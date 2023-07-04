@@ -1,0 +1,55 @@
+@import "/src/common/styles/colors.scss";
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 40px;
+  align-items: center;
+  z-index: 9999;
+  background-color: $roger-bg-color;
+  height: 10vh;
+
+  .logo-title {
+    font-size: 2rem;
+    color: $roger-text-color;
+    text-decoration: none;
+    font-weight: bolder;
+  }
+
+  .logo-title:hover {
+    color: $roger-green;
+  }
+
+  .header-nav-container {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 40px;
+
+    .header-nav-sub-container {
+      display: flex;
+      justify-content: space-between;
+      column-gap: 15px;
+    }
+
+    .nav-link {
+      color: $roger-text-color;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-link:hover {
+      color: $roger-green;
+    }
+
+    .logout-link {
+      color: $roger-red;
+      font-weight: bold;
+      text-decoration: none;
+    }
+  }
+}

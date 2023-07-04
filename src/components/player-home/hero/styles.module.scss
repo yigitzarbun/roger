@@ -1,0 +1,9 @@
+@import "/src/common/styles/common.scss";
+
+img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: $roger-border-radius;
+}

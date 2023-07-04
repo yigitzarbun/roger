@@ -1,4 +1,10 @@
+import PlayerLogin from "./player/PlayerLogin";
+
 const Login = () => {
-  return <div>Login</div>;
+  return (
+    <div>
+      <PlayerLogin />
+    </div>
+  );
 };
 export default Login;

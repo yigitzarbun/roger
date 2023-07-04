@@ -1,0 +1,69 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.request-container {
+  display: flex;
+  flex-direction: column;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 20px;
+
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .request-title {
+    font-size: 2rem;
+  }
+
+  .nav-container {
+    display: flex;
+    column-gap: 20px;
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+  }
+
+  .player-image {
+    width: 50px;
+    height: 50px;
+  }
+  .buttons-container {
+    display: flex;
+    column-gap: 15px;
+  }
+  .accept-button {
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-weight: bold;
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    border: 1px solid $roger-green;
+  }
+
+  .accept-button:hover {
+    background-color: $roger-green;
+    cursor: pointer;
+    color: $roger-black-dark;
+  }
+  .decline-button {
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-weight: bold;
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    border: 1px solid $roger-red;
+  }
+
+  .decline-button:hover {
+    background-color: $roger-red;
+    cursor: pointer;
+    color: $roger-black-dark;
+  }
+}

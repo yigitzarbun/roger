@@ -1,0 +1,26 @@
+$roger-blue: #0079ff;
+$roger-green: #00dfa2;
+$roger-yellow: #f6fa70;
+$roger-purple: #8070fa;
+$roger-red: #ff0060;
+$roger-black-dark: #1a1a1a;
+$roger-black-light: #232222;
+
+$roger-text-color: rgba(255, 255, 255, 0.87);
+
+$roger-bg-color: #191919;
+$roger-box-bg-color: #222831;
+
+$background-blue-green-light: linear-gradient(
+  90deg,
+  rgb(152, 100%, 50%, 1) 0%,
+  rgb(186, 100%, 69%, 1) 100%
+);
+
+$background-blue-green-regular: linear-gradient(
+  109.6deg,
+  rgba(9, 111, 224, 1) 11.2%,
+  rgb(64, 128, 102) 91.2%
+);
+
+$background-blue-pink-regular: linear-gradient(19deg, #21d4fd 0%, #b721ff 100%);

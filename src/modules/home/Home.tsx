@@ -1,5 +1,10 @@
+import PlayerHome from "./player/PlayerHome";
 const Home = () => {
-  return <div>Home</div>;
+  return (
+    <div>
+      <PlayerHome />
+    </div>
+  );
 };
 
 export default Home;

@@ -1,0 +1,23 @@
+@import "/src/common/styles/colors.scss";
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  color: $roger-text-color;
+  background-color: $roger-bg-color;
+  padding: 40px 25px 0 20px;
+}
+
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
