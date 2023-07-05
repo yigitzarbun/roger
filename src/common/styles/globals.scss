@@ -1,4 +1,5 @@
 @import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
 
 * {
   box-sizing: border-box;
@@ -13,11 +14,20 @@ body {
   margin: auto;
   color: $roger-text-color;
   background-color: $roger-bg-color;
-  padding: 40px 25px 0 20px;
+  padding: 40px 55px 0 55px;
+  width: 100%;
 }
 
 body {
   width: 100%;
   min-height: 100%;
   margin: 0;
+}
+
+.hero {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: $roger-border-radius;
 }

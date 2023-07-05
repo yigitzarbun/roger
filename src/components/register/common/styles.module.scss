@@ -3,40 +3,42 @@
 
 .common-register-container {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  row-gap: 10vh;
+  margin-top: 100px;
+
+  .hero {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+    border-radius: $roger-border-radius;
+  }
+
+  .user-type-outer-container {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    row-gap: 8vh;
+    justify-content: center;
+  }
 
   .user-type-options-container {
     display: flex;
     justify-content: space-between;
   }
   .user-type-container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 4vh;
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
     width: 30%;
-    //height: 20vh;
-  }
-
-  .user-type-title {
-    font-size: 2rem;
-    font-weight: bold;
-  }
-
-  .user-type-button {
-    font-size: 1rem;
-    font-weight: bold;
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    border: none;
     cursor: pointer;
   }
-
-  .user-type-button:hover {
-    background-color: $roger-green;
+  .user-type-container:hover {
+    background-color: $roger-blue;
+  }
+  .user-type-title {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
   }
 }

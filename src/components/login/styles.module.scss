@@ -3,13 +3,27 @@
 
 .login-page-container {
   display: flex;
-  flex-direction: column;
-  row-gap: 4vh;
-  background-color: $roger-box-bg-color;
-  padding: $roger-box-padding;
-  border-radius: $roger-border-radius;
-  width: 40vw;
-  margin: 0 auto;
+  align-items: stretch;
+  margin-top: 100px;
+
+  .hero {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+    border-radius: $roger-border-radius;
+  }
+
+  .login-form-content {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4vh;
+    background-color: $roger-box-bg-color;
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    width: 45%;
+    margin: 0 auto;
+  }
 
   .login-title {
     font-size: 2rem;
@@ -44,7 +58,7 @@
   }
 
   .form-button:hover {
-    background-color: $roger-green;
+    background-color: $roger-blue;
     cursor: pointer;
   }
 

@@ -1,6 +1,6 @@
 import styles from "./styles.module.scss";
 
-export const PlayerRequests = () => {
+const PlayerRequests = () => {
   return (
     <div className={styles["request-container"]}>
       <div className={styles["top-container"]}>
@@ -13,24 +13,17 @@ export const PlayerRequests = () => {
       <table>
         <thead>
           <tr>
+            <th>Oyuncu</th>
+            <th>İsim</th>
             <th>Tür</th>
             <th>Tarih</th>
             <th>Saat</th>
             <th>Konum</th>
-            <th>Kort</th>
-            <th>Oyuncu</th>
-            <th>İsim</th>
-            <th>Sıralama</th>
             <th>Takvim</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Antreman</td>
-            <td>21.12.2023</td>
-            <td>19:00</td>
-            <td>Enka Spor Tesisleri</td>
-            <td>1</td>
             <td>
               <img
                 src="/images/players/player1.png"
@@ -38,13 +31,17 @@ export const PlayerRequests = () => {
               />
             </td>
             <td>Hasan Karayel</td>
-            <td>1</td>
+            <td>Antreman</td>
+            <td>21.12.2023</td>
+            <td>19:00</td>
+            <td>Enka Spor Tesisleri</td>
             <td>Müsait</td>
-            <td className={styles["buttons-container"]}>
+            <td>
               <button className={styles["accept-button"]}>Kabul et</button>
+            </td>
+            <td>
               <button className={styles["decline-button"]}>Reddet</button>
             </td>
-            <td></td>
           </tr>
         </tbody>
       </table>
@@ -53,3 +50,5 @@ export const PlayerRequests = () => {
     </div>
   );
 };
+
+export default PlayerRequests;
