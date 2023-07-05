@@ -1,0 +1,71 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.register-page-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4vh;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 40vw;
+  margin: 0 auto;
+
+  .register-title {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2vh;
+  }
+  .input-outer-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1vh;
+    width: 100%;
+  }
+
+  input,
+  select {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 95%;
+  }
+
+  .form-button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    margin-top: 4vh;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .form-button:hover {
+    background-color: $roger-green;
+    cursor: pointer;
+  }
+
+  .error-field {
+    color: $roger-red;
+    font-size: 0.8rem;
+  }
+
+  .login-nav {
+    text-decoration: none;
+    color: $roger-text-color;
+  }
+
+  .login-span {
+    color: $roger-green;
+    font-weight: bold;
+  }
+}

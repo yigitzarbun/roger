@@ -1,4 +1,5 @@
 {
+  "headerSearchPlaceholder": "Oyuncu, kulüp ve eğitmen ara",
   "matchTitle": "Maç",
   "matchText": "Maç yap, puan topla, liderlik tablosunda yüksel",
   "matchButtonText": "Rakip Bul",
@@ -10,5 +11,12 @@
   "lessonButtonText": "Eğitmen Bul",
   "equipTitle": "Ekipman",
   "equipText": "En kaliteli ekipmanlarla performansını arttır",
-  "equipButtonText": "Ekipman Bul"
+  "equipButtonText": "Ekipman Bul",
+  "loginEmailInputPlaceholder": "roger@federer.com",
+  "loginButtonText": "Giriş yap",
+  "registerFNamelInputPlaceholder": "Roger",
+  "registerLNamelInputPlaceholder": "Federer",
+  "registerBirthYearlInputPlaceholder": "örn. 1993",
+  "registerEmailInputPlaceholder": "roger@federer.com",
+  "registerButtonText": "Kayıt ol"
 }

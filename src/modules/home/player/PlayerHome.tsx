@@ -1,11 +1,11 @@
-import { PlayerHomeHero } from "../../../components/player-home/hero/PlayerHomeHero";
-import PlayerMatch from "../../../components/player-home/match/PlayerMatch";
-import PlayerTrain from "../../../components/player-home/train/PlayerTrain";
-import PlayerLesson from "../../../components/player-home/lesson/PlayerLesson";
-import PlayerEquip from "../../../components/player-home/equip/PlayerEquip";
+import { PlayerHomeHero } from "../../../components/home/player/hero/PlayerHomeHero";
+import PlayerMatch from "../../../components/home/player/match/PlayerMatch";
+import PlayerTrain from "../../../components/home/player/train/PlayerTrain";
+import PlayerLesson from "../../../components/home/player/lesson/PlayerLesson";
+import PlayerEquip from "../../../components/home/player/equip/PlayerEquip";
 
 import styles from "./styles.module.scss";
-import { PlayerRequests } from "../../../components/player-home/requests/PlayerRequests";
+import { PlayerRequests } from "../../../components/home/player/requests/PlayerRequests";
 
 const PlayerHome = () => {
   return (

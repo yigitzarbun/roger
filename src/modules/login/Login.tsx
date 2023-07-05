@@ -1,9 +1,8 @@
-import PlayerLogin from "./player/PlayerLogin";
-
+import LoginForm from "../../components/login/LoginForm";
 const Login = () => {
   return (
     <div>
-      <PlayerLogin />
+      <LoginForm />
     </div>
   );
 };

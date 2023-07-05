@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import i18n from "../../../common/i18n/i18n";
+import i18n from "../../common/i18n/i18n";
 import styles from "./styles.module.scss";
-import paths from "../../../routing/Paths";
+import paths from "../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 type FormValues = {
@@ -9,7 +9,7 @@ type FormValues = {
   password: string;
 };
 
-const PlayerLoginForm = () => {
+const LoginForm = () => {
   const navigate = useNavigate();
 
   const {
@@ -61,4 +61,4 @@ const PlayerLoginForm = () => {
   );
 };
 
-export default PlayerLoginForm;
+export default LoginForm;

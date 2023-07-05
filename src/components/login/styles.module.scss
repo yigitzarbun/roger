@@ -1,0 +1,55 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.login-page-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4vh;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 40vw;
+  margin: 0 auto;
+
+  .login-title {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2vh;
+  }
+
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1vh;
+  }
+
+  input {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+  }
+
+  .form-button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    margin-top: 4vh;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .form-button:hover {
+    background-color: $roger-green;
+    cursor: pointer;
+  }
+
+  .error-field {
+    color: $roger-red;
+    font-size: 0.8rem;
+  }
+}

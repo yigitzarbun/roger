@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
-import i18n from "../../../common/i18n/i18n";
-import paths from "../../../routing/Paths";
+import i18n from "../../../../common/i18n/i18n";
+import paths from "../../../../routing/Paths";
 
 const PlayerMatch = () => {
   return (
