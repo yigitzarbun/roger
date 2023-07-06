@@ -1,0 +1,47 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.lesson-page-container {
+  display: flex;
+  column-gap: 4vh;
+  background-color: $roger-black-light;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 100%;
+
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1vh;
+    width: 30%;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  select {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 100%;
+  }
+
+  button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background-color: $roger-red;
+    cursor: pointer;
+  }
+
+  .error-field {
+    color: $roger-red;
+    font-size: 0.8rem;
+  }
+}

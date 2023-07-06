@@ -1,0 +1,25 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.nav-container {
+  display: flex;
+
+  .active-button {
+    background-color: $roger-blue;
+    padding: $roger-box-padding;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .inactive-button {
+    padding: $roger-box-padding;
+    border: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .inactive-button:hover {
+    background-color: $roger-black-light;
+  }
+}

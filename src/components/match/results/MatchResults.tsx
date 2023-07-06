@@ -1,10 +1,10 @@
 import styles from "./styles.module.scss";
 
-const TrainResults = () => {
+const MatchResults = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Antreman</h2>
+        <h2 className={styles["result-title"]}>Maç</h2>
       </div>
       <table>
         <thead>
@@ -15,6 +15,7 @@ const TrainResults = () => {
             <th>Cinsiyet</th>
             <th>Yaş</th>
             <th>Konum</th>
+            <th>Değerlendirme</th>
           </tr>
         </thead>
         <tbody>
@@ -30,6 +31,7 @@ const TrainResults = () => {
             <td>Erkek</td>
             <td>25</td>
             <td>Ataşehir</td>
+            <td>4 / 5</td>
             <td>
               <button className={styles["accept-button"]}>Davet et</button>
             </td>
@@ -46,6 +48,7 @@ const TrainResults = () => {
             <td>Erkek</td>
             <td>25</td>
             <td>Ataşehir</td>
+            <td>4 / 5</td>
             <td>
               <button className={styles["accept-button"]}>Davet et</button>
             </td>
@@ -62,6 +65,7 @@ const TrainResults = () => {
             <td>Erkek</td>
             <td>25</td>
             <td>Ataşehir</td>
+            <td>4 / 5</td>
             <td>
               <button className={styles["accept-button"]}>Davet et</button>
             </td>
@@ -74,4 +78,4 @@ const TrainResults = () => {
   );
 };
 
-export default TrainResults;
+export default MatchResults;

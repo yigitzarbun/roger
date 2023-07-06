@@ -1,20 +1,22 @@
 import styles from "./styles.module.scss";
 
-const TrainResults = () => {
+const LessonResults = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Antreman</h2>
+        <h2 className={styles["result-title"]}>Ders</h2>
       </div>
       <table>
         <thead>
           <tr>
-            <th>Oyuncu</th>
+            <th>Eğitmen</th>
             <th>İsim</th>
-            <th>Seviye</th>
+            <th>Tecrübe</th>
             <th>Cinsiyet</th>
             <th>Yaş</th>
             <th>Konum</th>
+            <th>Fiyat (saat)</th>
+            <th>Değerlendirme</th>
           </tr>
         </thead>
         <tbody>
@@ -28,10 +30,12 @@ const TrainResults = () => {
             <td>Hasan Karayel</td>
             <td>Başlangıç</td>
             <td>Erkek</td>
-            <td>25</td>
+            <td>11 yıl</td>
             <td>Ataşehir</td>
+            <td>150 TL</td>
+            <td>4/5</td>
             <td>
-              <button className={styles["accept-button"]}>Davet et</button>
+              <button className={styles["accept-button"]}>İstek gönder</button>
             </td>
           </tr>
           <tr className={styles["player-row"]}>
@@ -44,10 +48,12 @@ const TrainResults = () => {
             <td>Hasan Karayel</td>
             <td>Başlangıç</td>
             <td>Erkek</td>
-            <td>25</td>
+            <td>11 yıl</td>
             <td>Ataşehir</td>
+            <td>150 TL</td>
+            <td>4/5</td>
             <td>
-              <button className={styles["accept-button"]}>Davet et</button>
+              <button className={styles["accept-button"]}>İstek gönder</button>
             </td>
           </tr>
           <tr className={styles["player-row"]}>
@@ -60,10 +66,12 @@ const TrainResults = () => {
             <td>Hasan Karayel</td>
             <td>Başlangıç</td>
             <td>Erkek</td>
-            <td>25</td>
+            <td>11 yıl</td>
             <td>Ataşehir</td>
+            <td>150 TL</td>
+            <td>4/5</td>
             <td>
-              <button className={styles["accept-button"]}>Davet et</button>
+              <button className={styles["accept-button"]}>İstek gönder</button>
             </td>
           </tr>
         </tbody>
@@ -74,4 +82,4 @@ const TrainResults = () => {
   );
 };
 
-export default TrainResults;
+export default LessonResults;

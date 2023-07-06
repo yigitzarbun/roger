@@ -8,6 +8,13 @@ import i18n from "../../common/i18n/i18n";
 
 const Header = () => {
   const [search, setSearch] = useState("");
+  const [searchBar, setSearchBar] = useState(false);
+
+  const handleSearchBar = () => {
+    setSearchBar((prev) => !prev);
+    setSearch("");
+  };
+
   const navigate = useNavigate();
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -15,37 +22,48 @@ const Header = () => {
   const handleSearch = () => {
     navigate("/", { state: { search: search } });
   };
-  const handleClearSearch = () => {
-    setSearch("");
-  };
-  const isLoggedIn = false;
+
+  const isLoggedIn = true;
   return (
     <div className={styles["header-container"]}>
       <Link to={paths.HOME} className={styles["logo-title"]}>
         Roger
       </Link>
-      <div className={styles["search-container"]}>
-        <input
-          onChange={handleSearchValue}
-          type="text"
-          value={search}
-          placeholder={i18n.t("headerSearchPlaceholder")}
-          className={styles["search-input"]}
-        />
-        <div className={styles["search-buttons-container"]}>
-          <button onClick={handleSearch} className={styles["search-button"]}>
-            Ara
-          </button>
-          <button
-            onClick={handleClearSearch}
-            className={styles["clear-button"]}
-          >
-            Temizle
-          </button>
-        </div>
-      </div>
 
       <nav className={styles["header-nav-container"]}>
+        {searchBar && (
+          <div className={styles["search-container"]}>
+            <input
+              onChange={handleSearchValue}
+              type="text"
+              value={search}
+              placeholder={i18n.t("headerSearchPlaceholder")}
+              className={styles["search-input"]}
+            />
+            <div className={styles["search-buttons-container"]}>
+              <button
+                onClick={handleSearch}
+                className={styles["search-button"]}
+              >
+                Ara
+              </button>
+              <button
+                onClick={handleSearchBar}
+                className={styles["clear-button"]}
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        )}
+        {!searchBar && (
+          <img
+            src="/images/icons/search.png"
+            className={styles["search-icon"]}
+            onClick={handleSearchBar}
+          />
+        )}
+
         {isLoggedIn ? (
           <>
             <div className={styles["header-nav-sub-container"]}>

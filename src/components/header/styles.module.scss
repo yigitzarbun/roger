@@ -26,52 +26,58 @@
     color: $roger-blue;
   }
 
-  .search-container {
-    display: flex;
-    column-gap: 10px;
-
-    .search-input {
-      padding: 5px;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 200px;
-    }
-
-    .search-buttons-container {
-      display: flex;
-      column-gap: 5px;
-    }
-    .search-button {
-      padding: 5px;
-      background-color: inherit;
-      border: 1px solid $roger-blue;
-      border-radius: $roger-border-radius;
-      font-weight: bold;
-    }
-    .search-button:hover {
-      background-color: $roger-blue;
-    }
-    .clear-button {
-      padding: 5px;
-      background-color: inherit;
-      border: 1px solid $roger-red;
-      border-radius: $roger-border-radius;
-      font-weight: bold;
-    }
-    .clear-button:hover {
-      background-color: $roger-red;
-    }
-  }
-
   .header-nav-container {
     display: flex;
     justify-content: space-between;
     column-gap: 40px;
 
+    .search-icon {
+      width: 25px;
+    }
+    .search-container {
+      display: flex;
+      column-gap: 10px;
+
+      .search-input {
+        border-radius: $roger-border-radius;
+        border: none;
+        width: 200px;
+        padding: 5px;
+      }
+
+      .search-buttons-container {
+        display: flex;
+        column-gap: 5px;
+      }
+      .search-button {
+        padding: 5px;
+        background-color: inherit;
+        border: 1px solid $roger-blue;
+        border-radius: $roger-border-radius;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .search-button:hover {
+        background-color: $roger-blue;
+      }
+      .clear-button {
+        padding: 5px;
+        background-color: inherit;
+        border: 1px solid $roger-red;
+        border-radius: $roger-border-radius;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .clear-button:hover {
+        background-color: $roger-red;
+      }
+    }
+
     .header-nav-sub-container {
       display: flex;
       justify-content: space-between;
       column-gap: 15px;
+      align-items: center;
     }
 
     .nav-link {
