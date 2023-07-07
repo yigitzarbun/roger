@@ -2,9 +2,11 @@ import PlayerCalendarHero from "../../../components/calendar/player/hero/PlayerC
 import PlayerCalendarResults from "../../../components/calendar/player/results/PlayerCalendarResults";
 import PlayerCalendarSearch from "../../../components/calendar/player/search/PlayerCalendarSearch";
 
+import styles from "./styles.module.scss";
+
 const PlayerCalendar = () => {
   return (
-    <div>
+    <div className={styles["calendar-container"]}>
       <PlayerCalendarHero />
       <PlayerCalendarSearch />
       <PlayerCalendarResults />

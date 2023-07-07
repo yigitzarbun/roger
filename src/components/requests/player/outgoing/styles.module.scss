@@ -26,14 +26,20 @@
       height: 50px;
     }
 
-    .accept-button {
+    .cancel-button {
       font-weight: bold;
       border: none;
       background-color: transparent;
       font-size: 1rem;
-      color: $roger-blue;
+      color: $roger-red;
       cursor: pointer;
-      text-decoration: none;
     }
+    .fee {
+      color: $roger-green;
+    }
+  }
+  .fee-text {
+    color: $roger-green;
+    font-size: 0.9rem;
   }
 }

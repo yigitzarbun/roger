@@ -1,0 +1,85 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.invite-page-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4vh;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 60%;
+  margin: 0 auto;
+
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .invite-title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .prev-button {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+  }
+
+  .coach-name {
+    color: $roger-blue;
+  }
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2vh;
+  }
+  .input-outer-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1vh;
+    width: 100%;
+  }
+
+  input,
+  select {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 95%;
+  }
+
+  .form-button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    margin-top: 4vh;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .form-button:hover {
+    background-color: $roger-blue;
+    cursor: pointer;
+  }
+
+  .error-field {
+    color: $roger-red;
+    font-size: 0.8rem;
+  }
+
+  .login-nav {
+    text-decoration: none;
+    color: $roger-text-color;
+  }
+
+  .login-span {
+    color: $roger-blue;
+    font-weight: bold;
+  }
+}

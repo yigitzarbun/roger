@@ -1,3 +1,7 @@
+import { Link } from "react-router-dom";
+
+import paths from "../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 const LessonResults = () => {
@@ -11,6 +15,7 @@ const LessonResults = () => {
           <tr>
             <th>Eğitmen</th>
             <th>İsim</th>
+            <th>Kulüp</th>
             <th>Tecrübe</th>
             <th>Cinsiyet</th>
             <th>Yaş</th>
@@ -28,14 +33,27 @@ const LessonResults = () => {
               />
             </td>
             <td>Hasan Karayel</td>
-            <td>Başlangıç</td>
-            <td>Erkek</td>
+            <td>Ferdi / Bağımsız</td>
             <td>11 yıl</td>
+            <td>Erkek</td>
+            <td>41</td>
             <td>Ataşehir</td>
             <td>150 TL</td>
             <td>4/5</td>
             <td>
-              <button className={styles["accept-button"]}>İstek gönder</button>
+              <Link
+                to={paths.LESSON_INVITE}
+                state={{
+                  fname: "Hasan",
+                  lname: "Karayel",
+                  image: "/images/players/player1.png",
+                  lesson_price: "150",
+                  court_price: "100",
+                }}
+                className={styles["accept-button"]}
+              >
+                Davet gönder
+              </Link>
             </td>
           </tr>
           <tr className={styles["player-row"]}>
@@ -46,14 +64,27 @@ const LessonResults = () => {
               />
             </td>
             <td>Hasan Karayel</td>
-            <td>Başlangıç</td>
-            <td>Erkek</td>
+            <td>Ferdi / Bağımsız</td>
             <td>11 yıl</td>
+            <td>Erkek</td>
+            <td>41</td>
             <td>Ataşehir</td>
             <td>150 TL</td>
             <td>4/5</td>
             <td>
-              <button className={styles["accept-button"]}>İstek gönder</button>
+              <Link
+                to={paths.LESSON_INVITE}
+                state={{
+                  fname: "Hasan",
+                  lname: "Karayel",
+                  image: "/images/players/player1.png",
+                  lesson_price: "150",
+                  court_price: "100",
+                }}
+                className={styles["accept-button"]}
+              >
+                Davet gönder
+              </Link>
             </td>
           </tr>
           <tr className={styles["player-row"]}>
@@ -64,14 +95,27 @@ const LessonResults = () => {
               />
             </td>
             <td>Hasan Karayel</td>
-            <td>Başlangıç</td>
-            <td>Erkek</td>
+            <td>Ferdi / Bağımsız</td>
             <td>11 yıl</td>
+            <td>Erkek</td>
+            <td>41</td>
             <td>Ataşehir</td>
             <td>150 TL</td>
             <td>4/5</td>
             <td>
-              <button className={styles["accept-button"]}>İstek gönder</button>
+              <Link
+                to={paths.LESSON_INVITE}
+                state={{
+                  fname: "Hasan",
+                  lname: "Karayel",
+                  image: "/images/players/player1.png",
+                  lesson_price: "150",
+                  court_price: "100",
+                }}
+                className={styles["accept-button"]}
+              >
+                Davet gönder
+              </Link>
             </td>
           </tr>
         </tbody>

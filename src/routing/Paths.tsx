@@ -11,5 +11,8 @@ export default {
   LESSON: "/ders",
   CALENDAR: "/takvim",
   REQUESTS: "/davetler",
+  MATCH_INVITE: "/mac-davet",
+  TRAIN_INVITE: "/antreman-davet",
+  LESSON_INVITE: "/ders-davet",
   NOT_FOUND: "*",
 } as Paths;

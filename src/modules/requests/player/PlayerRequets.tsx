@@ -3,6 +3,7 @@ import PlayerRequestsNavigation from "../../../components/requests/player/naviga
 import PlayerRequestsIncoming from "../../../components/requests/player/incoming/PlayerRequestsIncoming";
 import PlayerRequestsOutgoing from "../../../components/requests/player/outgoing/PlayerRequestsOutgoing";
 import { useState } from "react";
+import styles from "./styles.module.scss";
 
 const PlayerRequets = () => {
   const [display, setDisplay] = useState("incoming");
@@ -10,14 +11,14 @@ const PlayerRequets = () => {
     setDisplay(value);
   };
   return (
-    <div>
+    <div className={styles["requests-container"]}>
       <PlayerRequestsHero />
       <PlayerRequestsNavigation
         display={display}
         handleDisplay={handleDisplay}
       />
-      {display === "incoming" && <PlayerRequestsIncoming display={display} />}
-      {display === "outgoing" && <PlayerRequestsOutgoing display={display} />}
+      {display === "incoming" && <PlayerRequestsIncoming />}
+      {display === "outgoing" && <PlayerRequestsOutgoing />}
     </div>
   );
 };

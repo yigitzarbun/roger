@@ -1,10 +1,8 @@
-import styles from "./styles.module.scss";
-
 import PlayerRequets from "./player/PlayerRequets";
 
 const Requests = () => {
   return (
-    <div className={styles["requests-container"]}>
+    <div>
       <PlayerRequets />
     </div>
   );

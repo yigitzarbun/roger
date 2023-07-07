@@ -16,6 +16,13 @@ const Match = lazy(() => import("../modules/match/Match"));
 const Lesson = lazy(() => import("../modules/lesson/Lesson"));
 const Calendar = lazy(() => import("../modules/calendar/Calendar"));
 const Requests = lazy(() => import("../modules/requests/Requests"));
+const LessonInvite = lazy(
+  () => import("../modules/invite/lesson/LessonInvite")
+);
+const MatchInvite = lazy(() => import("../modules/invite/match/MatchInivte"));
+const TrainInvite = lazy(
+  () => import("../modules/invite/training/TrainingInvite")
+);
 
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
@@ -40,6 +47,9 @@ const routes: Route[] = [
   { path: paths.LESSON, element: getRouteElement(Lesson) },
   { path: paths.CALENDAR, element: getRouteElement(Calendar) },
   { path: paths.REQUESTS, element: getRouteElement(Requests) },
+  { path: paths.LESSON_INVITE, element: getRouteElement(LessonInvite) },
+  { path: paths.MATCH_INVITE, element: getRouteElement(MatchInvite) },
+  { path: paths.TRAIN_INVITE, element: getRouteElement(TrainInvite) },
 ];
 
 export default createBrowserRouter(routes);

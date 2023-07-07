@@ -3,6 +3,8 @@
 
 .nav-container {
   display: flex;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
 
   .active-button {
     background-color: $roger-blue;
