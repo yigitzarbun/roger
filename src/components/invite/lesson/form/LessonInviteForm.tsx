@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -15,9 +15,11 @@ export type FormValues = {
   lname: string;
   lesson_price: number;
   court_price: number;
+  image: string;
 };
 
 const LessonInviteForm = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const coach = location.state;
   const {
@@ -31,11 +33,12 @@ const LessonInviteForm = () => {
   const [formData, setFormData] = useState<FormValues | null>(null);
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    formData.event_type = "Lesson";
+    formData.event_type = "lesson";
     formData.fname = coach.fname;
     formData.lname = coach.lname;
     formData.lesson_price = coach.lesson_price;
     formData.court_price = coach.court_price;
+    formData.image = coach.image;
     console.log(formData);
     setFormData(formData);
     setModal(true);
@@ -46,9 +49,13 @@ const LessonInviteForm = () => {
     handleSubmit((data) => {
       console.log(data);
       reset();
+      navigate(paths.LESSON);
     })();
   };
 
+  const handleCloseModal = () => {
+    setModal(false);
+  };
   return (
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>
@@ -126,6 +133,7 @@ const LessonInviteForm = () => {
         modal={modal}
         handleModalSubmit={handleModalSubmit}
         formData={formData}
+        handleCloseModal={handleCloseModal}
       />
     </div>
   );
