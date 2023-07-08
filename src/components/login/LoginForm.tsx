@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import i18n from "../../common/i18n/i18n";
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
@@ -59,6 +59,10 @@ const LoginForm = () => {
             {i18n.t("loginButtonText")}
           </button>
         </form>
+        <Link to={paths.REGISTER} className={styles["register-nav"]}>
+          Hesabın yok mu?{" "}
+          <span className={styles["register-span"]}>Kayıt ol</span>
+        </Link>
       </div>
     </div>
   );
