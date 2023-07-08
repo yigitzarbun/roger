@@ -63,9 +63,15 @@ const InviteModal = ({
             {formData?.event_type === "lesson" && (
               <td>{formData?.lesson_price}</td>
             )}
-            <td className={styles["total-sum-text"]}>
-              {Number(formData?.court_price) + Number(formData?.lesson_price)}
-            </td>
+            {formData?.event_type === "lesson" ? (
+              <td className={styles["total-sum-text"]}>
+                {Number(formData?.court_price) + Number(formData?.lesson_price)}
+              </td>
+            ) : (
+              <td className={styles["total-sum-text"]}>
+                {Number(formData?.court_price)}
+              </td>
+            )}
           </tr>
         </tbody>
       </table>

@@ -29,10 +29,11 @@
   .header-nav-container {
     display: flex;
     justify-content: space-between;
-    column-gap: 40px;
+    column-gap: 80px;
 
     .search-icon {
       width: 25px;
+      cursor: pointer;
     }
     .search-container {
       display: flex;

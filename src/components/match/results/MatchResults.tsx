@@ -1,4 +1,6 @@
+import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
+import paths from "../../../routing/Paths";
 
 const MatchResults = () => {
   return (
@@ -33,7 +35,18 @@ const MatchResults = () => {
             <td>Ataşehir</td>
             <td>4 / 5</td>
             <td>
-              <button className={styles["accept-button"]}>Davet et</button>
+              <Link
+                to={paths.MATCH_INVITE}
+                state={{
+                  fname: "Hasan",
+                  lname: "Karayel",
+                  image: "/images/players/player1.png",
+                  court_price: "100",
+                }}
+                className={styles["accept-button"]}
+              >
+                Davet gönder
+              </Link>
             </td>
           </tr>
           <tr className={styles["player-row"]}>
@@ -50,7 +63,18 @@ const MatchResults = () => {
             <td>Ataşehir</td>
             <td>4 / 5</td>
             <td>
-              <button className={styles["accept-button"]}>Davet et</button>
+              <Link
+                to={paths.MATCH_INVITE}
+                state={{
+                  fname: "Hasan",
+                  lname: "Karayel",
+                  image: "/images/players/player1.png",
+                  court_price: "100",
+                }}
+                className={styles["accept-button"]}
+              >
+                Davet gönder
+              </Link>
             </td>
           </tr>
           <tr className={styles["player-row"]}>
@@ -67,7 +91,18 @@ const MatchResults = () => {
             <td>Ataşehir</td>
             <td>4 / 5</td>
             <td>
-              <button className={styles["accept-button"]}>Davet et</button>
+              <Link
+                to={paths.MATCH_INVITE}
+                state={{
+                  fname: "Hasan",
+                  lname: "Karayel",
+                  image: "/images/players/player1.png",
+                  court_price: "100",
+                }}
+                className={styles["accept-button"]}
+              >
+                Davet gönder
+              </Link>
             </td>
           </tr>
         </tbody>
