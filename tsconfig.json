@@ -4,13 +4,20 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "baseUrl": "./src",
+    "jsx": "react",
     "paths": {
       "*": ["*"],
       "@/*": ["*"]
     },
-    "rootDir": "src",
+    "rootDir": "./src",
     "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.scss.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.scss",
+    "src/**/*.scss.d.ts"
+  ],
+
   "exclude": ["node_modules"]
 }
