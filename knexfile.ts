@@ -1,8 +1,9 @@
 import { Knex } from "knex";
 
-const knexConfig: Knex.Config = {
-  client: "pg",
+module.exports = {
+  client: "pg", // Specify the correct database client, e.g., 'pg' for PostgreSQL
   connection: {
+    // Database connection details
     host: "localhost",
     port: 5432,
     user: "postgres",
@@ -18,4 +19,4 @@ const knexConfig: Knex.Config = {
   },
 };
 
-export default knexConfig;
+//export default knexConfig;

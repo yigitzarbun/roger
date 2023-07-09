@@ -1,37 +1,29 @@
+import { Request, Response, NextFunction } from "express";
 import playersModel from "../players/players-model";
 
-/*
-const credentialsExist = (req, res, next) => {
+export const credentialsExist = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const {
     birth_year,
-    body_image,
-    club_preference_1_id,
-    club_preference_2_id,
-    club_preference_3_id,
     email,
-    face_image,
     fname,
-    gender_id,
-    level_id,
+    gender,
+    level,
     lname,
     password,
-    registry_date,
     user_type,
   } = req.body;
   if (
     !birth_year ||
-    !body_image ||
-    !club_preference_1_id ||
-    !club_preference_2_id ||
-    !club_preference_3_id ||
     !email ||
-    !face_image ||
     !fname ||
-    !gender_id ||
-    !level_id ||
+    !gender ||
+    !level ||
     !lname ||
     !password ||
-    !registry_date ||
     !user_type
   ) {
     res.status(400).json({ message: "Required fields are missing" });
@@ -39,9 +31,12 @@ const credentialsExist = (req, res, next) => {
     next();
   }
 };
-*/
 
-const emailUnique = async (req, res, next) => {
+export const emailUnique = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email } = req.body;
   const emailExist = await playersModel.getByFilter({ email });
   if (emailExist) {
@@ -51,7 +46,11 @@ const emailUnique = async (req, res, next) => {
   }
 };
 
-const emailExists = async (req, res, next) => {
+export const emailExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email } = req.body;
   const emailExists = await playersModel.getByFilter({ email });
   if (!emailExists) {
@@ -61,17 +60,15 @@ const emailExists = async (req, res, next) => {
   }
 };
 
-const loginCredentialsExist = (req, res, next) => {
+export const loginCredentialsExist = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).json({ message: "Invalid credentials" });
   } else {
     next();
   }
-};
-module.exports = {
-  //credentialsExist,
-  emailUnique,
-  emailExists,
-  loginCredentialsExist,
 };

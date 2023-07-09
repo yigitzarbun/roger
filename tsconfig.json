@@ -9,15 +9,17 @@
       "*": ["*"],
       "@/*": ["*"]
     },
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "dist"
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.scss",
-    "src/**/*.scss.d.ts"
+    "src/**/*.scss.d.ts",
+    "index.ts",
+    "knexfile.ts",
+    "server.ts"
   ],
-
   "exclude": ["node_modules"]
 }

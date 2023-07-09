@@ -19,9 +19,7 @@ const playersModel = {
   },
 
   async add(player) {
-    const playerIdArray = await db("players").insert(player);
-    const playerId = playerIdArray[0];
-    const newPlayer = await db("players").where("player_id", playerId).first();
+    const [newPlayer] = await db("players").insert(player).returning("*");
     return newPlayer;
   },
 

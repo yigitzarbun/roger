@@ -1,17 +1,22 @@
+import { Request, Response, NextFunction, Router } from "express";
 import playersModel from "../players/players-model";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../../../config/secrets";
+import {
+  credentialsExist,
+  emailUnique,
+  emailExists,
+  loginCredentialsExist,
+} from "../players_auth/auth-middleware";
 
-const authRouter = require("express").Router();
-const { JWT_SECRET } = require("../../config/secrets");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const secrets = require("../secrets");
-const playersMd = require("../players_auth/auth-middleware");
+const authRouter = Router();
 
 authRouter.post(
   "/register",
-  playersMd.credentialsExist,
-  playersMd.emailUnique,
-  async (req, res, next) => {
+  credentialsExist,
+  emailUnique,
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const credentials = req.body;
       const hash = bcrypt.hashSync(credentials.password, 8);
@@ -26,11 +31,10 @@ authRouter.post(
 
 authRouter.post(
   "/login",
-  playersMd.loginCredentialsExist,
-  playersMd.emailExists,
-  (req, res, next) => {
+  loginCredentialsExist,
+  emailExists,
+  (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    console.log(req.body);
     playersModel
       .getByFilter({ email })
       .then((player) => {
@@ -45,7 +49,7 @@ authRouter.post(
   }
 );
 
-function generateToken(player) {
+function generateToken(player: any) {
   const payload = {
     player_id: player.player_id,
     email: player.email,
@@ -53,7 +57,8 @@ function generateToken(player) {
   const options = {
     expiresIn: "1d",
   };
-  const token = jwt.sign(payload, secrets.JWT_SECRET, options);
+  const token = jwt.sign(payload, JWT_SECRET, options);
   return token;
 }
-module.exports = authRouter;
+
+export default authRouter;
