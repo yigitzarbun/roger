@@ -1,18 +1,21 @@
+import React from "react";
+import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
-import styles from "./styles.module.scss";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 type FormValues = {
+  user_type: string;
+  player_status: string;
   email: string;
   password: string;
   fname: string;
   lname: string;
-  gender: string;
   birth_year: number;
-  level: string;
   location: string;
+  gender: string;
+  level: string;
 };
 
 const PlayerRegisterForm = () => {
@@ -26,7 +29,12 @@ const PlayerRegisterForm = () => {
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    console.log(formData);
+    const dataWide = {
+      ...formData,
+      user_type: "player",
+      player_status: "active",
+    };
+    console.log(dataWide);
     navigate(paths.LOGIN);
     reset();
   };

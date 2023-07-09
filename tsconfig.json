@@ -1,8 +1,16 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["*"],
+      "@/*": ["*"]
+    },
+    "rootDir": "src",
+    "outDir": "dist"
   },
-  "include": ["/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.scss.d.ts"],
   "exclude": ["node_modules"]
 }
