@@ -1,31 +1,43 @@
-const router = require("express").Router();
-const playersModel = require("./players-model");
+import { Request, Response, NextFunction, Router } from "express";
 
-router.get("/", async (req, res, next) => {
-  try {
-    const players = await playersModel.getAll();
-    res.status(200).json(players);
-  } catch (error) {
-    next(error);
-  }
-});
+import playersModel from "./players-model";
 
-router.get("/:player_id", async (req, res, next) => {
-  try {
-    const player = await playersModel.getById(req.params.player_id);
-    res.status(200).json(player);
-  } catch (error) {
-    next(error);
-  }
-});
+const playersRouter = Router();
 
-router.put("/:player_id", async (req, res, next) => {
-  try {
-    await playersModel.update(req.body);
-    const updatedPlayer = await playersModel.getById(req.body.player_id);
-    res.status(200).json(updatedPlayer);
-  } catch (error) {
-    next(error);
+playersRouter.get(
+  "/",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const players = await playersModel.getAll();
+      res.status(200).json(players);
+    } catch (error) {
+      next(error);
+    }
   }
-});
-module.exports = router;
+);
+
+playersRouter.get(
+  "/:player_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const player = await playersModel.getById(req.params.player_id);
+      res.status(200).json(player);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+playersRouter.put(
+  "/:player_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await playersModel.update(req.body);
+      const updatedPlayer = await playersModel.getById(req.body.player_id);
+      res.status(200).json(updatedPlayer);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+export default playersRouter;

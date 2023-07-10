@@ -5,12 +5,15 @@ import paths from "../../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
-import { useGetPlayersQuery } from "api/apiSlice";
+import { useGetPlayersQuery } from "../../../api/apiSlice";
 
 const TrainResults = () => {
-  const { data: players, isLoading, isError } = useGetPlayersQuery({});
+  const { data: players, isLoading, isError, error } = useGetPlayersQuery({});
 
-  console.log(players);
+  console.log(players !== undefined ? players : "Loading...");
+  const today = new Date();
+  const year = today.getFullYear();
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -28,90 +31,51 @@ const TrainResults = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className={styles["player-row"]}>
-            <td>
-              <img
-                src="/images/players/player1.png"
-                className={styles["player-image"]}
-              />
-            </td>
-            <td>Hasan Karayel</td>
-            <td>Başlangıç</td>
-            <td>Erkek</td>
-            <td>25</td>
-            <td>Ataşehir</td>
-            <td>
-              <Link
-                to={paths.TRAIN_INVITE}
-                state={{
-                  fname: "Hasan",
-                  lname: "Karayel",
-                  image: "/images/players/player1.png",
-                  court_price: "100",
-                }}
-                className={styles["accept-button"]}
-              >
-                Davet gönder
-              </Link>
-            </td>
-          </tr>
-          <tr className={styles["player-row"]}>
-            <td>
-              <img
-                src="/images/players/player1.png"
-                className={styles["player-image"]}
-              />
-            </td>
-            <td>Hasan Karayel</td>
-            <td>Başlangıç</td>
-            <td>Erkek</td>
-            <td>25</td>
-            <td>Ataşehir</td>
-            <td>
-              <Link
-                to={paths.TRAIN_INVITE}
-                state={{
-                  fname: "Hasan",
-                  lname: "Karayel",
-                  image: "/images/players/player1.png",
-                  court_price: "100",
-                }}
-                className={styles["accept-button"]}
-              >
-                Davet gönder
-              </Link>
-            </td>
-          </tr>
-          <tr className={styles["player-row"]}>
-            <td>
-              <img
-                src="/images/players/player1.png"
-                className={styles["player-image"]}
-              />
-            </td>
-            <td>Hasan Karayel</td>
-            <td>Başlangıç</td>
-            <td>Erkek</td>
-            <td>25</td>
-            <td>Ataşehir</td>
-            <td>
-              <Link
-                to={paths.TRAIN_INVITE}
-                state={{
-                  fname: "Hasan",
-                  lname: "Karayel",
-                  image: "/images/players/player1.png",
-                  court_price: "100",
-                }}
-                className={styles["accept-button"]}
-              >
-                Davet gönder
-              </Link>
-            </td>
-          </tr>
+          {isLoading ? (
+            <tr>
+              <td>Yükleniyor...</td>
+            </tr>
+          ) : isError ? (
+            <tr>
+              <td>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</td>
+            </tr>
+          ) : (
+            players &&
+            players.map((player) => (
+              <tr key={player.player_id} className={styles["player-row"]}>
+                <td>
+                  <img
+                    src={
+                      player.image ? player.image : "/images/icons/avatar.png"
+                    }
+                    alt={player.name}
+                    className={styles["player-image"]}
+                  />
+                </td>
+                <td>{`${player.fname} ${player.lname}`}</td>
+                <td>{player.level}</td>
+                <td>{player.gender}</td>
+                <td>{year - Number(player.birth_year)}</td>
+                <td>{player.location}</td>
+                <td>
+                  <Link
+                    to={paths.TRAIN_INVITE}
+                    state={{
+                      fname: player.fname,
+                      lname: player.lname,
+                      image: player.image,
+                      court_price: "100",
+                    }}
+                    className={styles["accept-button"]}
+                  >
+                    Davet gönder
+                  </Link>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
-
       <div></div>
     </div>
   );

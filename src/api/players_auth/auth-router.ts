@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction, Router } from "express";
-import playersModel from "../players/players-model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
+import playersModel from "../players/players-model";
+
 import { JWT_SECRET } from "../../../config/secrets";
 import {
   credentialsExist,
