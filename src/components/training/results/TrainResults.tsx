@@ -10,7 +10,6 @@ import { useGetPlayersQuery } from "../../../api/apiSlice";
 const TrainResults = () => {
   const { data: players, isLoading, isError, error } = useGetPlayersQuery({});
 
-  console.log(players !== undefined ? players : "Loading...");
   const today = new Date();
   const year = today.getFullYear();
 

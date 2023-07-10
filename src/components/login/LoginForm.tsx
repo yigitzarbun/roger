@@ -1,8 +1,20 @@
+import React from "react";
+
 import { useNavigate, Link } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+
 import i18n from "../../common/i18n/i18n";
+
 import styles from "./styles.module.scss";
+
 import paths from "../../routing/Paths";
+
 import { useForm, SubmitHandler } from "react-hook-form";
+
+import { useLoginPlayerMutation } from "../../api/apiSlice";
+
+import { setLoggedIn } from "../../store/slices/authSlice";
 
 type FormValues = {
   email: string;
@@ -11,6 +23,9 @@ type FormValues = {
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [loginPlayer] = useLoginPlayerMutation();
 
   const {
     register,
@@ -19,12 +34,17 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    console.log(formData);
-    navigate(paths.HOME);
-    reset();
+  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+    try {
+      await loginPlayer(formData).unwrap();
+      dispatch(setLoggedIn());
+      navigate(paths.HOME);
+      localStorage.setItem("user", JSON.stringify(formData));
+      reset();
+    } catch (error) {
+      console.log(error);
+    }
   };
-
   return (
     <div className={styles["login-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court4.jpeg" />

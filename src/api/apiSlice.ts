@@ -14,7 +14,18 @@ export const apiSlice = createApi({
         body: player,
       }),
     }),
+    loginPlayer: builder.mutation({
+      query: (player) => ({
+        url: "/playersAuth/login",
+        method: "POST",
+        body: player,
+      }),
+    }),
   }),
 });
 
-export const { useGetPlayersQuery, useAddPlayerMutation } = apiSlice;
+export const {
+  useGetPlayersQuery,
+  useAddPlayerMutation,
+  useLoginPlayerMutation,
+} = apiSlice;

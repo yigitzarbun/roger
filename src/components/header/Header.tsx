@@ -1,15 +1,19 @@
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { RootState } from "../../store/store";
 import paths from "../../routing/Paths";
-
 import styles from "./styles.module.scss";
 import { useState } from "react";
 import i18n from "../../common/i18n/i18n";
+import { useAppSelector } from "../../store/hooks";
 
 const Header = () => {
+  const authState = useAppSelector((state: RootState) => state.auth);
+  const userData = authState?.userData || {};
+  console.log(userData);
+
   const [search, setSearch] = useState("");
   const [searchBar, setSearchBar] = useState(false);
-
   const handleSearchBar = () => {
     setSearchBar((prev) => !prev);
     setSearch("");
@@ -23,7 +27,8 @@ const Header = () => {
     navigate("/", { state: { search: search } });
   };
 
-  const isLoggedIn = true;
+  const isLoggedIn = true; // Replace with your own authentication logic
+
   return (
     <div className={styles["header-container"]}>
       <Link to={paths.HOME} className={styles["logo-title"]}>
@@ -81,7 +86,6 @@ const Header = () => {
               <Link to={paths.CALENDAR} className={styles["nav-link"]}>
                 Takvim
               </Link>
-
               <Link to={paths.REQUESTS} className={styles["nav-link"]}>
                 Davetler
               </Link>
@@ -109,4 +113,5 @@ const Header = () => {
     </div>
   );
 };
+
 export default Header;

@@ -10,11 +10,14 @@ import Router from "./routing/Router";
 import { Provider } from "react-redux";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
 import { apiSlice } from "./api/apiSlice";
+import store from "./store/store";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ApiProvider api={apiSlice}>
-      <RouterProvider router={Router} />
-    </ApiProvider>
+    <Provider store={store}>
+      <ApiProvider api={apiSlice}>
+        <RouterProvider router={Router} />
+      </ApiProvider>
+    </Provider>
   </React.StrictMode>
 );
