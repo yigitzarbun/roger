@@ -5,7 +5,12 @@ import paths from "../../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
+import { useGetPlayersQuery } from "api/apiSlice";
+
 const TrainResults = () => {
+  const { data: players, isLoading, isError } = useGetPlayersQuery({});
+
+  console.log(players);
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
