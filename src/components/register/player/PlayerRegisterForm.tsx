@@ -5,7 +5,7 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddPlayerMutation } from "../../../store/slices/apiSlice";
+import { useAddPlayerMutation } from "../../../store/auth/apiSlice";
 
 export type FormValues = {
   user_type: string;

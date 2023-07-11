@@ -9,15 +9,15 @@ import Router from "./routing/Router";
 
 import { Provider } from "react-redux";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { apiSlice } from "./store/slices/apiSlice";
+import { apiSlice } from "./store/auth/apiSlice";
 import { store } from "./store/store";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <ApiProvider api={apiSlice}>
-        <RouterProvider router={Router} />
-      </ApiProvider>
+      <RouterProvider router={Router} />
     </Provider>
   </React.StrictMode>
 );
+
+//       <ApiProvider api={apiSlice}>  </ApiProvider>

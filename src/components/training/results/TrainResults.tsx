@@ -5,7 +5,7 @@ import paths from "../../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
-import { useGetPlayersQuery } from "../../../store/slices/apiSlice";
+import { useGetPlayersQuery } from "../../../store/auth/apiSlice";
 
 const TrainResults = () => {
   const { data: players, isLoading, isError, error } = useGetPlayersQuery({});

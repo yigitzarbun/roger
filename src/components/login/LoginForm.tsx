@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import i18n from "../../common/i18n/i18n";
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useLoginPlayerMutation } from "../../store/slices/apiSlice";
+import { useLoginPlayerMutation } from "../../store/auth/apiSlice";
+import { useAppDispatch } from "../../store/hooks";
+import { setCredentials } from "../../store/slices/authSlice";
 
 type FormValues = {
   email: string;
@@ -13,7 +15,9 @@ type FormValues = {
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [loginPlayer] = useLoginPlayerMutation();
+  const dispatch = useAppDispatch();
+  const [loginPlayer, { data: credentials, isSuccess, isError, error }] =
+    useLoginPlayerMutation();
 
   const {
     register,
@@ -22,20 +26,23 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+  const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
-      const response = await loginPlayer(formData).unwrap();
-      const { player, token } = response;
-      localStorage.setItem("tennis_app_user", JSON.stringify(player));
-      localStorage.setItem("tennis_app_token", JSON.stringify(token));
-      navigate(paths.HOME);
+      await loginPlayer(formData).unwrap();
+      reset();
     } catch (error) {
       console.log(error);
     }
-
-    reset();
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(
+        setCredentials({ player: credentials.player, token: credentials.token })
+      );
+      navigate(paths.HOME);
+    }
+  }, [isSuccess]);
   return (
     <div className={styles["login-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court4.jpeg" />

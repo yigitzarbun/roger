@@ -4,8 +4,12 @@ import paths from "../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useState } from "react";
 import i18n from "../../common/i18n/i18n";
+import { LocalStorageKeys } from "../../common/constants/lsConstants";
+import { useAppSelector } from "../../store/hooks";
 
 const Header = () => {
+  const user = useAppSelector((store) => store.user.user);
+
   const [search, setSearch] = useState("");
   const [searchBar, setSearchBar] = useState(false);
   const handleSearchBar = () => {
@@ -22,12 +26,12 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("tennis_app_user");
-    localStorage.removeItem("tennis_app_token");
+    localStorage.removeItem(LocalStorageKeys.user);
+    localStorage.removeItem(LocalStorageKeys.token);
     navigate(paths.LOGIN);
   };
-  const isLoggedIn = true; // Replace with your own authentication logic
 
+  const isLoggedIn = true;
   return (
     <div className={styles["header-container"]}>
       <Link to={paths.HOME} className={styles["logo-title"]}>
@@ -91,9 +95,11 @@ const Header = () => {
             </div>
             <div className={styles["header-nav-sub-container"]}>
               <Link to={paths.PROFILE} className={styles["nav-link"]}>
-                Profil
+                {user ? user.fname : "Profil"}
               </Link>
-              <button onClick={handleLogout}>Çıkış</button>
+              <button className={styles["nav-link"]} onClick={handleLogout}>
+                Çıkış
+              </button>
             </div>
           </>
         ) : (
