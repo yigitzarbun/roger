@@ -9,8 +9,8 @@ import Router from "./routing/Router";
 
 import { Provider } from "react-redux";
 import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { apiSlice } from "./api/apiSlice";
-import store from "./store/store";
+import { apiSlice } from "./store/slices/apiSlice";
+import { store } from "./store/store";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

@@ -4,14 +4,8 @@ import paths from "../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useState } from "react";
 import i18n from "../../common/i18n/i18n";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { logoutCurrentUser } from "../../store/slices/currentUserSlice";
 
 const Header = () => {
-  const currentUser = useAppSelector((store) => store.currentUser?.currentUser);
-
-  console.log("Current User:", currentUser);
-  const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const [searchBar, setSearchBar] = useState(false);
   const handleSearchBar = () => {
@@ -28,7 +22,9 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutCurrentUser());
+    localStorage.removeItem("tennis_app_user");
+    localStorage.removeItem("tennis_app_token");
+    navigate(paths.LOGIN);
   };
   const isLoggedIn = true; // Replace with your own authentication logic
 

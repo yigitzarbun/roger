@@ -4,10 +4,7 @@ import i18n from "../../common/i18n/i18n";
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useLoginPlayerMutation } from "../../api/apiSlice";
-import { setLoggedIn } from "../../store/slices/authSlice";
-import { useAppDispatch } from "../../store/hooks";
-import { addCurrentUser } from "../../store/slices/currentUserSlice";
+import { useLoginPlayerMutation } from "../../store/slices/apiSlice";
 
 type FormValues = {
   email: string;
@@ -16,8 +13,6 @@ type FormValues = {
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
   const [loginPlayer] = useLoginPlayerMutation();
 
   const {
@@ -31,19 +26,14 @@ const LoginForm = () => {
     try {
       const response = await loginPlayer(formData).unwrap();
       const { player, token } = response;
-
-      if (player && token) {
-        dispatch(addCurrentUser(player));
-        dispatch(setLoggedIn());
-
-        navigate(paths.HOME);
-        reset();
-      } else {
-        console.log("Invalid response from the server");
-      }
+      localStorage.setItem("tennis_app_user", JSON.stringify(player));
+      localStorage.setItem("tennis_app_token", JSON.stringify(token));
+      navigate(paths.HOME);
     } catch (error) {
       console.log(error);
     }
+
+    reset();
   };
 
   return (

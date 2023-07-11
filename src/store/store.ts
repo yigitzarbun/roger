@@ -1,19 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./slices/authSlice";
-import { apiSlice } from "../api/apiSlice";
-import currentUserReducer from "./slices/currentUserSlice";
+import { apiSlice } from "./slices/apiSlice";
+import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
-    auth: authReducer,
-    currentUser: currentUserReducer,
-    api: apiSlice.reducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
+  devTools: process.env.NODE_ENV !== "production",
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
-console.log("Initial store state:", store.getState());
 
-export default store;
-// Infer the `RootState` and `AppDispatch` types from the store itself
+// Infer the `RootState` type from the store
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
+
+//export const useAppDispatch: () => AppDispatch = useDispatch;
+//export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
