@@ -1,3 +1,5 @@
+import React from "react";
+
 import TrainingInviteForm from "../../../components/invite/training/form/TrainingForm";
 import TrainingHero from "../../../components/training/hero/TrainingHero";
 

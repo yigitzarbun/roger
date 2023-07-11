@@ -1,20 +1,13 @@
 import React from "react";
-
 import { useNavigate, Link } from "react-router-dom";
-
-import { useDispatch } from "react-redux";
-
 import i18n from "../../common/i18n/i18n";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../routing/Paths";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { useLoginPlayerMutation } from "../../api/apiSlice";
-
 import { setLoggedIn } from "../../store/slices/authSlice";
+import { useAppDispatch } from "../../store/hooks";
+import { addCurrentUser } from "../../store/slices/currentUserSlice";
 
 type FormValues = {
   email: string;
@@ -23,7 +16,7 @@ type FormValues = {
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [loginPlayer] = useLoginPlayerMutation();
 
@@ -36,15 +29,23 @@ const LoginForm = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
     try {
-      await loginPlayer(formData).unwrap();
-      dispatch(setLoggedIn());
-      navigate(paths.HOME);
-      localStorage.setItem("user", JSON.stringify(formData));
-      reset();
+      const response = await loginPlayer(formData).unwrap();
+      const { player, token } = response;
+
+      if (player && token) {
+        dispatch(addCurrentUser(player));
+        dispatch(setLoggedIn());
+
+        navigate(paths.HOME);
+        reset();
+      } else {
+        console.log("Invalid response from the server");
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div className={styles["login-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court4.jpeg" />

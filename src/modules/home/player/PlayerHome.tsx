@@ -1,3 +1,5 @@
+import React from "react";
+
 import PlayerHomeHero from "../../../components/home/player/hero/PlayerHomeHero";
 import PlayerMatch from "../../../components/home/player/match/PlayerMatch";
 import PlayerTrain from "../../../components/home/player/train/PlayerTrain";

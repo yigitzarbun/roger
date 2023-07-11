@@ -1,3 +1,4 @@
+import React from "react";
 import MatchInviteForm from "../../../components/invite/match/form/MathInviteForm";
 import MatchInviteHero from "../../../components/invite/match/hero/MatchInviteHero";
 

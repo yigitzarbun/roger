@@ -1,4 +1,5 @@
 import Modal from "react-modal";
+import React from "react";
 
 import styles from "./styles.module.scss";
 

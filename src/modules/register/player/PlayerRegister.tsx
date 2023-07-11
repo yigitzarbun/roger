@@ -1,3 +1,5 @@
+import React from "react";
+
 import PlayerRegisterForm from "../../../components/register/player/PlayerRegisterForm";
 
 const PlayerRegister = () => {

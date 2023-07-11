@@ -1,3 +1,5 @@
+import React from "react";
+
 import { useState } from "react";
 
 import PlayerAccountDetails from "../../../components/profile/player/account-details/PlayerAccountDetails";

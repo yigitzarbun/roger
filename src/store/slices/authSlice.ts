@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const getLocallySavedAuthToken = () => {
-  return localStorage.getItem("token") || "";
-};
-
 const getLocallySavedUserData = () => {
   const userDataString = localStorage.getItem("user");
   if (userDataString) {
@@ -12,14 +8,16 @@ const getLocallySavedUserData = () => {
   return null;
 };
 
+export interface UserData {
+  email: string;
+  password: string;
+}
 export interface AuthState {
-  authToken: string;
   isLoggedIn: boolean;
-  userData: any;
+  userData: UserData;
 }
 
 const INITIAL_STATE: AuthState = {
-  authToken: getLocallySavedAuthToken(),
   isLoggedIn: false,
   userData: getLocallySavedUserData(),
 };
@@ -28,9 +26,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState: INITIAL_STATE,
   reducers: {
-    setAuthToken: (state, action: PayloadAction<string>) => {
-      state.authToken = action.payload;
-    },
     setLoggedIn: (state) => {
       state.isLoggedIn = true;
       state.userData = getLocallySavedUserData();
@@ -46,7 +41,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { setAuthToken, setLoggedIn, setLoggedOut } = authSlice.actions;
+export const { setLoggedIn, setLoggedOut } = authSlice.actions;
 
 export default authSlice.reducer;
 

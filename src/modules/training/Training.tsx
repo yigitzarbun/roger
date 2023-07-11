@@ -1,3 +1,5 @@
+import React from "react";
+
 import TrainingHero from "../../components/training/hero/TrainingHero";
 import TrainSearch from "../../components/training/search/TrainSearch";
 import TrainResults from "../../components/training/results/TrainResults";

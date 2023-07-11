@@ -1,3 +1,5 @@
+import React from "react";
+
 import { useState } from "react";
 import PlayerRegister from "./player/PlayerRegister";
 import CommonRegisterNav from "../../components/register/common/CommonRegisterNav";

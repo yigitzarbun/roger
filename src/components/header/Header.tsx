@@ -1,17 +1,17 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { RootState } from "../../store/store";
 import paths from "../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useState } from "react";
 import i18n from "../../common/i18n/i18n";
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { logoutCurrentUser } from "../../store/slices/currentUserSlice";
 
 const Header = () => {
-  const authState = useAppSelector((state: RootState) => state.auth);
-  const userData = authState?.userData || {};
-  console.log(userData);
+  const currentUser = useAppSelector((store) => store.currentUser?.currentUser);
 
+  console.log("Current User:", currentUser);
+  const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
   const [searchBar, setSearchBar] = useState(false);
   const handleSearchBar = () => {
@@ -27,6 +27,9 @@ const Header = () => {
     navigate("/", { state: { search: search } });
   };
 
+  const handleLogout = () => {
+    dispatch(logoutCurrentUser());
+  };
   const isLoggedIn = true; // Replace with your own authentication logic
 
   return (
@@ -94,9 +97,7 @@ const Header = () => {
               <Link to={paths.PROFILE} className={styles["nav-link"]}>
                 Profil
               </Link>
-              <Link to={paths.LOGIN} className={styles["logout-link"]}>
-                Çıkış
-              </Link>
+              <button onClick={handleLogout}>Çıkış</button>
             </div>
           </>
         ) : (

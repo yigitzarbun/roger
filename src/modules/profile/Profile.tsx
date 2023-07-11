@@ -1,3 +1,5 @@
+import React from "react";
+
 import PlayerProfile from "./player/PlayerProfile";
 
 const Profile = () => {

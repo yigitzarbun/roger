@@ -1,3 +1,5 @@
+import React from "react";
+
 import PlayerRequestsHero from "../../../components/requests/player/hero/PlayerRequestsHero";
 import PlayerRequestsNavigation from "../../../components/requests/player/navigation/PlayerRequestsNavigation";
 import PlayerRequestsIncoming from "../../../components/requests/player/incoming/PlayerRequestsIncoming";

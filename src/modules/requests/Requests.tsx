@@ -1,3 +1,4 @@
+import React from "react";
 import PlayerRequets from "./player/PlayerRequets";
 
 const Requests = () => {
