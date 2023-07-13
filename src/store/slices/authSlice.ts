@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { LocalStorageKeys } from "../../common/constants/lsConstants";
 import { RootState } from "store/store";
 
 export interface User {
@@ -22,8 +23,17 @@ export interface AuthState {
   token: string | null;
 }
 
+export function getUserFromLs() {
+  let user = null;
+  const userString = JSON.parse(localStorage.getItem(LocalStorageKeys.user));
+  if (userString.user) {
+    user = userString.user;
+  }
+  return user;
+}
+
 const initialState: AuthState = {
-  user: null,
+  user: getUserFromLs(),
   token: null,
 };
 
@@ -33,23 +43,22 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ player: User; token: string }>
+      action: PayloadAction<{ user: User; token: string }>
     ) => {
-      console.log(action.payload);
-      console.log("player");
-      state.user = action.payload.player;
+      state.user = action.payload.user;
       state.token = action.payload.token;
       localStorage.setItem(
-        "tennis_app_uer",
+        LocalStorageKeys.user,
         JSON.stringify({
-          user: action.payload.player,
+          user: action.payload.user,
           token: action.payload.token,
         })
       );
     },
-    logOut: (state, action) => {
+    logOut: (state) => {
       state.user = null;
       state.token = null;
+      localStorage.removeItem(LocalStorageKeys.user);
     },
   },
 });

@@ -7,8 +7,6 @@ interface MainLayoutProps {
   children: React.ReactNode | React.ReactNode[];
 }
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const player = useAppSelector((store) => store.user);
-  console.log(player);
   return (
     <div>
       <Header />

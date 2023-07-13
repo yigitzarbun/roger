@@ -4,34 +4,39 @@ import paths from "../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useState } from "react";
 import i18n from "../../common/i18n/i18n";
-import { LocalStorageKeys } from "../../common/constants/lsConstants";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { logOut } from "../../store/slices/authSlice";
 
 const Header = () => {
-  const user = useAppSelector((store) => store.user.user);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const [search, setSearch] = useState("");
+  const { user } = useAppSelector((store) => store.user);
+
   const [searchBar, setSearchBar] = useState(false);
+
   const handleSearchBar = () => {
     setSearchBar((prev) => !prev);
     setSearch("");
   };
 
-  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
+
   const handleSearch = () => {
     navigate("/", { state: { search: search } });
   };
 
   const handleLogout = () => {
-    localStorage.removeItem(LocalStorageKeys.user);
-    localStorage.removeItem(LocalStorageKeys.token);
+    dispatch(logOut());
     navigate(paths.LOGIN);
   };
 
-  const isLoggedIn = true;
+  const isLoggedIn = user;
+
   return (
     <div className={styles["header-container"]}>
       <Link to={paths.HOME} className={styles["logo-title"]}>
