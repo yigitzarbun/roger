@@ -1,28 +1,21 @@
 import React from "react";
 
-import { useState } from "react";
-
 import PlayerAccountDetails from "../../../components/profile/player/account-details/PlayerAccountDetails";
 import PlayerCardPayments from "../../../components/profile/player/card-payments/PlayerCardPayments";
 import PlayerProfileHero from "../../../components/profile/player/hero/PlayerProfileHero";
-import PlayerProfileNavigation from "../../../components/profile/player/navigation/PlayerProfileNavigation";
 import PlayerStats from "../../../components/profile/player/stats/PlayerStats";
 
+import styles from "./styles.module.scss";
+import PlayerSubscriptions from "../../../components/profile/player/subscriptions/PlayerSubscriptions";
+
 const PlayerProfile = () => {
-  const [display, setDisplay] = useState("account-details");
-  const handleDisplay = (value: string) => {
-    setDisplay(value);
-  };
   return (
-    <div>
+    <div className={styles["player-profile-container"]}>
       <PlayerProfileHero />
-      <PlayerProfileNavigation
-        display={display}
-        handleDisplay={handleDisplay}
-      />
-      {display === "account-details" && <PlayerAccountDetails />}
-      {display === "card-payments" && <PlayerCardPayments />}
-      {display === "stats" && <PlayerStats />}
+      <PlayerAccountDetails />
+      <PlayerCardPayments />
+      <PlayerStats />
+      <PlayerSubscriptions />
     </div>
   );
 };

@@ -17,6 +17,7 @@ const Training = () => {
   const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
     setGender(event.target.value);
   };
+
   const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
     setLocation(event.target.value);
   };
@@ -34,6 +35,9 @@ const Training = () => {
         handleGender={handleGender}
         handleLocation={handleLocation}
         handleClear={handleClear}
+        level={level}
+        gender={gender}
+        location={location}
       />
       <TrainResults level={level} gender={gender} location={location} />
     </div>

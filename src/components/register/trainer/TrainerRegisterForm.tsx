@@ -17,12 +17,16 @@ export type FormValues = {
   birth_year: number;
   location: string;
   gender: string;
-  level: string;
+  experience: string;
+  employment_type: string;
+  price: number;
+  club: string;
 };
 
-const PlayerRegisterForm = () => {
+const TrainerRegisterForm = () => {
   const navigate = useNavigate();
   const [addPlayer] = useAddPlayerMutation();
+
   const {
     register,
     handleSubmit,
@@ -33,19 +37,18 @@ const PlayerRegisterForm = () => {
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const dataWide = {
       ...formData,
-      user_type: "player",
+      user_type: "trainer",
       player_status: "active",
     };
     addPlayer(dataWide);
     navigate(paths.LOGIN);
     reset();
   };
-
   return (
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court3.jpeg" />
       <div className={styles["register-form-content"]}>
-        <h1 className={styles["register-title"]}>Oyuncu Kayıt</h1>
+        <h1 className={styles["register-title"]}>Eğitmen Kayıt</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -118,15 +121,15 @@ const PlayerRegisterForm = () => {
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Seviye</label>
-              <select {...register("level", { required: true })}>
+              <label>Tecrübe</label>
+              <select {...register("experience", { required: true })}>
                 <option value="">-- Seçim yapın --</option>
-                <option value="beginner">Başlangıç</option>
-                <option value="intermediate">Orta</option>
-                <option value="advanced">İleri</option>
-                <option value="professional">Profesyonel</option>
+                <option value="">1-5 yıl</option>
+                <option value="">6-10 yıl</option>
+                <option value="">11-15 yıl</option>
+                <option value="">16 yıl +</option>
               </select>
-              {errors.level && (
+              {errors.experience && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -147,6 +150,32 @@ const PlayerRegisterForm = () => {
               )}
             </div>
           </div>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Çalışma Şekli</label>
+              <select {...register("employment_type", { required: true })}>
+                <option value="">-- Seçim yapın --</option>
+                <option value="independent">Ferdi / Bağımsız</option>
+                <option value="private_club">Özel Kulüp</option>
+                <option value="public_club">Devlet / Belediye</option>
+              </select>
+              {errors.employment_type && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Ücret (TL / saat)</label>
+              <input {...register("price", { required: true })} type="number" />
+              {errors.price && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
               <label>E-posta</label>
@@ -187,4 +216,4 @@ const PlayerRegisterForm = () => {
   );
 };
 
-export default PlayerRegisterForm;
+export default TrainerRegisterForm;

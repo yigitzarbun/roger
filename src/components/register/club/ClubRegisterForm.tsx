@@ -9,18 +9,17 @@ import { useAddPlayerMutation } from "../../../store/auth/apiSlice";
 
 export type FormValues = {
   user_type: string;
-  player_status: string;
+  user_status: string;
   email: string;
   password: string;
-  fname: string;
-  lname: string;
-  birth_year: number;
+  club_name: string;
   location: string;
-  gender: string;
-  level: string;
+  picture: string;
+  address: string;
+  club_type: string;
 };
 
-const PlayerRegisterForm = () => {
+const ClubRegisterForm = () => {
   const navigate = useNavigate();
   const [addPlayer] = useAddPlayerMutation();
   const {
@@ -33,7 +32,7 @@ const PlayerRegisterForm = () => {
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const dataWide = {
       ...formData,
-      user_type: "player",
+      user_type: "club",
       player_status: "active",
     };
     addPlayer(dataWide);
@@ -45,93 +44,42 @@ const PlayerRegisterForm = () => {
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court3.jpeg" />
       <div className={styles["register-form-content"]}>
-        <h1 className={styles["register-title"]}>Oyuncu Kayıt</h1>
+        <h1 className={styles["register-title"]}>Kulüp Kayıt</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>İsim</label>
+              <label>Kulüp Adı</label>
               <input
-                {...register("fname", { required: true })}
+                {...register("club_name", { required: true })}
                 type="text"
-                placeholder={i18n.t("registerFNamelInputPlaceholder")}
+                placeholder="örn. Wimbledon Tennis Club"
               />
-              {errors.fname && (
+              {errors.club_name && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Soyisim</label>
-              <input
-                {...register("lname", { required: true })}
-                type="text"
-                placeholder={i18n.t("registerLNamelInputPlaceholder")}
-              />
-              {errors.lname && (
+              <label>Kulüp Tipi</label>
+              <select {...register("club_type", { required: true })}>
+                <option value="">-- Seçim yapın --</option>
+                <option value="ataşehir">Özel</option>
+                <option value="kadiköy">Devlet / Belediye / Okul</option>
+                <option value="maltepe">Site / Rezidans / Konut</option>
+              </select>
+              {errors.club_type && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
               )}
             </div>
           </div>
+
           <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <label>Cinsiyet</label>
-              <select {...register("gender", { required: true })}>
-                <option value="">-- Seçim yapın --</option>
-                <option value="female">Kadın</option>
-                <option value="male">Erkek</option>
-              </select>
-              {errors.gender && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
-            <div className={styles["input-container"]}>
-              <label>Doğum Yılı</label>
-              <input
-                {...register("birth_year", {
-                  required: "Bu alan zorunludur",
-                  min: {
-                    value: 1900,
-                    message: "Girdiğiniz tarihi kontrol edin",
-                  },
-                  max: {
-                    value: 2023,
-                    message: "Girdiğiniz tarihi kontrol edin",
-                  },
-                })}
-                type="number"
-                placeholder={i18n.t("registerBirthYearlInputPlaceholder")}
-              />
-              {errors.birth_year && (
-                <span className={styles["error-field"]}>
-                  {errors.birth_year.message}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <label>Seviye</label>
-              <select {...register("level", { required: true })}>
-                <option value="">-- Seçim yapın --</option>
-                <option value="beginner">Başlangıç</option>
-                <option value="intermediate">Orta</option>
-                <option value="advanced">İleri</option>
-                <option value="professional">Profesyonel</option>
-              </select>
-              {errors.level && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
             <div className={styles["input-container"]}>
               <label>Konum</label>
               <select {...register("location", { required: true })}>
@@ -141,6 +89,15 @@ const PlayerRegisterForm = () => {
                 <option value="maltepe">Maltepe</option>
               </select>
               {errors.location && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Adres</label>
+              <input {...register("address", { required: true })} type="text" />
+              {errors.address && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -187,4 +144,4 @@ const PlayerRegisterForm = () => {
   );
 };
 
-export default PlayerRegisterForm;
+export default ClubRegisterForm;

@@ -16,7 +16,7 @@ type FormValues = {
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [loginPlayer, { data: credentials, isSuccess, isError, error }] =
+  const [loginPlayer, { data: credentials, isSuccess }] =
     useLoginPlayerMutation();
 
   const {

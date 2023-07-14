@@ -22,6 +22,13 @@
     font-weight: bolder;
   }
 
+  .active-logo-title {
+    font-size: 2rem;
+    color: $roger-blue;
+    text-decoration: none;
+    font-weight: bolder;
+  }
+
   .logo-title:hover {
     color: $roger-blue;
   }
@@ -93,6 +100,16 @@
 
     .nav-link:hover {
       color: $roger-blue;
+    }
+
+    .active-nav-link {
+      color: $roger-blue;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      border: none;
+      background-color: inherit;
+      cursor: pointer;
     }
 
     .logout-link {

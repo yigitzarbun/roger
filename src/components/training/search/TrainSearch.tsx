@@ -7,13 +7,24 @@ interface TrainSearchProps {
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
+  level: string;
+  gender: string;
+  location: string;
 }
 const TrainSearch = (props: TrainSearchProps) => {
-  const { handleLevel, handleGender, handleLocation, handleClear } = props;
+  const {
+    handleLevel,
+    handleGender,
+    handleLocation,
+    handleClear,
+    level,
+    gender,
+    location,
+  } = props;
   return (
     <div className={styles["training-page-container"]}>
       <div className={styles["input-container"]}>
-        <select onChange={handleLevel}>
+        <select onChange={handleLevel} value={level}>
           <option value="">-- Seviye --</option>
           <option value="beginner">Başlangıç</option>
           <option value="intermediate">Orta</option>
@@ -22,14 +33,14 @@ const TrainSearch = (props: TrainSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleGender}>
+        <select onChange={handleGender} value={gender}>
           <option value="">-- Cinsiyet --</option>
           <option value="female">Kadın</option>
           <option value="male">Erkek</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleLocation}>
+        <select onChange={handleLocation} value={location}>
           <option value="">-- Konum --</option>
           <option value="atasehir">Ataşehir</option>
           <option value="kadikoy">Kadıköy</option>

@@ -24,12 +24,12 @@ export interface AuthState {
 }
 
 export function getUserFromLs() {
-  let user = null;
-  const userString = JSON.parse(localStorage.getItem(LocalStorageKeys.user));
-  if (userString.user) {
-    user = userString.user;
+  const userString = localStorage.getItem(LocalStorageKeys.user);
+  if (userString) {
+    const user = JSON.parse(userString);
+    return user.user || null;
   }
-  return user;
+  return null;
 }
 
 const initialState: AuthState = {

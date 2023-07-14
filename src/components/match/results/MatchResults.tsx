@@ -5,80 +5,99 @@ import paths from "../../../routing/Paths";
 import { useGetPlayersQuery } from "../../../store/auth/apiSlice";
 import { useAppSelector } from "../../../store/hooks";
 
-const MatchResults = () => {
+interface MatchResultsProps {
+  level: string;
+  gender: string;
+  location: string;
+}
+const MatchResults = (props: MatchResultsProps) => {
+  const { level, gender, location } = props;
   const { user } = useAppSelector((store) => store.user);
   const { data: players, isLoading, isError, error } = useGetPlayersQuery({});
 
   const today = new Date();
   const year = today.getFullYear();
+
+  const filteredPlayers =
+    players &&
+    players
+      .filter((player) => player.player_id !== user.player_id)
+      .filter((player) => {
+        if (level === "" && gender === "" && location === "") {
+          return player;
+        } else if (
+          (level === player.level || level === "") &&
+          (gender === player.gender || gender === "") &&
+          (location === player.location || location === "")
+        ) {
+          return player;
+        }
+      });
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Antreman</h2>
+        <h2 className={styles["result-title"]}>Maç</h2>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Oyuncu</th>
-            <th>İsim</th>
-            <th>Seviye</th>
-            <th>Cinsiyet</th>
-            <th>Yaş</th>
-            <th>Konum</th>
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading ? (
+      {isLoading ? (
+        <p>Yükleniyor...</p>
+      ) : (
+        isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>
+      )}
+      {players && filteredPlayers.length === 0 && (
+        <p>
+          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
+          tekrar deneyin.
+        </p>
+      )}
+      {players && filteredPlayers.length > 0 && (
+        <table>
+          <thead>
             <tr>
-              <td>Yükleniyor...</td>
+              <th>Oyuncu</th>
+              <th>İsim</th>
+              <th>Seviye</th>
+              <th>Cinsiyet</th>
+              <th>Yaş</th>
+              <th>Konum</th>
             </tr>
-          ) : isError ? (
-            <tr>
-              <td>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</td>
-            </tr>
-          ) : (
-            players &&
-            players
-              .filter(
-                (player) =>
-                  player.player_id !== user.player_id &&
-                  player.gender === user.gender
-              )
-              .map((player) => (
-                <tr key={player.player_id} className={styles["player-row"]}>
-                  <td>
-                    <img
-                      src={
-                        player.image ? player.image : "/images/icons/avatar.png"
-                      }
-                      alt={player.name}
-                      className={styles["player-image"]}
-                    />
-                  </td>
-                  <td>{`${player.fname} ${player.lname}`}</td>
-                  <td>{player.level}</td>
-                  <td>{player.gender}</td>
-                  <td>{year - Number(player.birth_year)}</td>
-                  <td>{player.location}</td>
-                  <td>
-                    <Link
-                      to={paths.MATCH_INVITE}
-                      state={{
-                        fname: player.fname,
-                        lname: player.lname,
-                        image: player.image,
-                        court_price: "100",
-                      }}
-                      className={styles["accept-button"]}
-                    >
-                      Davet gönder
-                    </Link>
-                  </td>
-                </tr>
-              ))
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredPlayers.map((player) => (
+              <tr key={player.player_id} className={styles["player-row"]}>
+                <td>
+                  <img
+                    src={
+                      player.image ? player.image : "/images/icons/avatar.png"
+                    }
+                    alt={player.name}
+                    className={styles["player-image"]}
+                  />
+                </td>
+                <td>{`${player.fname} ${player.lname}`}</td>
+                <td>{player.level}</td>
+                <td>{player.gender}</td>
+                <td>{year - Number(player.birth_year)}</td>
+                <td>{player.location}</td>
+                <td>
+                  <Link
+                    to={paths.MATCH_INVITE}
+                    state={{
+                      fname: player.fname,
+                      lname: player.lname,
+                      image: player.image,
+                      court_price: "100",
+                    }}
+                    className={styles["accept-button"]}
+                  >
+                    Davet gönder
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
