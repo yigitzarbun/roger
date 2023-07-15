@@ -1,5 +1,6 @@
-import { Knex } from "knex";
-
+/**
+ * @type { Object.<string, import("knex").Knex.Config> }
+ */
 module.exports = {
   client: "pg", // Specify the correct database client, e.g., 'pg' for PostgreSQL
   connection: {
