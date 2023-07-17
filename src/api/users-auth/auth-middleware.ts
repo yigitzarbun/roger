@@ -1,31 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import playersModel from "../players/players-model";
+import usersModel from "../users/users-model";
 
 export const credentialsExist = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    birth_year,
-    email,
-    fname,
-    gender,
-    level,
-    lname,
-    password,
-    user_type,
-  } = req.body;
-  if (
-    !birth_year ||
-    !email ||
-    !fname ||
-    !gender ||
-    !level ||
-    !lname ||
-    !password ||
-    !user_type
-  ) {
+  const { email, password, user_type_id, user_status_type_id } = req.body;
+  if (!email || !user_status_type_id || !password || !user_type_id) {
     res.status(400).json({ message: "Required fields are missing" });
   } else {
     next();
@@ -38,7 +20,7 @@ export const emailUnique = async (
   next: NextFunction
 ) => {
   const { email } = req.body;
-  const emailExist = await playersModel.getByFilter({ email });
+  const emailExist = await usersModel.getByFilter({ email });
   if (emailExist) {
     res.status(400).json({ message: "Email is already registered" });
   } else {
@@ -52,7 +34,7 @@ export const emailExists = async (
   next: NextFunction
 ) => {
   const { email } = req.body;
-  const emailExists = await playersModel.getByFilter({ email });
+  const emailExists = await usersModel.getByFilter({ email });
   if (!emailExists) {
     res.status(400).json({ message: "Invalid credentials" });
   } else {

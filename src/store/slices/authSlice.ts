@@ -3,19 +3,12 @@ import { LocalStorageKeys } from "../../common/constants/lsConstants";
 import { RootState } from "store/store";
 
 export interface User {
-  birth_year: string;
+  user_id: number;
   email: string;
-  fname: string;
-  gender: string;
-  image: string | null;
-  level: string;
-  lname: string;
-  location: string;
   password: string;
-  player_id: number;
-  player_status: string;
   registered_at: string;
-  user_type: string;
+  user_type_id: number;
+  user_status_type_id: number;
 }
 
 export interface AuthState {

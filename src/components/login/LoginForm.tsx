@@ -4,7 +4,7 @@ import i18n from "../../common/i18n/i18n";
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useLoginPlayerMutation } from "../../store/auth/apiSlice";
+import { useLoginUserMutation } from "../../store/auth/apiSlice";
 import { useAppDispatch } from "../../store/hooks";
 import { setCredentials } from "../../store/slices/authSlice";
 
@@ -16,8 +16,7 @@ type FormValues = {
 const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [loginPlayer, { data: credentials, isSuccess }] =
-    useLoginPlayerMutation();
+  const [loginUser, { data: credentials, isSuccess }] = useLoginUserMutation();
 
   const {
     register,
@@ -28,7 +27,7 @@ const LoginForm = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
-      await loginPlayer(formData).unwrap();
+      await loginUser(formData).unwrap();
       reset();
     } catch (error) {
       console.log(error);
@@ -38,7 +37,7 @@ const LoginForm = () => {
   useEffect(() => {
     if (isSuccess) {
       dispatch(
-        setCredentials({ user: credentials.player, token: credentials.token })
+        setCredentials({ user: credentials.user, token: credentials.token })
       );
       navigate(paths.HOME);
     }

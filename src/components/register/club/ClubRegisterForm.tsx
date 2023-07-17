@@ -5,7 +5,7 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddPlayerMutation } from "../../../store/auth/apiSlice";
+import { useAddUserMutation } from "../../../store/auth/apiSlice";
 
 export type FormValues = {
   user_type: string;
@@ -21,7 +21,7 @@ export type FormValues = {
 
 const ClubRegisterForm = () => {
   const navigate = useNavigate();
-  const [addPlayer] = useAddPlayerMutation();
+  const [addPlayer] = useAddUserMutation();
   const {
     register,
     handleSubmit,

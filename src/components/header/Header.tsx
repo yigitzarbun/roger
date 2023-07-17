@@ -11,7 +11,8 @@ const Header = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { user } = useAppSelector((store) => store.user);
+  const { user } = useAppSelector((store) => store);
+  console.log(user);
 
   const [searchBar, setSearchBar] = useState(false);
 
@@ -149,7 +150,7 @@ const Header = () => {
                     : `${styles["nav-link"]}`
                 }
               >
-                {user ? user.fname : "Profil"}
+                {user.user ? user.user.email : "Profil"}
               </NavLink>
               <button className={styles["nav-link"]} onClick={handleLogout}>
                 Çıkış

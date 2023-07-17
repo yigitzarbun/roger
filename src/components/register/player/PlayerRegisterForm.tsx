@@ -5,7 +5,7 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddPlayerMutation } from "../../../store/auth/apiSlice";
+import { useAddUserMutation } from "../../../store/auth/apiSlice";
 
 export type FormValues = {
   user_type: string;
@@ -20,9 +20,12 @@ export type FormValues = {
   level: string;
 };
 
+// user_type_id ve user_status_type_id backend'den alınacak
+// user'a ek olarak players tablosuna da ekleme yapılacak
+// locations, player level server'dan alınacak
 const PlayerRegisterForm = () => {
   const navigate = useNavigate();
-  const [addPlayer] = useAddPlayerMutation();
+  const [addUser] = useAddUserMutation();
   const {
     register,
     handleSubmit,
@@ -31,12 +34,13 @@ const PlayerRegisterForm = () => {
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    const dataWide = {
-      ...formData,
-      user_type: "player",
-      player_status: "active",
+    const userRegisterData = {
+      email: formData.email,
+      password: formData.password,
+      user_type_id: 1,
+      user_status_type_id: 1,
     };
-    addPlayer(dataWide);
+    addUser(userRegisterData);
     navigate(paths.LOGIN);
     reset();
   };

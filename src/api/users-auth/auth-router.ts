@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import playersModel from "../players/players-model";
+import usersModel from "../users/users-model";
 
 import { JWT_SECRET } from "../../../config/secrets";
 import {
@@ -10,7 +10,7 @@ import {
   emailUnique,
   emailExists,
   loginCredentialsExist,
-} from "../players_auth/auth-middleware";
+} from "./auth-middleware";
 
 const authRouter = Router();
 
@@ -23,8 +23,8 @@ authRouter.post(
       const credentials = req.body;
       const hash = bcrypt.hashSync(credentials.password, 8);
       credentials.password = hash;
-      const newPlayer = await playersModel.add(credentials);
-      res.status(201).json(newPlayer);
+      const newUser = await usersModel.add(credentials);
+      res.status(201).json(newUser);
     } catch (error) {
       next(error);
     }
@@ -37,12 +37,12 @@ authRouter.post(
   emailExists,
   (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    playersModel
+    usersModel
       .getByFilter({ email })
-      .then((player) => {
-        if (player && bcrypt.compareSync(password, player.password)) {
-          const token = generateToken(player);
-          res.status(200).json({ player, token });
+      .then((user) => {
+        if (user && bcrypt.compareSync(password, user.password)) {
+          const token = generateToken(user);
+          res.status(200).json({ user, token });
         } else {
           res.status(401).json({ message: "Invalid credentials" });
         }
@@ -51,10 +51,10 @@ authRouter.post(
   }
 );
 
-function generateToken(player: any) {
+function generateToken(user: any) {
   const payload = {
-    player_id: player.player_id,
-    email: player.email,
+    user_id: user.user_id,
+    email: user.email,
   };
   const options = {
     expiresIn: "1d",

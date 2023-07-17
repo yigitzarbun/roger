@@ -4,28 +4,25 @@ export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
   endpoints: (builder) => ({
-    getPlayers: builder.query({
-      query: () => "/players",
+    getUsers: builder.query({
+      query: () => "/users",
     }),
-    addPlayer: builder.mutation({
-      query: (player) => ({
-        url: "/playersAuth/register",
+    addUser: builder.mutation({
+      query: (user) => ({
+        url: "/usersAuth/register",
         method: "POST",
-        body: player,
+        body: user,
       }),
     }),
-    loginPlayer: builder.mutation({
-      query: (player) => ({
-        url: "/playersAuth/login",
+    loginUser: builder.mutation({
+      query: (user) => ({
+        url: "/usersAuth/login",
         method: "POST",
-        body: player,
+        body: user,
       }),
     }),
   }),
 });
 
-export const {
-  useGetPlayersQuery,
-  useAddPlayerMutation,
-  useLoginPlayerMutation,
-} = apiSlice;
+export const { useGetUsersQuery, useAddUserMutation, useLoginUserMutation } =
+  apiSlice;
