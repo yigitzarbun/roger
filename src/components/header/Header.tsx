@@ -12,7 +12,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { user } = useAppSelector((store) => store);
-  console.log(user);
 
   const [searchBar, setSearchBar] = useState(false);
 

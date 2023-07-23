@@ -10,7 +10,6 @@ const usersModel = {
     const user = await db("users").where(filter).first();
     return user;
   },
-
   async getById(user_id) {
     const user = await db("users").where("user_id", user_id);
     return user;

@@ -28,6 +28,16 @@ usersRouter.get(
   }
 );
 
+usersRouter.get("/email/:email", async (req: Request, res: Response) => {
+  try {
+    const email = req.params.email;
+    const user = await usersModel.getByFilter({ email });
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 usersRouter.put(
   "/:user_id",
   async (req: Request, res: Response, next: NextFunction) => {

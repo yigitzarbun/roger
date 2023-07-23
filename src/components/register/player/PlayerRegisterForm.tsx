@@ -5,27 +5,44 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddUserMutation } from "../../../store/auth/apiSlice";
+import {
+  useAddUserMutation,
+  useGetUserByEmailQuery,
+} from "../../../store/auth/apiSlice";
+import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
+import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
+import { useGetUserStatusTypesQuery } from "../../../api/endpoints/UserStatusTypesApi";
 
 export type FormValues = {
-  user_type: string;
-  player_status: string;
+  user_type_id: number;
+  user_status_type_id: number;
   email: string;
   password: string;
   fname: string;
   lname: string;
   birth_year: number;
-  location: string;
+  location_id: number;
   gender: string;
-  level: string;
+  player_level_id: number;
 };
+interface NewUser {
+  user_id: number;
+  email: string;
+  password: string;
+  registered_at: string;
+  user_type_id: number;
+  user_status_type_id: number;
+}
+interface AddUserMutationResponse {
+  data?: NewUser;
+  error?: string;
+}
 
-// user_type_id ve user_status_type_id backend'den alınacak
-// user'a ek olarak players tablosuna da ekleme yapılacak
-// locations, player level server'dan alınacak
 const PlayerRegisterForm = () => {
   const navigate = useNavigate();
   const [addUser] = useAddUserMutation();
+
   const {
     register,
     handleSubmit,
@@ -33,17 +50,57 @@ const PlayerRegisterForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (formData) => {
+  const useFetchUserByEmail = async (
+    email: string
+  ): Promise<{ data?: NewUser; error?: Error }> => {
+    try {
+      const { data } = await useGetUserByEmailQuery(email);
+      return { data };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
     const userRegisterData = {
       email: formData.email,
       password: formData.password,
       user_type_id: 1,
       user_status_type_id: 1,
     };
-    addUser(userRegisterData);
-    navigate(paths.LOGIN);
-    reset();
+
+    try {
+      const response = await addUser(userRegisterData);
+
+      if ("data" in response) {
+        const newUser = response.data;
+        const playerRegisterData = {
+          fname: formData.fname,
+          lname: formData.lname,
+          birth_year: formData.birth_year,
+          gender: formData.gender,
+          phone_number: null,
+          image: null,
+          player_bio_description: null,
+          location_id: formData.location_id,
+          player_level_id: formData.player_level_id,
+          user_id: newUser.user_id,
+        };
+        // add player
+        navigate(paths.LOGIN);
+        reset();
+      } else {
+        console.error("New user data is missing.");
+      }
+    } catch (error) {
+      console.error("Error while adding new user:", error);
+    }
   };
+
+  const { data: locations } = useGetLocationsQuery({});
+  const { data: playerLevels } = useGetPlayerLevelsQuery({});
+  const { data: userTypes } = useGetUserTypesQuery({});
+  const { data: userStatusTypes } = useGetUserStatusTypesQuery({});
 
   return (
     <div className={styles["register-page-container"]}>
@@ -123,14 +180,15 @@ const PlayerRegisterForm = () => {
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
               <label>Seviye</label>
-              <select {...register("level", { required: true })}>
+              <select {...register("player_level_id", { required: true })}>
                 <option value="">-- Seçim yapın --</option>
-                <option value="beginner">Başlangıç</option>
-                <option value="intermediate">Orta</option>
-                <option value="advanced">İleri</option>
-                <option value="professional">Profesyonel</option>
+                {playerLevels?.map((playerLevel) => (
+                  <option key={playerLevel.player_level_id}>
+                    {playerLevel.player_level_name}
+                  </option>
+                ))}
               </select>
-              {errors.level && (
+              {errors.player_level_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -138,13 +196,15 @@ const PlayerRegisterForm = () => {
             </div>
             <div className={styles["input-container"]}>
               <label>Konum</label>
-              <select {...register("location", { required: true })}>
+              <select {...register("location_id", { required: true })}>
                 <option value="">-- Seçim yapın --</option>
-                <option value="ataşehir">Ataşehir</option>
-                <option value="kadiköy">Kadıköy</option>
-                <option value="maltepe">Maltepe</option>
+                {locations?.map((location) => (
+                  <option key={location.location_id}>
+                    {location.location_name}
+                  </option>
+                ))}
               </select>
-              {errors.location && (
+              {errors.location_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
