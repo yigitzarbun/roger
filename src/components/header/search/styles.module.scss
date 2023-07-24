@@ -1,0 +1,51 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.search-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 25%;
+
+  .search-icon {
+    width: 25px;
+    cursor: pointer;
+  }
+  .search-open-container {
+    display: flex;
+    column-gap: 10px;
+    .search-input {
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 200px;
+      height: 35px;
+      padding: 5px;
+    }
+
+    .search-buttons-container {
+      display: flex;
+      column-gap: 5px;
+    }
+    .search-button {
+      padding: 5px;
+      background-color: inherit;
+      border: 1px solid $roger-blue;
+      border-radius: $roger-border-radius;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .search-button:hover {
+      background-color: $roger-blue;
+    }
+    .clear-button {
+      padding: 5px;
+      background-color: inherit;
+      border: 1px solid $roger-red;
+      border-radius: $roger-border-radius;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .clear-button:hover {
+      background-color: $roger-red;
+    }
+  }
+}

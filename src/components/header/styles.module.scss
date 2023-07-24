@@ -7,7 +7,7 @@
   left: 0;
   right: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   width: 100%;
   padding: 20px 55px;
   align-items: center;
@@ -33,89 +33,47 @@
     color: $roger-blue;
   }
 
-  .header-nav-container {
+  .credentials-nav {
     display: flex;
     justify-content: space-between;
-    column-gap: 80px;
+    column-gap: 15px;
+    align-items: center;
+  }
 
-    .search-icon {
-      width: 25px;
-      cursor: pointer;
-    }
-    .search-container {
-      display: flex;
-      column-gap: 10px;
+  .nav-link {
+    color: $roger-text-color;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+  }
 
-      .search-input {
-        border-radius: $roger-border-radius;
-        border: none;
-        width: 200px;
-        padding: 5px;
-      }
+  .nav-link:hover {
+    color: $roger-blue;
+  }
 
-      .search-buttons-container {
-        display: flex;
-        column-gap: 5px;
-      }
-      .search-button {
-        padding: 5px;
-        background-color: inherit;
-        border: 1px solid $roger-blue;
-        border-radius: $roger-border-radius;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .search-button:hover {
-        background-color: $roger-blue;
-      }
-      .clear-button {
-        padding: 5px;
-        background-color: inherit;
-        border: 1px solid $roger-red;
-        border-radius: $roger-border-radius;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .clear-button:hover {
-        background-color: $roger-red;
-      }
-    }
+  .active-nav-link {
+    color: $roger-blue;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+  }
 
-    .header-nav-sub-container {
-      display: flex;
-      justify-content: space-between;
-      column-gap: 15px;
-      align-items: center;
-    }
-
-    .nav-link {
-      color: $roger-text-color;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-      border: none;
-      background-color: inherit;
-      cursor: pointer;
-    }
-
-    .nav-link:hover {
-      color: $roger-blue;
-    }
-
-    .active-nav-link {
-      color: $roger-blue;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-      border: none;
-      background-color: inherit;
-      cursor: pointer;
-    }
-
-    .logout-link {
-      color: $roger-red;
-      font-weight: bold;
-      text-decoration: none;
-    }
+  .logout-link {
+    color: $roger-text-color;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+  }
+  .logout-link:hover {
+    color: $roger-red;
   }
 }

@@ -1,42 +1,32 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import paths from "../../routing/Paths";
+
 import styles from "./styles.module.scss";
-import { useState } from "react";
-import i18n from "../../common/i18n/i18n";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import paths from "../../routing/Paths";
+
 import { logOut } from "../../store/slices/authSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+
+//import i18n from "../../common/i18n/i18n";
+
+import SearchBar from "./search/SearchBar";
+import PlayerHeader from "./player/PlayerHeader";
+import TrainerHeader from "./trainer/TrainerHeader";
+import ClubHeader from "./club/ClubHeader";
 
 const Header = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const { user } = useAppSelector((store) => store);
-
-  const [searchBar, setSearchBar] = useState(false);
-
-  const handleSearchBar = () => {
-    setSearchBar((prev) => !prev);
-    setSearch("");
-  };
-
-  const [search, setSearch] = useState("");
-
-  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  };
-
-  const handleSearch = () => {
-    navigate("/", { state: { search: search } });
-  };
+  const userType = user.user?.user?.user_type_id;
 
   const handleLogout = () => {
     dispatch(logOut());
     navigate(paths.LOGIN);
   };
 
-  const isLoggedIn = user;
-
+  const isLoggedIn = user.token;
   return (
     <div className={styles["header-container"]}>
       <NavLink
@@ -49,124 +39,56 @@ const Header = () => {
       >
         Roger
       </NavLink>
-
-      <nav className={styles["header-nav-container"]}>
-        {searchBar && isLoggedIn && (
-          <div className={styles["search-container"]}>
-            <input
-              onChange={handleSearchValue}
-              type="text"
-              value={search}
-              placeholder={i18n.t("headerSearchPlaceholder")}
-              className={styles["search-input"]}
-            />
-            <div className={styles["search-buttons-container"]}>
-              <button
-                onClick={handleSearch}
-                className={styles["search-button"]}
-              >
-                Ara
-              </button>
-              <button
-                onClick={handleSearchBar}
-                className={styles["clear-button"]}
-              >
-                Kapat
-              </button>
-            </div>
-          </div>
-        )}
-        {!searchBar && (
-          <img
-            src="/images/icons/search.png"
-            className={styles["search-icon"]}
-            onClick={handleSearchBar}
-          />
-        )}
-
-        {isLoggedIn ? (
-          <>
-            <div className={styles["header-nav-sub-container"]}>
-              <NavLink
-                to={paths.TRAIN}
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles["active-nav-link"]}`
-                    : `${styles["nav-link"]}`
-                }
-              >
-                Antreman
-              </NavLink>
-              <NavLink
-                to={paths.MATCH}
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles["active-nav-link"]}`
-                    : `${styles["nav-link"]}`
-                }
-              >
-                Maç
-              </NavLink>
-              <NavLink
-                to={paths.LESSON}
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles["active-nav-link"]}`
-                    : `${styles["nav-link"]}`
-                }
-              >
-                Ders
-              </NavLink>
-            </div>
-            <div className={styles["header-nav-sub-container"]}>
-              <NavLink
-                to={paths.CALENDAR}
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles["active-nav-link"]}`
-                    : `${styles["nav-link"]}`
-                }
-              >
-                Takvim
-              </NavLink>
-              <NavLink
-                to={paths.REQUESTS}
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles["active-nav-link"]}`
-                    : `${styles["nav-link"]}`
-                }
-              >
-                Davetler
-              </NavLink>
-            </div>
-            <div className={styles["header-nav-sub-container"]}>
-              <NavLink
-                to={paths.PROFILE}
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles["active-nav-link"]}`
-                    : `${styles["nav-link"]}`
-                }
-              >
-                {user.user ? user.user.email : "Profil"}
-              </NavLink>
-              <button className={styles["nav-link"]} onClick={handleLogout}>
-                Çıkış
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <NavLink to={paths.LOGIN} className={styles["nav-link"]}>
-              Giriş
-            </NavLink>
-            <NavLink to={paths.REGISTER} className={styles["nav-link"]}>
-              Kayıt
-            </NavLink>
-          </>
-        )}
-      </nav>
+      {isLoggedIn && <SearchBar />}
+      {userType === 1 && <PlayerHeader />}
+      {userType === 2 && <TrainerHeader />}
+      {userType === 3 && <ClubHeader />}
+      {isLoggedIn ? (
+        <div className={styles["credentials-nav"]}>
+          <NavLink
+            to={paths.PROFILE}
+            className={({ isActive }) =>
+              isActive
+                ? `${styles["active-nav-link"]}`
+                : `${styles["nav-link"]}`
+            }
+          >
+            {user.user && userType === 1
+              ? user.user.playerDetails.fname
+              : userType === 2
+              ? user.user.trainerDetails.fname
+              : userType === 3
+              ? user.user.clubDetails.club_name
+              : "Profil"}
+          </NavLink>
+          <button className={styles["logout-link"]} onClick={handleLogout}>
+            Çıkış
+          </button>
+        </div>
+      ) : (
+        <div className={styles["credentials-nav"]}>
+          <NavLink
+            to={paths.LOGIN}
+            className={({ isActive }) =>
+              isActive
+                ? `${styles["active-nav-link"]}`
+                : `${styles["nav-link"]}`
+            }
+          >
+            Giriş
+          </NavLink>
+          <NavLink
+            to={paths.REGISTER}
+            className={({ isActive }) =>
+              isActive
+                ? `${styles["active-nav-link"]}`
+                : `${styles["nav-link"]}`
+            }
+          >
+            Kayıt
+          </NavLink>
+        </div>
+      )}
     </div>
   );
 };

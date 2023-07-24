@@ -1,0 +1,39 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.header-player-container {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 80px;
+
+  .header-nav-sub-container {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 15px;
+    align-items: center;
+  }
+
+  .nav-link-player {
+    color: $roger-text-color;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+  }
+
+  .nav-link-player:hover {
+    color: $roger-blue;
+  }
+
+  .active-nav-link-player {
+    color: $roger-blue;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+  }
+}
