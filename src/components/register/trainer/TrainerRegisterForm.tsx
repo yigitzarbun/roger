@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
@@ -6,26 +6,55 @@ import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useAddUserMutation } from "../../../store/auth/apiSlice";
+import { useAddTrainerMutation } from "../../../api/endpoints/TrainersApi";
+import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
+import { useGetTrainerEmploymentTypesQuery } from "../../../api/endpoints/TrainerEmploymentTypesApi";
+import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
+import { useGetUserStatusTypesQuery } from "../../../api/endpoints/UserStatusTypesApi";
 
 export type FormValues = {
-  user_type: string;
-  player_status: string;
+  user_type: number;
+  player_status: number;
   email: string;
   password: string;
   fname: string;
   lname: string;
   birth_year: number;
-  location: string;
+  location_id: number;
   gender: string;
-  experience: string;
-  employment_type: string;
-  price: number;
-  club: string;
+  trainer_experience_type_id: number;
+  trainer_employment_type_id: number;
+  price_hour: number;
+  club_id: number;
 };
 
 const TrainerRegisterForm = () => {
   const navigate = useNavigate();
-  const [addPlayer] = useAddUserMutation();
+
+  const [employmentType, setEmploymentType] = useState(null);
+  const handleEmploymentType = (event) => {
+    setEmploymentType(event.target.value);
+  };
+  const [addUser] = useAddUserMutation();
+  const [addTrainer] = useAddTrainerMutation();
+
+  const { data: locations, isLoading: isLocationsLoading } =
+    useGetLocationsQuery({});
+  const { data: userTypes, isLoading: isUserTypesLoading } =
+    useGetUserTypesQuery({});
+  const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
+    useGetUserStatusTypesQuery({});
+  const {
+    data: trainerExperienceTypes,
+    isLoading: isTrainerExperienceTypesLoading,
+  } = useGetTrainerExperienceTypesQuery({});
+  const {
+    data: trainerEmploymentTypes,
+    isLoading: isTrainerEmploymentTypesLoading,
+  } = useGetTrainerEmploymentTypesQuery({});
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const {
     register,
@@ -34,16 +63,66 @@ const TrainerRegisterForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    const dataWide = {
-      ...formData,
-      user_type: "trainer",
-      player_status: "active",
+  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+    // arrange user register data
+    const userRegisterData = {
+      email: formData.email,
+      password: formData.password,
+      user_type_id: userTypes?.find((u) => u.user_type_name === "trainer")
+        .user_type_id,
+      user_status_type_id: userStatusTypes?.find(
+        (u) => u.user_status_type_name === "active"
+      ).user_status_type_id,
     };
-    addPlayer(dataWide);
-    navigate(paths.LOGIN);
-    reset();
+    try {
+      // register user
+      const response = await addUser(userRegisterData);
+
+      if ("data" in response) {
+        // get newly added user from db
+        const newUser = response.data;
+        // arrange player register data
+        const trainerRegisterData = {
+          fname: formData.fname,
+          lname: formData.lname,
+          birth_year: formData.birth_year,
+          gender: formData.gender,
+          price_hour: formData.price_hour,
+          phone_number: null,
+          image: null,
+          tainer_bio_description: null,
+          location_id: Number(formData.location_id),
+          trainer_experience_type_id: Number(
+            formData.trainer_experience_type_id
+          ),
+          trainer_employment_type_id: Number(
+            formData.trainer_employment_type_id
+          ),
+          club_id: formData.club_id,
+          user_id: newUser.user_id,
+        };
+        // register player
+        await addTrainer(trainerRegisterData);
+        navigate(paths.LOGIN);
+        reset();
+      } else {
+        console.error("New user data is missing.");
+      }
+    } catch (error) {
+      console.error("Error while adding new user:", error);
+    }
   };
+
+  if (
+    isLocationsLoading ||
+    isTrainerExperienceTypesLoading ||
+    isUserTypesLoading ||
+    isUserStatusTypesLoading ||
+    isTrainerEmploymentTypesLoading ||
+    isClubsLoading
+  ) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court3.jpeg" />
@@ -122,14 +201,20 @@ const TrainerRegisterForm = () => {
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
               <label>Tecrübe</label>
-              <select {...register("experience", { required: true })}>
+              <select
+                {...register("trainer_experience_type_id", { required: true })}
+              >
                 <option value="">-- Seçim yapın --</option>
-                <option value="">1-5 yıl</option>
-                <option value="">6-10 yıl</option>
-                <option value="">11-15 yıl</option>
-                <option value="">16 yıl +</option>
+                {trainerExperienceTypes?.map((trainer_experience_type) => (
+                  <option
+                    key={trainer_experience_type.trainer_experience_type_id}
+                    value={trainer_experience_type.trainer_experience_type_id}
+                  >
+                    {trainer_experience_type.trainer_experience_type_name}
+                  </option>
+                ))}
               </select>
-              {errors.experience && (
+              {errors.trainer_experience_type_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -137,13 +222,18 @@ const TrainerRegisterForm = () => {
             </div>
             <div className={styles["input-container"]}>
               <label>Konum</label>
-              <select {...register("location", { required: true })}>
+              <select {...register("location_id", { required: true })}>
                 <option value="">-- Seçim yapın --</option>
-                <option value="ataşehir">Ataşehir</option>
-                <option value="kadiköy">Kadıköy</option>
-                <option value="maltepe">Maltepe</option>
+                {locations?.map((location) => (
+                  <option
+                    key={location.location_id}
+                    value={location.location_id}
+                  >
+                    {location.location_name}
+                  </option>
+                ))}
               </select>
-              {errors.location && (
+              {errors.location_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -153,13 +243,21 @@ const TrainerRegisterForm = () => {
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
               <label>Çalışma Şekli</label>
-              <select {...register("employment_type", { required: true })}>
+              <select
+                {...register("trainer_employment_type_id", { required: true })}
+                onChange={handleEmploymentType}
+              >
                 <option value="">-- Seçim yapın --</option>
-                <option value="independent">Ferdi / Bağımsız</option>
-                <option value="private_club">Özel Kulüp</option>
-                <option value="public_club">Devlet / Belediye</option>
+                {trainerEmploymentTypes?.map((trainer_employment_type) => (
+                  <option
+                    key={trainer_employment_type.trainer_employment_type_id}
+                    value={trainer_employment_type.trainer_employment_type_id}
+                  >
+                    {trainer_employment_type.trainer_employment_type_name}
+                  </option>
+                ))}
               </select>
-              {errors.employment_type && (
+              {errors.trainer_employment_type_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -167,14 +265,44 @@ const TrainerRegisterForm = () => {
             </div>
             <div className={styles["input-container"]}>
               <label>Ücret (TL / saat)</label>
-              <input {...register("price", { required: true })} type="number" />
-              {errors.price && (
+              <input
+                {...register("price_hour", { required: true })}
+                type="number"
+              />
+              {errors.price_hour && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
               )}
             </div>
           </div>
+          {(employmentType ==
+            trainerEmploymentTypes.find(
+              (t) => t.trainer_employment_type_name === "private_club"
+            ).trainer_employment_type_id ||
+            employmentType ==
+              trainerEmploymentTypes.find(
+                (t) => t.trainer_employment_type_name === "public_club"
+              ).trainer_employment_type_id) && (
+            <div className={styles["input-outer-container"]}>
+              <div className={styles["input-container"]}>
+                <label>Kulüp</label>
+                <select {...register("club_id", { required: true })}>
+                  <option value="">-- Seçim yapın --</option>
+                  {clubs?.map((club) => (
+                    <option key={club.club_id} value={club.club_id}>
+                      {club.club_name}
+                    </option>
+                  ))}
+                </select>
+                {errors.club_id && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>

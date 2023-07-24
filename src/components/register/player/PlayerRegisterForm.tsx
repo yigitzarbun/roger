@@ -24,14 +24,6 @@ export type FormValues = {
   gender: string;
   player_level_id: number;
 };
-interface NewUser {
-  user_id: number;
-  email: string;
-  password: string;
-  registered_at: string;
-  user_type_id: number;
-  user_status_type_id: number;
-}
 
 const PlayerRegisterForm = () => {
   const navigate = useNavigate();
@@ -39,10 +31,14 @@ const PlayerRegisterForm = () => {
   const [addUser] = useAddUserMutation();
   const [addPlayer] = useAddPlayerMutation();
 
-  const { data: locations } = useGetLocationsQuery({});
-  const { data: playerLevels } = useGetPlayerLevelsQuery({});
-  const { data: userTypes } = useGetUserTypesQuery({});
-  const { data: userStatusTypes } = useGetUserStatusTypesQuery({});
+  const { data: locations, isLoading: isLocationsLoading } =
+    useGetLocationsQuery({});
+  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
+    useGetPlayerLevelsQuery({});
+  const { data: userTypes, isLoading: isUserTypesLoading } =
+    useGetUserTypesQuery({});
+  const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
+    useGetUserStatusTypesQuery({});
 
   const {
     register,
@@ -94,7 +90,14 @@ const PlayerRegisterForm = () => {
       console.error("Error while adding new user:", error);
     }
   };
-
+  if (
+    isLocationsLoading ||
+    isPlayerLevelsLoading ||
+    isUserTypesLoading ||
+    isUserStatusTypesLoading
+  ) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court3.jpeg" />

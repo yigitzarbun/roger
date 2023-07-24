@@ -9,6 +9,11 @@ import { playerLevelsSlice } from "../api/endpoints/PlayerLevelsApi";
 import { userTypesSlice } from "../api/endpoints/UserTypesApi";
 import { userStatusTypesSlice } from "../api/endpoints/UserStatusTypesApi";
 import { playersSlice } from "../api/endpoints/PlayersApi";
+import { clubsSlice } from "../api/endpoints/ClubsApi";
+import { clubTypesSlice } from "../api/endpoints/ClubTypesApi";
+import { trainersSlice } from "../api/endpoints/TrainersApi";
+import { trainerExperienceTypesSlice } from "../api/endpoints/TrainerExperienceTypesApi";
+import { trainerEmploymentTypesSlice } from "../api/endpoints/TrainerEmploymentTypesApi";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +23,13 @@ export const store = configureStore({
     [userTypesSlice.reducerPath]: userTypesSlice.reducer,
     [userStatusTypesSlice.reducerPath]: userStatusTypesSlice.reducer,
     [playersSlice.reducerPath]: playersSlice.reducer,
+    [clubsSlice.reducerPath]: clubsSlice.reducer,
+    [clubTypesSlice.reducerPath]: clubTypesSlice.reducer,
+    [trainersSlice.reducerPath]: trainersSlice.reducer,
+    [trainerExperienceTypesSlice.reducerPath]:
+      trainerExperienceTypesSlice.reducer,
+    [trainerEmploymentTypesSlice.reducerPath]:
+      trainerEmploymentTypesSlice.reducer,
     user: authReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
@@ -28,7 +40,12 @@ export const store = configureStore({
       .concat(playerLevelsSlice.middleware)
       .concat(userTypesSlice.middleware)
       .concat(userStatusTypesSlice.middleware)
-      .concat(playersSlice.middleware),
+      .concat(playersSlice.middleware)
+      .concat(clubsSlice.middleware)
+      .concat(clubTypesSlice.middleware)
+      .concat(trainersSlice.middleware)
+      .concat(trainerExperienceTypesSlice.middleware)
+      .concat(trainerEmploymentTypesSlice.middleware),
 });
 
 // Infer the `RootState` type from the store

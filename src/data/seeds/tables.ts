@@ -22,6 +22,7 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("court_structure_types").del();
   await knex("trainer_experience_types").del();
   await knex("player_levels").del();
+  await knex("club_types").del();
   await knex("locations").del();
   await knex("trainer_employment_types").del();
 
@@ -59,6 +60,12 @@ export async function seed(knex: Knex): Promise<void> {
     { location_id: 15, location_name: "Ümraniye" },
     { location_id: 16, location_name: "Üsküdar" },
     { location_id: 17, location_name: "Zeytinburnu" },
+  ]);
+
+  await knex("club_types").insert([
+    { club_type_id: 1, club_type_name: "Özel" },
+    { club_type_id: 2, club_type_name: "Devlet / Belediye / Okul" },
+    { club_type_id: 3, club_type_name: "Rezidans / Site / Konut" },
   ]);
 
   await knex("player_levels").insert([
@@ -239,7 +246,13 @@ export async function seed(knex: Knex): Promise<void> {
   ]);
 
   await knex("clubs").insert([
-    { club_id: 1, club_name: "TED", location_id: 4, user_id: 4 },
+    {
+      club_id: 1,
+      club_name: "TED",
+      location_id: 4,
+      club_type_id: 1,
+      user_id: 4,
+    },
   ]);
 
   await knex("trainers").insert([

@@ -10,6 +10,10 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("location_id");
       table.string("location_name").unique().notNullable();
     })
+    .createTable("club_types", (table) => {
+      table.increments("club_type_id");
+      table.string("club_type_name").unique().notNullable();
+    })
     .createTable("player_levels", (table) => {
       table.increments("player_level_id");
       table.string("player_level_name").unique().notNullable();
@@ -125,6 +129,14 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       table
+        .integer("club_type_id")
+        .unsigned()
+        .notNullable()
+        .references("club_type_id")
+        .inTable("club_types")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
         .integer("user_id")
         .unsigned()
         .notNullable()
@@ -146,7 +158,6 @@ export async function up(knex: Knex): Promise<void> {
       table
         .integer("club_id")
         .unsigned()
-        .notNullable()
         .references("club_id")
         .inTable("clubs")
         .onUpdate("CASCADE")
@@ -382,6 +393,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("court_structure_types")
     .dropTableIfExists("trainer_experience_types")
     .dropTableIfExists("player_levels")
+    .dropTableIfExists("club_types")
     .dropTableIfExists("locations")
     .dropTableIfExists("trainer_employment_types");
 }
