@@ -28,6 +28,18 @@ playersRouter.get(
   }
 );
 
+playersRouter.post(
+  "/",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const newPlayer = await playersModel.add(req.body);
+      res.status(201).json(newPlayer);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 playersRouter.put(
   "/:player_id",
   async (req: Request, res: Response, next: NextFunction) => {

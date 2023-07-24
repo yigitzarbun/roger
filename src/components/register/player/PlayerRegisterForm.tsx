@@ -5,14 +5,12 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import {
-  useAddUserMutation,
-  useGetUserByEmailQuery,
-} from "../../../store/auth/apiSlice";
+import { useAddUserMutation } from "../../../store/auth/apiSlice";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import { useGetUserStatusTypesQuery } from "../../../api/endpoints/UserStatusTypesApi";
+import { useAddPlayerMutation } from "../../../api/endpoints/PlayersApi";
 
 export type FormValues = {
   user_type_id: number;
@@ -34,14 +32,17 @@ interface NewUser {
   user_type_id: number;
   user_status_type_id: number;
 }
-interface AddUserMutationResponse {
-  data?: NewUser;
-  error?: string;
-}
 
 const PlayerRegisterForm = () => {
   const navigate = useNavigate();
+
   const [addUser] = useAddUserMutation();
+  const [addPlayer] = useAddPlayerMutation();
+
+  const { data: locations } = useGetLocationsQuery({});
+  const { data: playerLevels } = useGetPlayerLevelsQuery({});
+  const { data: userTypes } = useGetUserTypesQuery({});
+  const { data: userStatusTypes } = useGetUserStatusTypesQuery({});
 
   const {
     register,
@@ -50,30 +51,26 @@ const PlayerRegisterForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const useFetchUserByEmail = async (
-    email: string
-  ): Promise<{ data?: NewUser; error?: Error }> => {
-    try {
-      const { data } = await useGetUserByEmailQuery(email);
-      return { data };
-    } catch (error) {
-      return { error };
-    }
-  };
-
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+    // arrange user register data
     const userRegisterData = {
       email: formData.email,
       password: formData.password,
-      user_type_id: 1,
-      user_status_type_id: 1,
+      user_type_id: userTypes?.find((u) => u.user_type_name === "player")
+        .user_type_id,
+      user_status_type_id: userStatusTypes?.find(
+        (u) => u.user_status_type_name === "active"
+      ).user_status_type_id,
     };
 
     try {
+      // register user
       const response = await addUser(userRegisterData);
 
       if ("data" in response) {
+        // get newly added user from db
         const newUser = response.data;
+        // arrange player register data
         const playerRegisterData = {
           fname: formData.fname,
           lname: formData.lname,
@@ -82,11 +79,12 @@ const PlayerRegisterForm = () => {
           phone_number: null,
           image: null,
           player_bio_description: null,
-          location_id: formData.location_id,
-          player_level_id: formData.player_level_id,
+          location_id: Number(formData.location_id),
+          player_level_id: Number(formData.player_level_id),
           user_id: newUser.user_id,
         };
-        // add player
+        // register player
+        await addPlayer(playerRegisterData);
         navigate(paths.LOGIN);
         reset();
       } else {
@@ -96,11 +94,6 @@ const PlayerRegisterForm = () => {
       console.error("Error while adding new user:", error);
     }
   };
-
-  const { data: locations } = useGetLocationsQuery({});
-  const { data: playerLevels } = useGetPlayerLevelsQuery({});
-  const { data: userTypes } = useGetUserTypesQuery({});
-  const { data: userStatusTypes } = useGetUserStatusTypesQuery({});
 
   return (
     <div className={styles["register-page-container"]}>
@@ -183,7 +176,10 @@ const PlayerRegisterForm = () => {
               <select {...register("player_level_id", { required: true })}>
                 <option value="">-- Seçim yapın --</option>
                 {playerLevels?.map((playerLevel) => (
-                  <option key={playerLevel.player_level_id}>
+                  <option
+                    key={playerLevel.player_level_id}
+                    value={playerLevel.player_level_id}
+                  >
                     {playerLevel.player_level_name}
                   </option>
                 ))}
@@ -199,7 +195,10 @@ const PlayerRegisterForm = () => {
               <select {...register("location_id", { required: true })}>
                 <option value="">-- Seçim yapın --</option>
                 {locations?.map((location) => (
-                  <option key={location.location_id}>
+                  <option
+                    key={location.location_id}
+                    value={location.location_id}
+                  >
                     {location.location_name}
                   </option>
                 ))}
