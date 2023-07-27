@@ -20,7 +20,7 @@ interface TrainSearchProps {
   clubId: number;
 }
 
-const LessonSeach = (props: TrainSearchProps) => {
+const LessonSearch = (props: TrainSearchProps) => {
   const {
     handleLevel,
     handleGender,
@@ -48,6 +48,7 @@ const LessonSeach = (props: TrainSearchProps) => {
   if (isLocationsLoading || istrainerExperienceTypesLoading || isClubsLoading) {
     return <div>Yükleniyor..</div>;
   }
+
   return (
     <div className={styles["lesson-page-container"]}>
       <div className={styles["input-container"]}>
@@ -109,4 +110,4 @@ const LessonSeach = (props: TrainSearchProps) => {
   );
 };
 
-export default LessonSeach;
+export default LessonSearch;

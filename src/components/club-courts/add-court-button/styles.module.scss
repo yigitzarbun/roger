@@ -1,0 +1,26 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.add-court-container {
+  border: none;
+  display: flex;
+  justify-content: flex-end;
+
+  .add-court-button {
+    display: flex;
+    align-items: center;
+    background-color: $roger-blue;
+    border-radius: $roger-border-radius;
+    padding: $roger-box-padding;
+    border: none;
+    cursor: pointer;
+  }
+
+  .add-icon {
+    width: 30px;
+  }
+
+  .add-title {
+    font-size: 1rem;
+  }
+}

@@ -94,34 +94,34 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("court_structure_types").insert([
     {
       court_structure_type_id: 1,
-      court_structure_type_name: "indoor",
+      court_structure_type_name: "Kapalı (İç mekan)",
     },
     {
       court_structure_type_id: 2,
-      court_structure_type_name: "outdoor",
+      court_structure_type_name: "Açık (Dış mekan)",
     },
     {
       court_structure_type_id: 3,
-      court_structure_type_name: "convertible",
+      court_structure_type_name: "Hibrit (Üstü açılır - kapanır)",
     },
   ]);
 
   await knex("court_surface_types").insert([
     {
       court_surface_type_id: 1,
-      court_surface_type_name: "hard",
+      court_surface_type_name: "Sert",
     },
     {
       court_surface_type_id: 2,
-      court_surface_type_name: "clay",
+      court_surface_type_name: "Toprak",
     },
     {
       court_surface_type_id: 3,
-      court_surface_type_name: "grass",
+      court_surface_type_name: "Çim",
     },
     {
       court_surface_type_id: 4,
-      court_surface_type_name: "carpet",
+      court_surface_type_name: "Halı",
     },
   ]);
 
@@ -312,8 +312,8 @@ export async function seed(knex: Knex): Promise<void> {
       court_id: 1,
       court_name: "Merkez",
       registered_at: "2023-07-15",
-      opening_time: 800,
-      closing_time: 900,
+      opening_time: "08:00",
+      closing_time: "21:00",
       price_hour: 150,
       court_structure_type_id: 1,
       court_surface_type_id: 1,

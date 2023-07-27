@@ -4,7 +4,7 @@ import styles from "./styles.module.scss";
 
 import LessonHero from "../../components/lesson/hero/LessonHero";
 import LessonResults from "../../components/lesson/results/LessonResults";
-import LessonSeach from "../../components/lesson/search/LessonsSearch";
+import LessonSearch from "../../components/lesson/search/LessonsSearch";
 
 const Lesson = () => {
   const [trainerLevelId, setTrainerLevelId] = useState<number | null>(null);
@@ -26,14 +26,17 @@ const Lesson = () => {
     const value = parseInt(event.target.value, 10);
     setTrainerPrice(isNaN(value) ? null : value);
   };
+
   const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setLocationId(isNaN(value) ? null : value);
   };
+
   const handleClub = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
+
   const handleClear = () => {
     setTrainerLevelId(null);
     setGender("");
@@ -44,7 +47,7 @@ const Lesson = () => {
   return (
     <div className={styles["lesson-container"]}>
       <LessonHero />
-      <LessonSeach
+      <LessonSearch
         handleLevel={handleLevel}
         handleGender={handleGender}
         handlePrice={handlePrice}

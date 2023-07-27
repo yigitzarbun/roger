@@ -287,8 +287,8 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("court_id");
       table.string("court_name");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
-      table.integer("opening_time").notNullable();
-      table.integer("closing_time").notNullable();
+      table.time("opening_time").notNullable();
+      table.time("closing_time").notNullable();
       table.integer("price_hour").notNullable();
       table
         .integer("court_structure_type_id")
