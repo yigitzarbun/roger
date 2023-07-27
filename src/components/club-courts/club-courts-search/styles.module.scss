@@ -1,0 +1,61 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.courts-page-container {
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 4vh;
+  background-color: $roger-black-light;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 100%;
+
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1vh;
+    // width: 15%;
+
+    select {
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 100%;
+    }
+  }
+  .price-input {
+    width: 30%;
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: none;
+    background-color: rgb(59, 59, 59);
+    border: none;
+    label {
+      font-size: 13px;
+      width: 50%;
+    }
+    input {
+      width: 70%;
+    }
+  }
+  button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background-color: $roger-red;
+    cursor: pointer;
+  }
+
+  .error-field {
+    color: $roger-red;
+    font-size: 0.8rem;
+  }
+}

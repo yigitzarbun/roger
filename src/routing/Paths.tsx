@@ -14,5 +14,6 @@ export default {
   MATCH_INVITE: "/mac-davet",
   TRAIN_INVITE: "/antreman-davet",
   LESSON_INVITE: "/ders-davet",
+  CLUB_COURTS: "/kulüp-kortlar",
   NOT_FOUND: "*",
 } as Paths;

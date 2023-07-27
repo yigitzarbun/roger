@@ -13,6 +13,9 @@ import clubTypesRouter from "./src/api/club-types/club-types-router";
 import trainersRouter from "./src/api/trainers/trainers-router";
 import trainerEmploymentTypesRouter from "./src/api/trainer-employment-types/trainer-employment-types-router";
 import trainerExperienceTypesRouter from "./src/api/trainer-experience-types/trainer-experience-types-router";
+import courtsRouter from "./src/api/courts/courts-router";
+import courtStructureTypesRouter from "./src/api/court-structure-types/court-structure-types-router";
+import courtSurfaceTypesRouter from "./src/api/court-surface-types/court-surface-types-router";
 
 const cors = require("cors");
 
@@ -32,6 +35,9 @@ server.use("/api/club-types", clubTypesRouter);
 server.use("/api/trainers", trainersRouter);
 server.use("/api/trainer-employment-types", trainerEmploymentTypesRouter);
 server.use("/api/trainer-experience-types", trainerExperienceTypesRouter);
+server.use("/api/courts", courtsRouter);
+server.use("/api/court-structure-types", courtStructureTypesRouter);
+server.use("/api/court-surface-types", courtSurfaceTypesRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");
