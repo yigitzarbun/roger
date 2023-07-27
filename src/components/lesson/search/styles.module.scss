@@ -13,20 +13,33 @@
     display: flex;
     flex-direction: column;
     row-gap: 1vh;
+    // width: 15%;
+
+    select {
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 100%;
+    }
+  }
+  .price-input {
     width: 30%;
-  }
-
-  label {
-    font-weight: bold;
-  }
-
-  select {
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
     border: none;
-    width: 100%;
+    background-color: rgb(59, 59, 59);
+    border: none;
+    label {
+      font-size: 13px;
+      width: 50%;
+    }
+    input {
+      width: 70%;
+    }
   }
-
   button {
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;

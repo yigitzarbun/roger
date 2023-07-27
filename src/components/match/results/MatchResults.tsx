@@ -1,19 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styles from "./styles.module.scss";
+
 import paths from "../../../routing/Paths";
-import { useGetPlayersQuery } from "../../../store/auth/apiSlice";
+
+import styles from "./styles.module.scss";
+
 import { useAppSelector } from "../../../store/hooks";
 
+import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
+
 interface MatchResultsProps {
-  level: string;
+  playerLevelId: number;
   gender: string;
-  location: string;
+  locationId: number;
 }
 const MatchResults = (props: MatchResultsProps) => {
-  const { level, gender, location } = props;
+  const { playerLevelId, gender, locationId } = props;
+
   const { user } = useAppSelector((store) => store.user);
-  const { data: players, isLoading, isError, error } = useGetPlayersQuery({});
+  const {
+    data: players,
+    isLoading: isPlayersLoading,
+    isError,
+  } = useGetPlayersQuery({});
+
+  const { data: locations, isLoading: isLocationsLoading } =
+    useGetLocationsQuery({});
+
+  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
+    useGetPlayerLevelsQuery({});
+
+  const levelId = Number(playerLevelId) ?? null;
+  const selectedGender = gender ?? "";
+  const locationIdValue = Number(locationId) ?? null;
 
   const today = new Date();
   const year = today.getFullYear();
@@ -21,29 +42,30 @@ const MatchResults = (props: MatchResultsProps) => {
   const filteredPlayers =
     players &&
     players
-      .filter((player) => player.player_id !== user.player_id)
+      .filter((player) => player.user_id !== user.user.user_id)
       .filter((player) => {
-        if (level === "" && gender === "" && location === "") {
+        if (levelId === 0 && gender === "" && locationIdValue === 0) {
           return player;
         } else if (
-          (level === player.level || level === "") &&
-          (gender === player.gender || gender === "") &&
-          (location === player.location || location === "")
+          (levelId === player.player_level_id || levelId === 0) &&
+          (selectedGender === player.gender || selectedGender === "") &&
+          (locationIdValue === player.location_id || locationIdValue === 0)
         ) {
           return player;
         }
       });
+
+  if (isPlayersLoading || isLocationsLoading || isPlayerLevelsLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Maç</h2>
       </div>
-      {isLoading ? (
-        <p>Yükleniyor...</p>
-      ) : (
-        isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>
-      )}
+      {isPlayersLoading && <p>Yükleniyor...</p>}
+      {isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>}
       {players && filteredPlayers.length === 0 && (
         <p>
           Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
@@ -75,13 +97,26 @@ const MatchResults = (props: MatchResultsProps) => {
                   />
                 </td>
                 <td>{`${player.fname} ${player.lname}`}</td>
-                <td>{player.level}</td>
+                <td>
+                  {
+                    playerLevels?.find(
+                      (player_level) =>
+                        player_level.player_level_id === player.player_level_id
+                    ).player_level_name
+                  }
+                </td>
                 <td>{player.gender}</td>
                 <td>{year - Number(player.birth_year)}</td>
-                <td>{player.location}</td>
+                <td>
+                  {
+                    locations?.find(
+                      (location) => location.location_id === player.location_id
+                    ).location_name
+                  }
+                </td>
                 <td>
                   <Link
-                    to={paths.MATCH_INVITE}
+                    to={paths.TRAIN_INVITE}
                     state={{
                       fname: player.fname,
                       lname: player.lname,

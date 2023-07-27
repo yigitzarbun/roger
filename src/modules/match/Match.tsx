@@ -7,25 +7,28 @@ import MatchResults from "../../components/match/results/MatchResults";
 import MatchSearch from "../../components/match/search/MatchSearch";
 
 const Match = () => {
-  const [level, setLevel] = useState("");
-  const [gender, setGender] = useState("");
-  const [location, setLocation] = useState("");
+  const [playerLevelId, setPlayerLevelId] = useState<number | null>(null);
+  const [gender, setGender] = useState<string>("");
+  const [locationId, setLocationId] = useState<number | null>(null);
 
-  const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
-    setLevel(event.target.value);
-  };
   const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
     setGender(event.target.value);
   };
 
+  const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setPlayerLevelId(isNaN(value) ? null : value);
+  };
+
   const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
-    setLocation(event.target.value);
+    const value = parseInt(event.target.value, 10);
+    setLocationId(isNaN(value) ? null : value);
   };
 
   const handleClear = () => {
-    setLevel("");
+    setPlayerLevelId(null);
     setGender("");
-    setLocation("");
+    setLocationId(null);
   };
   return (
     <div className={styles["match-container"]}>
@@ -35,11 +38,15 @@ const Match = () => {
         handleGender={handleGender}
         handleLocation={handleLocation}
         handleClear={handleClear}
-        level={level}
+        playerLevelId={playerLevelId}
         gender={gender}
-        location={location}
+        locationId={locationId}
       />
-      <MatchResults level={level} gender={gender} location={location} />
+      <MatchResults
+        playerLevelId={playerLevelId}
+        gender={gender}
+        locationId={locationId}
+      />
     </div>
   );
 };

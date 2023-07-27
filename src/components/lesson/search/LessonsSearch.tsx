@@ -1,54 +1,108 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
 import styles from "./styles.module.scss";
 
-const LessonSeach = () => {
+import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
+import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+
+interface TrainSearchProps {
+  handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handlePrice: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
+  trainerLevelId: number;
+  trainerPrice: number;
+  gender: string;
+  locationId: number;
+  clubId: number;
+}
+
+const LessonSeach = (props: TrainSearchProps) => {
+  const {
+    handleLevel,
+    handleGender,
+    handlePrice,
+    handleLocation,
+    handleClub,
+    handleClear,
+    trainerLevelId,
+    trainerPrice,
+    gender,
+    locationId,
+    clubId,
+  } = props;
+
+  const { data: locations, isLoading: isLocationsLoading } =
+    useGetLocationsQuery({});
+
+  const {
+    data: trainerExperienceTypes,
+    isLoading: istrainerExperienceTypesLoading,
+  } = useGetTrainerExperienceTypesQuery({});
+
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  if (isLocationsLoading || istrainerExperienceTypesLoading || isClubsLoading) {
+    return <div>Yükleniyor..</div>;
+  }
   return (
     <div className={styles["lesson-page-container"]}>
       <div className={styles["input-container"]}>
-        <select>
-          <option value="">-- Tecrübe --</option>
-          <option value="beginner">1 - 5 yıl</option>
-          <option value="intermediate">5 - 10 yıl</option>
-          <option value="advanced">11 - 15 yıl</option>
-          <option value="professional">20 yıl +</option>
+        <select onChange={handleLevel} value={trainerLevelId ?? ""}>
+          <option value="">-- Seviye --</option>
+          {trainerExperienceTypes?.map((trainer_experience_type) => (
+            <option
+              key={trainer_experience_type.trainer_experience_type_id}
+              value={trainer_experience_type.trainer_experience_type_id}
+            >
+              {trainer_experience_type.trainer_experience_type_name}
+            </option>
+          ))}
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select>
+        <select onChange={handleGender} value={gender}>
           <option value="">-- Cinsiyet --</option>
           <option value="female">Kadın</option>
           <option value="male">Erkek</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select>
+        <select onChange={handleLocation} value={locationId ?? ""}>
           <option value="">-- Konum --</option>
-          <option value="atasehir">Ataşehir</option>
-          <option value="kadikoy">Kadıköy</option>
-          <option value="kartal">Kartal</option>
-          <option value="maltepe">Maltepe</option>
+          {locations?.map((location) => (
+            <option key={location.location_id} value={location.location_id}>
+              {location.location_name}
+            </option>
+          ))}
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select>
-          <option value="">-- Fiyat --</option>
-          <option value="low">100 - 150 TL / saat</option>
-          <option value="mid">150 - 300 TL / saat</option>
-          <option value="premium">300 - 500 TL / saat</option>
+        <select onChange={handleClub} value={clubId ?? ""}>
+          <option value="">-- Kulüp --</option>
+          {clubs?.map((club) => (
+            <option key={club.club_id} value={club.club_id}>
+              {club.club_name}
+            </option>
+          ))}
         </select>
       </div>
-      <div className={styles["input-container"]}>
-        <select>
-          <option value="">-- Değerlendirme --</option>
-          <option value="low">1 / 5</option>
-          <option value="mid">2 / 5</option>
-          <option value="premium">3 / 5</option>
-          <option value="premium">4 / 5</option>
-          <option value="premium">5 / 5</option>
-        </select>
+      <div className={styles["price-input"]}>
+        <label> {`Fiyat:  ${trainerPrice} TL`}</label>
+        <input
+          type="range"
+          id="trainerPrice"
+          name="trainerPrice"
+          min="0"
+          max="750"
+          defaultValue={100}
+          onChange={handlePrice}
+        />
       </div>
-      <button type="submit" className={styles["button"]}>
+      <button onClick={handleClear} className={styles["button"]}>
         Temizle
       </button>
     </div>
