@@ -7,18 +7,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import InviteModal from "../../invite-modal/InviteModal";
 import { useState } from "react";
 
-export type FormValues = {
-  event_type: string;
-  event_date: string;
-  event_time: string;
-  location: string;
-  court_name: string;
-  fname: string;
-  lname: string;
-  lesson_price: number;
-  court_price: number;
-  image: string;
-};
+import { FormValues } from "../../invite-modal/InviteModal";
 
 const MatchInviteForm = () => {
   const navigate = useNavigate();
@@ -35,14 +24,22 @@ const MatchInviteForm = () => {
   const [formData, setFormData] = useState<FormValues | null>(null);
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    formData.event_type = "match";
-    formData.fname = player.fname;
-    formData.lname = player.lname;
-    formData.lesson_price = player.lesson_price;
-    formData.court_price = player.court_price;
-    formData.image = player.image;
-    console.log(formData);
-    setFormData(formData);
+    const bookingData = {
+      event_date: formData.event_date,
+      event_time: formData.event_time,
+      // get from api
+      booking_status_type_id: 1,
+      // get from api
+      event_type_id: 2,
+      club_id: formData.club_id,
+      court_id: formData.court_id,
+      inviter_id: 1111111,
+      invitee_id: player.user_id,
+      lesson_price: null,
+      court_price: null,
+    };
+    console.log(bookingData);
+    setFormData(bookingData);
     setModal(true);
   };
 
@@ -104,25 +101,25 @@ const MatchInviteForm = () => {
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Konum</label>
-            <select {...register("location", { required: true })}>
+            <select {...register("club_id", { required: true })}>
               <option value="">-- Seçim yapın --</option>
               <option value="enka">Enka</option>
               <option value="ted">TED</option>
               <option value="antuka">Antuka</option>
             </select>
-            {errors.location && (
+            {errors.club_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
           <div className={styles["input-container"]}>
             <label>Kort</label>
-            <select {...register("court_name", { required: true })}>
+            <select {...register("court_id", { required: true })}>
               <option value="">-- Seçim yapın --</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
             </select>
-            {errors.court_name && (
+            {errors.court_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>

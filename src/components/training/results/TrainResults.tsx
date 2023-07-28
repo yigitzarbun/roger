@@ -123,6 +123,7 @@ const TrainResults = (props: TrainResultsProps) => {
                       lname: player.lname,
                       image: player.image,
                       court_price: "100",
+                      user_id: player.user_id,
                     }}
                     className={styles["accept-button"]}
                   >

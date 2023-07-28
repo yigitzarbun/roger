@@ -320,6 +320,8 @@ export async function up(knex: Knex): Promise<void> {
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table.date("event_date").notNullable();
       table.time("event_time").notNullable();
+      table.integer("court_price").notNullable();
+      table.integer("lesson_price");
       table
         .integer("booking_status_type_id")
         .unsigned()

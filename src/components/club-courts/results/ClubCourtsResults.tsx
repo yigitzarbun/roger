@@ -68,7 +68,6 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   ) {
     return <div>Yükleniyor..</div>;
   }
-
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -87,59 +86,62 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
           </p>
         )
       )}
-      {courts && filteredCourts.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Kort</th>
-              <th>Kort Adı</th>
-              <th>Yüzey</th>
-              <th>Mekan</th>
-              <th>Açılış</th>
-              <th>Kapanış</th>
-              <th>Fiyat (saat / TL)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCourts.map((court) => (
-              <tr key={court.court_id} className={styles["court-row"]}>
-                <td>
-                  <img
-                    src="/images/icons/avatar.png"
-                    alt="kort"
-                    className={styles["court-image"]}
-                  />
-                </td>
-                <td>{court.court_name}</td>
-                <td>
-                  {
-                    courtSurfaceTypes.find(
-                      (surface) =>
-                        surface.court_surface_type_id ===
-                        court.court_surface_type_id
-                    ).court_surface_name
-                  }
-                </td>
-                <td>
-                  {
-                    courtStructureTypes.find(
-                      (structure) =>
-                        structure.court_structure_type_id ===
-                        court.court_structure_type_id
-                    ).court_structure_name
-                  }
-                </td>
-                <td>{court.opening_time}</td>
-                <td>{court.closing_time}</td>
-                <td>{court.price_hour}</td>
-                <td onClick={() => openEditCourtModal(court.court_id)}>
-                  Düzenle
-                </td>
+      {courts &&
+        courtStructureTypes &&
+        courtSurfaceTypes &&
+        filteredCourts.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <th>Kort</th>
+                <th>Kort Adı</th>
+                <th>Yüzey</th>
+                <th>Mekan</th>
+                <th>Açılış</th>
+                <th>Kapanış</th>
+                <th>Fiyat (saat / TL)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {filteredCourts.map((court) => (
+                <tr key={court.court_id} className={styles["court-row"]}>
+                  <td>
+                    <img
+                      src="/images/icons/avatar.png"
+                      alt="kort"
+                      className={styles["court-image"]}
+                    />
+                  </td>
+                  <td>{court.court_name}</td>
+                  <td>
+                    {
+                      courtSurfaceTypes.find(
+                        (surface) =>
+                          surface.court_surface_type_id ==
+                          court.court_surface_type_id
+                      ).court_surface_type_name
+                    }
+                  </td>
+                  <td>
+                    {
+                      courtStructureTypes.find(
+                        (structure) =>
+                          structure.court_structure_type_id ==
+                          court.court_structure_type_id
+                      ).court_structure_type_name
+                    }
+                  </td>
+                  <td>{court.opening_time}</td>
+                  <td>{court.closing_time}</td>
+                  <td>{court.price_hour}</td>
+                  <td onClick={() => openEditCourtModal(court.court_id)}>
+                    Düzenle
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
     </div>
   );
 };
