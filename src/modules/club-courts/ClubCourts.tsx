@@ -4,9 +4,10 @@ import styles from "./styles.module.scss";
 
 import ClubCourtseHero from "../../components/club-courts/hero/ClubCourtsHero";
 import ClubCourtsSearch from "../../components/club-courts/search/ClubCourtsSearch";
-import AddCourt from "../../components/club-courts/add-court-button/AddCourtButton";
+import AddCourtButton from "../../components/club-courts/add-court-button/AddCourtButton";
 import ClubCourtsResults from "../../components/club-courts/results/ClubCourtsResults";
 import AddCourtModal from "../../components/club-courts/add-court-modal/AddCourtModal";
+import EditCourtModal from "../../components/club-courts/edit-court/EditCourtModal";
 
 const ClubCourts = () => {
   const [surfaceTypeId, setSurfaceTypeId] = useState<number | null>(null);
@@ -33,14 +34,26 @@ const ClubCourts = () => {
     setPrice(0);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddCourtModalOpen, setIsAddCourtModalOpen] = useState(false);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openAddCourtModal = () => {
+    setIsAddCourtModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeAddCourtModal = () => {
+    setIsAddCourtModalOpen(false);
+  };
+
+  const [isEditCourtModalOpen, setIsEditCourtModalOpen] = useState(false);
+  const [selectedCourtId, setSelectedCourtId] = useState<number | null>(null);
+
+  const openEditCourtModal = (court_id: number) => {
+    setSelectedCourtId(court_id);
+    setIsEditCourtModalOpen(true);
+  };
+
+  const closeEditCourtModal = () => {
+    setIsEditCourtModalOpen(false);
   };
 
   return (
@@ -55,13 +68,22 @@ const ClubCourts = () => {
         structureTypeId={structureTypeId}
         price={price}
       />
-      <AddCourt openModal={openModal} />
+      <AddCourtButton openAddCourtModal={openAddCourtModal} />
       <ClubCourtsResults
         surfaceTypeId={surfaceTypeId}
         structureTypeId={structureTypeId}
         price={price}
+        openEditCourtModal={openEditCourtModal}
       />
-      <AddCourtModal isModalOpen={isModalOpen} closeModal={closeModal} />
+      <AddCourtModal
+        isAddCourtModalOpen={isAddCourtModalOpen}
+        closeAddCourtModal={closeAddCourtModal}
+      />
+      <EditCourtModal
+        court_id={selectedCourtId}
+        isEditCourtModalOpen={isEditCourtModalOpen}
+        closeEditCourtModal={closeEditCourtModal}
+      />
     </div>
   );
 };

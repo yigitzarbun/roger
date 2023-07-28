@@ -15,7 +15,18 @@ export const courtsSlice = createApi({
         body: court,
       }),
     }),
+    updateCourt: builder.mutation({
+      query: (updatedCourt) => ({
+        url: `/courts/${updatedCourt.court_id}`,
+        method: "PUT",
+        body: updatedCourt,
+      }),
+    }),
   }),
 });
 
-export const { useGetCourtsQuery, useAddCourtMutation } = courtsSlice;
+export const {
+  useGetCourtsQuery,
+  useAddCourtMutation,
+  useUpdateCourtMutation,
+} = courtsSlice;

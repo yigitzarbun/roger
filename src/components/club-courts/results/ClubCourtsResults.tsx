@@ -12,9 +12,10 @@ interface ClubCourtResultsProps {
   surfaceTypeId: number;
   structureTypeId: number;
   price: number;
+  openEditCourtModal: (value: number) => void;
 }
 const ClubCourtsResults = (props: ClubCourtResultsProps) => {
-  const { surfaceTypeId, structureTypeId, price } = props;
+  const { surfaceTypeId, structureTypeId, price, openEditCourtModal } = props;
 
   const { user } = useAppSelector((store) => store.user);
 
@@ -131,7 +132,9 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                 <td>{court.opening_time}</td>
                 <td>{court.closing_time}</td>
                 <td>{court.price_hour}</td>
-                <td>Düzenle</td>
+                <td onClick={() => openEditCourtModal(court.court_id)}>
+                  Düzenle
+                </td>
               </tr>
             ))}
           </tbody>

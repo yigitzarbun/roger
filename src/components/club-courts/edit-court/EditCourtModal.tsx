@@ -8,44 +8,53 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../store/hooks";
-
-import {
-  useAddCourtMutation,
-  useGetCourtsQuery,
-} from "../../../api/endpoints/CourtsApi";
-
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import {
+  useGetCourtsQuery,
+  useUpdateCourtMutation,
+} from "../../../api/endpoints/CourtsApi";
 
-interface AddCourtModalProps {
-  isAddCourtModalOpen: boolean;
-  closeAddCourtModal: () => void;
+import { useAppSelector } from "../../../store/hooks";
+
+interface EditCourtModalProps {
+  isEditCourtModalOpen: boolean;
+  closeEditCourtModal: () => void;
+  court_id: number;
 }
 
 type FormValues = {
   court_name: string;
-  opening_time: number;
-  closing_time: number;
+  opening_time: string;
+  closing_time: string;
   price_hour: number;
   court_structure_type_id: number;
   court_surface_type_id: number;
   club_id: number;
 };
 
-const AddCourtModal = (props: AddCourtModalProps) => {
-  const { isAddCourtModalOpen, closeAddCourtModal } = props;
+// TO DO: set selectedCourtId to null after editing court
+
+const EditCourtModal = (props: EditCourtModalProps) => {
+  const { isEditCourtModalOpen, closeEditCourtModal, court_id } = props;
+
   const { user } = useAppSelector((store) => store.user);
 
-  const [addCourt, { data, isSuccess }] = useAddCourtMutation({});
-
-  const { refetch } = useGetCourtsQuery({});
+  const [updateCourt, { data, isSuccess }] = useUpdateCourtMutation({});
 
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
 
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
+
+  const {
+    data: courts,
+    isLoading: isCourtsLoading,
+    refetch,
+  } = useGetCourtsQuery({});
+
+  const selectedCourt = courts?.find((court) => court.court_id === court_id);
 
   const {
     register,
@@ -56,7 +65,8 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
-      const newCourtData = {
+      const updatedCourtData = {
+        court_id: court_id,
         court_name: formData.court_name,
         opening_time: formData.opening_time,
         closing_time: formData.closing_time,
@@ -65,30 +75,44 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         court_surface_type_id: Number(formData.court_surface_type_id),
         club_id: user.clubDetails.club_id,
       };
-      addCourt(newCourtData);
+      console.log(updatedCourtData);
+      updateCourt(updatedCourtData);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
+    if (courts && selectedCourt) {
+      reset({
+        court_name: selectedCourt.court_name || "",
+        opening_time: selectedCourt.opening_time || "",
+        closing_time: selectedCourt.closing_time || "",
+        price_hour: selectedCourt.price_hour || 0,
+        court_structure_type_id: selectedCourt.court_structure_type_id || 0,
+        court_surface_type_id: selectedCourt.court_surface_type_id || 0,
+      });
+    }
+  }, [selectedCourt, courts, reset]);
+
+  useEffect(() => {
     if (isSuccess) {
       refetch();
       reset();
-      closeAddCourtModal();
+      closeEditCourtModal();
     }
   }, [isSuccess]);
 
   return (
     <Modal
-      isOpen={isAddCourtModalOpen}
-      onRequestClose={closeAddCourtModal}
+      isOpen={isEditCourtModalOpen}
+      onRequestClose={closeEditCourtModal}
       className={styles["modal-container"]}
     >
       <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Kort Ekle</h1>
+        <h1 className={styles.title}>Kort Düzenle</h1>
         <FaWindowClose
-          onClick={closeAddCourtModal}
+          onClick={closeEditCourtModal}
           className={styles["close-icon"]}
         />
       </div>
@@ -190,5 +214,4 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     </Modal>
   );
 };
-
-export default AddCourtModal;
+export default EditCourtModal;
