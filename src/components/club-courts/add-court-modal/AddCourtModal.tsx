@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
@@ -17,6 +17,8 @@ import {
 
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
+
+import { generateTimesArray } from "../../../common/util/TimeFunctions";
 
 interface AddCourtModalProps {
   isAddCourtModalOpen: boolean;
@@ -46,6 +48,11 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
+
+  const [openingTime, setOpeningTime] = useState<string>("00:00");
+  const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setOpeningTime(event.target.value);
+  };
 
   const {
     register,
@@ -160,26 +167,49 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Açılış Saati</label>
-            <input
+            <select
               {...register("opening_time", { required: true })}
-              type="time"
-              min="00:00"
-              max="24:00"
-            />
+              onChange={handleOpeningTime}
+            >
+              <option value="">-- Açılış Saati --</option>
+              {generateTimesArray(24).map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
             {errors.opening_time && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
           <div className={styles["input-container"]}>
             <label>Kapanış Saati</label>
-            <input
-              {...register("closing_time", { required: true })}
-              type="time"
-              min="00:00"
-              max="24:00"
-            />
-            {errors.closing_time && (
+            <select
+              {...register("closing_time", {
+                required: true,
+                validate: (value) => {
+                  const closingHour = Number(value.toString().padStart(2, "0"));
+                  const openingHour = Number(
+                    openingTime.toString().padStart(2, "0")
+                  );
+                  return closingHour > openingHour;
+                },
+              })}
+            >
+              <option value="">-- Kapanış Saati --</option>
+              {generateTimesArray(24).map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+            {errors.closing_time?.type === "required" && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+            {errors.closing_time?.type === "validate" && (
+              <span className={styles["error-field"]}>
+                Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
+              </span>
             )}
           </div>
         </div>

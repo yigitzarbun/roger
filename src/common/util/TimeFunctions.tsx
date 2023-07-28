@@ -25,3 +25,16 @@ export function roundToNearestHour(time) {
   const roundedTime = `${String(hours).padStart(2, "0")}:00`;
   return roundedTime;
 }
+
+export function generateTimesArray(hours) {
+  const hoursArray = [];
+  let t = 0;
+  for (let t = 1; t <= hours; t++) {
+    let time = String(t);
+    if (time.length === 1) {
+      time = time.padStart(2, "0");
+    }
+    hoursArray.push(`${time}:00`);
+  }
+  return hoursArray;
+}
