@@ -101,7 +101,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
           </thead>
           <tbody>
             {filteredCourts.map((court) => (
-              <tr className={styles["court-row"]}>
+              <tr key={court.court_id} className={styles["court-row"]}>
                 <td>
                   <img
                     src="/images/icons/avatar.png"

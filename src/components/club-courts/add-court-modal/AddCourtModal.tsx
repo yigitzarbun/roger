@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
@@ -10,7 +10,10 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 
-import { useAddCourtMutation } from "../../../api/endpoints/CourtsApi";
+import {
+  useAddCourtMutation,
+  useGetCourtsQuery,
+} from "../../../api/endpoints/CourtsApi";
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
 
@@ -32,7 +35,10 @@ type FormValues = {
 const AddCourtModal = (props: AddCourtModalProps) => {
   const { isModalOpen, closeModal } = props;
   const { user } = useAppSelector((store) => store.user);
-  const [addCourt, { data, isSuccess }] = useAddCourtMutation();
+
+  const [addCourt, { data, isSuccess }] = useAddCourtMutation({});
+
+  const { refetch } = useGetCourtsQuery({});
 
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
@@ -58,13 +64,19 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         court_surface_type_id: Number(formData.court_surface_type_id),
         club_id: user.clubDetails.club_id,
       };
-      console.log(newCourtData);
       addCourt(newCourtData);
-      reset();
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      reset();
+      closeModal();
+    }
+  }, [isSuccess]);
   return (
     <Modal
       isOpen={isModalOpen}
@@ -72,90 +84,103 @@ const AddCourtModal = (props: AddCourtModalProps) => {
       className={styles["modal-container"]}
     >
       <div className={styles["top-container"]}>
-        <h1>Kort Ekle</h1>
-        <FaWindowClose onClick={closeModal} />
+        <h1 className={styles.title}>Kort Ekle</h1>
+        <FaWindowClose onClick={closeModal} className={styles["close-icon"]} />
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
       >
-        <div className={styles["input-container"]}>
-          <label>Kort Adı</label>
-          <input {...register("court_name", { required: true })} type="text" />
-          {errors.court_name && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Kort Adı</label>
+            <input
+              {...register("court_name", { required: true })}
+              type="text"
+            />
+            {errors.court_name && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Fiyat (TL / saat)</label>
+            <input
+              {...register("price_hour", { required: true })}
+              type="number"
+              min="0"
+            />
+            {errors.price_hour && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
         </div>
-        <div className={styles["input-container"]}>
-          <label>Kort Yüzeyi</label>
-          <select {...register("court_surface_type_id", { required: true })}>
-            <option value="">-- Kort Yüzeyi --</option>
-            {courtSurfaceTypes?.map((surface) => (
-              <option
-                key={surface.court_surface_type_id}
-                value={surface.court_surface_type_id}
-              >
-                {surface.court_surface_type_name}
-              </option>
-            ))}
-          </select>
-          {errors.court_surface_type_id && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Kort Yüzeyi</label>
+            <select {...register("court_surface_type_id", { required: true })}>
+              <option value="">-- Kort Yüzeyi --</option>
+              {courtSurfaceTypes?.map((surface) => (
+                <option
+                  key={surface.court_surface_type_id}
+                  value={surface.court_surface_type_id}
+                >
+                  {surface.court_surface_type_name}
+                </option>
+              ))}
+            </select>
+            {errors.court_surface_type_id && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Mekan Tipi</label>
+            <select
+              {...register("court_structure_type_id", { required: true })}
+            >
+              <option value="">-- Mekan Tipi --</option>
+              {courtStructureTypes?.map((structure) => (
+                <option
+                  key={structure.court_structure_type_id}
+                  value={structure.court_structure_type_id}
+                >
+                  {structure.court_structure_type_name}
+                </option>
+              ))}
+            </select>
+            {errors.court_structure_type_id && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
         </div>
-        <div className={styles["input-container"]}>
-          <label>Mekan Tipi</label>
-          <select {...register("court_structure_type_id", { required: true })}>
-            <option value="">-- Mekan Tipi --</option>
-            {courtStructureTypes?.map((structure) => (
-              <option
-                key={structure.court_structure_type_id}
-                value={structure.court_structure_type_id}
-              >
-                {structure.court_structure_type_name}
-              </option>
-            ))}
-          </select>
-          {errors.court_structure_type_id && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Açılış Saati</label>
+            <input
+              {...register("opening_time", { required: true })}
+              type="time"
+              min="00:00"
+              max="24:00"
+            />
+            {errors.opening_time && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Kapanış Saati</label>
+            <input
+              {...register("closing_time", { required: true })}
+              type="time"
+              min="00:00"
+              max="24:00"
+            />
+            {errors.closing_time && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
         </div>
-        <div className={styles["input-container"]}>
-          <label>Açılış Saati</label>
-          <input
-            {...register("opening_time", { required: true })}
-            type="time"
-            min="00:00"
-            max="24:00"
-          />
-          {errors.opening_time && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
-        </div>
-        <div className={styles["input-container"]}>
-          <label>Kapanış Saati</label>
-          <input
-            {...register("closing_time", { required: true })}
-            type="time"
-            min="00:00"
-            max="24:00"
-          />
-          {errors.closing_time && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
-        </div>
-        <div className={styles["input-container"]}>
-          <label>Fiyat (TL / saat)</label>
-          <input
-            {...register("price_hour", { required: true })}
-            type="number"
-            min="0"
-          />
-          {errors.price_hour && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
-        </div>
-        <button type="submit">Tamamla</button>
+        <button type="submit" className={styles["form-button"]}>
+          Tamamla
+        </button>
       </form>
     </Modal>
   );
