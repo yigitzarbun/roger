@@ -7,7 +7,7 @@ import ClubCourtsSearch from "../../components/club-courts/search/ClubCourtsSear
 import AddCourtButton from "../../components/club-courts/add-court-button/AddCourtButton";
 import ClubCourtsResults from "../../components/club-courts/results/ClubCourtsResults";
 import AddCourtModal from "../../components/club-courts/add-court-modal/AddCourtModal";
-import EditCourtModal from "../../components/club-courts/edit-court/EditCourtModal";
+import EditCourtModal from "../../components/club-courts/edit-court-modal/EditCourtModal";
 
 const ClubCourts = () => {
   const [surfaceTypeId, setSurfaceTypeId] = useState<number | null>(null);

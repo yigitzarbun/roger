@@ -102,12 +102,7 @@ const TrainingInviteForm = () => {
     const isCurrentDate =
       selectedDateObj.toDateString() === currentDate.toDateString();
 
-    // If the selected date is the current date, filter out time slots before the current hour
     if (isCurrentDate) {
-      const currentHour = currentDate.getHours();
-      const currentMinute = currentDate.getMinutes();
-      const currentTotalMinutes = currentHour * 60 + currentMinute;
-
       // Find the next available time slot after the current hour
       while (startTime < closingTime) {
         const endTime = addMinutes(startTime, slotDurationInMinutes);

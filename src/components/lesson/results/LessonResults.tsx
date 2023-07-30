@@ -147,12 +147,13 @@ const LessonResults = (props: TrainSearchProps) => {
                 <td>{parseFloat(trainer.price_hour).toFixed(2)}</td>
                 <td>
                   <Link
-                    to={paths.TRAIN_INVITE}
+                    to={paths.LESSON_INVITE}
                     state={{
                       fname: trainer.fname,
                       lname: trainer.lname,
                       image: trainer.image,
-                      court_price: "100",
+                      court_price: "",
+                      user_id: trainer.user_id,
                     }}
                     className={styles["accept-button"]}
                   >

@@ -122,7 +122,7 @@ const TrainResults = (props: TrainResultsProps) => {
                       fname: player.fname,
                       lname: player.lname,
                       image: player.image,
-                      court_price: "100",
+                      court_price: "",
                       user_id: player.user_id,
                     }}
                     className={styles["accept-button"]}

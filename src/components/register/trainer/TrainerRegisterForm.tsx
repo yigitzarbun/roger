@@ -98,10 +98,10 @@ const TrainerRegisterForm = () => {
           trainer_employment_type_id: Number(
             formData.trainer_employment_type_id
           ),
-          club_id: formData.club_id,
-          user_id: newUser.user_id,
+          club_id: Number(formData.club_id),
+          user_id: Number(newUser.user_id),
         };
-        // register player
+        // register trainer
         await addTrainer(trainerRegisterData);
         navigate(paths.LOGIN);
         reset();

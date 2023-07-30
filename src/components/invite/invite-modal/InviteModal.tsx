@@ -3,6 +3,13 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
+import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import { useGetUsersQuery } from "../../../store/auth/apiSlice";
+import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
+import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
+import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
+
 export type FormValues = {
   event_type_id: number;
   event_date: string;
@@ -12,6 +19,7 @@ export type FormValues = {
   court_id: number;
   court_price: number;
   lesson_price: number | null;
+  invitee_id: string;
 };
 
 interface ModalProps {
@@ -27,13 +35,42 @@ const InviteModal = ({
   formData,
   handleCloseModal,
 }: ModalProps) => {
+  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+  const { data: userTypes, isLoading: isUserTypesLoading } =
+    useGetUserTypesQuery({});
+
+  const invitee = users?.find(
+    (user) => user.user_id === Number(formData?.invitee_id)
+  );
+
+  const inviteeUserTypeId = userTypes?.find(
+    (type) => type.user_type_id === invitee?.user_type_id
+  )?.user_type_id;
+
+  if (
+    isUsersLoading ||
+    isPlayersLoading ||
+    isTrainersLoading ||
+    isClubsLoading ||
+    isCourtsLoading ||
+    isUserTypesLoading
+  ) {
+    return <div>Yükleniyor..</div>;
+  }
+
   return (
     <Modal isOpen={modal} className={styles["modal-container"]}>
       <div className={styles["top-container"]}>
         <h1>
-          {formData?.event_type_id === 3
+          {Number(formData?.event_type_id) === 3
             ? "Ders"
-            : formData?.event_type_id === 2
+            : Number(formData?.event_type_id) === 2
             ? "Maç"
             : "Antreman"}
         </h1>
@@ -62,20 +99,79 @@ const InviteModal = ({
             <td>
               <img />
             </td>
-            <td>isim</td>
+            <td>
+              {inviteeUserTypeId === 1
+                ? `${
+                    players?.find(
+                      (player) =>
+                        player.user_id === Number(formData?.invitee_id)
+                    )?.fname
+                  } ${
+                    players?.find(
+                      (player) =>
+                        player.user_id === Number(formData?.invitee_id)
+                    )?.lname
+                  }`
+                : inviteeUserTypeId === 2
+                ? `${
+                    trainers?.find(
+                      (trainer) => trainer.user_id === invitee.user_id
+                    )?.fname
+                  } ${
+                    trainers?.find(
+                      (trainer) => trainer.user_id === invitee.user_id
+                    )?.lname
+                  }`
+                : ""}
+            </td>
             <td>{formData?.event_date}</td>
             <td>{formData?.event_time}</td>
-            <td>{formData?.club_id}</td>
-            <td>{formData?.court_id}</td>
-            <td>{formData?.court_price}</td>
-            {formData?.event_type_id === 3 && <td>{formData?.lesson_price}</td>}
+            <td>
+              {
+                clubs?.find(
+                  (club) => club.club_id === Number(formData?.club_id)
+                )?.club_name
+              }
+            </td>
+            <td>
+              {
+                courts?.find(
+                  (court) => court.court_id === Number(formData?.court_id)
+                )?.court_name
+              }
+            </td>
+            <td>
+              {
+                courts?.find(
+                  (court) => court.court_id === Number(formData?.court_id)
+                )?.price_hour
+              }
+            </td>
+            {formData?.event_type_id === 3 && (
+              <td>
+                {
+                  trainers?.find(
+                    (trainer) => trainer.user_id === invitee.user_id
+                  )?.price_hour
+                }
+              </td>
+            )}
             {formData?.event_type_id === 3 ? (
               <td className={styles["total-sum-text"]}>
-                {Number(formData?.court_price) + Number(formData?.lesson_price)}
+                {courts?.find(
+                  (court) => court.court_id === Number(formData?.court_id)
+                )?.price_hour +
+                  trainers?.find(
+                    (trainer) => trainer.user_id === invitee.user_id
+                  )?.price_hour}
               </td>
             ) : (
               <td className={styles["total-sum-text"]}>
-                {Number(formData?.court_price)}
+                {
+                  courts?.find(
+                    (court) => court.court_id === Number(formData?.court_id)
+                  )?.price_hour
+                }
               </td>
             )}
           </tr>

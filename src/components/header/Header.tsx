@@ -54,11 +54,11 @@ const Header = () => {
             }
           >
             {user.user && userType === 1
-              ? user.user.playerDetails.fname
+              ? user.user.playerDetails?.fname
               : userType === 2
-              ? user.user.trainerDetails.fname
+              ? user.user.trainerDetails?.fname
               : userType === 3
-              ? user.user.clubDetails.club_name
+              ? user.user.clubDetails?.club_name
               : "Profil"}
           </NavLink>
           <button className={styles["logout-link"]} onClick={handleLogout}>

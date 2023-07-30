@@ -116,12 +116,13 @@ const MatchResults = (props: MatchResultsProps) => {
                 </td>
                 <td>
                   <Link
-                    to={paths.TRAIN_INVITE}
+                    to={paths.MATCH_INVITE}
                     state={{
                       fname: player.fname,
                       lname: player.lname,
                       image: player.image,
-                      court_price: "100",
+                      court_price: "",
+                      user_id: player.user_id,
                     }}
                     className={styles["accept-button"]}
                   >

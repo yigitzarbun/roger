@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
@@ -16,6 +16,8 @@ import {
 } from "../../../api/endpoints/CourtsApi";
 
 import { useAppSelector } from "../../../store/hooks";
+
+import { generateTimesArray } from "../../../common/util/TimeFunctions";
 
 interface EditCourtModalProps {
   isEditCourtModalOpen: boolean;
@@ -56,6 +58,11 @@ const EditCourtModal = (props: EditCourtModalProps) => {
 
   const selectedCourt = courts?.find((court) => court.court_id === court_id);
 
+  const [openingTime, setOpeningTime] = useState<string>("00:00");
+  const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setOpeningTime(event.target.value);
+  };
+
   const {
     register,
     handleSubmit,
@@ -84,17 +91,20 @@ const EditCourtModal = (props: EditCourtModalProps) => {
 
   useEffect(() => {
     if (courts && selectedCourt) {
+      const openingTimePart =
+        selectedCourt.opening_time?.substring(0, 5) || "00:00";
+      const closingTimePart =
+        selectedCourt.closing_time?.substring(0, 5) || "00:00";
       reset({
         court_name: selectedCourt.court_name || "",
-        opening_time: selectedCourt.opening_time || "",
-        closing_time: selectedCourt.closing_time || "",
+        opening_time: openingTimePart,
+        closing_time: closingTimePart,
         price_hour: selectedCourt.price_hour || 0,
         court_structure_type_id: selectedCourt.court_structure_type_id || 0,
         court_surface_type_id: selectedCourt.court_surface_type_id || 0,
       });
     }
   }, [selectedCourt, courts, reset]);
-
   useEffect(() => {
     if (isSuccess) {
       refetch();
@@ -184,26 +194,47 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Açılış Saati</label>
-            <input
+            <select
               {...register("opening_time", { required: true })}
-              type="time"
-              min="00:00"
-              max="24:00"
-            />
+              onChange={handleOpeningTime}
+            >
+              <option value="">-- Açılış Saati --</option>
+              {generateTimesArray(24).map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
             {errors.opening_time && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
           <div className={styles["input-container"]}>
             <label>Kapanış Saati</label>
-            <input
-              {...register("closing_time", { required: true })}
-              type="time"
-              min="00:00"
-              max="24:00"
-            />
-            {errors.closing_time && (
+            <select
+              {...register("closing_time", {
+                required: true,
+                validate: (value) => {
+                  const closing = Number(String(value).slice(0, 2));
+                  const opening = Number(String(openingTime).slice(0, 2));
+                  return closing > opening;
+                },
+              })}
+            >
+              <option value="">-- Kapanış Saati --</option>
+              {generateTimesArray(24).map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+            {errors.closing_time?.type === "required" && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+            {errors.closing_time?.type === "validate" && (
+              <span className={styles["error-field"]}>
+                Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
+              </span>
             )}
           </div>
         </div>

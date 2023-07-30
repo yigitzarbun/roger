@@ -1,18 +1,148 @@
 import React from "react";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import styles from "./styles.module.scss";
+
 import paths from "../../../../routing/Paths";
+
 import { useForm, SubmitHandler } from "react-hook-form";
+
 import InviteModal from "../../invite-modal/InviteModal";
+
 import { useState } from "react";
 
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+
+import { useAppSelector } from "../../../../store/hooks";
+
 import { FormValues } from "../../invite-modal/InviteModal";
+import {
+  useAddBookingMutation,
+  useGetBookingsQuery,
+} from "../../../../api/endpoints/BookingsApi";
+
+import {
+  addMinutes,
+  formatTime,
+  roundToNearestHour,
+} from "../../../../common/util/TimeFunctions";
 
 const MatchInviteForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const player = location.state;
+
+  const { user } = useAppSelector((store) => store.user);
+
+  const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
+
+  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
+    {}
+  );
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const today = new Date();
+  let day = String(today.getDate());
+  let month = String(today.getMonth() + 1);
+  const year = today.getFullYear();
+
+  day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
+  month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
+
+  const currentDay = `${year}-${month}-${day}`;
+
+  const currentHour = String(today.getHours()).padStart(2, "0");
+  const currentMinute = String(today.getMinutes()).padStart(2, "0");
+  const currentTime = `${currentHour}:${currentMinute}`;
+
+  const [selectedDate, setSelectedDate] = useState("");
+  const handleSelectedDate = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
+  const [selectedTime, setSelectedTime] = useState("");
+  const handleSelectedTime = (event) => {
+    setSelectedTime(event.target.value);
+  };
+  const [selectedClub, setSelectedClub] = useState(null);
+  const handleSelectedClub = (event) => {
+    setSelectedClub(Number(event.target.value));
+  };
+
+  const [selectedCourt, setSelectedCourt] = useState(null);
+  const handleSelectedCourt = (event) => {
+    setSelectedCourt(Number(event.target.value));
+  };
+
+  const bookedHoursForSelectedCourtOnSelectedDate = bookings?.filter(
+    (booking) =>
+      booking.court_id === selectedCourt && booking.event_date === selectedDate
+  );
+
+  // Determine the available time slots based on the opening and closing times and the booked hours
+  const availableTimeSlots = [];
+  if (selectedCourt && selectedDate && courts) {
+    const selectedCourtInfo = courts.find(
+      (court) => court.court_id === selectedCourt
+    );
+    const openingTime = selectedCourtInfo.opening_time; // Make sure this is in "HH:mm" format
+    const closingTime = selectedCourtInfo.closing_time; // Make sure this is in "HH:mm" format
+    const slotDurationInMinutes = 60;
+
+    // Loop through the time slots to create available time slots
+    let startTime = roundToNearestHour(openingTime);
+
+    // Check if the selected date is the same as the current date
+    const currentDate = new Date();
+    const selectedDateObj = new Date(selectedDate);
+    const isCurrentDate =
+      selectedDateObj.toDateString() === currentDate.toDateString();
+
+    if (isCurrentDate) {
+      // Find the next available time slot after the current hour
+      while (startTime < closingTime) {
+        const endTime = addMinutes(startTime, slotDurationInMinutes);
+        const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
+          (booking) =>
+            (startTime <= booking.event_time && booking.event_time < endTime) ||
+            (startTime < booking.end_time && booking.end_time <= endTime)
+        );
+
+        if (!isBooked && startTime >= currentTime) {
+          availableTimeSlots.push({
+            start: startTime,
+            end: endTime,
+          });
+        }
+
+        startTime = roundToNearestHour(endTime);
+      }
+    } else {
+      // If the selected date is in the future, show all time slots from opening to closing
+      while (startTime < closingTime) {
+        const endTime = addMinutes(startTime, slotDurationInMinutes);
+        const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
+          (booking) =>
+            (startTime <= booking.event_time && booking.event_time < endTime) ||
+            (startTime < booking.end_time && booking.end_time <= endTime)
+        );
+
+        if (!isBooked) {
+          availableTimeSlots.push({
+            start: startTime,
+            end: endTime,
+          });
+        }
+
+        startTime = roundToNearestHour(endTime);
+      }
+    }
+  }
+
   const {
     register,
     handleSubmit,
@@ -27,28 +157,28 @@ const MatchInviteForm = () => {
     const bookingData = {
       event_date: formData.event_date,
       event_time: formData.event_time,
-      // get from api
+      // TO DO: get from api
       booking_status_type_id: 1,
-      // get from api
+      // TO DO: get from api
       event_type_id: 2,
       club_id: formData.club_id,
       court_id: formData.court_id,
-      inviter_id: 1111111,
+      inviter_id: user.user.user_id,
       invitee_id: player.user_id,
       lesson_price: null,
-      court_price: null,
+      court_price: courts?.find((court) => court.court_id === selectedCourt)
+        .price_hour,
     };
-    console.log(bookingData);
     setFormData(bookingData);
     setModal(true);
   };
 
   const handleModalSubmit = () => {
     setModal(false);
-    handleSubmit((data) => {
-      console.log(data);
+    handleSubmit(() => {
+      addBooking(formData);
       reset();
-      navigate(paths.MATCH);
+      navigate(paths.TRAIN);
     })();
   };
 
@@ -78,49 +208,74 @@ const MatchInviteForm = () => {
                 required: "Bu alan zorunludur",
               })}
               type="date"
+              onChange={handleSelectedDate}
+              min={currentDay}
             />
             {errors.event_date && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>Saat</label>
-            <input
-              {...register("event_time", {
-                required: "Bu alan zorunludur",
-              })}
-              type="time"
-            />
-            {errors.event_time && (
-              <span className={styles["error-field"]}>
-                {errors.event_time.message}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Konum</label>
-            <select {...register("club_id", { required: true })}>
+            <label>Kulüp</label>
+            <select
+              {...register("club_id", { required: true })}
+              onChange={handleSelectedClub}
+            >
               <option value="">-- Seçim yapın --</option>
-              <option value="enka">Enka</option>
-              <option value="ted">TED</option>
-              <option value="antuka">Antuka</option>
+              {clubs?.map((club) => (
+                <option key={club.club_id} value={club.club_id}>
+                  {club.club_name}
+                </option>
+              ))}
             </select>
             {errors.club_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Kort</label>
-            <select {...register("court_id", { required: true })}>
+            <select
+              {...register("court_id", { required: true })}
+              onChange={handleSelectedCourt}
+              disabled={!selectedClub || !selectedDate}
+            >
               <option value="">-- Seçim yapın --</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              {selectedClub &&
+                courts
+                  ?.filter((court) => court.club_id === selectedClub)
+                  .map((court) => (
+                    <option key={court.court_id} value={court.court_id}>
+                      {court.court_name}
+                    </option>
+                  ))}
             </select>
             {errors.court_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Saat</label>
+            <select
+              {...register("event_time", {
+                required: "Bu alan zorunludur",
+              })}
+              onChange={handleSelectedTime}
+              value={selectedTime}
+              disabled={!selectedClub || !selectedDate}
+            >
+              <option value="">-- Seçim yapın --</option>
+              {availableTimeSlots.map((timeSlot) => (
+                <option key={timeSlot.start} value={timeSlot.start}>
+                  {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
+                </option>
+              ))}
+            </select>
+            {errors.event_time && (
+              <span className={styles["error-field"]}>
+                {errors.event_time.message}
+              </span>
             )}
           </div>
         </div>

@@ -188,11 +188,10 @@ const AddCourtModal = (props: AddCourtModalProps) => {
               {...register("closing_time", {
                 required: true,
                 validate: (value) => {
-                  const closingHour = Number(value.toString().padStart(2, "0"));
-                  const openingHour = Number(
-                    openingTime.toString().padStart(2, "0")
-                  );
-                  return closingHour > openingHour;
+                  const closing = Number(String(value).slice(0, 2));
+                  const opening = Number(String(openingTime).slice(0, 2));
+
+                  return closing > opening;
                 },
               })}
             >
