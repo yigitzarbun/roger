@@ -15,9 +15,9 @@ export const bookingsSlice = createApi({
         body: booking,
       }),
     }),
-    updatebooking: builder.mutation({
+    updateBooking: builder.mutation({
       query: (updatedBooking) => ({
-        url: `/bookings/${updatedBooking.booking_id}`,
+        url: `/bookings/`,
         method: "PUT",
         body: updatedBooking,
       }),
@@ -28,5 +28,5 @@ export const bookingsSlice = createApi({
 export const {
   useGetBookingsQuery,
   useAddBookingMutation,
-  useUpdatebookingMutation,
+  useUpdateBookingMutation,
 } = bookingsSlice;

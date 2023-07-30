@@ -17,6 +17,7 @@ import courtsRouter from "./src/api/courts/courts-router";
 import courtStructureTypesRouter from "./src/api/court-structure-types/court-structure-types-router";
 import courtSurfaceTypesRouter from "./src/api/court-surface-types/court-surface-types-router";
 import bookingsRouter from "./src/api/bookings/bookings-router";
+import eventTypesRouter from "./src/api/event-types/event-types-router";
 
 const cors = require("cors");
 
@@ -40,6 +41,7 @@ server.use("/api/courts", courtsRouter);
 server.use("/api/court-structure-types", courtStructureTypesRouter);
 server.use("/api/court-surface-types", courtSurfaceTypesRouter);
 server.use("/api/bookings", bookingsRouter);
+server.use("/api/event-types", eventTypesRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

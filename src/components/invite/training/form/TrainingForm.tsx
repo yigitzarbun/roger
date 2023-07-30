@@ -181,7 +181,7 @@ const TrainingInviteForm = () => {
       navigate(paths.TRAIN);
     })();
   };
-
+  console.log(formData);
   const handleCloseModal = () => {
     setModal(false);
   };

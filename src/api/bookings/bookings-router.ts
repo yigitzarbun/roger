@@ -41,7 +41,7 @@ bookingsRouter.post(
 );
 
 bookingsRouter.put(
-  "/:booking_id",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await bookingsModel.update(req.body);
