@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -39,9 +39,11 @@ const MatchInviteForm = () => {
 
   const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
+  const {
+    data: bookings,
+    isLoading: isBookingsLoading,
+    refetch,
+  } = useGetBookingsQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
@@ -155,7 +157,7 @@ const MatchInviteForm = () => {
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const bookingData = {
-      event_date: formData.event_date,
+      event_date: new Date(formData.event_date).toISOString(),
       event_time: formData.event_time,
       // TO DO: get from api
       booking_status_type_id: 1,
@@ -178,13 +180,24 @@ const MatchInviteForm = () => {
     handleSubmit(() => {
       addBooking(formData);
       reset();
-      navigate(paths.TRAIN);
     })();
   };
 
   const handleCloseModal = () => {
     setModal(false);
   };
+
+  if (isBookingsLoading || isClubsLoading || isCourtsLoading) {
+    return;
+    <div>Yükleniyor..</div>;
+  }
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      navigate(paths.REQUESTS);
+    }
+  }, [isSuccess]);
+
   return (
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>

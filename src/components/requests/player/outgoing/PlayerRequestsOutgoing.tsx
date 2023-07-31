@@ -19,7 +19,7 @@ import CancelInviteModal, {
 } from "../../../invite/cancel-modal/CancelInviteModal";
 
 const PlayerRequestsOutgoing = () => {
-  const { user } = useAppSelector((store) => store.user.user);
+  const { user } = useAppSelector((store) => store.user?.user);
 
   const {
     data: bookings,
@@ -209,7 +209,7 @@ const PlayerRequestsOutgoing = () => {
                     )?.event_type_name
                   }
                 </td>
-                <td>{booking.event_date.slice(0, 10)}</td>
+                <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>
                   {

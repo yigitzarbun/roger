@@ -22,7 +22,7 @@ import DeclineInviteModal, {
   DeclineBookingData,
 } from "../../../invite/decline-modal/DeclineInviteModal";
 
-const PlayerRequestsIncoming = () => {
+const TrainerRequestsIncoming = () => {
   const { user } = useAppSelector((store) => store.user.user);
 
   const {
@@ -44,17 +44,12 @@ const PlayerRequestsIncoming = () => {
   const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
     useGetPlayerLevelsQuery({});
 
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
-
   const incomingBookings = bookings?.filter(
     (booking) =>
       booking.invitee_id === user?.user_id &&
       booking.booking_status_type_id === 1
   );
-
+  console.log(incomingBookings);
   const currentYear = new Date().getFullYear();
 
   const [
@@ -125,8 +120,7 @@ const PlayerRequestsIncoming = () => {
     isTrainersLoading ||
     isEventTypesLoading ||
     isPlayersLoading ||
-    isPlayerLevelTypesLoading ||
-    isTrainerExperienceTypesLoading
+    isPlayerLevelTypesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -137,7 +131,7 @@ const PlayerRequestsIncoming = () => {
         <h2 className={styles["result-title"]}>Gelen Davetler</h2>
       </div>
       {incomingBookings?.length === 0 ? (
-        <div>Gelen antreman, maç veya ders daveti bulunmamaktadır</div>
+        <div>Gelen ders daveti bulunmamaktadır</div>
       ) : (
         <table>
           <thead>
@@ -160,81 +154,50 @@ const PlayerRequestsIncoming = () => {
           </thead>
           <tbody>
             {incomingBookings?.map((booking) => (
-              <tr key={booking.booking_id} className={styles["player-row"]}>
+              <tr key={booking.booking_id} className={styles["trainer-row"]}>
                 <td>
                   {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                 </td>
                 <td>
                   <img
                     src="/images/players/player1.png"
-                    className={styles["player-image"]}
+                    className={styles["trainer-image"]}
                   />
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? `${
+                  {`${
+                    players?.find(
+                      (player) => player.user_id === booking.inviter_id
+                    )?.fname
+                  } ${
+                    players?.find(
+                      (player) => player.user_id === booking.inviter_id
+                    )?.lname
+                  }`}
+                </td>
+                <td>
+                  {
+                    playerLevelTypes?.find(
+                      (level) =>
+                        level.player_level_id ===
                         players?.find(
                           (player) => player.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.lname
-                      }`
-                    : booking.event_type_id === 3
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.inviter_id
-                        )?.lname
-                      }`
-                    : ""}
+                        )?.player_level_id
+                    )?.player_level_name
+                  }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? playerLevelTypes?.find(
-                        (level) =>
-                          level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === booking.inviter_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : booking.event_type_id === 3
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
-                          trainers?.find(
-                            (trainer) => trainer.user_id === booking.inviter_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : ""}
+                  {
+                    players?.find(
+                      (player) => player.user_id === booking.inviter_id
+                    )?.gender
+                  }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.gender
-                    : booking.event_type_id === 3
-                    ? trainers?.find(
-                        (trainer) => trainer.user_id === booking.inviter_id
-                      )?.gender
-                    : ""}
-                </td>
-                <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? currentYear -
-                      players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.birth_year
-                    : booking.event_type_id === 3
-                    ? currentYear -
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.inviter_id
-                      )?.birth_year
-                    : ""}
+                  {currentYear -
+                    players?.find(
+                      (player) => player.user_id === booking.inviter_id
+                    )?.birth_year}
                 </td>
                 <td>
                   {
@@ -258,18 +221,11 @@ const PlayerRequestsIncoming = () => {
                   }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour / 2
-                    : booking.event_type_id === 3
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour +
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.inviter_id
-                      )?.price_hour
-                    : "External Booking"}
+                  {
+                    trainers?.find(
+                      (trainer) => trainer.user_id === booking.invitee_id
+                    )?.price_hour
+                  }
                 </td>
                 <td>
                   <button
@@ -304,11 +260,8 @@ const PlayerRequestsIncoming = () => {
         declineBookingData={declineBookingData}
         handleDeclineBooking={handleDeclineBooking}
       />
-      <p className={styles["fee-text"]}>
-        (*) Kort ücreti ve diğer tüm masraflar dahil ödeyeceğin tutar.
-      </p>
     </div>
   );
 };
 
-export default PlayerRequestsIncoming;
+export default TrainerRequestsIncoming;

@@ -10,6 +10,7 @@ import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
+import { useAppSelector } from "../../../store/hooks";
 
 export type AcceptBookingData = {
   booking_id: number;
@@ -37,6 +38,9 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     acceptBookingData,
     handleAcceptBooking,
   } = props;
+
+  const user = useAppSelector((store) => store.user);
+
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
@@ -74,10 +78,10 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
       <div className={styles["top-container"]}>
         <h1>
           {Number(acceptBookingData?.event_type_id) === 3
-            ? "Ders İptal"
+            ? "Ders Onay"
             : Number(acceptBookingData?.event_type_id) === 2
-            ? "Maç İptal"
-            : "Antreman İptal"}
+            ? "Maç Onay"
+            : "Antreman Onay"}
         </h1>
         <img
           src="/images/icons/close.png"
@@ -96,7 +100,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
             <th>Saat</th>
             <th>Konum</th>
             <th>Kort</th>
-            <th>Kort Ücreti (TL)</th>
+            {user.user.user.user_type_id === 1 && <th>Kort Ücreti (TL)</th>}
             {acceptBookingData?.event_type_id === 3 && (
               <th>Ders Ücreti (TL)</th>
             )}
@@ -151,12 +155,11 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
               }
             </td>
             <td>
-              {
+              {user.user.user.user_type_id === 1 &&
                 courts?.find(
                   (court) =>
                     court.court_id === Number(acceptBookingData?.court_id)
-                )?.price_hour
-              }
+                )?.price_hour}
             </td>
             {acceptBookingData?.event_type_id === 3 && (
               <td>

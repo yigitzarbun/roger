@@ -25,7 +25,6 @@ const Header = () => {
     dispatch(logOut());
     navigate(paths.LOGIN);
   };
-
   const isLoggedIn = user.token;
   return (
     <div className={styles["header-container"]}>

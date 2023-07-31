@@ -25,6 +25,8 @@ const server = express();
 server.use(express.json());
 server.use(cors());
 
+process.env.TZ = "UTC";
+
 server.use("/api/usersAuth", usersAuthRouter);
 server.use("/api/users", usersRouter);
 server.use("/api/players", playersRouter);

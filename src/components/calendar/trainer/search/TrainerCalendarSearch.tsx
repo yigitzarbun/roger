@@ -1,27 +1,16 @@
 import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 
-interface PlayerCalendarSearchProps {
+interface TrainerCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
   date: string;
-  eventTypeId: number;
   clubId: number;
 }
-const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
-  const {
-    handleDate,
-    handleEventType,
-    handleClub,
-    handleClear,
-    date,
-    eventTypeId,
-    clubId,
-  } = props;
+const TrainerCalendarSearch = (props: TrainerCalendarSearchProps) => {
+  const { handleDate, handleClub, handleClear, date, clubId } = props;
 
   // date filter
   const currentDate = new Date();
@@ -33,11 +22,9 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
-  if (isEventTypesLoading || isClubsLoading) {
+  if (isClubsLoading) {
     return <div>Yükleniyor..</div>;
   }
 
@@ -50,18 +37,7 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
           <option value={tomorrow.toLocaleDateString()}>Yarın</option>
         </select>
       </div>
-      <div className={styles["input-container"]}>
-        <select onChange={handleEventType} value={eventTypeId ?? ""}>
-          <option value="">-- Tür --</option>
-          {eventTypes
-            ?.filter((type) => type.event_type_name !== "external")
-            .map((type) => (
-              <option key={type.event_type_id} value={type.event_type_id}>
-                {type.event_type_name}
-              </option>
-            ))}
-        </select>
-      </div>
+
       <div className={styles["input-container"]}>
         <select onChange={handleClub} value={clubId ?? ""}>
           <option value="">-- Konum --</option>
@@ -79,4 +55,4 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
   );
 };
 
-export default PlayerCalendarSearch;
+export default TrainerCalendarSearch;

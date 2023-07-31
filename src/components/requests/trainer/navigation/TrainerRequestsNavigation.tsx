@@ -2,15 +2,15 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
-interface PlayerRequestsNavigationProps {
+interface TrainerRequestsNavigationProps {
   display: string;
   handleDisplay: (value: string) => void;
 }
 
-const PlayerRequestsNavigation = ({
+const TrainerRequestsNavigation = ({
   display,
   handleDisplay,
-}: PlayerRequestsNavigationProps) => {
+}: TrainerRequestsNavigationProps) => {
   return (
     <div className={styles["nav-container"]}>
       <button
@@ -37,4 +37,4 @@ const PlayerRequestsNavigation = ({
   );
 };
 
-export default PlayerRequestsNavigation;
+export default TrainerRequestsNavigation;

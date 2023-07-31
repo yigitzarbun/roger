@@ -1,31 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
+
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { BookingData } from "../../../../components/invite/cancel-modal/CancelInviteModal";
 
-import CancelInviteModal from "../../../../components/invite/cancel-modal/CancelInviteModal";
+import CancelInviteModal, {
+  BookingData,
+} from "../../../invite/cancel-modal/CancelInviteModal";
 
-interface PlayerCalendarResultsProps {
-  date: string;
-  eventTypeId: number;
-  clubId: number;
-}
-const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
-  const { date, eventTypeId, clubId } = props;
-
-  // fetch data
-  const user = useAppSelector((store) => store.user.user.user);
+const TrainerRequestsOutgoing = () => {
+  const { user } = useAppSelector((store) => store.user?.user);
 
   const {
     data: bookings,
@@ -33,18 +27,17 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     refetch,
   } = useGetBookingsQuery({});
 
+  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
+  const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
     useGetPlayerLevelsQuery({});
 
   const {
@@ -52,41 +45,14 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-
-  // date
-  const currentDate = new Date();
-
-  const currentYear = currentDate.getFullYear();
-  const today = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
-
-  // bookings
-  const myBookings = bookings?.filter(
+  const outgoingBookings = bookings?.filter(
     (booking) =>
-      (booking.inviter_id === user.user_id ||
-        booking.invitee_id === user.user_id) &&
-      booking.booking_status_type_id === 2 &&
-      new Date(booking.event_date) >= today
+      booking.inviter_id === user?.user_id &&
+      booking.booking_status_type_id === 1
   );
 
-  const filteredBookings = myBookings?.filter((booking) => {
-    const eventDate = new Date(booking.event_date);
-    if (date === "" && eventTypeId === null && clubId === null) {
-      return true;
-    } else if (
-      (date === eventDate.toLocaleDateString() || date === "") &&
-      (eventTypeId === booking.event_type_id || eventTypeId === null) &&
-      (clubId === booking.club_id || clubId === null)
-    ) {
-      return booking;
-    }
-  });
+  const currentYear = new Date().getFullYear();
 
-  // update booking
   const [updateBooking, { data, isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
@@ -118,26 +84,26 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     }
   }, [isSuccess]);
 
-  // data loading check
   if (
     isBookingsLoading ||
-    isPlayersLoading ||
-    isTrainersLoading ||
+    isCourtsLoading ||
     isClubsLoading ||
+    isTrainersLoading ||
     isEventTypesLoading ||
-    isPlayerLevelsLoading ||
-    isTrainerExperienceTypesLoading ||
-    isCourtsLoading
+    isPlayersLoading ||
+    isPlayerLevelTypesLoading ||
+    isTrainerExperienceTypesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Takvim</h2>
+        <h2 className={styles["result-title"]}>Gönderilen Davetler</h2>
       </div>
-      {filteredBookings?.length === 0 ? (
-        <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
+      {outgoingBookings?.length === 0 ? (
+        <div>Gönderilen antreman, maç veya ders daveti bulunmamaktadır</div>
       ) : (
         <table>
           <thead>
@@ -148,18 +114,21 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
               <th>Seviye</th>
               <th>Cinsiyet</th>
               <th>Yaş</th>
-              <th>Tür </th>
+              <th>Tür</th>
               <th>Tarih</th>
               <th>Saat </th>
               <th>Kort</th>
               <th>Konum</th>
+              <th>
+                Ücret<span className={styles["fee"]}>*</span>
+              </th>
             </tr>
           </thead>
           <tbody>
-            {filteredBookings?.map((booking) => (
+            {outgoingBookings?.map((booking) => (
               <tr key={booking.booking_id} className={styles["player-row"]}>
                 <td>
-                  {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
+                  {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                 </td>
                 <td>
                   <img
@@ -168,9 +137,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   />
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.event_type_id === 1 || booking.event_type_id === 2
                     ? `${
                         players?.find(
                           (player) => player.user_id === booking.invitee_id
@@ -178,18 +145,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                       } ${
                         players?.find(
                           (player) => player.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
                         )?.lname
                       }`
                     : booking.event_type_id === 3
@@ -205,24 +160,12 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                     : ""}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
-                    ? playerLevels?.find(
+                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                    ? playerLevelTypes?.find(
                         (level) =>
                           level.player_level_id ===
                           players?.find(
                             (player) => player.user_id === booking.invitee_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === booking.inviter_id
                           )?.player_level_id
                       )?.player_level_name
                     : booking.event_type_id === 3
@@ -236,17 +179,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                     : ""}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.event_type_id === 1 || booking.event_type_id === 2
                     ? players?.find(
                         (player) => player.user_id === booking.invitee_id
-                      )?.gender
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? players?.find(
-                        (player) => player.user_id === booking.inviter_id
                       )?.gender
                     : booking.event_type_id === 3
                     ? trainers?.find(
@@ -255,19 +190,10 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                     : ""}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.event_type_id === 1 || booking.event_type_id === 2
                     ? currentYear -
                       players?.find(
                         (player) => player.user_id === booking.invitee_id
-                      )?.birth_year
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? currentYear -
-                      players?.find(
-                        (player) => player.user_id === booking.inviter_id
                       )?.birth_year
                     : booking.event_type_id === 3
                     ? currentYear -
@@ -330,8 +256,11 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
         bookingData={bookingData}
         handleCancelBooking={handleCancelBooking}
       />
+      <p className={styles["fee-text"]}>
+        (*) Kort ücreti ve diğer tüm masraflar dahil ödeyeceğin tutar.
+      </p>
     </div>
   );
 };
 
-export default PlayerCalendarResults;
+export default TrainerRequestsOutgoing;

@@ -16,13 +16,12 @@ import { BookingData } from "../../../../components/invite/cancel-modal/CancelIn
 
 import CancelInviteModal from "../../../../components/invite/cancel-modal/CancelInviteModal";
 
-interface PlayerCalendarResultsProps {
+interface TrainerCalendarResultsProps {
   date: string;
-  eventTypeId: number;
   clubId: number;
 }
-const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
-  const { date, eventTypeId, clubId } = props;
+const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
+  const { date, clubId } = props;
 
   // fetch data
   const user = useAppSelector((store) => store.user.user.user);
@@ -70,16 +69,16 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
       (booking.inviter_id === user.user_id ||
         booking.invitee_id === user.user_id) &&
       booking.booking_status_type_id === 2 &&
+      booking.event_type_id === 3 &&
       new Date(booking.event_date) >= today
   );
 
   const filteredBookings = myBookings?.filter((booking) => {
     const eventDate = new Date(booking.event_date);
-    if (date === "" && eventTypeId === null && clubId === null) {
+    if (date === "" && clubId === null) {
       return true;
     } else if (
       (date === eventDate.toLocaleDateString() || date === "") &&
-      (eventTypeId === booking.event_type_id || eventTypeId === null) &&
       (clubId === booking.club_id || clubId === null)
     ) {
       return booking;
@@ -153,6 +152,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
               <th>Saat </th>
               <th>Kort</th>
               <th>Konum</th>
+              <th>Ücret</th>
             </tr>
           </thead>
           <tbody>
@@ -168,9 +168,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   />
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id
                     ? `${
                         players?.find(
                           (player) => player.user_id === booking.invitee_id
@@ -180,10 +178,8 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                           (player) => player.user_id === booking.invitee_id
                         )?.lname
                       }`
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? `${
+                    : booking.invitee_id === user.user_id &&
+                      `${
                         players?.find(
                           (player) => player.user_id === booking.inviter_id
                         )?.fname
@@ -191,23 +187,10 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                         players?.find(
                           (player) => player.user_id === booking.inviter_id
                         )?.lname
-                      }`
-                    : booking.event_type_id === 3
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : ""}
+                      }`}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
@@ -215,66 +198,36 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                             (player) => player.user_id === booking.invitee_id
                           )?.player_level_id
                       )?.player_level_name
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? playerLevels?.find(
+                    : booking.invitee_id === user.user_id &&
+                      playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
                           players?.find(
                             (player) => player.user_id === booking.inviter_id
                           )?.player_level_id
-                      )?.player_level_name
-                    : booking.event_type_id === 3
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
-                          trainers?.find(
-                            (trainer) => trainer.user_id === booking.invitee_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : ""}
+                      )?.player_level_name}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id
                     ? players?.find(
                         (player) => player.user_id === booking.invitee_id
                       )?.gender
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? players?.find(
+                    : booking.invitee_id === user.user_id &&
+                      players?.find(
                         (player) => player.user_id === booking.inviter_id
-                      )?.gender
-                    : booking.event_type_id === 3
-                    ? trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.gender
-                    : ""}
+                      )?.gender}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id
                     ? currentYear -
                       players?.find(
                         (player) => player.user_id === booking.invitee_id
                       )?.birth_year
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? currentYear -
-                      players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.birth_year
-                    : booking.event_type_id === 3
-                    ? currentYear -
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.birth_year
-                    : ""}
+                    : booking.invitee_id === user.user_id &&
+                      currentYear -
+                        players?.find(
+                          (player) => player.user_id === booking.inviter_id
+                        )?.birth_year}
                 </td>
                 <td>
                   {
@@ -298,18 +251,11 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour / 2
-                    : booking.event_type_id === 3
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour +
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.price_hour
-                    : "External Booking"}
+                  {
+                    trainers?.find(
+                      (trainer) => trainer.user_id === user.user_id
+                    )?.price_hour
+                  }
                 </td>
                 <td>
                   <button
@@ -334,4 +280,4 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   );
 };
 
-export default PlayerCalendarResults;
+export default TrainerCalendarResults;

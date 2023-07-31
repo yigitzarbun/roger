@@ -10,6 +10,7 @@ import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
+import { useAppSelector } from "../../../store/hooks";
 
 export type BookingData = {
   booking_id: number;
@@ -22,6 +23,7 @@ export type BookingData = {
   court_price: number;
   lesson_price: number | null;
   invitee_id: number;
+  inviter_id: number;
 };
 
 interface CancelInviteModalProps {
@@ -33,6 +35,8 @@ interface CancelInviteModalProps {
 const CancelInviteModal = (props: CancelInviteModalProps) => {
   const { isModalOpen, handleCloseModal, bookingData, handleCancelBooking } =
     props;
+  const user = useAppSelector((store) => store.user.user.user);
+
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
@@ -43,13 +47,22 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
 
-  const invitee = users?.find(
-    (user) => user.user_id === Number(bookingData?.invitee_id)
-  );
+  const isUserPlayer = user.user_type_id === 1;
+  const isUserTrainer = user.user_type_id === 2;
 
-  const inviteeUserTypeId = userTypes?.find(
-    (type) => type.user_type_id === invitee?.user_type_id
-  )?.user_type_id;
+  const isUserInviter = bookingData?.inviter_id === user.user_id;
+  const isUserInvitee = bookingData?.invitee_id === user.user_id;
+
+  const oppositionUser = isUserInviter
+    ? users?.find((user) => user.user_id === bookingData?.invitee_id)
+    : isUserInvitee &&
+      users?.find((user) => user.user_id === bookingData?.inviter_id);
+
+  const opposition =
+    oppositionUser.user_type_id === 1
+      ? players?.find((player) => player.user_id === oppositionUser.user_id)
+      : oppositionUser.user_type_id === 2 &&
+        trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
 
   if (
     isUsersLoading ||
@@ -90,9 +103,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             <th>Saat</th>
             <th>Konum</th>
             <th>Kort</th>
-            <th>Kort Ücreti (TL)</th>
+            {user.user_type_id === 1 && <th>Kort Ücreti (TL)</th>}
             {bookingData?.event_type_id === 3 && <th>Ders Ücreti (TL)</th>}
-            <th>Toplam Tutar (TL)</th>
+            {user.user_type_id === 1 && <th>Toplam Tutar (TL)</th>}
           </tr>
         </thead>
         <tbody>
@@ -100,31 +113,7 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             <td>
               <img />
             </td>
-            <td>
-              {inviteeUserTypeId === 1
-                ? `${
-                    players?.find(
-                      (player) =>
-                        player.user_id === Number(bookingData?.invitee_id)
-                    )?.fname
-                  } ${
-                    players?.find(
-                      (player) =>
-                        player.user_id === Number(bookingData?.invitee_id)
-                    )?.lname
-                  }`
-                : inviteeUserTypeId === 2
-                ? `${
-                    trainers?.find(
-                      (trainer) => trainer.user_id === invitee.user_id
-                    )?.fname
-                  } ${
-                    trainers?.find(
-                      (trainer) => trainer.user_id === invitee.user_id
-                    )?.lname
-                  }`
-                : ""}
-            </td>
+            <td>{`${opposition.fname} ${opposition.lname}`}</td>
             <td>{bookingData?.event_date}</td>
             <td>{bookingData?.event_time}</td>
             <td>
@@ -142,39 +131,67 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
               }
             </td>
             <td>
-              {
+              {isUserPlayer &&
+                (bookingData.event_type_id === 1 ||
+                  bookingData.event_type_id === 2) &&
                 courts?.find(
                   (court) => court.court_id === Number(bookingData?.court_id)
-                )?.price_hour
-              }
+                )?.price_hour / 2}
+              {isUserPlayer &&
+                bookingData.event_type_id === 3 &&
+                courts?.find(
+                  (court) => court.court_id === Number(bookingData?.court_id)
+                )?.price_hour}
             </td>
             {bookingData?.event_type_id === 3 && (
               <td>
-                {
+                {isUserTrainer &&
+                  trainers?.find((trainer) => trainer.user_id === user.user_id)
+                    ?.price_hour}
+                {isUserPlayer &&
+                  isUserInvitee &&
                   trainers?.find(
-                    (trainer) => trainer.user_id === invitee.user_id
-                  )?.price_hour
-                }
-              </td>
-            )}
-            {bookingData?.event_type_id === 3 ? (
-              <td className={styles["total-sum-text"]}>
-                {courts?.find(
-                  (court) => court.court_id === Number(bookingData?.court_id)
-                )?.price_hour +
+                    (trainer) => trainer.user_id === bookingData?.inviter_id
+                  )?.price_hour}
+                {isUserPlayer &&
+                  isUserInviter &&
                   trainers?.find(
-                    (trainer) => trainer.user_id === invitee.user_id
+                    (trainer) => trainer.user_id === bookingData?.invitee_id
                   )?.price_hour}
               </td>
-            ) : (
-              <td className={styles["total-sum-text"]}>
-                {
-                  courts?.find(
-                    (court) => court.court_id === Number(bookingData?.court_id)
-                  )?.price_hour
-                }
-              </td>
             )}
+            {isUserPlayer &&
+              bookingData?.event_type_id === 3 &&
+              isUserInviter && (
+                <td>
+                  {courts?.find(
+                    (court) => court.court_id === bookingData?.court_id
+                  )?.price_hour +
+                    trainers?.find(
+                      (trainer) => trainer.user_id === bookingData?.invitee_id
+                    ).price_hour}
+                </td>
+              )}
+            {isUserPlayer &&
+              bookingData?.event_type_id === 3 &&
+              isUserInvitee && (
+                <td>
+                  {courts?.find(
+                    (court) => court.court_id === bookingData?.court_id
+                  )?.price_hour +
+                    trainers?.find(
+                      (trainer) => trainer.user_id === bookingData?.inviter_id
+                    )?.price_hour}
+                </td>
+              )}
+            {(isUserPlayer && bookingData?.event_type_id === 1) ||
+              (isUserPlayer && bookingData?.event_type_id === 2 && (
+                <td>
+                  {courts?.find(
+                    (court) => court.court_id === bookingData?.court_id
+                  )?.price_hour / 2}
+                </td>
+              ))}
           </tr>
         </tbody>
       </table>

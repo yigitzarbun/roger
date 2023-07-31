@@ -8,7 +8,7 @@ import { useState } from "react";
 import styles from "./styles.module.scss";
 
 const PlayerRequets = () => {
-  const [display, setDisplay] = useState("incoming");
+  const [display, setDisplay] = useState("outgoing");
   const handleDisplay = (value: string) => {
     setDisplay(value);
   };
