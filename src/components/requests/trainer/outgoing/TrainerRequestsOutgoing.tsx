@@ -103,7 +103,7 @@ const TrainerRequestsOutgoing = () => {
         <h2 className={styles["result-title"]}>Gönderilen Davetler</h2>
       </div>
       {outgoingBookings?.length === 0 ? (
-        <div>Gönderilen antreman, maç veya ders daveti bulunmamaktadır</div>
+        <div>Gönderilen ders daveti bulunmamaktadır</div>
       ) : (
         <table>
           <thead>
@@ -256,9 +256,6 @@ const TrainerRequestsOutgoing = () => {
         bookingData={bookingData}
         handleCancelBooking={handleCancelBooking}
       />
-      <p className={styles["fee-text"]}>
-        (*) Kort ücreti ve diğer tüm masraflar dahil ödeyeceğin tutar.
-      </p>
     </div>
   );
 };

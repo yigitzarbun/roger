@@ -137,8 +137,10 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
                   }`
                 : ""}
             </td>
-            <td>{acceptBookingData?.event_date}</td>
-            <td>{acceptBookingData?.event_time}</td>
+            <td>
+              {new Date(acceptBookingData?.event_date).toLocaleDateString()}
+            </td>
+            <td>{acceptBookingData?.event_time.slice(0, 5)}</td>
             <td>
               {
                 clubs?.find(
@@ -159,7 +161,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
                 courts?.find(
                   (court) =>
                     court.court_id === Number(acceptBookingData?.court_id)
-                )?.price_hour}
+                )?.price_hour / 2}
             </td>
             {acceptBookingData?.event_type_id === 3 && (
               <td>
@@ -182,12 +184,10 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
               </td>
             ) : (
               <td className={styles["total-sum-text"]}>
-                {
-                  courts?.find(
-                    (court) =>
-                      court.court_id === Number(acceptBookingData?.court_id)
-                  )?.price_hour
-                }
+                {courts?.find(
+                  (court) =>
+                    court.court_id === Number(acceptBookingData?.court_id)
+                )?.price_hour / 2}
               </td>
             )}
           </tr>

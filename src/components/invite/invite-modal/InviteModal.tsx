@@ -124,7 +124,7 @@ const InviteModal = ({
                   }`
                 : ""}
             </td>
-            <td>{formData?.event_date}</td>
+            <td>{new Date(formData.event_date).toLocaleDateString()}</td>
             <td>{formData?.event_time}</td>
             <td>
               {
@@ -141,11 +141,9 @@ const InviteModal = ({
               }
             </td>
             <td>
-              {
-                courts?.find(
-                  (court) => court.court_id === Number(formData?.court_id)
-                )?.price_hour
-              }
+              {courts?.find(
+                (court) => court.court_id === Number(formData?.court_id)
+              )?.price_hour / 2}
             </td>
             {formData?.event_type_id === 3 && (
               <td>
@@ -167,11 +165,9 @@ const InviteModal = ({
               </td>
             ) : (
               <td className={styles["total-sum-text"]}>
-                {
-                  courts?.find(
-                    (court) => court.court_id === Number(formData?.court_id)
-                  )?.price_hour
-                }
+                {courts?.find(
+                  (court) => court.court_id === Number(formData?.court_id)
+                )?.price_hour / 2}
               </td>
             )}
           </tr>

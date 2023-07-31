@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import styles from "./styles.module.scss";
+
 import TrainerRequestsHero from "../../../components/requests/trainer/hero/TrainerRequestsHero";
 import TrainerRequestsNavigation from "../../../components/requests/trainer/navigation/TrainerRequestsNavigation";
 import TrainerRequestsIncoming from "../../../components/requests/trainer/incoming/TrainerRequestsIncoming";
@@ -11,7 +13,7 @@ const TrainerRequests = () => {
     setDisplay(value);
   };
   return (
-    <div>
+    <div className={styles["requests-container"]}>
       <TrainerRequestsHero />
       <TrainerRequestsNavigation
         display={display}

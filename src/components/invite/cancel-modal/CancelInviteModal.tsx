@@ -64,6 +64,10 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
       : oppositionUser.user_type_id === 2 &&
         trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
 
+  const isEventTraining = bookingData?.event_type_id === 1;
+  const isEventMatch = bookingData?.event_type_id === 2;
+  const isEventLesson = bookingData?.event_type_id === 3;
+
   if (
     isUsersLoading ||
     isPlayersLoading ||
@@ -82,9 +86,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     >
       <div className={styles["top-container"]}>
         <h1>
-          {Number(bookingData?.event_type_id) === 3
+          {isEventLesson
             ? "Ders İptal"
-            : Number(bookingData?.event_type_id) === 2
+            : isEventMatch
             ? "Maç İptal"
             : "Antreman İptal"}
         </h1>
@@ -97,15 +101,19 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
       <table>
         <thead>
           <tr>
-            <th>{bookingData?.event_type_id === 3 ? "Eğitmen" : "Oyuncu"}</th>
+            <th>
+              {isEventLesson && isUserPlayer
+                ? "Eğitmen"
+                : isEventLesson && isUserTrainer && "Oyuncu"}
+            </th>
             <th>İsim</th>
             <th>Tarih</th>
             <th>Saat</th>
             <th>Konum</th>
             <th>Kort</th>
-            {user.user_type_id === 1 && <th>Kort Ücreti (TL)</th>}
-            {bookingData?.event_type_id === 3 && <th>Ders Ücreti (TL)</th>}
-            {user.user_type_id === 1 && <th>Toplam Tutar (TL)</th>}
+            {isUserPlayer && <th>Kort Ücreti (TL)</th>}
+            {isEventLesson && <th>Ders Ücreti (TL)</th>}
+            {isUserPlayer && <th>Toplam Tutar (TL)</th>}
           </tr>
         </thead>
         <tbody>
@@ -114,8 +122,8 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
               <img />
             </td>
             <td>{`${opposition.fname} ${opposition.lname}`}</td>
-            <td>{bookingData?.event_date}</td>
-            <td>{bookingData?.event_time}</td>
+            <td>{new Date(bookingData?.event_date).toLocaleDateString()}</td>
+            <td>{bookingData?.event_time.slice(0, 5)}</td>
             <td>
               {
                 clubs?.find(
@@ -130,20 +138,22 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
                 )?.court_name
               }
             </td>
-            <td>
-              {isUserPlayer &&
-                (bookingData.event_type_id === 1 ||
-                  bookingData.event_type_id === 2) &&
-                courts?.find(
-                  (court) => court.court_id === Number(bookingData?.court_id)
-                )?.price_hour / 2}
-              {isUserPlayer &&
-                bookingData.event_type_id === 3 &&
-                courts?.find(
-                  (court) => court.court_id === Number(bookingData?.court_id)
-                )?.price_hour}
-            </td>
-            {bookingData?.event_type_id === 3 && (
+            {/* kort ücreti */}
+            {isUserPlayer && (
+              <td>
+                {(isEventTraining || isEventMatch) &&
+                  courts?.find(
+                    (court) => court.court_id === Number(bookingData?.court_id)
+                  )?.price_hour / 2}
+                {isEventLesson &&
+                  courts?.find(
+                    (court) => court.court_id === Number(bookingData?.court_id)
+                  )?.price_hour}
+              </td>
+            )}
+
+            {/* ders ücreti */}
+            {isEventLesson && (
               <td>
                 {isUserTrainer &&
                   trainers?.find((trainer) => trainer.user_id === user.user_id)
@@ -160,38 +170,35 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
                   )?.price_hour}
               </td>
             )}
-            {isUserPlayer &&
-              bookingData?.event_type_id === 3 &&
-              isUserInviter && (
-                <td>
-                  {courts?.find(
-                    (court) => court.court_id === bookingData?.court_id
-                  )?.price_hour +
-                    trainers?.find(
-                      (trainer) => trainer.user_id === bookingData?.invitee_id
-                    ).price_hour}
-                </td>
-              )}
-            {isUserPlayer &&
-              bookingData?.event_type_id === 3 &&
-              isUserInvitee && (
-                <td>
-                  {courts?.find(
-                    (court) => court.court_id === bookingData?.court_id
-                  )?.price_hour +
-                    trainers?.find(
-                      (trainer) => trainer.user_id === bookingData?.inviter_id
-                    )?.price_hour}
-                </td>
-              )}
-            {(isUserPlayer && bookingData?.event_type_id === 1) ||
-              (isUserPlayer && bookingData?.event_type_id === 2 && (
-                <td>
-                  {courts?.find(
-                    (court) => court.court_id === bookingData?.court_id
-                  )?.price_hour / 2}
-                </td>
-              ))}
+            {/* toplam ücret */}
+            {isUserPlayer && isEventLesson && isUserInviter && (
+              <td>
+                {courts?.find(
+                  (court) => court.court_id === bookingData?.court_id
+                )?.price_hour +
+                  trainers?.find(
+                    (trainer) => trainer.user_id === bookingData?.invitee_id
+                  ).price_hour}
+              </td>
+            )}
+            {isUserPlayer && isEventLesson && isUserInvitee && (
+              <td>
+                {courts?.find(
+                  (court) => court.court_id === bookingData?.court_id
+                )?.price_hour +
+                  trainers?.find(
+                    (trainer) => trainer.user_id === bookingData?.inviter_id
+                  )?.price_hour}
+              </td>
+            )}
+            {((isUserPlayer && isEventTraining) ||
+              (isUserPlayer && isEventMatch)) && (
+              <td>
+                {courts?.find(
+                  (court) => court.court_id === bookingData?.court_id
+                )?.price_hour / 2}
+              </td>
+            )}
           </tr>
         </tbody>
       </table>
