@@ -35,6 +35,7 @@ interface CancelInviteModalProps {
 const CancelInviteModal = (props: CancelInviteModalProps) => {
   const { isModalOpen, handleCloseModal, bookingData, handleCancelBooking } =
     props;
+
   const user = useAppSelector((store) => store.user.user.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});

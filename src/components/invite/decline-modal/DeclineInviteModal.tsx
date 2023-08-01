@@ -11,6 +11,8 @@ import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 
+import { useAppSelector } from "../../../store/hooks";
+
 export type DeclineBookingData = {
   booking_id: number;
   event_type_id: number;
@@ -22,6 +24,7 @@ export type DeclineBookingData = {
   court_price: number;
   lesson_price: number | null;
   invitee_id: number;
+  inviter_id: number;
 };
 
 interface DeclineInviteModalProps {
@@ -38,6 +41,8 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
     handleDeclineBooking,
   } = props;
 
+  const user = useAppSelector((store) => store.user.user.user);
+
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
@@ -48,13 +53,26 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
 
-  const invitee = users?.find(
-    (user) => user.user_id === Number(declineBookingData?.invitee_id)
-  );
+  const isUserPlayer = user.user_type_id === 1;
+  const isUserTrainer = user.user_type_id === 2;
 
-  const inviteeUserTypeId = userTypes?.find(
-    (type) => type.user_type_id === invitee?.user_type_id
-  )?.user_type_id;
+  const isUserInviter = declineBookingData?.inviter_id === user.user_id;
+  const isUserInvitee = declineBookingData?.invitee_id === user.user_id;
+
+  const oppositionUser = isUserInviter
+    ? users?.find((user) => user.user_id === declineBookingData?.invitee_id)
+    : isUserInvitee &&
+      users?.find((user) => user.user_id === declineBookingData?.inviter_id);
+
+  const opposition =
+    oppositionUser.user_type_id === 1
+      ? players?.find((player) => player.user_id === oppositionUser.user_id)
+      : oppositionUser.user_type_id === 2 &&
+        trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
+
+  const isEventTraining = declineBookingData?.event_type_id === 1;
+  const isEventMatch = declineBookingData?.event_type_id === 2;
+  const isEventLesson = declineBookingData?.event_type_id === 3;
 
   if (
     isUsersLoading ||
@@ -90,18 +108,18 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
         <thead>
           <tr>
             <th>
-              {declineBookingData?.event_type_id === 3 ? "Eğitmen" : "Oyuncu"}
+              {isEventLesson && isUserPlayer
+                ? "Eğitmen"
+                : isEventLesson && isUserTrainer && "Oyuncu"}
             </th>
             <th>İsim</th>
             <th>Tarih</th>
             <th>Saat</th>
             <th>Konum</th>
             <th>Kort</th>
-            <th>Kort Ücreti (TL)</th>
-            {declineBookingData?.event_type_id === 3 && (
-              <th>Ders Ücreti (TL)</th>
-            )}
-            <th>Toplam Tutar (TL)</th>
+            {isUserPlayer && <th>Kort Ücreti (TL)</th>}
+            {isEventLesson && <th>Ders Ücreti (TL)</th>}
+            {isUserPlayer && <th>Toplam Tutar (TL)</th>}
           </tr>
         </thead>
         <tbody>
@@ -109,33 +127,7 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
             <td>
               <img />
             </td>
-            <td>
-              {inviteeUserTypeId === 1
-                ? `${
-                    players?.find(
-                      (player) =>
-                        player.user_id ===
-                        Number(declineBookingData?.invitee_id)
-                    )?.fname
-                  } ${
-                    players?.find(
-                      (player) =>
-                        player.user_id ===
-                        Number(declineBookingData?.invitee_id)
-                    )?.lname
-                  }`
-                : inviteeUserTypeId === 2
-                ? `${
-                    trainers?.find(
-                      (trainer) => trainer.user_id === invitee.user_id
-                    )?.fname
-                  } ${
-                    trainers?.find(
-                      (trainer) => trainer.user_id === invitee.user_id
-                    )?.lname
-                  }`
-                : ""}
-            </td>
+            <td>{`${opposition.fname} ${opposition.lname}`}</td>
             <td>
               {new Date(declineBookingData?.event_date).toLocaleDateString()}
             </td>
@@ -155,36 +147,70 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
                 )?.court_name
               }
             </td>
-            <td>
-              {courts?.find(
-                (court) =>
-                  court.court_id === Number(declineBookingData?.court_id)
-              )?.price_hour / 2}
-            </td>
-            {declineBookingData?.event_type_id === 3 && (
+            {/* kort ücreti */}
+            {isUserPlayer && (
               <td>
-                {
-                  trainers?.find(
-                    (trainer) => trainer.user_id === invitee.user_id
-                  )?.price_hour
-                }
-              </td>
-            )}
-            {declineBookingData?.event_type_id === 3 ? (
-              <td className={styles["total-sum-text"]}>
-                {courts?.find(
-                  (court) =>
-                    court.court_id === Number(declineBookingData?.court_id)
-                )?.price_hour +
-                  trainers?.find(
-                    (trainer) => trainer.user_id === invitee.user_id
+                {(isEventTraining || isEventMatch) &&
+                  courts?.find(
+                    (court) =>
+                      court.court_id === Number(declineBookingData?.court_id)
+                  )?.price_hour / 2}
+                {isEventLesson &&
+                  courts?.find(
+                    (court) =>
+                      court.court_id === Number(declineBookingData?.court_id)
                   )?.price_hour}
               </td>
-            ) : (
-              <td className={styles["total-sum-text"]}>
+            )}
+
+            {/* ders ücreti */}
+            {isEventLesson && (
+              <td>
+                {isUserTrainer &&
+                  trainers?.find((trainer) => trainer.user_id === user.user_id)
+                    ?.price_hour}
+                {isUserPlayer &&
+                  isUserInvitee &&
+                  trainers?.find(
+                    (trainer) =>
+                      trainer.user_id === declineBookingData?.inviter_id
+                  )?.price_hour}
+                {isUserPlayer &&
+                  isUserInviter &&
+                  trainers?.find(
+                    (trainer) =>
+                      trainer.user_id === declineBookingData?.invitee_id
+                  )?.price_hour}
+              </td>
+            )}
+            {/* toplam ücret */}
+            {isUserPlayer && isEventLesson && isUserInviter && (
+              <td>
                 {courts?.find(
-                  (court) =>
-                    court.court_id === Number(declineBookingData?.court_id)
+                  (court) => court.court_id === declineBookingData?.court_id
+                )?.price_hour +
+                  trainers?.find(
+                    (trainer) =>
+                      trainer.user_id === declineBookingData?.invitee_id
+                  ).price_hour}
+              </td>
+            )}
+            {isUserPlayer && isEventLesson && isUserInvitee && (
+              <td>
+                {courts?.find(
+                  (court) => court.court_id === declineBookingData?.court_id
+                )?.price_hour +
+                  trainers?.find(
+                    (trainer) =>
+                      trainer.user_id === declineBookingData?.inviter_id
+                  )?.price_hour}
+              </td>
+            )}
+            {((isUserPlayer && isEventTraining) ||
+              (isUserPlayer && isEventMatch)) && (
+              <td>
+                {courts?.find(
+                  (court) => court.court_id === declineBookingData?.court_id
                 )?.price_hour / 2}
               </td>
             )}
