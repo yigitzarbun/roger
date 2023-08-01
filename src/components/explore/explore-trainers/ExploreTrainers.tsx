@@ -66,9 +66,10 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
+              <th>Eğitmen</th>
               <th>İsim</th>
               <th>Seviye</th>
+              <th>Ücret (Saat / TL)</th>
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
@@ -96,6 +97,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     ).trainer_experience_type_name
                   }
                 </td>
+                <td>{trainer?.price_hour}</td>
                 <td>{trainer.gender}</td>
                 <td>{year - Number(trainer.birth_year)}</td>
                 <td>

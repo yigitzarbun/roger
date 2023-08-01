@@ -64,7 +64,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
+        <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
       </div>
       {clubs && clubs.length === 0 && (
         <p>

@@ -28,7 +28,7 @@ const ClubHeader = () => {
           Kortlar
         </NavLink>
         <NavLink
-          to={paths.HOME}
+          to={paths.CALENDAR}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-club"]}`
