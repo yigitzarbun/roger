@@ -1,5 +1,5 @@
 import React from "react";
-import MatchInviteForm from "../../../components/invite/match/form/MathInviteForm";
+import MatchInviteForm from "../../../components/invite/match/form/MatchInviteForm";
 import MatchInviteHero from "../../../components/invite/match/hero/MatchInviteHero";
 
 import styles from "./styles.module.scss";

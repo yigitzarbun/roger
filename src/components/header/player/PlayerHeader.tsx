@@ -8,6 +8,16 @@ const PlayerHeader = () => {
     <nav className={styles["header-player-container"]}>
       <div className={styles["header-nav-sub-container"]}>
         <NavLink
+          to={paths.EXPLORE}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-player"]}`
+              : `${styles["nav-link-player"]}`
+          }
+        >
+          Keşfet
+        </NavLink>
+        <NavLink
           to={paths.TRAIN}
           className={({ isActive }) =>
             isActive

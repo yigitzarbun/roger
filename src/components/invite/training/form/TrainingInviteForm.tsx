@@ -29,8 +29,9 @@ import {
   roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
 
-const MatchInviteForm = () => {
+const TrainingInviteForm = () => {
   const navigate = useNavigate();
+
   const location = useLocation();
 
   const player = location.state;
@@ -162,10 +163,10 @@ const MatchInviteForm = () => {
       // TO DO: get from api
       booking_status_type_id: 1,
       // TO DO: get from api
-      event_type_id: 2,
+      event_type_id: 1,
       club_id: formData.club_id,
       court_id: formData.court_id,
-      inviter_id: user.user.user_id,
+      inviter_id: user?.user.user_id,
       invitee_id: player.user_id,
       lesson_price: null,
       court_price: courts?.find((court) => court.court_id === selectedCourt)
@@ -182,27 +183,25 @@ const MatchInviteForm = () => {
       reset();
     })();
   };
-
   const handleCloseModal = () => {
     setModal(false);
   };
 
-  if (isBookingsLoading || isClubsLoading || isCourtsLoading) {
-    return;
-    <div>Yükleniyor..</div>;
-  }
   useEffect(() => {
     if (isSuccess) {
       refetch();
       navigate(paths.REQUESTS);
     }
-  }, [isSuccess]);
+  }, [isSuccess, refetch, navigate]);
 
+  if (isBookingsLoading || isClubsLoading || isCourtsLoading) {
+    return <div>Yükleniyor..</div>;
+  }
   return (
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>
-        <h1 className={styles["invite-title"]}>Maç Davet</h1>
-        <Link to={paths.MATCH}>
+        <h1 className={styles["invite-title"]}>Antreman Davet</h1>
+        <Link to={paths.TRAIN}>
           <img src="/images/icons/prev.png" className={styles["prev-button"]} />
         </Link>
       </div>
@@ -306,4 +305,4 @@ const MatchInviteForm = () => {
   );
 };
 
-export default MatchInviteForm;
+export default TrainingInviteForm;

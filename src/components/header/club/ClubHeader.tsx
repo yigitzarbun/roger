@@ -8,6 +8,16 @@ const ClubHeader = () => {
     <nav className={styles["header-club-container"]}>
       <div className={styles["header-nav-sub-container"]}>
         <NavLink
+          to={paths.EXPLORE}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-club"]}`
+              : `${styles["nav-link-club"]}`
+          }
+        >
+          Keşfet
+        </NavLink>
+        <NavLink
           to={paths.CLUB_COURTS}
           className={({ isActive }) =>
             isActive

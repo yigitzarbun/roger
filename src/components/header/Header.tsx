@@ -18,14 +18,24 @@ const Header = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { user } = useAppSelector((store) => store);
-  const userType = user.user?.user?.user_type_id;
+  const user = useAppSelector((store) => store.user);
+
+  let isUserPlayer = false;
+  let isUserTrainer = false;
+  let isUserClub = false;
+
+  if (user && user.user && user.user.user) {
+    isUserPlayer = user?.user.user.user_type_id === 1;
+    isUserTrainer = user?.user.user.user_type_id === 2;
+    isUserClub = user?.user.user.user_type_id === 3;
+  }
 
   const handleLogout = () => {
     dispatch(logOut());
     navigate(paths.LOGIN);
   };
-  const isLoggedIn = user.token;
+  const isLoggedIn = user?.token;
+
   return (
     <div className={styles["header-container"]}>
       <NavLink
@@ -39,9 +49,9 @@ const Header = () => {
         Roger
       </NavLink>
       {isLoggedIn && <SearchBar />}
-      {userType === 1 && <PlayerHeader />}
-      {userType === 2 && <TrainerHeader />}
-      {userType === 3 && <ClubHeader />}
+      {isUserPlayer && <PlayerHeader />}
+      {isUserTrainer && <TrainerHeader />}
+      {isUserClub && <ClubHeader />}
       {isLoggedIn ? (
         <div className={styles["credentials-nav"]}>
           <NavLink
@@ -52,11 +62,11 @@ const Header = () => {
                 : `${styles["nav-link"]}`
             }
           >
-            {user.user && userType === 1
+            {isLoggedIn && isUserPlayer
               ? user.user.playerDetails?.fname
-              : userType === 2
+              : isLoggedIn && isUserTrainer
               ? user.user.trainerDetails?.fname
-              : userType === 3
+              : isLoggedIn && isUserClub
               ? user.user.clubDetails?.club_name
               : "Profil"}
           </NavLink>

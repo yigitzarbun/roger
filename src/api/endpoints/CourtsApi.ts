@@ -1,6 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../common/constants/apiConstants";
 
+export interface Court {
+  court_id: number;
+  court_name: string;
+  registered_at: string;
+  opening_time: string;
+  closing_time: string;
+  price_hour: string;
+  court_structure_type_id: number;
+  court_surface_type_id: number;
+  club_id: number;
+}
+
 export const courtsSlice = createApi({
   reducerPath: "courts",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),

@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../common/constants/apiConstants";
 
+export interface Location {
+  location_id: number;
+  location_name: string;
+}
+
 export const locationsSlice = createApi({
   reducerPath: "locations",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),

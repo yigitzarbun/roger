@@ -15,5 +15,7 @@ export default {
   TRAIN_INVITE: "/antreman-davet",
   LESSON_INVITE: "/ders-davet",
   CLUB_COURTS: "/kulüp-kortlar",
+  STUDENTS: "/egitmen-ogrenciler",
+  EXPLORE: "/kesfet",
   NOT_FOUND: "*",
 } as Paths;

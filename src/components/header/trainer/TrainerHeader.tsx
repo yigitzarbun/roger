@@ -8,6 +8,16 @@ const TrainerHeader = () => {
     <nav className={styles["header-trainer-container"]}>
       <div className={styles["header-nav-sub-container"]}>
         <NavLink
+          to={paths.EXPLORE}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-trainer"]}`
+              : `${styles["nav-link-trainer"]}`
+          }
+        >
+          Keşfet
+        </NavLink>
+        <NavLink
           to={paths.CALENDAR}
           className={({ isActive }) =>
             isActive
@@ -28,7 +38,7 @@ const TrainerHeader = () => {
           Davetler
         </NavLink>
         <NavLink
-          to={paths.HOME}
+          to={paths.STUDENTS}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-trainer"]}`
