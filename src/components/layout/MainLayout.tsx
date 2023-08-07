@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import { useAppSelector } from "../../store/hooks";
+import { useNavigate } from "react-router-dom";
+import Paths from "../../routing/Paths";
 
 interface MainLayoutProps {
   children: React.ReactNode | React.ReactNode[];
 }
 const MainLayout = ({ children }: MainLayoutProps) => {
+  const token = useAppSelector((store) => store.user?.token);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) {
+      navigate(Paths.LOGIN);
+    }
+  }, [navigate]);
   return (
     <div>
       <Header />
