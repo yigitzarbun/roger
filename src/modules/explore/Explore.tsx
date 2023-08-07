@@ -6,10 +6,10 @@ import { useAppSelector } from "../../store/hooks";
 
 import ExploreHero from "../../components/explore/hero/ExploreHero";
 import ExploreNavigation from "../../components/explore/navigation/ExploreNavigation";
-import ExplorePlayers from "../../components/explore/explore-players/ExplorePlayers";
-import ExploreTrainers from "../../components/explore/explore-trainers/ExploreTrainers";
-import ExploreClubs from "../../components/explore/explore-clubs/ExploreClubs";
-import ExploreCourts from "../../components/explore/explore-courts/ExploreCourts";
+import ExplorePlayers from "../../components/explore/explore-results/explore-players/ExplorePlayers";
+import ExploreTrainers from "../../components/explore/explore-results/explore-trainers/ExploreTrainers";
+import ExploreClubs from "../../components/explore/explore-results/explore-clubs/ExploreClubs";
+import ExploreCourts from "../../components/explore/explore-results/explore-courts/ExploreCourts";
 
 import { useGetPlayersQuery } from "../../api/endpoints/PlayersApi";
 import { useGetLocationsQuery } from "../../api/endpoints/LocationsApi";

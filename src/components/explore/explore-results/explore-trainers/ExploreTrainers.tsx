@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
-import paths from "../../../routing/Paths";
+import paths from "../../../../routing/Paths";
 
-import { User } from "../../../store/slices/authSlice";
-import { Location } from "../../../api/endpoints/LocationsApi";
-import { Trainer } from "../../../api/endpoints/TrainersApi";
-import { TrainerExperienceType } from "../../../api/endpoints/TrainerExperienceTypesApi";
+import { User } from "../../../../store/slices/authSlice";
+import { Location } from "../../../../api/endpoints/LocationsApi";
+import { Trainer } from "../../../../api/endpoints/TrainersApi";
+import { TrainerExperienceType } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 
 interface ExploreTrainersProps {
   user: User;
@@ -124,7 +124,9 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                   </td>
                 )}
                 {isUserPlayer && <td>Abone ol</td>}
-                <td>Görüntüle</td>
+                <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
+                  Görüntüle
+                </Link>
               </tr>
             ))}
           </tbody>

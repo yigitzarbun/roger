@@ -29,6 +29,9 @@ const TrainerStudents = lazy(
   () => import("../modules/trainer-students/TrainerStudents")
 );
 const Explore = lazy(() => import("../modules/explore/Explore"));
+const ExploreProfile = lazy(
+  () => import("../modules/explore-profiles/ExploreProfiles")
+);
 
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
@@ -59,6 +62,10 @@ const routes: Route[] = [
   { path: paths.CLUB_COURTS, element: getRouteElement(ClubCourts) },
   { path: paths.STUDENTS, element: getRouteElement(TrainerStudents) },
   { path: paths.EXPLORE, element: getRouteElement(Explore) },
+  {
+    path: `${paths.EXPLORE_PROFILE}:profile_type/:id`,
+    element: getRouteElement(ExploreProfile),
+  },
 ];
 
 export default createBrowserRouter(routes);

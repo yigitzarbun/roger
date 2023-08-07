@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
-import paths from "../../../routing/Paths";
+import paths from "../../../../routing/Paths";
 
-import { User } from "../../../store/slices/authSlice";
-import { Club } from "../../../api/endpoints/ClubsApi";
-import { Location } from "../../../api/endpoints/LocationsApi";
-import { ClubType } from "../../../api/endpoints/ClubTypesApi";
-import { Court } from "../../../api/endpoints/CourtsApi";
+import { User } from "../../../../store/slices/authSlice";
+import { Club } from "../../../../api/endpoints/ClubsApi";
+import { Location } from "../../../../api/endpoints/LocationsApi";
+import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
+import { Court } from "../../../../api/endpoints/CourtsApi";
 
 interface ExploreClubsProps {
   user: User;
@@ -111,7 +111,11 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                   }
                 </td>
                 {isUserPlayer && <td>Üye ol</td>}
-                <td>Görüntüle</td>
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}>
+                    Görüntüle
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

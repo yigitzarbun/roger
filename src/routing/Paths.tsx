@@ -17,5 +17,6 @@ export default {
   CLUB_COURTS: "/kulüp-kortlar",
   STUDENTS: "/egitmen-ogrenciler",
   EXPLORE: "/kesfet",
+  EXPLORE_PROFILE: "/kesfet/profil/",
   NOT_FOUND: "*",
 } as Paths;

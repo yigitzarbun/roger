@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
-import paths from "../../../routing/Paths";
+import paths from "../../../../routing/Paths";
 
-import { User } from "../../../store/slices/authSlice";
-import { Club } from "../../../api/endpoints/ClubsApi";
-import { Location } from "../../../api/endpoints/LocationsApi";
-import { ClubType } from "../../../api/endpoints/ClubTypesApi";
-import { Court } from "../../../api/endpoints/CourtsApi";
+import { User } from "../../../../store/slices/authSlice";
+import { Club } from "../../../../api/endpoints/ClubsApi";
+import { Location } from "../../../../api/endpoints/LocationsApi";
+import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
+import { Court } from "../../../../api/endpoints/CourtsApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
 
@@ -131,8 +131,9 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                     )?.location_name
                   }
                 </td>
-                {(isUserPlayer || isUserTrainer) && <td>Rezerve et</td>}
-                <td>Görüntüle</td>
+                <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
+                  Görüntüle
+                </Link>
               </tr>
             ))}
           </tbody>

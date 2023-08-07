@@ -1,0 +1,77 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10vh;
+  h3 {
+    margin-bottom: 2vh;
+    color: $roger-green;
+  }
+
+  .top-sections-container {
+    display: flex;
+    justify-content: space-between;
+
+    .profile-section {
+      background-color: $roger-box-bg-color;
+      width: 30%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+
+      .club-image {
+        width: 50px;
+      }
+    }
+
+    .courts-section {
+      background-color: $roger-box-bg-color;
+      width: 65%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+
+      table {
+        width: 100%;
+        text-align: left;
+      }
+    }
+  }
+
+  .bottom-sections-container {
+    display: flex;
+    justify-content: space-between;
+
+    .subscription-section {
+      background-color: $roger-box-bg-color;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      width: 30%;
+      button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+        width: 200px;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
+    }
+    .trainers-section {
+      background-color: $roger-box-bg-color;
+      width: 65%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+
+      table {
+        width: 100%;
+        text-align: left;
+      }
+    }
+  }
+}

@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
-import paths from "../../../routing/Paths";
+import paths from "../../../../routing/Paths";
 
-import { User } from "../../../store/slices/authSlice";
+import { User } from "../../../../store/slices/authSlice";
 
-import { Player } from "../../../api/endpoints/PlayersApi";
-import { Location } from "../../../api/endpoints/LocationsApi";
-import { PlayerLevel } from "../../../api/endpoints/PlayerLevelsApi";
+import { Player } from "../../../../api/endpoints/PlayersApi";
+import { Location } from "../../../../api/endpoints/LocationsApi";
+import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
 
 interface ExplorePlayersProps {
   user: User;
@@ -155,7 +155,9 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                   </td>
                 )}
                 <td>Takip et</td>
-                <td>Görüntüle</td>
+                <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
+                  Görüntüle
+                </Link>
               </tr>
             ))}
           </tbody>
