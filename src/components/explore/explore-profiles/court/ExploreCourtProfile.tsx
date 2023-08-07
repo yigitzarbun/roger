@@ -64,10 +64,6 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
     openHours.push(i);
   }
 
-  const courtBookings = bookings?.filter(
-    (booking) => booking.court_id === selectedCourt.court_id
-  );
-
   const slotAvailabilityChecker = (date, time) => {
     const [year, month, day] = date
       .split("-")
@@ -76,13 +72,15 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
     const selectedDate = new Date(`${year}-${month}-${day}`);
     const selectedTime = `${String(time).slice(0, 2)}:${String(time).slice(2)}`;
 
-    const bookingExists = courtBookings.find((booking) => {
+    const bookingExists = bookings.find((booking) => {
       const bookingDate = new Date(booking.event_date.slice(0, 10));
       const bookingTime = booking.event_time.slice(0, 5);
       return (
         booking.court_id === selectedCourt.court_id &&
         bookingDate.getTime() === selectedDate.getTime() &&
-        bookingTime === selectedTime
+        bookingTime === selectedTime &&
+        (booking.booking_status_type_id === 1 ||
+          booking.booking_status_type_id === 2)
       );
     });
 
