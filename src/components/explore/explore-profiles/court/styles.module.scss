@@ -34,6 +34,18 @@
       table {
         width: 100%;
         text-align: left;
+
+        .reserved {
+          background-color: $roger-red;
+          border-radius: $roger-border-radius;
+          text-align: center;
+        }
+        .available {
+          background-color: $roger-blue;
+          border-radius: $roger-border-radius;
+          text-align: center;
+          cursor: pointer;
+        }
       }
     }
   }

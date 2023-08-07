@@ -1,17 +1,14 @@
 import React from "react";
 
-import { Link } from "react-router-dom";
-
-import paths from "../../../../routing/Paths";
-
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubTypesQuery } from "../../../../api/endpoints/ClubTypesApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 
 import styles from "./styles.module.scss";
+import { th } from "date-fns/locale";
+import { log } from "console";
 
 interface ExploreCourtProfileProps {
   court_id: string;
@@ -23,28 +20,79 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const { data: clubTypes, isLoading: isClubTypesLoading } =
-    useGetClubTypesQuery({});
-
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
 
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
 
+  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
+    {}
+  );
+
   const selectedCourt = courts?.find(
     (court) => court.court_id === Number(court_id)
   );
-  console.log(court_id);
+
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  //const today = `${year}-${month}-${day}`;
+
+  let daysOfWeek = [];
+  for (let i = 0; i < 7; i++) {
+    const nextDate = new Date(date);
+    nextDate.setDate(date.getDate() + i);
+    const day = nextDate.getDate();
+    const month = nextDate.getMonth() + 1;
+    const year = nextDate.getFullYear();
+    daysOfWeek.push(`${year}-${month}-${day}`);
+  }
+
+  let openHours = [];
+
+  const openingTime = Number(
+    selectedCourt?.opening_time.slice(0, 5).split(":").join("")
+  );
+
+  const closingTime = Number(
+    selectedCourt?.closing_time.slice(0, 5).split(":").join("")
+  );
+
+  for (let i = openingTime; i < closingTime; i += 100) {
+    openHours.push(i);
+  }
+
+  const courtBookings = bookings?.filter(
+    (booking) => booking.court_id === selectedCourt.court_id
+  );
+
+  const slotAvailabilityChecker = (date, time) => {
+    const [year, month, day] = date
+      .split("-")
+      .map((part) => part.padStart(2, "0"));
+
+    const selectedDate = new Date(`${year}-${month}-${day}`);
+    const selectedTime = `${String(time).slice(0, 2)}:${String(time).slice(2)}`;
+
+    const bookingExists = courtBookings.find((booking) => {
+      const bookingDate = new Date(booking.event_date.slice(0, 10));
+      const bookingTime = booking.event_time.slice(0, 5);
+      return (
+        booking.court_id === selectedCourt.court_id &&
+        bookingDate.getTime() === selectedDate.getTime() &&
+        bookingTime === selectedTime
+      );
+    });
+
+    return bookingExists ? "reserved" : "available";
+  };
+
   if (
     isClubsLoading ||
     isCourtsLoading ||
-    isClubTypesLoading ||
-    isLocationsLoading ||
-    isLocationsLoading ||
+    isBookingsLoading ||
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading
   ) {
@@ -95,54 +143,37 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
         </div>
         <div className={styles["courts-section"]}>
           <h3>Takvim</h3>
-          {courts?.filter((court) => court.club_id === selectedCourt?.club_id)
-            .length > 0 ? (
-            <table>
-              <thead>
-                <th>Kort</th>
-                <th>Yüzey</th>
-                <th>Mekan</th>
-                <th>Fiyat (TL / Saat)</th>
-              </thead>
-              <tbody>
-                {courts
-                  ?.filter((court) => court.club_id === selectedCourt?.club_id)
-                  .map((court) => (
-                    <tr>
-                      <td>{court.court_name}</td>
-                      <td>
-                        {
-                          courtSurfaceTypes?.find(
-                            (type) =>
-                              type.court_surface_type_id ===
-                              court.court_surface_type_id
-                          )?.court_surface_type_name
-                        }
-                      </td>
-                      <td>
-                        {
-                          courtStructureTypes?.find(
-                            (type) =>
-                              type.court_structure_type_id ===
-                              court.court_structure_type_id
-                          )?.court_structure_type_name
-                        }
-                      </td>
-                      <td>{court.price_hour}</td>
-                      <td>
-                        <Link
-                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                        >
-                          Görüntüle
-                        </Link>
-                      </td>
-                    </tr>
+          <table>
+            <thead>
+              <tr>
+                <th>Saat</th>
+                {daysOfWeek.map((day) => (
+                  <th key={day}>{day}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {openHours.map((hour) => (
+                <tr key={hour}>
+                  <td>{`${String(hour).slice(0, 2)}:${String(hour).slice(
+                    2
+                  )}`}</td>
+                  {daysOfWeek.map((day) => (
+                    <td
+                      key={day}
+                      className={
+                        slotAvailabilityChecker(day, hour) === "reserved"
+                          ? styles.reserved
+                          : styles.available
+                      }
+                    >
+                      {slotAvailabilityChecker(day, hour)}
+                    </td>
                   ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>Henüz kulübe ait kort bulunmamaktadır</p>
-          )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
