@@ -30,7 +30,6 @@ const CourtBookingForm = () => {
   const user = useAppSelector((store) => store.user.user.user);
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
-  const isUserClub = user?.user_type_id === 3;
 
   const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
 
@@ -123,16 +122,28 @@ const CourtBookingForm = () => {
       navigate(paths.REQUESTS);
     }
   }, [isSuccess]);
+
+  if (
+    isBookingsLoading ||
+    isClubsLoading ||
+    isCourtsLoading ||
+    isPlayersLoading ||
+    isTrainersLoading ||
+    isEventTypesLoading
+  ) {
+    return <div>Yükleniyor..</div>;
+  }
+
   return (
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>
         <h1 className={styles["invite-title"]}>Kort Kiralama</h1>
-        <Link to={paths.LESSON}>
+        <Link to={paths.EXPLORE}>
           <img src="/images/icons/prev.png" className={styles["prev-button"]} />
         </Link>
       </div>
 
-      <p className={styles["player-name"]}>{`Kort: ${
+      <p className={styles["court-name"]}>{`Kort: ${
         courts?.find(
           (court) => court.court_id === courtBookingDetails?.court_id
         )?.court_name
@@ -140,7 +151,7 @@ const CourtBookingForm = () => {
         clubs?.find((club) => club.club_id === courtBookingDetails?.club_id)
           ?.club_name
       }`}</p>
-      <p className={styles["player-name"]}>{`Tarih: ${
+      <p className={styles["court-name"]}>{`Tarih: ${
         courtBookingDetails?.event_date
       } - Saat: ${String(courtBookingDetails?.event_time).slice(0, 2)}:${String(
         courtBookingDetails?.event_time

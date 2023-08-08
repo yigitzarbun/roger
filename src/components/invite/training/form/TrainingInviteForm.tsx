@@ -81,10 +81,21 @@ const TrainingInviteForm = () => {
     setSelectedCourt(Number(event.target.value));
   };
 
-  const bookedHoursForSelectedCourtOnSelectedDate = bookings?.filter(
-    (booking) =>
-      booking.court_id === selectedCourt && booking.event_date === selectedDate
+  const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
+    []
   );
+  useEffect(() => {
+    if (selectedCourt && selectedDate && bookings) {
+      const filteredBookings = bookings.filter(
+        (booking) =>
+          booking.court_id === Number(selectedCourt) &&
+          booking.event_date.slice(0, 10) === selectedDate &&
+          (booking.booking_status_type_id === 1 ||
+            booking.booking_status_type_id === 2)
+      );
+      setBookedHours(filteredBookings);
+    }
+  }, [selectedCourt, selectedDate, bookings]);
 
   // Determine the available time slots based on the opening and closing times and the booked hours
   const availableTimeSlots = [];

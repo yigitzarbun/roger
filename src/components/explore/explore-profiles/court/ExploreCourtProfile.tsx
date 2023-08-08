@@ -59,20 +59,32 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
   );
 
   for (let i = openingTime; i < closingTime; i += 100) {
-    openHours.push(i);
+    openHours.push(String(i).padStart(4, "0"));
   }
-
   const slotAvailabilityChecker = (date, time) => {
     const [year, month, day] = date
       .split("-")
       .map((part) => part.padStart(2, "0"));
-
     const selectedDate = new Date(`${year}-${month}-${day}`);
     const selectedTime = `${String(time).slice(0, 2)}:${String(time).slice(2)}`;
+
+    const currentTime = new Date();
+    const currentTimeString = `${String(currentTime.getHours()).padStart(
+      2,
+      "0"
+    )}:${String(currentTime.getMinutes()).padStart(2, "0")}`;
+
+    if (
+      selectedDate.toDateString() === currentTime.toDateString() &&
+      selectedTime < currentTimeString
+    ) {
+      return "reserved";
+    }
 
     const bookingExists = bookings.find((booking) => {
       const bookingDate = new Date(booking.event_date.slice(0, 10));
       const bookingTime = booking.event_time.slice(0, 5);
+
       return (
         booking.court_id === selectedCourt.court_id &&
         bookingDate.getTime() === selectedDate.getTime() &&

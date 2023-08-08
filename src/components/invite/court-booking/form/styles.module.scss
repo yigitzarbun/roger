@@ -27,7 +27,7 @@
     }
   }
 
-  .coach-name {
+  .court-name {
     color: $roger-blue;
   }
   .form-container {
@@ -35,25 +35,25 @@
     flex-direction: column;
     row-gap: 2vh;
   }
-  .input-outer-container {
-    display: flex;
-    justify-content: space-between;
-  }
+
   .input-container {
     display: flex;
     flex-direction: column;
     row-gap: 1vh;
     width: 100%;
-  }
 
-  input,
-  select {
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    border: none;
-    width: 95%;
-  }
+    select {
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 95%;
+    }
 
+    .error-field {
+      color: $roger-red;
+      font-size: 0.8rem;
+    }
+  }
   .form-button {
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
@@ -66,20 +66,5 @@
   .form-button:hover {
     background-color: $roger-blue;
     cursor: pointer;
-  }
-
-  .error-field {
-    color: $roger-red;
-    font-size: 0.8rem;
-  }
-
-  .login-nav {
-    text-decoration: none;
-    color: $roger-text-color;
-  }
-
-  .login-span {
-    color: $roger-blue;
-    font-weight: bold;
   }
 }

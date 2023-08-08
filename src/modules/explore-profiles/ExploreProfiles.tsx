@@ -1,7 +1,8 @@
 import React from "react";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
+import ExploreHero from "../../components/explore/hero/ExploreHero";
 import ExplorePlayerProfile from "../../components/explore/explore-profiles/player/ExplorePlayerProfile";
 import ExploreTrainerProfile from "../../components/explore/explore-profiles/trainer/ExploreTrainerProfile";
 import ExploreClubProfile from "../../components/explore/explore-profiles/club/ExploreClubProfile";
@@ -9,13 +10,18 @@ import ExploreCourtProfile from "../../components/explore/explore-profiles/court
 
 const ExploreProfiles = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const isProfilePlayer = Number(params.profile_type) === 1;
   const isProfileTrainer = Number(params.profile_type) === 2;
   const isProfileClub = Number(params.profile_type) === 3;
   const isProfileCourt = params.profile_type === "kort";
-
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <div>
+      <ExploreHero />
+      <button onClick={handleBack}>Geri</button>
       {isProfilePlayer && <ExplorePlayerProfile user_id={params.id} />}
       {isProfileTrainer && <ExploreTrainerProfile user_id={params.id} />}
       {isProfileClub && <ExploreClubProfile user_id={params.id} />}
