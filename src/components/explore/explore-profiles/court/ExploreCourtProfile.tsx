@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
@@ -7,8 +9,8 @@ import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtS
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 
 import styles from "./styles.module.scss";
-import { th } from "date-fns/locale";
-import { log } from "console";
+
+import paths from "../../../../routing/Paths";
 
 interface ExploreCourtProfileProps {
   court_id: string;
@@ -35,10 +37,6 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
   );
 
   const date = new Date();
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  //const today = `${year}-${month}-${day}`;
 
   let daysOfWeek = [];
   for (let i = 0; i < 7; i++) {
@@ -165,7 +163,18 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                           : styles.available
                       }
                     >
-                      {slotAvailabilityChecker(day, hour)}
+                      <Link
+                        to={paths.COURT_BOOKING_INVITE}
+                        state={{
+                          event_date: day,
+                          event_time: hour,
+                          club_id: selectedCourt?.club_id,
+                          court_id: selectedCourt?.court_id,
+                          court_price: selectedCourt?.price_hour,
+                        }}
+                      >
+                        {slotAvailabilityChecker(day, hour)}
+                      </Link>
                     </td>
                   ))}
                 </tr>

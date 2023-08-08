@@ -8,7 +8,7 @@ import paths from "../../../../routing/Paths";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import InviteModal from "../../invite-modal/InviteModal";
+import InviteModal from "../../modals/invite-modal/InviteModal";
 
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { FormValues } from "../../invite-modal/InviteModal";
+import { FormValues } from "../../modals/invite-modal/InviteModal";
 import {
   useAddBookingMutation,
   useGetBookingsQuery,
@@ -159,9 +159,7 @@ const MatchInviteForm = () => {
     const bookingData = {
       event_date: new Date(formData.event_date).toISOString(),
       event_time: formData.event_time,
-      // TO DO: get from api
       booking_status_type_id: 1,
-      // TO DO: get from api
       event_type_id: 2,
       club_id: formData.club_id,
       court_id: formData.court_id,

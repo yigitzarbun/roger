@@ -1,18 +1,20 @@
 import React from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetUsersQuery } from "../../../store/auth/apiSlice";
-import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
-import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
-import { useAppSelector } from "../../../store/hooks";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 
-export type FormValues = {
+import { useAppSelector } from "../../../../store/hooks";
+
+export type DeclineBookingData = {
+  booking_id: number;
   event_type_id: number;
   event_date: string;
   event_time: string;
@@ -25,19 +27,20 @@ export type FormValues = {
   inviter_id: number;
 };
 
-interface ModalProps {
-  modal: boolean;
-  handleModalSubmit: () => void;
-  formData?: FormValues | null | undefined;
-  handleCloseModal: () => void;
+interface DeclineInviteModalProps {
+  isDeclineModalOpen: boolean;
+  handleCloseDeclineModal: () => void;
+  declineBookingData: DeclineBookingData;
+  handleDeclineBooking: () => void;
 }
+const DeclineInviteModal = (props: DeclineInviteModalProps) => {
+  const {
+    isDeclineModalOpen,
+    handleCloseDeclineModal,
+    declineBookingData,
+    handleDeclineBooking,
+  } = props;
 
-const InviteModal = ({
-  modal,
-  handleModalSubmit,
-  formData,
-  handleCloseModal,
-}: ModalProps) => {
   const user = useAppSelector((store) => store.user.user.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
@@ -53,13 +56,13 @@ const InviteModal = ({
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
 
-  const isUserInviter = formData?.inviter_id === user.user_id;
-  const isUserInvitee = formData?.invitee_id === user.user_id;
+  const isUserInviter = declineBookingData?.inviter_id === user.user_id;
+  const isUserInvitee = declineBookingData?.invitee_id === user.user_id;
 
   const oppositionUser = isUserInviter
-    ? users?.find((user) => user.user_id === formData?.invitee_id)
+    ? users?.find((user) => user.user_id === declineBookingData?.invitee_id)
     : isUserInvitee &&
-      users?.find((user) => user.user_id === formData?.inviter_id);
+      users?.find((user) => user.user_id === declineBookingData?.inviter_id);
 
   const opposition =
     oppositionUser.user_type_id === 1
@@ -67,9 +70,9 @@ const InviteModal = ({
       : oppositionUser.user_type_id === 2 &&
         trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
 
-  const isEventTraining = formData?.event_type_id === 1;
-  const isEventMatch = formData?.event_type_id === 2;
-  const isEventLesson = formData?.event_type_id === 3;
+  const isEventTraining = declineBookingData?.event_type_id === 1;
+  const isEventMatch = declineBookingData?.event_type_id === 2;
+  const isEventLesson = declineBookingData?.event_type_id === 3;
 
   if (
     isUsersLoading ||
@@ -81,20 +84,23 @@ const InviteModal = ({
   ) {
     return <div>Yükleniyor..</div>;
   }
-
   return (
-    <Modal isOpen={modal} className={styles["modal-container"]}>
+    <ReactModal
+      isOpen={isDeclineModalOpen}
+      onRequestClose={handleCloseDeclineModal}
+      className={styles["modal-container"]}
+    >
       <div className={styles["top-container"]}>
         <h1>
-          {Number(formData?.event_type_id) === 3
-            ? "Ders"
-            : Number(formData?.event_type_id) === 2
-            ? "Maç"
-            : "Antreman"}
+          {Number(declineBookingData?.event_type_id) === 3
+            ? "Ders İptal"
+            : Number(declineBookingData?.event_type_id) === 2
+            ? "Maç İptal"
+            : "Antreman İptal"}
         </h1>
         <img
           src="/images/icons/close.png"
-          onClick={handleCloseModal}
+          onClick={handleCloseDeclineModal}
           className={styles["close-button"]}
         />
       </div>
@@ -122,19 +128,22 @@ const InviteModal = ({
               <img />
             </td>
             <td>{`${opposition.fname} ${opposition.lname}`}</td>
-            <td>{new Date(formData?.event_date).toLocaleDateString()}</td>
-            <td>{formData?.event_time.slice(0, 5)}</td>
+            <td>
+              {new Date(declineBookingData?.event_date).toLocaleDateString()}
+            </td>
+            <td>{declineBookingData?.event_time.slice(0, 5)}</td>
             <td>
               {
                 clubs?.find(
-                  (club) => club.club_id === Number(formData?.club_id)
+                  (club) => club.club_id === Number(declineBookingData?.club_id)
                 )?.club_name
               }
             </td>
             <td>
               {
                 courts?.find(
-                  (court) => court.court_id === Number(formData?.court_id)
+                  (court) =>
+                    court.court_id === Number(declineBookingData?.court_id)
                 )?.court_name
               }
             </td>
@@ -143,11 +152,13 @@ const InviteModal = ({
               <td>
                 {(isEventTraining || isEventMatch) &&
                   courts?.find(
-                    (court) => court.court_id === Number(formData?.court_id)
+                    (court) =>
+                      court.court_id === Number(declineBookingData?.court_id)
                   )?.price_hour / 2}
                 {isEventLesson &&
                   courts?.find(
-                    (court) => court.court_id === Number(formData?.court_id)
+                    (court) =>
+                      court.court_id === Number(declineBookingData?.court_id)
                   )?.price_hour}
               </td>
             )}
@@ -162,13 +173,13 @@ const InviteModal = ({
                   isUserInvitee &&
                   trainers?.find(
                     (trainer) =>
-                      trainer.user_id === Number(formData?.inviter_id)
+                      trainer.user_id === declineBookingData?.inviter_id
                   )?.price_hour}
                 {isUserPlayer &&
                   isUserInviter &&
                   trainers?.find(
                     (trainer) =>
-                      trainer.user_id === Number(formData?.invitee_id)
+                      trainer.user_id === declineBookingData?.invitee_id
                   )?.price_hour}
               </td>
             )}
@@ -176,38 +187,38 @@ const InviteModal = ({
             {isUserPlayer && isEventLesson && isUserInviter && (
               <td>
                 {courts?.find(
-                  (court) => court.court_id === Number(formData?.court_id)
+                  (court) => court.court_id === declineBookingData?.court_id
                 )?.price_hour +
                   trainers?.find(
                     (trainer) =>
-                      trainer.user_id === Number(formData?.invitee_id)
+                      trainer.user_id === declineBookingData?.invitee_id
                   ).price_hour}
               </td>
             )}
             {isUserPlayer && isEventLesson && isUserInvitee && (
               <td>
                 {courts?.find(
-                  (court) => court.court_id === Number(formData?.court_id)
+                  (court) => court.court_id === declineBookingData?.court_id
                 )?.price_hour +
                   trainers?.find(
                     (trainer) =>
-                      trainer.user_id === Number(formData?.inviter_id)
+                      trainer.user_id === declineBookingData?.inviter_id
                   )?.price_hour}
               </td>
             )}
-            {isUserPlayer && (isEventTraining || isEventMatch) && (
+            {((isUserPlayer && isEventTraining) ||
+              (isUserPlayer && isEventMatch)) && (
               <td>
                 {courts?.find(
-                  (court) => court.court_id === Number(formData?.court_id)
+                  (court) => court.court_id === declineBookingData?.court_id
                 )?.price_hour / 2}
               </td>
             )}
           </tr>
         </tbody>
       </table>
-      <button onClick={handleModalSubmit}>Davet gönder</button>
-    </Modal>
+      <button onClick={handleDeclineBooking}>Onayla</button>
+    </ReactModal>
   );
 };
-
-export default InviteModal;
+export default DeclineInviteModal;

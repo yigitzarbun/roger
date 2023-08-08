@@ -12,9 +12,9 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { BookingData } from "../../../../components/invite/cancel-modal/CancelInviteModal";
+import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
-import CancelInviteModal from "../../../../components/invite/cancel-modal/CancelInviteModal";
+import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
 interface TrainerCalendarResultsProps {
   date: string;

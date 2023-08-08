@@ -4,13 +4,13 @@ import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetUsersQuery } from "../../../store/auth/apiSlice";
-import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
-import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
-import { useAppSelector } from "../../../store/hooks";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
+import { useAppSelector } from "../../../../store/hooks";
 
 export type BookingData = {
   booking_id: number;

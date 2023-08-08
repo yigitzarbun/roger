@@ -14,6 +14,7 @@ export default {
   MATCH_INVITE: "/mac-davet",
   TRAIN_INVITE: "/antreman-davet",
   LESSON_INVITE: "/ders-davet",
+  COURT_BOOKING_INVITE: "/kort-kiralama",
   CLUB_COURTS: "/kulüp-kortlar",
   STUDENTS: "/egitmen-ogrenciler",
   EXPLORE: "/kesfet",

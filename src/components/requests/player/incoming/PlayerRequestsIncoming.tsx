@@ -16,11 +16,11 @@ import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi"
 
 import AcceptInviteModal, {
   AcceptBookingData,
-} from "../../../invite/accept-modal/AcceptInviteModal";
+} from "../../../invite/modals/accept-modal/AcceptInviteModal";
 
 import DeclineInviteModal, {
   DeclineBookingData,
-} from "../../../invite/decline-modal/DeclineInviteModal";
+} from "../../../invite/modals/decline-modal/DeclineInviteModal";
 
 const PlayerRequestsIncoming = () => {
   const { user } = useAppSelector((store) => store.user.user);

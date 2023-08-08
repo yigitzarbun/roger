@@ -16,7 +16,7 @@ import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi"
 
 import CancelInviteModal, {
   BookingData,
-} from "../../../invite/cancel-modal/CancelInviteModal";
+} from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
 const PlayerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);

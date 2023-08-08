@@ -61,6 +61,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
   ) {
     return <div>Yükleniyor..</div>;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -76,7 +77,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Kulüp</th>
+              <th>Kort</th>
               <th>İsim</th>
               <th>Yüzey</th>
               <th>Mekan</th>

@@ -8,7 +8,7 @@ import paths from "../../../../routing/Paths";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import InviteModal from "../../invite-modal/InviteModal";
+import InviteModal from "../../modals/invite-modal/InviteModal";
 
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { FormValues } from "../../invite-modal/InviteModal";
+import { FormValues } from "../../modals/invite-modal/InviteModal";
 import {
   useAddBookingMutation,
   useGetBookingsQuery,

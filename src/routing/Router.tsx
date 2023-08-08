@@ -32,7 +32,9 @@ const Explore = lazy(() => import("../modules/explore/Explore"));
 const ExploreProfile = lazy(
   () => import("../modules/explore-profiles/ExploreProfiles")
 );
-
+const CourtBookingInvite = lazy(
+  () => import("../modules/invite/court-booking/CourtBookingInvite")
+);
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
     <MainLayout>
@@ -65,6 +67,10 @@ const routes: Route[] = [
   {
     path: `${paths.EXPLORE_PROFILE}:profile_type/:id`,
     element: getRouteElement(ExploreProfile),
+  },
+  {
+    path: paths.COURT_BOOKING_INVITE,
+    element: getRouteElement(CourtBookingInvite),
   },
 ];
 
