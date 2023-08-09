@@ -175,18 +175,22 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                           : styles.available
                       }
                     >
-                      <Link
-                        to={paths.COURT_BOOKING_INVITE}
-                        state={{
-                          event_date: day,
-                          event_time: hour,
-                          club_id: selectedCourt?.club_id,
-                          court_id: selectedCourt?.court_id,
-                          court_price: selectedCourt?.price_hour,
-                        }}
-                      >
-                        {slotAvailabilityChecker(day, hour)}
-                      </Link>
+                      {slotAvailabilityChecker(day, hour) === "available" ? (
+                        <Link
+                          to={paths.COURT_BOOKING_INVITE}
+                          state={{
+                            event_date: day,
+                            event_time: hour,
+                            club_id: selectedCourt?.club_id,
+                            court_id: selectedCourt?.court_id,
+                            court_price: selectedCourt?.price_hour,
+                          }}
+                        >
+                          {slotAvailabilityChecker(day, hour)}
+                        </Link>
+                      ) : (
+                        "reserved"
+                      )}
                     </td>
                   ))}
                 </tr>

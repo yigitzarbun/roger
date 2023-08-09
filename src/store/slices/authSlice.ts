@@ -16,7 +16,7 @@ export interface User {
     player_id: number;
     fname: string;
     lname: string;
-    birt_year: string;
+    birth_year: string;
     gender: string;
     image: string;
     location_id: number;
@@ -95,11 +95,30 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem(LocalStorageKeys.user);
     },
+    updatePlayerDetails: (
+      state,
+      action: PayloadAction<User["playerDetails"]>
+    ) => {
+      if (state.user) {
+        state.user.playerDetails = {
+          ...action.payload,
+        };
+
+        localStorage.setItem(
+          LocalStorageKeys.user,
+          JSON.stringify({
+            user: state.user,
+            token: state.token,
+          })
+        );
+      }
+    },
   },
 });
 
 export const selectCurrentUser = (state: RootState) => state.user;
 
-export const { setCredentials, logOut } = authSlice.actions;
+export const { setCredentials, logOut, updatePlayerDetails } =
+  authSlice.actions;
 
 export default authSlice.reducer;

@@ -27,7 +27,18 @@ export const playersSlice = createApi({
         body: player,
       }),
     }),
+    updatePlayer: builder.mutation({
+      query: (updatedPlayer) => ({
+        url: "/players",
+        method: "PUT",
+        body: updatedPlayer,
+      }),
+    }),
   }),
 });
 
-export const { useGetPlayersQuery, useAddPlayerMutation } = playersSlice;
+export const {
+  useGetPlayersQuery,
+  useAddPlayerMutation,
+  useUpdatePlayerMutation,
+} = playersSlice;

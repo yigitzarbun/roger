@@ -9,7 +9,6 @@ import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useAppSelector } from "../../../../store/hooks";
 
 export type FormValues = {
@@ -38,7 +37,7 @@ const InviteModal = ({
   formData,
   handleCloseModal,
 }: ModalProps) => {
-  const user = useAppSelector((store) => store.user.user.user);
+  const user = useAppSelector((store) => store.user?.user.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
@@ -47,8 +46,6 @@ const InviteModal = ({
   );
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: userTypes, isLoading: isUserTypesLoading } =
-    useGetUserTypesQuery({});
 
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
@@ -76,8 +73,7 @@ const InviteModal = ({
     isPlayersLoading ||
     isTrainersLoading ||
     isClubsLoading ||
-    isCourtsLoading ||
-    isUserTypesLoading
+    isCourtsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

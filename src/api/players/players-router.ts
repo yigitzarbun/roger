@@ -41,7 +41,7 @@ playersRouter.post(
 );
 
 playersRouter.put(
-  "/:player_id",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await playersModel.update(req.body);
