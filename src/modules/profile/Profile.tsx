@@ -2,6 +2,8 @@ import React from "react";
 
 import PlayerProfile from "./player/PlayerProfile";
 import TrainerProfile from "./trainer/TrainerProfile";
+import ClubProfile from "./club/ClubProfile";
+
 import { useAppSelector } from "../../store/hooks";
 
 const Profile = () => {
@@ -15,6 +17,7 @@ const Profile = () => {
     <div>
       {isUserPlayer && <PlayerProfile />}
       {isUserTrainer && <TrainerProfile />}
+      {isUserClub && <ClubProfile />}
     </div>
   );
 };

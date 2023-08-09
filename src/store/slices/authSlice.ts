@@ -130,6 +130,20 @@ const authSlice = createSlice({
         );
       }
     },
+    updateClubDetails: (state, action: PayloadAction<User["clubDetails"]>) => {
+      if (state.user) {
+        state.user.clubDetails = {
+          ...action.payload,
+        };
+        localStorage.setItem(
+          LocalStorageKeys.user,
+          JSON.stringify({
+            user: state.user,
+            token: state.token,
+          })
+        );
+      }
+    },
   },
 });
 
@@ -140,6 +154,7 @@ export const {
   logOut,
   updatePlayerDetails,
   updateTrainerDetails,
+  updateClubDetails,
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -26,7 +26,15 @@ export const clubsSlice = createApi({
         body: club,
       }),
     }),
+    updateClub: builder.mutation({
+      query: (updates) => ({
+        url: "/clubs",
+        method: "PUT",
+        body: updates,
+      }),
+    }),
   }),
 });
 
-export const { useGetClubsQuery, useAddClubMutation } = clubsSlice;
+export const { useGetClubsQuery, useAddClubMutation, useUpdateClubMutation } =
+  clubsSlice;

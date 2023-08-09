@@ -41,7 +41,7 @@ clubsRouter.post(
 );
 
 clubsRouter.put(
-  "/:club_id",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await clubsModel.update(req.body);
