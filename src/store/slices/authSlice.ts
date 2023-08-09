@@ -113,12 +113,33 @@ const authSlice = createSlice({
         );
       }
     },
+    updateTrainerDetails: (
+      state,
+      action: PayloadAction<User["trainerDetails"]>
+    ) => {
+      if (state.user) {
+        state.user.trainerDetails = {
+          ...action.payload,
+        };
+        localStorage.setItem(
+          LocalStorageKeys.user,
+          JSON.stringify({
+            user: state.user,
+            token: state.token,
+          })
+        );
+      }
+    },
   },
 });
 
 export const selectCurrentUser = (state: RootState) => state.user;
 
-export const { setCredentials, logOut, updatePlayerDetails } =
-  authSlice.actions;
+export const {
+  setCredentials,
+  logOut,
+  updatePlayerDetails,
+  updateTrainerDetails,
+} = authSlice.actions;
 
 export default authSlice.reducer;

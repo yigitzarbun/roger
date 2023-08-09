@@ -6,20 +6,23 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { Player, useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useUpdatePlayerMutation } from "../../../api/endpoints/PlayersApi";
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
+import {
+  Player,
+  useGetPlayersQuery,
+} from "../../../../api/endpoints/PlayersApi";
+import { useUpdatePlayerMutation } from "../../../../api/endpoints/PlayersApi";
+import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
+import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 
-import { useAppDispatch } from "../../../store/hooks";
-import { updatePlayerDetails } from "../../../store/slices/authSlice";
+import { useAppDispatch } from "../../../../store/hooks";
+import { updatePlayerDetails } from "../../../../store/slices/authSlice";
 
-interface UpdateProfileModalProps {
+interface UpdatePlayerProfileModalProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
   profileData: Player;
 }
-const UpdateProfileModal = (props: UpdateProfileModalProps) => {
+const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
   const { isModalOpen, handleCloseModal, profileData } = props;
 
   const dispatch = useAppDispatch();
@@ -193,4 +196,4 @@ const UpdateProfileModal = (props: UpdateProfileModalProps) => {
   );
 };
 
-export default UpdateProfileModal;
+export default UpdatePlayerProfileModal;

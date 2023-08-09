@@ -41,7 +41,7 @@ trainersRouter.post(
 );
 
 trainersRouter.put(
-  "/:trainer_id",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await trainersModel.update(req.body);

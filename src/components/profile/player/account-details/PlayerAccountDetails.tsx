@@ -6,7 +6,7 @@ import { useAppSelector } from "../../../../store/hooks";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 
-import UpdateProfileModal from "../../../../components/profile/update-profile-modal/UpdateProfileModal";
+import UpdateProfileModal from "../../update-profile-modals/player/UpdatePlayerProfileModal";
 
 const PlayerAccountDetails = () => {
   const user = useAppSelector((store) => store.user.user);
@@ -40,7 +40,6 @@ const PlayerAccountDetails = () => {
     setIsModalOpen(false);
   };
 
-  console.log(typeof user?.playerDetails.player_level_id);
   if (isLocationsLoading || isPlayerLevelsLoading) {
     return <div>Yükleniyor..</div>;
   }

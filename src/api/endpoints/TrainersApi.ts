@@ -32,7 +32,18 @@ export const trainersSlice = createApi({
         body: trainer,
       }),
     }),
+    updateTrainer: builder.mutation({
+      query: (updates) => ({
+        url: "/trainers",
+        method: "PUT",
+        body: updates,
+      }),
+    }),
   }),
 });
 
-export const { useGetTrainersQuery, useAddTrainerMutation } = trainersSlice;
+export const {
+  useGetTrainersQuery,
+  useAddTrainerMutation,
+  useUpdateTrainerMutation,
+} = trainersSlice;
