@@ -146,9 +146,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
       </div>
       <div className={styles["bottom-sections-container"]}>
         <div className={styles["subscription-section"]}>
-          <h3>Üyelik</h3>
-          <p>163 üye</p>
-          <button>Üye Ol</button>
+          <h3>Favoriler</h3>
+          <p>163 oyuncu favorilere ekledi</p>
+          <button>Favorilere ekle</button>
         </div>
         <div className={styles["trainers-section"]}>
           <h3>Eğitmenler</h3>

@@ -154,7 +154,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     </Link>
                   </td>
                 )}
-                <td>Takip et</td>
+                <td>Favorilere ekle</td>
                 <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
                   Görüntüle
                 </Link>

@@ -123,7 +123,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     </Link>
                   </td>
                 )}
-                {isUserPlayer && <td>Abone ol</td>}
+                {isUserPlayer && <td>Favorilere ekle</td>}
                 <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
                   Görüntüle
                 </Link>

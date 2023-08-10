@@ -110,7 +110,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                       ?.length
                   }
                 </td>
-                {isUserPlayer && <td>Üye ol</td>}
+                {isUserPlayer && <td>Favorilere ekle</td>}
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}>
                     Görüntüle

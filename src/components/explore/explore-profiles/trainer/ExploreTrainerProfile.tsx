@@ -103,9 +103,9 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
           <p>{`${selectedTrainer?.price_hour} TL / Saat`}</p>
         </div>
         <div className={styles["subscription-section"]}>
-          <h3>Üyelik</h3>
-          <p>163 üye</p>
-          <button>Üye Ol</button>
+          <h3>Favoriler</h3>
+          <p>163 üye favorilere ekledi.</p>
+          <button>Favorilere ekle</button>
           <button>Ders Al</button>
         </div>
       </div>

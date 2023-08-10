@@ -70,7 +70,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
         </div>
         <div className={styles["subscription-section"]}>
           <h3>Etkileşim</h3>
-          <button>Takip Et</button>
+          <button>Favorilere ekle</button>
           <button>Antreman Yap</button>
           <button>Maç Yap</button>
         </div>

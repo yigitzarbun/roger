@@ -90,7 +90,7 @@ const TrainerRegisterForm = () => {
           price_hour: formData.price_hour,
           phone_number: null,
           image: null,
-          tainer_bio_description: null,
+          trainer_bio_description: null,
           location_id: Number(formData.location_id),
           trainer_experience_type_id: Number(
             formData.trainer_experience_type_id

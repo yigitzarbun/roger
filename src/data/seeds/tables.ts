@@ -2,6 +2,10 @@ import { Knex } from "knex";
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
+  await knex("favourites").del();
+  await knex("club_subscriptions").del();
+  await knex("club_subscription_packages").del();
+  await knex("club_subscription_types").del();
   await knex("bookings").del();
   await knex("courts").del();
   await knex("club_external_members").del();
@@ -177,5 +181,28 @@ export async function seed(knex: Knex): Promise<void> {
     { booking_status_type_id: 2, booking_status_type_name: "confirmed" },
     { booking_status_type_id: 3, booking_status_type_name: "rejected" },
     { booking_status_type_id: 4, booking_status_type_name: "cancelled" },
+  ]);
+
+  await knex("club_subscription_types").insert([
+    {
+      club_subscription_type_id: 1,
+      club_subscription_type_name: "1 Aylık Üyelik",
+      club_subscription_duration_months: 1,
+    },
+    {
+      club_subscription_type_id: 2,
+      club_subscription_type_name: "3 Aylık Üyelik",
+      club_subscription_duration_months: 3,
+    },
+    {
+      club_subscription_type_id: 3,
+      club_subscription_type_name: "6 Aylık Üyelik",
+      club_subscription_duration_months: 6,
+    },
+    {
+      club_subscription_type_id: 4,
+      club_subscription_type_name: "12 Aylık Üyelik",
+      club_subscription_duration_months: 12,
+    },
   ]);
 }

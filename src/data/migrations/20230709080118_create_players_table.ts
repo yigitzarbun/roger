@@ -120,6 +120,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("club_address");
       table.string("club_bio_description");
       table.string("club_name").unique().notNullable();
+      table.boolean("isSubscriptionRequired").defaultTo(false).notNullable();
       table
         .integer("location_id")
         .unsigned()
@@ -154,7 +155,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("price_hour").notNullable();
       table.integer("phone_number");
       table.string("image");
-      table.string("tainer_bio_description");
+      table.string("trainer_bio_description");
       table
         .integer("club_id")
         .unsigned()
@@ -370,11 +371,92 @@ export async function up(knex: Knex): Promise<void> {
         .inTable("users")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
+    })
+    .createTable("club_subscription_types", (table) => {
+      table.increments("club_subscription_type_id");
+      table.string("club_subscription_type_name");
+      table.string("club_subscription_duration_months");
+    })
+    .createTable("club_subscription_packages", (table) => {
+      table.increments("club_subscription_package_id");
+      table.integer("price").notNullable();
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table
+        .integer("club_subscription_type_id")
+        .unsigned()
+        .notNullable()
+        .references("club_subscription_type_id")
+        .inTable("club_subscription_types")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("club_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+    .createTable("club_subscriptions", (table) => {
+      table.increments("club_subscription_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.dateTime("start_date").notNullable();
+      table.dateTime("end_date").notNullable();
+      table
+        .integer("club_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("player_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("club_subscription_package_id")
+        .unsigned()
+        .notNullable()
+        .references("club_subscription_package_id")
+        .inTable("club_subscription_packages")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+    .createTable("favourites", (table) => {
+      table.increments("favourite_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.boolean("isActive").notNullable();
+      table
+        .integer("favouriter_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("favouritee_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
     });
 }
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
+    .dropTableIfExists("favourites")
+    .dropTableIfExists("club_subscriptions")
+    .dropTableIfExists("club_subscription_packages")
+    .dropTableIfExists("club_subscription_types")
     .dropTableIfExists("bookings")
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")

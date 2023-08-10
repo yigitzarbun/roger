@@ -88,7 +88,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
       gender: formData?.gender,
       phone_number: null,
       image: null,
-      tainer_bio_description: null,
+      trainer_bio_description: null,
       location_id: Number(formData?.location_id),
       club_id: Number(formData?.club_id),
       price_hour: Number(formData?.price_hour),

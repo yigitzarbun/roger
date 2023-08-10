@@ -10,7 +10,7 @@ export interface Trainer {
   price_hour: number;
   phone_number?: number | null;
   image?: string | null;
-  tainer_bio_description?: string | null;
+  trainer_bio_description?: string | null;
   club_id?: number;
   trainer_experience_type_id: number;
   location_id: number;
