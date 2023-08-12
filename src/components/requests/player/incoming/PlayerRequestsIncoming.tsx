@@ -57,10 +57,8 @@ const PlayerRequestsIncoming = () => {
 
   const currentYear = new Date().getFullYear();
 
-  const [
-    updateBooking,
-    { data: updateBookingData, isSuccess: isUpdateBookingSuccess },
-  ] = useUpdateBookingMutation({});
+  const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
+    useUpdateBookingMutation({});
 
   // accept booking
   const [acceptBookingData, setAcceptBookingData] =
@@ -171,7 +169,21 @@ const PlayerRequestsIncoming = () => {
                   />
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                  {(booking.event_type_id === 1 ||
+                    booking.event_type_id === 2) &&
+                  booking.inviter_id === user?.user_id
+                    ? `${
+                        players?.find(
+                          (player) => player.user_id === booking.invitee_id
+                        )?.fname
+                      } ${
+                        players?.find(
+                          (player) => player.user_id === booking.invitee_id
+                        )?.lname
+                      }`
+                    : (booking.event_type_id === 1 ||
+                        booking.event_type_id === 2) &&
+                      booking.invitee_id === user?.user_id
                     ? `${
                         players?.find(
                           (player) => player.user_id === booking.inviter_id
@@ -181,7 +193,20 @@ const PlayerRequestsIncoming = () => {
                           (player) => player.user_id === booking.inviter_id
                         )?.lname
                       }`
-                    : booking.event_type_id === 3
+                    : ""}
+                  {booking.event_type_id === 3 &&
+                  booking.inviter_id === user?.user_id
+                    ? `${
+                        trainers?.find(
+                          (trainer) => trainer.user_id === booking.invitee_id
+                        )?.fname
+                      } ${
+                        trainers?.find(
+                          (trainer) => trainer.user_id === booking.invitee_id
+                        )?.lname
+                      }`
+                    : booking.event_type_id === 3 &&
+                      booking.invitee_id === user?.user_id
                     ? `${
                         trainers?.find(
                           (trainer) => trainer.user_id === booking.inviter_id
@@ -194,7 +219,19 @@ const PlayerRequestsIncoming = () => {
                     : ""}
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                  {(booking.event_type_id === 1 ||
+                    booking.event_type_id === 2) &&
+                  booking.inviter_id === user?.user_id
+                    ? playerLevelTypes?.find(
+                        (level) =>
+                          level.player_level_id ===
+                          players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.player_level_id
+                      )?.player_level_name
+                    : (booking.event_type_id === 1 ||
+                        booking.event_type_id === 2) &&
+                      booking.invitee_id === user?.user_id
                     ? playerLevelTypes?.find(
                         (level) =>
                           level.player_level_id ===
@@ -202,7 +239,19 @@ const PlayerRequestsIncoming = () => {
                             (player) => player.user_id === booking.inviter_id
                           )?.player_level_id
                       )?.player_level_name
-                    : booking.event_type_id === 3
+                    : ""}
+
+                  {booking.event_type_id === 3 &&
+                  booking.inviter_id === user?.user_id
+                    ? trainerExperienceTypes?.find(
+                        (type) =>
+                          type.trainer_experience_type_id ===
+                          trainers?.find(
+                            (trainer) => trainer.user_id === booking.invitee_id
+                          )?.trainer_experience_type_id
+                      )?.trainer_experience_type_name
+                    : booking.event_type_id === 3 &&
+                      booking.invitee_id === user?.user_id
                     ? trainerExperienceTypes?.find(
                         (type) =>
                           type.trainer_experience_type_id ===
@@ -213,23 +262,55 @@ const PlayerRequestsIncoming = () => {
                     : ""}
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                  {(booking.event_type_id === 1 ||
+                    booking.event_type_id === 2) &&
+                  booking.inviter_id === user?.user_id
+                    ? players?.find(
+                        (player) => player.user_id === booking.invitee_id
+                      )?.gender
+                    : (booking.event_type_id === 1 ||
+                        booking.event_type_id === 2) &&
+                      booking.invitee_id === user?.user_id
                     ? players?.find(
                         (player) => player.user_id === booking.inviter_id
                       )?.gender
-                    : booking.event_type_id === 3
+                    : ""}
+                  {booking.event_type_id === 3 &&
+                  booking.inviter_id === user?.user_id
+                    ? trainers?.find(
+                        (trainer) => trainer.user_id === booking.invitee_id
+                      )?.gender
+                    : booking.event_type_id === 3 &&
+                      booking.invitee_id === user?.user_id
                     ? trainers?.find(
                         (trainer) => trainer.user_id === booking.inviter_id
                       )?.gender
                     : ""}
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                  {(booking.event_type_id === 1 ||
+                    booking.event_type_id === 2) &&
+                  booking.inviter_id === user?.user_id
+                    ? currentYear -
+                      players?.find(
+                        (player) => player.user_id === booking.invitee_id
+                      )?.birth_year
+                    : (booking.event_type_id === 1 ||
+                        booking.event_type_id === 2) &&
+                      booking.invitee_id === user?.user_id
                     ? currentYear -
                       players?.find(
                         (player) => player.user_id === booking.inviter_id
                       )?.birth_year
-                    : booking.event_type_id === 3
+                    : ""}
+                  {booking.event_type_id === 3 &&
+                  booking.inviter_id === user?.user_id
+                    ? currentYear -
+                      trainers?.find(
+                        (trainer) => trainer.user_id === booking.invitee_id
+                      )?.birth_year
+                    : booking.event_type_id === 3 &&
+                      booking.invitee_id === user?.user_id
                     ? currentYear -
                       trainers?.find(
                         (trainer) => trainer.user_id === booking.inviter_id
@@ -258,18 +339,27 @@ const PlayerRequestsIncoming = () => {
                   }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                  {(booking.event_type_id === 1 ||
+                    booking.event_type_id === 2) &&
+                    courts?.find((court) => court.court_id === booking.court_id)
+                      ?.price_hour / 2}
+                  {booking.event_type_id === 3 &&
+                  booking.inviter_id === user?.user_id
                     ? courts?.find(
                         (court) => court.court_id === booking.court_id
-                      )?.price_hour / 2
-                    : booking.event_type_id === 3
+                      )?.price_hour +
+                      trainers?.find(
+                        (trainer) => trainer.user_id === booking.invitee_id
+                      )?.price_hour
+                    : booking.event_type_id === 3 &&
+                      booking.invitee_id === user?.user_id
                     ? courts?.find(
                         (court) => court.court_id === booking.court_id
                       )?.price_hour +
                       trainers?.find(
                         (trainer) => trainer.user_id === booking.inviter_id
                       )?.price_hour
-                    : "External Booking"}
+                    : ""}
                 </td>
                 <td>
                   <button

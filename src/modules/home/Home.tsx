@@ -10,6 +10,7 @@ const Home = () => {
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
   const isUserClub = user?.user?.user_type_id === 3;
+
   return (
     <div>
       {isUserPlayer && <PlayerHome />}

@@ -29,13 +29,11 @@ const Header = () => {
     isUserTrainer = user?.user.user.user_type_id === 2;
     isUserClub = user?.user.user.user_type_id === 3;
   }
-
   const handleLogout = () => {
     dispatch(logOut());
     navigate(paths.LOGIN);
   };
   const isLoggedIn = user?.token;
-
   return (
     <div className={styles["header-container"]}>
       <NavLink

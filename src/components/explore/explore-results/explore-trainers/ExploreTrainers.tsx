@@ -54,7 +54,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
+        <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
       </div>
       {trainers && trainers.length === 0 && (
         <p>

@@ -11,20 +11,23 @@
 
   .input-container {
     display: flex;
-    flex-direction: column;
-    row-gap: 1vh;
-    width: 30%;
-  }
-
-  label {
-    font-weight: bold;
-  }
-
-  select {
-    padding: $roger-box-padding;
+    width: 25%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
     border-radius: $roger-border-radius;
-    border: none;
-    width: 100%;
+    justify-content: center;
+    column-gap: 14px;
+
+    label {
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      border: none;
+      background-color: $roger-black-dark;
+    }
   }
 
   button {

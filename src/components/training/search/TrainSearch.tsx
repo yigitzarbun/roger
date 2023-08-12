@@ -9,22 +9,25 @@ interface TrainSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClear: () => void;
   playerLevelId: number;
   gender: string;
   locationId: number;
+  favourite: boolean;
 }
 const TrainSearch = (props: TrainSearchProps) => {
   const {
     handleLevel,
     handleGender,
     handleLocation,
+    handleFavourite,
     handleClear,
     playerLevelId,
     gender,
     locationId,
+    favourite,
   } = props;
-
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -38,7 +41,11 @@ const TrainSearch = (props: TrainSearchProps) => {
   return (
     <div className={styles["training-page-container"]}>
       <div className={styles["input-container"]}>
-        <select onChange={handleLevel} value={playerLevelId ?? ""}>
+        <select
+          onChange={handleLevel}
+          value={playerLevelId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Seviye --</option>
           {playerLevels?.map((player_level) => (
             <option
@@ -51,14 +58,22 @@ const TrainSearch = (props: TrainSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleGender} value={gender}>
+        <select
+          onChange={handleGender}
+          value={gender}
+          className="input-element"
+        >
           <option value="">-- Cinsiyet --</option>
           <option value="female">Kadın</option>
           <option value="male">Erkek</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleLocation} value={locationId ?? ""}>
+        <select
+          onChange={handleLocation}
+          value={locationId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Konum --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
@@ -66,6 +81,15 @@ const TrainSearch = (props: TrainSearchProps) => {
             </option>
           ))}
         </select>
+      </div>
+      <div className={styles["input-container"]}>
+        <label>Favori</label>
+        <input
+          type="checkbox"
+          checked={favourite || false}
+          onChange={handleFavourite}
+          className="input-element"
+        />
       </div>
       <button onClick={handleClear} className={styles["button"]}>
         Temizle

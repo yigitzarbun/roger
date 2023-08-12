@@ -15,9 +15,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   useEffect(() => {
     if (!token) {
-      navigate(Paths.LOGIN);
+      if (
+        location.pathname !== Paths.LOGIN &&
+        location.pathname !== Paths.REGISTER
+      ) {
+        navigate(Paths.LOGIN);
+      }
     }
-  }, [navigate]);
+  }, [token, location, navigate]);
   return (
     <div>
       <Header />

@@ -131,8 +131,8 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                       ).court_structure_type_name
                     }
                   </td>
-                  <td>{court.opening_time}</td>
-                  <td>{court.closing_time}</td>
+                  <td>{court.opening_time.slice(0, 5)}</td>
+                  <td>{court.closing_time.slice(0, 5)}</td>
                   <td>{court.price_hour}</td>
                   <td onClick={() => openEditCourtModal(court.court_id)}>
                     Düzenle

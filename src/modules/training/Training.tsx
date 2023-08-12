@@ -10,6 +10,7 @@ const Training = () => {
   const [playerLevelId, setPlayerLevelId] = useState<number | null>(null);
   const [gender, setGender] = useState<string>("");
   const [locationId, setLocationId] = useState<number | null>(null);
+  const [favourite, setFavourite] = useState<boolean | null>(null);
 
   const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
     setGender(event.target.value);
@@ -25,10 +26,16 @@ const Training = () => {
     setLocationId(isNaN(value) ? null : value);
   };
 
+  const handleFavourite = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.checked;
+    setFavourite(value);
+  };
+
   const handleClear = () => {
     setPlayerLevelId(null);
     setGender("");
     setLocationId(null);
+    setFavourite(null);
   };
   return (
     <div className={styles["training-container"]}>
@@ -37,15 +44,18 @@ const Training = () => {
         handleLevel={handleLevel}
         handleGender={handleGender}
         handleLocation={handleLocation}
+        handleFavourite={handleFavourite}
         handleClear={handleClear}
         playerLevelId={playerLevelId}
         gender={gender}
         locationId={locationId}
+        favourite={favourite}
       />
       <TrainResults
         playerLevelId={playerLevelId}
         gender={gender}
         locationId={locationId}
+        favourite={favourite}
       />
     </div>
   );
