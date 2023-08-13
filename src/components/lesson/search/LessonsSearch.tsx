@@ -12,12 +12,14 @@ interface TrainSearchProps {
   handlePrice: (event: ChangeEvent<HTMLInputElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClear: () => void;
   trainerLevelId: number;
   trainerPrice: number;
   gender: string;
   locationId: number;
   clubId: number;
+  favourite: boolean;
 }
 
 const LessonSearch = (props: TrainSearchProps) => {
@@ -27,12 +29,14 @@ const LessonSearch = (props: TrainSearchProps) => {
     handlePrice,
     handleLocation,
     handleClub,
+    handleFavourite,
     handleClear,
     trainerLevelId,
     trainerPrice,
     gender,
     locationId,
     clubId,
+    favourite,
   } = props;
 
   const { data: locations, isLoading: isLocationsLoading } =
@@ -101,6 +105,15 @@ const LessonSearch = (props: TrainSearchProps) => {
           max="750"
           defaultValue={100}
           onChange={handlePrice}
+        />
+      </div>
+      <div className={styles["input-container"]}>
+        <label>Favori</label>
+        <input
+          type="checkbox"
+          checked={favourite || false}
+          onChange={handleFavourite}
+          className="input-element"
         />
       </div>
       <button onClick={handleClear} className={styles["button"]}>

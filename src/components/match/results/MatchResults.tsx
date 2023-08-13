@@ -10,14 +10,16 @@ import { useAppSelector } from "../../../store/hooks";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
+import { useGetFavouritesQuery } from "../../../api/endpoints/FavouritesApi";
 
 interface MatchResultsProps {
   playerLevelId: number;
   gender: string;
   locationId: number;
+  favourite: boolean;
 }
 const MatchResults = (props: MatchResultsProps) => {
-  const { playerLevelId, gender, locationId } = props;
+  const { playerLevelId, gender, locationId, favourite } = props;
 
   const { user } = useAppSelector((store) => store.user);
   const {
@@ -32,6 +34,15 @@ const MatchResults = (props: MatchResultsProps) => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
 
+  const { data: favourites, isLoading: isFavouritesLoading } =
+    useGetFavouritesQuery({});
+
+  const myFavourites = favourites?.filter(
+    (favourite) =>
+      favourite.favouriter_id === user?.user?.user_id &&
+      favourite.isActive === true
+  );
+
   const levelId = Number(playerLevelId) ?? null;
   const selectedGender = gender ?? "";
   const locationIdValue = Number(locationId) ?? null;
@@ -44,18 +55,33 @@ const MatchResults = (props: MatchResultsProps) => {
     players
       .filter((player) => player.user_id !== user.user.user_id)
       .filter((player) => {
-        if (levelId === 0 && gender === "" && locationIdValue === 0) {
+        if (
+          levelId === 0 &&
+          gender === "" &&
+          locationIdValue === 0 &&
+          favourite !== true
+        ) {
           return player;
         } else if (
           (levelId === player.player_level_id || levelId === 0) &&
           (selectedGender === player.gender || selectedGender === "") &&
-          (locationIdValue === player.location_id || locationIdValue === 0)
+          (locationIdValue === player.location_id || locationIdValue === 0) &&
+          ((favourite === true &&
+            myFavourites.find(
+              (favourite) => favourite.favouritee_id === player.user_id
+            )) ||
+            favourite !== true)
         ) {
           return player;
         }
       });
 
-  if (isPlayersLoading || isLocationsLoading || isPlayerLevelsLoading) {
+  if (
+    isPlayersLoading ||
+    isLocationsLoading ||
+    isPlayerLevelsLoading ||
+    isFavouritesLoading
+  ) {
     return <div>Loading...</div>;
   }
 

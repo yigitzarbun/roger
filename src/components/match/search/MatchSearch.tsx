@@ -9,10 +9,12 @@ interface MatchSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClear: () => void;
   playerLevelId: number;
   gender: string;
   locationId: number;
+  favourite: boolean;
 }
 
 const MatchSearch = (props: MatchSearchProps) => {
@@ -20,10 +22,12 @@ const MatchSearch = (props: MatchSearchProps) => {
     handleLevel,
     handleGender,
     handleLocation,
+    handleFavourite,
     handleClear,
     playerLevelId,
     gender,
     locationId,
+    favourite,
   } = props;
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -66,6 +70,15 @@ const MatchSearch = (props: MatchSearchProps) => {
             </option>
           ))}
         </select>
+      </div>
+      <div className={styles["input-container"]}>
+        <label>Favori</label>
+        <input
+          type="checkbox"
+          checked={favourite || false}
+          onChange={handleFavourite}
+          className="input-element"
+        />
       </div>
       <button onClick={handleClear} className={styles["button"]}>
         Temizle

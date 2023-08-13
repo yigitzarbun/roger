@@ -19,5 +19,6 @@ export default {
   STUDENTS: "/egitmen-ogrenciler",
   EXPLORE: "/kesfet",
   EXPLORE_PROFILE: "/kesfet/profil/",
+  CLUB_SUBSCRIPTIONS: "/kulup-uyelikler",
   NOT_FOUND: "*",
 } as Paths;

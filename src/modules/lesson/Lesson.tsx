@@ -12,6 +12,7 @@ const Lesson = () => {
   const [gender, setGender] = useState<string>("");
   const [locationId, setLocationId] = useState<number | null>(null);
   const [clubId, setClubId] = useState<number | null>(null);
+  const [favourite, setFavourite] = useState<boolean | null>(null);
 
   const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -37,12 +38,18 @@ const Lesson = () => {
     setClubId(isNaN(value) ? null : value);
   };
 
+  const handleFavourite = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.checked;
+    setFavourite(value);
+  };
+
   const handleClear = () => {
     setTrainerLevelId(null);
     setGender("");
     setTrainerPrice(100);
     setLocationId(null);
     setClubId(null);
+    setFavourite(null);
   };
   return (
     <div className={styles["lesson-container"]}>
@@ -53,12 +60,14 @@ const Lesson = () => {
         handlePrice={handlePrice}
         handleLocation={handleLocation}
         handleClub={handleClub}
+        handleFavourite={handleFavourite}
         handleClear={handleClear}
         trainerLevelId={trainerLevelId}
         trainerPrice={trainerPrice}
         gender={gender}
         locationId={locationId}
         clubId={clubId}
+        favourite={favourite}
       />
       <LessonResults
         trainerLevelId={trainerLevelId}
@@ -66,6 +75,7 @@ const Lesson = () => {
         gender={gender}
         locationId={locationId}
         clubId={clubId}
+        favourite={favourite}
       />
     </div>
   );

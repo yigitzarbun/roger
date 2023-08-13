@@ -35,6 +35,10 @@ const ExploreProfile = lazy(
 const CourtBookingInvite = lazy(
   () => import("../modules/invite/court-booking/CourtBookingInvite")
 );
+const ClubSubscriptions = lazy(
+  () => import("../modules/club-subscriptions/ClubSubscriptions")
+);
+
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
     <MainLayout>
@@ -71,6 +75,10 @@ const routes: Route[] = [
   {
     path: paths.COURT_BOOKING_INVITE,
     element: getRouteElement(CourtBookingInvite),
+  },
+  {
+    path: paths.CLUB_SUBSCRIPTIONS,
+    element: getRouteElement(ClubSubscriptions),
   },
 ];
 

@@ -1,18 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
+
+import { Link } from "react-router-dom";
+
+import styles from "./styles.module.scss";
+
+import paths from "../../../../routing/Paths";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetTrainerEmploymentTypesQuery } from "../../../../api/endpoints/TrainerEmploymentTypesApi";
+import {
+  useAddFavouriteMutation,
+  useGetFavouritesQuery,
+  useUpdateFavouriteMutation,
+} from "../../../../api/endpoints/FavouritesApi";
 
-import styles from "./styles.module.scss";
+import { useAppSelector } from "../../../../store/hooks";
 
 interface ExploreTrainerProfileProps {
   user_id: string;
 }
 const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const { user_id } = props;
+
+  const user = useAppSelector((store) => store.user?.user);
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -37,13 +50,91 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     (trainer) => trainer.user_id === Number(user_id)
   );
 
+  const {
+    data: favourites,
+    isLoading: isFavouritesLoading,
+    refetch,
+  } = useGetFavouritesQuery({});
+
+  const trainerFavouriters = favourites?.filter(
+    (favourite) =>
+      favourite.favouritee_id === Number(user_id) && favourite.isActive === true
+  )?.length;
+
+  const myFavouriteTrainers = favourites?.filter(
+    (favourite) => favourite.favouriter_id === user?.user?.user_id
+  );
+
+  const isTrainerInMyFavourites = (user_id: number) => {
+    if (
+      myFavouriteTrainers.find(
+        (favourite) =>
+          favourite.favouritee_id === user_id && favourite.isActive === false
+      )
+    ) {
+      return "deactivated";
+    } else if (
+      myFavouriteTrainers.find(
+        (favourite) =>
+          favourite.favouritee_id === user_id && favourite.isActive === true
+      )
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
+    useAddFavouriteMutation();
+
+  const handleAddFavourite = (favouritee_id: number) => {
+    const favouriteData = {
+      isActive: true,
+      favouriter_id: user?.user?.user_id,
+      favouritee_id: favouritee_id,
+    };
+    addFavourite(favouriteData);
+  };
+
+  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
+    useUpdateFavouriteMutation();
+
+  const handleUpdateFavourite = (userId: number) => {
+    const selectedFavourite = myFavouriteTrainers?.find(
+      (favourite) => favourite.favouritee_id === userId
+    );
+    const favouriteData = {
+      favourite_id: selectedFavourite.favourite_id,
+      registered_at: selectedFavourite.registered_at,
+      isActive: selectedFavourite.isActive === true ? false : true,
+      favouriter_id: selectedFavourite.favouriter_id,
+      favouritee_id: selectedFavourite.favouritee_id,
+    };
+    updateFavourite(favouriteData);
+  };
+
+  const handleToggleFavourite = (userId: number) => {
+    if (isTrainerInMyFavourites(userId)) {
+      handleUpdateFavourite(userId);
+    } else {
+      handleAddFavourite(userId);
+    }
+  };
+
+  useEffect(() => {
+    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
+      refetch();
+    }
+  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
   if (
     isClubsLoading ||
     isLocationsLoading ||
     isLocationsLoading ||
     isTrainersLoading ||
     isTrainerExperienceTypesLoading ||
-    isTrainerEmploymentTypesLoading
+    isTrainerEmploymentTypesLoading ||
+    isFavouritesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -104,9 +195,27 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
         </div>
         <div className={styles["subscription-section"]}>
           <h3>Favoriler</h3>
-          <p>163 üye favorilere ekledi.</p>
-          <button>Favorilere ekle</button>
-          <button>Ders Al</button>
+          <p>{`${trainerFavouriters} kişi favorilere ekledi`}</p>
+          <button
+            onClick={() => handleToggleFavourite(selectedTrainer?.user_id)}
+          >
+            {isTrainerInMyFavourites(selectedTrainer?.user_id) === true
+              ? "Favorilerden çıkar"
+              : "Favorilere ekle"}
+          </button>
+          <Link
+            to={paths.LESSON_INVITE}
+            state={{
+              fname: selectedTrainer.fname,
+              lname: selectedTrainer.lname,
+              image: selectedTrainer.image,
+              court_price: "",
+              user_id: selectedTrainer.user_id,
+            }}
+            className={styles["accept-button"]}
+          >
+            <button>Ders al</button>
+          </Link>
         </div>
       </div>
     </div>

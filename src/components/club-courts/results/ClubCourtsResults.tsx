@@ -68,6 +68,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   ) {
     return <div>Yükleniyor..</div>;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>

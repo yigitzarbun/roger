@@ -12,6 +12,7 @@ import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
+import { useGetFavouritesQuery } from "../../../api/endpoints/FavouritesApi";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -19,10 +20,18 @@ interface TrainSearchProps {
   gender: string;
   locationId: number;
   clubId: number;
+  favourite: boolean;
 }
 
 const LessonResults = (props: TrainSearchProps) => {
-  const { trainerLevelId, trainerPrice, gender, locationId, clubId } = props;
+  const {
+    trainerLevelId,
+    trainerPrice,
+    gender,
+    locationId,
+    clubId,
+    favourite,
+  } = props;
   const { user } = useAppSelector((store) => store.user);
 
   const {
@@ -40,6 +49,15 @@ const LessonResults = (props: TrainSearchProps) => {
   } = useGetTrainerExperienceTypesQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  const { data: favourites, isLoading: isFavouritesLoading } =
+    useGetFavouritesQuery({});
+
+  const myFavourites = favourites?.filter(
+    (favourite) =>
+      favourite.favouriter_id === user?.user?.user_id &&
+      favourite.isActive === true
+  );
 
   const trainerLevelValue = Number(trainerLevelId) ?? null;
   const selectedGenderValue = gender ?? "";
@@ -60,7 +78,8 @@ const LessonResults = (props: TrainSearchProps) => {
           selectedGenderValue === "" &&
           locationIdValue === 0 &&
           clubIdValue === 0 &&
-          trainerPriceValue === 0
+          trainerPriceValue === 0 &&
+          favourite !== true
         ) {
           return trainer;
         } else if (
@@ -70,13 +89,24 @@ const LessonResults = (props: TrainSearchProps) => {
             selectedGenderValue === "") &&
           (locationIdValue === trainer.location_id || locationIdValue === 0) &&
           (clubIdValue === trainer.club_id || clubIdValue === 0) &&
-          (trainerPriceValue <= trainer.price_hour || trainerPriceValue === 100)
+          (trainerPriceValue <= trainer.price_hour ||
+            trainerPriceValue === 100) &&
+          ((favourite === true &&
+            myFavourites.find(
+              (favourite) => favourite.favouritee_id === trainer.user_id
+            )) ||
+            favourite !== true)
         ) {
           return trainer;
         }
       });
 
-  if (isLocationsLoading || istrainerExperienceTypesLoading || isClubsLoading) {
+  if (
+    isLocationsLoading ||
+    istrainerExperienceTypesLoading ||
+    isClubsLoading ||
+    isFavouritesLoading
+  ) {
     return <div>Yükleniyor..</div>;
   }
 

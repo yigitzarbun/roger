@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
+
+import styles from "./styles.module.scss";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
@@ -12,14 +14,21 @@ import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSur
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
+import {
+  useAddFavouriteMutation,
+  useGetFavouritesQuery,
+  useUpdateFavouriteMutation,
+} from "../../../../api/endpoints/FavouritesApi";
 
-import styles from "./styles.module.scss";
+import { useAppSelector } from "../../../../store/hooks";
 
 interface ExploreClubProfileProps {
   user_id: string;
 }
 const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   const { user_id } = props;
+
+  const user = useAppSelector((store) => store.user?.user);
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -48,6 +57,83 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
 
   const selectedClub = clubs?.find((club) => club.user_id === Number(user_id));
 
+  const {
+    data: favourites,
+    isLoading: isFavouritesLoading,
+    refetch,
+  } = useGetFavouritesQuery({});
+
+  const clubFavouriters = favourites?.filter(
+    (favourite) =>
+      favourite.favouritee_id === Number(user_id) && favourite.isActive === true
+  )?.length;
+
+  const myFavouriteClubs = favourites?.filter(
+    (favourite) => favourite.favouriter_id === user?.user?.user_id
+  );
+
+  const isClubInMyFavourites = (user_id: number) => {
+    if (
+      myFavouriteClubs.find(
+        (favourite) =>
+          favourite.favouritee_id === user_id && favourite.isActive === false
+      )
+    ) {
+      return "deactivated";
+    } else if (
+      myFavouriteClubs.find(
+        (favourite) =>
+          favourite.favouritee_id === user_id && favourite.isActive === true
+      )
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
+    useAddFavouriteMutation();
+
+  const handleAddFavourite = (favouritee_id: number) => {
+    const favouriteData = {
+      isActive: true,
+      favouriter_id: user?.user?.user_id,
+      favouritee_id: favouritee_id,
+    };
+    addFavourite(favouriteData);
+  };
+
+  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
+    useUpdateFavouriteMutation();
+
+  const handleUpdateFavourite = (userId: number) => {
+    const selectedFavourite = myFavouriteClubs?.find(
+      (favourite) => favourite.favouritee_id === userId
+    );
+    const favouriteData = {
+      favourite_id: selectedFavourite.favourite_id,
+      registered_at: selectedFavourite.registered_at,
+      isActive: selectedFavourite.isActive === true ? false : true,
+      favouriter_id: selectedFavourite.favouriter_id,
+      favouritee_id: selectedFavourite.favouritee_id,
+    };
+    updateFavourite(favouriteData);
+  };
+
+  const handleToggleFavourite = (userId: number) => {
+    if (isClubInMyFavourites(userId)) {
+      handleUpdateFavourite(userId);
+    } else {
+      handleAddFavourite(userId);
+    }
+  };
+
+  useEffect(() => {
+    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
+      refetch();
+    }
+  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
   if (
     isClubsLoading ||
     isCourtsLoading ||
@@ -57,7 +143,8 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading ||
     isTrainersLoading ||
-    isTrainerExperienceTypesLoading
+    isTrainerExperienceTypesLoading ||
+    isFavouritesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -100,16 +187,18 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
             .length > 0 ? (
             <table>
               <thead>
-                <th>Kort</th>
-                <th>Yüzey</th>
-                <th>Mekan</th>
-                <th>Fiyat (TL / Saat)</th>
+                <tr>
+                  <th>Kort</th>
+                  <th>Yüzey</th>
+                  <th>Mekan</th>
+                  <th>Fiyat (TL / Saat)</th>
+                </tr>
               </thead>
               <tbody>
                 {courts
                   ?.filter((court) => court.club_id === selectedClub?.club_id)
                   .map((court) => (
-                    <tr>
+                    <tr key={court.court_id}>
                       <td>{court.court_name}</td>
                       <td>
                         {
@@ -130,11 +219,13 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                         }
                       </td>
                       <td>{court.price_hour}</td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                      >
-                        Görüntüle
-                      </Link>
+                      <td>
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                        >
+                          Görüntüle
+                        </Link>
+                      </td>
                     </tr>
                   ))}
               </tbody>
@@ -147,8 +238,12 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
       <div className={styles["bottom-sections-container"]}>
         <div className={styles["subscription-section"]}>
           <h3>Favoriler</h3>
-          <p>163 oyuncu favorilere ekledi</p>
-          <button>Favorilere ekle</button>
+          <p>{`${clubFavouriters} kişi favorilere ekledi`}</p>
+          <button onClick={() => handleToggleFavourite(selectedClub?.user_id)}>
+            {isClubInMyFavourites(selectedClub?.user_id) === true
+              ? "Favorilerden çıkar"
+              : "Favorilere ekle"}
+          </button>
         </div>
         <div className={styles["trainers-section"]}>
           <h3>Eğitmenler</h3>
@@ -157,11 +252,13 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           ).length > 0 ? (
             <table>
               <thead>
-                <th>İsim</th>
-                <th>Soyisim</th>
-                <th>Cinsiyet</th>
-                <th>Tecrübe</th>
-                <th>Fiyat (TL / Saat)</th>
+                <tr>
+                  <th>İsim</th>
+                  <th>Soyisim</th>
+                  <th>Cinsiyet</th>
+                  <th>Tecrübe</th>
+                  <th>Fiyat (TL / Saat)</th>
+                </tr>
               </thead>
               <tbody>
                 {trainers
@@ -169,7 +266,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                     (trainer) => trainer.club_id === selectedClub?.club_id
                   )
                   .map((trainer) => (
-                    <tr>
+                    <tr key={trainer.user_id}>
                       <td>{trainer.fname}</td>
                       <td>{trainer.lname}</td>
                       <td>{trainer.gender}</td>
@@ -183,11 +280,13 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                         }
                       </td>
                       <td>{trainer.price_hour}</td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
-                      >
-                        Görüntüle
-                      </Link>
+                      <td>
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                        >
+                          Görüntüle
+                        </Link>
+                      </td>
                     </tr>
                   ))}
               </tbody>

@@ -132,9 +132,11 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                     )?.location_name
                   }
                 </td>
-                <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
-                  Görüntüle
-                </Link>
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
+                    Görüntüle
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

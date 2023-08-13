@@ -9,37 +9,28 @@
   border-radius: $roger-border-radius;
   width: 100%;
 
-  .input-container {
+  .input-container,
+  .price-container {
     display: flex;
-    flex-direction: column;
-    row-gap: 1vh;
-    // width: 15%;
-
-    select {
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 100%;
-    }
-  }
-  .price-input {
-    width: 30%;
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    display: flex;
-    justify-content: space-around;
+    width: 25%;
     align-items: center;
-    border: none;
-    background-color: rgb(59, 59, 59);
-    border: none;
+    background-color: $roger-black-dark;
+    padding: 2px;
+    border-radius: $roger-border-radius;
+    justify-content: center;
+    column-gap: 14px;
+
     label {
-      font-size: 13px;
-      width: 50%;
+      font-weight: bold;
     }
+
+    select,
     input {
-      width: 70%;
+      border: none;
+      background-color: $roger-black-dark;
     }
   }
+
   button {
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;

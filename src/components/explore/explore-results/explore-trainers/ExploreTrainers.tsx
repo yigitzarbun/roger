@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -10,6 +10,11 @@ import { User } from "../../../../store/slices/authSlice";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { Trainer } from "../../../../api/endpoints/TrainersApi";
 import { TrainerExperienceType } from "../../../../api/endpoints/TrainerExperienceTypesApi";
+import {
+  useAddFavouriteMutation,
+  useGetFavouritesQuery,
+  useUpdateFavouriteMutation,
+} from "../../../../api/endpoints/FavouritesApi";
 
 interface ExploreTrainersProps {
   user: User;
@@ -44,10 +49,83 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
 
+  const {
+    data: favourites,
+    isLoading: isFavouritesLoading,
+    refetch,
+  } = useGetFavouritesQuery({});
+
+  const myFavouriteTrainers = favourites?.filter(
+    (favourite) => favourite.favouriter_id === user?.user?.user_id
+  );
+
+  const isTrainerInMyFavourites = (user_id: number) => {
+    if (
+      myFavouriteTrainers.find(
+        (favourite) =>
+          favourite.favouritee_id === user_id && favourite.isActive === false
+      )
+    ) {
+      return "deactivated";
+    } else if (
+      myFavouriteTrainers.find(
+        (favourite) =>
+          favourite.favouritee_id === user_id && favourite.isActive === true
+      )
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
+    useAddFavouriteMutation();
+
+  const handleAddFavourite = (favouritee_id: number) => {
+    const favouriteData = {
+      isActive: true,
+      favouriter_id: user?.user?.user_id,
+      favouritee_id: favouritee_id,
+    };
+    addFavourite(favouriteData);
+  };
+
+  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
+    useUpdateFavouriteMutation();
+
+  const handleUpdateFavourite = (userId: number) => {
+    const selectedFavourite = myFavouriteTrainers?.find(
+      (favourite) => favourite.favouritee_id === userId
+    );
+    const favouriteData = {
+      favourite_id: selectedFavourite.favourite_id,
+      registered_at: selectedFavourite.registered_at,
+      isActive: selectedFavourite.isActive === true ? false : true,
+      favouriter_id: selectedFavourite.favouriter_id,
+      favouritee_id: selectedFavourite.favouritee_id,
+    };
+    updateFavourite(favouriteData);
+  };
+
+  const handleToggleFavourite = (userId: number) => {
+    if (isTrainerInMyFavourites(userId)) {
+      handleUpdateFavourite(userId);
+    } else {
+      handleAddFavourite(userId);
+    }
+  };
+
+  useEffect(() => {
+    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
+      refetch();
+    }
+  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
   if (
     isTrainersLoading ||
     isLocationsLoading ||
-    isTrainerExperienceTypesLoading
+    isTrainerExperienceTypesLoading ||
+    isFavouritesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -123,10 +201,18 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     </Link>
                   </td>
                 )}
-                {isUserPlayer && <td>Favorilere ekle</td>}
-                <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
-                  Görüntüle
-                </Link>
+                {
+                  <td onClick={() => handleToggleFavourite(trainer.user_id)}>
+                    {isTrainerInMyFavourites(trainer.user_id) === true
+                      ? "Favorilerden çıkar"
+                      : "Favorilere ekle"}
+                  </td>
+                }
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
+                    Görüntüle
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

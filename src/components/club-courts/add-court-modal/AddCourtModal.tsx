@@ -37,9 +37,10 @@ type FormValues = {
 
 const AddCourtModal = (props: AddCourtModalProps) => {
   const { isAddCourtModalOpen, closeAddCourtModal } = props;
+
   const { user } = useAppSelector((store) => store.user);
 
-  const [addCourt, { data, isSuccess }] = useAddCourtMutation({});
+  const [addCourt, { isSuccess }] = useAddCourtMutation({});
 
   const { refetch } = useGetCourtsQuery({});
 
@@ -50,6 +51,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     useGetCourtSurfaceTypesQuery({});
 
   const [openingTime, setOpeningTime] = useState<string>("00:00");
+
   const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setOpeningTime(event.target.value);
   };
@@ -85,6 +87,10 @@ const AddCourtModal = (props: AddCourtModalProps) => {
       closeAddCourtModal();
     }
   }, [isSuccess]);
+
+  if (isCourtStructureTypesLoading || isCourtSurfaceTypesLoading) {
+    return <div>Yükleniyor..</div>;
+  }
 
   return (
     <Modal

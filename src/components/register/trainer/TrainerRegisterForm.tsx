@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
@@ -6,7 +6,10 @@ import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useAddUserMutation } from "../../../store/auth/apiSlice";
-import { useAddTrainerMutation } from "../../../api/endpoints/TrainersApi";
+import {
+  useAddTrainerMutation,
+  useGetTrainersQuery,
+} from "../../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetTrainerEmploymentTypesQuery } from "../../../api/endpoints/TrainerEmploymentTypesApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
@@ -38,24 +41,32 @@ const TrainerRegisterForm = () => {
     setEmploymentType(event.target.value);
   };
   const [addUser] = useAddUserMutation();
-  const [addTrainer] = useAddTrainerMutation();
+
+  const [addTrainer, { isSuccess: isAddTrainerSuccess }] =
+    useAddTrainerMutation();
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
+
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
+
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
+
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
+
   const {
     data: trainerEmploymentTypes,
     isLoading: isTrainerEmploymentTypesLoading,
   } = useGetTrainerEmploymentTypesQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
+  const { refetch } = useGetTrainersQuery({});
   const {
     register,
     handleSubmit,
@@ -113,6 +124,11 @@ const TrainerRegisterForm = () => {
     }
   };
 
+  useEffect(() => {
+    if (isAddTrainerSuccess) {
+      refetch();
+    }
+  }, [isAddTrainerSuccess]);
   if (
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
