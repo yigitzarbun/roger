@@ -239,7 +239,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                         : "Favorilere ekle"}
                     </td>
                   }
-
                   <td>
                     <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
                       Görüntüle

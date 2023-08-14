@@ -8,14 +8,14 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../../store/hooks";
+import { useAppSelector } from "../../../store/hooks";
 
 import {
   useAddClubSubscriptionMutation,
   useGetClubSubscriptionsQuery,
-} from "../../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubSubscriptionPackagesQuery } from "../../../../../api/endpoints/ClubSubscriptionPackagesApi";
-import { useGetClubSubscriptionTypesQuery } from "../../../../../api/endpoints/ClubSubscriptionTypesApi";
+} from "../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
 
 interface SubscribeToClubModalProps {
   openSubscribeModal: boolean;
@@ -80,14 +80,21 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
       if (selectedPackage && selectedSubscriptionType) {
         const currentDate = new Date();
         const startDate = currentDate.toISOString();
+
+        // Convert to local time zone for endDate calculation
         const endDate = new Date(currentDate);
         endDate.setMonth(
           currentDate.getMonth() +
             parseInt(selectedSubscriptionType.club_subscription_duration_months)
         );
+
+        // Adjust for local time zone offset
+        const timeZoneOffset = currentDate.getTimezoneOffset();
+        endDate.setMinutes(endDate.getMinutes() - timeZoneOffset);
+
         const newSubscriptionData = {
           start_date: startDate,
-          end_date: endDate.toISOString(),
+          end_date: endDate.toISOString(), // Keep this in ISO format for consistency
           club_id: selectedClubId,
           player_id: user?.user?.user_id,
           club_subscription_package_id: Number(

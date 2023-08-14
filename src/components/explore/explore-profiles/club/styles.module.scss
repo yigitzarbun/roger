@@ -38,11 +38,11 @@
     }
   }
 
-  .bottom-sections-container {
+  .mid-sections-container {
     display: flex;
     justify-content: space-between;
 
-    .subscription-section {
+    .favourites-section {
       background-color: $roger-box-bg-color;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
@@ -63,6 +63,41 @@
       }
     }
     .trainers-section {
+      background-color: $roger-box-bg-color;
+      width: 65%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+
+      table {
+        width: 100%;
+        text-align: left;
+      }
+    }
+  }
+  .bottom-sections-container {
+    display: flex;
+    justify-content: space-between;
+    .subscribers-section {
+      background-color: $roger-box-bg-color;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      width: 30%;
+      button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+        width: 200px;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
+    }
+    .subscriptions-section {
       background-color: $roger-box-bg-color;
       width: 65%;
       padding: $roger-box-padding;

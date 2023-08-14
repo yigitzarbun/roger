@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -19,8 +19,12 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
+import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 
 interface ExploreClubProfileProps {
   user_id: string;
@@ -51,12 +55,26 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   );
 
   const {
+    data: clubSubscriptionTypes,
+    isLoading: isClubSubscriptionTypesLoading,
+  } = useGetClubSubscriptionTypesQuery({});
+
+  const {
+    data: clubSubscriptionPackages,
+    isLoading: isClubSubscriptionPackagesLoading,
+  } = useGetClubSubscriptionPackagesQuery({});
+
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
+    useGetClubSubscriptionsQuery({});
+
+  const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
   const selectedClub = clubs?.find((club) => club.user_id === Number(user_id));
 
+  // favourites
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
@@ -128,6 +146,39 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     }
   };
 
+  // subscriptions
+  const selectedClubSubscriptionPackages = clubSubscriptionPackages?.filter(
+    (subscriptionPackage) =>
+      subscriptionPackage.club_id === selectedClub?.user_id
+  );
+
+  const selectedClubSubscribers = clubSubscriptions?.filter(
+    (subscription) => subscription.club_id === selectedClub?.user_id
+  ).length;
+
+  const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
+
+  const [selectedClubId, setSelectedClubId] = useState(null);
+
+  const handleOpenSubscribeModal = (value: number) => {
+    setOpenSubscribeModal(true);
+    setSelectedClubId(value);
+  };
+  const handleCloseSubscribeModal = () => {
+    setOpenSubscribeModal(false);
+    setSelectedClubId(null);
+  };
+
+  const isUserSubscribedToClub = () => {
+    const activeSubscription = clubSubscriptions?.find(
+      (subscription) =>
+        subscription.club_id === selectedClub?.user_id &&
+        subscription.player_id === user?.user?.user_id &&
+        subscription.isActive === true
+    );
+    return activeSubscription ? true : false;
+  };
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetch();
@@ -144,7 +195,10 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     isCourtStructureTypesLoading ||
     isTrainersLoading ||
     isTrainerExperienceTypesLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isClubSubscriptionTypesLoading ||
+    isClubSubscriptionPackagesLoading ||
+    isClubSubscriptionsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -235,8 +289,8 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           )}
         </div>
       </div>
-      <div className={styles["bottom-sections-container"]}>
-        <div className={styles["subscription-section"]}>
+      <div className={styles["mid-sections-container"]}>
+        <div className={styles["favourites-section"]}>
           <h3>Favoriler</h3>
           <p>{`${clubFavouriters} kişi favorilere ekledi`}</p>
           <button onClick={() => handleToggleFavourite(selectedClub?.user_id)}>
@@ -292,10 +346,75 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
               </tbody>
             </table>
           ) : (
-            <p>Henüz kulübe ait kort bulunmamaktadır</p>
+            <p>Henüz kulübe bağlı çalışan eğitmen bulunmamaktadır</p>
           )}
         </div>
       </div>
+      <div className={styles["bottom-sections-container"]}>
+        <div className={styles["subscribers-section"]}>
+          <h3>Üyeler</h3>
+          <p>{`${selectedClubSubscribers} kişi abone oldu`}</p>
+        </div>
+        <div className={styles["subscriptions-section"]}>
+          <h3>Üyelikler</h3>
+          {selectedClubSubscriptionPackages?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Abonelik Türü</th>
+                  <th>Abonelik Süresi</th>
+                  <th>Fiyat (TL)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedClubSubscriptionPackages?.map((clubPackage) => (
+                  <tr key={clubPackage.club_subscription_package_id}>
+                    <td>
+                      {
+                        clubSubscriptionTypes?.find(
+                          (type) =>
+                            type.club_subscription_type_id ===
+                            clubPackage.club_subscription_type_id
+                        )?.club_subscription_type_name
+                      }
+                    </td>
+                    <td>
+                      {
+                        clubSubscriptionTypes?.find(
+                          (type) =>
+                            type.club_subscription_type_id ===
+                            clubPackage.club_subscription_type_id
+                        )?.club_subscription_duration_months
+                      }
+                    </td>
+                    <td>{clubPackage.price}</td>
+                    <td>
+                      {isUserSubscribedToClub() === true ? (
+                        ""
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handleOpenSubscribeModal(selectedClub?.user_id)
+                          }
+                        >
+                          Üyel ol
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Henüz kulübe ait abonelik paketi bulunmamaktadır</p>
+          )}
+        </div>
+      </div>
+      <SubscribeToClubModal
+        openSubscribeModal={openSubscribeModal}
+        handleCloseSubscribeModal={handleCloseSubscribeModal}
+        selectedClubId={selectedClubId}
+      />
     </div>
   );
 };

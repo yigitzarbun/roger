@@ -18,7 +18,7 @@ import {
 } from "../../../../api/endpoints/FavouritesApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
-import SubscribeToClubModal from "./subscribe-club-modal/SubscribeToClubModal";
+import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 
 interface ExploreClubsProps {
   user: User;
