@@ -21,6 +21,7 @@ import eventTypesRouter from "./src/api/event-types/event-types-router";
 import favouritesRouter from "./src/api/favourites/favourites-router";
 import clubSubscriptionTypesRouter from "./src/api/club-subscription-types/club-subscription-types-router";
 import clubSubscriptionPackagesRouter from "./src/api/club-subscription-packages/club-subscription-packages-router";
+import clubSubscriptionsRouter from "./src/api/club-subscriptions/club-subscriptions-router";
 
 const cors = require("cors");
 
@@ -50,6 +51,7 @@ server.use("/api/event-types", eventTypesRouter);
 server.use("/api/favourites", favouritesRouter);
 server.use("/api/club-subscription-types", clubSubscriptionTypesRouter);
 server.use("/api/club-subscription-packages", clubSubscriptionPackagesRouter);
+server.use("/api/club-subscriptions", clubSubscriptionsRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

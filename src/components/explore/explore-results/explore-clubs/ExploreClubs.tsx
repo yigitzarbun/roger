@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -16,6 +16,9 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+
+import SubscribeToClubModal from "./subscribe-club-modal/SubscribeToClubModal";
 
 interface ExploreClubsProps {
   user: User;
@@ -51,6 +54,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isUserClub = user.user.user_type_id === 3;
   }
 
+  // favourites
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
@@ -116,6 +120,33 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     }
   };
 
+  // subscription
+  const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
+
+  const [selectedClubId, setSelectedClubId] = useState(null);
+
+  const handleOpenSubscribeModal = (value: number) => {
+    setOpenSubscribeModal(true);
+    setSelectedClubId(value);
+  };
+  const handleCloseSubscribeModal = () => {
+    setOpenSubscribeModal(false);
+    setSelectedClubId(null);
+  };
+
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
+    useGetClubSubscriptionsQuery({});
+
+  const isUserSubscribedToClub = (club_id: number) => {
+    const activeSubscription = clubSubscriptions?.find(
+      (subscription) =>
+        subscription.club_id === club_id &&
+        subscription.player_id === user?.user?.user_id &&
+        subscription.isActive === true
+    );
+    return activeSubscription ? true : false;
+  };
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetch();
@@ -127,7 +158,8 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isLocationsLoading ||
     isClubTypesLoading ||
     isCourtsLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isClubSubscriptionsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -196,11 +228,27 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     Görüntüle
                   </Link>
                 </td>
+                <td>
+                  {isUserSubscribedToClub(club.user_id) === true ? (
+                    "Üyelik Var"
+                  ) : (
+                    <button
+                      onClick={() => handleOpenSubscribeModal(club.user_id)}
+                    >
+                      Üyel ol
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
+      <SubscribeToClubModal
+        openSubscribeModal={openSubscribeModal}
+        handleCloseSubscribeModal={handleCloseSubscribeModal}
+        selectedClubId={selectedClubId}
+      />
     </div>
   );
 };

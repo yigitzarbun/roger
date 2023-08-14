@@ -30,7 +30,10 @@ const clubSubscriptionPackagesModel = {
 
   async update(updates) {
     return await db("club_subscription_packages")
-      .where("club_subscription_package_id", updates.club_id)
+      .where(
+        "club_subscription_package_id",
+        updates.club_subscription_package_id
+      )
       .update(updates);
   },
 };

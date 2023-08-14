@@ -7,7 +7,13 @@ import { useAppSelector } from "../../../../store/hooks";
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 
-const ClubSubscriptionPackagesResults = () => {
+interface ClubSubscriptionPackagesResultsProps {
+  openEditClubSubscriptionPackageModal: (value: number) => void;
+}
+const ClubSubscriptionPackagesResults = (
+  props: ClubSubscriptionPackagesResultsProps
+) => {
+  const { openEditClubSubscriptionPackageModal } = props;
   const { user } = useAppSelector((store) => store.user);
 
   const {
@@ -22,7 +28,9 @@ const ClubSubscriptionPackagesResults = () => {
   } = useGetClubSubscriptionPackagesQuery({});
 
   const myPackages = clubSubscriptionPackages?.filter(
-    (subscriptionPackage) => subscriptionPackage.club_id === user?.user?.user_id
+    (subscriptionPackage) =>
+      subscriptionPackage.club_id === user?.user?.user_id &&
+      subscriptionPackage.isActive === true
   );
 
   if (isClubSubscriptionTypesLoading || isClubSubscriptionPackagesLoading) {
@@ -32,7 +40,7 @@ const ClubSubscriptionPackagesResults = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Kortlar</h2>
+        <h2 className={styles["result-title"]}>Üyelikler</h2>
       </div>
       {isClubSubscriptionPackagesLoading ||
         (isClubSubscriptionTypesLoading && <p>Yükleniyor...</p>)}
@@ -76,8 +84,17 @@ const ClubSubscriptionPackagesResults = () => {
                     }
                   </td>
                   <td>{subscriptionPackage.price}</td>
-                  <td>Düzenle</td>
-                  <td>Sil</td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        openEditClubSubscriptionPackageModal(
+                          subscriptionPackage.club_subscription_package_id
+                        )
+                      }
+                    >
+                      Düzenle
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

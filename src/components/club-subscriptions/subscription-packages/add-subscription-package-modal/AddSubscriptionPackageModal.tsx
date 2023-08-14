@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
@@ -25,7 +25,6 @@ interface AddSubscriptionPackageModalProps {
 type FormValues = {
   price: number;
   club_subscription_type_id: number;
-  club_id: number;
 };
 
 const AddSubscriptionPackageModal = (
@@ -33,9 +32,9 @@ const AddSubscriptionPackageModal = (
 ) => {
   const { openAddPackageModal, closeAddClubSubscriptionPackageModal } = props;
 
-  const { user } = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
-  const [addClubSubscriptionPackage, { data, isSuccess }] =
+  const [addClubSubscriptionPackage, { isSuccess }] =
     useAddClubSubscriptionPackageMutation({});
 
   const {
@@ -43,7 +42,21 @@ const AddSubscriptionPackageModal = (
     isLoading: isClubSubscriptionTypesLoading,
   } = useGetClubSubscriptionTypesQuery({});
 
-  const { refetch } = useGetClubSubscriptionPackagesQuery({});
+  const {
+    data: clubSubscriptionPackages,
+    isLoading: isClubSubscriptionPackagesLoading,
+    refetch,
+  } = useGetClubSubscriptionPackagesQuery({});
+
+  const myPackages = clubSubscriptionPackages?.filter(
+    (subscriptionPackage) =>
+      subscriptionPackage.club_id === user?.user?.user_id &&
+      subscriptionPackage.isActive === true
+  );
+  const myPackageTypes = [];
+  myPackages?.forEach((myPackage) =>
+    myPackageTypes.push(myPackage.club_subscription_type_id)
+  );
 
   const {
     register,
@@ -73,7 +86,7 @@ const AddSubscriptionPackageModal = (
     }
   }, [isSuccess]);
 
-  if (isClubSubscriptionTypesLoading) {
+  if (isClubSubscriptionTypesLoading || isClubSubscriptionPackagesLoading) {
     return <div>Yükleniyor..</div>;
   }
 
@@ -101,14 +114,19 @@ const AddSubscriptionPackageModal = (
               {...register("club_subscription_type_id", { required: true })}
             >
               <option value="">-- Üyelik Türü --</option>
-              {clubSubscriptionTypes?.map((type) => (
-                <option
-                  key={type.club_subscription_type_id}
-                  value={type.club_subscription_type_id}
-                >
-                  {type.club_subscription_type_name}
-                </option>
-              ))}
+              {clubSubscriptionTypes
+                ?.filter(
+                  (type) =>
+                    !myPackageTypes.includes(type.club_subscription_type_id)
+                )
+                ?.map((type) => (
+                  <option
+                    key={type.club_subscription_type_id}
+                    value={type.club_subscription_type_id}
+                  >
+                    {type.club_subscription_type_name}
+                  </option>
+                ))}
             </select>
             {errors.club_subscription_type_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>

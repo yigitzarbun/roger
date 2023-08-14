@@ -381,6 +381,7 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("club_subscription_package_id");
       table.integer("price").notNullable();
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.boolean("isActive").defaultTo(true).notNullable();
       table
         .integer("club_subscription_type_id")
         .unsigned()
@@ -403,6 +404,7 @@ export async function up(knex: Knex): Promise<void> {
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table.dateTime("start_date").notNullable();
       table.dateTime("end_date").notNullable();
+      table.boolean("isActive").defaultTo(true).notNullable();
       table
         .integer("club_id")
         .unsigned()
@@ -449,6 +451,14 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     });
+
+  await knex.raw(`
+    UPDATE "club_subscriptions"
+    SET "isActive" = CASE
+      WHEN "end_date" > NOW() THEN TRUE
+      ELSE FALSE
+    END
+  `);
 }
 
 export async function down(knex: Knex): Promise<void> {

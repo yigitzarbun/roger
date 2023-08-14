@@ -48,14 +48,14 @@ const ClubHeader = () => {
           Personel
         </NavLink>
         <NavLink
-          to={paths.HOME}
+          to={paths.CLUB_SUBSCRIPTIONS}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-club"]}`
               : `${styles["nav-link-club"]}`
           }
         >
-          Üyeler
+          Üyelikler
         </NavLink>
       </div>
     </nav>
