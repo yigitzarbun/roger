@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
@@ -10,7 +10,10 @@ import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import { useGetUserStatusTypesQuery } from "../../../api/endpoints/UserStatusTypesApi";
-import { useAddPlayerMutation } from "../../../api/endpoints/PlayersApi";
+import {
+  useAddPlayerMutation,
+  useGetPlayersQuery,
+} from "../../../api/endpoints/PlayersApi";
 
 export type FormValues = {
   user_type_id: number;
@@ -29,7 +32,7 @@ const PlayerRegisterForm = () => {
   const navigate = useNavigate();
 
   const [addUser] = useAddUserMutation();
-  const [addPlayer] = useAddPlayerMutation();
+  const [addPlayer, { isSuccess }] = useAddPlayerMutation();
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -39,6 +42,7 @@ const PlayerRegisterForm = () => {
     useGetUserTypesQuery({});
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
+  const { refetch } = useGetPlayersQuery({});
 
   const {
     register,
@@ -90,6 +94,11 @@ const PlayerRegisterForm = () => {
       console.error("Error while adding new user:", error);
     }
   };
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
   if (
     isLocationsLoading ||
     isPlayerLevelsLoading ||

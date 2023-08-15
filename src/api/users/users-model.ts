@@ -37,6 +37,15 @@ const usersModel = {
           clubDetails,
         };
         return userDetails;
+      } else if (user.user_type_id === 4) {
+        const clubStaffDetails = await db("club_staff")
+          .where("user_id", user.user_id)
+          .first();
+        const userDetails = {
+          user,
+          clubStaffDetails,
+        };
+        return userDetails;
       }
     }
     return null;

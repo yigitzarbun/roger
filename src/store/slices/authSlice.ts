@@ -23,35 +23,67 @@ export interface User {
     phone_number: number;
     player_bio_description: string;
     player_level_id: number;
+    is_premium: boolean;
+    name_on_card: string;
+    card_number: number;
+    cvc: number;
     user_id: number;
   };
 
   trainerDetails?: {
-    birth_year: string;
-    club_id: number;
-    fname: string;
-    gender: string;
-    image: string;
-    lname: string;
-    location_id: number;
-    phone_number: number;
-    price_hour: number;
-    trainer_bio_description: string;
-    trainer_employment_type_id: number;
-    trainer_experience_type_id: number;
     trainer_id: number;
+    fname: string;
+    lname: string;
+    birth_year: string;
+    gender: string;
+    price_hour: number;
+    phone_number: number;
+    image: string;
+    trainer_bio_description: string;
+    bank_account_no: number;
+    bank_name: string;
+    name_on_bank_account: string;
+    is_premium: boolean;
+    club_id: number;
+    trainer_experience_type_id: number;
+    location_id: number;
+    trainer_employment_type_id: number;
     user_id: number;
   };
+
   clubDetails?: {
+    club_id: number;
+    picture: string;
     club_address: string;
     club_bio_description: string;
-    club_id: number;
     club_name: string;
-    club_type_id: number;
-    location_id: number;
-    picture: string;
+    is_premium: boolean;
+    phone_number: number;
+    bank_account_no: number;
+    bank_name: string;
+    name_on_bank_account: string;
     isPlayerSubscriptionRequired: boolean;
     isTrainerSubscriptionRequired: boolean;
+    location_id: number;
+    club_type_id: number;
+    user_id: number;
+  };
+
+  clubStaffDetails?: {
+    club_staff_id: number;
+    fname: string;
+    lname: string;
+    birth_year: string;
+    gender: string;
+    isActive: boolean;
+    gross_salary_month: number;
+    bank_account_no: number;
+    bank_name: string;
+    name_on_bank_account: string;
+    phone_number: number;
+    image: string;
+    club_id: number;
+    club_staff_role_type_id: number;
     user_id: number;
   };
 }

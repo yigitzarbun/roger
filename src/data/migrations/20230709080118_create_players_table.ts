@@ -46,10 +46,6 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("club_staff_role_type_id");
       table.string("club_staff_role_type_name").unique().notNullable();
     })
-    .createTable("club_staff_employment_types", (table) => {
-      table.increments("club_staff_employment_type_id");
-      table.string("club_staff_employment_type_name").unique().notNullable();
-    })
     .createTable("permission_types", (table) => {
       table.increments("permission_type_id");
       table.string("permission_type_name").unique().notNullable();
@@ -89,6 +85,10 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("phone_number");
       table.string("image");
       table.string("player_bio_description");
+      table.boolean("is_premium").defaultTo(false).notNullable();
+      table.string("name_on_card");
+      table.integer("card_number");
+      table.integer("cvc");
       table
         .integer("location_id")
         .unsigned()
@@ -120,6 +120,11 @@ export async function up(knex: Knex): Promise<void> {
       table.string("club_address");
       table.string("club_bio_description");
       table.string("club_name").unique().notNullable();
+      table.boolean("is_premium").defaultTo(false).notNullable();
+      table.integer("phone_number");
+      table.integer("bank_account_no");
+      table.string("bank_name");
+      table.string("name_on_bank_account");
       table
         .boolean("isPlayerSubscriptionRequired")
         .defaultTo(false)
@@ -163,6 +168,10 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("phone_number");
       table.string("image");
       table.string("trainer_bio_description");
+      table.integer("bank_account_no");
+      table.string("bank_name");
+      table.string("name_on_bank_account");
+      table.boolean("is_premium").defaultTo(false).notNullable();
       table
         .integer("club_id")
         .unsigned()
@@ -209,9 +218,10 @@ export async function up(knex: Knex): Promise<void> {
       table.string("lname").notNullable();
       table.string("birth_year").notNullable();
       table.string("gender").notNullable();
-      table.boolean("isActive").notNullable();
+      table.string("employment_status").notNullable();
       table.integer("gross_salary_month");
       table.integer("bank_account_no");
+      table.string("bank_name");
       table.integer("phone_number");
       table.string("image");
       table
@@ -220,14 +230,6 @@ export async function up(knex: Knex): Promise<void> {
         .notNullable()
         .references("club_id")
         .inTable("clubs")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("club_staff_employment_type_id")
-        .unsigned()
-        .notNullable()
-        .references("club_staff_employment_type_id")
-        .inTable("club_staff_employment_types")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       table

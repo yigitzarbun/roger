@@ -1,0 +1,29 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 20px;
+
+  .result-title {
+    font-size: 2rem;
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+
+    .staff-row:hover {
+      background-color: $roger-black-light;
+      cursor: pointer;
+    }
+    .staff-image {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}

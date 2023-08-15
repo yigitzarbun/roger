@@ -17,7 +17,6 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("users").del();
   await knex("booking_status_types").del();
   await knex("permission_types").del();
-  await knex("club_staff_employment_types").del();
   await knex("club_staff_role_types").del();
   await knex("event_types").del();
   await knex("user_status_types").del();
@@ -82,16 +81,19 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("trainer_experience_types").insert([
     {
       trainer_experience_type_id: 1,
-      trainer_experience_type_name: "beginner",
+      trainer_experience_type_name: "0-2 sene",
     },
     {
       trainer_experience_type_id: 2,
-      trainer_experience_type_name: "intermediate",
+      trainer_experience_type_name: "3-5 sene",
     },
-    { trainer_experience_type_id: 3, trainer_experience_type_name: "advanced" },
+    {
+      trainer_experience_type_id: 3,
+      trainer_experience_type_name: "6-10 sene",
+    },
     {
       trainer_experience_type_id: 4,
-      trainer_experience_type_name: "professional",
+      trainer_experience_type_name: "10 sene ve üzeri",
     },
   ]);
 
@@ -162,17 +164,6 @@ export async function seed(knex: Knex): Promise<void> {
     {
       club_staff_role_type_id: 3,
       club_staff_role_type_name: "other",
-    },
-  ]);
-
-  await knex("club_staff_employment_types").insert([
-    {
-      club_staff_employment_type_id: 1,
-      club_staff_employment_type_name: "full_time",
-    },
-    {
-      club_staff_employment_type_id: 2,
-      club_staff_employment_type_name: "part_time",
     },
   ]);
 

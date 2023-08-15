@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
@@ -6,7 +6,10 @@ import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useAddUserMutation } from "../../../store/auth/apiSlice";
-import { useAddClubMutation } from "../../../api/endpoints/ClubsApi";
+import {
+  useAddClubMutation,
+  useGetClubsQuery,
+} from "../../../api/endpoints/ClubsApi";
 import { useGetClubTypesQuery } from "../../../api/endpoints/ClubTypesApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
@@ -29,7 +32,7 @@ const ClubRegisterForm = () => {
   const navigate = useNavigate();
 
   const [addUser] = useAddUserMutation();
-  const [addClub] = useAddClubMutation();
+  const [addClub, { isSuccess }] = useAddClubMutation();
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -39,6 +42,7 @@ const ClubRegisterForm = () => {
     useGetUserTypesQuery({});
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
+  const { refetch } = useGetClubsQuery({});
 
   const {
     register,
@@ -86,6 +90,11 @@ const ClubRegisterForm = () => {
       console.error("Error while adding new user:", error);
     }
   };
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess]);
   if (
     isLocationsLoading ||
     isClubTypesLoading ||

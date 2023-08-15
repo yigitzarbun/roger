@@ -16,6 +16,10 @@ import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import { useGetUserStatusTypesQuery } from "../../../api/endpoints/UserStatusTypesApi";
+import {
+  useAddClubStaffMutation,
+  useGetClubStaffQuery,
+} from "../../../api/endpoints/ClubStaffApi";
 
 export type FormValues = {
   user_type: number;
@@ -37,6 +41,7 @@ const TrainerRegisterForm = () => {
   const navigate = useNavigate();
 
   const [employmentType, setEmploymentType] = useState(null);
+
   const handleEmploymentType = (event) => {
     setEmploymentType(event.target.value);
   };
@@ -54,6 +59,8 @@ const TrainerRegisterForm = () => {
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
 
+  const { refetch: refetchTrainers } = useGetTrainersQuery({});
+
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
@@ -66,7 +73,11 @@ const TrainerRegisterForm = () => {
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
-  const { refetch } = useGetTrainersQuery({});
+  const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
+    useAddClubStaffMutation({});
+
+  const { refetch: refetchClubStaff } = useGetClubStaffQuery({});
+
   const {
     register,
     handleSubmit,
@@ -92,7 +103,7 @@ const TrainerRegisterForm = () => {
       if ("data" in response) {
         // get newly added user from db
         const newUser = response.data;
-        // arrange player register data
+        // arrange trainer register data
         const trainerRegisterData = {
           fname: formData.fname,
           lname: formData.lname,
@@ -114,6 +125,25 @@ const TrainerRegisterForm = () => {
         };
         // register trainer
         await addTrainer(trainerRegisterData);
+        // register trainer as club staff, if applicablenp
+        if (Number(formData.trainer_employment_type_id) !== 1) {
+          const clubStaffRegisterData = {
+            fname: formData.fname,
+            lname: formData.lname,
+            birth_year: formData.birth_year,
+            gender: formData.gender,
+            employment_status: "pending",
+            gross_salary_month: null,
+            bank_account_no: null,
+            bank_name: null,
+            phone_number: null,
+            image: null,
+            club_id: Number(formData.club_id),
+            club_staff_role_type_id: 2,
+            user_id: Number(newUser.user_id),
+          };
+          await addClubStaff(clubStaffRegisterData);
+        }
         navigate(paths.LOGIN);
         reset();
       } else {
@@ -126,9 +156,15 @@ const TrainerRegisterForm = () => {
 
   useEffect(() => {
     if (isAddTrainerSuccess) {
-      refetch();
+      refetchTrainers();
     }
   }, [isAddTrainerSuccess]);
+
+  useEffect(() => {
+    if (isAddClubStaffSuccess) {
+      refetchClubStaff();
+    }
+  }, [isAddClubStaffSuccess]);
   if (
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
@@ -293,11 +329,11 @@ const TrainerRegisterForm = () => {
             </div>
           </div>
           {(employmentType ==
-            trainerEmploymentTypes.find(
+            trainerEmploymentTypes?.find(
               (t) => t.trainer_employment_type_name === "private_club"
             ).trainer_employment_type_id ||
             employmentType ==
-              trainerEmploymentTypes.find(
+              trainerEmploymentTypes?.find(
                 (t) => t.trainer_employment_type_name === "public_club"
               ).trainer_employment_type_id) && (
             <div className={styles["input-outer-container"]}>

@@ -22,6 +22,8 @@ import favouritesRouter from "./src/api/favourites/favourites-router";
 import clubSubscriptionTypesRouter from "./src/api/club-subscription-types/club-subscription-types-router";
 import clubSubscriptionPackagesRouter from "./src/api/club-subscription-packages/club-subscription-packages-router";
 import clubSubscriptionsRouter from "./src/api/club-subscriptions/club-subscriptions-router";
+import clubStaffRoleTypesRouter from "./src/api/club-staff-role-types/club-staff-role-types-router";
+import clubStaffRouter from "./src/api/club-staff/club-staff-router";
 
 const cors = require("cors");
 
@@ -52,6 +54,8 @@ server.use("/api/favourites", favouritesRouter);
 server.use("/api/club-subscription-types", clubSubscriptionTypesRouter);
 server.use("/api/club-subscription-packages", clubSubscriptionPackagesRouter);
 server.use("/api/club-subscriptions", clubSubscriptionsRouter);
+server.use("/api/club-staff-role-types", clubStaffRoleTypesRouter);
+server.use("/api/club-staff", clubStaffRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

@@ -38,7 +38,7 @@ const ClubHeader = () => {
           Takvim
         </NavLink>
         <NavLink
-          to={paths.HOME}
+          to={paths.CLUB_STAFF}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-club"]}`

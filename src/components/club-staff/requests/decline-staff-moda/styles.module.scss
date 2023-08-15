@@ -1,0 +1,49 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.modal-container {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 50%;
+  row-gap: 2vh;
+  margin: 70px auto;
+  background-color: $roger-box-bg-color;
+  padding: $roger-modal-padding;
+  border-radius: $roger-border-radius;
+  color: $roger-text-color;
+
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .close-icon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    .close-icon:hover {
+      color: $roger-red;
+    }
+  }
+
+  .button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    margin-top: 4vh;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .button:hover {
+    background-color: $roger-blue;
+    cursor: pointer;
+  }
+}

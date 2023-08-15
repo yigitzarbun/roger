@@ -20,5 +20,6 @@ export default {
   EXPLORE: "/kesfet",
   EXPLORE_PROFILE: "/kesfet/profil/",
   CLUB_SUBSCRIPTIONS: "/kulup-uyelikler",
+  CLUB_STAFF: "/kulup-personel",
   NOT_FOUND: "*",
 } as Paths;
