@@ -10,6 +10,9 @@ export interface Club {
   location_id: number;
   club_type_id: number;
   user_id: number;
+  is_trainer_subscription_required: boolean;
+  is_player_subscription_required: boolean;
+  rule_id?: boolean;
 }
 
 export const clubsSlice = createApi({

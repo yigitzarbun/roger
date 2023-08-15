@@ -126,11 +126,11 @@ export async function up(knex: Knex): Promise<void> {
       table.string("bank_name");
       table.string("name_on_bank_account");
       table
-        .boolean("isPlayerSubscriptionRequired")
+        .boolean("is_player_subscription_required")
         .defaultTo(false)
         .notNullable();
       table
-        .boolean("isTrainerSubscriptionRequired")
+        .boolean("is_trainer_subscription_required")
         .defaultTo(false)
         .notNullable();
       table

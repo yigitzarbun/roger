@@ -62,8 +62,8 @@ export interface User {
     bank_account_no: number;
     bank_name: string;
     name_on_bank_account: string;
-    isPlayerSubscriptionRequired: boolean;
-    isTrainerSubscriptionRequired: boolean;
+    is_player_subscription_required: boolean;
+    is_trainer_subscription_required: boolean;
     location_id: number;
     club_type_id: number;
     user_id: number;

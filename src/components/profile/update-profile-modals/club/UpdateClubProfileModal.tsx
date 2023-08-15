@@ -13,10 +13,8 @@ import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetClubTypesQuery } from "../../../../api/endpoints/ClubTypesApi";
 
 import { useAppDispatch } from "../../../../store/hooks";
-import {
-  updateClubDetails,
-  updatePlayerDetails,
-} from "../../../../store/slices/authSlice";
+
+import { updateClubDetails } from "../../../../store/slices/authSlice";
 
 interface UpdateClubProfileModallProps {
   isModalOpen: boolean;

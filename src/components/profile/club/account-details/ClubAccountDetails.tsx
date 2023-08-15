@@ -6,22 +6,18 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetClubTypesQuery } from "../../../../api/endpoints/ClubTypesApi";
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import UpdateClubProfileModall from "../../../../components/profile/update-profile-modals/club/UpdateClubProfileModal";
 
 const ClubAccountDetails = () => {
   const user = useAppSelector((store) => store.user.user);
 
-  const profileData = {
-    club_id: user?.clubDetails.club_id,
-    picture: null,
-    club_address: user?.clubDetails.club_address,
-    club_bio_description: user?.clubDetails.club_bio_description,
-    club_name: user?.clubDetails.club_name,
-    location_id: user?.clubDetails.location_id,
-    club_type_id: user?.clubDetails.club_type_id,
-    user_id: user?.user.user_id,
-  };
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  const profileData = clubs?.find(
+    (club) => club.user_id === user?.user?.user_id
+  );
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -38,7 +34,7 @@ const ClubAccountDetails = () => {
     setIsModalOpen(false);
   };
 
-  if (isLocationsLoading || isClubTypesLoading) {
+  if (isLocationsLoading || isClubTypesLoading || isClubsLoading) {
     return <div>Yükleniyor..</div>;
   }
   return (
