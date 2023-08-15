@@ -15,15 +15,21 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
+import { Club } from "../../../../api/endpoints/ClubsApi";
 
 interface ExploreTrainersProps {
   user: User;
   trainers: Trainer[];
   locations: Location[];
   trainerExperienceTypes: TrainerExperienceType[];
+  clubStaff: ClubStaff[];
+  clubs: Club[];
   isTrainersLoading: boolean;
   isLocationsLoading: boolean;
   isTrainerExperienceTypesLoading: boolean;
+  isClubStaffLoading: boolean;
+  isClubsLoading: boolean;
 }
 const ExploreTrainers = (props: ExploreTrainersProps) => {
   const {
@@ -31,9 +37,13 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     trainers,
     locations,
     trainerExperienceTypes,
+    clubStaff,
+    clubs,
     isTrainersLoading,
     isLocationsLoading,
     isTrainerExperienceTypesLoading,
+    isClubStaffLoading,
+    isClubsLoading,
   } = props;
 
   let isUserPlayer = false;
@@ -125,7 +135,9 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     isTrainersLoading ||
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isClubStaffLoading ||
+    isClubsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -147,6 +159,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
               <th>Eğitmen</th>
               <th>İsim</th>
               <th>Seviye</th>
+              <th>Kulüp</th>
               <th>Ücret (Saat / TL)</th>
               <th>Cinsiyet</th>
               <th>Yaş</th>
@@ -174,6 +187,16 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                         trainer.trainer_experience_type_id
                     ).trainer_experience_type_name
                   }
+                </td>
+                <td>
+                  {clubStaff?.find(
+                    (staff) =>
+                      staff.user_id === trainer.user_id &&
+                      staff.employment_status === "accepted"
+                  )
+                    ? clubs?.find((club) => club.club_id === trainer.club_id)
+                        ?.club_name
+                    : "Bağımsız"}
                 </td>
                 <td>{trainer?.price_hour}</td>
                 <td>{trainer.gender}</td>

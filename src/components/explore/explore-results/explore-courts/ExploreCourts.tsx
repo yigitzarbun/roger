@@ -9,7 +9,6 @@ import paths from "../../../../routing/Paths";
 import { User } from "../../../../store/slices/authSlice";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
-import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
 import { Court } from "../../../../api/endpoints/CourtsApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
@@ -67,13 +66,13 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
       </div>
-      {clubs && clubs.length === 0 && (
+      {courts && courts.length === 0 && (
         <p>
           Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}
-      {clubs && clubs.length > 0 && (
+      {courts && courts.length > 0 && (
         <table>
           <thead>
             <tr>

@@ -50,6 +50,9 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
 
+  const filteredPlayers = players?.filter(
+    (player) => player.user_id !== user?.user?.user_id
+  );
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
@@ -132,7 +135,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
       </div>
-      {players && players.length === 0 && (
+      {players && filteredPlayers.length === 0 && (
         <p>
           Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
@@ -151,101 +154,97 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
             </tr>
           </thead>
           <tbody>
-            {players
-              .filter((player) => player.user_id !== user?.user?.user_id)
-              .map((player) => (
-                <tr key={player.player_id} className={styles["player-row"]}>
-                  <td>
-                    <img
-                      src={
-                        player.image ? player.image : "/images/icons/avatar.png"
-                      }
-                      alt={player.fname}
-                      className={styles["player-image"]}
-                    />
-                  </td>
-                  <td>{`${player.fname} ${player.lname}`}</td>
-                  <td>
-                    {
-                      playerLevels?.find(
-                        (player_level) =>
-                          player_level.player_level_id ===
-                          player.player_level_id
-                      ).player_level_name
+            {filteredPlayers.map((player) => (
+              <tr key={player.player_id} className={styles["player-row"]}>
+                <td>
+                  <img
+                    src={
+                      player.image ? player.image : "/images/icons/avatar.png"
                     }
-                  </td>
-                  <td>{player.gender}</td>
-                  <td>{year - Number(player.birth_year)}</td>
-                  <td>
-                    {
-                      locations?.find(
-                        (location) =>
-                          location.location_id === player.location_id
-                      ).location_name
-                    }
-                  </td>
-                  {isUserPlayer && (
-                    <td>
-                      <Link
-                        to={paths.TRAIN_INVITE}
-                        state={{
-                          fname: player.fname,
-                          lname: player.lname,
-                          image: player.image,
-                          court_price: "",
-                          user_id: player.user_id,
-                        }}
-                      >
-                        Antreman yap
-                      </Link>
-                    </td>
-                  )}
-                  {isUserPlayer && (
-                    <td>
-                      <Link
-                        to={paths.MATCH_INVITE}
-                        state={{
-                          fname: player.fname,
-                          lname: player.lname,
-                          image: player.image,
-                          court_price: "",
-                          user_id: player.user_id,
-                        }}
-                      >
-                        Maç yap
-                      </Link>
-                    </td>
-                  )}
-                  {isUserTrainer && (
-                    <td>
-                      <Link
-                        to={paths.LESSON_INVITE}
-                        state={{
-                          fname: player.fname,
-                          lname: player.lname,
-                          image: player.image,
-                          court_price: "",
-                          user_id: player.user_id,
-                        }}
-                      >
-                        Derse davet et
-                      </Link>
-                    </td>
-                  )}
+                    alt={player.fname}
+                    className={styles["player-image"]}
+                  />
+                </td>
+                <td>{`${player.fname} ${player.lname}`}</td>
+                <td>
                   {
-                    <td onClick={() => handleToggleFavourite(player.user_id)}>
-                      {isPlayerInMyFavourites(player.user_id) === true
-                        ? "Favorilerden çıkar"
-                        : "Favorilere ekle"}
-                    </td>
+                    playerLevels?.find(
+                      (player_level) =>
+                        player_level.player_level_id === player.player_level_id
+                    ).player_level_name
                   }
+                </td>
+                <td>{player.gender}</td>
+                <td>{year - Number(player.birth_year)}</td>
+                <td>
+                  {
+                    locations?.find(
+                      (location) => location.location_id === player.location_id
+                    ).location_name
+                  }
+                </td>
+                {isUserPlayer && (
                   <td>
-                    <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
-                      Görüntüle
+                    <Link
+                      to={paths.TRAIN_INVITE}
+                      state={{
+                        fname: player.fname,
+                        lname: player.lname,
+                        image: player.image,
+                        court_price: "",
+                        user_id: player.user_id,
+                      }}
+                    >
+                      Antreman yap
                     </Link>
                   </td>
-                </tr>
-              ))}
+                )}
+                {isUserPlayer && (
+                  <td>
+                    <Link
+                      to={paths.MATCH_INVITE}
+                      state={{
+                        fname: player.fname,
+                        lname: player.lname,
+                        image: player.image,
+                        court_price: "",
+                        user_id: player.user_id,
+                      }}
+                    >
+                      Maç yap
+                    </Link>
+                  </td>
+                )}
+                {isUserTrainer && (
+                  <td>
+                    <Link
+                      to={paths.LESSON_INVITE}
+                      state={{
+                        fname: player.fname,
+                        lname: player.lname,
+                        image: player.image,
+                        court_price: "",
+                        user_id: player.user_id,
+                      }}
+                    >
+                      Derse davet et
+                    </Link>
+                  </td>
+                )}
+                {
+                  <td onClick={() => handleToggleFavourite(player.user_id)}>
+                    {isPlayerInMyFavourites(player.user_id) === true
+                      ? "Favorilerden çıkar"
+                      : "Favorilere ekle"}
+                  </td>
+                }
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
+                    Görüntüle
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}

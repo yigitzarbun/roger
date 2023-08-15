@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../common/constants/apiConstants";
 
-export interface Club {
+export interface ClubStaff {
   club_staff_id: number;
   fname: string;
   lname: string;

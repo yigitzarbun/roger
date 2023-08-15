@@ -21,6 +21,7 @@ import { useGetClubTypesQuery } from "../../api/endpoints/ClubTypesApi";
 import { useGetCourtsQuery } from "../../api/endpoints/CourtsApi";
 import { useGetCourtStructureTypesQuery } from "../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../api/endpoints/CourtSurfaceTypesApi";
+import { useGetClubStaffQuery } from "../../api/endpoints/ClubStaffApi";
 
 const Explore = () => {
   const user = useAppSelector((store) => store.user.user);
@@ -46,6 +47,9 @@ const Explore = () => {
     {}
   );
 
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
+
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
@@ -63,7 +67,9 @@ const Explore = () => {
 
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
-  // isUserPlayer burdan gönder
+
+  // TO DO: isUserPlayer burdan gönder
+
   return (
     <div className={styles["explore-container"]}>
       <ExploreHero />
@@ -85,9 +91,13 @@ const Explore = () => {
           trainers={trainers}
           locations={locations}
           trainerExperienceTypes={trainerExperienceTypes}
+          clubStaff={clubStaff}
+          clubs={clubs}
           isTrainersLoading={isTrainersLoading}
           isLocationsLoading={isLocationsLoading}
           isTrainerExperienceTypesLoading={isTrainerExperienceTypesLoading}
+          isClubStaffLoading={isClubStaffLoading}
+          isClubsLoading={isClubsLoading}
         />
       )}
       {display === "clubs" && (

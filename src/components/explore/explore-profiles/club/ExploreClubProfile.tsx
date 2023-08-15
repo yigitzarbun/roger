@@ -22,8 +22,10 @@ import {
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 import { useAppSelector } from "../../../../store/hooks";
+
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 
 interface ExploreClubProfileProps {
@@ -54,6 +56,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     {}
   );
 
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
+
   const {
     data: clubSubscriptionTypes,
     isLoading: isClubSubscriptionTypesLoading,
@@ -73,6 +78,24 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   } = useGetTrainerExperienceTypesQuery({});
 
   const selectedClub = clubs?.find((club) => club.user_id === Number(user_id));
+
+  // club trainers
+  const clubStaffTrainers = clubStaff?.filter(
+    (staff) =>
+      staff.club_id === Number(user_id) &&
+      staff.employment_status === "accepted" &&
+      staff.club_staff_role_type_id === 2
+  );
+
+  let confirmedClubTrainers = [];
+  clubStaffTrainers?.forEach((clubTrainer) => {
+    const trainerDetails = trainers?.find(
+      (trainer) => trainer.user_id === clubTrainer.user_id
+    );
+    if (trainerDetails) {
+      confirmedClubTrainers.push(trainerDetails);
+    }
+  });
 
   // favourites
   const {
@@ -198,7 +221,8 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     isFavouritesLoading ||
     isClubSubscriptionTypesLoading ||
     isClubSubscriptionPackagesLoading ||
-    isClubSubscriptionsLoading
+    isClubSubscriptionsLoading ||
+    isClubStaffLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -301,9 +325,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
         </div>
         <div className={styles["trainers-section"]}>
           <h3>Eğitmenler</h3>
-          {trainers?.filter(
-            (trainer) => trainer.club_id === selectedClub?.club_id
-          ).length > 0 ? (
+          {confirmedClubTrainers?.length > 0 ? (
             <table>
               <thead>
                 <tr>
@@ -315,34 +337,44 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                 </tr>
               </thead>
               <tbody>
-                {trainers
-                  ?.filter(
-                    (trainer) => trainer.club_id === selectedClub?.club_id
-                  )
-                  .map((trainer) => (
-                    <tr key={trainer.user_id}>
-                      <td>{trainer.fname}</td>
-                      <td>{trainer.lname}</td>
-                      <td>{trainer.gender}</td>
-                      <td>
-                        {
-                          trainerExperienceTypes?.find(
-                            (type) =>
-                              type.trainer_experience_type_id ===
-                              trainer.trainer_experience_type_id
-                          )?.trainer_experience_type_name
-                        }
-                      </td>
-                      <td>{trainer.price_hour}</td>
-                      <td>
-                        <Link
-                          to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
-                        >
-                          Görüntüle
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                {confirmedClubTrainers?.map((trainer) => (
+                  <tr key={trainer.user_id}>
+                    <td>{trainer.fname}</td>
+                    <td>{trainer.lname}</td>
+                    <td>{trainer.gender}</td>
+                    <td>
+                      {
+                        trainerExperienceTypes?.find(
+                          (type) =>
+                            type.trainer_experience_type_id ===
+                            trainer.trainer_experience_type_id
+                        )?.trainer_experience_type_name
+                      }
+                    </td>
+                    <td>{trainer.price_hour}</td>
+                    <td>
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                      >
+                        Görüntüle
+                      </Link>
+                    </td>
+                    <td>
+                      <Link
+                        to={paths.LESSON_INVITE}
+                        state={{
+                          fname: trainer.fname,
+                          lname: trainer.lname,
+                          image: trainer.image,
+                          court_price: "",
+                          user_id: trainer.user_id,
+                        }}
+                      >
+                        Derse davet et
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           ) : (

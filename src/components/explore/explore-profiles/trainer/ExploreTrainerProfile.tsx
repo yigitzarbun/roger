@@ -16,6 +16,7 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -35,6 +36,9 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
+
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
 
   const {
     data: trainerExperienceTypes,
@@ -134,7 +138,8 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     isTrainersLoading ||
     isTrainerExperienceTypesLoading ||
     isTrainerEmploymentTypesLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isClubStaffLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -149,8 +154,8 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
                 ? selectedTrainer?.picture
                 : "/images/icons/avatar.png"
             }
-            alt="club_picture"
-            className={styles["club-image"]}
+            alt="trainer_picture"
+            className={styles["trainer-image"]}
           />
           <h2>{`${selectedTrainer?.fname} ${selectedTrainer.lname}`}</h2>
           <p>{selectedTrainer?.trainer_bio_description}</p>
@@ -187,9 +192,15 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
               (type) =>
                 type.trainer_employment_type_id ===
                 selectedTrainer?.trainer_employment_type_id
-            )?.trainer_employment_type_id === 2 &&
-              clubs?.find((club) => club.club_id === selectedTrainer?.club_id)
-                ?.club_name}
+            )?.trainer_employment_type_id !== 1 &&
+            clubStaff?.find(
+              (staff) =>
+                staff.user_id === selectedTrainer?.user_id &&
+                staff.employment_status === "accepted"
+            )
+              ? clubs?.find((club) => club.club_id === selectedTrainer?.club_id)
+                  ?.club_name
+              : "Bağlı olduğu kulüp bulunmamaktadır."}
           </p>
           <p>{`${selectedTrainer?.price_hour} TL / Saat`}</p>
         </div>

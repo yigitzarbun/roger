@@ -13,6 +13,7 @@ import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/Traine
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetFavouritesQuery } from "../../../api/endpoints/FavouritesApi";
+import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -53,6 +54,9 @@ const LessonResults = (props: TrainSearchProps) => {
   const { data: favourites, isLoading: isFavouritesLoading } =
     useGetFavouritesQuery({});
 
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
+
   const myFavourites = favourites?.filter(
     (favourite) =>
       favourite.favouriter_id === user?.user?.user_id &&
@@ -88,7 +92,11 @@ const LessonResults = (props: TrainSearchProps) => {
           (selectedGenderValue === trainer.gender ||
             selectedGenderValue === "") &&
           (locationIdValue === trainer.location_id || locationIdValue === 0) &&
-          (clubIdValue === trainer.club_id || clubIdValue === 0) &&
+          ((clubIdValue === trainer.club_id &&
+            clubStaff?.find((staff) => staff.user_id === trainer.user_id) &&
+            clubStaff?.find((staff) => staff.user_id === trainer.user_id)
+              ?.employment_status === "accepted") ||
+            clubIdValue === 0) &&
           (trainerPriceValue <= trainer.price_hour ||
             trainerPriceValue === 100) &&
           ((favourite === true &&
@@ -105,7 +113,8 @@ const LessonResults = (props: TrainSearchProps) => {
     isLocationsLoading ||
     istrainerExperienceTypesLoading ||
     isClubsLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isClubStaffLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -151,10 +160,14 @@ const LessonResults = (props: TrainSearchProps) => {
                 </td>
                 <td>{`${trainer.fname} ${trainer.lname}`}</td>
                 <td>
-                  {trainer.club_id
+                  {clubStaff?.find(
+                    (staff) =>
+                      staff.user_id === trainer.user_id &&
+                      staff.employment_status === "accepted"
+                  )
                     ? clubs?.find((club) => club.club_id === trainer.club_id)
-                        .club_name
-                    : "Ferdi / Bağımsız"}
+                        ?.club_name
+                    : "Bağımsız"}
                 </td>
                 <td>
                   {
