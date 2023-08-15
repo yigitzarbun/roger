@@ -153,7 +153,15 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("club_staff_role_types").insert([
     {
       club_staff_role_type_id: 1,
-      club_staff_role_type_name: "admin",
+      club_staff_role_type_name: "managerial",
+    },
+    {
+      club_staff_role_type_id: 2,
+      club_staff_role_type_name: "trainer",
+    },
+    {
+      club_staff_role_type_id: 3,
+      club_staff_role_type_name: "other",
     },
   ]);
 

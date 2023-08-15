@@ -1,0 +1,45 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.club-rules-container {
+  background-color: $roger-box-bg-color;
+  width: 48%;
+  border-radius: $roger-border-radius;
+  padding: $roger-box-padding;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 2vh;
+
+  h2 {
+    font-weight: bold;
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+
+    .rule-row:hover {
+      background-color: $roger-black-light;
+      cursor: pointer;
+    }
+  }
+
+  button {
+    background-color: $roger-black-dark;
+    border: none;
+    width: 200px;
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: $roger-black-light;
+  }
+}

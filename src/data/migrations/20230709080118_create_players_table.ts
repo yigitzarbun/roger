@@ -120,7 +120,14 @@ export async function up(knex: Knex): Promise<void> {
       table.string("club_address");
       table.string("club_bio_description");
       table.string("club_name").unique().notNullable();
-      table.boolean("isSubscriptionRequired").defaultTo(false).notNullable();
+      table
+        .boolean("isPlayerSubscriptionRequired")
+        .defaultTo(false)
+        .notNullable();
+      table
+        .boolean("isTrainerSubscriptionRequired")
+        .defaultTo(false)
+        .notNullable();
       table
         .integer("location_id")
         .unsigned()
@@ -202,7 +209,8 @@ export async function up(knex: Knex): Promise<void> {
       table.string("lname").notNullable();
       table.string("birth_year").notNullable();
       table.string("gender").notNullable();
-      table.integer("gross_salary_month").notNullable();
+      table.boolean("isActive").notNullable();
+      table.integer("gross_salary_month");
       table.integer("bank_account_no");
       table.integer("phone_number");
       table.string("image");

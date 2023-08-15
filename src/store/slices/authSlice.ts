@@ -50,6 +50,8 @@ export interface User {
     club_type_id: number;
     location_id: number;
     picture: string;
+    isPlayerSubscriptionRequired: boolean;
+    isTrainerSubscriptionRequired: boolean;
     user_id: number;
   };
 }
