@@ -23,6 +23,8 @@ import {
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+
 import {
   addMinutes,
   formatTime,
@@ -44,8 +46,13 @@ const MatchInviteForm = () => {
     isLoading: isBookingsLoading,
     refetch,
   } = useGetBookingsQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsRequired } =
+    useGetClubSubscriptionsQuery({});
 
   const today = new Date();
   let day = String(today.getDate());
@@ -80,6 +87,40 @@ const MatchInviteForm = () => {
     setSelectedCourt(Number(event.target.value));
   };
 
+  // subscription check
+  let isPlayersSubscribed = false;
+  let clubSubscriptionRequired = false;
+
+  const selectedClubSubscriptions = clubSubscriptions?.filter(
+    (subscription) => subscription.club_id === selectedClub
+  );
+
+  if (
+    clubs?.find((club) => club.club_id === selectedClub)
+      ?.is_player_subscription_required
+  ) {
+    clubSubscriptionRequired = true;
+  }
+
+  if (
+    player &&
+    user &&
+    clubSubscriptions &&
+    selectedClubSubscriptions &&
+    clubSubscriptionRequired
+  ) {
+    if (
+      selectedClubSubscriptions?.find(
+        (subscription) => subscription.player_id === player?.user_id
+      ) &&
+      selectedClubSubscriptions?.find(
+        (subscription) => subscription.player_id === user?.user?.user_id
+      )
+    )
+      isPlayersSubscribed = true;
+  }
+
+  // booking hours check
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
@@ -203,7 +244,12 @@ const MatchInviteForm = () => {
     }
   }, [isSuccess, refetch, navigate]);
 
-  if (isBookingsLoading || isClubsLoading || isCourtsLoading) {
+  if (
+    isBookingsLoading ||
+    isClubsLoading ||
+    isCourtsLoading ||
+    isClubSubscriptionsRequired
+  ) {
     return <div>Yükleniyor..</div>;
   }
   return (
@@ -300,8 +346,14 @@ const MatchInviteForm = () => {
             )}
           </div>
         </div>
-        <button type="submit" className={styles["form-button"]}>
-          Davet et
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={clubSubscriptionRequired && !isPlayersSubscribed}
+        >
+          {clubSubscriptionRequired && !isPlayersSubscribed
+            ? "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"
+            : "Davet Gönder"}
         </button>
       </form>
       <InviteModal

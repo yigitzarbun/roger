@@ -130,6 +130,10 @@ export async function up(knex: Knex): Promise<void> {
         .defaultTo(false)
         .notNullable();
       table
+        .boolean("is_player_lesson_subscription_required")
+        .defaultTo(false)
+        .notNullable();
+      table
         .boolean("is_trainer_subscription_required")
         .defaultTo(false)
         .notNullable();

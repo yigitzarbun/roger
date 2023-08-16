@@ -13,6 +13,7 @@ import InviteModal, { FormValues } from "../../modals/invite-modal/InviteModal";
 import { useState } from "react";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -21,6 +22,10 @@ import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
+
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 import {
   addMinutes,
@@ -32,19 +37,27 @@ const LeesonInviteForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const player = location.state;
+  const trainer = location.state;
 
   const { user } = useAppSelector((store) => store.user);
 
-  const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
+  const [addBooking, { isSuccess }] = useAddBookingMutation({});
 
   const {
     data: bookings,
     isLoading: isBookingsLoading,
     refetch,
   } = useGetBookingsQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
+    useGetClubSubscriptionsQuery({});
+
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
 
   const today = new Date();
   let day = String(today.getDate());
@@ -79,6 +92,18 @@ const LeesonInviteForm = () => {
     setSelectedCourt(Number(event.target.value));
   };
 
+  // subscription check
+  let isPlayerSubscribed = false;
+  let isTrainerStaff = false;
+
+  let playerSubscriptionRequired = false;
+  let trainerStaffRequired = false;
+
+  const selectedClubSubscriptions = clubSubscriptions?.filter(
+    (subscription) => subscription.club_id === selectedClub
+  );
+
+  // booking hours check
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
@@ -173,7 +198,7 @@ const LeesonInviteForm = () => {
       club_id: formData.club_id,
       court_id: formData.court_id,
       inviter_id: user.user.user_id,
-      invitee_id: player.user_id,
+      invitee_id: trainer?.user_id,
       lesson_price: null,
       court_price: courts?.find((court) => court.court_id === selectedCourt)
         .price_hour,
@@ -193,6 +218,83 @@ const LeesonInviteForm = () => {
     setModal(false);
   };
 
+  // disabled button
+
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [buttonText, setButtonText] = useState("");
+
+  useEffect(() => {
+    if (
+      clubs?.find((club) => club.club_id === selectedClub)
+        ?.is_player_lesson_subscription_required
+    ) {
+      playerSubscriptionRequired = true;
+    }
+
+    if (
+      clubs?.find((club) => club.club_id === selectedClub)
+        ?.is_trainer_subscription_required
+    ) {
+      trainerStaffRequired = true;
+    }
+
+    if (selectedClubSubscriptions?.length > 0 && user && clubSubscriptions) {
+      if (
+        selectedClubSubscriptions.find(
+          (subscription) => subscription.player_id === user?.user?.user_id
+        )
+      ) {
+        isPlayerSubscribed = true;
+      }
+    }
+
+    if (
+      selectedClubSubscriptions?.length > 0 &&
+      trainer &&
+      clubStaff &&
+      clubSubscriptions
+    ) {
+      if (
+        clubStaff?.find(
+          (staff) =>
+            staff.user_id === trainer?.user_id &&
+            staff.club_id === selectedClub &&
+            staff.employment_status === "accepted"
+        )
+      ) {
+        isTrainerStaff = true;
+      }
+    }
+    if (
+      playerSubscriptionRequired === true &&
+      trainerStaffRequired === true &&
+      (isPlayerSubscribed === false || isTrainerStaff === false)
+    ) {
+      setIsButtonDisabled(true);
+      setButtonText(
+        "Kort kiralamak için oyuncunun kulübe üye, eğitmenin kulüp çalışanı olması gerekmektedir"
+      );
+    } else if (
+      playerSubscriptionRequired === false &&
+      trainerStaffRequired === true &&
+      isTrainerStaff === false
+    ) {
+      setIsButtonDisabled(true);
+      setButtonText(
+        "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir"
+      );
+    } else if (
+      playerSubscriptionRequired === true &&
+      trainerStaffRequired === false &&
+      isPlayerSubscribed === false
+    ) {
+      setIsButtonDisabled(true);
+      setButtonText(
+        "Kort kiralamak için oyuncunun kulüp üyesi olması gerekmektedir"
+      );
+    }
+  }, [selectedClub]);
+
   useEffect(() => {
     if (isSuccess) {
       refetch();
@@ -200,6 +302,15 @@ const LeesonInviteForm = () => {
     }
   }, [isSuccess]);
 
+  if (
+    isBookingsLoading ||
+    isClubStaffLoading ||
+    isClubSubscriptionsLoading ||
+    isClubsLoading ||
+    isCourtsLoading
+  ) {
+    return <div>Yükleniyor..</div>;
+  }
   return (
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>
@@ -210,7 +321,7 @@ const LeesonInviteForm = () => {
       </div>
       <p
         className={styles["player-name"]}
-      >{`Eğitmen: ${player.fname} ${player.lname}`}</p>
+      >{`Eğitmen: ${trainer?.fname} ${trainer?.lname}`}</p>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
@@ -294,8 +405,12 @@ const LeesonInviteForm = () => {
             )}
           </div>
         </div>
-        <button type="submit" className={styles["form-button"]}>
-          Davet et
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={isButtonDisabled}
+        >
+          {isButtonDisabled ? buttonText : "Davet et"}
         </button>
       </form>
       <InviteModal

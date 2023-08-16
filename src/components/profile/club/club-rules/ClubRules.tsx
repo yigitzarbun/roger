@@ -37,40 +37,58 @@ const ClubRules = () => {
       <table>
         <thead>
           <tr>
-            <th>Kural</th>
+            <th>Antreman ve Maç Kuralları</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className={styles["rule-row"]}>
+            <td>Oyuncuların kort kiralamak için üye olmasına gerek yok</td>
+            <td>
+              {clubDetails?.is_player_subscription_required === false
+                ? "Evet"
+                : "Hayır"}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Ders Kuralları</th>
             <th>Durum</th>
           </tr>
         </thead>
         <tbody>
           <tr className={styles["rule-row"]}>
             <td>
-              Eğtimen kulüp çalışanı veya oyuncunun üye olmasına gerek yok
+              Eğtimenin kulüp çalışanı veya oyuncunun üye olmasına gerek yok
             </td>
             <td>
               {clubDetails?.is_trainer_subscription_required === false &&
-              clubDetails?.is_player_subscription_required === false
+              clubDetails?.is_player_lesson_subscription_required === false
                 ? "Evet"
                 : "Hayır"}
             </td>
           </tr>
           <tr className={styles["rule-row"]}>
             <td>
-              Eğitmen kulüp çalışanı değil, oyuncu üye ise kort kiralanabilir
+              Eğitmenin kulüp çalışanı değil, oyuncu üye ise kort kiralanabilir
             </td>
             <td>
               {clubDetails?.is_trainer_subscription_required === false &&
-              clubDetails?.is_player_subscription_required === true
+              clubDetails?.is_player_lesson_subscription_required === true
                 ? "Evet"
                 : "Hayır"}
             </td>
           </tr>
           <tr className={styles["rule-row"]}>
             <td>
-              Eğitmen kulüp çalışanı, oyuncu üye değil ise kort kiralanabilir{" "}
+              Eğitmenin kulüp çalışanı, oyuncu üye değil ise kort kiralanabilir{" "}
             </td>
             <td>
               {clubDetails?.is_trainer_subscription_required === true &&
-              clubDetails?.is_player_subscription_required === false
+              clubDetails?.is_player_lesson_subscription_required === false
                 ? "Evet"
                 : "Hayır"}
             </td>
@@ -79,7 +97,7 @@ const ClubRules = () => {
             <td>Eğitmenin kulüp çalışanı, oyuncunun üye olması zorunludur</td>
             <td>
               {clubDetails?.is_trainer_subscription_required === true &&
-              clubDetails?.is_player_subscription_required === true
+              clubDetails?.is_player_lesson_subscription_required === true
                 ? "Evet"
                 : "Hayır"}
             </td>

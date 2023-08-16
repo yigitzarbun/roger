@@ -113,16 +113,16 @@ const TrainingInviteForm = () => {
   ) {
     if (
       selectedClubSubscriptions?.find(
-        (subscription) => subscription.user_id === player?.user_id
+        (subscription) => subscription.player_id === player?.user_id
       ) &&
       selectedClubSubscriptions?.find(
-        (subscription) => subscription.user_id === user?.user?.user_id
+        (subscription) => subscription.player_id === user?.user?.user_id
       )
     )
       isPlayersSubscribed = true;
   }
 
-  // booking hours checks
+  // booking hours check
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
@@ -350,7 +350,7 @@ const TrainingInviteForm = () => {
           disabled={clubSubscriptionRequired && !isPlayersSubscribed}
         >
           {clubSubscriptionRequired && !isPlayersSubscribed
-            ? "Kort Kiralamak için Kulüp Üyeliği Gerekmektedir"
+            ? "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"
             : "Davet Gönder"}
         </button>
       </form>
