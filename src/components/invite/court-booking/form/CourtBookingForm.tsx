@@ -19,25 +19,25 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
 const CourtBookingForm = () => {
   const navigate = useNavigate();
+
   const location = useLocation();
+
   const courtBookingDetails = location?.state;
 
-  const user = useAppSelector((store) => store.user.user.user);
+  const user = useAppSelector((store) => store?.user?.user?.user);
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
 
   const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
 
-  const {
-    data: bookings,
-    isLoading: isBookingsLoading,
-    refetch,
-  } = useGetBookingsQuery({});
+  const { isLoading: isBookingsLoading, refetch } = useGetBookingsQuery({});
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
@@ -52,6 +52,12 @@ const CourtBookingForm = () => {
     {}
   );
 
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
+    useGetClubSubscriptionsQuery({});
+
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
+
   const {
     register,
     handleSubmit,
@@ -63,6 +69,115 @@ const CourtBookingForm = () => {
   const handleSelectedEvent = (event) => {
     setSelectedEventType(Number(event.target.value));
   };
+
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const handleSelectedPlayer = (event) => {
+    setSelectedPlayer(Number(event.target.value));
+  };
+
+  const [selectedTrainer, setSelectedTrainer] = useState(null);
+  const handleSelectedTrainer = (event) => {
+    setSelectedTrainer(Number(event.target.value));
+  };
+  // event type nedir?
+
+  // isTrainerStaff
+  // isPlayerSub
+
+  // isButtonDisabled
+
+  const selectedClub = clubs?.find(
+    (club) => club.club_id === courtBookingDetails?.club_id
+  );
+
+  let playerSubscriptionRequired =
+    selectedClub?.is_player_subscription_required;
+
+  let playerLessonSubscriptionRequired =
+    selectedClub?.is_player_lesson_subscription_required;
+
+  let trainerStaffRequired = selectedClub?.is_trainer_subscription_required;
+
+  let isTrainerStaff = false;
+  let isPlayerSubscribed = false;
+
+  let isButtonDisabled = false;
+  let buttonText = "";
+
+  if (selectedEventType === 1 || selectedEventType === 2) {
+    if (playerSubscriptionRequired) {
+      const inviterPlayerSubscribed = clubSubscriptions?.find(
+        (subscription) =>
+          subscription.player_id === user?.user_id &&
+          subscription.club_id === selectedClub?.user_id &&
+          subscription.isActive === true
+      )
+        ? true
+        : false;
+      const inviteePlayerSubscribed = clubSubscriptions?.find(
+        (subscription) =>
+          subscription.player_id === selectedPlayer &&
+          subscription.club_id === selectedClub?.user_id &&
+          subscription.isActive === true
+      )
+        ? true
+        : false;
+      if (
+        inviterPlayerSubscribed === false ||
+        inviteePlayerSubscribed === false
+      ) {
+        isButtonDisabled = true;
+        buttonText =
+          "Kort kiralayabilmek için oyuncuların kulübe üye olması gerekmetkedir";
+      }
+    }
+  }
+
+  if (selectedEventType === 3) {
+    isPlayerSubscribed = clubSubscriptions?.find(
+      (subscription) =>
+        subscription.player_id === user?.user_id &&
+        subscription.club_id === selectedClub?.user_id &&
+        subscription.isActive === true
+    )
+      ? true
+      : false;
+
+    isTrainerStaff = clubStaff?.find(
+      (staff) =>
+        staff.user_id === selectedTrainer &&
+        staff.club_id === selectedClub?.club_id &&
+        staff.employment_status === "accepted"
+    )
+      ? true
+      : false;
+
+    if (
+      playerLessonSubscriptionRequired === true &&
+      trainerStaffRequired === true &&
+      (isPlayerSubscribed === false || isTrainerStaff === false)
+    ) {
+      isButtonDisabled = true;
+      buttonText =
+        "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir";
+    } else if (
+      playerLessonSubscriptionRequired === false &&
+      trainerStaffRequired === true &&
+      isTrainerStaff === false
+    ) {
+      isButtonDisabled = true;
+      buttonText =
+        "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir";
+    } else if (
+      playerLessonSubscriptionRequired === true &&
+      trainerStaffRequired === false &&
+      isPlayerSubscribed === false
+    ) {
+      isButtonDisabled = true;
+      buttonText =
+        "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir";
+    }
+  }
 
   const [modal, setModal] = useState(false);
   const [formData, setFormData] = useState<FormValues | null>(null);
@@ -129,7 +244,9 @@ const CourtBookingForm = () => {
     isCourtsLoading ||
     isPlayersLoading ||
     isTrainersLoading ||
-    isEventTypesLoading
+    isEventTypesLoading ||
+    isClubSubscriptionsLoading ||
+    isClubStaffLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -195,7 +312,10 @@ const CourtBookingForm = () => {
           (selectedEventType === 1 || selectedEventType === 2) && (
             <div className={styles["input-container"]}>
               <label>Oyuncu Seçimi</label>
-              <select {...register("invitee_id", { required: true })}>
+              <select
+                {...register("invitee_id", { required: true })}
+                onChange={handleSelectedPlayer}
+              >
                 <option value="">-- Seçim yapın --</option>
                 {players
                   ?.filter((player) => player.user_id !== user?.user_id)
@@ -221,7 +341,10 @@ const CourtBookingForm = () => {
                 ? "Oyuncu Seçimi"
                 : ""}{" "}
             </label>
-            <select {...register("invitee_id", { required: true })}>
+            <select
+              {...register("invitee_id", { required: true })}
+              onChange={handleSelectedTrainer}
+            >
               <option value="">-- Seçim yapın --</option>
               {isUserPlayer &&
                 trainers.map((trainer) => (
@@ -241,8 +364,14 @@ const CourtBookingForm = () => {
             )}
           </div>
         )}
-        <button type="submit" className={styles["form-button"]}>
-          Davet et
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={isButtonDisabled}
+        >
+          {(selectedPlayer || selectedTrainer) && isButtonDisabled
+            ? buttonText
+            : "Davet Gönder"}
         </button>
       </form>
       <InviteModal
