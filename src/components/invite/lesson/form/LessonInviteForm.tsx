@@ -37,9 +37,29 @@ const LeesonInviteForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const trainer = location.state;
+  const user = useAppSelector((store) => store?.user?.user);
 
-  const { user } = useAppSelector((store) => store.user);
+  const isUserTrainer = user?.user?.user_type_id === 2;
+  const isUserPlayer = user?.user?.user_type_id === 1;
+
+  let trainer;
+  let player;
+  let trainerUserId;
+  let playerUserId;
+
+  if (user && isUserTrainer) {
+    player = location.state;
+    trainerUserId = user?.user?.user_id;
+    playerUserId = player?.user_id;
+    trainer = user;
+  }
+
+  if (user && isUserPlayer) {
+    trainer = location.state;
+    trainerUserId = trainer?.user_id;
+    player = user;
+    playerUserId = user?.user?.user_id;
+  }
 
   const [addBooking, { isSuccess }] = useAddBookingMutation({});
 
@@ -197,8 +217,12 @@ const LeesonInviteForm = () => {
       event_type_id: 3,
       club_id: formData.club_id,
       court_id: formData.court_id,
-      inviter_id: user.user.user_id,
-      invitee_id: trainer?.user_id,
+      inviter_id: user?.user?.user_id,
+      invitee_id: isUserTrainer
+        ? playerUserId
+        : isUserPlayer
+        ? trainerUserId
+        : null,
       lesson_price: null,
       court_price: courts?.find((court) => court.court_id === selectedCourt)
         .price_hour,
@@ -223,48 +247,54 @@ const LeesonInviteForm = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [buttonText, setButtonText] = useState("");
 
+  if (
+    selectedClub &&
+    clubs &&
+    clubs?.find((club) => club.club_id === selectedClub)
+      ?.is_player_lesson_subscription_required
+  ) {
+    playerSubscriptionRequired = true;
+  }
+
+  if (
+    selectedClub &&
+    clubs &&
+    clubs?.find((club) => club.club_id === selectedClub)
+      ?.is_trainer_subscription_required
+  ) {
+    trainerStaffRequired = true;
+  }
+
+  if (selectedClubSubscriptions?.length > 0 && user && clubSubscriptions) {
+    if (
+      selectedClubSubscriptions.find(
+        (subscription) => subscription.player_id === playerUserId
+      )
+    ) {
+      isPlayerSubscribed = true;
+    }
+  }
+
+  if (
+    selectedClubSubscriptions?.length > 0 &&
+    trainer &&
+    clubStaff &&
+    clubSubscriptions &&
+    selectedClub
+  ) {
+    if (
+      clubStaff?.find(
+        (staff) =>
+          staff.user_id === trainerUserId &&
+          staff.club_id === selectedClub &&
+          staff.employment_status === "accepted"
+      )
+    ) {
+      isTrainerStaff = true;
+    }
+  }
+
   useEffect(() => {
-    if (
-      clubs?.find((club) => club.club_id === selectedClub)
-        ?.is_player_lesson_subscription_required
-    ) {
-      playerSubscriptionRequired = true;
-    }
-
-    if (
-      clubs?.find((club) => club.club_id === selectedClub)
-        ?.is_trainer_subscription_required
-    ) {
-      trainerStaffRequired = true;
-    }
-
-    if (selectedClubSubscriptions?.length > 0 && user && clubSubscriptions) {
-      if (
-        selectedClubSubscriptions.find(
-          (subscription) => subscription.player_id === user?.user?.user_id
-        )
-      ) {
-        isPlayerSubscribed = true;
-      }
-    }
-
-    if (
-      selectedClubSubscriptions?.length > 0 &&
-      trainer &&
-      clubStaff &&
-      clubSubscriptions
-    ) {
-      if (
-        clubStaff?.find(
-          (staff) =>
-            staff.user_id === trainer?.user_id &&
-            staff.club_id === selectedClub &&
-            staff.employment_status === "accepted"
-        )
-      ) {
-        isTrainerStaff = true;
-      }
-    }
     if (
       playerSubscriptionRequired === true &&
       trainerStaffRequired === true &&
@@ -319,9 +349,16 @@ const LeesonInviteForm = () => {
           <img src="/images/icons/prev.png" className={styles["prev-button"]} />
         </Link>
       </div>
-      <p
-        className={styles["player-name"]}
-      >{`Eğitmen: ${trainer?.fname} ${trainer?.lname}`}</p>
+      {isUserPlayer && (
+        <p
+          className={styles["player-name"]}
+        >{`Eğitmen: ${trainer?.fname} ${trainer?.lname}`}</p>
+      )}
+      {isUserTrainer && (
+        <p
+          className={styles["player-name"]}
+        >{`Öğrenci: ${player?.fname} ${player?.lname}`}</p>
+      )}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
