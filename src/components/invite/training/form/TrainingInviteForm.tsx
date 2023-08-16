@@ -23,6 +23,8 @@ import {
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+
 import {
   addMinutes,
   formatTime,
@@ -38,15 +40,20 @@ const TrainingInviteForm = () => {
 
   const { user } = useAppSelector((store) => store.user);
 
-  const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
+  const [addBooking, { isSuccess }] = useAddBookingMutation({});
 
   const {
     data: bookings,
     isLoading: isBookingsLoading,
     refetch,
   } = useGetBookingsQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsRequired } =
+    useGetClubSubscriptionsQuery({});
 
   const today = new Date();
   let day = String(today.getDate());
@@ -72,6 +79,7 @@ const TrainingInviteForm = () => {
     setSelectedTime(event.target.value);
   };
   const [selectedClub, setSelectedClub] = useState(null);
+
   const handleSelectedClub = (event) => {
     setSelectedClub(Number(event.target.value));
   };
@@ -81,6 +89,40 @@ const TrainingInviteForm = () => {
     setSelectedCourt(Number(event.target.value));
   };
 
+  // subscription check
+  let isPlayersSubscribed = false;
+  let clubSubscriptionRequired = false;
+
+  const selectedClubSubscriptions = clubSubscriptions?.filter(
+    (subscription) => subscription.club_id === selectedClub
+  );
+
+  if (
+    clubs?.find((club) => club.club_id === selectedClub)
+      ?.is_player_subscription_required
+  ) {
+    clubSubscriptionRequired = true;
+  }
+
+  if (
+    player &&
+    user &&
+    clubSubscriptions &&
+    selectedClubSubscriptions &&
+    clubSubscriptionRequired
+  ) {
+    if (
+      selectedClubSubscriptions?.find(
+        (subscription) => subscription.user_id === player?.user_id
+      ) &&
+      selectedClubSubscriptions?.find(
+        (subscription) => subscription.user_id === user?.user?.user_id
+      )
+    )
+      isPlayersSubscribed = true;
+  }
+
+  // booking hours checks
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
@@ -302,8 +344,14 @@ const TrainingInviteForm = () => {
             )}
           </div>
         </div>
-        <button type="submit" className={styles["form-button"]}>
-          Davet et
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={clubSubscriptionRequired && !isPlayersSubscribed}
+        >
+          {clubSubscriptionRequired && !isPlayersSubscribed
+            ? "Kort Kiralamak için Kulüp Üyeliği Gerekmektedir"
+            : "Davet Gönder"}
         </button>
       </form>
       <InviteModal
