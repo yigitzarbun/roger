@@ -33,6 +33,7 @@ type FormValues = {
   court_structure_type_id: number;
   court_surface_type_id: number;
   club_id: number;
+  is_active: boolean;
 };
 
 // TO DO: set selectedCourtId to null after editing court
@@ -42,7 +43,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
 
   const { user } = useAppSelector((store) => store.user);
 
-  const [updateCourt, { data, isSuccess }] = useUpdateCourtMutation({});
+  const [updateCourt, { isSuccess }] = useUpdateCourtMutation({});
 
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
@@ -80,9 +81,9 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         price_hour: Number(formData.price_hour),
         court_structure_type_id: Number(formData.court_structure_type_id),
         court_surface_type_id: Number(formData.court_surface_type_id),
+        is_active: formData.is_active,
         club_id: user.clubDetails.club_id,
       };
-      console.log(updatedCourtData);
       updateCourt(updatedCourtData);
     } catch (error) {
       console.log(error);
@@ -102,6 +103,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         price_hour: selectedCourt.price_hour || 0,
         court_structure_type_id: selectedCourt.court_structure_type_id || 0,
         court_surface_type_id: selectedCourt.court_surface_type_id || 0,
+        is_active: selectedCourt.is_active ? true : false,
       });
     }
   }, [selectedCourt, courts, reset]);
@@ -112,6 +114,14 @@ const EditCourtModal = (props: EditCourtModalProps) => {
       closeEditCourtModal();
     }
   }, [isSuccess]);
+
+  if (
+    isCourtsLoading ||
+    isCourtStructureTypesLoading ||
+    isCourtSurfaceTypesLoading
+  ) {
+    <div>Yükleniyor..</div>;
+  }
 
   return (
     <Modal
@@ -235,6 +245,22 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               <span className={styles["error-field"]}>
                 Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
               </span>
+            )}
+          </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Kort Statüsü</label>
+            <select
+              {...register("is_active", {
+                required: "Bu alan zorunludur.",
+              })}
+            >
+              <option value="true">Aktif</option>
+              <option value="false">Bloke</option>
+            </select>
+            {errors.is_active?.type === "required" && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
         </div>

@@ -101,6 +101,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                 <th>Açılış</th>
                 <th>Kapanış</th>
                 <th>Fiyat (saat / TL)</th>
+                <th>Durum</th>
               </tr>
             </thead>
             <tbody>
@@ -135,6 +136,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                   <td>{court.opening_time.slice(0, 5)}</td>
                   <td>{court.closing_time.slice(0, 5)}</td>
                   <td>{court.price_hour}</td>
+                  <td>{court.is_active ? "Aktif" : "Bloke"}</td>
                   <td onClick={() => openEditCourtModal(court.court_id)}>
                     Düzenle
                   </td>

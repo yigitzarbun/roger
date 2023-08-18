@@ -72,6 +72,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         price_hour: Number(formData.price_hour),
         court_structure_type_id: Number(formData.court_structure_type_id),
         court_surface_type_id: Number(formData.court_surface_type_id),
+        is_active: true,
         club_id: user.clubDetails.club_id,
       };
       addCourt(newCourtData);

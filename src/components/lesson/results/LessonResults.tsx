@@ -60,7 +60,7 @@ const LessonResults = (props: TrainSearchProps) => {
   const myFavourites = favourites?.filter(
     (favourite) =>
       favourite.favouriter_id === user?.user?.user_id &&
-      favourite.isActive === true
+      favourite.is_active === true
   );
 
   const trainerLevelValue = Number(trainerLevelId) ?? null;

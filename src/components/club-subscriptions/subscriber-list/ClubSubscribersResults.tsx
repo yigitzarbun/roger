@@ -39,7 +39,7 @@ const ClubSubscribersResults = () => {
 
   const mySubscriptions = clubSubscriptions?.filter(
     (subscription) =>
-      subscription.club_id === user?.user_id && subscription.isActive === true
+      subscription.club_id === user?.user_id && subscription.is_active === true
   );
 
   const today = new Date();
@@ -164,7 +164,7 @@ const ClubSubscribersResults = () => {
                   <td>{subscription.start_date.slice(0, 10)}</td>
                   <td>{subscription.end_date.slice(0, 10)}</td>
                   <td>
-                    {subscription.isActive === true ? "Aktif" : "Sonlandı"}
+                    {subscription.is_active === true ? "Aktif" : "Sonlandı"}
                   </td>
                   <td>
                     <Link

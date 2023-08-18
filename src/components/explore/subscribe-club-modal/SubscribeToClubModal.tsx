@@ -55,7 +55,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   const selectedClubPackages = clubSubscriptionPackages?.filter(
     (clubPackage) =>
-      clubPackage.club_id === selectedClubId && clubPackage.isActive === true
+      clubPackage.club_id === selectedClubId && clubPackage.is_active === true
   );
 
   const {

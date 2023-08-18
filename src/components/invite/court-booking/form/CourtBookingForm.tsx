@@ -104,7 +104,7 @@ const CourtBookingForm = () => {
         (subscription) =>
           subscription.player_id === user?.user_id &&
           subscription.club_id === selectedClub?.user_id &&
-          subscription.isActive === true
+          subscription.is_active === true
       )
         ? true
         : false;
@@ -112,7 +112,7 @@ const CourtBookingForm = () => {
         (subscription) =>
           subscription.player_id === selectedPlayer &&
           subscription.club_id === selectedClub?.user_id &&
-          subscription.isActive === true
+          subscription.is_active === true
       )
         ? true
         : false;
@@ -133,7 +133,7 @@ const CourtBookingForm = () => {
         (subscription) =>
           subscription.player_id === user?.user_id &&
           subscription.club_id === selectedClub?.user_id &&
-          subscription.isActive === true
+          subscription.is_active === true
       )
         ? true
         : false;
@@ -151,7 +151,7 @@ const CourtBookingForm = () => {
         (subscription) =>
           subscription.player_id === selectedPlayer &&
           subscription.club_id === selectedClub?.user_id &&
-          subscription.isActive === true
+          subscription.is_active === true
       )
         ? true
         : false;

@@ -41,7 +41,7 @@ const TrainResults = (props: TrainResultsProps) => {
   const myFavourites = favourites?.filter(
     (favourite) =>
       favourite.favouriter_id === user?.user?.user_id &&
-      favourite.isActive === true
+      favourite.is_active === true
   );
 
   const levelId = Number(playerLevelId) ?? null;

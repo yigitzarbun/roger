@@ -10,6 +10,7 @@ export interface Court {
   price_hour: string;
   court_structure_type_id: number;
   court_surface_type_id: number;
+  is_active: boolean;
   club_id: number;
 }
 

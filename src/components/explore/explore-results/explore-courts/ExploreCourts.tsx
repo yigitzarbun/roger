@@ -83,6 +83,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
               <th>Fiyat (Saat / TL)</th>
               <th>Kulüp</th>
               <th>Konum</th>
+              <th>Kort Statüsü</th>
             </tr>
           </thead>
           <tbody>
@@ -131,11 +132,16 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                     )?.location_name
                   }
                 </td>
-                <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
-                    Görüntüle
-                  </Link>
-                </td>
+                <td>{court.is_active ? "Aktif" : "Bloke"}</td>
+                {court.is_active && (
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                    >
+                      Görüntüle
+                    </Link>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

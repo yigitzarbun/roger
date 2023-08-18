@@ -76,7 +76,7 @@ export interface User {
     lname: string;
     birth_year: string;
     gender: string;
-    isActive: boolean;
+    is_active: boolean;
     gross_salary_month: number;
     bank_account_no: number;
     bank_name: string;

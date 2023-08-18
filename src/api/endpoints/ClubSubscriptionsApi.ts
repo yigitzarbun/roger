@@ -5,7 +5,7 @@ export interface ClubSubscription {
   club_subscription_id: number;
   start_date: string;
   end_date: string;
-  isActive: boolean;
+  is_active: boolean;
   club_id: number;
   player_id: number;
   club_subscription_package_id: number;

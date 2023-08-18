@@ -73,14 +73,14 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     if (
       myFavouriteTrainers.find(
         (favourite) =>
-          favourite.favouritee_id === user_id && favourite.isActive === false
+          favourite.favouritee_id === user_id && favourite.is_active === false
       )
     ) {
       return "deactivated";
     } else if (
       myFavouriteTrainers.find(
         (favourite) =>
-          favourite.favouritee_id === user_id && favourite.isActive === true
+          favourite.favouritee_id === user_id && favourite.is_active === true
       )
     ) {
       return true;
@@ -93,7 +93,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
 
   const handleAddFavourite = (favouritee_id: number) => {
     const favouriteData = {
-      isActive: true,
+      is_active: true,
       favouriter_id: user?.user?.user_id,
       favouritee_id: favouritee_id,
     };
@@ -110,7 +110,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     const favouriteData = {
       favourite_id: selectedFavourite.favourite_id,
       registered_at: selectedFavourite.registered_at,
-      isActive: selectedFavourite.isActive === true ? false : true,
+      is_active: selectedFavourite.is_active === true ? false : true,
       favouriter_id: selectedFavourite.favouriter_id,
       favouritee_id: selectedFavourite.favouritee_id,
     };

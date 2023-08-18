@@ -305,6 +305,7 @@ export async function up(knex: Knex): Promise<void> {
       table.time("opening_time").notNullable();
       table.time("closing_time").notNullable();
       table.integer("price_hour").notNullable();
+      table.boolean("is_active").defaultTo(true).notNullable();
       table
         .integer("court_structure_type_id")
         .unsigned()
@@ -395,7 +396,7 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("club_subscription_package_id");
       table.integer("price").notNullable();
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
-      table.boolean("isActive").defaultTo(true).notNullable();
+      table.boolean("is_active").defaultTo(true).notNullable();
       table
         .integer("club_subscription_type_id")
         .unsigned()
@@ -418,7 +419,7 @@ export async function up(knex: Knex): Promise<void> {
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table.dateTime("start_date").notNullable();
       table.dateTime("end_date").notNullable();
-      table.boolean("isActive").defaultTo(true).notNullable();
+      table.boolean("is_active").defaultTo(true).notNullable();
       table
         .integer("club_id")
         .unsigned()
@@ -447,7 +448,7 @@ export async function up(knex: Knex): Promise<void> {
     .createTable("favourites", (table) => {
       table.increments("favourite_id");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
-      table.boolean("isActive").notNullable();
+      table.boolean("is_active").notNullable();
       table
         .integer("favouriter_id")
         .unsigned()

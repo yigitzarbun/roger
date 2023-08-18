@@ -55,13 +55,13 @@ const EditSubscriptionPackageModal = (
   const myPackages = clubSubscriptionPackages?.filter(
     (subscriptionPackage) =>
       subscriptionPackage.club_id === user?.user?.user_id &&
-      subscriptionPackage.isActive === true
+      subscriptionPackage.is_active === true
   );
 
   const selectedPackage = myPackages?.find(
     (myPackage) =>
       myPackage.club_subscription_package_id === clubSubscriptionPackageId &&
-      myPackage.isActive === true
+      myPackage.is_active === true
   );
 
   const {
@@ -81,7 +81,7 @@ const EditSubscriptionPackageModal = (
       const updatedSubscriptionPackageData = {
         club_subscription_package_id: clubSubscriptionPackageId,
         price: Number(formData.price),
-        isActive: true,
+        is_active: true,
         club_subscription_type_id: selectedPackage?.club_subscription_type_id,
         club_id: user?.user?.user_id,
       };

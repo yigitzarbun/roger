@@ -113,12 +113,12 @@ const MatchInviteForm = () => {
       selectedClubSubscriptions?.find(
         (subscription) =>
           subscription.player_id === player?.user_id &&
-          subscription.isActive === true
+          subscription.is_active === true
       ) &&
       selectedClubSubscriptions?.find(
         (subscription) =>
           subscription.player_id === user?.user?.user_id &&
-          subscription.isActive === true
+          subscription.is_active === true
       )
     )
       isPlayersSubscribed = true;
@@ -315,7 +315,10 @@ const MatchInviteForm = () => {
               <option value="">-- Seçim yapın --</option>
               {selectedClub &&
                 courts
-                  ?.filter((court) => court.club_id === selectedClub)
+                  ?.filter(
+                    (court) =>
+                      court.club_id === selectedClub && court.is_active === true
+                  )
                   .map((court) => (
                     <option key={court.court_id} value={court.court_id}>
                       {court.court_name}

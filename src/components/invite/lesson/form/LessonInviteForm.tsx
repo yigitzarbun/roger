@@ -273,7 +273,7 @@ const LeesonInviteForm = () => {
       selectedClubSubscriptions.find(
         (subscription) =>
           subscription.player_id === playerUserId &&
-          subscription.isActive === true
+          subscription.is_active === true
       )
     ) {
       isPlayerSubscribed = true;
@@ -414,7 +414,10 @@ const LeesonInviteForm = () => {
               <option value="">-- Seçim yapın --</option>
               {selectedClub &&
                 courts
-                  ?.filter((court) => court.club_id === selectedClub)
+                  ?.filter(
+                    (court) =>
+                      court.club_id === selectedClub && court.is_active === true
+                  )
                   .map((court) => (
                     <option key={court.court_id} value={court.court_id}>
                       {court.court_name}

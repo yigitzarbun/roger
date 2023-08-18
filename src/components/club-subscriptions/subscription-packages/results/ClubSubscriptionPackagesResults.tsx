@@ -30,7 +30,7 @@ const ClubSubscriptionPackagesResults = (
   const myPackages = clubSubscriptionPackages?.filter(
     (subscriptionPackage) =>
       subscriptionPackage.club_id === user?.user?.user_id &&
-      subscriptionPackage.isActive === true
+      subscriptionPackage.is_active === true
   );
 
   if (isClubSubscriptionTypesLoading || isClubSubscriptionPackagesLoading) {

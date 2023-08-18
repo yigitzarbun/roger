@@ -4,7 +4,7 @@ import { baseUrl } from "../../common/constants/apiConstants";
 export interface Favourite {
   favourite_id: number;
   registered_at: string;
-  isActive: boolean;
+  is_active: boolean;
   favouriter_id: number;
   favouritee_id: number;
 }

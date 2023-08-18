@@ -183,7 +183,8 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                       }
                     >
                       {slotAvailabilityChecker(day, hour) === "available" &&
-                      (isUserPlayer || isUserTrainer) ? (
+                      (isUserPlayer || isUserTrainer) &&
+                      selectedCourt?.is_active === true ? (
                         <Link
                           to={paths.COURT_BOOKING_INVITE}
                           state={{
