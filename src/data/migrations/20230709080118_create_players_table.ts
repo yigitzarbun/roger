@@ -10,6 +10,10 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("location_id");
       table.string("location_name").unique().notNullable();
     })
+    .createTable("banks", (table) => {
+      table.increments("bank_id");
+      table.string("bank_name").unique().notNullable();
+    })
     .createTable("club_types", (table) => {
       table.increments("club_type_id");
       table.string("club_type_name").unique().notNullable();
@@ -89,6 +93,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("name_on_card");
       table.integer("card_number");
       table.integer("cvc");
+      table.string("card_expiry");
       table
         .integer("location_id")
         .unsigned()
@@ -122,8 +127,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("club_name").unique().notNullable();
       table.boolean("is_premium").defaultTo(false).notNullable();
       table.integer("phone_number");
-      table.integer("bank_account_no");
-      table.string("bank_name");
+      table.integer("iban");
       table.string("name_on_bank_account");
       table
         .boolean("is_player_subscription_required")
@@ -143,6 +147,13 @@ export async function up(knex: Knex): Promise<void> {
         .notNullable()
         .references("location_id")
         .inTable("locations")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("bank_id")
+        .unsigned()
+        .references("bank_id")
+        .inTable("banks")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       table
@@ -172,8 +183,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("phone_number");
       table.string("image");
       table.string("trainer_bio_description");
-      table.integer("bank_account_no");
-      table.string("bank_name");
+      table.integer("iban");
       table.string("name_on_bank_account");
       table.boolean("is_premium").defaultTo(false).notNullable();
       table
@@ -181,6 +191,13 @@ export async function up(knex: Knex): Promise<void> {
         .unsigned()
         .references("club_id")
         .inTable("clubs")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("bank_id")
+        .unsigned()
+        .references("bank_id")
+        .inTable("banks")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       table
@@ -224,10 +241,16 @@ export async function up(knex: Knex): Promise<void> {
       table.string("gender").notNullable();
       table.string("employment_status").notNullable();
       table.integer("gross_salary_month");
-      table.integer("bank_account_no");
-      table.string("bank_name");
+      table.integer("iban");
       table.integer("phone_number");
       table.string("image");
+      table
+        .integer("bank_id")
+        .unsigned()
+        .references("bank_id")
+        .inTable("banks")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
       table
         .integer("club_id")
         .unsigned()
@@ -387,6 +410,32 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
+    .createTable("match_scores", (table) => {
+      table.increments("match_score_id");
+      table.string("match_score_status");
+      table.integer("inviter_first_set_games_won");
+      table.integer("inviter_second_set_games_won");
+      table.integer("inviter_thir_set_games_won");
+      table.integer("invitee_first_set_games_won");
+      table.integer("invitee_second_set_games_won");
+      table.integer("invitee_thir_set_games_won");
+      table
+        .integer("booking_id")
+        .unsigned()
+        .notNullable()
+        .references("booking_id")
+        .inTable("bookings")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("winner_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
     .createTable("club_subscription_types", (table) => {
       table.increments("club_subscription_type_id");
       table.string("club_subscription_type_name");
@@ -445,6 +494,74 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
+    .createTable("payment_types", (table) => {
+      table.increments("payment_type_id");
+      table.string("payment_type_name");
+    })
+    .createTable("payments", (table) => {
+      table.increments("payment_id");
+      table.integer("payment_amount");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.string("payment_status").notNullable();
+      table
+        .integer("payment_type_id")
+        .unsigned()
+        .notNullable()
+        .references("payment_type_id")
+        .inTable("payment_types")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_subscriber_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_inviter_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_invitee_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("recipient_club_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("recipient_trainer_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("booking_id")
+        .unsigned()
+        .references("booking_id")
+        .inTable("bookings")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("club_subscription_id")
+        .unsigned()
+        .references("club_subscription_id")
+        .inTable("club_subscriptions")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
     .createTable("favourites", (table) => {
       table.increments("favourite_id");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
@@ -477,9 +594,12 @@ export async function up(knex: Knex): Promise<void> {
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
     .dropTableIfExists("favourites")
+    .dropTableIfExists("payments")
+    .dropTableIfExists("payment_types")
     .dropTableIfExists("club_subscriptions")
     .dropTableIfExists("club_subscription_packages")
     .dropTableIfExists("club_subscription_types")
+    .dropTableIfExists("match_scores")
     .dropTableIfExists("bookings")
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")
@@ -501,6 +621,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("trainer_experience_types")
     .dropTableIfExists("player_levels")
     .dropTableIfExists("club_types")
+    .dropTableIfExists("banks")
     .dropTableIfExists("locations")
     .dropTableIfExists("trainer_employment_types");
 }

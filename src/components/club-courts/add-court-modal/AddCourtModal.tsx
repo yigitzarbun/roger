@@ -17,6 +17,7 @@ import {
 
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 
 import { generateTimesArray } from "../../../common/util/TimeFunctions";
 
@@ -39,6 +40,14 @@ const AddCourtModal = (props: AddCourtModalProps) => {
   const { isAddCourtModalOpen, closeAddCourtModal } = props;
 
   const { user } = useAppSelector((store) => store.user);
+
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  const clubBankDetailsExist =
+    clubs?.find((club) => club.club_id === user?.user?.user_id)?.iban &&
+    clubs?.find((club) => club.club_id === user?.user?.user_id)?.bank_id &&
+    clubs?.find((club) => club.club_id === user?.user?.user_id)
+      ?.name_on_bank_account;
 
   const [addCourt, { isSuccess }] = useAddCourtMutation({});
 
@@ -75,7 +84,9 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         is_active: true,
         club_id: user.clubDetails.club_id,
       };
-      addCourt(newCourtData);
+      if (clubBankDetailsExist) {
+        addCourt(newCourtData);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -219,8 +230,14 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             )}
           </div>
         </div>
-        <button type="submit" className={styles["form-button"]}>
-          Tamamla
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={!clubBankDetailsExist}
+        >
+          {clubBankDetailsExist
+            ? "Tamamla"
+            : "Banka Hesap Bilgilerinizi Ekleyin"}
         </button>
       </form>
     </Modal>

@@ -24,6 +24,9 @@ import clubSubscriptionPackagesRouter from "./src/api/club-subscription-packages
 import clubSubscriptionsRouter from "./src/api/club-subscriptions/club-subscriptions-router";
 import clubStaffRoleTypesRouter from "./src/api/club-staff-role-types/club-staff-role-types-router";
 import clubStaffRouter from "./src/api/club-staff/club-staff-router";
+import paymentTypesRouter from "./src/api/payment-types/payment-types-router";
+import paymentsRouter from "./src/api/payments/payments-router";
+import banksRouter from "./src/api/banks/banks-router";
 
 const cors = require("cors");
 
@@ -56,6 +59,9 @@ server.use("/api/club-subscription-packages", clubSubscriptionPackagesRouter);
 server.use("/api/club-subscriptions", clubSubscriptionsRouter);
 server.use("/api/club-staff-role-types", clubStaffRoleTypesRouter);
 server.use("/api/club-staff", clubStaffRouter);
+server.use("/api/payment-types", paymentTypesRouter);
+server.use("/api/payments", paymentsRouter);
+server.use("/api/banks", banksRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

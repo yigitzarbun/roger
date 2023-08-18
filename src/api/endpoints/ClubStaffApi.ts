@@ -9,8 +9,8 @@ export interface ClubStaff {
   gender: string;
   employment_status: string;
   gross_salary_month?: number | null;
-  bank_account_no?: number | null;
-  bank_name?: string | null;
+  iban?: number | null;
+  bank_id?: string | null;
   name_on_bank_account?: string | null;
   phone_number?: number | null;
   image?: string | null;

@@ -15,6 +15,9 @@ export interface Club {
   is_player_subscription_required: boolean;
   lesson_rule_id?: boolean;
   player_rule_id?: boolean;
+  iban?: number;
+  bank_id?: number;
+  name_on_bank_account?: string;
 }
 
 export const clubsSlice = createApi({

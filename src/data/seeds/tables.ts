@@ -3,6 +3,8 @@ import { Knex } from "knex";
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
   await knex("favourites").del();
+  await knex("payments").del();
+  await knex("payment_types").del();
   await knex("club_subscriptions").del();
   await knex("club_subscription_packages").del();
   await knex("club_subscription_types").del();
@@ -26,6 +28,7 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("trainer_experience_types").del();
   await knex("player_levels").del();
   await knex("club_types").del();
+  await knex("banks").del();
   await knex("locations").del();
   await knex("trainer_employment_types").del();
 
@@ -63,6 +66,73 @@ export async function seed(knex: Knex): Promise<void> {
     { location_id: 15, location_name: "Ümraniye" },
     { location_id: 16, location_name: "Üsküdar" },
     { location_id: 17, location_name: "Zeytinburnu" },
+  ]);
+
+  await knex("banks").insert([
+    {
+      bank_id: 1,
+      bank_name: "Halkbank",
+    },
+    {
+      bank_id: 2,
+      bank_name: "VakıfBank",
+    },
+    {
+      bank_id: 3,
+      bank_name: "Ziraat Bankası",
+    },
+    {
+      bank_id: 4,
+      bank_name: "Akbank",
+    },
+    {
+      bank_id: 5,
+      bank_name: "Fibabanka",
+    },
+    {
+      bank_id: 6,
+      bank_name: "Şekerbank",
+    },
+    {
+      bank_id: 7,
+      bank_name: "Türkiye İş Bankası",
+    },
+    {
+      bank_id: 8,
+      bank_name: "Yapı Kredi",
+    },
+    {
+      bank_id: 9,
+      bank_name: "DenizBank",
+    },
+    {
+      bank_id: 10,
+      bank_name: "Garanti BBVA",
+    },
+    {
+      bank_id: 11,
+      bank_name: "HSBC",
+    },
+    {
+      bank_id: 12,
+      bank_name: "ICBC Turkey Bank",
+    },
+    {
+      bank_id: 13,
+      bank_name: "ING",
+    },
+    {
+      bank_id: 14,
+      bank_name: "Odeabank",
+    },
+    {
+      bank_id: 15,
+      bank_name: "QNB Finansbank",
+    },
+    {
+      bank_id: 16,
+      bank_name: "TEB",
+    },
   ]);
 
   await knex("club_types").insert([
@@ -180,6 +250,7 @@ export async function seed(knex: Knex): Promise<void> {
     { booking_status_type_id: 2, booking_status_type_name: "confirmed" },
     { booking_status_type_id: 3, booking_status_type_name: "rejected" },
     { booking_status_type_id: 4, booking_status_type_name: "cancelled" },
+    { booking_status_type_id: 5, booking_status_type_name: "completed" },
   ]);
 
   await knex("club_subscription_types").insert([
@@ -202,6 +273,29 @@ export async function seed(knex: Knex): Promise<void> {
       club_subscription_type_id: 4,
       club_subscription_type_name: "12 Aylık Üyelik",
       club_subscription_duration_months: 12,
+    },
+  ]);
+
+  await knex("payment_types").insert([
+    {
+      payment_type_id: 1,
+      payment_type_name: "training",
+    },
+    {
+      payment_type_id: 2,
+      payment_type_name: "match",
+    },
+    {
+      payment_type_id: 3,
+      payment_type_name: "lesson",
+    },
+    {
+      payment_type_id: 4,
+      payment_type_name: "external",
+    },
+    {
+      payment_type_id: 5,
+      payment_type_name: "subscription",
     },
   ]);
 }

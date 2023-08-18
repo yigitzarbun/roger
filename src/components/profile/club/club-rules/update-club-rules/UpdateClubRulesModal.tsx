@@ -161,7 +161,7 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
                 Eğitmenin kulüp çalışanı, oyuncunun üye olması zorunludur
               </option>
             </select>
-            {errors.rule_id && (
+            {errors.lesson_rule_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
@@ -179,7 +179,7 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
                 Oyuncuların kort kiralamak için üye olmaları gerekmiyor
               </option>
             </select>
-            {errors.rule_id && (
+            {errors.player_rule_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>

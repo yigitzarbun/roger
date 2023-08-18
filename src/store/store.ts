@@ -25,6 +25,9 @@ import { clubSubscriptionPackagesSlice } from "../api/endpoints/ClubSubscription
 import { clubSubscriptionsSlice } from "../api/endpoints/ClubSubscriptionsApi";
 import { clubStaffRoleTypesSlice } from "../api/endpoints/ClubStaffRoleTypesApi";
 import { clubStaffSlice } from "../api/endpoints/ClubStaffApi";
+import { paymentTypesSlice } from "../api/endpoints/PaymentTypesApi";
+import { paymentsSlice } from "../api/endpoints/PaymentsApi";
+import { banksSlice } from "../api/endpoints/BanksApi";
 
 export const store = configureStore({
   reducer: {
@@ -54,6 +57,9 @@ export const store = configureStore({
     [clubSubscriptionsSlice.reducerPath]: clubSubscriptionsSlice.reducer,
     [clubStaffRoleTypesSlice.reducerPath]: clubStaffRoleTypesSlice.reducer,
     [clubStaffSlice.reducerPath]: clubStaffSlice.reducer,
+    [paymentTypesSlice.reducerPath]: paymentTypesSlice.reducer,
+    [paymentsSlice.reducerPath]: paymentsSlice.reducer,
+    [banksSlice.reducerPath]: banksSlice.reducer,
     user: authReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
@@ -80,7 +86,10 @@ export const store = configureStore({
       .concat(clubSubscriptionPackagesSlice.middleware)
       .concat(clubSubscriptionsSlice.middleware)
       .concat(clubStaffRoleTypesSlice.middleware)
-      .concat(clubStaffSlice.middleware),
+      .concat(clubStaffSlice.middleware)
+      .concat(paymentTypesSlice.middleware)
+      .concat(paymentsSlice.middleware)
+      .concat(banksSlice.middleware),
 });
 
 // Infer the `RootState` type from the store

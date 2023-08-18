@@ -40,8 +40,8 @@ export interface User {
     phone_number: number;
     image: string;
     trainer_bio_description: string;
-    bank_account_no: number;
-    bank_name: string;
+    iban: number;
+    bank_id: string;
     name_on_bank_account: string;
     is_premium: boolean;
     club_id: number;
@@ -59,8 +59,8 @@ export interface User {
     club_name: string;
     is_premium: boolean;
     phone_number: number;
-    bank_account_no: number;
-    bank_name: string;
+    iban: number;
+    bank_id: string;
     name_on_bank_account: string;
     is_player_subscription_required: boolean;
     is_player_lesson_subscription_required: boolean;
@@ -78,8 +78,8 @@ export interface User {
     gender: string;
     is_active: boolean;
     gross_salary_month: number;
-    bank_account_no: number;
-    bank_name: string;
+    iban: number;
+    bank_id: string;
     name_on_bank_account: string;
     phone_number: number;
     image: string;

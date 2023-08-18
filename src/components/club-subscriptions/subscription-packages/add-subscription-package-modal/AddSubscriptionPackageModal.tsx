@@ -15,6 +15,8 @@ import {
   useGetClubSubscriptionPackagesQuery,
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 
 interface AddSubscriptionPackageModalProps {
@@ -33,6 +35,14 @@ const AddSubscriptionPackageModal = (
   const { openAddPackageModal, closeAddClubSubscriptionPackageModal } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  const clubBankDetailsExist =
+    clubs?.find((club) => club.club_id === user?.user?.user_id)?.iban &&
+    clubs?.find((club) => club.club_id === user?.user?.user_id)?.bank_id &&
+    clubs?.find((club) => club.club_id === user?.user?.user_id)
+      ?.name_on_bank_account;
 
   const [addClubSubscriptionPackage, { isSuccess }] =
     useAddClubSubscriptionPackageMutation({});
@@ -72,7 +82,9 @@ const AddSubscriptionPackageModal = (
         club_subscription_type_id: Number(formData.club_subscription_type_id),
         club_id: user?.user?.user_id,
       };
-      addClubSubscriptionPackage(newSubscriptionPackageData);
+      if (clubBankDetailsExist) {
+        addClubSubscriptionPackage(newSubscriptionPackageData);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +98,11 @@ const AddSubscriptionPackageModal = (
     }
   }, [isSuccess]);
 
-  if (isClubSubscriptionTypesLoading || isClubSubscriptionPackagesLoading) {
+  if (
+    isClubSubscriptionTypesLoading ||
+    isClubSubscriptionPackagesLoading ||
+    isClubsLoading
+  ) {
     return <div>Yükleniyor..</div>;
   }
 
@@ -144,8 +160,14 @@ const AddSubscriptionPackageModal = (
             )}
           </div>
         </div>
-        <button type="submit" className={styles["form-button"]}>
-          Tamamla
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={!clubBankDetailsExist}
+        >
+          {clubBankDetailsExist
+            ? "Tamamla"
+            : "Banka Hesap Bilgilerinizi Ekleyin"}
         </button>
       </form>
     </Modal>

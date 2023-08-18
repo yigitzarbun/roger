@@ -11,6 +11,10 @@ export interface Player {
   birth_year: string;
   location_id: number;
   user_id: number;
+  name_on_card?: string;
+  card_number?: number;
+  cvc?: number;
+  card_expiry?: string;
 }
 
 export const playersSlice = createApi({
