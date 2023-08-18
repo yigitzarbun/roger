@@ -137,70 +137,39 @@ const TrainerRequestsOutgoing = () => {
                   />
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? `${
+                  {`${
+                    players?.find(
+                      (player) => player.user_id === booking.invitee_id
+                    )?.fname
+                  } ${
+                    players?.find(
+                      (player) => player.user_id === booking.invitee_id
+                    )?.lname
+                  }`}
+                </td>
+                <td>
+                  {
+                    playerLevelTypes?.find(
+                      (level) =>
+                        level.player_level_id ===
                         players?.find(
                           (player) => player.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : booking.event_type_id === 3
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : ""}
+                        )?.player_level_id
+                    )?.player_level_name
+                  }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? playerLevelTypes?.find(
-                        (level) =>
-                          level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === booking.invitee_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : booking.event_type_id === 3
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
-                          trainers?.find(
-                            (trainer) => trainer.user_id === booking.invitee_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : ""}
+                  {
+                    players?.find(
+                      (player) => player.user_id === booking.invitee_id
+                    )?.gender
+                  }
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )?.gender
-                    : booking.event_type_id === 3
-                    ? trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.gender
-                    : ""}
-                </td>
-                <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? currentYear -
-                      players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )?.birth_year
-                    : booking.event_type_id === 3
-                    ? currentYear -
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.birth_year
-                    : ""}
+                  {currentYear -
+                    players?.find(
+                      (player) => player.user_id === booking.invitee_id
+                    )?.birth_year}
                 </td>
                 <td>
                   {

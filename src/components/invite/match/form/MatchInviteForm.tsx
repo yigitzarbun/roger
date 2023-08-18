@@ -14,16 +14,16 @@ import { useState } from "react";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
 import { FormValues } from "../../modals/invite-modal/InviteModal";
+
 import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
-
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
 import {
   addMinutes,
@@ -39,7 +39,7 @@ const MatchInviteForm = () => {
 
   const { user } = useAppSelector((store) => store.user);
 
-  const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
+  const [addBooking, { isSuccess }] = useAddBookingMutation({});
 
   const {
     data: bookings,
@@ -111,10 +111,14 @@ const MatchInviteForm = () => {
   ) {
     if (
       selectedClubSubscriptions?.find(
-        (subscription) => subscription.player_id === player?.user_id
+        (subscription) =>
+          subscription.player_id === player?.user_id &&
+          subscription.isActive === true
       ) &&
       selectedClubSubscriptions?.find(
-        (subscription) => subscription.player_id === user?.user?.user_id
+        (subscription) =>
+          subscription.player_id === user?.user?.user_id &&
+          subscription.isActive === true
       )
     )
       isPlayersSubscribed = true;

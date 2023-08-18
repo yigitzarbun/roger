@@ -113,10 +113,14 @@ const TrainingInviteForm = () => {
   ) {
     if (
       selectedClubSubscriptions?.find(
-        (subscription) => subscription.player_id === player?.user_id
+        (subscription) =>
+          subscription.player_id === player?.user_id &&
+          subscription.isActive === true
       ) &&
       selectedClubSubscriptions?.find(
-        (subscription) => subscription.player_id === user?.user?.user_id
+        (subscription) =>
+          subscription.player_id === user?.user?.user_id &&
+          subscription.isActive === true
       )
     )
       isPlayersSubscribed = true;

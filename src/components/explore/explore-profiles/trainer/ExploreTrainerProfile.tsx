@@ -28,6 +28,8 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
 
   const user = useAppSelector((store) => store.user?.user);
 
+  const isUserPlayer = user?.user?.user_type_id === 1;
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
@@ -214,19 +216,21 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
               ? "Favorilerden çıkar"
               : "Favorilere ekle"}
           </button>
-          <Link
-            to={paths.LESSON_INVITE}
-            state={{
-              fname: selectedTrainer.fname,
-              lname: selectedTrainer.lname,
-              image: selectedTrainer.image,
-              court_price: "",
-              user_id: selectedTrainer.user_id,
-            }}
-            className={styles["accept-button"]}
-          >
-            <button>Ders al</button>
-          </Link>
+          {isUserPlayer && (
+            <Link
+              to={paths.LESSON_INVITE}
+              state={{
+                fname: selectedTrainer.fname,
+                lname: selectedTrainer.lname,
+                image: selectedTrainer.image,
+                court_price: "",
+                user_id: selectedTrainer.user_id,
+              }}
+              className={styles["accept-button"]}
+            >
+              <button>Ders al</button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

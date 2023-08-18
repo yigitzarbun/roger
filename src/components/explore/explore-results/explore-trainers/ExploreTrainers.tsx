@@ -224,13 +224,15 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     </Link>
                   </td>
                 )}
-                {
+                {trainer.user_id !== user?.user?.user_id ? (
                   <td onClick={() => handleToggleFavourite(trainer.user_id)}>
                     {isTrainerInMyFavourites(trainer.user_id) === true
                       ? "Favorilerden çıkar"
                       : "Favorilere ekle"}
                   </td>
-                }
+                ) : (
+                  "(Kendi profilim)"
+                )}
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
                     Görüntüle

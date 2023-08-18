@@ -12,11 +12,18 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import { useAppSelector } from "../../../../store/hooks";
+
 interface ExploreCourtProfileProps {
   court_id: string;
 }
 const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
   const { court_id } = props;
+
+  const user = useAppSelector((store) => store?.user?.user);
+
+  const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -175,7 +182,8 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                           : styles.available
                       }
                     >
-                      {slotAvailabilityChecker(day, hour) === "available" ? (
+                      {slotAvailabilityChecker(day, hour) === "available" &&
+                      (isUserPlayer || isUserTrainer) ? (
                         <Link
                           to={paths.COURT_BOOKING_INVITE}
                           state={{

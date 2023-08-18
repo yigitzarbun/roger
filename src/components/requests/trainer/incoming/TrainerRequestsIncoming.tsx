@@ -49,7 +49,7 @@ const TrainerRequestsIncoming = () => {
       booking.invitee_id === user?.user_id &&
       booking.booking_status_type_id === 1
   );
-  console.log(incomingBookings);
+
   const currentYear = new Date().getFullYear();
 
   const [

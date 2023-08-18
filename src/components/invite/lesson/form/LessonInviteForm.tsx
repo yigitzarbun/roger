@@ -61,6 +61,9 @@ const LeesonInviteForm = () => {
     playerUserId = user?.user?.user_id;
   }
 
+  const navigateToPreviousPage = () => {
+    navigate(-1);
+  };
   const [addBooking, { isSuccess }] = useAddBookingMutation({});
 
   const {
@@ -268,7 +271,9 @@ const LeesonInviteForm = () => {
   if (selectedClubSubscriptions?.length > 0 && user && clubSubscriptions) {
     if (
       selectedClubSubscriptions.find(
-        (subscription) => subscription.player_id === playerUserId
+        (subscription) =>
+          subscription.player_id === playerUserId &&
+          subscription.isActive === true
       )
     ) {
       isPlayerSubscribed = true;
@@ -345,9 +350,11 @@ const LeesonInviteForm = () => {
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>
         <h1 className={styles["invite-title"]}>Ders Davet</h1>
-        <Link to={paths.LESSON}>
-          <img src="/images/icons/prev.png" className={styles["prev-button"]} />
-        </Link>
+        <img
+          src="/images/icons/prev.png"
+          className={styles["prev-button"]}
+          onClick={navigateToPreviousPage}
+        />
       </div>
       {isUserPlayer && (
         <p

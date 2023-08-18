@@ -68,6 +68,11 @@
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
 
+      .trainers-section-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
       table {
         width: 100%;
         text-align: left;

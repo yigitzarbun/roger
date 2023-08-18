@@ -14,6 +14,8 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -25,6 +27,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
 
   const user = useAppSelector((store) => store.user?.user);
 
+  const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
+  const isUserClub = user?.user?.user_type_id === 3;
+
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
@@ -33,6 +39,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
 
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
+    useGetClubSubscriptionsQuery({});
   const selectedPlayer = players?.find(
     (player) => player.user_id === Number(user_id)
   );
@@ -42,6 +52,23 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isLoading: isFavouritesLoading,
     refetch,
   } = useGetFavouritesQuery({});
+
+  const selectedPlayerSubscriptions = clubSubscriptions?.filter(
+    (subscription) =>
+      subscription.player_id === selectedPlayer?.user_id &&
+      subscription.isActive === true
+  );
+
+  const selectedPlayerSubscriptionClubNames = [];
+
+  if (selectedPlayerSubscriptions?.length > 0) {
+    selectedPlayerSubscriptions.forEach((subscription) => {
+      const clubName = clubs?.find(
+        (club) => club.user_id === subscription.club_id
+      )?.club_name;
+      selectedPlayerSubscriptionClubNames.push(clubName);
+    });
+  }
 
   const playerFavouriters = favourites?.filter(
     (favourite) =>
@@ -119,7 +146,8 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isLocationsLoading ||
     isPlayersLoading ||
     isPlayerLevelsLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isClubSubscriptionsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -158,6 +186,13 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
               )?.location_name
             }
           </p>
+          <p>
+            {selectedPlayerSubscriptions?.length > 0
+              ? selectedPlayerSubscriptionClubNames?.map((clubName) => (
+                  <span key={clubName}>{clubName}</span>
+                ))
+              : "Oyuncunun kulüp üyeliği bulunmamaktadır."}
+          </p>
         </div>
         <div className={styles["subscription-section"]}>
           <h3>Etkileşim</h3>
@@ -169,32 +204,50 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
               ? "Favorilerden çıkar"
               : "Favorilere ekle"}
           </button>
-          <Link
-            to={paths.TRAIN_INVITE}
-            state={{
-              fname: selectedPlayer.fname,
-              lname: selectedPlayer.lname,
-              image: selectedPlayer.image,
-              court_price: "",
-              user_id: selectedPlayer.user_id,
-            }}
-            className={styles["accept-button"]}
-          >
-            <button> Antreman yap</button>
-          </Link>
-          <Link
-            to={paths.MATCH_INVITE}
-            state={{
-              fname: selectedPlayer.fname,
-              lname: selectedPlayer.lname,
-              image: selectedPlayer.image,
-              court_price: "",
-              user_id: selectedPlayer.user_id,
-            }}
-            className={styles["accept-button"]}
-          >
-            <button> Maç yap</button>
-          </Link>
+          {isUserPlayer && (
+            <Link
+              to={paths.TRAIN_INVITE}
+              state={{
+                fname: selectedPlayer.fname,
+                lname: selectedPlayer.lname,
+                image: selectedPlayer.image,
+                court_price: "",
+                user_id: selectedPlayer.user_id,
+              }}
+              className={styles["accept-button"]}
+            >
+              <button> Antreman yap</button>
+            </Link>
+          )}
+          {isUserPlayer && (
+            <Link
+              to={paths.MATCH_INVITE}
+              state={{
+                fname: selectedPlayer.fname,
+                lname: selectedPlayer.lname,
+                image: selectedPlayer.image,
+                court_price: "",
+                user_id: selectedPlayer.user_id,
+              }}
+              className={styles["accept-button"]}
+            >
+              <button> Maç yap</button>
+            </Link>
+          )}
+          {isUserTrainer && (
+            <Link
+              to={paths.LESSON_INVITE}
+              state={{
+                fname: selectedPlayer.fname,
+                lname: selectedPlayer.lname,
+                image: selectedPlayer.image,
+                court_price: "",
+                user_id: selectedPlayer.user_id,
+              }}
+            >
+              <button>Derse davet et</button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

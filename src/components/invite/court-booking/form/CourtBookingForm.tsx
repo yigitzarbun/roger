@@ -35,7 +35,7 @@ const CourtBookingForm = () => {
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
 
-  const [addBooking, { data, isSuccess }] = useAddBookingMutation({});
+  const [addBooking, { isSuccess }] = useAddBookingMutation({});
 
   const { isLoading: isBookingsLoading, refetch } = useGetBookingsQuery({});
 
@@ -79,12 +79,6 @@ const CourtBookingForm = () => {
   const handleSelectedTrainer = (event) => {
     setSelectedTrainer(Number(event.target.value));
   };
-  // event type nedir?
-
-  // isTrainerStaff
-  // isPlayerSub
-
-  // isButtonDisabled
 
   const selectedClub = clubs?.find(
     (club) => club.club_id === courtBookingDetails?.club_id
@@ -134,23 +128,43 @@ const CourtBookingForm = () => {
   }
 
   if (selectedEventType === 3) {
-    isPlayerSubscribed = clubSubscriptions?.find(
-      (subscription) =>
-        subscription.player_id === user?.user_id &&
-        subscription.club_id === selectedClub?.user_id &&
-        subscription.isActive === true
-    )
-      ? true
-      : false;
+    if (isUserPlayer) {
+      isPlayerSubscribed = clubSubscriptions?.find(
+        (subscription) =>
+          subscription.player_id === user?.user_id &&
+          subscription.club_id === selectedClub?.user_id &&
+          subscription.isActive === true
+      )
+        ? true
+        : false;
 
-    isTrainerStaff = clubStaff?.find(
-      (staff) =>
-        staff.user_id === selectedTrainer &&
-        staff.club_id === selectedClub?.club_id &&
-        staff.employment_status === "accepted"
-    )
-      ? true
-      : false;
+      isTrainerStaff = clubStaff?.find(
+        (staff) =>
+          staff.user_id === selectedTrainer &&
+          staff.club_id === selectedClub?.club_id &&
+          staff.employment_status === "accepted"
+      )
+        ? true
+        : false;
+    } else if (isUserTrainer) {
+      isPlayerSubscribed = clubSubscriptions?.find(
+        (subscription) =>
+          subscription.player_id === selectedPlayer &&
+          subscription.club_id === selectedClub?.user_id &&
+          subscription.isActive === true
+      )
+        ? true
+        : false;
+
+      isTrainerStaff = clubStaff?.find(
+        (staff) =>
+          staff.user_id === user?.user_id &&
+          staff.club_id === selectedClub?.club_id &&
+          staff.employment_status === "accepted"
+      )
+        ? true
+        : false;
+    }
 
     if (
       playerLessonSubscriptionRequired === true &&
@@ -206,11 +220,11 @@ const CourtBookingForm = () => {
         2
       )}:${String(courtBookingDetails?.event_time).slice(2)}`,
       booking_status_type_id: 1,
-      event_type_id: Number(formData.event_type_id),
+      event_type_id: Number(formData?.event_type_id),
       club_id: Number(courtBookingDetails?.club_id),
       court_id: Number(courtBookingDetails?.club_id),
       inviter_id: user?.user_id,
-      invitee_id: Number(formData.invitee_id),
+      invitee_id: Number(formData?.invitee_id),
       lesson_price: null,
       court_price: Number(courtBookingDetails?.court_price),
     };
@@ -339,11 +353,17 @@ const CourtBookingForm = () => {
                 ? "Eğitmen Seçimi"
                 : isUserTrainer
                 ? "Oyuncu Seçimi"
-                : ""}{" "}
+                : ""}
             </label>
             <select
               {...register("invitee_id", { required: true })}
-              onChange={handleSelectedTrainer}
+              onChange={
+                isUserPlayer
+                  ? handleSelectedTrainer
+                  : isUserTrainer
+                  ? handleSelectedPlayer
+                  : null
+              }
             >
               <option value="">-- Seçim yapın --</option>
               {isUserPlayer &&

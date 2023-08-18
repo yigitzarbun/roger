@@ -17,6 +17,11 @@ import {
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import {
+  useGetClubStaffQuery,
+  useAddClubStaffMutation,
+} from "../../../../api/endpoints/ClubStaffApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 
@@ -46,19 +51,53 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   let isUserPlayer = false;
   let isUserTrainer = false;
-  let isUserClub = false;
 
   if (user) {
     isUserPlayer = user.user.user_type_id === 1;
     isUserTrainer = user.user.user_type_id === 2;
-    isUserClub = user.user.user_type_id === 3;
   }
+  const {
+    data: clubSubscriptionPackages,
+    isLoading: isClubSubscriptionPackageLoading,
+  } = useGetClubSubscriptionPackagesQuery({});
+
+  const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
+    useAddClubStaffMutation({});
+
+  const {
+    data: clubStaff,
+    isLoading: isClubStaffLoading,
+    refetch: clubStaffRefetch,
+  } = useGetClubStaffQuery({});
+
+  // add club staff
+
+  const handleAddClubStaff = (club_id: number) => {
+    if (isUserTrainer) {
+      const clubStaffData = {
+        fname: user?.trainerDetails?.fname,
+        lname: user?.trainerDetails?.lname,
+        birth_year: user?.trainerDetails?.birth_year,
+        gender: user?.trainerDetails?.gender,
+        employment_status: "pending",
+        gross_salary_month: null,
+        bank_account_no: null,
+        bank_name: null,
+        phone_number: null,
+        image: null,
+        club_id: club_id,
+        club_staff_role_type_id: 2,
+        user_id: user?.user?.user_id,
+      };
+      addClubStaff(clubStaffData);
+    }
+  };
 
   // favourites
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
-    refetch,
+    refetch: favouritesRefetch,
   } = useGetFavouritesQuery({});
 
   const myFavouriteClubs = favourites?.filter(
@@ -149,17 +188,24 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      refetch();
+      favouritesRefetch();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
+  useEffect(() => {
+    if (isAddClubStaffSuccess) {
+      clubStaffRefetch();
+    }
+  }, [isAddClubStaffSuccess]);
   if (
     isClubsLoading ||
     isLocationsLoading ||
     isClubTypesLoading ||
     isCourtsLoading ||
     isFavouritesLoading ||
-    isClubSubscriptionsLoading
+    isClubSubscriptionsLoading ||
+    isClubSubscriptionPackageLoading ||
+    isClubStaffLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -228,17 +274,48 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     Görüntüle
                   </Link>
                 </td>
-                <td>
-                  {isUserSubscribedToClub(club.user_id) === true ? (
-                    "Üyelik Var"
-                  ) : (
-                    <button
-                      onClick={() => handleOpenSubscribeModal(club.user_id)}
-                    >
-                      Üyel ol
-                    </button>
-                  )}
-                </td>
+                {isUserPlayer && (
+                  <td>
+                    {clubSubscriptionPackages?.find(
+                      (subscriptionPackage) =>
+                        subscriptionPackage.club_id === club.user_id
+                    ) && isUserSubscribedToClub(club.user_id) === true ? (
+                      "Üyelik Var"
+                    ) : clubSubscriptionPackages?.find(
+                        (subscriptionPackage) =>
+                          subscriptionPackage.club_id === club.user_id
+                      ) ? (
+                      <button
+                        onClick={() => handleOpenSubscribeModal(club.user_id)}
+                      >
+                        Üyel ol
+                      </button>
+                    ) : (
+                      "Kulübün üyelik paketi bulunmamaktadır"
+                    )}
+                  </td>
+                )}
+                {isUserTrainer &&
+                clubStaff?.find(
+                  (staff) =>
+                    staff.club_id === club.club_id &&
+                    staff.user_id === user?.user?.user_id &&
+                    staff.employment_status === "accepted"
+                )
+                  ? "Bu kulüpte çalışıyorsun"
+                  : isUserTrainer &&
+                    clubStaff?.find(
+                      (staff) =>
+                        staff.club_id === club.club_id &&
+                        staff.user_id === user?.user?.user_id &&
+                        staff.employment_status === "pending"
+                    )
+                  ? "Başvurun henüz yanıtlanmadı"
+                  : isUserTrainer && (
+                      <button onClick={() => handleAddClubStaff(club.club_id)}>
+                        Bu kulüpte çalıştığına dair kulübe başvur
+                      </button>
+                    )}
               </tr>
             ))}
           </tbody>

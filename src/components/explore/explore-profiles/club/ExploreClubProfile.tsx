@@ -22,7 +22,10 @@ import {
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import {
+  useGetClubStaffQuery,
+  useAddClubStaffMutation,
+} from "../../../../api/endpoints/ClubStaffApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -35,6 +38,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   const { user_id } = props;
 
   const user = useAppSelector((store) => store.user?.user);
+
+  const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -56,8 +62,14 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     {}
   );
 
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
+  const {
+    data: clubStaff,
+    isLoading: isClubStaffLoading,
+    refetch: clubStaffRefetch,
+  } = useGetClubStaffQuery({});
+
+  const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
+    useAddClubStaffMutation({});
 
   const {
     data: clubSubscriptionTypes,
@@ -97,11 +109,32 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     }
   });
 
+  const handleAddClubStaff = (club_id: number) => {
+    if (isUserTrainer) {
+      const clubStaffData = {
+        fname: user?.trainerDetails?.fname,
+        lname: user?.trainerDetails?.lname,
+        birth_year: user?.trainerDetails?.birth_year,
+        gender: user?.trainerDetails?.gender,
+        employment_status: "pending",
+        gross_salary_month: null,
+        bank_account_no: null,
+        bank_name: null,
+        phone_number: null,
+        image: null,
+        club_id: club_id,
+        club_staff_role_type_id: 2,
+        user_id: user?.user?.user_id,
+      };
+      addClubStaff(clubStaffData);
+    }
+  };
+
   // favourites
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
-    refetch,
+    refetch: favouritesRefetch,
   } = useGetFavouritesQuery({});
 
   const clubFavouriters = favourites?.filter(
@@ -204,9 +237,15 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      refetch();
+      favouritesRefetch();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
+  useEffect(() => {
+    if (isAddClubStaffSuccess) {
+      clubStaffRefetch();
+    }
+  }, [isAddClubStaffSuccess]);
 
   if (
     isClubsLoading ||
@@ -258,6 +297,28 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
             }
           </p>
           <address>{selectedClub?.club_address}</address>
+          <p>{`Antreman ve Maç kuralı: ${
+            selectedClub?.is_player_subscription_required
+              ? "Oyuncuların kort kiralamak için kulübe üye olmaları gerekir"
+              : "Oyuncuların kort kiralamak için kulübe üye olmalarına gerek yoktur"
+          } `}</p>
+          <p>{`Ders kuralı: ${
+            selectedClub?.is_player_lesson_subscription_required &&
+            selectedClub?.is_trainer_subscription_required
+              ? "Kort kiralamak için eğitmenin kulüp çalışanı, oyuncunun kulüp üyesi olması gerekir"
+              : selectedClub?.is_player_lesson_subscription_required ===
+                  false &&
+                selectedClub?.is_trainer_subscription_required === true
+              ? "Kort kiralamak için eğitmenin kulüp çalışanı olması yeterlidir"
+              : selectedClub?.is_player_lesson_subscription_required === true &&
+                selectedClub?.is_trainer_subscription_required === false
+              ? "Kort kiralamak için oyuncunun kulüp üyesi olması yeterlidir"
+              : selectedClub?.is_player_lesson_subscription_required ===
+                  false &&
+                selectedClub?.is_trainer_subscription_required === false
+              ? "Kort kiralamak için oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur"
+              : ""
+          } `}</p>
         </div>
         <div className={styles["courts-section"]}>
           <h3>Kortlar</h3>
@@ -324,7 +385,32 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           </button>
         </div>
         <div className={styles["trainers-section"]}>
-          <h3>Eğitmenler</h3>
+          <div className={styles["trainers-section-title-container"]}>
+            <h3>Eğitmenler</h3>
+            {isUserTrainer &&
+            clubStaff?.find(
+              (staff) =>
+                staff.club_id === selectedClub.club_id &&
+                staff.user_id === user?.user?.user_id &&
+                staff.employment_status === "accepted"
+            )
+              ? "Bu kulüpte çalışıyorsun"
+              : isUserTrainer &&
+                clubStaff?.find(
+                  (staff) =>
+                    staff.club_id === selectedClub.club_id &&
+                    staff.user_id === user?.user?.user_id &&
+                    staff.employment_status === "pending"
+                )
+              ? "Başvurun henüz yanıtlanmadı"
+              : isUserTrainer && (
+                  <button
+                    onClick={() => handleAddClubStaff(selectedClub.club_id)}
+                  >
+                    Bu kulüpte çalıştığına dair kulübe başvur
+                  </button>
+                )}
+          </div>
           {confirmedClubTrainers?.length > 0 ? (
             <table>
               <thead>
@@ -359,20 +445,22 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                         Görüntüle
                       </Link>
                     </td>
-                    <td>
-                      <Link
-                        to={paths.LESSON_INVITE}
-                        state={{
-                          fname: trainer.fname,
-                          lname: trainer.lname,
-                          image: trainer.image,
-                          court_price: "",
-                          user_id: trainer.user_id,
-                        }}
-                      >
-                        Derse davet et
-                      </Link>
-                    </td>
+                    {isUserPlayer && (
+                      <td>
+                        <Link
+                          to={paths.LESSON_INVITE}
+                          state={{
+                            fname: trainer.fname,
+                            lname: trainer.lname,
+                            image: trainer.image,
+                            court_price: "",
+                            user_id: trainer.user_id,
+                          }}
+                        >
+                          Derse davet et
+                        </Link>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -420,19 +508,21 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                       }
                     </td>
                     <td>{clubPackage.price}</td>
-                    <td>
-                      {isUserSubscribedToClub() === true ? (
-                        ""
-                      ) : (
-                        <button
-                          onClick={() =>
-                            handleOpenSubscribeModal(selectedClub?.user_id)
-                          }
-                        >
-                          Üyel ol
-                        </button>
-                      )}
-                    </td>
+                    {isUserPlayer && (
+                      <td>
+                        {isUserSubscribedToClub() === true ? (
+                          ""
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleOpenSubscribeModal(selectedClub?.user_id)
+                            }
+                          >
+                            Üyel ol
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
