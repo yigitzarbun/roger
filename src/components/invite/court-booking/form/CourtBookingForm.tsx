@@ -98,6 +98,9 @@ const CourtBookingForm = () => {
   let isButtonDisabled = false;
   let buttonText = "";
 
+  let playerPaymentDetailsExist = false;
+  let trainerPaymentDetailsExist = false;
+
   if (selectedEventType === 1 || selectedEventType === 2) {
     if (playerSubscriptionRequired) {
       const inviterPlayerSubscribed = clubSubscriptions?.find(
@@ -125,6 +128,42 @@ const CourtBookingForm = () => {
           "Kort kiralayabilmek için oyuncuların kulübe üye olması gerekmetkedir";
       }
     }
+
+    const inviterPlayer = players?.find(
+      (player) => player.user_id === user?.user_id
+    );
+    const inviteePlayer = players?.find(
+      (player) => player.user_id === selectedPlayer
+    );
+
+    let inviterPlayerPaymentDetailsExist = false;
+    if (
+      inviterPlayer?.name_on_card &&
+      inviterPlayer?.card_number &&
+      inviterPlayer?.cvc &&
+      inviterPlayer?.card_expiry
+    ) {
+      inviterPlayerPaymentDetailsExist = true;
+    }
+
+    let inviteePlayerPaymentDetailsExist = false;
+    if (
+      inviteePlayer?.name_on_card &&
+      inviteePlayer?.card_number &&
+      inviteePlayer?.cvc &&
+      inviteePlayer?.card_expiry
+    ) {
+      inviteePlayerPaymentDetailsExist = true;
+    }
+    if (inviterPlayerPaymentDetailsExist && inviteePlayerPaymentDetailsExist) {
+      playerPaymentDetailsExist = true;
+    }
+
+    if (playerPaymentDetailsExist === false) {
+      isButtonDisabled = true;
+      buttonText =
+        "Kort kiralamak için oyuncuların kart bilgilerini eklemeleri gerekmektedir";
+    }
   }
 
   if (selectedEventType === 3) {
@@ -146,6 +185,29 @@ const CourtBookingForm = () => {
       )
         ? true
         : false;
+
+      const selectedPlayer = players?.find(
+        (player) => player.user_id === user?.user_id
+      );
+      if (
+        selectedPlayer?.name_on_card &&
+        selectedPlayer?.card_number &&
+        selectedPlayer?.cvc &&
+        selectedPlayer?.card_expiry
+      ) {
+        playerPaymentDetailsExist = true;
+      }
+
+      const selectedTrainerDetails = trainers?.find(
+        (trainer) => trainer.user_id === selectedTrainer
+      );
+      if (
+        selectedTrainerDetails?.iban &&
+        selectedTrainerDetails?.name_on_bank_account &&
+        selectedTrainerDetails?.bank_id
+      ) {
+        trainerPaymentDetailsExist = true;
+      }
     } else if (isUserTrainer) {
       isPlayerSubscribed = clubSubscriptions?.find(
         (subscription) =>
@@ -164,6 +226,37 @@ const CourtBookingForm = () => {
       )
         ? true
         : false;
+
+      const selectedTrainer = trainers?.find(
+        (trainer) => trainer.user_id === user?.user_id
+      );
+      if (
+        selectedTrainer?.iban &&
+        selectedTrainer?.name_on_bank_account &&
+        selectedTrainer?.bank_id
+      ) {
+        trainerPaymentDetailsExist = true;
+      }
+    }
+
+    const selectedPlayerDetails = players?.find(
+      (player) => player.user_id === selectedPlayer
+    );
+    if (
+      selectedPlayerDetails?.name_on_card &&
+      selectedPlayerDetails?.card_number &&
+      selectedPlayerDetails?.cvc &&
+      selectedPlayerDetails?.card_expiry
+    ) {
+      playerPaymentDetailsExist = true;
+    }
+    if (
+      playerPaymentDetailsExist === false ||
+      trainerPaymentDetailsExist === false
+    ) {
+      isButtonDisabled = true;
+      buttonText =
+        "Kort kiralamak için oyuncu ve eğitmenin kart bilgilerini eklemeleri gerekmektedir";
     }
 
     if (
