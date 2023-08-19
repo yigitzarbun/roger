@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
@@ -22,10 +22,10 @@ import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
-
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import {
   addMinutes,
@@ -37,6 +37,11 @@ const LeesonInviteForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const isUserTrainer = user?.user?.user_type_id === 2;
@@ -46,6 +51,9 @@ const LeesonInviteForm = () => {
   let player;
   let trainerUserId;
   let playerUserId;
+
+  let trainerBankDetailsExist = false;
+  let playerPaymentDetailsExist = false;
 
   if (user && isUserTrainer) {
     player = location.state;
@@ -59,6 +67,26 @@ const LeesonInviteForm = () => {
     trainerUserId = trainer?.user_id;
     player = user;
     playerUserId = user?.user?.user_id;
+  }
+
+  const selectedTrainer = trainers?.find((t) => t.user_id === trainerUserId);
+  const selectedPlayer = players?.find((p) => p.user_id === playerUserId);
+
+  if (
+    selectedTrainer?.iban &&
+    selectedTrainer?.bank_id &&
+    selectedTrainer?.name_on_bank_account
+  ) {
+    trainerBankDetailsExist = true;
+  }
+
+  if (
+    selectedPlayer?.name_on_card &&
+    selectedPlayer?.card_number &&
+    selectedPlayer?.cvc &&
+    selectedPlayer?.card_expiry
+  ) {
+    playerPaymentDetailsExist = true;
   }
 
   const navigateToPreviousPage = () => {
@@ -253,8 +281,11 @@ const LeesonInviteForm = () => {
   if (
     selectedClub &&
     clubs &&
-    clubs?.find((club) => club.club_id === selectedClub)
-      ?.is_player_lesson_subscription_required
+    clubs?.find(
+      (club) =>
+        club.club_id ===
+        clubs?.find((club) => club.user_id === selectedClub)?.club_id
+    )?.is_player_lesson_subscription_required
   ) {
     playerSubscriptionRequired = true;
   }
@@ -262,12 +293,14 @@ const LeesonInviteForm = () => {
   if (
     selectedClub &&
     clubs &&
-    clubs?.find((club) => club.club_id === selectedClub)
-      ?.is_trainer_subscription_required
+    clubs?.find(
+      (club) =>
+        club.club_id ===
+        clubs?.find((club) => club.user_id === selectedClub)?.club_id
+    )?.is_trainer_subscription_required
   ) {
     trainerStaffRequired = true;
   }
-
   if (selectedClubSubscriptions?.length > 0 && user && clubSubscriptions) {
     if (
       selectedClubSubscriptions.find(
@@ -279,7 +312,6 @@ const LeesonInviteForm = () => {
       isPlayerSubscribed = true;
     }
   }
-
   if (
     selectedClubSubscriptions?.length > 0 &&
     trainer &&
@@ -291,7 +323,8 @@ const LeesonInviteForm = () => {
       clubStaff?.find(
         (staff) =>
           staff.user_id === trainerUserId &&
-          staff.club_id === selectedClub &&
+          staff.club_id ===
+            clubs?.find((club) => club.user_id === selectedClub)?.club_id &&
           staff.employment_status === "accepted"
       )
     ) {
@@ -327,6 +360,11 @@ const LeesonInviteForm = () => {
       setButtonText(
         "Kort kiralamak için oyuncunun kulüp üyesi olması gerekmektedir"
       );
+    } else if (!trainerBankDetailsExist || !playerPaymentDetailsExist) {
+      setIsButtonDisabled(true);
+      setButtonText(
+        "Kort kiralamak için oyuncu ve eğitmenin banka bilgilerinin mevcut olması gerekmektedir"
+      );
     }
   }, [selectedClub]);
 
@@ -342,7 +380,9 @@ const LeesonInviteForm = () => {
     isClubStaffLoading ||
     isClubSubscriptionsLoading ||
     isClubsLoading ||
-    isCourtsLoading
+    isCourtsLoading ||
+    isTrainersLoading ||
+    isPlayersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -393,7 +433,7 @@ const LeesonInviteForm = () => {
             >
               <option value="">-- Seçim yapın --</option>
               {clubs?.map((club) => (
-                <option key={club.club_id} value={club.club_id}>
+                <option key={club.user_id} value={club.user_id}>
                   {club.club_name}
                 </option>
               ))}
@@ -416,7 +456,8 @@ const LeesonInviteForm = () => {
                 courts
                   ?.filter(
                     (court) =>
-                      court.club_id === selectedClub && court.is_active === true
+                      court.club_id === clubs?.find((club) => club)?.club_id &&
+                      court.is_active === true
                   )
                   .map((court) => (
                     <option key={court.court_id} value={court.court_id}>

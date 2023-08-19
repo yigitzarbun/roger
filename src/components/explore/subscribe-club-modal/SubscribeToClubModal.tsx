@@ -16,6 +16,7 @@ import {
 } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
+import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 
 interface SubscribeToClubModalProps {
   openSubscribeModal: boolean;
@@ -52,6 +53,22 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
     data: clubSubscriptionTypes,
     isLoading: isClubSubscriptionTypesLoading,
   } = useGetClubSubscriptionTypesQuery({});
+
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  let playerPaymentDetailsExist = false;
+
+  const currentPlayer = players?.find(
+    (player) => player.user_id === user?.user?.user_id
+  );
+  if (
+    currentPlayer?.name_on_card &&
+    currentPlayer?.card_number &&
+    currentPlayer?.cvc &&
+    currentPlayer?.card_expiry
+  ) {
+    playerPaymentDetailsExist = true;
+  }
 
   const selectedClubPackages = clubSubscriptionPackages?.filter(
     (clubPackage) =>
@@ -101,7 +118,9 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
             formData?.club_subscription_package_id
           ),
         };
-        addSubscription(newSubscriptionData);
+        if (playerPaymentDetailsExist) {
+          addSubscription(newSubscriptionData);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -119,7 +138,8 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   if (
     isClubSubscriptionPackagesLoading ||
     isClubSubscriptionTypesLoading ||
-    isClubSubscriptionsLoading
+    isClubSubscriptionsLoading ||
+    isPlayersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -175,7 +195,11 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
             )}
           </div>
         </div>
-        <button type="submit" className={styles["form-button"]}>
+        <button
+          type="submit"
+          className={styles["form-button"]}
+          disabled={!playerPaymentDetailsExist}
+        >
           Tamamla
         </button>
       </form>

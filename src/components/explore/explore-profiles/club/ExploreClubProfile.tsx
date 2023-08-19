@@ -26,6 +26,7 @@ import {
   useGetClubStaffQuery,
   useAddClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -88,6 +89,24 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
+
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  let playerPaymentDetailsExist = false;
+
+  if (isUserPlayer) {
+    const currentPlayer = players?.find(
+      (player) => player.user_id === user?.user?.user_id
+    );
+    if (
+      currentPlayer?.name_on_card &&
+      currentPlayer?.card_number &&
+      currentPlayer?.cvc &&
+      currentPlayer?.card_expiry
+    ) {
+      playerPaymentDetailsExist = true;
+    }
+  }
 
   const selectedClub = clubs?.find((club) => club.user_id === Number(user_id));
 
@@ -262,7 +281,8 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     isClubSubscriptionTypesLoading ||
     isClubSubscriptionPackagesLoading ||
     isClubSubscriptionsLoading ||
-    isClubStaffLoading
+    isClubStaffLoading ||
+    isPlayersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -518,8 +538,11 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                             onClick={() =>
                               handleOpenSubscribeModal(selectedClub?.user_id)
                             }
+                            disabled={!playerPaymentDetailsExist}
                           >
-                            Üyel ol
+                            {playerPaymentDetailsExist
+                              ? "Üye Ol"
+                              : "Üye olmak için ödeme bilgilerini ekle"}
                           </button>
                         )}
                       </td>

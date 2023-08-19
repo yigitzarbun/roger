@@ -68,7 +68,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
       </div>
       {courts && courts.length === 0 && (
         <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
+          Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}

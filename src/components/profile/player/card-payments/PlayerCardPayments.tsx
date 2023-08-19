@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import AddPlayerCardDetails from "./add-card-details/AddPlayerCardDetails";
+import EditPlayerCardDetails from "./edit-card-details/EditPlayerCardDetails";
 
 const PlayerCardPayments = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const {
+    data: players,
+    isLoading: isPlayersLoading,
+    refetch,
+  } = useGetPlayersQuery({});
 
   const selectedPlayer = players?.find(
     (player) => player.user_id === user?.user?.user_id
@@ -46,16 +51,15 @@ const PlayerCardPayments = () => {
   return (
     <div className={styles["player-payment-details-container"]}>
       <h2>Kart ve Ödeme Bilgileri</h2>
-
       {cardDetailsExist ? (
         <div>
           <p>
-            {`${selectedPlayer?.card_number.slice(
-              selectedPlayer?.card_number.length - 4
-            )}
+            {`${selectedPlayer?.card_number}
             ile biten kartınız aktiftir`}
           </p>
-          <button>Kart Bilgilerini Düzenle</button>
+          <button onClick={handleOpenEditCardModal}>
+            Kart Bilgilerini Düzenle
+          </button>
         </div>
       ) : (
         <div>
@@ -70,6 +74,10 @@ const PlayerCardPayments = () => {
       <AddPlayerCardDetails
         isModalOpen={isAddCardModalOpen}
         handleCloseModal={handleCloseAddCardModal}
+      />
+      <EditPlayerCardDetails
+        isModalOpen={isEditCardModalOpen}
+        handleCloseModal={handleCloseEditCardModal}
       />
     </div>
   );

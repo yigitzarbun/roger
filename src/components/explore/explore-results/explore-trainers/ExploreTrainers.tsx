@@ -148,7 +148,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       </div>
       {trainers && trainers.length === 0 && (
         <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
+          Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}

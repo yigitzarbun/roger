@@ -19,10 +19,14 @@ const AddCourtButton = (props: AddCourtButtonProps) => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const clubBankDetailsExist =
-    clubs?.find((club) => club.club_id === user?.user?.user_id)?.iban &&
-    clubs?.find((club) => club.club_id === user?.user?.user_id)?.bank_id &&
-    clubs?.find((club) => club.club_id === user?.user?.user_id)
+    clubs?.find((club) => club.user_id === user?.user?.user_id)?.iban &&
+    clubs?.find((club) => club.user_id === user?.user?.user_id)?.bank_id &&
+    clubs?.find((club) => club.user_id === user?.user?.user_id)
       ?.name_on_bank_account;
+
+  if (isClubsLoading) {
+    return <div>Yükleniyor..</div>;
+  }
 
   return (
     <div className={styles["add-court-container"]}>

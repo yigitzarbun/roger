@@ -22,6 +22,7 @@ import {
   useGetClubStaffQuery,
   useAddClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 
@@ -64,6 +65,23 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
     useAddClubStaffMutation({});
 
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  let playerPaymentDetailsExist = false;
+
+  if (isUserPlayer) {
+    const currentPlayer = players?.find(
+      (player) => player.user_id === user?.user?.user_id
+    );
+    if (
+      currentPlayer?.name_on_card &&
+      currentPlayer?.card_number &&
+      currentPlayer?.cvc &&
+      currentPlayer?.card_expiry
+    ) {
+      playerPaymentDetailsExist = true;
+    }
+  }
   const {
     data: clubStaff,
     isLoading: isClubStaffLoading,
@@ -205,7 +223,8 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isFavouritesLoading ||
     isClubSubscriptionsLoading ||
     isClubSubscriptionPackageLoading ||
-    isClubStaffLoading
+    isClubStaffLoading ||
+    isPlayersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -216,7 +235,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       </div>
       {clubs && clubs.length === 0 && (
         <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
+          Aradığınız kritere göre kulüp bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}
@@ -287,8 +306,11 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                       ) ? (
                       <button
                         onClick={() => handleOpenSubscribeModal(club.user_id)}
+                        disabled={!playerPaymentDetailsExist}
                       >
-                        Üyel ol
+                        {playerPaymentDetailsExist
+                          ? "Üye Ol"
+                          : "Üye olmak için ödeme bilgilerini ekle"}
                       </button>
                     ) : (
                       "Kulübün üyelik paketi bulunmamaktadır"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import ReactModal from "react-modal";
 
@@ -9,19 +9,21 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../../store/hooks";
 
 import {
-  Club,
-  useGetClubsQuery,
-  useUpdateClubMutation,
-} from "../../../../../api/endpoints/ClubsApi";
+  Trainer,
+  useGetTrainersQuery,
+  useUpdateTrainerMutation,
+} from "../../../../../api/endpoints/TrainersApi";
 
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
 
-interface EditClubBankDetailsModallProps {
+interface AddTrainerBankDetailsModallProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
 }
 
-const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
+const AddTrainerBankDetailsModal = (
+  props: AddTrainerBankDetailsModallProps
+) => {
   const { isModalOpen, handleCloseModal } = props;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -29,46 +31,42 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {
-    data: clubs,
-    isLoading: isClubsLoading,
+    data: trainers,
+    isLoading: isTrainersLoading,
     refetch,
-  } = useGetClubsQuery({});
+  } = useGetTrainersQuery({});
 
-  const selectedClub = clubs?.find((club) => club.user_id === user?.user_id);
+  const selectedTrainer = trainers?.find(
+    (trainer) => trainer.user_id === user?.user_id
+  );
 
-  const [updateClub, { isSuccess }] = useUpdateClubMutation({});
+  const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      iban: selectedClub?.iban,
-      name_on_bank_account: selectedClub?.name_on_bank_account,
-      bank_id: selectedClub?.bank_id,
-    },
-  });
+  } = useForm();
 
-  const onSubmit: SubmitHandler<Club> = (formData) => {
-    const clubBankDetails = {
-      ...selectedClub,
+  const onSubmit: SubmitHandler<Trainer> = (formData) => {
+    const trainerBankDetails = {
+      ...selectedTrainer,
       iban: Number(formData?.iban),
       name_on_bank_account: formData?.name_on_bank_account,
       bank_id: Number(formData?.bank_id),
     };
-    updateClub(clubBankDetails);
+    updateTrainer(trainerBankDetails);
   };
-
   useEffect(() => {
     if (isSuccess) {
       refetch();
+      reset();
       handleCloseModal();
     }
   }, [isSuccess]);
 
-  if (isClubsLoading || isBanksLoading) {
+  if (isTrainersLoading || isBanksLoading) {
     return <div>Yükleniyor..</div>;
   }
   return (
@@ -78,7 +76,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
       className={styles["modal-container"]}
     >
       <div className={styles["top-container"]}>
-        <h1>Banka Hesabını Düzenle</h1>
+        <h1>Banka Hesabı Ekle</h1>
         <img
           src="/images/icons/close.png"
           onClick={handleCloseModal}
@@ -130,4 +128,4 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
   );
 };
 
-export default EditClubBankDetailsModal;
+export default AddTrainerBankDetailsModal;

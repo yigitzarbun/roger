@@ -16,6 +16,9 @@ export interface Trainer {
   location_id: number;
   trainer_employment_type_id: number;
   user_id: number;
+  iban?: number;
+  name_on_bank_account?: string;
+  bank_id?: number;
 }
 
 export const trainersSlice = createApi({

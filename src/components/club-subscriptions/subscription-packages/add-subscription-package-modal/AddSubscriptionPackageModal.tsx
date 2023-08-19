@@ -39,9 +39,9 @@ const AddSubscriptionPackageModal = (
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const clubBankDetailsExist =
-    clubs?.find((club) => club.club_id === user?.user?.user_id)?.iban &&
-    clubs?.find((club) => club.club_id === user?.user?.user_id)?.bank_id &&
-    clubs?.find((club) => club.club_id === user?.user?.user_id)
+    clubs?.find((club) => club.user_id === user?.user?.user_id)?.iban &&
+    clubs?.find((club) => club.user_id === user?.user?.user_id)?.bank_id &&
+    clubs?.find((club) => club.user_id === user?.user?.user_id)
       ?.name_on_bank_account;
 
   const [addClubSubscriptionPackage, { isSuccess }] =

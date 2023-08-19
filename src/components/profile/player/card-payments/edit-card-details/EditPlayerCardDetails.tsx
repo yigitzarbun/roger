@@ -14,12 +14,12 @@ import {
   useUpdatePlayerMutation,
 } from "../../../../../api/endpoints/PlayersApi";
 
-interface AddPlayerCardDetailsModallProps {
+interface EditPlayerCardDetailsModallProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
 }
 
-const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
+const EditPlayerCardDetails = (props: EditPlayerCardDetailsModallProps) => {
   const { isModalOpen, handleCloseModal } = props;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -46,7 +46,6 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
     } else if (value.length === 2) {
       value = `${value}/`;
     }
-
     setExpiryValue(value);
   };
 
@@ -55,7 +54,14 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name_on_card: selectedPlayer?.name_on_card,
+      card_number: selectedPlayer?.card_number,
+      cvc: selectedPlayer?.cvc,
+      card_expiry: selectedPlayer?.card_expiry,
+    },
+  });
 
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const playerCardDetails = {
@@ -70,7 +76,6 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetch();
-      reset();
       handleCloseModal();
     }
   }, [isSuccess]);
@@ -85,7 +90,7 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
       className={styles["modal-container"]}
     >
       <div className={styles["top-container"]}>
-        <h1>Banka Hesabı Ekle</h1>
+        <h1>Banka Hesap Bilgilerini Düzenle</h1>
         <img
           src="/images/icons/close.png"
           onClick={handleCloseModal}
@@ -141,11 +146,11 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
           </div>
         </div>
         <button type="submit" className={styles["form-button"]}>
-          Onayla
+          Değişiklikleri Kaydet
         </button>
       </form>
     </ReactModal>
   );
 };
 
-export default AddPlayerCardDetails;
+export default EditPlayerCardDetails;

@@ -24,6 +24,7 @@ import {
 } from "../../../../api/endpoints/BookingsApi";
 
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import {
   addMinutes,
@@ -36,7 +37,7 @@ const TrainingInviteForm = () => {
 
   const location = useLocation();
 
-  const player = location.state;
+  const selectedPlayer = location.state;
 
   const { user } = useAppSelector((store) => store.user);
 
@@ -52,8 +53,10 @@ const TrainingInviteForm = () => {
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsRequired } =
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsQuery({});
+
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const today = new Date();
   let day = String(today.getDate());
@@ -89,6 +92,35 @@ const TrainingInviteForm = () => {
     setSelectedCourt(Number(event.target.value));
   };
 
+  // payment method check
+  const inviterPlayer = players?.find(
+    (player) => player.user_id === user?.user?.user_id
+  );
+  let inviterPlayerPaymentMethodExists = false;
+
+  if (
+    inviterPlayer?.name_on_card &&
+    inviterPlayer?.card_number &&
+    inviterPlayer?.cvc &&
+    inviterPlayer?.card_expiry
+  ) {
+    inviterPlayerPaymentMethodExists = true;
+  }
+
+  const inviteePlayer = players?.find(
+    (player) => player.user_id === selectedPlayer?.user_id
+  );
+
+  let inviteePlayerPaymentMethodExists = false;
+  if (
+    inviteePlayer?.name_on_card &&
+    inviteePlayer?.card_number &&
+    inviteePlayer?.cvc &&
+    inviteePlayer?.card_expiry
+  ) {
+    inviteePlayerPaymentMethodExists = true;
+  }
+
   // subscription check
   let isPlayersSubscribed = false;
   let clubSubscriptionRequired = false;
@@ -105,7 +137,7 @@ const TrainingInviteForm = () => {
   }
 
   if (
-    player &&
+    selectedPlayer &&
     user &&
     clubSubscriptions &&
     selectedClubSubscriptions &&
@@ -114,7 +146,7 @@ const TrainingInviteForm = () => {
     if (
       selectedClubSubscriptions?.find(
         (subscription) =>
-          subscription.player_id === player?.user_id &&
+          subscription.player_id === selectedPlayer?.user_id &&
           subscription.is_active === true
       ) &&
       selectedClubSubscriptions?.find(
@@ -224,7 +256,7 @@ const TrainingInviteForm = () => {
       club_id: formData.club_id,
       court_id: formData.court_id,
       inviter_id: user?.user.user_id,
-      invitee_id: player.user_id,
+      invitee_id: selectedPlayer?.user_id,
       lesson_price: null,
       court_price: courts?.find((court) => court.court_id === selectedCourt)
         .price_hour,
@@ -236,8 +268,13 @@ const TrainingInviteForm = () => {
   const handleModalSubmit = () => {
     setModal(false);
     handleSubmit(() => {
-      addBooking(formData);
-      reset();
+      if (
+        inviterPlayerPaymentMethodExists &&
+        inviteePlayerPaymentMethodExists
+      ) {
+        addBooking(formData);
+        reset();
+      }
     })();
   };
   const handleCloseModal = () => {
@@ -251,7 +288,13 @@ const TrainingInviteForm = () => {
     }
   }, [isSuccess, refetch, navigate]);
 
-  if (isBookingsLoading || isClubsLoading || isCourtsLoading) {
+  if (
+    isBookingsLoading ||
+    isClubsLoading ||
+    isCourtsLoading ||
+    isPlayersLoading ||
+    isClubSubscriptionsLoading
+  ) {
     return <div>Yükleniyor..</div>;
   }
   return (
@@ -264,7 +307,7 @@ const TrainingInviteForm = () => {
       </div>
       <p
         className={styles["player-name"]}
-      >{`Rakip: ${player.fname} ${player.lname}`}</p>
+      >{`Rakip: ${selectedPlayer.fname} ${selectedPlayer.lname}`}</p>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
@@ -354,8 +397,15 @@ const TrainingInviteForm = () => {
         <button
           type="submit"
           className={styles["form-button"]}
-          disabled={clubSubscriptionRequired && !isPlayersSubscribed}
+          disabled={
+            (clubSubscriptionRequired && !isPlayersSubscribed) ||
+            !inviterPlayerPaymentMethodExists ||
+            !inviteePlayerPaymentMethodExists
+          }
         >
+          {(!inviterPlayerPaymentMethodExists ||
+            !inviteePlayerPaymentMethodExists) &&
+            "Oyuncuların kort kiralamak için ödeme bilgilerini eklemesi gerekmektedir"}
           {clubSubscriptionRequired && !isPlayersSubscribed
             ? "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"
             : "Davet Gönder"}
