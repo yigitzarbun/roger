@@ -9,6 +9,7 @@ export interface ClubSubscription {
   club_id: number;
   player_id: number;
   club_subscription_package_id: number;
+  payment_id: number;
 }
 
 export const clubSubscriptionsSlice = createApi({

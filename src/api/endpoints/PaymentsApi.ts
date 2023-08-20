@@ -12,8 +12,6 @@ export interface Payment {
   sender_invitee_id?: number | null;
   recipient_club_id?: number | null;
   recipient_trainer_id?: number | null;
-  booking_id?: number | null;
-  club_subscription_id?: number | null;
 }
 
 export const paymentsSlice = createApi({

@@ -17,6 +17,10 @@ import {
 import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import {
+  useAddPaymentMutation,
+  useGetPaymentsQuery,
+} from "../../../api/endpoints/PaymentsApi";
 
 interface SubscribeToClubModalProps {
   openSubscribeModal: boolean;
@@ -39,10 +43,22 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const [addSubscription, { isSuccess }] = useAddClubSubscriptionMutation({});
+  const [
+    addSubscription,
+    { data: newSubscriptionData, isSuccess: isSubscriptionSuccess },
+  ] = useAddClubSubscriptionMutation({});
 
-  const { isLoading: isClubSubscriptionsLoading, refetch } =
-    useGetClubSubscriptionsQuery({});
+  const [addPayment, { isSuccess: isPaymentSuccess }] = useAddPaymentMutation(
+    {}
+  );
+
+  const { isLoading: isPaymentsLoading, refetch: refetchPayments } =
+    useGetPaymentsQuery({});
+
+  const {
+    isLoading: isClubSubscriptionsLoading,
+    refetch: refetchSubscriptions,
+  } = useGetClubSubscriptionsQuery({});
 
   const {
     data: clubSubscriptionPackages,
@@ -61,6 +77,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   const currentPlayer = players?.find(
     (player) => player.user_id === user?.user?.user_id
   );
+
   if (
     currentPlayer?.name_on_card &&
     currentPlayer?.card_number &&
@@ -126,20 +143,37 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
       console.log(error);
     }
   };
-
   useEffect(() => {
-    if (isSuccess) {
-      refetch();
-      reset();
-      handleCloseSubscribeModal();
+    if (isSubscriptionSuccess && newSubscriptionData && selectedClubId) {
+      const paymentData = {
+        payment_amount: clubSubscriptionPackages?.find(
+          (subscriptionPackage) =>
+            subscriptionPackage.club_subscription_package_id ===
+            newSubscriptionData?.club_subscription_package_id
+        )?.price,
+        payment_status: "success",
+        payment_type_id: 5,
+        sender_subscriber_id: user?.user?.user_id,
+        recipient_club_id: selectedClubId,
+        club_subscription_id: newSubscriptionData?.club_subscription_id,
+      };
+      addPayment(paymentData);
+      if (isPaymentSuccess) {
+        console.log(paymentData);
+        refetchSubscriptions();
+        refetchPayments();
+        reset();
+        handleCloseSubscribeModal();
+      }
     }
-  }, [isSuccess]);
+  }, [isSubscriptionSuccess, isPaymentSuccess]);
 
   if (
     isClubSubscriptionPackagesLoading ||
     isClubSubscriptionTypesLoading ||
     isClubSubscriptionsLoading ||
-    isPlayersLoading
+    isPlayersLoading ||
+    isPaymentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

@@ -6,6 +6,10 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("trainer_employment_type_id");
       table.string("trainer_employment_type_name").unique().notNullable();
     })
+    .createTable("payment_types", (table) => {
+      table.increments("payment_type_id");
+      table.string("payment_type_name");
+    })
     .createTable("locations", (table) => {
       table.increments("location_id");
       table.string("location_name").unique().notNullable();
@@ -354,6 +358,56 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
+    .createTable("payments", (table) => {
+      table.increments("payment_id");
+      table.integer("payment_amount");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.string("payment_status").notNullable();
+      table
+        .integer("payment_type_id")
+        .unsigned()
+        .notNullable()
+        .references("payment_type_id")
+        .inTable("payment_types")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_subscriber_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_inviter_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_invitee_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("recipient_club_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("recipient_trainer_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
     .createTable("bookings", (table) => {
       table.increments("booking_id");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
@@ -361,6 +415,14 @@ export async function up(knex: Knex): Promise<void> {
       table.time("event_time").notNullable();
       table.integer("court_price").notNullable();
       table.integer("lesson_price");
+      table
+        .integer("payment_id")
+        .unsigned()
+        .notNullable()
+        .references("payment_id")
+        .inTable("payments")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
       table
         .integer("booking_status_type_id")
         .unsigned()
@@ -470,6 +532,14 @@ export async function up(knex: Knex): Promise<void> {
       table.dateTime("end_date").notNullable();
       table.boolean("is_active").defaultTo(true).notNullable();
       table
+        .integer("payment_id")
+        .unsigned()
+        .notNullable()
+        .references("payment_id")
+        .inTable("payments")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
         .integer("club_id")
         .unsigned()
         .notNullable()
@@ -491,74 +561,6 @@ export async function up(knex: Knex): Promise<void> {
         .notNullable()
         .references("club_subscription_package_id")
         .inTable("club_subscription_packages")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-    })
-    .createTable("payment_types", (table) => {
-      table.increments("payment_type_id");
-      table.string("payment_type_name");
-    })
-    .createTable("payments", (table) => {
-      table.increments("payment_id");
-      table.integer("payment_amount");
-      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
-      table.string("payment_status").notNullable();
-      table
-        .integer("payment_type_id")
-        .unsigned()
-        .notNullable()
-        .references("payment_type_id")
-        .inTable("payment_types")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("sender_subscriber_id")
-        .unsigned()
-        .references("user_id")
-        .inTable("users")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("sender_inviter_id")
-        .unsigned()
-        .references("user_id")
-        .inTable("users")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("sender_invitee_id")
-        .unsigned()
-        .references("user_id")
-        .inTable("users")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("recipient_club_id")
-        .unsigned()
-        .notNullable()
-        .references("user_id")
-        .inTable("users")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("recipient_trainer_id")
-        .unsigned()
-        .references("user_id")
-        .inTable("users")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("booking_id")
-        .unsigned()
-        .references("booking_id")
-        .inTable("bookings")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("club_subscription_id")
-        .unsigned()
-        .references("club_subscription_id")
-        .inTable("club_subscriptions")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
@@ -594,13 +596,12 @@ export async function up(knex: Knex): Promise<void> {
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
     .dropTableIfExists("favourites")
-    .dropTableIfExists("payments")
-    .dropTableIfExists("payment_types")
     .dropTableIfExists("club_subscriptions")
     .dropTableIfExists("club_subscription_packages")
     .dropTableIfExists("club_subscription_types")
     .dropTableIfExists("match_scores")
     .dropTableIfExists("bookings")
+    .dropTableIfExists("payments")
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")
     .dropTableIfExists("permissions")
@@ -623,5 +624,6 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("club_types")
     .dropTableIfExists("banks")
     .dropTableIfExists("locations")
+    .dropTableIfExists("payment_types")
     .dropTableIfExists("trainer_employment_types");
 }

@@ -24,6 +24,7 @@ export type BookingData = {
   lesson_price: number | null;
   invitee_id: number;
   inviter_id: number;
+  payment_id: number;
 };
 
 interface CancelInviteModalProps {

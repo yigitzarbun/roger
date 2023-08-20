@@ -3,12 +3,11 @@ import { Knex } from "knex";
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
   await knex("favourites").del();
-  await knex("payments").del();
-  await knex("payment_types").del();
   await knex("club_subscriptions").del();
   await knex("club_subscription_packages").del();
   await knex("club_subscription_types").del();
   await knex("bookings").del();
+  await knex("payments").del();
   await knex("courts").del();
   await knex("club_external_members").del();
   await knex("permissions").del();
@@ -30,6 +29,7 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("club_types").del();
   await knex("banks").del();
   await knex("locations").del();
+  await knex("payment_types").del();
   await knex("trainer_employment_types").del();
 
   // Inserts seed entries
@@ -45,6 +45,29 @@ export async function seed(knex: Knex): Promise<void> {
     {
       trainer_employment_type_id: 3,
       trainer_employment_type_name: "public_club",
+    },
+  ]);
+
+  await knex("payment_types").insert([
+    {
+      payment_type_id: 1,
+      payment_type_name: "training",
+    },
+    {
+      payment_type_id: 2,
+      payment_type_name: "match",
+    },
+    {
+      payment_type_id: 3,
+      payment_type_name: "lesson",
+    },
+    {
+      payment_type_id: 4,
+      payment_type_name: "external",
+    },
+    {
+      payment_type_id: 5,
+      payment_type_name: "subscription",
     },
   ]);
 
@@ -273,29 +296,6 @@ export async function seed(knex: Knex): Promise<void> {
       club_subscription_type_id: 4,
       club_subscription_type_name: "12 Aylık Üyelik",
       club_subscription_duration_months: 12,
-    },
-  ]);
-
-  await knex("payment_types").insert([
-    {
-      payment_type_id: 1,
-      payment_type_name: "training",
-    },
-    {
-      payment_type_id: 2,
-      payment_type_name: "match",
-    },
-    {
-      payment_type_id: 3,
-      payment_type_name: "lesson",
-    },
-    {
-      payment_type_id: 4,
-      payment_type_name: "external",
-    },
-    {
-      payment_type_id: 5,
-      payment_type_name: "subscription",
     },
   ]);
 }
