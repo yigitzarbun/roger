@@ -66,12 +66,14 @@ const PlayerCardPayments = () => {
     setDisplay(value);
   };
 
-  const myPayments = payments?.filter(
-    (payment) =>
-      payment.sender_subscriber_id === user?.user?.user_id ||
-      payment.sender_inviter_id === user?.user?.user_id ||
-      payment.sender_invitee_id === user?.user?.user_id
-  );
+  const myPayments = payments
+    ?.filter(
+      (payment) =>
+        payment.sender_subscriber_id === user?.user?.user_id ||
+        payment.sender_inviter_id === user?.user?.user_id ||
+        payment.sender_invitee_id === user?.user?.user_id
+    )
+    .slice(0, 5);
 
   if (
     isPlayersLoading ||
@@ -146,7 +148,7 @@ const PlayerCardPayments = () => {
             </thead>
             <tbody>
               {myPayments?.map((payment) => (
-                <tr key={payment.payment_id} className={styles["user-row"]}>
+                <tr key={payment.payment_id} className={styles["payment-row"]}>
                   <td>{payment.registered_at}</td>
                   <td>{payment.payment_status}</td>
                   <td>

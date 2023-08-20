@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
@@ -43,14 +43,11 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const [
-    addSubscription,
-    { data: newSubscriptionData, isSuccess: isSubscriptionSuccess },
-  ] = useAddClubSubscriptionMutation({});
+  const [addSubscription, { isSuccess: isSubscriptionSuccess }] =
+    useAddClubSubscriptionMutation({});
 
-  const [addPayment, { isSuccess: isPaymentSuccess }] = useAddPaymentMutation(
-    {}
-  );
+  const [addPayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
+    useAddPaymentMutation({});
 
   const { isLoading: isPaymentsLoading, refetch: refetchPayments } =
     useGetPaymentsQuery({});
@@ -71,6 +68,8 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   } = useGetClubSubscriptionTypesQuery({});
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  const [selectedClubPackage, setSelectedClubPackage] = useState(null);
 
   let playerPaymentDetailsExist = false;
 
@@ -106,67 +105,67 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
           selectedPackage.club_subscription_package_id ===
           Number(formData?.club_subscription_package_id)
       );
-      const selectedSubscriptionType = clubSubscriptionTypes?.find(
-        (type) =>
-          type.club_subscription_type_id ===
-          selectedPackage?.club_subscription_type_id
-      );
-      if (selectedPackage && selectedSubscriptionType) {
-        const currentDate = new Date();
-        const startDate = currentDate.toISOString();
 
-        // Convert to local time zone for endDate calculation
-        const endDate = new Date(currentDate);
-        endDate.setMonth(
-          currentDate.getMonth() +
-            parseInt(selectedSubscriptionType.club_subscription_duration_months)
-        );
+      setSelectedClubPackage(selectedPackage);
 
-        // Adjust for local time zone offset
-        const timeZoneOffset = currentDate.getTimezoneOffset();
-        endDate.setMinutes(endDate.getMinutes() - timeZoneOffset);
-
-        const newSubscriptionData = {
-          start_date: startDate,
-          end_date: endDate.toISOString(), // Keep this in ISO format for consistency
-          club_id: selectedClubId,
-          player_id: user?.user?.user_id,
-          club_subscription_package_id: Number(
-            formData?.club_subscription_package_id
-          ),
+      if (selectedPackage && playerPaymentDetailsExist) {
+        const paymentData = {
+          payment_amount: clubSubscriptionPackages?.find(
+            (subscriptionPackage) =>
+              subscriptionPackage.club_subscription_package_id ===
+              selectedPackage?.club_subscription_package_id
+          )?.price,
+          payment_status: "success",
+          payment_type_id: 5,
+          sender_subscriber_id: user?.user?.user_id,
+          recipient_club_id: selectedClubId,
         };
-        if (playerPaymentDetailsExist) {
-          addSubscription(newSubscriptionData);
-        }
+        addPayment(paymentData);
       }
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    if (isSubscriptionSuccess && newSubscriptionData && selectedClubId) {
-      const paymentData = {
-        payment_amount: clubSubscriptionPackages?.find(
-          (subscriptionPackage) =>
-            subscriptionPackage.club_subscription_package_id ===
-            newSubscriptionData?.club_subscription_package_id
-        )?.price,
-        payment_status: "success",
-        payment_type_id: 5,
-        sender_subscriber_id: user?.user?.user_id,
-        recipient_club_id: selectedClubId,
-        club_subscription_id: newSubscriptionData?.club_subscription_id,
+    if (isPaymentSuccess) {
+      const currentDate = new Date();
+      const startDate = currentDate.toISOString();
+      const packageDurationMonths = clubSubscriptionTypes?.find(
+        (type) =>
+          type.club_subscription_type_id ===
+          selectedClubPackage?.club_subscription_type_id
+      )?.club_subscription_duration_months;
+
+      // Convert to local time zone for endDate calculation
+      const endDate = new Date(currentDate);
+      endDate.setMonth(currentDate.getMonth() + packageDurationMonths);
+
+      // Adjust for local time zone offset
+      const timeZoneOffset = currentDate.getTimezoneOffset();
+      endDate.setMinutes(endDate.getMinutes() - timeZoneOffset);
+
+      const newSubscriptionData = {
+        start_date: startDate,
+        end_date: endDate.toISOString(),
+        club_id: selectedClubId,
+        player_id: user?.user?.user_id,
+        club_subscription_package_id: Number(
+          selectedClubPackage?.club_subscription_package_id
+        ),
+        payment_id: paymentData?.payment_id,
       };
-      addPayment(paymentData);
-      if (isPaymentSuccess) {
-        console.log(paymentData);
-        refetchSubscriptions();
-        refetchPayments();
-        reset();
-        handleCloseSubscribeModal();
-      }
+      addSubscription(newSubscriptionData);
     }
-  }, [isSubscriptionSuccess, isPaymentSuccess]);
+  }, [isPaymentSuccess]);
+
+  useEffect(() => {
+    if (isSubscriptionSuccess) {
+      refetchSubscriptions();
+      refetchPayments();
+      reset();
+      handleCloseSubscribeModal();
+    }
+  }, [isSubscriptionSuccess]);
 
   if (
     isClubSubscriptionPackagesLoading ||

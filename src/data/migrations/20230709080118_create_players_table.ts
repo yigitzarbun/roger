@@ -585,23 +585,17 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     });
-  await knex.raw(`
-    UPDATE bookings
-    SET booking_status_type_id = 4
-    WHERE booking_status_type_id = 1
-      AND registered_at <= NOW() - INTERVAL '1 minute';
-  `);
 }
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
     .dropTableIfExists("favourites")
+    .dropTableIfExists("payments")
     .dropTableIfExists("club_subscriptions")
     .dropTableIfExists("club_subscription_packages")
     .dropTableIfExists("club_subscription_types")
     .dropTableIfExists("match_scores")
     .dropTableIfExists("bookings")
-    .dropTableIfExists("payments")
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")
     .dropTableIfExists("permissions")

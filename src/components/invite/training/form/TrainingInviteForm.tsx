@@ -14,6 +14,12 @@ import { useState } from "react";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import {
+  useAddPaymentMutation,
+  useGetPaymentsQuery,
+} from "../../../../api/endpoints/PaymentsApi";
+import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -22,9 +28,6 @@ import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
-
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import {
   addMinutes,
@@ -41,12 +44,19 @@ const TrainingInviteForm = () => {
 
   const { user } = useAppSelector((store) => store.user);
 
-  const [addBooking, { isSuccess }] = useAddBookingMutation({});
+  const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
+    {}
+  );
+
+  const [addPayment, { data: paymentData, isSuccess: isPaymentSucess }] =
+    useAddPaymentMutation({});
+
+  const { refetch: refetchPayments } = useGetPaymentsQuery({});
 
   const {
     data: bookings,
     isLoading: isBookingsLoading,
-    refetch,
+    refetch: refetchBookings,
   } = useGetBookingsQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
@@ -243,7 +253,9 @@ const TrainingInviteForm = () => {
   } = useForm<FormValues>();
 
   const [modal, setModal] = useState(false);
-  const [formData, setFormData] = useState<FormValues | null>(null);
+  const [bookingFormData, setBookingFormData] = useState<FormValues | null>(
+    null
+  );
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const bookingData = {
@@ -260,33 +272,48 @@ const TrainingInviteForm = () => {
       lesson_price: null,
       court_price: courts?.find((court) => court.court_id === selectedCourt)
         .price_hour,
+      payment_id: null,
     };
-    setFormData(bookingData);
+    setBookingFormData(bookingData);
     setModal(true);
   };
 
   const handleModalSubmit = () => {
     setModal(false);
-    handleSubmit(() => {
-      if (
-        inviterPlayerPaymentMethodExists &&
-        inviteePlayerPaymentMethodExists
-      ) {
-        addBooking(formData);
-        reset();
-      }
-    })();
+    if (inviterPlayerPaymentMethodExists && inviteePlayerPaymentMethodExists) {
+      const paymentDetails = {
+        payment_amount: bookingFormData?.court_price,
+        payment_status: "pending",
+        payment_type_id: 1,
+        sender_inviter_id: user?.user.user_id,
+        sender_invitee_id: selectedPlayer?.user_id,
+        recipient_club_id: clubs?.find(
+          (club) => club.club_id === Number(bookingFormData?.club_id)
+        )?.user_id,
+      };
+      addPayment(paymentDetails);
+    }
   };
+
   const handleCloseModal = () => {
     setModal(false);
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      refetch();
+    if (isPaymentSucess) {
+      refetchPayments();
+      bookingFormData.payment_id = paymentData?.payment_id;
+      addBooking(bookingFormData);
+      reset();
+    }
+  }, [isPaymentSucess]);
+
+  useEffect(() => {
+    if (isBookingSuccess) {
+      refetchBookings();
       navigate(paths.REQUESTS);
     }
-  }, [isSuccess, refetch, navigate]);
+  }, [isBookingSuccess, refetchBookings, navigate]);
 
   if (
     isBookingsLoading ||
@@ -414,7 +441,7 @@ const TrainingInviteForm = () => {
       <InviteModal
         modal={modal}
         handleModalSubmit={handleModalSubmit}
-        formData={formData}
+        formData={bookingFormData}
         handleCloseModal={handleCloseModal}
       />
     </div>
