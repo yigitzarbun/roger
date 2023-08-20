@@ -360,7 +360,10 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable("payments", (table) => {
       table.increments("payment_id");
-      table.integer("payment_amount");
+      table.integer("payment_amount").notNullable();
+      table.integer("lesson_price");
+      table.integer("court_price");
+      table.integer("subscription_price");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table.string("payment_status").notNullable();
       table
@@ -590,12 +593,12 @@ export async function up(knex: Knex): Promise<void> {
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
     .dropTableIfExists("favourites")
-    .dropTableIfExists("payments")
     .dropTableIfExists("club_subscriptions")
     .dropTableIfExists("club_subscription_packages")
     .dropTableIfExists("club_subscription_types")
     .dropTableIfExists("match_scores")
     .dropTableIfExists("bookings")
+    .dropTableIfExists("payments")
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")
     .dropTableIfExists("permissions")

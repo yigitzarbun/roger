@@ -48,16 +48,16 @@ const MatchInviteForm = () => {
     {}
   );
 
-  const [addPayment, { data: paymentData, isSuccess: isPaymentSucess }] =
-    useAddPaymentMutation({});
-
-  const { refetch: refetchPayments } = useGetPaymentsQuery({});
-
   const {
     data: bookings,
     isLoading: isBookingsLoading,
     refetch: refetchBookings,
   } = useGetBookingsQuery({});
+
+  const [addPayment, { data: paymentData, isSuccess: isPaymentSucess }] =
+    useAddPaymentMutation({});
+
+  const { refetch: refetchPayments } = useGetPaymentsQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -280,6 +280,7 @@ const MatchInviteForm = () => {
     if (inviterPlayerPaymentMethodExists && inviteePlayerPaymentMethodExists) {
       const paymentDetails = {
         payment_amount: bookingFormData?.court_price,
+        court_price: bookingFormData?.court_price,
         payment_status: "pending",
         payment_type_id: 2,
         sender_inviter_id: user?.user.user_id,

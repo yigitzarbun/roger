@@ -115,6 +115,11 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
               subscriptionPackage.club_subscription_package_id ===
               selectedPackage?.club_subscription_package_id
           )?.price,
+          subscription_price: clubSubscriptionPackages?.find(
+            (subscriptionPackage) =>
+              subscriptionPackage.club_subscription_package_id ===
+              selectedPackage?.club_subscription_package_id
+          )?.price,
           payment_status: "success",
           payment_type_id: 5,
           sender_subscriber_id: user?.user?.user_id,

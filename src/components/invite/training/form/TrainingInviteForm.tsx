@@ -283,6 +283,7 @@ const TrainingInviteForm = () => {
     if (inviterPlayerPaymentMethodExists && inviteePlayerPaymentMethodExists) {
       const paymentDetails = {
         payment_amount: bookingFormData?.court_price,
+        court_price: bookingFormData?.court_price,
         payment_status: "pending",
         payment_type_id: 1,
         sender_inviter_id: user?.user.user_id,

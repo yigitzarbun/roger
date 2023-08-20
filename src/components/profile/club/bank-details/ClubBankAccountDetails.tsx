@@ -164,7 +164,14 @@ const ClubBankAccountDetails = () => {
                       )?.payment_type_name
                     }
                   </td>
-                  <td>{`${payment.payment_amount} TL`}</td>
+                  {payment.payment_type_id === 5 && (
+                    <td>{`${payment.subscription_price} TL`}</td>
+                  )}
+                  {(payment.payment_type_id === 1 ||
+                    payment.payment_type_id === 2 ||
+                    payment.payment_type_id === 3) && (
+                    <td>{`${payment.court_price} TL`}</td>
+                  )}
                   {payment.payment_type_id === 5 && (
                     <td>
                       {`${

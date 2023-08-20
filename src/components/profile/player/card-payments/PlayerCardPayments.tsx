@@ -143,13 +143,14 @@ const PlayerCardPayments = () => {
                 <th>Durum</th>
                 <th>Konu</th>
                 <th>Tutar</th>
-                <th>Alıcı</th>
+                <th>Kulüp</th>
+                <th>Eğitmen</th>
               </tr>
             </thead>
             <tbody>
               {myPayments?.map((payment) => (
                 <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.registered_at}</td>
+                  <td>{payment.registered_at.slice(0, 10)}</td>
                   <td>{payment.payment_status}</td>
                   <td>
                     {
@@ -159,7 +160,22 @@ const PlayerCardPayments = () => {
                       )?.payment_type_name
                     }
                   </td>
-                  <td>{`${payment.payment_amount} TL`}</td>
+                  {(payment.payment_type_id === 1 ||
+                    payment.payment_type_id === 2) && (
+                    <td>{`${payment.court_price / 2} TL`}</td>
+                  )}
+                  {payment.payment_type_id === 3 && (
+                    <td>
+                      {`${payment.lesson_price + payment.court_price} TL`}
+                    </td>
+                  )}
+                  {payment.payment_type_id === 5 && (
+                    <td>
+                      {`${
+                        payment.lesson_price + payment.subscription_price
+                      } TL`}
+                    </td>
+                  )}
                   <td>
                     {
                       clubs?.find(
@@ -182,6 +198,9 @@ const PlayerCardPayments = () => {
                       }`}
                     </td>
                   )}
+                  {(payment.payment_type_id === 1 ||
+                    payment.payment_type_id === 2 ||
+                    payment.payment_type_id === 5) && <td>-</td>}
                 </tr>
               ))}
             </tbody>
