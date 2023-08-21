@@ -24,6 +24,7 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
+  const isUserClub = user?.user?.user_type_id === 3;
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -197,8 +198,12 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                         >
                           {slotAvailabilityChecker(day, hour)}
                         </Link>
+                      ) : isUserClub &&
+                        slotAvailabilityChecker(day, hour) === "available" &&
+                        selectedCourt?.is_active === true ? (
+                        "Uygun"
                       ) : (
-                        "reserved"
+                        "Rezerve"
                       )}
                     </td>
                   ))}

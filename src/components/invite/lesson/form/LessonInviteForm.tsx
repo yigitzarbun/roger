@@ -97,7 +97,7 @@ const LeesonInviteForm = () => {
     navigate(-1);
   };
 
-  const [addPayment, { data: paymentData, isSuccess: isPaymentSucess }] =
+  const [addPayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useAddPaymentMutation({});
 
   const { refetch: refetchPayments } = useGetPaymentsQuery({});
@@ -269,7 +269,9 @@ const LeesonInviteForm = () => {
         : isUserPlayer
         ? trainerUserId
         : null,
-      lesson_price: null,
+      lesson_price: trainers?.find(
+        (trainer) => trainer.user_id === trainerUserId
+      )?.price_hour,
       court_price: courts?.find((court) => court.court_id === selectedCourt)
         .price_hour,
       payment_id: null,
@@ -402,13 +404,13 @@ const LeesonInviteForm = () => {
   }, [selectedClub]);
 
   useEffect(() => {
-    if (isPaymentSucess) {
+    if (isPaymentSuccess) {
       refetchPayments();
       bookingFormData.payment_id = paymentData?.payment_id;
       addBooking(bookingFormData);
       reset();
     }
-  }, [isPaymentSucess]);
+  }, [isPaymentSuccess]);
 
   useEffect(() => {
     if (isBookingSuccess) {

@@ -39,6 +39,7 @@ const ClubSubscriptions = lazy(
   () => import("../modules/club-subscriptions/ClubSubscriptions")
 );
 const ClubStaff = lazy(() => import("../modules/club-staff/ClubStaff"));
+const Payments = lazy(() => import("../modules/payments/Payments"));
 
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
@@ -82,6 +83,7 @@ const routes: Route[] = [
     element: getRouteElement(ClubSubscriptions),
   },
   { path: paths.CLUB_STAFF, element: getRouteElement(ClubStaff) },
+  { path: paths.PAYMENTS, element: getRouteElement(Payments) },
 ];
 
 export default createBrowserRouter(routes);

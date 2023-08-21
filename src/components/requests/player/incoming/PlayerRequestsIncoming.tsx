@@ -4,7 +4,10 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import {
+  useGetBookingsQuery,
+  useUpdateBookingMutation,
+} from "../../../../api/endpoints/BookingsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
@@ -12,7 +15,10 @@ import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
-import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
+import {
+  useGetPaymentsQuery,
+  useUpdatePaymentMutation,
+} from "../../../../api/endpoints/PaymentsApi";
 
 import AcceptInviteModal, {
   AcceptBookingData,
@@ -28,12 +34,15 @@ const PlayerRequestsIncoming = () => {
   const {
     data: bookings,
     isLoading: isBookingsLoading,
-    refetch,
+    refetch: refetchBookings,
   } = useGetBookingsQuery({});
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
@@ -55,10 +64,19 @@ const PlayerRequestsIncoming = () => {
       booking.booking_status_type_id === 1
   );
 
-  const currentYear = new Date().getFullYear();
+  const {
+    data: payments,
+    isLoading: isPaymentsLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentsQuery({});
 
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
+
+  const [updatePayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
+    useUpdatePaymentMutation({});
+
+  const currentYear = new Date().getFullYear();
 
   // accept booking
   const [acceptBookingData, setAcceptBookingData] =
@@ -74,14 +92,15 @@ const PlayerRequestsIncoming = () => {
   const handleCloseAcceptModal = () => {
     setIsAcceptModalOpen(false);
   };
-
   const handleAcceptBooking = () => {
-    const acceptedBookingData = {
-      ...acceptBookingData,
-      booking_status_type_id: 2,
+    const selectedPayment = payments?.find(
+      (payment) => payment.payment_id === acceptBookingData?.payment_id
+    );
+    const updatedPaymentData = {
+      ...selectedPayment,
+      payment_status: "success",
     };
-    updateBooking(acceptedBookingData);
-    setAcceptBookingData(null);
+    updatePayment(updatedPaymentData);
   };
 
   // decline booking
@@ -100,17 +119,39 @@ const PlayerRequestsIncoming = () => {
   };
 
   const handleDeclineBooking = () => {
-    const declineddBookingData = {
-      ...declineBookingData,
-      booking_status_type_id: 3,
+    const selectedPayment = payments?.find(
+      (payment) => payment.payment_id === declineBookingData?.payment_id
+    );
+    const updatedPaymentData = {
+      ...selectedPayment,
+      payment_status: "declined",
     };
-    updateBooking(declineddBookingData);
-    setDeclineBookingData(null);
+    updatePayment(updatedPaymentData);
   };
 
   useEffect(() => {
+    if (isPaymentSuccess && paymentData) {
+      if (paymentData[0]?.payment_status === "success") {
+        const acceptedBookingData = {
+          ...acceptBookingData,
+          booking_status_type_id: 2,
+        };
+        updateBooking(acceptedBookingData);
+      } else if (paymentData[0]?.payment_status === "declined") {
+        const declineddBookingData = {
+          ...declineBookingData,
+          booking_status_type_id: 3,
+        };
+        updateBooking(declineddBookingData);
+      }
+      setAcceptBookingData(null);
+      refetchPayments();
+    }
+  }, [isPaymentSuccess]);
+
+  useEffect(() => {
     if (isUpdateBookingSuccess) {
-      refetch();
+      refetchBookings();
       handleCloseAcceptModal();
       handleCloseDeclineModal();
     }
@@ -124,7 +165,8 @@ const PlayerRequestsIncoming = () => {
     isEventTypesLoading ||
     isPlayersLoading ||
     isPlayerLevelTypesLoading ||
-    isTrainerExperienceTypesLoading
+    isTrainerExperienceTypesLoading ||
+    isPaymentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

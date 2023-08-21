@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
 import styles from "./styles.module.scss";
+
+import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -140,46 +144,50 @@ const ClubBankAccountDetails = () => {
 
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Tarih</th>
-                <th>Durum</th>
-                <th>Konu</th>
-                <th>Tutar</th>
-                <th>Gönderen 1</th>
-                <th>Gönderen 2</th>
-              </tr>
-            </thead>
-            <tbody>
-              {myPayments?.map((payment) => (
-                <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.registered_at.slice(0, 10)}</td>
-                  <td>{payment.payment_status}</td>
-                  <td>
-                    {
-                      paymentTypes?.find(
-                        (type) =>
-                          type.payment_type_id === payment.payment_type_id
-                      )?.payment_type_name
-                    }
-                  </td>
-                  {payment.payment_type_id === 5 && (
-                    <td>{`${payment.subscription_price} TL`}</td>
-                  )}
-                  {(payment.payment_type_id === 1 ||
-                    payment.payment_type_id === 2 ||
-                    payment.payment_type_id === 3) && (
-                    <td>{`${payment.court_price} TL`}</td>
-                  )}
-                  {payment.payment_type_id === 5 && (
+          <>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Durum</th>
+                  <th>Konu</th>
+                  <th>Tutar</th>
+                  <th>Gönderen 1</th>
+                  <th>Gönderen 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                {myPayments?.map((payment) => (
+                  <tr
+                    key={payment.payment_id}
+                    className={styles["payment-row"]}
+                  >
+                    <td>{payment.registered_at.slice(0, 10)}</td>
+                    <td>{payment.payment_status}</td>
                     <td>
-                      {`${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_subscriber_id
-                        )?.fname
+                      {
+                        paymentTypes?.find(
+                          (type) =>
+                            type.payment_type_id === payment.payment_type_id
+                        )?.payment_type_name
                       }
+                    </td>
+                    {payment.payment_type_id === 5 && (
+                      <td>{`${payment.subscription_price} TL`}</td>
+                    )}
+                    {(payment.payment_type_id === 1 ||
+                      payment.payment_type_id === 2 ||
+                      payment.payment_type_id === 3) && (
+                      <td>{`${payment.court_price} TL`}</td>
+                    )}
+                    {payment.payment_type_id === 5 && (
+                      <td>
+                        {`${
+                          players?.find(
+                            (player) =>
+                              player.user_id === payment.sender_subscriber_id
+                          )?.fname
+                        }
                       ${
                         players?.find(
                           (player) =>
@@ -187,48 +195,10 @@ const ClubBankAccountDetails = () => {
                         )?.lname
                       }
                       `}
-                    </td>
-                  )}
-                  {(payment.payment_type_id === 1 ||
-                    payment.payment_type_id === 2) && (
-                    <td>
-                      {`${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_inviter_id
-                        )?.fname
-                      }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_inviter_id
-                        )?.lname
-                      }
-                      `}
-                    </td>
-                  )}
-                  {(payment.payment_type_id === 1 ||
-                    payment.payment_type_id === 2) && (
-                    <td>
-                      {`${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_invitee_id
-                        )?.fname
-                      }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_invitee_id
-                        )?.lname
-                      }
-                      `}
-                    </td>
-                  )}
-                  {payment.payment_type_id === 3 &&
-                    players?.find(
-                      (player) => player.user_id === payment.sender_inviter_id
-                    ) && (
+                      </td>
+                    )}
+                    {(payment.payment_type_id === 1 ||
+                      payment.payment_type_id === 2) && (
                       <td>
                         {`${
                           players?.find(
@@ -245,10 +215,8 @@ const ClubBankAccountDetails = () => {
                       `}
                       </td>
                     )}
-                  {payment.payment_type_id === 3 &&
-                    players?.find(
-                      (player) => player.user_id === payment.sender_invitee_id
-                    ) && (
+                    {(payment.payment_type_id === 1 ||
+                      payment.payment_type_id === 2) && (
                       <td>
                         {`${
                           players?.find(
@@ -265,12 +233,54 @@ const ClubBankAccountDetails = () => {
                       `}
                       </td>
                     )}
-                  {(payment.payment_type_id === 3 ||
-                    payment.payment_type_id === 5) && <td>-</td>}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {payment.payment_type_id === 3 &&
+                      players?.find(
+                        (player) => player.user_id === payment.sender_inviter_id
+                      ) && (
+                        <td>
+                          {`${
+                            players?.find(
+                              (player) =>
+                                player.user_id === payment.sender_inviter_id
+                            )?.fname
+                          }
+                      ${
+                        players?.find(
+                          (player) =>
+                            player.user_id === payment.sender_inviter_id
+                        )?.lname
+                      }
+                      `}
+                        </td>
+                      )}
+                    {payment.payment_type_id === 3 &&
+                      players?.find(
+                        (player) => player.user_id === payment.sender_invitee_id
+                      ) && (
+                        <td>
+                          {`${
+                            players?.find(
+                              (player) =>
+                                player.user_id === payment.sender_invitee_id
+                            )?.fname
+                          }
+                      ${
+                        players?.find(
+                          (player) =>
+                            player.user_id === payment.sender_invitee_id
+                        )?.lname
+                      }
+                      `}
+                        </td>
+                      )}
+                    {(payment.payment_type_id === 3 ||
+                      payment.payment_type_id === 5) && <td>-</td>}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Link to={paths.PAYMENTS}>Tümünü Görüntüle</Link>
+          </>
         ) : (
           <p>Henüz ödemeniz bulunmamaktadır.</p>
         ))}

@@ -120,7 +120,7 @@ const TrainerRequestsOutgoing = () => {
               <th>Kort</th>
               <th>Konum</th>
               <th>
-                Ücret<span className={styles["fee"]}>*</span>
+                Ücret TL<span className={styles["fee"]}>(*)</span>
               </th>
             </tr>
           </thead>
@@ -192,20 +192,7 @@ const TrainerRequestsOutgoing = () => {
                       ?.club_name
                   }
                 </td>
-                <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour / 2
-                    : booking.event_type_id === 3
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour +
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.price_hour
-                    : "External Booking"}
-                </td>
+                <td>{booking.lesson_price}</td>
                 <td>
                   <button
                     onClick={() => handleOpenModal(booking)}

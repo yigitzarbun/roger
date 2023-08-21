@@ -48,7 +48,7 @@ const TrainingInviteForm = () => {
     {}
   );
 
-  const [addPayment, { data: paymentData, isSuccess: isPaymentSucess }] =
+  const [addPayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useAddPaymentMutation({});
 
   const { refetch: refetchPayments } = useGetPaymentsQuery({});
@@ -301,13 +301,13 @@ const TrainingInviteForm = () => {
   };
 
   useEffect(() => {
-    if (isPaymentSucess) {
+    if (isPaymentSuccess) {
       refetchPayments();
       bookingFormData.payment_id = paymentData?.payment_id;
       addBooking(bookingFormData);
       reset();
     }
-  }, [isPaymentSucess]);
+  }, [isPaymentSuccess]);
 
   useEffect(() => {
     if (isBookingSuccess) {

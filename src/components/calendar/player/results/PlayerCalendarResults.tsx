@@ -87,7 +87,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   });
 
   // update booking
-  const [updateBooking, { data, isSuccess }] = useUpdateBookingMutation({});
+  const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 

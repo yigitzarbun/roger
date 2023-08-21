@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -139,45 +143,72 @@ const TrainerBankAccountDetails = () => {
       )}
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Tarih</th>
-                <th>Durum</th>
-                <th>Konu</th>
-                <th>Tutar</th>
-                <th>Öğrenci</th>
-              </tr>
-            </thead>
-            <tbody>
-              {myPayments?.map((payment) => (
-                <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.registered_at.slice(0, 10)}</td>
-                  <td>{payment.payment_status}</td>
-                  <td>
-                    {
-                      paymentTypes?.find(
-                        (type) =>
-                          type.payment_type_id === payment.payment_type_id
-                      )?.payment_type_name
-                    }
-                  </td>
-                  {payment.payment_type_id === 3 && (
-                    <td>{`${payment.lesson_price} TL`}</td>
-                  )}
-                  <td>{`${
-                    players?.find(
-                      (player) => player.user_id === payment.sender_inviter_id
-                    )?.fname
-                  } ${
-                    players?.find(
-                      (player) => player.user_id === payment.sender_inviter_id
-                    )?.lname
-                  }`}</td>
+          <>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Durum</th>
+                  <th>Konu</th>
+                  <th>Tutar</th>
+                  <th>Öğrenci</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {myPayments?.map((payment) => (
+                  <tr
+                    key={payment.payment_id}
+                    className={styles["payment-row"]}
+                  >
+                    <td>{payment.registered_at.slice(0, 10)}</td>
+                    <td>{payment.payment_status}</td>
+                    <td>
+                      {
+                        paymentTypes?.find(
+                          (type) =>
+                            type.payment_type_id === payment.payment_type_id
+                        )?.payment_type_name
+                      }
+                    </td>
+                    {payment.payment_type_id === 3 && (
+                      <td>{`${payment.lesson_price} TL`}</td>
+                    )}
+                    {players?.find(
+                      (player) => player.user_id === payment.sender_inviter_id
+                    ) && (
+                      <td>{`${
+                        players?.find(
+                          (player) =>
+                            player.user_id === payment.sender_inviter_id
+                        )?.fname
+                      } ${
+                        players?.find(
+                          (player) =>
+                            player.user_id === payment.sender_inviter_id
+                        )?.lname
+                      }`}</td>
+                    )}
+                    {players?.find(
+                      (player) => player.user_id === payment.sender_invitee_id
+                    ) && (
+                      <td>{`${
+                        players?.find(
+                          (player) =>
+                            player.user_id === payment.sender_invitee_id
+                        )?.fname
+                      } ${
+                        players?.find(
+                          (player) =>
+                            player.user_id === payment.sender_invitee_id
+                        )?.lname
+                      }`}</td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Link to={paths.PAYMENTS}>Tümünü Görüntüle</Link>
+          </>
         ) : (
           <p>Henüz ödemeniz bulunmamaktadır.</p>
         ))}

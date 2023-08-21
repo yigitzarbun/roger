@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -34,6 +38,7 @@ const PlayerCardPayments = () => {
   const selectedPlayer = players?.find(
     (player) => player.user_id === user?.user?.user_id
   );
+
   const cardDetailsExist =
     selectedPlayer?.name_on_card &&
     selectedPlayer?.card_number &&
@@ -136,75 +141,81 @@ const PlayerCardPayments = () => {
       )}
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>Tarih</th>
-                <th>Durum</th>
-                <th>Konu</th>
-                <th>Tutar</th>
-                <th>Kulüp</th>
-                <th>Eğitmen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {myPayments?.map((payment) => (
-                <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.registered_at.slice(0, 10)}</td>
-                  <td>{payment.payment_status}</td>
-                  <td>
-                    {
-                      paymentTypes?.find(
-                        (type) =>
-                          type.payment_type_id === payment.payment_type_id
-                      )?.payment_type_name
-                    }
-                  </td>
-                  {(payment.payment_type_id === 1 ||
-                    payment.payment_type_id === 2) && (
-                    <td>{`${payment.court_price / 2} TL`}</td>
-                  )}
-                  {payment.payment_type_id === 3 && (
-                    <td>
-                      {`${payment.lesson_price + payment.court_price} TL`}
-                    </td>
-                  )}
-                  {payment.payment_type_id === 5 && (
-                    <td>
-                      {`${
-                        payment.lesson_price + payment.subscription_price
-                      } TL`}
-                    </td>
-                  )}
-                  <td>
-                    {
-                      clubs?.find(
-                        (club) => club.user_id === payment.recipient_club_id
-                      )?.club_name
-                    }
-                  </td>
-                  {payment.payment_type_id === 3 && (
-                    <td>
-                      {`${
-                        trainers?.find(
-                          (trainer) =>
-                            trainer.user_id === payment.recipient_trainer_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) =>
-                            trainer.user_id === payment.recipient_trainer_id
-                        )?.lname
-                      }`}
-                    </td>
-                  )}
-                  {(payment.payment_type_id === 1 ||
-                    payment.payment_type_id === 2 ||
-                    payment.payment_type_id === 5) && <td>-</td>}
+          <>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Durum</th>
+                  <th>Konu</th>
+                  <th>Tutar</th>
+                  <th>Kulüp</th>
+                  <th>Eğitmen</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {myPayments?.map((payment) => (
+                  <tr
+                    key={payment.payment_id}
+                    className={styles["payment-row"]}
+                  >
+                    <td>{payment.registered_at.slice(0, 10)}</td>
+                    <td>{payment.payment_status}</td>
+                    <td>
+                      {
+                        paymentTypes?.find(
+                          (type) =>
+                            type.payment_type_id === payment.payment_type_id
+                        )?.payment_type_name
+                      }
+                    </td>
+                    {(payment.payment_type_id === 1 ||
+                      payment.payment_type_id === 2) && (
+                      <td>{`${payment.court_price / 2} TL`}</td>
+                    )}
+                    {payment.payment_type_id === 3 && (
+                      <td>
+                        {`${payment.lesson_price + payment.court_price} TL`}
+                      </td>
+                    )}
+                    {payment.payment_type_id === 5 && (
+                      <td>
+                        {`${
+                          payment.lesson_price + payment.subscription_price
+                        } TL`}
+                      </td>
+                    )}
+                    <td>
+                      {
+                        clubs?.find(
+                          (club) => club.user_id === payment.recipient_club_id
+                        )?.club_name
+                      }
+                    </td>
+                    {payment.payment_type_id === 3 && (
+                      <td>
+                        {`${
+                          trainers?.find(
+                            (trainer) =>
+                              trainer.user_id === payment.recipient_trainer_id
+                          )?.fname
+                        } ${
+                          trainers?.find(
+                            (trainer) =>
+                              trainer.user_id === payment.recipient_trainer_id
+                          )?.lname
+                        }`}
+                      </td>
+                    )}
+                    {(payment.payment_type_id === 1 ||
+                      payment.payment_type_id === 2 ||
+                      payment.payment_type_id === 5) && <td>-</td>}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <Link to={paths.PAYMENTS}>Tümünü Görüntüle</Link>
+          </>
         ) : (
           <p>Henüz ödemeniz bulunmamaktadır.</p>
         ))}
