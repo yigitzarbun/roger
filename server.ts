@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
+import knex from "knex";
+import cron from "node-cron";
+import knexConfig from "./knexfile";
 
 import usersAuthRouter from "./src/api/users-auth/auth-router";
 import usersRouter from "./src/api/users/users-router";
 import playersRouter from "./src/api/players/players-router";
-
 import locationsRouter from "./src/api/locations/locations-router";
 import playerLevelsRouter from "./src/api/player-levels/player-levels-router";
 import userTypesRouter from "./src/api/user-types/user-types-router";
@@ -33,8 +35,64 @@ const cors = require("cors");
 const server = express();
 server.use(express.json());
 server.use(cors());
-
 process.env.TZ = "UTC";
+
+const db = knex(knexConfig.development);
+
+cron.schedule("* * * * *", async () => {
+  await updatePendingBookings();
+  await updatePendingPayments();
+});
+
+cron.schedule("* * * * * ", async () => {
+  await updateCompletedBookings();
+});
+
+async function updatePendingBookings() {
+  try {
+    const currentDateInUTC = new Date();
+    const twentyMinutesAgoInUTC = new Date(
+      currentDateInUTC.getTime() - 20 * 60000
+    ); // 20 minutes in milliseconds
+
+    await db("bookings")
+      .where("booking_status_type_id", "=", 1)
+      .where("registered_at", "<", twentyMinutesAgoInUTC.toISOString())
+      .update({ booking_status_type_id: 4 }); // Use the object to specify column and value
+  } catch (error) {
+    console.error("Error updating pending bookings:", error);
+  }
+}
+
+async function updatePendingPayments() {
+  try {
+    const currentDateInUTC = new Date();
+    const twentyMinutesAgoInUTC = new Date(
+      currentDateInUTC.getTime() - 20 * 60000
+    ); // 20 minutes in milliseconds
+
+    await db("payments")
+      .where("payment_status", "=", "pending")
+      .where("registered_at", "<", twentyMinutesAgoInUTC.toISOString())
+      .update({ payment_status: "declined" }); // Use the object to specify column and value
+  } catch (error) {
+    console.error("Error updating pending payments:", error);
+  }
+}
+
+async function updateCompletedBookings() {
+  try {
+    const currentDateInUTC = new Date();
+    const oneHourAgoInUTC = new Date(currentDateInUTC.getTime() - 60 * 60000); // 60 minutes in milliseconds
+
+    await db("bookings")
+      .where("booking_status_type_id", "=", 2)
+      .where("registered_at", "<", oneHourAgoInUTC.toISOString())
+      .update({ booking_status_type_id: 5 }); // Use the object to specify column and value
+  } catch (error) {
+    console.error("Error updating completed bookings:", error);
+  }
+}
 
 server.use("/api/usersAuth", usersAuthRouter);
 server.use("/api/users", usersRouter);
