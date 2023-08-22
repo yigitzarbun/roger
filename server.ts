@@ -29,6 +29,8 @@ import clubStaffRouter from "./src/api/club-staff/club-staff-router";
 import paymentTypesRouter from "./src/api/payment-types/payment-types-router";
 import paymentsRouter from "./src/api/payments/payments-router";
 import banksRouter from "./src/api/banks/banks-router";
+import matchScoresRouter from "./src/api/match-scores/match-scores-router";
+import matchScoresStatusTypesRouter from "./src/api/match-score-status-types/match-scores-status-types-router";
 
 const cors = require("cors");
 
@@ -120,6 +122,8 @@ server.use("/api/club-staff", clubStaffRouter);
 server.use("/api/payment-types", paymentTypesRouter);
 server.use("/api/payments", paymentsRouter);
 server.use("/api/banks", banksRouter);
+server.use("/api/match-scores", matchScoresRouter);
+server.use("/api-match-scores-status-types", matchScoresStatusTypesRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -12,8 +12,11 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
+import { useGetMatchScoresStatusTypesQuery } from "../../../../api/endpoints/MatchScoresStatusTypesApi";
+import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
 
-const TrainerEventsResults = () => {
+const PlayerScores = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
@@ -30,13 +33,35 @@ const TrainerEventsResults = () => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: matchScores, isLoading: isMatchScoresLoading } =
+    useGetMatchScoresQuery({});
 
   const myEvents = bookings?.filter(
     (booking) =>
       (booking.inviter_id === user?.user?.user_id ||
         booking.invitee_id === user?.user?.user_id) &&
+      booking.event_type_id === 2 &&
       booking.booking_status_type_id === 5
   );
+
+  const [isAddScoreModalOpen, setIsAddScoreModalOpen] = useState(false);
+
+  const [selectedMatchScoreId, setSelectedMatchScoreId] = useState(null);
+
+  const handleSelectedMatchDetails = (booking_id: number) => {
+    return matchScores?.find((match) => match.booking_id === booking_id)
+      ?.match_score_id;
+  };
+
+  const openAddScoreModal = (booking_id: number) => {
+    setIsAddScoreModalOpen(true);
+    setSelectedMatchScoreId(handleSelectedMatchDetails(booking_id));
+  };
+
+  const closeAddScoreModal = () => {
+    setIsAddScoreModalOpen(false);
+  };
+
   if (
     isBookingsLoading ||
     isEventTypesLoading ||
@@ -45,13 +70,16 @@ const TrainerEventsResults = () => {
     isPlayerLevelsLoading ||
     isClubsLoading ||
     isCourtSurfaceTypesLoading ||
-    isCourtStructureTypesLoading
+    isCourtStructureTypesLoading ||
+    isPlayersLoading ||
+    isMatchScoresLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
+
   return (
     <div className={styles["results-container"]}>
-      <h2 className={styles.title}>Etkinlik Geçmişi</h2>
+      <h2 className={styles.title}>Maç Skorları</h2>
       {myEvents?.length > 0 ? (
         <table>
           <thead>
@@ -65,6 +93,8 @@ const TrainerEventsResults = () => {
               <th>Kort Mekan</th>
               <th>Oyuncu</th>
               <th>Oyuncu Seviye</th>
+              <th>Skor</th>
+              <th>Skor Durum</th>
             </tr>
           </thead>
           <tbody>
@@ -114,7 +144,8 @@ const TrainerEventsResults = () => {
                   }
                 </td>
                 <td>
-                  {event.inviter_id === user?.user?.user_id
+                  {(event.event_type_id === 1 || event.event_type_id === 2) &&
+                  event.inviter_id === user?.user?.user_id
                     ? `${
                         players?.find(
                           (player) => player.user_id === event.invitee_id
@@ -124,7 +155,9 @@ const TrainerEventsResults = () => {
                           (player) => player.user_id === event.invitee_id
                         )?.lname
                       }`
-                    : event.invitee_id === user?.user?.user_id
+                    : (event.event_type_id === 1 ||
+                        event.event_type_id === 2) &&
+                      event.invitee_id === user?.user?.user_id
                     ? `${
                         players?.find(
                           (player) => player.user_id === event.inviter_id
@@ -137,7 +170,8 @@ const TrainerEventsResults = () => {
                     : "-"}
                 </td>
                 <td>
-                  {event.inviter_id === user?.user?.user_id
+                  {(event.event_type_id === 1 || event.event_type_id === 2) &&
+                  event.inviter_id === user?.user?.user_id
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
@@ -145,7 +179,9 @@ const TrainerEventsResults = () => {
                             (player) => player.user_id === event.invitee_id
                           )?.player_level_id
                       )?.player_level_name
-                    : event.invitee_id === user?.user?.user_id
+                    : (event.event_type_id === 1 ||
+                        event.event_type_id === 2) &&
+                      event.invitee_id === user?.user?.user_id
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
@@ -155,6 +191,34 @@ const TrainerEventsResults = () => {
                       )?.player_level_name
                     : "-"}
                 </td>
+                <td>6-2 / 6-1</td>
+                <td>
+                  {matchScores?.find(
+                    (match) => match.booking_id === event.booking_id
+                  )?.match_score_status_type_id === 1 ? (
+                    <button onClick={() => openAddScoreModal(event.booking_id)}>
+                      Skor Paylaş
+                    </button>
+                  ) : matchScores?.find(
+                      (match) =>
+                        match.booking_id === event.booking_id &&
+                        match.reporter_id === user?.user?.user_id
+                    )?.match_score_status_type_id === 2 ? (
+                    "Onay Bekleniyor"
+                  ) : matchScores?.find(
+                      (match) =>
+                        match.booking_id === event.booking_id &&
+                        match.reporter_id !== user?.user?.user_id
+                    )?.match_score_status_type_id === 2 ? (
+                    <button>Onayla</button>
+                  ) : matchScores?.find(
+                      (match) => match.booking_id === event.booking_id
+                    )?.match_score_status_type_id === 3 ? (
+                    "Onaylandı"
+                  ) : (
+                    ""
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -162,7 +226,13 @@ const TrainerEventsResults = () => {
       ) : (
         <p>Henüz tamamlanmış etkinlik bulunmamaktadır</p>
       )}
+      <AddMatchScoreModal
+        isAddScoreModalOpen={isAddScoreModalOpen}
+        closeAddScoreModal={closeAddScoreModal}
+        selectedMatchScoreId={selectedMatchScoreId}
+      />
     </div>
   );
 };
-export default TrainerEventsResults;
+
+export default PlayerScores;

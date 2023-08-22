@@ -15,7 +15,7 @@ import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 
-const PlayerEventsResults = () => {
+const PlayerPastEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
@@ -46,7 +46,6 @@ const PlayerEventsResults = () => {
         booking.invitee_id === user?.user?.user_id) &&
       booking.booking_status_type_id === 5
   );
-
   if (
     isBookingsLoading ||
     isEventTypesLoading ||
@@ -57,15 +56,16 @@ const PlayerEventsResults = () => {
     isTrainersLoading ||
     isTrainerExperienceTypesLoading ||
     isCourtSurfaceTypesLoading ||
-    isCourtStructureTypesLoading
+    isCourtStructureTypesLoading ||
+    isPlayersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
 
   return (
     <div className={styles["results-container"]}>
-      <h2 className={styles.title}>Etkinlik Geçmişi</h2>
-      {myEvents.length > 0 ? (
+      <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+      {myEvents?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -233,4 +233,4 @@ const PlayerEventsResults = () => {
   );
 };
 
-export default PlayerEventsResults;
+export default PlayerPastEventsResults;

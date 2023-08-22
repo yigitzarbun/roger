@@ -29,6 +29,7 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("club_types").del();
   await knex("banks").del();
   await knex("locations").del();
+  await knex("match_score_status_types").del();
   await knex("payment_types").del();
   await knex("trainer_employment_types").del();
 
@@ -68,6 +69,21 @@ export async function seed(knex: Knex): Promise<void> {
     {
       payment_type_id: 5,
       payment_type_name: "subscription",
+    },
+  ]);
+
+  await knex("match_score_status_types").insert([
+    {
+      match_score_status_type_id: 1,
+      match_score_status_type_name: "awaiting_score",
+    },
+    {
+      match_score_status_type_id: 2,
+      match_score_status_type_name: "awaiting_confirmation",
+    },
+    {
+      match_score_status_type_id: 3,
+      match_score_status_type_name: "done",
     },
   ]);
 

@@ -19,6 +19,10 @@ import {
   useGetPaymentsQuery,
   useUpdatePaymentMutation,
 } from "../../../../api/endpoints/PaymentsApi";
+import {
+  useAddMatchScoreMutation,
+  useGetMatchScoresQuery,
+} from "../../../../api/endpoints/MatchScoresApi";
 
 import AcceptInviteModal, {
   AcceptBookingData,
@@ -29,7 +33,7 @@ import DeclineInviteModal, {
 } from "../../../invite/modals/decline-modal/DeclineInviteModal";
 
 const PlayerRequestsIncoming = () => {
-  const { user } = useAppSelector((store) => store.user.user);
+  const user = useAppSelector((store) => store?.user?.user?.user);
 
   const {
     data: bookings,
@@ -58,9 +62,29 @@ const PlayerRequestsIncoming = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
+  const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
+
+  const {
+    data: payments,
+    isLoading: isPaymentsLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentsQuery({});
+
+  const [
+    updateBooking,
+    { data: updatedBooking, isSuccess: isUpdateBookingSuccess },
+  ] = useUpdateBookingMutation({});
+
+  const [updatePayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
+    useUpdatePaymentMutation({});
+
+  const [addMatchScore, { isSuccess: isMatchScoreSuccess }] =
+    useAddMatchScoreMutation({});
+
   const date = new Date();
   const today = date.toLocaleDateString();
   const now = date.toLocaleTimeString();
+  const currentYear = new Date().getFullYear();
 
   const incomingBookings = bookings?.filter(
     (booking) =>
@@ -70,20 +94,6 @@ const PlayerRequestsIncoming = () => {
         (new Date(booking.event_date).toLocaleDateString() === today &&
           booking.event_time >= now))
   );
-
-  const {
-    data: payments,
-    isLoading: isPaymentsLoading,
-    refetch: refetchPayments,
-  } = useGetPaymentsQuery({});
-
-  const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
-    useUpdateBookingMutation({});
-
-  const [updatePayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
-    useUpdatePaymentMutation({});
-
-  const currentYear = new Date().getFullYear();
 
   // accept booking
   const [acceptBookingData, setAcceptBookingData] =
@@ -99,6 +109,7 @@ const PlayerRequestsIncoming = () => {
   const handleCloseAcceptModal = () => {
     setIsAcceptModalOpen(false);
   };
+
   const handleAcceptBooking = () => {
     const selectedPayment = payments?.find(
       (payment) => payment.payment_id === acceptBookingData?.payment_id
@@ -151,18 +162,33 @@ const PlayerRequestsIncoming = () => {
         };
         updateBooking(declineddBookingData);
       }
-      setAcceptBookingData(null);
+
       refetchPayments();
     }
   }, [isPaymentSuccess]);
 
   useEffect(() => {
-    if (isUpdateBookingSuccess) {
-      refetchBookings();
+    if (
+      isUpdateBookingSuccess &&
+      paymentData[0]?.payment_status === "success"
+    ) {
+      const matchScoreData = {
+        match_score_status_type_id: 1,
+        booking_id: acceptBookingData?.booking_id,
+      };
+      addMatchScore(matchScoreData);
+    }
+    refetchBookings();
+    setAcceptBookingData(null);
+  }, [isUpdateBookingSuccess]);
+
+  useEffect(() => {
+    if (isMatchScoreSuccess) {
+      refetchMatchScores();
       handleCloseAcceptModal();
       handleCloseDeclineModal();
     }
-  }, [isUpdateBookingSuccess]);
+  }, [isMatchScoreSuccess]);
 
   if (
     isBookingsLoading ||

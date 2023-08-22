@@ -10,6 +10,10 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("payment_type_id");
       table.string("payment_type_name");
     })
+    .createTable("match_score_status_types", (table) => {
+      table.increments("match_score_status_type_id");
+      table.string("match_score_status_type_name");
+    })
     .createTable("locations", (table) => {
       table.increments("location_id");
       table.string("location_name").unique().notNullable();
@@ -477,13 +481,27 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable("match_scores", (table) => {
       table.increments("match_score_id");
-      table.string("match_score_status");
       table.integer("inviter_first_set_games_won");
       table.integer("inviter_second_set_games_won");
-      table.integer("inviter_thir_set_games_won");
+      table.integer("inviter_third_set_games_won");
       table.integer("invitee_first_set_games_won");
       table.integer("invitee_second_set_games_won");
-      table.integer("invitee_thir_set_games_won");
+      table.integer("invitee_third_set_games_won");
+      table
+        .integer("reporter_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("match_score_status_type_id")
+        .unsigned()
+        .notNullable()
+        .references("match_score_status_type_id")
+        .inTable("match_score_status_types")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
       table
         .integer("booking_id")
         .unsigned()
@@ -495,7 +513,6 @@ export async function up(knex: Knex): Promise<void> {
       table
         .integer("winner_id")
         .unsigned()
-        .notNullable()
         .references("user_id")
         .inTable("users")
         .onUpdate("CASCADE")
@@ -621,6 +638,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("club_types")
     .dropTableIfExists("banks")
     .dropTableIfExists("locations")
+    .dropTableIfExists("match_score_status_types")
     .dropTableIfExists("payment_types")
     .dropTableIfExists("trainer_employment_types");
 }
