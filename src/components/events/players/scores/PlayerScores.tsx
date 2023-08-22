@@ -15,6 +15,7 @@ import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtS
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 import { useGetMatchScoresStatusTypesQuery } from "../../../../api/endpoints/MatchScoresStatusTypesApi";
 import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
+import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";
 
 const PlayerScores = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -46,6 +47,8 @@ const PlayerScores = () => {
 
   const [isAddScoreModalOpen, setIsAddScoreModalOpen] = useState(false);
 
+  const [isEditScoreModalOpen, setIsEditScoreModalOpen] = useState(false);
+
   const [selectedMatchScoreId, setSelectedMatchScoreId] = useState(null);
 
   const handleSelectedMatchDetails = (booking_id: number) => {
@@ -60,6 +63,15 @@ const PlayerScores = () => {
 
   const closeAddScoreModal = () => {
     setIsAddScoreModalOpen(false);
+  };
+
+  const openEditScoreModal = (booking_id: number) => {
+    setIsEditScoreModalOpen(true);
+    setSelectedMatchScoreId(handleSelectedMatchDetails(booking_id));
+  };
+
+  const closeEditScoreModal = () => {
+    setIsEditScoreModalOpen(false);
   };
 
   if (
@@ -210,7 +222,11 @@ const PlayerScores = () => {
                         match.booking_id === event.booking_id &&
                         match.reporter_id !== user?.user?.user_id
                     )?.match_score_status_type_id === 2 ? (
-                    <button>Onayla</button>
+                    <button
+                      onClick={() => openEditScoreModal(event.booking_id)}
+                    >
+                      Onayla / Değişiklik Talep Et
+                    </button>
                   ) : matchScores?.find(
                       (match) => match.booking_id === event.booking_id
                     )?.match_score_status_type_id === 3 ? (
@@ -229,6 +245,11 @@ const PlayerScores = () => {
       <AddMatchScoreModal
         isAddScoreModalOpen={isAddScoreModalOpen}
         closeAddScoreModal={closeAddScoreModal}
+        selectedMatchScoreId={selectedMatchScoreId}
+      />
+      <EditMatchScoreModal
+        isEditScoreModalOpen={isEditScoreModalOpen}
+        closeEditScoreModal={closeEditScoreModal}
         selectedMatchScoreId={selectedMatchScoreId}
       />
     </div>
