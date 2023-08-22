@@ -72,7 +72,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
       location_id: profileData?.location_id,
       trainer_employment_type_id: profileData?.trainer_employment_type_id,
       trainer_experience_type_id: profileData?.trainer_experience_type_id,
-      club_id: profileData?.trainer_employment_type_id,
+      club_id: profileData?.club_id,
       price_hour: profileData?.price_hour,
     },
   });

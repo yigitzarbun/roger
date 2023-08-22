@@ -46,11 +46,6 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
 
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
-
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
   // date
@@ -86,7 +81,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   });
 
   // update booking
-  const [updateBooking, { data, isSuccess }] = useUpdateBookingMutation({});
+  const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
@@ -125,7 +120,6 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     isClubsLoading ||
     isEventTypesLoading ||
     isPlayerLevelsLoading ||
-    isTrainerExperienceTypesLoading ||
     isCourtsLoading
   ) {
     return <div>Yükleniyor..</div>;

@@ -45,15 +45,21 @@ const PlayerRequestsOutgoing = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
+  const date = new Date();
+  const today = date.toLocaleDateString();
+  const now = date.toLocaleTimeString();
+
   const outgoingBookings = bookings?.filter(
     (booking) =>
       booking.inviter_id === user?.user_id &&
-      booking.booking_status_type_id === 1
+      booking.booking_status_type_id === 1 &&
+      (new Date(booking.event_date).toLocaleDateString() > today ||
+        (new Date(booking.event_date).toLocaleDateString() === today &&
+          booking.event_time >= now))
   );
-
   const currentYear = new Date().getFullYear();
 
-  const [updateBooking, { data, isSuccess }] = useUpdateBookingMutation({});
+  const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 

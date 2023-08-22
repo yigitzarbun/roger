@@ -58,10 +58,17 @@ const PlayerRequestsIncoming = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
+  const date = new Date();
+  const today = date.toLocaleDateString();
+  const now = date.toLocaleTimeString();
+
   const incomingBookings = bookings?.filter(
     (booking) =>
       booking.invitee_id === user?.user_id &&
-      booking.booking_status_type_id === 1
+      booking.booking_status_type_id === 1 &&
+      (new Date(booking.event_date).toLocaleDateString() > today ||
+        (new Date(booking.event_date).toLocaleDateString() === today &&
+          booking.event_time >= now))
   );
 
   const {

@@ -8,10 +8,8 @@ import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 
 import CancelInviteModal, {
@@ -30,9 +28,6 @@ const TrainerRequestsOutgoing = () => {
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
@@ -40,20 +35,22 @@ const TrainerRequestsOutgoing = () => {
   const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
     useGetPlayerLevelsQuery({});
 
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
+  const date = new Date();
+  const today = date.toLocaleDateString();
+  const now = date.toLocaleTimeString();
 
   const outgoingBookings = bookings?.filter(
     (booking) =>
       booking.inviter_id === user?.user_id &&
-      booking.booking_status_type_id === 1
+      booking.booking_status_type_id === 1 &&
+      (new Date(booking.event_date).toLocaleDateString() > today ||
+        (new Date(booking.event_date).toLocaleDateString() === today &&
+          booking.event_time >= now))
   );
 
   const currentYear = new Date().getFullYear();
 
-  const [updateBooking, { data, isSuccess }] = useUpdateBookingMutation({});
+  const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
@@ -88,11 +85,9 @@ const TrainerRequestsOutgoing = () => {
     isBookingsLoading ||
     isCourtsLoading ||
     isClubsLoading ||
-    isTrainersLoading ||
     isEventTypesLoading ||
     isPlayersLoading ||
-    isPlayerLevelTypesLoading ||
-    isTrainerExperienceTypesLoading
+    isPlayerLevelTypesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
