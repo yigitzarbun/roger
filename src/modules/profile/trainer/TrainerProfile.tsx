@@ -4,6 +4,7 @@ import styles from "./styles.module.scss";
 import TrainerProfileHero from "../../../components/profile/trainer/hero/TrainerProfileHero";
 import TrainerAccountDetails from "../../../components/profile/trainer/account-details/TrainerAccountDetails";
 import TrainerBankAccountDetails from "../../../components/profile/trainer/bank-details/TrainerBankAccountDetails";
+import TrainerStats from "../../../components/profile/trainer/stats/TrainerStats";
 
 const TrainerProfile = () => {
   return (
@@ -11,6 +12,7 @@ const TrainerProfile = () => {
       <TrainerProfileHero />
       <TrainerAccountDetails />
       <TrainerBankAccountDetails />
+      <TrainerStats />
     </div>
   );
 };

@@ -204,7 +204,7 @@ const PlayerEventsResults = () => {
                 <td>
                   {event.event_type_id === 3 &&
                   event.inviter_id === user?.user?.user_id
-                    ? trainerExperienceTypes(
+                    ? trainerExperienceTypes?.find(
                         (type) =>
                           type.trainer_experience_type_id ===
                           trainers?.find(
@@ -213,7 +213,7 @@ const PlayerEventsResults = () => {
                       )?.trainer_experience_type_name
                     : event.event_type_id === 3 &&
                       event.invitee_id === user?.user?.user_id
-                    ? trainerExperienceTypes(
+                    ? trainerExperienceTypes?.find(
                         (type) =>
                           type.trainer_experience_type_id ===
                           trainers?.find(
