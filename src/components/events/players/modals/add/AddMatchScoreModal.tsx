@@ -64,11 +64,11 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
     (booking) => booking.booking_id === selectedMatch?.booking_id
   );
 
-  const inviter = players.find(
+  const inviter = players?.find(
     (player) => player.user_id === selectedMatchBookingDetails?.inviter_id
   );
 
-  const invitee = players.find(
+  const invitee = players?.find(
     (player) => player.user_id === selectedMatchBookingDetails?.invitee_id
   );
 

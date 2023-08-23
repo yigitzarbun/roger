@@ -190,8 +190,6 @@ const PlayerRequestsIncoming = () => {
       addMatchScore(matchScoreData);
     }
 
-    // eğer event tiği ders ise
-    // eğer öğrenci değilse
     const selectedTrainerId = trainers?.find(
       (trainer) => trainer.user_id === acceptBookingData?.inviter_id
     )

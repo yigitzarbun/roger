@@ -3,6 +3,8 @@ import knex from "knex";
 import cron from "node-cron";
 import knexConfig from "./knexfile";
 
+const { DateTime } = require("luxon");
+
 import usersAuthRouter from "./src/api/users-auth/auth-router";
 import usersRouter from "./src/api/users/users-router";
 import playersRouter from "./src/api/players/players-router";
@@ -84,17 +86,24 @@ async function updatePendingPayments() {
 
 async function updateCompletedBookings() {
   try {
-    const currentDateInUTC = new Date();
-    const currentUTCDate = new Date(
-      currentDateInUTC.toISOString().split("T")[0]
-    );
-    const oneHourAgoInUTC = new Date(currentDateInUTC.getTime() - 60 * 60000);
+    const currentDate = new Date();
+    const utcTimestamp = currentDate.getTime();
 
-    await db("bookings")
+    const completedBookings = await db("bookings")
       .where("booking_status_type_id", "=", 2)
-      .where("event_date", "=", currentUTCDate.toISOString().split("T")[0])
-      .where("event_time", "<=", oneHourAgoInUTC.toISOString().split("T")[1])
-      .update({ booking_status_type_id: 5 });
+      .select();
+
+    for (const booking of completedBookings) {
+      const bookingTimestamp = new Date(
+        booking.event_date + " " + booking.event_time
+      ).getTime();
+
+      if (bookingTimestamp <= utcTimestamp) {
+        await db("bookings")
+          .where("booking_id", "=", booking.booking_id)
+          .update({ booking_status_type_id: 5 });
+      }
+    }
   } catch (error) {
     console.error("Error updating completed bookings:", error);
   }

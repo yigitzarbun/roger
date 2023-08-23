@@ -21,6 +21,7 @@ const PlayerPastEventsResults = () => {
   const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
     {}
   );
+
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});

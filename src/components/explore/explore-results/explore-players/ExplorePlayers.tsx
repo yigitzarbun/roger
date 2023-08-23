@@ -64,14 +64,14 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   );
   const isPlayerInMyFavourites = (user_id: number) => {
     if (
-      myFavouritePlayers.find(
+      myFavouritePlayers?.find(
         (favourite) =>
           favourite.favouritee_id === user_id && favourite.is_active === false
       )
     ) {
       return "deactivated";
     } else if (
-      myFavouritePlayers.find(
+      myFavouritePlayers?.find(
         (favourite) =>
           favourite.favouritee_id === user_id && favourite.is_active === true
       )

@@ -50,6 +50,8 @@ const TrainerRegisterForm = () => {
   const [addTrainer, { isSuccess: isAddTrainerSuccess }] =
     useAddTrainerMutation();
 
+  const { refetch: refetchTrainers } = useGetTrainersQuery({});
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -58,8 +60,6 @@ const TrainerRegisterForm = () => {
 
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
-
-  const { refetch: refetchTrainers } = useGetTrainersQuery({});
 
   const {
     data: trainerExperienceTypes,

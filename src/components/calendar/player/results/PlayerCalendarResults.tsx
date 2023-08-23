@@ -72,7 +72,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
       booking.booking_status_type_id === 2 &&
       new Date(booking.event_date) >= today
   );
-
   const filteredBookings = myBookings?.filter((booking) => {
     const eventDate = new Date(booking.event_date);
     if (date === "" && eventTypeId === null && clubId === null) {
