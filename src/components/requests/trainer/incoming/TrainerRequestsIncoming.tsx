@@ -4,6 +4,14 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
+import AcceptInviteModal, {
+  AcceptBookingData,
+} from "../../../invite/modals/accept-modal/AcceptInviteModal";
+
+import DeclineInviteModal, {
+  DeclineBookingData,
+} from "../../../invite/modals/decline-modal/DeclineInviteModal";
+
 import {
   useGetBookingsQuery,
   useUpdateBookingMutation,
@@ -19,16 +27,13 @@ import {
   useUpdatePaymentMutation,
 } from "../../../../api/endpoints/PaymentsApi";
 
-import AcceptInviteModal, {
-  AcceptBookingData,
-} from "../../../invite/modals/accept-modal/AcceptInviteModal";
-
-import DeclineInviteModal, {
-  DeclineBookingData,
-} from "../../../invite/modals/decline-modal/DeclineInviteModal";
+import {
+  useGetStudentsQuery,
+  useAddStudentMutation,
+} from "../../../../api/endpoints/StudentsApi";
 
 const TrainerRequestsIncoming = () => {
-  const { user } = useAppSelector((store) => store.user.user);
+  const user = useAppSelector((store) => store?.user?.user?.user);
 
   const {
     data: bookings,
@@ -42,12 +47,23 @@ const TrainerRequestsIncoming = () => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
+  const {
+    data: students,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useGetStudentsQuery({});
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
   const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
     useGetPlayerLevelsQuery({});
+
+  const {
+    data: payments,
+    isLoading: isPaymentsLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentsQuery({});
 
   const date = new Date();
   const today = date.toLocaleDateString();
@@ -62,12 +78,6 @@ const TrainerRequestsIncoming = () => {
           booking.event_time >= now))
   );
 
-  const {
-    data: payments,
-    isLoading: isPaymentsLoading,
-    refetch: refetchPayments,
-  } = useGetPaymentsQuery({});
-
   const currentYear = new Date().getFullYear();
 
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
@@ -75,6 +85,9 @@ const TrainerRequestsIncoming = () => {
 
   const [updatePayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useUpdatePaymentMutation({});
+
+  const [addStudent, { isSuccess: isAddStudentSuccess }] =
+    useAddStudentMutation({});
 
   // accept booking
   const [acceptBookingData, setAcceptBookingData] =
@@ -143,18 +156,46 @@ const TrainerRequestsIncoming = () => {
         };
         updateBooking(declineddBookingData);
       }
-      setAcceptBookingData(null);
-      refetchPayments();
     }
   }, [isPaymentSuccess]);
 
   useEffect(() => {
     if (isUpdateBookingSuccess) {
+      // check if player is not student. add if not
+      const selectedPlayerId = players?.find(
+        (player) => player.user_id === acceptBookingData.inviter_id
+      )
+        ? acceptBookingData.inviter_id
+        : acceptBookingData.invitee_id;
+
+      const isStudent = students?.find(
+        (student) =>
+          student.player_id === selectedPlayerId &&
+          student.trainer_id === user?.user_id &&
+          (student.student_status === "pending" ||
+            student.student_status === "accepted")
+      );
+      if (!isStudent) {
+        const newStudent = {
+          student_status: "pending",
+          trainer_id: user?.user_id,
+          player_id: selectedPlayerId,
+        };
+        addStudent(newStudent);
+      }
+    }
+  }, [isUpdateBookingSuccess]);
+
+  useEffect(() => {
+    if (isAddStudentSuccess) {
       refetchBookings();
+      refetchStudents();
+      refetchPayments();
+      setAcceptBookingData(null);
       handleCloseAcceptModal();
       handleCloseDeclineModal();
     }
-  }, [isUpdateBookingSuccess]);
+  }, [isAddStudentSuccess]);
 
   if (
     isBookingsLoading ||
@@ -164,7 +205,8 @@ const TrainerRequestsIncoming = () => {
     isEventTypesLoading ||
     isPlayersLoading ||
     isPlayerLevelTypesLoading ||
-    isPaymentsLoading
+    isPaymentsLoading ||
+    isStudentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

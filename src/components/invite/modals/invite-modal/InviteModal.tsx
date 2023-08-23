@@ -48,8 +48,8 @@ const InviteModal = ({
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const isUserPlayer = user.user_type_id === 1;
-  const isUserTrainer = user.user_type_id === 2;
+  const isUserPlayer = user?.user_type_id === 1;
+  const isUserTrainer = user?.user_type_id === 2;
 
   const isUserInviter = formData?.inviter_id === user.user_id;
   const isUserInvitee = formData?.invitee_id === user.user_id;
@@ -60,10 +60,12 @@ const InviteModal = ({
       users?.find((user) => user.user_id === formData?.inviter_id);
 
   const opposition =
-    oppositionUser.user_type_id === 1
-      ? players?.find((player) => player.user_id === oppositionUser.user_id)
-      : oppositionUser.user_type_id === 2 &&
-        trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
+    oppositionUser?.user_type_id === 1
+      ? players?.find((player) => player.user_id === oppositionUser?.user_id)
+      : oppositionUser?.user_type_id === 2 &&
+        trainers?.find(
+          (trainer) => trainer.user_id === oppositionUser?.user_id
+        );
 
   const isEventTraining = formData?.event_type_id === 1;
   const isEventMatch = formData?.event_type_id === 2;

@@ -11,6 +11,8 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("courts").del();
   await knex("club_external_members").del();
   await knex("permissions").del();
+  await knex("students").del();
+  await knex("student_groups").del();
   await knex("club_staff").del();
   await knex("trainers").del();
   await knex("clubs").del();

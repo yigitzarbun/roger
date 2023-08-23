@@ -3,15 +3,17 @@ import React, { useState } from "react";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
+
+import UpdateTrainerProfileModal from "../../../../components/profile/update-profile-modals/trainer/UpdateTrainerProfileModal";
+
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetTrainerEmploymentTypesQuery } from "../../../../api/endpoints/TrainerEmploymentTypesApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-
-import UpdateTrainerProfileModal from "../../../../components/profile/update-profile-modals/trainer/UpdateTrainerProfileModal";
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 const TrainerAccountDetails = () => {
-  const user = useAppSelector((store) => store.user.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const profileData = {
     trainer_id: user?.trainerDetails.trainer_id,
@@ -45,6 +47,9 @@ const TrainerAccountDetails = () => {
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -54,11 +59,16 @@ const TrainerAccountDetails = () => {
     setIsModalOpen(false);
   };
 
+  const isTrainerClubsStaff = clubStaff?.find(
+    (staff) => staff.user_id === user?.user?.user_id
+  )?.employment_status;
+
   if (
     isLocationsLoading ||
     isTrainerEmploymentTypesLoading ||
     isTrainerExperienceTypesLoading ||
-    isClubsLoading
+    isClubsLoading ||
+    isClubStaffLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -92,12 +102,21 @@ const TrainerAccountDetails = () => {
         )?.trainer_employment_type_name
       }`}</p>
       {(user?.trainerDetails.trainer_employment_type_id === 2 ||
-        user?.trainerDetails.trainer_employment_type_id === 3) && (
-        <p>{`Kulüp: ${
-          clubs?.find((club) => club.club_id === user?.trainerDetails.club_id)
-            ?.club_name
-        }`}</p>
-      )}
+        user?.trainerDetails.trainer_employment_type_id === 3) &&
+        isTrainerClubsStaff === "accepted" && (
+          <p>{`Kulüp: ${
+            clubs?.find((club) => club.club_id === user?.trainerDetails.club_id)
+              ?.club_name
+          }`}</p>
+        )}
+      {(user?.trainerDetails.trainer_employment_type_id === 2 ||
+        user?.trainerDetails.trainer_employment_type_id === 3) &&
+        isTrainerClubsStaff === "pending" && (
+          <p>{`Kulüp: ${
+            clubs?.find((club) => club.club_id === user?.trainerDetails.club_id)
+              ?.club_name
+          } (onay bekleniyor)`}</p>
+        )}
       <UpdateTrainerProfileModal
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}

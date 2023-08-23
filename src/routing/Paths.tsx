@@ -23,5 +23,6 @@ export default {
   CLUB_STAFF: "/kulup-personel",
   PAYMENTS: "/odemeler",
   PERFORMANCE: "/performans",
+  PLAYERS_LEADERBOARD: "/oyuncu-liderlik-tablosu",
   NOT_FOUND: "*",
 } as Paths;

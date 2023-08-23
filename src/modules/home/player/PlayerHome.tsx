@@ -7,7 +7,7 @@ import PlayerMatch from "../../../components/home/player/match/PlayerMatch";
 import PlayerTrain from "../../../components/home/player/train/PlayerTrain";
 import PlayerLesson from "../../../components/home/player/lesson/PlayerLesson";
 import PlayerEquip from "../../../components/home/player/equip/PlayerEquip";
-import PlayersLeaderboard from "../../../components/home/player/leaderboard/PlayersLeaderboard";
+import PlayerHomeLeaderboard from "../../../components/home/player/leaderboard/PlayerHomeLeaderboard";
 
 const PlayerHome = () => {
   return (
@@ -21,7 +21,7 @@ const PlayerHome = () => {
         <PlayerLesson />
         <PlayerEquip />
       </div>
-      <PlayersLeaderboard />
+      <PlayerHomeLeaderboard />
     </div>
   );
 };

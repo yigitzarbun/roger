@@ -284,6 +284,52 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
+    .createTable("student_groups", (table) => {
+      table.increments("student_group_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.string("student_group_name").notNullable();
+      table.boolean("is_active");
+      table
+        .integer("club_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("trainer_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+    .createTable("students", (table) => {
+      table.increments("student_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.string("student_status").notNullable();
+      table
+        .integer("trainer_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("player_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("student_group_id")
+        .unsigned()
+        .references("student_group_id")
+        .inTable("student_groups")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
     .createTable("permissions", (table) => {
       table.increments("permission_id");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
@@ -318,8 +364,9 @@ export async function up(knex: Knex): Promise<void> {
       table.string("email");
       table.string("fname").notNullable();
       table.string("lname").notNullable();
-      table.string("birth_year").notNullable();
-      table.string("gender").notNullable();
+      table.string("birth_year");
+      table.string("gender");
+      table.boolean("is_active");
       table
         .integer("club_id")
         .unsigned()
@@ -619,6 +666,8 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")
     .dropTableIfExists("permissions")
+    .dropTableIfExists("students")
+    .dropTableIfExists("student_groups")
     .dropTableIfExists("club_staff")
     .dropTableIfExists("trainers")
     .dropTableIfExists("clubs")

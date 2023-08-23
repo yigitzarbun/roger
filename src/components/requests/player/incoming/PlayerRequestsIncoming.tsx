@@ -4,6 +4,14 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
+import AcceptInviteModal, {
+  AcceptBookingData,
+} from "../../../invite/modals/accept-modal/AcceptInviteModal";
+
+import DeclineInviteModal, {
+  DeclineBookingData,
+} from "../../../invite/modals/decline-modal/DeclineInviteModal";
+
 import {
   useGetBookingsQuery,
   useUpdateBookingMutation,
@@ -23,14 +31,10 @@ import {
   useAddMatchScoreMutation,
   useGetMatchScoresQuery,
 } from "../../../../api/endpoints/MatchScoresApi";
-
-import AcceptInviteModal, {
-  AcceptBookingData,
-} from "../../../invite/modals/accept-modal/AcceptInviteModal";
-
-import DeclineInviteModal, {
-  DeclineBookingData,
-} from "../../../invite/modals/decline-modal/DeclineInviteModal";
+import {
+  useAddStudentMutation,
+  useGetStudentsQuery,
+} from "../../../../api/endpoints/StudentsApi";
 
 const PlayerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -70,10 +74,17 @@ const PlayerRequestsIncoming = () => {
     refetch: refetchPayments,
   } = useGetPaymentsQuery({});
 
-  const [
-    updateBooking,
-    { data: updatedBooking, isSuccess: isUpdateBookingSuccess },
-  ] = useUpdateBookingMutation({});
+  const {
+    data: students,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useGetStudentsQuery({});
+
+  const [addStudent, { isSuccess: isAddStudentSuccess }] =
+    useAddStudentMutation({});
+
+  const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
+    useUpdateBookingMutation({});
 
   const [updatePayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useUpdatePaymentMutation({});
@@ -178,13 +189,41 @@ const PlayerRequestsIncoming = () => {
       };
       addMatchScore(matchScoreData);
     }
-    refetchBookings();
-    setAcceptBookingData(null);
+
+    // eğer event tiği ders ise
+    // eğer öğrenci değilse
+    const selectedTrainerId = trainers?.find(
+      (trainer) => trainer.user_id === acceptBookingData?.inviter_id
+    )
+      ? acceptBookingData?.inviter_id
+      : acceptBookingData?.invitee_id;
+
+    const isEventLesson = acceptBookingData?.event_type_id === 3;
+
+    const isStudent = students?.find(
+      (student) =>
+        student.player_id === user?.user_id &&
+        student.trainer_id === selectedTrainerId &&
+        (student.student_status === "pending" ||
+          student.student_status === "accepted")
+    );
+
+    if (isEventLesson && !isStudent) {
+      const newStudent = {
+        student_status: "pending",
+        trainer_id: selectedTrainerId,
+        player_id: user?.user_id,
+      };
+      addStudent(newStudent);
+    }
   }, [isUpdateBookingSuccess]);
 
   useEffect(() => {
     if (isMatchScoreSuccess) {
       refetchMatchScores();
+      refetchBookings();
+      refetchStudents();
+      setAcceptBookingData(null);
       handleCloseAcceptModal();
       handleCloseDeclineModal();
     }
@@ -199,7 +238,8 @@ const PlayerRequestsIncoming = () => {
     isPlayersLoading ||
     isPlayerLevelTypesLoading ||
     isTrainerExperienceTypesLoading ||
-    isPaymentsLoading
+    isPaymentsLoading ||
+    isStudentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

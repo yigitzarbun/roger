@@ -20,10 +20,10 @@ export const clubSubscriptionsSlice = createApi({
       query: () => "/club-subscriptions",
     }),
     addClubSubscription: builder.mutation({
-      query: (club) => ({
+      query: (subscription) => ({
         url: "/club-subscriptions",
         method: "POST",
-        body: club,
+        body: subscription,
       }),
     }),
     updateClubSubscription: builder.mutation({

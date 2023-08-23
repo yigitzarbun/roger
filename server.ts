@@ -31,6 +31,8 @@ import paymentsRouter from "./src/api/payments/payments-router";
 import banksRouter from "./src/api/banks/banks-router";
 import matchScoresRouter from "./src/api/match-scores/match-scores-router";
 import matchScoresStatusTypesRouter from "./src/api/match-score-status-types/match-scores-status-types-router";
+import studentsRouter from "./src/api/students/students-router";
+import studentGroupsRouter from "./src/api/student-groups/student-groups-router";
 
 const cors = require("cors");
 
@@ -44,10 +46,8 @@ const db = knex(knexConfig.development);
 cron.schedule("* * * * *", async () => {
   await updatePendingBookings();
   await updatePendingPayments();
-});
-
-cron.schedule("* * * * * ", async () => {
   await updateCompletedBookings();
+  await updateSubscriptions();
 });
 
 async function updatePendingBookings() {
@@ -60,7 +60,7 @@ async function updatePendingBookings() {
     await db("bookings")
       .where("booking_status_type_id", "=", 1)
       .where("registered_at", "<", twentyMinutesAgoInUTC.toISOString())
-      .update({ booking_status_type_id: 4 }); // Use the object to specify column and value
+      .update({ booking_status_type_id: 4 });
   } catch (error) {
     console.error("Error updating pending bookings:", error);
   }
@@ -76,7 +76,7 @@ async function updatePendingPayments() {
     await db("payments")
       .where("payment_status", "=", "pending")
       .where("registered_at", "<", twentyMinutesAgoInUTC.toISOString())
-      .update({ payment_status: "declined" }); // Use the object to specify column and value
+      .update({ payment_status: "declined" });
   } catch (error) {
     console.error("Error updating pending payments:", error);
   }
@@ -85,14 +85,34 @@ async function updatePendingPayments() {
 async function updateCompletedBookings() {
   try {
     const currentDateInUTC = new Date();
-    const oneHourAgoInUTC = new Date(currentDateInUTC.getTime() - 60 * 60000); // 60 minutes in milliseconds
+    const currentUTCDate = new Date(
+      currentDateInUTC.toISOString().split("T")[0]
+    );
+    const oneHourAgoInUTC = new Date(currentDateInUTC.getTime() - 60 * 60000);
 
     await db("bookings")
       .where("booking_status_type_id", "=", 2)
-      .where("registered_at", "<", oneHourAgoInUTC.toISOString())
-      .update({ booking_status_type_id: 5 }); // Use the object to specify column and value
+      .where("event_date", "=", currentUTCDate.toISOString().split("T")[0])
+      .where("event_time", "<=", oneHourAgoInUTC.toISOString().split("T")[1])
+      .update({ booking_status_type_id: 5 });
   } catch (error) {
     console.error("Error updating completed bookings:", error);
+  }
+}
+
+async function updateSubscriptions() {
+  try {
+    const currentDateInUTC = new Date();
+    const currentUTCDate = new Date(
+      currentDateInUTC.toISOString().split("T")[0]
+    );
+
+    await db("club_subscriptions")
+      .where("is_active", true)
+      .where("end_date", "<", currentUTCDate)
+      .update({ is_active: false });
+  } catch (error) {
+    console.log("Error updating subscriptions:", error);
   }
 }
 
@@ -124,6 +144,8 @@ server.use("/api/payments", paymentsRouter);
 server.use("/api/banks", banksRouter);
 server.use("/api/match-scores", matchScoresRouter);
 server.use("/api-match-scores-status-types", matchScoresStatusTypesRouter);
+server.use("/api/students", studentsRouter);
+server.use("/api/student-groups", studentGroupsRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

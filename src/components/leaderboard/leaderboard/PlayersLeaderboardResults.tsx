@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import styles from "./styles.module.scss";
 
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
-import { tr } from "date-fns/locale";
+import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
+import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
+import { useGetMatchScoresQuery } from "../../../api/endpoints/MatchScoresApi";
 
-const PlayersLeaderboard = () => {
+const PlayersLeaderboardResults = () => {
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
@@ -127,7 +126,7 @@ const PlayersLeaderboard = () => {
         </thead>
         {rankedPlayersList?.length > 0 && (
           <tbody>
-            {rankedPlayersList.slice(0, 5).map((player) => (
+            {rankedPlayersList.map((player) => (
               <tr key={player.id} className={styles["player-row"]}>
                 <td>
                   <img
@@ -157,4 +156,4 @@ const PlayersLeaderboard = () => {
   );
 };
 
-export default PlayersLeaderboard;
+export default PlayersLeaderboardResults;
