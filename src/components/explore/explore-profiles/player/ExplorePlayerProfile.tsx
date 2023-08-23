@@ -29,7 +29,6 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
-  const isUserClub = user?.user?.user_type_id === 3;
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
@@ -52,6 +51,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isLoading: isFavouritesLoading,
     refetch,
   } = useGetFavouritesQuery({});
+
+  const userGender = players?.find(
+    (player) => player.user_id === user?.user?.user_id
+  )?.gender;
 
   const selectedPlayerSubscriptions = clubSubscriptions?.filter(
     (subscription) =>
@@ -148,7 +151,8 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isPlayersLoading ||
     isPlayerLevelsLoading ||
     isFavouritesLoading ||
-    isClubSubscriptionsLoading
+    isClubSubscriptionsLoading ||
+    isClubsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -220,7 +224,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
               <button> Antreman yap</button>
             </Link>
           )}
-          {isUserPlayer && (
+          {isUserPlayer && selectedPlayer?.gender === userGender && (
             <Link
               to={paths.MATCH_INVITE}
               state={{

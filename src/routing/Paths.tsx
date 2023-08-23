@@ -22,6 +22,6 @@ export default {
   CLUB_SUBSCRIPTIONS: "/kulup-uyelikler",
   CLUB_STAFF: "/kulup-personel",
   PAYMENTS: "/odemeler",
-  EVENTS: "/etkinlikler",
+  PERFORMANCE: "/performans",
   NOT_FOUND: "*",
 } as Paths;

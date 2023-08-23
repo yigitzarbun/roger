@@ -7,12 +7,10 @@ import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi"
 
 interface MatchSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClear: () => void;
   playerLevelId: number;
-  gender: string;
   locationId: number;
   favourite: boolean;
 }
@@ -20,15 +18,14 @@ interface MatchSearchProps {
 const MatchSearch = (props: MatchSearchProps) => {
   const {
     handleLevel,
-    handleGender,
     handleLocation,
     handleFavourite,
     handleClear,
     playerLevelId,
-    gender,
     locationId,
     favourite,
   } = props;
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -52,13 +49,6 @@ const MatchSearch = (props: MatchSearchProps) => {
               {player_level.player_level_name}
             </option>
           ))}
-        </select>
-      </div>
-      <div className={styles["input-container"]}>
-        <select onChange={handleGender} value={gender}>
-          <option value="">-- Cinsiyet --</option>
-          <option value="female">Kadın</option>
-          <option value="male">Erkek</option>
         </select>
       </div>
       <div className={styles["input-container"]}>

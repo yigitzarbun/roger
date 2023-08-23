@@ -85,7 +85,7 @@ const routes: Route[] = [
   },
   { path: paths.CLUB_STAFF, element: getRouteElement(ClubStaff) },
   { path: paths.PAYMENTS, element: getRouteElement(Payments) },
-  { path: paths.EVENTS, element: getRouteElement(Events) },
+  { path: paths.PERFORMANCE, element: getRouteElement(Events) },
 ];
 
 export default createBrowserRouter(routes);

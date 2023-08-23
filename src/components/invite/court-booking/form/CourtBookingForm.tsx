@@ -92,6 +92,10 @@ const CourtBookingForm = () => {
     setSelectedTrainer(Number(event.target.value));
   };
 
+  const userGender = players?.find(
+    (player) => player?.user_id === user?.user_id
+  )?.gender;
+
   const selectedClub = clubs?.find(
     (club) => club.club_id === courtBookingDetails?.club_id
   );
@@ -499,30 +503,52 @@ const CourtBookingForm = () => {
             )}
           </div>
         }
-        {isUserPlayer &&
-          (selectedEventType === 1 || selectedEventType === 2) && (
-            <div className={styles["input-container"]}>
-              <label>Oyuncu Seçimi</label>
-              <select
-                {...register("invitee_id", { required: true })}
-                onChange={handleSelectedPlayer}
-              >
-                <option value="">-- Seçim yapın --</option>
-                {players
-                  ?.filter((player) => player.user_id !== user?.user_id)
-                  .map((player) => (
-                    <option key={player.user_id} value={player.user_id}>
-                      {`${player.fname} ${player.lname} - ${player.gender}`}
-                    </option>
-                  ))}
-              </select>
-              {errors.invitee_id && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
-          )}
+        {isUserPlayer && selectedEventType === 1 && (
+          <div className={styles["input-container"]}>
+            <label>Oyuncu Seçimi</label>
+            <select
+              {...register("invitee_id", { required: true })}
+              onChange={handleSelectedPlayer}
+            >
+              <option value="">-- Seçim yapın --</option>
+              {players
+                ?.filter((player) => player.user_id !== user?.user_id)
+                .map((player) => (
+                  <option key={player.user_id} value={player.user_id}>
+                    {`${player.fname} ${player.lname} - ${player.gender}`}
+                  </option>
+                ))}
+            </select>
+            {errors.invitee_id && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+        )}
+        {isUserPlayer && selectedEventType === 2 && (
+          <div className={styles["input-container"]}>
+            <label>Oyuncu Seçimi</label>
+            <select
+              {...register("invitee_id", { required: true })}
+              onChange={handleSelectedPlayer}
+            >
+              <option value="">-- Seçim yapın --</option>
+              {players
+                ?.filter(
+                  (player) =>
+                    player.user_id !== user?.user_id &&
+                    player.gender === userGender
+                )
+                .map((player) => (
+                  <option key={player.user_id} value={player.user_id}>
+                    {`${player.fname} ${player.lname} - ${player.gender}`}
+                  </option>
+                ))}
+            </select>
+            {errors.invitee_id && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+        )}
         {selectedEventType === 3 && (
           <div className={styles["input-container"]}>
             <label>

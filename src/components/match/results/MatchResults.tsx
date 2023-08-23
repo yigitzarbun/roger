@@ -14,12 +14,11 @@ import { useGetFavouritesQuery } from "../../../api/endpoints/FavouritesApi";
 
 interface MatchResultsProps {
   playerLevelId: number;
-  gender: string;
   locationId: number;
   favourite: boolean;
 }
 const MatchResults = (props: MatchResultsProps) => {
-  const { playerLevelId, gender, locationId, favourite } = props;
+  const { playerLevelId, locationId, favourite } = props;
 
   const { user } = useAppSelector((store) => store.user);
   const {
@@ -44,7 +43,6 @@ const MatchResults = (props: MatchResultsProps) => {
   );
 
   const levelId = Number(playerLevelId) ?? null;
-  const selectedGender = gender ?? "";
   const locationIdValue = Number(locationId) ?? null;
 
   const today = new Date();
@@ -53,18 +51,18 @@ const MatchResults = (props: MatchResultsProps) => {
   const filteredPlayers =
     players &&
     players
-      .filter((player) => player.user_id !== user.user.user_id)
+      .filter(
+        (player) =>
+          player.user_id !== user?.user?.user_id &&
+          player.gender ===
+            players?.find((player) => player.user_id === user?.user?.user_id)
+              ?.gender
+      )
       .filter((player) => {
-        if (
-          levelId === 0 &&
-          gender === "" &&
-          locationIdValue === 0 &&
-          favourite !== true
-        ) {
+        if (levelId === 0 && locationIdValue === 0 && favourite !== true) {
           return player;
         } else if (
           (levelId === player.player_level_id || levelId === 0) &&
-          (selectedGender === player.gender || selectedGender === "") &&
           (locationIdValue === player.location_id || locationIdValue === 0) &&
           ((favourite === true &&
             myFavourites.find(

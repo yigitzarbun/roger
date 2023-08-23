@@ -101,12 +101,13 @@ const PlayerScores = () => {
               <th>Tür</th>
               <th>Konum</th>
               <th>Kort</th>
-              <th>Kort Yüzey</th>
-              <th>Kort Mekan</th>
+              <th>Yüzey</th>
+              <th>Mekan</th>
               <th>Oyuncu</th>
-              <th>Oyuncu Seviye</th>
+              <th>Seviye</th>
               <th>Skor</th>
-              <th>Skor Durum</th>
+              <th>Kazanan</th>
+              <th>Durum</th>
             </tr>
           </thead>
           <tbody>
@@ -203,7 +204,87 @@ const PlayerScores = () => {
                       )?.player_level_name
                     : "-"}
                 </td>
-                <td>6-2 / 6-1</td>
+                <td>
+                  {matchScores?.find(
+                    (match) =>
+                      match.booking_id === event.booking_id &&
+                      match.inviter_third_set_games_won === null
+                  )?.match_score_status_type_id === 3
+                    ? `${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.inviter_first_set_games_won
+                      }-${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.invitee_first_set_games_won
+                      } ${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.inviter_second_set_games_won
+                      }-${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.invitee_second_set_games_won
+                      } `
+                    : matchScores?.find(
+                        (match) =>
+                          match.booking_id === event.booking_id &&
+                          match.match_score_status_type_id === 3 &&
+                          match.inviter_third_set_games_won
+                      )
+                    ? `${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.inviter_first_set_games_won
+                      }-${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.invitee_first_set_games_won
+                      } ${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.inviter_second_set_games_won
+                      }-${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.invitee_second_set_games_won
+                      } ${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.inviter_third_set_games_won
+                      }-${
+                        matchScores?.find(
+                          (match) => match.booking_id === event.booking_id
+                        )?.invitee_third_set_games_won
+                      }`
+                    : "-"}
+                </td>
+                <td>
+                  {matchScores?.find(
+                    (match) =>
+                      match.booking_id === event.booking_id &&
+                      match.match_score_status_type_id === 3
+                  )?.winner_id
+                    ? `${
+                        players?.find(
+                          (player) =>
+                            player.user_id ===
+                            matchScores?.find(
+                              (match) => match.booking_id === event.booking_id
+                            )?.winner_id
+                        )?.fname
+                      } ${
+                        players?.find(
+                          (player) =>
+                            player.user_id ===
+                            matchScores?.find(
+                              (match) => match.booking_id === event.booking_id
+                            )?.winner_id
+                        )?.lname
+                      }`
+                    : "-"}
+                </td>
                 <td>
                   {matchScores?.find(
                     (match) => match.booking_id === event.booking_id

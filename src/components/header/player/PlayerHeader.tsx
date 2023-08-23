@@ -69,6 +69,16 @@ const PlayerHeader = () => {
         >
           Davetler
         </NavLink>
+        <NavLink
+          to={paths.PERFORMANCE}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-player"]}`
+              : `${styles["nav-link-player"]}`
+          }
+        >
+          Performans
+        </NavLink>
       </div>
     </nav>
   );

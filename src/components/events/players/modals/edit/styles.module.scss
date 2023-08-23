@@ -14,6 +14,45 @@
   border-radius: $roger-border-radius;
   color: $roger-text-color;
 
+  .decision-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .decision-buttons-container {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+
+      .decision-button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+      .decision-button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
+    }
+
+    table {
+      width: 100%;
+      text-align: left;
+      margin-top: 20px;
+
+      .payment-row:hover {
+        background-color: $roger-black-light;
+        cursor: pointer;
+      }
+      .payment-image {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
   .top-container {
     display: flex;
     justify-content: space-between;

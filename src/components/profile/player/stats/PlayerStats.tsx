@@ -39,7 +39,7 @@ const PlayerStats = () => {
         myEvents?.filter((event) => event.event_type_id === 3).length
       }`}</p>
       <p>{`Toplam etkinlik: ${myEvents?.length}`}</p>
-      <Link to={paths.EVENTS}>Tümünü Görüntüle</Link>
+      <Link to={paths.PERFORMANCE}>Tümünü Görüntüle</Link>
     </div>
   );
 };

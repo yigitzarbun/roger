@@ -98,16 +98,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
-    defaultValues: {
-      inviter_first_set_games_won: selectedMatch?.inviter_first_set_games_won,
-      inviter_second_set_games_won: selectedMatch?.inviter_second_set_games_won,
-      inviter_third_set_games_won: selectedMatch?.inviter_third_set_games_won,
-      invitee_first_set_games_won: selectedMatch?.invitee_first_set_games_won,
-      invitee_second_set_games_won: selectedMatch?.invitee_second_set_games_won,
-      invitee_third_set_games_won: selectedMatch?.invitee_third_set_games_won,
-    },
-  });
+  } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
@@ -192,12 +183,56 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
       className={styles["modal-container"]}
     >
       {scoreConfirmDecision === "" && (
-        <div>
-          <h2>Maç Skorunu Onayla veya Değişiklik Talep Et</h2>
-          <button onClick={() => setScoreConfirmDecision("edit")}>
-            Değişiklik Talep Et
-          </button>
-          <button onClick={handleConfirmScore}>Skoru Onayla</button>
+        <div className={styles["decision-container"]}>
+          <h2>Maç Skorunu Doğru Mu?</h2>
+          <p>{`${
+            players?.find(
+              (player) => player.user_id === selectedMatch?.reporter_id
+            )?.fname
+          } ${
+            players?.find(
+              (player) => player.user_id === selectedMatch?.reporter_id
+            )?.lname
+          } maç skorunu şu şekilde kayıt etti:`}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Davet Eden</th>
+                <th>Davet Edilen</th>
+                <th>1. Set</th>
+                <th>2. Set</th>
+                <th>3. Set</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{`${inviter?.fname} ${inviter?.lname}`}</td>
+                <td>{`${invitee?.fname} ${invitee?.lname}`}</td>
+                <td>{`${selectedMatch?.inviter_first_set_games_won}-${selectedMatch?.invitee_first_set_games_won}`}</td>
+                <td>{`${selectedMatch?.inviter_second_set_games_won}-${selectedMatch?.invitee_second_set_games_won}`}</td>
+                {selectedMatch?.inviter_third_set_games_won &&
+                selectedMatch?.invitee_third_set_games_won ? (
+                  <td>{`${selectedMatch?.inviter_third_set_games_won}-${selectedMatch?.invitee_third_set_games_won}`}</td>
+                ) : (
+                  "-"
+                )}
+              </tr>
+            </tbody>
+          </table>
+          <div className={styles["decision-buttons-container"]}>
+            <button
+              onClick={() => setScoreConfirmDecision("edit")}
+              className={styles["decision-button"]}
+            >
+              Değişiklik Talep Et
+            </button>
+            <button
+              onClick={handleConfirmScore}
+              className={styles["decision-button"]}
+            >
+              Skoru Onayla
+            </button>
+          </div>
         </div>
       )}
       {scoreConfirmDecision === "edit" && (

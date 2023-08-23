@@ -32,7 +32,7 @@ const TrainerStats = () => {
       <p>{`Özel ders sayısı: ${
         myEvents?.filter((event) => event.event_type_id === 3).length
       }`}</p>
-      <Link to={paths.EVENTS}>Tümünü Görüntüle</Link>
+      <Link to={paths.PERFORMANCE}>Tümünü Görüntüle</Link>
     </div>
   );
 };

@@ -8,13 +8,8 @@ import MatchSearch from "../../components/match/search/MatchSearch";
 
 const Match = () => {
   const [playerLevelId, setPlayerLevelId] = useState<number | null>(null);
-  const [gender, setGender] = useState<string>("");
   const [locationId, setLocationId] = useState<number | null>(null);
   const [favourite, setFavourite] = useState<boolean | null>(null);
-
-  const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
-    setGender(event.target.value);
-  };
 
   const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -33,7 +28,6 @@ const Match = () => {
 
   const handleClear = () => {
     setPlayerLevelId(null);
-    setGender("");
     setLocationId(null);
     setFavourite(null);
   };
@@ -42,18 +36,15 @@ const Match = () => {
       <MatchHero />
       <MatchSearch
         handleLevel={handleLevel}
-        handleGender={handleGender}
         handleLocation={handleLocation}
         handleFavourite={handleFavourite}
         handleClear={handleClear}
         playerLevelId={playerLevelId}
-        gender={gender}
         locationId={locationId}
         favourite={favourite}
       />
       <MatchResults
         playerLevelId={playerLevelId}
-        gender={gender}
         locationId={locationId}
         favourite={favourite}
       />

@@ -82,6 +82,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   };
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
+
   const handleAddFavourite = (favouritee_id: number) => {
     const favouriteData = {
       is_active: true,
@@ -114,6 +115,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       handleAddFavourite(userId);
     }
   };
+
+  const userGender = players?.find(
+    (player) => player.user_id === user?.user?.user_id
+  )?.gender;
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
@@ -183,6 +188,18 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     ).location_name
                   }
                 </td>
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
+                    Görüntüle
+                  </Link>
+                </td>
+                {
+                  <td onClick={() => handleToggleFavourite(player.user_id)}>
+                    {isPlayerInMyFavourites(player.user_id) === true
+                      ? "Favorilerden çıkar"
+                      : "Favorilere ekle"}
+                  </td>
+                }
                 {isUserPlayer && (
                   <td>
                     <Link
@@ -199,7 +216,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     </Link>
                   </td>
                 )}
-                {isUserPlayer && (
+                {isUserPlayer && player.gender === userGender && (
                   <td>
                     <Link
                       to={paths.MATCH_INVITE}
@@ -231,18 +248,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     </Link>
                   </td>
                 )}
-                {
-                  <td onClick={() => handleToggleFavourite(player.user_id)}>
-                    {isPlayerInMyFavourites(player.user_id) === true
-                      ? "Favorilerden çıkar"
-                      : "Favorilere ekle"}
-                  </td>
-                }
-                <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
-                    Görüntüle
-                  </Link>
-                </td>
               </tr>
             ))}
           </tbody>
