@@ -87,18 +87,34 @@ async function updatePendingPayments() {
 
 async function updateCompletedBookings() {
   try {
-    const currentDate = DateTime.utc(); // Get the current UTC time using Luxon
+    // Adjust for the timezone difference (3 hours behind)
+    const timezoneOffsetHours = 3;
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + timezoneOffsetHours);
+    const currentTime = new Date();
+    currentTime.setHours(currentTime.getHours() + timezoneOffsetHours);
+
+    // Get the current UTC time using Luxon
     const completedBookings = await db("bookings")
       .where("booking_status_type_id", "=", 2)
       .select();
 
     for (const booking of completedBookings) {
-      const bookingTimestamp = DateTime.fromSQL(
-        `${booking.event_date} ${booking.event_time}`,
-        { zone: "Europe/Istanbul" } // Replace with the correct timezone
-      ).toMillis();
+      const bookingDate = new Date(booking.event_date);
+      bookingDate.setHours(bookingDate.getHours() + timezoneOffsetHours);
 
-      if (bookingTimestamp <= currentDate.toMillis()) {
+      // Parse booking.event_time
+      const eventTimeParts = booking.event_time.split(":");
+      const bookingTime = new Date();
+      bookingTime.setHours(Number(eventTimeParts[0]) + timezoneOffsetHours);
+      bookingTime.setMinutes(Number(eventTimeParts[1]));
+      bookingTime.setSeconds(Number(eventTimeParts[2]));
+
+      // Compare the adjusted dates and times
+      if (
+        booking.event_date <= currentDate &&
+        booking.event_time <= currentTime.toLocaleTimeString()
+      ) {
         await db("bookings")
           .where("booking_id", "=", booking.booking_id)
           .update({ booking_status_type_id: 5 });
@@ -109,6 +125,7 @@ async function updateCompletedBookings() {
   }
 }
 
+//To do: adjust time & date
 async function updateSubscriptions() {
   try {
     const currentDateInUTC = new Date();
