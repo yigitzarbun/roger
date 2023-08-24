@@ -6,6 +6,8 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import { useAppSelector } from "../../../../store/hooks";
+
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
@@ -17,8 +19,11 @@ import {
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
-
-import { useAppSelector } from "../../../../store/hooks";
+import {
+  useAddStudentMutation,
+  useGetStudentsQuery,
+  useUpdateStudentMutation,
+} from "../../../../api/endpoints/StudentsApi";
 
 interface ExploreTrainerProfileProps {
   user_id: string;
@@ -55,6 +60,52 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const selectedTrainer = trainers?.find(
     (trainer) => trainer.user_id === Number(user_id)
   );
+
+  const {
+    data: students,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useGetStudentsQuery({});
+
+  const [addStudent, { isSuccess: isAddStudentSuccess }] =
+    useAddStudentMutation({});
+
+  const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
+    useUpdateStudentMutation({});
+
+  const handleAddStudent = (selectedTrainerId: number) => {
+    const selectedStudent = students?.find(
+      (student) =>
+        student.trainer_id === selectedTrainerId &&
+        student.player_id === user?.user?.user_id &&
+        (student.student_status === "pending" ||
+          student.student_status === "accepted")
+    );
+    if (!selectedStudent) {
+      const newStudentData = {
+        student_status: "pending",
+        trainer_id: selectedTrainerId,
+        player_id: user?.user?.user_id,
+      };
+      addStudent(newStudentData);
+    }
+  };
+
+  const handleDeclineStudent = (selectedTrainerId: number) => {
+    const selectedStudent = students?.find(
+      (student) =>
+        student.trainer_id === selectedTrainerId &&
+        student.player_id === user?.user?.user_id &&
+        student.student_status === "accepted"
+    );
+    if (selectedStudent) {
+      const updatedStudentData = {
+        ...selectedStudent,
+        student_status: "declined",
+      };
+      updateStudent(updatedStudentData);
+    }
+  };
 
   const {
     data: favourites,
@@ -134,6 +185,12 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
+  useEffect(() => {
+    if (isAddStudentSuccess || isUpdateStudentSuccess) {
+      refetchStudents();
+    }
+  }, [isAddStudentSuccess, isUpdateStudentSuccess]);
+
   if (
     isClubsLoading ||
     isLocationsLoading ||
@@ -142,7 +199,8 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     isTrainerExperienceTypesLoading ||
     isTrainerEmploymentTypesLoading ||
     isFavouritesLoading ||
-    isClubStaffLoading
+    isClubStaffLoading ||
+    isStudentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -231,6 +289,29 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
             >
               <button>Ders al</button>
             </Link>
+          )}
+          {students?.find(
+            (student) =>
+              student.player_id === user?.user?.user_id &&
+              student.trainer_id === selectedTrainer.user_id &&
+              student.student_status === "pending"
+          ) ? (
+            "Öğrencilik için eğitmen onayı bekleniyor"
+          ) : students?.find(
+              (student) =>
+                student.player_id === user?.user?.user_id &&
+                student.trainer_id === selectedTrainer.user_id &&
+                student.student_status === "accepted"
+            ) ? (
+            <button
+              onClick={() => handleDeclineStudent(selectedTrainer.user_id)}
+            >
+              Öğrenciliği sil
+            </button>
+          ) : (
+            <button onClick={() => handleAddStudent(selectedTrainer.user_id)}>
+              Öğrenci Ol
+            </button>
           )}
         </div>
       </div>

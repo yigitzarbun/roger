@@ -185,12 +185,17 @@ const TrainerRequestsIncoming = () => {
       }
     }
     refetchBookings();
-    refetchStudents();
     refetchPayments();
     setAcceptBookingData(null);
     handleCloseAcceptModal();
     handleCloseDeclineModal();
   }, [isUpdateBookingSuccess]);
+
+  useEffect(() => {
+    if (isAddStudentSuccess) {
+      refetchStudents();
+    }
+  }, [isAddStudentSuccess]);
 
   if (
     isBookingsLoading ||

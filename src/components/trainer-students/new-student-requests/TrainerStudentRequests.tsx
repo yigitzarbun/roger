@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import styles from "./styles.module.scss";
 
@@ -6,8 +6,10 @@ import { useAppSelector } from "../../../store/hooks";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetStudentsQuery } from "../../../api/endpoints/StudentsApi";
-import { tr } from "date-fns/locale";
+import {
+  useGetStudentsQuery,
+  useUpdateStudentMutation,
+} from "../../../api/endpoints/StudentsApi";
 
 const TrainerStudentRequests = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -17,20 +19,65 @@ const TrainerStudentRequests = () => {
     useGetPlayerLevelsQuery({});
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
-  const { data: students, isLoading: isStudentsLoading } = useGetStudentsQuery(
-    {}
-  );
+  const {
+    data: students,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useGetStudentsQuery({});
+  const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
+    useUpdateStudentMutation({});
 
   const date = new Date();
   const currentYear = date.getFullYear();
 
-  console.log(date.toLocaleTimeString());
   const myStudents = students?.filter(
     (student) =>
       student.trainer_id === user?.user?.user_id &&
       student.student_status === "pending"
   );
 
+  const handleAddStudent = (student_id: number) => {
+    const selectedStudent = students?.find(
+      (student) =>
+        student.student_id === student_id &&
+        student.trainer_id === user?.user?.user_id &&
+        student.student_status === "pending"
+    );
+    const updatedStudentData = {
+      ...selectedStudent,
+      student_status: "accepted",
+    };
+    updateStudent(updatedStudentData);
+  };
+
+  const handleDeclineStudent = (student_id: number) => {
+    const selectedStudent = students?.find(
+      (student) =>
+        student.student_id === student_id &&
+        student.trainer_id === user?.user?.user_id &&
+        student.student_status === "pending"
+    );
+    const updatedStudentData = {
+      ...selectedStudent,
+      student_status: "declined",
+    };
+    updateStudent(updatedStudentData);
+  };
+
+  useEffect(() => {
+    if (isUpdateStudentSuccess) {
+      refetchStudents();
+    }
+  }, [isUpdateStudentSuccess]);
+
+  if (
+    isPlayersLoading ||
+    isPlayerLevelsLoading ||
+    isLocationsLoading ||
+    isStudentsLoading
+  ) {
+    return <div>Yükleniyor..</div>;
+  }
   return (
     <div className={styles["result-container"]}>
       <h2 className={styles["result-title"]}>Öğrenciler</h2>
@@ -102,8 +149,18 @@ const TrainerStudentRequests = () => {
                     )?.player_level_name
                   }
                 </td>
-                <button>Kabul Et</button>
-                <button>Reddet</button>
+                <td>
+                  <button onClick={() => handleAddStudent(student.student_id)}>
+                    Kabul Et
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleDeclineStudent(student.student_id)}
+                  >
+                    Reddet
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
