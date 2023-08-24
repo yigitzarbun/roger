@@ -156,8 +156,16 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
       refetchMatchScores();
+      reset({
+        inviter_first_set_games_won: null,
+        inviter_second_set_games_won: null,
+        inviter_third_set_games_won: null,
+        invitee_first_set_games_won: null,
+        invitee_second_set_games_won: null,
+        invitee_third_set_games_won: null,
+        winner_id: null,
+      });
       closeAddScoreModal();
-      reset();
     }
   }, [isUpdateMatchScoreSuccess]);
   if (isBookingsLoading || isMatchScoresLoading || isPlayersLoading) {

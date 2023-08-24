@@ -6,6 +6,8 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import { useAppSelector } from "../../../../store/hooks";
+
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
@@ -13,6 +15,8 @@ import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 
 const PlayerHomeLeaderboard = () => {
+  const user = useAppSelector((store) => store?.user?.user);
+
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
@@ -27,74 +31,93 @@ const PlayerHomeLeaderboard = () => {
   const date = new Date();
   const currentYear = date.getFullYear();
 
+  const userGender = players?.find(
+    (player) => player?.user_id === user?.user?.user_id
+  )?.gender;
+
   const calculateRank = (player) => {
-    const performanceMetric =
-      player.wonMatches - player.lostMatches + player.drawMatches * 0.5;
-    return performanceMetric;
+    if (player.totalMatches === 0) {
+      return -1;
+    }
+    return player.wonMatches - player.lostMatches + player.drawMatches * 0.5;
   };
 
   let rankedPlayersList = [];
 
-  players?.forEach((player) => {
-    const playerStats = {
-      id: player.user_id,
-      rank: null,
-      picture: player.picutre,
-      name: `${player.fname} ${player.lname}`,
-      level: playerLevels?.find(
-        (level) => level.player_level_id === player.player_level_id
-      )?.player_level_name,
-      location: locations?.find(
-        (location) => location.location_id === player.location_id
-      )?.location_name,
-      gender: player.gender,
-      age: Number(currentYear) - player.birth_year,
-      totalMatches: bookings?.filter(
-        (booking) =>
-          (booking.inviter_id === player.user_id ||
-            booking.invitee_id === player.user_id) &&
-          booking.event_type_id === 2 &&
-          matchScores?.find((match) => match.booking_id === booking.booking_id)
-            ?.match_score_status_type_id === 3
-      ).length,
-      wonMatches: bookings?.filter(
-        (booking) =>
-          (booking.inviter_id === player.user_id ||
-            booking.invitee_id === player.user_id) &&
-          booking.event_type_id === 2 &&
-          matchScores?.find(
-            (match) =>
-              match.booking_id === booking.booking_id &&
-              match.winner_id === player.user_id
-          )?.match_score_status_type_id === 3
-      ).length,
-      lostMatches: bookings?.filter(
-        (booking) =>
-          (booking.inviter_id === player.user_id ||
-            booking.invitee_id === player.user_id) &&
-          booking.event_type_id === 2 &&
-          matchScores?.find(
-            (match) =>
-              match.booking_id === booking.booking_id &&
-              match.winner_id !== player.user_id
-          )?.match_score_status_type_id === 3
-      ).length,
-      drawMatches: bookings?.filter(
-        (booking) =>
-          (booking.inviter_id === player.user_id ||
-            booking.invitee_id === player.user_id) &&
-          booking.event_type_id === 2 &&
-          matchScores?.find(
-            (match) =>
-              match.booking_id === booking.booking_id &&
-              match.winner_id === null
-          )?.match_score_status_type_id === 3
-      ).length,
-    };
-    rankedPlayersList.push(playerStats);
+  players
+    ?.filter((player) => player.gender === (userGender && userGender))
+    ?.forEach((player) => {
+      const playerStats = {
+        id: player.user_id,
+        rank: null,
+        picture: player.picutre,
+        name: `${player.fname} ${player.lname}`,
+        level: playerLevels?.find(
+          (level) => level.player_level_id === player.player_level_id
+        )?.player_level_name,
+        location: locations?.find(
+          (location) => location.location_id === player.location_id
+        )?.location_name,
+        gender: player.gender,
+        age: Number(currentYear) - player.birth_year,
+        totalMatches: bookings?.filter(
+          (booking) =>
+            (booking.inviter_id === player.user_id ||
+              booking.invitee_id === player.user_id) &&
+            booking.event_type_id === 2 &&
+            matchScores?.find(
+              (match) => match.booking_id === booking.booking_id
+            )?.match_score_status_type_id === 3
+        ).length,
+        wonMatches: bookings?.filter(
+          (booking) =>
+            (booking.inviter_id === player.user_id ||
+              booking.invitee_id === player.user_id) &&
+            booking.event_type_id === 2 &&
+            matchScores?.find(
+              (match) =>
+                match.booking_id === booking.booking_id &&
+                match.winner_id === player.user_id
+            )?.match_score_status_type_id === 3
+        ).length,
+        lostMatches: bookings?.filter(
+          (booking) =>
+            (booking.inviter_id === player.user_id ||
+              booking.invitee_id === player.user_id) &&
+            booking.event_type_id === 2 &&
+            matchScores?.find(
+              (match) =>
+                match.booking_id === booking.booking_id &&
+                match.winner_id !== player.user_id
+            )?.match_score_status_type_id === 3
+        ).length,
+        drawMatches: bookings?.filter(
+          (booking) =>
+            (booking.inviter_id === player.user_id ||
+              booking.invitee_id === player.user_id) &&
+            booking.event_type_id === 2 &&
+            matchScores?.find(
+              (match) =>
+                match.booking_id === booking.booking_id &&
+                match.winner_id === null
+            )?.match_score_status_type_id === 3
+        ).length,
+      };
+      rankedPlayersList.push(playerStats);
+    });
+
+  rankedPlayersList.sort((a, b) => {
+    const performanceMetricA = calculateRank(a);
+    const performanceMetricB = calculateRank(b);
+
+    if (performanceMetricA !== performanceMetricB) {
+      return performanceMetricB - performanceMetricA; // Higher value gets higher rank
+    } else {
+      // If performance metrics are equal, prioritize the player with more matches
+      return b.totalMatches - a.totalMatches;
+    }
   });
 
-  rankedPlayersList.sort((a, b) => calculateRank(b) - calculateRank(a));
   rankedPlayersList.forEach((player, index) => {
     player.rank = index + 1;
   });
