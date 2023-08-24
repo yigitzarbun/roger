@@ -9,7 +9,6 @@ import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
@@ -57,6 +56,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     currentDate.getMonth(),
     currentDate.getDate()
   );
+  const currentTime = currentDate.toLocaleTimeString();
 
   // bookings
   const myBookings = bookings?.filter(
@@ -65,7 +65,11 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
         booking.invitee_id === user.user_id) &&
       booking.booking_status_type_id === 2 &&
       booking.event_type_id === 3 &&
-      new Date(booking.event_date) >= today
+      (new Date(booking.event_date).toLocaleDateString() >
+        today.toLocaleDateString() ||
+        (new Date(booking.event_date).toLocaleDateString() ===
+          today.toLocaleDateString() &&
+          booking.event_time > currentTime))
   );
 
   const filteredBookings = myBookings?.filter((booking) => {

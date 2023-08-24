@@ -64,14 +64,21 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     currentDate.getDate()
   );
 
+  const currentTime = currentDate.toLocaleTimeString();
+
   // bookings
   const myBookings = bookings?.filter(
     (booking) =>
       (booking.inviter_id === user.user_id ||
         booking.invitee_id === user.user_id) &&
       booking.booking_status_type_id === 2 &&
-      new Date(booking.event_date) >= today
+      (new Date(booking.event_date).toLocaleDateString() >
+        today.toLocaleDateString() ||
+        (new Date(booking.event_date).toLocaleDateString() ===
+          today.toLocaleDateString() &&
+          booking.event_time > currentTime))
   );
+
   const filteredBookings = myBookings?.filter((booking) => {
     const eventDate = new Date(booking.event_date);
     if (date === "" && eventTypeId === null && clubId === null) {

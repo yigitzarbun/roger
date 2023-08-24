@@ -49,13 +49,18 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     currentDate.getMonth(),
     currentDate.getDate()
   );
+  const currentTime = currentDate.toLocaleTimeString();
 
   // bookings
   const myBookings = bookings?.filter(
     (booking) =>
       booking.club_id === user.clubDetails.club_id &&
       booking.booking_status_type_id === 2 &&
-      new Date(booking.event_date) >= today
+      (new Date(booking.event_date).toLocaleDateString() >
+        today.toLocaleDateString() ||
+        (new Date(booking.event_date).toLocaleDateString() ===
+          today.toLocaleDateString() &&
+          booking.event_time > currentTime))
   );
 
   const filteredBookings = myBookings?.filter((booking) => {

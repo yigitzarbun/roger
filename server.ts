@@ -41,6 +41,7 @@ const cors = require("cors");
 const server = express();
 server.use(express.json());
 server.use(cors());
+
 process.env.TZ = "UTC";
 
 const db = knex(knexConfig.development);
@@ -86,19 +87,18 @@ async function updatePendingPayments() {
 
 async function updateCompletedBookings() {
   try {
-    const currentDate = new Date();
-    const utcTimestamp = currentDate.getTime();
-
+    const currentDate = DateTime.utc(); // Get the current UTC time using Luxon
     const completedBookings = await db("bookings")
       .where("booking_status_type_id", "=", 2)
       .select();
 
     for (const booking of completedBookings) {
-      const bookingTimestamp = new Date(
-        booking.event_date + " " + booking.event_time
-      ).getTime();
+      const bookingTimestamp = DateTime.fromSQL(
+        `${booking.event_date} ${booking.event_time}`,
+        { zone: "Europe/Istanbul" } // Replace with the correct timezone
+      ).toMillis();
 
-      if (bookingTimestamp <= utcTimestamp) {
+      if (bookingTimestamp <= currentDate.toMillis()) {
         await db("bookings")
           .where("booking_id", "=", booking.booking_id)
           .update({ booking_status_type_id: 5 });

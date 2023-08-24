@@ -208,17 +208,26 @@ const TrainingInviteForm = () => {
       // Find the next available time slot after the current hour
       while (startTime < closingTime) {
         const endTime = addMinutes(startTime, slotDurationInMinutes);
-        const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
-          (booking) =>
-            (startTime <= booking.event_time && booking.event_time < endTime) ||
-            (startTime < booking.end_time && booking.end_time <= endTime)
-        );
 
-        if (!isBooked && startTime >= currentTime) {
-          availableTimeSlots.push({
-            start: startTime,
-            end: endTime,
-          });
+        // Check if the startTime is not earlier than the current time
+        if (
+          startTime >= currentTime &&
+          startTime !== "24:00" &&
+          startTime !== "25:00"
+        ) {
+          const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
+            (booking) =>
+              (startTime <= booking.event_time &&
+                booking.event_time < endTime) ||
+              (startTime < booking.end_time && booking.end_time <= endTime)
+          );
+
+          if (!isBooked) {
+            availableTimeSlots.push({
+              start: startTime,
+              end: endTime,
+            });
+          }
         }
 
         startTime = roundToNearestHour(endTime);
@@ -227,17 +236,22 @@ const TrainingInviteForm = () => {
       // If the selected date is in the future, show all time slots from opening to closing
       while (startTime < closingTime) {
         const endTime = addMinutes(startTime, slotDurationInMinutes);
-        const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
-          (booking) =>
-            (startTime <= booking.event_time && booking.event_time < endTime) ||
-            (startTime < booking.end_time && booking.end_time <= endTime)
-        );
 
-        if (!isBooked) {
-          availableTimeSlots.push({
-            start: startTime,
-            end: endTime,
-          });
+        // Exclude the 24:00-25:00 time slot
+        if (startTime !== "24:00" && startTime !== "25:00") {
+          const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
+            (booking) =>
+              (startTime <= booking.event_time &&
+                booking.event_time < endTime) ||
+              (startTime < booking.end_time && booking.end_time <= endTime)
+          );
+
+          if (!isBooked) {
+            availableTimeSlots.push({
+              start: startTime,
+              end: endTime,
+            });
+          }
         }
 
         startTime = roundToNearestHour(endTime);
@@ -299,7 +313,7 @@ const TrainingInviteForm = () => {
   const handleCloseModal = () => {
     setModal(false);
   };
-
+  console.log(availableTimeSlots);
   useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();
