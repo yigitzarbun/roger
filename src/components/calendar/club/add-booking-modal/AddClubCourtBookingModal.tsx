@@ -23,6 +23,9 @@ import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
+import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 
 interface AddClubCourtBookingModalProps {
   addBookingModalOpen: boolean;
@@ -32,7 +35,7 @@ interface AddClubCourtBookingModalProps {
 const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   const { addBookingModalOpen, closeAddBookingModal } = props;
 
-  const user = useAppSelector((store) => store?.user?.user?.user);
+  const user = useAppSelector((store) => store?.user);
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
@@ -43,6 +46,22 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     isLoading: isBookingsLoading,
     refetch: refetchBookings,
   } = useGetBookingsQuery({});
+
+  const { data: eventTypes, isLoading: isEventTypesLoading } =
+    useGetEventTypesQuery({});
+
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
+
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
+
+  const myTrainers = clubStaff?.filter(
+    (staff) =>
+      staff.club_id === user?.user?.clubDetails?.club_id &&
+      staff.employment_status === "accepted"
+  );
 
   const today = new Date();
   let day = String(today.getDate());
@@ -59,11 +78,13 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   const currentTime = `${currentHour}:${currentMinute}`;
 
   const myCourts = courts?.filter(
-    (court) => court?.club_id === user?.user_id && court.is_active === true
+    (court) =>
+      court?.club_id === user?.user?.user?.user_id && court.is_active === true
   );
 
   const myExternalMembers = clubExternalMembers?.filter(
-    (member) => member.club_id === user?.user_id && member.is_active === true
+    (member) =>
+      member.club_id === user?.user?.user?.user_id && member.is_active === true
   );
 
   const [addBooking, { isSuccess: isAddBookingSuccess }] =
@@ -84,9 +105,9 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     setSelectedCourt(Number(event.target.value));
   };
 
-  const [selectedInviter, setSelectedInviter] = useState(null);
-  const handleSelectedInviter = (event) => {
-    setSelectedInviter(Number(event.target.value));
+  const [selectedEventType, setSelectedEventType] = useState(null);
+  const handleSelectedEventType = (event) => {
+    setSelectedEventType(Number(event.target.value));
   };
 
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
@@ -186,10 +207,6 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     formState: { errors },
   } = useForm<Booking>();
 
-  const isDifferent = (invitee_id: number) => {
-    return selectedInviter !== invitee_id;
-  };
-
   const onSubmit: SubmitHandler<Booking> = async (formData: Booking) => {
     const bookingData = {
       event_date: new Date(formData.event_date).toISOString(),
@@ -199,8 +216,8 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
           ?.price_hour
       ),
       booking_status_type_id: 2,
-      event_type_id: 4,
-      club_id: user?.user_id,
+      event_type_id: Number(formData?.event_type_id),
+      club_id: user?.user?.user?.user_id,
       court_id: Number(formData?.court_id),
       inviter_id: Number(formData?.inviter_id),
       invitee_id: Number(formData?.invitee_id),
@@ -219,7 +236,17 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   useEffect(() => {
     reset();
   }, [closeAddBookingModal]);
-  if (isCourtsLoading || isClubExternalMembersLoading || isBookingsLoading);
+
+  if (
+    isCourtsLoading ||
+    isClubExternalMembersLoading ||
+    isBookingsLoading ||
+    isEventTypesLoading ||
+    isClubStaffLoading ||
+    isTrainersLoading
+  ) {
+    return <div>Yükleniyor..</div>;
+  }
 
   return (
     <Modal
@@ -272,6 +299,8 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Saat</label>
             <select
@@ -295,32 +324,76 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               </span>
             )}
           </div>
+          <div className={styles["input-container"]}>
+            <label>Etkinlik Türü</label>
+            <select
+              {...register("event_type_id", {
+                required: "Bu alan zorunludur",
+              })}
+              onChange={handleSelectedEventType}
+            >
+              <option value="">-- Seçim yapın --</option>
+              {eventTypes
+                .filter(
+                  (type) => type.event_type_id === 4 || type.event_type_id == 5
+                )
+                .map((type) => (
+                  <option key={type.event_type_id} value={type.event_type_id}>
+                    {type.event_type_name}
+                  </option>
+                ))}
+            </select>
+            {errors.event_type_id && (
+              <span className={styles["error-field"]}>
+                {errors.event_type_id.message}
+              </span>
+            )}
+          </div>
         </div>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>1. Oyuncu</label>
-            <select
-              {...register("inviter_id", { required: true })}
-              onChange={handleSelectedInviter}
-            >
+            <label>
+              {selectedEventType === 4
+                ? "1. Oyuncu"
+                : selectedEventType === 5
+                ? "Eğitmen"
+                : "Taraf 1"}
+            </label>
+            <select {...register("inviter_id", { required: true })}>
               <option value="">-- Seçim yapın --</option>
-              {myExternalMembers &&
-                myExternalMembers.map((member) => (
-                  <option key={member.user_id} value={member.user_id}>
-                    {`${member.fname} ${member.lname}`}
-                  </option>
-                ))}
+              {selectedEventType === 4 && myExternalMembers
+                ? myExternalMembers.map((member) => (
+                    <option key={member.user_id} value={member.user_id}>
+                      {`${member.fname} ${member.lname}`}
+                    </option>
+                  ))
+                : selectedEventType === 5
+                ? myTrainers?.map((staff) => (
+                    <option key={staff.user_id} value={staff.user_id}>
+                      {
+                        trainers?.find(
+                          (trainer) => trainer.user_id === staff.user_id
+                        )?.fname
+                      }
+                    </option>
+                  ))
+                : ""}
             </select>
             {errors.inviter_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>2. Oyuncu</label>
+            <label>
+              {selectedEventType === 4
+                ? "2. Oyuncu"
+                : selectedEventType === 5
+                ? "Öğrenci"
+                : "Taraf 1"}
+            </label>
             <select
               {...register("invitee_id", {
                 required: true,
-                validate: (value) => isDifferent(value),
               })}
             >
               <option value="">-- Seçim yapın --</option>

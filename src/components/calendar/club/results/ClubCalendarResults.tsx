@@ -52,7 +52,8 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
   const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
 
   const myCourts = courts?.filter(
-    (court) => court.club_id === user?.user?.user_id && court.is_active === true
+    (court) =>
+      court.club_id === user?.clubDetails?.club_id && court.is_active === true
   );
 
   const openAddBookingModal = () => {
@@ -233,7 +234,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                       )?.fname
                     } ${
                       clubExternalMembers?.find(
-                        (member) => member.user_id === booking.inviter_id
+                        (member) => member.user_id === booking.invitee_id
                       )?.lname
                     }`}
                 </td>

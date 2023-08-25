@@ -261,7 +261,8 @@ export async function seed(knex: Knex): Promise<void> {
     { event_type_id: 1, event_type_name: "training" },
     { event_type_id: 2, event_type_name: "match" },
     { event_type_id: 3, event_type_name: "lesson" },
-    { event_type_id: 4, event_type_name: "external" },
+    { event_type_id: 4, event_type_name: "external_training" },
+    { event_type_id: 5, event_type_name: "external_lesson" },
   ]);
 
   await knex("club_staff_role_types").insert([
