@@ -74,6 +74,7 @@ const MatchResults = (props: MatchResultsProps) => {
         }
       });
 
+  console.log(filteredPlayers);
   if (
     isPlayersLoading ||
     isLocationsLoading ||

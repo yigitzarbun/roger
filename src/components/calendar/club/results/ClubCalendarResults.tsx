@@ -15,6 +15,7 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookingModal";
 
 interface ClubCalendarResultsProps {
   date: string;
@@ -49,12 +50,12 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
   const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
 
-  const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
-
   const myCourts = courts?.filter(
     (court) =>
       court.club_id === user?.clubDetails?.club_id && court.is_active === true
   );
+
+  const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
 
   const openAddBookingModal = () => {
     setAddBookingModalOpen(true);
@@ -62,6 +63,22 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
 
   const closeAddBookingModal = () => {
     setAddBookingModalOpen(false);
+  };
+
+  const [editBookingModalOpen, setEditBookingModalOpen] = useState(false);
+
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  const openEditBookingModal = (booking_id: number) => {
+    setEditBookingModalOpen(true);
+    setSelectedBooking(
+      bookings?.find((booking) => booking.booking_id === booking_id)
+    );
+  };
+
+  const closeEditBookingModal = () => {
+    setEditBookingModalOpen(false);
+    setSelectedBooking(null);
   };
 
   // date
@@ -266,6 +283,16 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                     )?.price_hour
                   }
                 </td>
+                {(booking.event_type_id === 4 ||
+                  booking.event_type_id === 5) && (
+                  <td>
+                    <button
+                      onClick={() => openEditBookingModal(booking.booking_id)}
+                    >
+                      Düzenle
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -274,6 +301,11 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       <AddClubCourtBookingModal
         addBookingModalOpen={addBookingModalOpen}
         closeAddBookingModal={closeAddBookingModal}
+      />
+      <EditClubCourtBookingModal
+        editBookingModalOpen={editBookingModalOpen}
+        closeEditBookingModal={closeEditBookingModal}
+        selectedBooking={selectedBooking}
       />
     </div>
   );

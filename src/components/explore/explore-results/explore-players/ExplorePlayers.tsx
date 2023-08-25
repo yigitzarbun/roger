@@ -140,13 +140,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
       </div>
-      {players && filteredPlayers.length === 0 && (
-        <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
-      )}
-      {players && players.length > 0 && (
+      {players && filteredPlayers.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -252,6 +246,11 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
             ))}
           </tbody>
         </table>
+      ) : (
+        <p>
+          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
+          tekrar deneyin.
+        </p>
       )}
     </div>
   );
