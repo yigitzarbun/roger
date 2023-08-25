@@ -33,6 +33,16 @@ const ClubSubscriptionsNavigation = ({
       >
         Üyeler
       </button>
+      <button
+        onClick={() => handleDisplay("groups")}
+        className={
+          display === "groups"
+            ? styles["active-button"]
+            : styles["inactive-button"]
+        }
+      >
+        Gruplar
+      </button>
     </div>
   );
 };

@@ -5,7 +5,16 @@ import AddSubscriptionPackageModal from "./add-subscription-package-modal/AddSub
 import ClubSubscriptionPackagesResults from "./results/ClubSubscriptionPackagesResults";
 import EditSubscriptionPackageModal from "./edit-subscription-package-modal/EditSubscriptionPackageModal";
 
+import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
+
 const ClubSubscriptionPackages = () => {
+  const [selectedSubscriptionPackage, setSelectedSubscriptionPackage] =
+    useState(null);
+
+  const {
+    data: clubSubscriptionPackages,
+    isLoading: isClubSubscriptionPackagesLoading,
+  } = useGetClubSubscriptionPackagesQuery({});
   const [openAddPackageModal, setOpenAddPackageModal] = useState(false);
 
   const openAddClubSubscriptionPackageModal = () => {
@@ -24,8 +33,13 @@ const ClubSubscriptionPackages = () => {
     setClubSubscriptionPackageId(null);
     setOpenEditPackageModal(true);
     setClubSubscriptionPackageId(value);
+    setSelectedSubscriptionPackage(
+      clubSubscriptionPackages?.find(
+        (subscriptionPackage) =>
+          subscriptionPackage.club_subscription_package_id === value
+      )
+    );
   };
-
   const closeEditClubSubscriptionPackageModal = () => {
     setClubSubscriptionPackageId(null);
     setOpenEditPackageModal(false);
@@ -55,6 +69,7 @@ const ClubSubscriptionPackages = () => {
           closeEditClubSubscriptionPackageModal
         }
         clubSubscriptionPackageId={clubSubscriptionPackageId}
+        selectedSubscriptionPackage={selectedSubscriptionPackage}
       />
     </div>
   );

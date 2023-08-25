@@ -4,7 +4,7 @@
 .nav-container {
   display: flex;
   border-radius: $roger-border-radius;
-  width: 80%;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
@@ -17,7 +17,7 @@
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer;
-    width: 48%;
+    width: 30%;
   }
   .inactive-button {
     padding: $roger-box-padding;
@@ -27,7 +27,7 @@
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer;
-    width: 48%;
+    width: 30%;
   }
   .inactive-button:hover {
     background-color: $roger-black-light;

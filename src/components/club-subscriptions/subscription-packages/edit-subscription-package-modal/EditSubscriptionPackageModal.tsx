@@ -11,6 +11,7 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
 
 import {
+  ClubSubscriptionPackage,
   useGetClubSubscriptionPackagesQuery,
   useUpdateClubSubscriptionPackageMutation,
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
@@ -21,6 +22,7 @@ interface EditSubscriptionPackageModalProps {
   openEditPackageModal: boolean;
   closeEditClubSubscriptionPackageModal: () => void;
   clubSubscriptionPackageId: number;
+  selectedSubscriptionPackage: ClubSubscriptionPackage;
 }
 
 type FormValues = {
@@ -34,12 +36,15 @@ const EditSubscriptionPackageModal = (
     openEditPackageModal,
     closeEditClubSubscriptionPackageModal,
     clubSubscriptionPackageId,
+    selectedSubscriptionPackage,
   } = props;
 
-  const { user } = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
-  const [updateClubSubscriptionPackage, { data: isSuccess }] =
-    useUpdateClubSubscriptionPackageMutation({});
+  const [
+    updateClubSubscriptionPackage,
+    { data: updatedClubSubscription, isSuccess },
+  ] = useUpdateClubSubscriptionPackageMutation({});
 
   const {
     data: clubSubscriptionPackages,
@@ -71,7 +76,7 @@ const EditSubscriptionPackageModal = (
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      price: selectedPackage?.price,
+      price: selectedSubscriptionPackage?.price,
     },
     mode: "onChange",
   });
@@ -92,18 +97,14 @@ const EditSubscriptionPackageModal = (
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && updatedClubSubscription) {
       refetch();
-      reset();
       closeEditClubSubscriptionPackageModal();
+      reset({ price: updatedClubSubscription?.price });
     }
   }, [isSuccess]);
 
-  if (
-    isClubSubscriptionPackagesLoading ||
-    !selectedPackage ||
-    isClubSubscriptionTypesLoading
-  ) {
+  if (isClubSubscriptionPackagesLoading || isClubSubscriptionTypesLoading) {
     return <div>Yükleniyor..</div>;
   }
 
@@ -140,6 +141,7 @@ const EditSubscriptionPackageModal = (
               {...register("price", { required: true })}
               type="number"
               min="0"
+              defaultValue={selectedSubscriptionPackage?.price}
             />
             {errors.price && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>

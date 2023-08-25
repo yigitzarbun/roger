@@ -247,6 +247,7 @@ export async function seed(knex: Knex): Promise<void> {
     { user_type_id: 2, user_type_name: "trainer" },
     { user_type_id: 3, user_type_name: "club" },
     { user_type_id: 4, user_type_name: "club_staff" },
+    { user_type_id: 5, user_type_name: "club_external_member" },
   ]);
 
   await knex("user_status_types").insert([

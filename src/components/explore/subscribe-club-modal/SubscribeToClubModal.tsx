@@ -142,12 +142,8 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
       )?.club_subscription_duration_months;
 
       // Convert to local time zone for endDate calculation
-      const endDate = new Date(currentDate);
-      endDate.setMonth(currentDate.getMonth() + packageDurationMonths);
-
-      // Adjust for local time zone offset
-      const timeZoneOffset = currentDate.getTimezoneOffset();
-      endDate.setMinutes(endDate.getMinutes() - timeZoneOffset);
+      const endDate = new Date();
+      endDate.setMonth(endDate.getMonth() + Number(packageDurationMonths));
 
       const newSubscriptionData = {
         start_date: startDate,

@@ -35,6 +35,7 @@ import matchScoresRouter from "./src/api/match-scores/match-scores-router";
 import matchScoresStatusTypesRouter from "./src/api/match-score-status-types/match-scores-status-types-router";
 import studentsRouter from "./src/api/students/students-router";
 import studentGroupsRouter from "./src/api/student-groups/student-groups-router";
+import clubExternalMembersRouter from "./src/api/external-members/club-external-members-router";
 
 const cors = require("cors");
 
@@ -172,6 +173,7 @@ server.use("/api/match-scores", matchScoresRouter);
 server.use("/api-match-scores-status-types", matchScoresStatusTypesRouter);
 server.use("/api/students", studentsRouter);
 server.use("/api/student-groups", studentGroupsRouter);
+server.use("/api/club-external-members", clubExternalMembersRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

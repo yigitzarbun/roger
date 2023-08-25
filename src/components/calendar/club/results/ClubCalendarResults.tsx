@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 import styles from "./styles.module.scss";
+
+import { FaPlusSquare } from "react-icons/fa";
+
+import AddClubCourtBookingModal from "../add-booking-modal/AddClubCourtBookingModal";
 
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
@@ -10,6 +14,7 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 
 interface ClubCalendarResultsProps {
   date: string;
@@ -40,6 +45,23 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     useGetEventTypesQuery({});
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
+    useGetClubExternalMembersQuery({});
+
+  const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
+
+  const myCourts = courts?.filter(
+    (court) => court.club_id === user?.user?.user_id && court.is_active === true
+  );
+
+  const openAddBookingModal = () => {
+    setAddBookingModalOpen(true);
+  };
+
+  const closeAddBookingModal = () => {
+    setAddBookingModalOpen(false);
+  };
 
   // date
   const currentDate = new Date();
@@ -84,12 +106,27 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     isClubsLoading ||
     isEventTypesLoading ||
     isCourtsLoading ||
-    isUsersLoading
+    isUsersLoading ||
+    isClubExternalMembersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
   return (
     <div className={styles["result-container"]}>
+      <div className={styles["add-booking-package-container"]}>
+        <button
+          className={styles["add-booking-package-button"]}
+          onClick={openAddBookingModal}
+          disabled={myCourts.length === 0}
+        >
+          <FaPlusSquare className={styles["add-icon"]} />
+          <h2 className={styles["add-title"]}>
+            {myCourts?.length === 0
+              ? "Kort Rezervasyonu için Kort Ekleyin"
+              : "Kort Rezervasyonu Ekle"}
+          </h2>
+        </button>
+      </div>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Takvim</h2>
       </div>
@@ -147,6 +184,17 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                         (trainer) => trainer.user_id === booking.inviter_id
                       )?.lname
                     }`}
+                  {users?.find((user) => user.user_id === booking.inviter_id)
+                    ?.user_type_id === 5 &&
+                    `${
+                      clubExternalMembers?.find(
+                        (member) => member.user_id === booking.inviter_id
+                      )?.fname
+                    } ${
+                      clubExternalMembers?.find(
+                        (member) => member.user_id === booking.inviter_id
+                      )?.lname
+                    }`}
                 </td>
                 <td>
                   <img
@@ -175,6 +223,17 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                     } ${
                       trainers?.find(
                         (trainer) => trainer.user_id === booking.invitee_id
+                      )?.lname
+                    }`}
+                  {users?.find((user) => user.user_id === booking.invitee_id)
+                    ?.user_type_id === 5 &&
+                    `${
+                      clubExternalMembers?.find(
+                        (member) => member.user_id === booking.invitee_id
+                      )?.fname
+                    } ${
+                      clubExternalMembers?.find(
+                        (member) => member.user_id === booking.inviter_id
                       )?.lname
                     }`}
                 </td>
@@ -211,6 +270,10 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
           </tbody>
         </table>
       )}
+      <AddClubCourtBookingModal
+        addBookingModalOpen={addBookingModalOpen}
+        closeAddBookingModal={closeAddBookingModal}
+      />
     </div>
   );
 };

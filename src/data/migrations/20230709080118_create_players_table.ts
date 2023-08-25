@@ -360,19 +360,41 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable("club_external_members", (table) => {
       table.increments("club_external_member_id");
-      table.integer("member_id");
+      table.string("member_id");
       table.string("email");
       table.string("fname").notNullable();
       table.string("lname").notNullable();
       table.string("birth_year");
       table.string("gender");
-      table.boolean("is_active");
+      table.boolean("is_active").notNullable();
+      table
+        .integer("player_level_id")
+        .unsigned()
+        .references("player_level_id")
+        .inTable("player_levels")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("location_id")
+        .unsigned()
+        .references("location_id")
+        .inTable("locations")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
       table
         .integer("club_id")
         .unsigned()
         .notNullable()
         .references("club_id")
         .inTable("clubs")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("user_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
@@ -472,7 +494,6 @@ export async function up(knex: Knex): Promise<void> {
       table
         .integer("payment_id")
         .unsigned()
-        .notNullable()
         .references("payment_id")
         .inTable("payments")
         .onUpdate("CASCADE")
@@ -601,7 +622,6 @@ export async function up(knex: Knex): Promise<void> {
       table
         .integer("payment_id")
         .unsigned()
-        .notNullable()
         .references("payment_id")
         .inTable("payments")
         .onUpdate("CASCADE")
