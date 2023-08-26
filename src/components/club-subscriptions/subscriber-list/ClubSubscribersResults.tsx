@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -11,6 +11,7 @@ import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import AddClubSubscriberModal from "./add-subscriber-modal/AddClubSubscriberModal";
+import EditClubSubscriberModal from "./edit-subscriber-modal/EditClubSubscriberModal";
 
 import { useGetClubSubscriptionsQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
@@ -21,7 +22,6 @@ import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/Club
 import { useGetUsersQuery } from "../../../store/auth/apiSlice";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExternalMembersApi";
-import EditClubSubscriberModal from "./edit-subscriber-modal/EditClubSubscriberModal";
 
 const ClubSubscribersResults = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);

@@ -8,6 +8,10 @@ export interface StudentGroup {
   is_active: boolean;
   club_id?: number;
   trainer_id?: number;
+  first_student_id: number;
+  second_student_id: number;
+  third_student_id: number;
+  fourth_student_id: number;
 }
 
 export const studentGroupsSlice = createApi({

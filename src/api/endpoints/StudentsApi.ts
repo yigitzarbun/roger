@@ -7,7 +7,6 @@ export interface Student {
   student_status: string;
   trainer_id?: number;
   player_id?: number;
-  student_group_id?: number;
 }
 
 export const studentsSlice = createApi({

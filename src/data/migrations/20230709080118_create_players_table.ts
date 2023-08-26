@@ -303,6 +303,34 @@ export async function up(knex: Knex): Promise<void> {
         .inTable("users")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
+      table
+        .integer("first_student_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("second_student_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("third_student_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("fourth_student_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
     })
     .createTable("students", (table) => {
       table.increments("student_id");
@@ -320,13 +348,6 @@ export async function up(knex: Knex): Promise<void> {
         .unsigned()
         .references("user_id")
         .inTable("users")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
-      table
-        .integer("student_group_id")
-        .unsigned()
-        .references("student_group_id")
-        .inTable("student_groups")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })

@@ -31,6 +31,7 @@ import { banksSlice } from "../api/endpoints/BanksApi";
 import { matchScoresSlice } from "../api/endpoints/MatchScoresApi";
 import { matchScoresStatusTypesSlice } from "../api/endpoints/MatchScoresStatusTypesApi";
 import { studentsSlice } from "../api/endpoints/StudentsApi";
+import { studentGroupsSlice } from "../api/endpoints/StudentGroupsApi";
 import { clubExternalMembersSlice } from "../api/endpoints/ClubExternalMembersApi";
 
 export const store = configureStore({
@@ -68,6 +69,7 @@ export const store = configureStore({
     [matchScoresStatusTypesSlice.reducerPath]:
       matchScoresStatusTypesSlice.reducer,
     [studentsSlice.reducerPath]: studentsSlice.reducer,
+    [studentGroupsSlice.reducerPath]: studentGroupsSlice.reducer,
     [clubExternalMembersSlice.reducerPath]: clubExternalMembersSlice.reducer,
     user: authReducer,
   },
@@ -102,6 +104,7 @@ export const store = configureStore({
       .concat(matchScoresSlice.middleware)
       .concat(matchScoresStatusTypesSlice.middleware)
       .concat(studentsSlice.middleware)
+      .concat(studentGroupsSlice.middleware)
       .concat(clubExternalMembersSlice.middleware),
 });
 

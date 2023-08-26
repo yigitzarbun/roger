@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../common/constants/apiConstants";
 
 export interface Booking {
+  booking_id: number;
   event_date: string;
   event_time: string;
   court_price: number;

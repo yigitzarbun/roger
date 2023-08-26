@@ -59,12 +59,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     {}
   );
 
-  const myTrainers = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === user?.user?.clubDetails?.club_id &&
-      staff.employment_status === "accepted"
-  );
-
   const today = new Date();
   let day = String(today.getDate());
   let month = String(today.getMonth() + 1);
@@ -78,6 +72,12 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   const currentHour = String(today.getHours()).padStart(2, "0");
   const currentMinute = String(today.getMinutes()).padStart(2, "0");
   const currentTime = `${currentHour}:${currentMinute}`;
+
+  const myTrainers = clubStaff?.filter(
+    (staff) =>
+      staff.club_id === user?.user?.clubDetails?.club_id &&
+      staff.employment_status === "accepted"
+  );
 
   const myCourts = courts?.filter(
     (court) =>
@@ -97,7 +97,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     setSelectedDate(event.target.value);
   };
 
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedTime, setSelectedTime] = useState(
+    selectedBooking?.event_time.slice(0, 5)
+  );
+
   const handleSelectedTime = (event) => {
     setSelectedTime(event.target.value);
   };
@@ -115,17 +118,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
-
-  // for setBookedHours to be populated initially, run the useEffect below
-  useEffect(() => {
-    if (selectedBooking) {
-      setSelectedCourt(selectedBooking.court_id);
-      setSelectedDate(
-        new Date(selectedBooking.event_date).toISOString().slice(0, 10)
-      );
-      setSelectedEventType(selectedBooking.event_type_id);
-    }
-  }, [selectedBooking]);
 
   useEffect(() => {
     if (selectedCourt && selectedDate && bookings) {
@@ -184,7 +176,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
             });
           }
         }
-
         startTime = roundToNearestHour(endTime);
       }
     } else {
@@ -213,6 +204,15 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       }
     }
   }
+
+  const handleDeleteBooking = () => {
+    const deletedBookingData = {
+      ...selectedBooking,
+      booking_status_type_id: 4,
+    };
+    updateBooking(deletedBookingData);
+  };
+
   const {
     register,
     handleSubmit,
@@ -223,8 +223,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       event_date: selectedBooking?.event_date
         ? new Date(selectedBooking.event_date).toISOString().substring(0, 10)
         : "",
-      event_time:
-        selectedBooking?.event_time && selectedBooking.event_time.slice(0, 5),
+      event_time: selectedBooking?.event_time.slice(0, 5),
       booking_status_type_id: selectedBooking?.booking_status_type_id,
       event_type_id: selectedBooking?.event_type_id,
       court_id: selectedBooking?.court_id,
@@ -235,6 +234,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
 
   const onSubmit: SubmitHandler<Booking> = async (formData: Booking) => {
     const bookingData = {
+      booking_id: selectedBooking?.booking_id,
       event_date: new Date(formData.event_date).toISOString(),
       event_time: selectedTime,
       court_price: Number(
@@ -257,14 +257,27 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
         event_date: selectedBooking?.event_date
           ? new Date(selectedBooking.event_date).toISOString().substring(0, 10)
           : "",
-        event_time:
-          selectedBooking?.event_time && selectedBooking.event_time.slice(0, 5),
+        event_time: selectedBooking?.event_time.slice(0, 5),
         booking_status_type_id: selectedBooking?.booking_status_type_id,
         event_type_id: selectedBooking?.event_type_id,
         court_id: selectedBooking?.court_id,
         inviter_id: selectedBooking?.inviter_id,
         invitee_id: selectedBooking?.invitee_id,
       });
+
+      setSelectedTime(selectedBooking?.event_time.slice(0, 5)); // Set the default time
+    }
+  }, [selectedBooking]);
+
+  // for setBookedHours to be populated initially, run the useEffect below
+  useEffect(() => {
+    if (selectedBooking) {
+      setSelectedCourt(selectedBooking.court_id);
+      setSelectedDate(
+        new Date(selectedBooking.event_date).toISOString().slice(0, 10)
+      );
+      setSelectedEventType(selectedBooking.event_type_id);
+      setSelectedTime(selectedBooking?.event_time.slice(0, 5));
     }
   }, [selectedBooking]);
 
@@ -286,7 +299,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   ) {
     return <div>Yükleniyor..</div>;
   }
-  console.log(selectedBooking?.inviter_id);
+
   return (
     <Modal
       isOpen={editBookingModalOpen}
@@ -294,7 +307,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       className={styles["modal-container"]}
     >
       <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Kort Rezervasyonunu Düzenle</h1>
+        <div>
+          <h1 className={styles.title}>Kort Rezervasyonunu Düzenle</h1>
+          <button onClick={handleDeleteBooking}>Rezervasyonu sil</button>
+        </div>
         <FaWindowClose
           onClick={closeEditBookingModal}
           className={styles["close-icon"]}
@@ -353,7 +369,16 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                   {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
                 </option>
               ))}
+              {selectedTime &&
+                !availableTimeSlots.some(
+                  (timeSlot) => timeSlot.start === selectedTime
+                ) && (
+                  <option value={selectedTime} disabled>
+                    {formatTime(selectedTime)} (Already Booked)
+                  </option>
+                )}
             </select>
+
             {errors.event_time && (
               <span className={styles["error-field"]}>
                 {errors.event_time.message}
@@ -399,20 +424,23 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               {...register("inviter_id", {
                 required: true,
               })}
-              defaultValue={selectedBooking?.inviter_id}
             >
               <option value="">-- Seçim yapın --</option>
-              {myExternalMembers && selectedBooking?.event_type_id === 4
+              {myExternalMembers && selectedEventType === 4
                 ? myExternalMembers?.map((member) => (
                     <option key={member.user_id} value={member.user_id}>
                       {`${member.fname} ${member.lname}`}
                     </option>
                   ))
-                : myExternalMembers &&
-                  selectedBooking?.event_type_id === 5 &&
-                  trainers?.map((trainer) => (
-                    <option key={trainer.user_id} value={trainer.user_id}>
-                      {`${trainer.fname} ${trainer.lname}`}
+                : myTrainers &&
+                  selectedEventType === 5 &&
+                  myTrainers?.map((staff) => (
+                    <option key={staff.user_id} value={staff.user_id}>
+                      {
+                        trainers?.find(
+                          (trainer) => trainer.user_id === staff.user_id
+                        )?.fname
+                      }
                     </option>
                   ))}
             </select>
