@@ -284,7 +284,8 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                   }
                 </td>
                 {(booking.event_type_id === 4 ||
-                  booking.event_type_id === 5) && (
+                  booking.event_type_id === 5 ||
+                  booking.event_type_id === 6) && (
                   <td>
                     <button
                       onClick={() => openEditBookingModal(booking.booking_id)}

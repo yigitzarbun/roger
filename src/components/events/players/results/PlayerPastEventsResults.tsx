@@ -14,6 +14,7 @@ import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/Tra
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 const PlayerPastEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -36,15 +37,30 @@ const PlayerPastEventsResults = () => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
+  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
+  const myGroups = studentGroups?.filter(
+    (group) =>
+      group.first_student_id === user?.user?.user_id ||
+      group.second_student_id === user?.user?.user_id ||
+      group.third_student_id === user?.user?.user_id ||
+      group.fourth_student_id === user?.user?.user_id
+  );
+
   const myEvents = bookings?.filter(
     (booking) =>
       (booking.inviter_id === user?.user?.user_id ||
-        booking.invitee_id === user?.user?.user_id) &&
+        booking.invitee_id === user?.user?.user_id ||
+        myGroups?.find(
+          (group) =>
+            group.user_id === booking.inviter_id ||
+            group.user_id === booking.invitee_id
+        )) &&
       booking.booking_status_type_id === 5
   );
   if (

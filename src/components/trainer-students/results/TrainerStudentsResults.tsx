@@ -25,6 +25,7 @@ const TrainerStudentsResults = () => {
     isLoading: isStudentsLoading,
     refetch: refetchStudents,
   } = useGetStudentsQuery({});
+
   const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
     {}
   );

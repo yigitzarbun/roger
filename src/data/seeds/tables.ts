@@ -248,6 +248,7 @@ export async function seed(knex: Knex): Promise<void> {
     { user_type_id: 3, user_type_name: "club" },
     { user_type_id: 4, user_type_name: "club_staff" },
     { user_type_id: 5, user_type_name: "club_external_member" },
+    { user_type_id: 6, user_type_name: "club_lesson_group" },
   ]);
 
   await knex("user_status_types").insert([
@@ -263,6 +264,7 @@ export async function seed(knex: Knex): Promise<void> {
     { event_type_id: 3, event_type_name: "lesson" },
     { event_type_id: 4, event_type_name: "external_training" },
     { event_type_id: 5, event_type_name: "external_lesson" },
+    { event_type_id: 6, event_type_name: "club_group_lesson" },
   ]);
 
   await knex("club_staff_role_types").insert([

@@ -6,6 +6,7 @@ import TrainerStudentsResults from "../../components/trainer-students/results/Tr
 import TrainerStudentsHero from "../../components/trainer-students/hero/TrainerStudentsHero";
 import TrainerStudentsNavigation from "../../components/trainer-students/navigation/TrainerStudentsNavigation";
 import TrainerStudentRequests from "../../components/trainer-students/new-student-requests/TrainerStudentRequests";
+import TrainerStudentGroupsResults from "../../components/trainer-students/groups/TrainerStudentGroupsResults";
 
 const TrainerStudents = () => {
   const [display, setDisplay] = useState("students");
@@ -21,6 +22,7 @@ const TrainerStudents = () => {
         handleDisplay={handleDisplay}
       />
       {display === "students" && <TrainerStudentsResults />}
+      {display === "groups" && <TrainerStudentGroupsResults />}
       {display === "requests" && <TrainerStudentRequests />}
     </div>
   );

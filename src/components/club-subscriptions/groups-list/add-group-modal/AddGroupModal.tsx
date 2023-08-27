@@ -18,7 +18,10 @@ import {
   useGetStudentGroupsQuery,
 } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import {
+  useAddUserMutation,
+  useGetUsersQuery,
+} from "../../../../store/auth/apiSlice";
 
 interface AddGroupModalProps {
   isAddGroupModalOpen: boolean;
@@ -30,8 +33,8 @@ type FormValues = {
   trainer_id: number;
   first_student_id: number;
   second_student_id: number;
-  third_student_id: number;
-  fourth_student_id: number;
+  third_student_id?: number;
+  fourth_student_id?: number;
 };
 
 const AddGroupModal = (props: AddGroupModalProps) => {
@@ -58,10 +61,15 @@ const AddGroupModal = (props: AddGroupModalProps) => {
   const [addGroup, { isSuccess: isAddGroupSuccess }] =
     useAddStudentGroupMutation({});
 
+  const [addUser, { data: newUserData, isSuccess: isAddUserSuccess }] =
+    useAddUserMutation({});
+
   const [addMoreUsers, setAddMoreUsers] = useState(false);
   const handleAddMoreUsers = () => {
     setAddMoreUsers(true);
   };
+
+  const [newGroup, setNewGroup] = useState(null);
 
   const myTrainers = clubStaff?.filter(
     (staff) =>
@@ -84,6 +92,13 @@ const AddGroupModal = (props: AddGroupModalProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
+      const newUser = {
+        email: `${formData?.student_group_name}${Date.now()}@dummyemail.com`,
+        password: String(Date.now()),
+        user_type_id: 6,
+        user_status_type_id: 1,
+      };
+      addUser(newUser);
       const groupData = {
         student_group_name: formData?.student_group_name,
         is_active: true,
@@ -91,14 +106,25 @@ const AddGroupModal = (props: AddGroupModalProps) => {
         trainer_id: Number(formData?.trainer_id),
         first_student_id: Number(formData?.first_student_id),
         second_student_id: Number(formData?.second_student_id),
-        third_student_id: Number(formData?.third_student_id),
-        fourth_student_id: Number(formData?.fourth_student_id),
+        third_student_id: Number(formData?.third_student_id)
+          ? Number(formData?.third_student_id)
+          : null,
+        fourth_student_id: Number(formData?.fourth_student_id)
+          ? Number(formData?.fourth_student_id)
+          : null,
       };
-      addGroup(groupData);
+      setNewGroup(groupData);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (isAddUserSuccess) {
+      newGroup.user_id = newUserData?.user_id;
+      addGroup(newGroup);
+    }
+  }, [isAddUserSuccess]);
 
   useEffect(() => {
     if (isAddGroupSuccess) {
@@ -259,11 +285,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
               <label>3. Oyuncu</label>
-              <select
-                {...register("third_student_id", {
-                  required: true,
-                })}
-              >
+              <select {...register("third_student_id")}>
                 <option value="">-- 3. Oyuncu --</option>
                 {mySubscribers.map((subscriber) => (
                   <option
@@ -297,7 +319,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                   </option>
                 ))}
               </select>
-              {errors.second_student_id && (
+              {errors.third_student_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
@@ -305,11 +327,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
             </div>
             <div className={styles["input-container"]}>
               <label>4. Oyuncu</label>
-              <select
-                {...register("third_student_id", {
-                  required: true,
-                })}
-              >
+              <select {...register("fourth_student_id")}>
                 <option value="">-- 4. Oyuncu --</option>
                 {mySubscribers.map((subscriber) => (
                   <option
@@ -343,7 +361,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                   </option>
                 ))}
               </select>
-              {errors.second_student_id && (
+              {errors.fourth_student_id && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>

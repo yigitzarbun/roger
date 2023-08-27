@@ -26,6 +26,8 @@ import {
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { group } from "console";
 
 interface EditClubCourtBookingModalProps {
   editBookingModalOpen: boolean;
@@ -59,6 +61,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     {}
   );
 
+  const { data: groups, isLoading: isGroupLoading } = useGetStudentGroupsQuery(
+    {}
+  );
+
   const today = new Date();
   let day = String(today.getDate());
   let month = String(today.getMonth() + 1);
@@ -89,6 +95,11 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       member.club_id === user?.user?.user?.user_id && member.is_active === true
   );
 
+  const myGroups = groups?.filter(
+    (group) =>
+      group.club_id === user?.user?.user?.user_id && group.is_active === true
+  );
+
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
 
@@ -113,6 +124,11 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   const [selectedEventType, setSelectedEventType] = useState(null);
   const handleSelectedEventType = (event) => {
     setSelectedEventType(Number(event.target.value));
+  };
+
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const handleSelectedGroup = (event) => {
+    setSelectedGroup(Number(event.target.value));
   };
 
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
@@ -299,7 +315,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   ) {
     return <div>Yükleniyor..</div>;
   }
-
   return (
     <Modal
       isOpen={editBookingModalOpen}
@@ -340,8 +355,8 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
             <select
               {...register("court_id", { required: true })}
               onChange={handleSelectedCourt}
+              disabled={!selectedDate}
             >
-              <option value="">-- Seçim yapın --</option>
               {myCourts &&
                 myCourts.map((court) => (
                   <option key={court.court_id} value={court.court_id}>
@@ -362,23 +377,15 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                 required: "Bu alan zorunludur",
               })}
               onChange={handleSelectedTime}
+              value={selectedTime}
+              disabled={!selectedDate || !selectedCourt}
             >
-              <option value="">-- Seçim yapın --</option>
               {availableTimeSlots.map((timeSlot) => (
                 <option key={timeSlot.start} value={timeSlot.start}>
                   {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
                 </option>
               ))}
-              {selectedTime &&
-                !availableTimeSlots.some(
-                  (timeSlot) => timeSlot.start === selectedTime
-                ) && (
-                  <option value={selectedTime} disabled>
-                    {formatTime(selectedTime)} (Already Booked)
-                  </option>
-                )}
             </select>
-
             {errors.event_time && (
               <span className={styles["error-field"]}>
                 {errors.event_time.message}
@@ -393,10 +400,12 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               })}
               onChange={handleSelectedEventType}
             >
-              <option value="">-- Seçim yapın --</option>
               {eventTypes
                 .filter(
-                  (type) => type.event_type_id === 4 || type.event_type_id == 5
+                  (type) =>
+                    type.event_type_id === 4 ||
+                    type.event_type_id == 5 ||
+                    type.event_type_id == 6
                 )
                 .map((type) => (
                   <option key={type.event_type_id} value={type.event_type_id}>
@@ -416,25 +425,22 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
             <label>
               {selectedEventType === 4
                 ? "1. Oyuncu"
-                : selectedEventType === 5
+                : selectedEventType === 5 || selectedEventType === 6
                 ? "Eğitmen"
                 : "Taraf 1"}
             </label>
             <select
-              {...register("inviter_id", {
-                required: true,
-              })}
+              {...register("inviter_id", { required: true })}
+              disabled={selectedEventType === 6 && !selectedGroup}
             >
-              <option value="">-- Seçim yapın --</option>
-              {myExternalMembers && selectedEventType === 4
-                ? myExternalMembers?.map((member) => (
+              {selectedEventType === 4 && myExternalMembers
+                ? myExternalMembers.map((member) => (
                     <option key={member.user_id} value={member.user_id}>
                       {`${member.fname} ${member.lname}`}
                     </option>
                   ))
-                : myTrainers &&
-                  selectedEventType === 5 &&
-                  myTrainers?.map((staff) => (
+                : selectedEventType === 5
+                ? myTrainers?.map((staff) => (
                     <option key={staff.user_id} value={staff.user_id}>
                       {
                         trainers?.find(
@@ -442,7 +448,21 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                         )?.fname
                       }
                     </option>
-                  ))}
+                  ))
+                : selectedEventType === 6 &&
+                  myTrainers
+                    ?.filter(
+                      (trainer) =>
+                        trainer.user_id ===
+                        myGroups?.find(
+                          (group) => group.user_id === selectedGroup
+                        )?.trainer_id
+                    )
+                    .map((trainer) => (
+                      <option key={trainer.user_id} value={trainer.user_id}>
+                        {trainer.fname}
+                      </option>
+                    ))}
             </select>
             {errors.inviter_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
@@ -454,20 +474,27 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                 ? "2. Oyuncu"
                 : selectedEventType === 5
                 ? "Öğrenci"
+                : selectedEventType === 6
+                ? "Grup"
                 : "Taraf 1"}
             </label>
             <select
               {...register("invitee_id", {
                 required: true,
               })}
+              onChange={handleSelectedGroup}
             >
-              <option value="">-- Seçim yapın --</option>
-              {myExternalMembers &&
-                myExternalMembers.map((member) => (
-                  <option key={member.user_id} value={member.user_id}>
-                    {`${member.fname} ${member.lname}`}
-                  </option>
-                ))}
+              {myExternalMembers && selectedEventType === 6
+                ? myGroups.map((group) => (
+                    <option key={group.user_id} value={group.user_id}>
+                      {group.student_group_name}
+                    </option>
+                  ))
+                : myExternalMembers.map((member) => (
+                    <option key={member.user_id} value={member.user_id}>
+                      {`${member.fname} ${member.lname}`}
+                    </option>
+                  ))}
             </select>
             {errors.invitee_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>

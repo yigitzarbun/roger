@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
+
+import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
+
+import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
+
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
@@ -12,9 +17,7 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
-
-import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -25,7 +28,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const { date, eventTypeId, clubId } = props;
 
   // fetch data
-  const user = useAppSelector((store) => store.user.user.user);
+  const user = useAppSelector((store) => store?.user?.user?.user);
 
   const {
     data: bookings,
@@ -38,6 +41,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
+
+  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -66,11 +72,26 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   const currentTime = currentDate.toLocaleTimeString();
 
+  // const club groups
+
+  const myGroups = studentGroups?.filter(
+    (group) =>
+      group.first_student_id === user?.user_id ||
+      group.second_student_id === user?.user_id ||
+      group.third_student_id === user?.user_id ||
+      group.fourth_student_id === user?.user_id
+  );
+
   // bookings
   const myBookings = bookings?.filter(
     (booking) =>
       (booking.inviter_id === user.user_id ||
-        booking.invitee_id === user.user_id) &&
+        booking.invitee_id === user.user_id ||
+        myGroups?.find(
+          (group) =>
+            group.user_id === booking.inviter_id ||
+            group.user_id === booking.invitee_id
+        )) &&
       booking.booking_status_type_id === 2 &&
       (new Date(booking.event_date).toLocaleDateString() >
         today.toLocaleDateString() ||
@@ -363,12 +384,17 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                     : ""}
                 </td>
                 <td>
-                  <button
-                    onClick={() => handleOpenModal(booking)}
-                    className={styles["cancel-button"]}
-                  >
-                    İptal et
-                  </button>
+                  {(booking.event_type_id === 1 ||
+                    booking.event_type_id === 2 ||
+                    booking.event_type_id === 3) && (
+                    <button
+                      onClick={() => handleOpenModal(booking)}
+                      className={styles["cancel-button"]}
+                      disabled={booking.event_type_id === 6}
+                    >
+                      İptal et
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -64,7 +64,9 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
       (booking.inviter_id === user.user_id ||
         booking.invitee_id === user.user_id) &&
       booking.booking_status_type_id === 2 &&
-      (booking.event_type_id === 3 || booking.event_type_id === 5) &&
+      (booking.event_type_id === 3 ||
+        booking.event_type_id === 5 ||
+        booking.event_type_id === 6) &&
       (new Date(booking.event_date).toLocaleDateString() >
         today.toLocaleDateString() ||
         (new Date(booking.event_date).toLocaleDateString() ===

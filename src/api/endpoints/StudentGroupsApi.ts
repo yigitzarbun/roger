@@ -12,6 +12,7 @@ export interface StudentGroup {
   second_student_id: number;
   third_student_id: number;
   fourth_student_id: number;
+  user_id: number;
 }
 
 export const studentGroupsSlice = createApi({

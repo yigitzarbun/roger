@@ -331,6 +331,13 @@ export async function up(knex: Knex): Promise<void> {
         .inTable("users")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
+      table
+        .integer("user_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
     })
     .createTable("students", (table) => {
       table.increments("student_id");
