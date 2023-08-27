@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import styles from "./styles.module.scss";
 
+import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
+
 import { useAppSelector } from "../../../../store/hooks";
+
+import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
+
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
@@ -11,9 +16,8 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
-
-import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 
 interface TrainerCalendarResultsProps {
   date: string;
@@ -47,6 +51,11 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
+  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
+
+  const { data: externalMembers, isLoading: isExternalMembersLoading } =
+    useGetClubExternalMembersQuery({});
   // date
   const currentDate = new Date();
 
@@ -57,6 +66,10 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     currentDate.getDate()
   );
   const currentTime = currentDate.toLocaleTimeString();
+
+  const myGroups = studentGroups?.filter(
+    (group) => group.trainer_id === user?.user_id && group.is_active === true
+  );
 
   // bookings
   const myBookings = bookings?.filter(
@@ -126,7 +139,9 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     isClubsLoading ||
     isEventTypesLoading ||
     isPlayerLevelsLoading ||
-    isCourtsLoading
+    isCourtsLoading ||
+    isStudentGroupsLoading ||
+    isExternalMembersLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -168,7 +183,8 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                   />
                 </td>
                 <td>
-                  {booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id &&
+                  booking.event_type_id === 3
                     ? `${
                         players?.find(
                           (player) => player.user_id === booking.invitee_id
@@ -179,7 +195,8 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                         )?.lname
                       }`
                     : booking.invitee_id === user.user_id &&
-                      `${
+                      booking.event_type_id === 3
+                    ? `${
                         players?.find(
                           (player) => player.user_id === booking.inviter_id
                         )?.fname
@@ -187,10 +204,44 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                         players?.find(
                           (player) => player.user_id === booking.inviter_id
                         )?.lname
-                      }`}
+                      }`
+                    : booking.inviter_id === user.user_id &&
+                      booking.event_type_id === 5
+                    ? `${
+                        externalMembers?.find(
+                          (member) => member.user_id === booking.invitee_id
+                        )?.fname
+                      } ${
+                        externalMembers?.find(
+                          (member) => member.user_id === booking.invitee_id
+                        )?.lname
+                      }`
+                    : booking.invitee_id === user.user_id &&
+                      booking.event_type_id === 5
+                    ? `${
+                        externalMembers?.find(
+                          (member) => member.user_id === booking.inviter_id
+                        )?.fname
+                      } ${
+                        externalMembers?.find(
+                          (member) => member.user_id === booking.inviter_id
+                        )?.lname
+                      }`
+                    : booking.inviter_id === user.user_id &&
+                      booking.event_type_id === 6
+                    ? studentGroups?.find(
+                        (group) => group.user_id === booking.invitee_id
+                      )?.student_group_name
+                    : booking.invitee_id === user.user_id &&
+                      booking.event_type_id === 6
+                    ? studentGroups?.find(
+                        (group) => group.user_id === booking.inviter_id
+                      )?.student_group_name
+                    : ""}
                 </td>
                 <td>
-                  {booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id &&
+                  booking.event_type_id === 3
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
@@ -199,35 +250,83 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                           )?.player_level_id
                       )?.player_level_name
                     : booking.invitee_id === user.user_id &&
-                      playerLevels?.find(
+                      booking.event_type_id === 3
+                    ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
                           players?.find(
                             (player) => player.user_id === booking.inviter_id
                           )?.player_level_id
-                      )?.player_level_name}
+                      )?.player_level_name
+                    : booking.event_type_id === 5 &&
+                      booking.inviter_id === user?.user_id
+                    ? playerLevels?.find(
+                        (level) =>
+                          level.player_level_id ===
+                          externalMembers?.find(
+                            (member) => member.user_id === booking.invitee_id
+                          )?.player_level_id
+                      )?.player_level_name
+                    : booking.event_type_id === 5 &&
+                      booking.invitee_id === user?.user_id
+                    ? playerLevels?.find(
+                        (level) =>
+                          level.player_level_id ===
+                          externalMembers?.find(
+                            (member) => member.user_id === booking.inviter_id
+                          )?.player_level_id
+                      )?.player_level_name
+                    : booking.event_type_id === 6 && "-"}
                 </td>
                 <td>
-                  {booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id &&
+                  booking.event_type_id === 3
                     ? players?.find(
                         (player) => player.user_id === booking.invitee_id
                       )?.gender
                     : booking.invitee_id === user.user_id &&
-                      players?.find(
+                      booking.event_type_id === 3
+                    ? players?.find(
                         (player) => player.user_id === booking.inviter_id
-                      )?.gender}
+                      )?.gender
+                    : booking.event_type_id === 5 &&
+                      booking.inviter_id === user?.user_id
+                    ? externalMembers?.find(
+                        (member) => member.user_id === booking.invitee_id
+                      )?.gender
+                    : booking.event_type_id === 5 &&
+                      booking.invitee_id === user?.user_id
+                    ? externalMembers?.find(
+                        (member) => member.user_id === booking.inviter_id
+                      )?.gender
+                    : booking.event_type_id === 6 && "-"}
                 </td>
                 <td>
-                  {booking.inviter_id === user.user_id
+                  {booking.inviter_id === user.user_id &&
+                  booking.event_type_id === 3
                     ? currentYear -
                       players?.find(
                         (player) => player.user_id === booking.invitee_id
                       )?.birth_year
                     : booking.invitee_id === user.user_id &&
-                      currentYear -
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.birth_year}
+                      booking.event_type_id === 3
+                    ? currentYear -
+                      players?.find(
+                        (player) => player.user_id === booking.inviter_id
+                      )?.birth_year
+                    : booking.inviter_id === user.user_id &&
+                      booking.event_type_id === 5
+                    ? currentYear -
+                      externalMembers?.find(
+                        (member) => member.user_id === booking.invitee_id
+                      )?.birth_year
+                    : booking.invitee_id === user.user_id &&
+                      booking.event_type_id === 5
+                    ? currentYear -
+                      externalMembers?.find(
+                        (member) => member.user_id === booking.inviter_id
+                      )?.birth_year
+                    : booking.event_type_id === 6 && "-"}
                 </td>
                 <td>
                   {

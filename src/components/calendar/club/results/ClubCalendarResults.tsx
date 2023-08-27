@@ -5,6 +5,7 @@ import styles from "./styles.module.scss";
 import { FaPlusSquare } from "react-icons/fa";
 
 import AddClubCourtBookingModal from "../add-booking-modal/AddClubCourtBookingModal";
+import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookingModal";
 
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
@@ -15,7 +16,7 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
-import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookingModal";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 interface ClubCalendarResultsProps {
   date: string;
@@ -40,6 +41,9 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     {}
   );
 
+  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
@@ -49,11 +53,6 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
 
   const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
-
-  const myCourts = courts?.filter(
-    (court) =>
-      court.club_id === user?.clubDetails?.club_id && court.is_active === true
-  );
 
   const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
 
@@ -91,6 +90,15 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
   );
   const currentTime = currentDate.toLocaleTimeString();
 
+  const myCourts = courts?.filter(
+    (court) =>
+      court.club_id === user?.clubDetails?.club_id && court.is_active === true
+  );
+
+  const myGroups = studentGroups?.filter(
+    (group) => group.club_id === user?.user?.user_id && group.is_active === true
+  );
+
   // bookings
   const myBookings = bookings?.filter(
     (booking) =>
@@ -125,7 +133,8 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     isEventTypesLoading ||
     isCourtsLoading ||
     isUsersLoading ||
-    isClubExternalMembersLoading
+    isClubExternalMembersLoading ||
+    isStudentGroupsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -254,6 +263,11 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                         (member) => member.user_id === booking.invitee_id
                       )?.lname
                     }`}
+                  {users?.find((user) => user.user_id === booking.invitee_id)
+                    ?.user_type_id === 6 &&
+                    myGroups?.find(
+                      (group) => group.user_id === booking.invitee_id
+                    )?.student_group_name}
                 </td>
                 <td>
                   {
