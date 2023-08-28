@@ -6,6 +6,10 @@ import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
+import { useAppSelector } from "../../../store/hooks";
+
+import { generateTimesArray } from "../../../common/util/TimeFunctions";
+
 import styles from "./styles.module.scss";
 
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
@@ -14,10 +18,7 @@ import {
   useGetCourtsQuery,
   useUpdateCourtMutation,
 } from "../../../api/endpoints/CourtsApi";
-
-import { useAppSelector } from "../../../store/hooks";
-
-import { generateTimesArray } from "../../../common/util/TimeFunctions";
+import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 
 interface EditCourtModalProps {
   isEditCourtModalOpen: boolean;
@@ -34,6 +35,7 @@ type FormValues = {
   court_surface_type_id: number;
   club_id: number;
   is_active: boolean;
+  price_hour_non_subscriber?: number;
 };
 
 // TO DO: set selectedCourtId to null after editing court
@@ -41,7 +43,7 @@ type FormValues = {
 const EditCourtModal = (props: EditCourtModalProps) => {
   const { isEditCourtModalOpen, closeEditCourtModal, court_id } = props;
 
-  const { user } = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const [updateCourt, { isSuccess }] = useUpdateCourtMutation({});
 
@@ -50,6 +52,8 @@ const EditCourtModal = (props: EditCourtModalProps) => {
 
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
+
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const {
     data: courts,
@@ -83,6 +87,9 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         court_surface_type_id: Number(formData.court_surface_type_id),
         is_active: formData.is_active,
         club_id: user.clubDetails.club_id,
+        price_hour_non_subscriber: formData?.price_hour_non_subscriber
+          ? Number(formData.price_hour_non_subscriber)
+          : null,
       };
       updateCourt(updatedCourtData);
     } catch (error) {
@@ -104,6 +111,8 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         court_structure_type_id: selectedCourt.court_structure_type_id || 0,
         court_surface_type_id: selectedCourt.court_surface_type_id || 0,
         is_active: selectedCourt.is_active ? true : false,
+        price_hour_non_subscriber:
+          selectedCourt?.price_hour_non_subscriber || 0,
       });
     }
   }, [selectedCourt, courts, reset]);
@@ -263,6 +272,22 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+          {clubs?.find((club) => club.user_id === user?.user?.user_id)
+            ?.higher_price_for_non_subscribers && (
+            <div className={styles["input-container"]}>
+              <label>Fiyat - Üye Olmayanlar (TL / saat)</label>
+              <input
+                {...register("price_hour_non_subscriber", { required: true })}
+                type="number"
+                min="0"
+              />
+              {errors.price_hour_non_subscriber && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <button type="submit" className={styles["form-button"]}>
           Tamamla

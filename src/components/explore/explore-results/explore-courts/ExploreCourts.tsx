@@ -81,6 +81,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
               <th>Yüzey</th>
               <th>Mekan</th>
               <th>Fiyat (Saat / TL)</th>
+              <th>Fiyat - Üye Olmayan (Saat / TL)</th>
               <th>Kulüp</th>
               <th>Konum</th>
               <th>Kort Statüsü</th>
@@ -116,6 +117,13 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                   }
                 </td>
                 <td>{court?.price_hour}</td>
+                <td>
+                  {clubs?.find((club) => club.club_id === court.club_id)
+                    ?.higher_price_for_non_subscribers &&
+                  court.price_hour_non_subscriber
+                    ? court.price_hour_non_subscriber
+                    : "-"}
+                </td>
                 <td>
                   {
                     clubs?.find((club) => club.club_id === court.club_id)

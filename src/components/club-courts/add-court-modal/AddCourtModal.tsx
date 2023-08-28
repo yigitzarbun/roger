@@ -34,12 +34,13 @@ type FormValues = {
   court_structure_type_id: number;
   court_surface_type_id: number;
   club_id: number;
+  price_hour_non_subscriber?: number;
 };
 
 const AddCourtModal = (props: AddCourtModalProps) => {
   const { isAddCourtModalOpen, closeAddCourtModal } = props;
 
-  const { user } = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -82,7 +83,10 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         court_structure_type_id: Number(formData.court_structure_type_id),
         court_surface_type_id: Number(formData.court_surface_type_id),
         is_active: true,
-        club_id: user.clubDetails.club_id,
+        club_id: user?.clubDetails?.club_id,
+        price_hour_non_subscriber: formData.price_hour_non_subscriber
+          ? Number(formData.price_hour_non_subscriber)
+          : null,
       };
       if (clubBankDetailsExist) {
         addCourt(newCourtData);
@@ -100,7 +104,11 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     }
   }, [isSuccess]);
 
-  if (isCourtStructureTypesLoading || isCourtSurfaceTypesLoading) {
+  if (
+    isCourtStructureTypesLoading ||
+    isCourtSurfaceTypesLoading ||
+    isClubsLoading
+  ) {
     return <div>Yükleniyor..</div>;
   }
 
@@ -230,6 +238,30 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             )}
           </div>
         </div>
+        {clubs?.find((club) => club.user_id === user?.user?.user_id)
+          ?.higher_price_for_non_subscribers && (
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Üye Olmayanlar İçin Fiyat (TL / saat)</label>
+              <p className={styles["description-text"]}>
+                Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
+                kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı
+                eklemek için profilinizdeki kurallar bölümünü ziyaret edin.
+              </p>
+              <input
+                {...register("price_hour_non_subscriber", { required: true })}
+                type="number"
+                min="0"
+              />
+              {errors.price_hour_non_subscriber && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         <button
           type="submit"
           className={styles["form-button"]}

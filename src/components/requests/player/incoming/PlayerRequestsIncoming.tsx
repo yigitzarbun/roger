@@ -454,8 +454,9 @@ const PlayerRequestsIncoming = () => {
                 <td>
                   {(booking.event_type_id === 1 ||
                     booking.event_type_id === 2) &&
-                    courts?.find((court) => court.court_id === booking.court_id)
-                      ?.price_hour / 2}
+                    payments?.find(
+                      (payment) => booking.payment_id === payment.payment_id
+                    )?.payment_amount / 2}
                   {booking.event_type_id === 3 &&
                   booking.inviter_id === user?.user_id
                     ? courts?.find(

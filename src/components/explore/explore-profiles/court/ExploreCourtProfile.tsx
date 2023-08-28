@@ -138,6 +138,11 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
           <p>{selectedCourt?.opening_time.slice(0, 5)}</p>
           <p>{selectedCourt?.closing_time.slice(0, 5)}</p>
           <p>{`${selectedCourt?.price_hour} TL / Saat`}</p>
+          {clubs?.find((club) => club.club_id === selectedCourt?.club_id)
+            ?.higher_price_for_non_subscribers &&
+            selectedCourt?.price_hour_non_subscriber && (
+              <p>{`${selectedCourt?.price_hour_non_subscriber} TL / Saat (Üye Olmayanlar)`}</p>
+            )}
           <p>
             {
               courtSurfaceTypes?.find(

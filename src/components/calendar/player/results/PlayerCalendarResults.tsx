@@ -18,6 +18,7 @@ import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/Tra
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -52,6 +53,10 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
+
+  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
+    {}
+  );
 
   const {
     data: trainerExperienceTypes,
@@ -154,7 +159,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     isEventTypesLoading ||
     isPlayerLevelsLoading ||
     isTrainerExperienceTypesLoading ||
-    isCourtsLoading
+    isCourtsLoading ||
+    isStudentGroupsLoading ||
+    isPaymentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -181,6 +188,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
               <th>Saat </th>
               <th>Kort</th>
               <th>Konum</th>
+              <th>Ücret</th>
             </tr>
           </thead>
           <tbody>
@@ -363,8 +371,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td>
                   {(booking.event_type_id === 1 ||
                     booking.event_type_id === 2) &&
-                    courts?.find((court) => court.court_id === booking.court_id)
-                      ?.price_hour / 2}
+                    payments?.find(
+                      (payment) => payment.payment_id === booking.payment_id
+                    )?.payment_amount / 2}
                   {booking.event_type_id === 3 &&
                   booking.inviter_id === user.user_id
                     ? courts?.find(

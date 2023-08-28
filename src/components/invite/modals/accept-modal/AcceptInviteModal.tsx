@@ -11,6 +11,7 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useAppSelector } from "../../../../store/hooks";
+import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 
 export type AcceptBookingData = {
   booking_id: number;
@@ -52,6 +53,9 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
+  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
+    {}
+  );
 
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
@@ -80,7 +84,8 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     isTrainersLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isUserTypesLoading
+    isUserTypesLoading ||
+    isPaymentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -153,10 +158,10 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
             {isUserPlayer && (
               <td>
                 {(isEventTraining || isEventMatch) &&
-                  courts?.find(
-                    (court) =>
-                      court.court_id === Number(acceptBookingData?.court_id)
-                  )?.price_hour / 2}
+                  payments?.find(
+                    (payment) =>
+                      payment.payment_id === acceptBookingData?.payment_id
+                  )?.payment_amount / 2}
                 {isEventLesson &&
                   courts?.find(
                     (court) =>
@@ -211,9 +216,10 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
             {((isUserPlayer && isEventTraining) ||
               (isUserPlayer && isEventMatch)) && (
               <td>
-                {courts?.find(
-                  (court) => court.court_id === acceptBookingData?.court_id
-                )?.price_hour / 2}
+                {payments?.find(
+                  (payment) =>
+                    payment.payment_id === acceptBookingData?.payment_id
+                )?.payment_amount / 2}
               </td>
             )}
           </tr>

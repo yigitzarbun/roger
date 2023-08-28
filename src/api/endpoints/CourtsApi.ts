@@ -12,6 +12,7 @@ export interface Court {
   court_surface_type_id: number;
   is_active: boolean;
   club_id: number;
+  price_hour_non_subscriber?: number;
 }
 
 export const courtsSlice = createApi({

@@ -30,7 +30,6 @@ const ClubRules = () => {
   if (isClubsLoading) {
     return <div>Yükleniyor..</div>;
   }
-
   return (
     <div className={styles["club-rules-container"]}>
       <h2>Kulüp Kuralları</h2>
@@ -98,6 +97,24 @@ const ClubRules = () => {
             <td>
               {clubDetails?.is_trainer_subscription_required === true &&
               clubDetails?.is_player_lesson_subscription_required === true
+                ? "Evet"
+                : "Hayır"}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Kort Fiyat Kuralları</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className={styles["rule-row"]}>
+            <td>Üye olmayanlara farklı fiyat politikası uygulanır</td>
+            <td>
+              {clubDetails?.higher_price_for_non_subscribers === true
                 ? "Evet"
                 : "Hayır"}
             </td>

@@ -138,6 +138,10 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("iban");
       table.string("name_on_bank_account");
       table
+        .boolean("higher_price_for_non_subscribers")
+        .defaultTo(false)
+        .notNullable();
+      table
         .boolean("is_player_subscription_required")
         .defaultTo(false)
         .notNullable();
@@ -433,6 +437,7 @@ export async function up(knex: Knex): Promise<void> {
       table.time("opening_time").notNullable();
       table.time("closing_time").notNullable();
       table.integer("price_hour").notNullable();
+      table.integer("price_hour_non_subscriber");
       table.boolean("is_active").defaultTo(true).notNullable();
       table
         .integer("court_structure_type_id")

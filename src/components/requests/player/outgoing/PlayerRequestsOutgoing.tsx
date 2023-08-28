@@ -4,6 +4,10 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
+import CancelInviteModal, {
+  BookingData,
+} from "../../../invite/modals/cancel-modal/CancelInviteModal";
+
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -14,9 +18,7 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 
-import CancelInviteModal, {
-  BookingData,
-} from "../../../invite/modals/cancel-modal/CancelInviteModal";
+import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 
 const PlayerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
@@ -31,6 +33,9 @@ const PlayerRequestsOutgoing = () => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
+  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
     {}
   );
 
@@ -231,9 +236,9 @@ const PlayerRequestsOutgoing = () => {
                 </td>
                 <td>
                   {booking.event_type_id === 1 || booking.event_type_id === 2
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour / 2
+                    ? payments?.find(
+                        (payment) => booking.payment_id === payment.payment_id
+                      )?.payment_amount / 2
                     : booking.event_type_id === 3
                     ? courts?.find(
                         (court) => court.court_id === booking.court_id

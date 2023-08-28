@@ -4,13 +4,15 @@ import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
+import { useAppSelector } from "../../../../store/hooks";
+
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
-import { useAppSelector } from "../../../../store/hooks";
+import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 
 export type BookingData = {
   booking_id: number;
@@ -48,7 +50,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
-
+  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
+    {}
+  );
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
 
@@ -76,7 +80,8 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     isTrainersLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isUserTypesLoading
+    isUserTypesLoading ||
+    isPaymentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -144,9 +149,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             {isUserPlayer && (
               <td>
                 {(isEventTraining || isEventMatch) &&
-                  courts?.find(
-                    (court) => court.court_id === Number(bookingData?.court_id)
-                  )?.price_hour / 2}
+                  payments?.find(
+                    (payment) => payment.payment_id === bookingData?.payment_id
+                  )?.payment_amount / 2}
                 {isEventLesson &&
                   courts?.find(
                     (court) => court.court_id === Number(bookingData?.court_id)
@@ -196,9 +201,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             {((isUserPlayer && isEventTraining) ||
               (isUserPlayer && isEventMatch)) && (
               <td>
-                {courts?.find(
-                  (court) => court.court_id === bookingData?.court_id
-                )?.price_hour / 2}
+                {payments?.find(
+                  (payment) => payment.payment_id === bookingData?.payment_id
+                )?.payment_amount / 2}
               </td>
             )}
           </tr>

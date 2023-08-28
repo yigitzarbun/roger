@@ -117,9 +117,12 @@ const CourtBookingForm = () => {
   let playerPaymentDetailsExist = false;
   let trainerPaymentDetailsExist = false;
 
+  let inviterPlayerSubscribed = false;
+  let inviteePlayerSubscribed = false;
+
   if (selectedEventType === 1 || selectedEventType === 2) {
     if (playerSubscriptionRequired) {
-      const inviterPlayerSubscribed = clubSubscriptions?.find(
+      inviterPlayerSubscribed = clubSubscriptions?.find(
         (subscription) =>
           subscription.player_id === user?.user_id &&
           subscription.club_id === selectedClub?.user_id &&
@@ -127,7 +130,7 @@ const CourtBookingForm = () => {
       )
         ? true
         : false;
-      const inviteePlayerSubscribed = clubSubscriptions?.find(
+      inviteePlayerSubscribed = clubSubscriptions?.find(
         (subscription) =>
           subscription.player_id === selectedPlayer &&
           subscription.club_id === selectedClub?.user_id &&
@@ -333,11 +336,31 @@ const CourtBookingForm = () => {
       booking_status_type_id: 1,
       event_type_id: Number(formData?.event_type_id),
       club_id: Number(courtBookingDetails?.club_id),
-      court_id: Number(courtBookingDetails?.club_id),
+      court_id: Number(courtBookingDetails?.court_id),
       inviter_id: user?.user_id,
       invitee_id: Number(formData?.invitee_id),
       lesson_price: null,
-      court_price: Number(courtBookingDetails?.court_price),
+      court_price:
+        clubs?.find(
+          (club) =>
+            club.club_id ===
+            courts?.find(
+              (court) =>
+                court.court_id === Number(courtBookingDetails?.court_id)
+            )?.club_id
+        )?.higher_price_for_non_subscribers &&
+        courts.find(
+          (court) => court.court_id === Number(courtBookingDetails?.court_id)
+        )?.price_hour_non_subscriber &&
+        (!inviterPlayerSubscribed || !inviteePlayerSubscribed)
+          ? courts.find(
+              (court) =>
+                court.court_id === Number(courtBookingDetails?.court_id)
+            )?.price_hour_non_subscriber
+          : courts?.find(
+              (court) =>
+                court.court_id === Number(courtBookingDetails?.court_id)
+            )?.price_hour,
       payment_id: null,
     };
 

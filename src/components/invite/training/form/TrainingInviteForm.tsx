@@ -284,8 +284,19 @@ const TrainingInviteForm = () => {
       inviter_id: user?.user.user_id,
       invitee_id: selectedPlayer?.user_id,
       lesson_price: null,
-      court_price: courts?.find((court) => court.court_id === selectedCourt)
-        .price_hour,
+      court_price:
+        clubs?.find(
+          (club) =>
+            club.club_id ===
+            courts?.find((court) => court.court_id === selectedCourt)?.club_id
+        )?.higher_price_for_non_subscribers &&
+        courts.find((court) => court.court_id === selectedCourt)
+          ?.price_hour_non_subscriber &&
+        !isPlayersSubscribed
+          ? courts.find((court) => court.court_id === selectedCourt)
+              ?.price_hour_non_subscriber
+          : courts?.find((court) => court.court_id === selectedCourt)
+              ?.price_hour,
       payment_id: null,
     };
     setBookingFormData(bookingData);
@@ -313,7 +324,7 @@ const TrainingInviteForm = () => {
   const handleCloseModal = () => {
     setModal(false);
   };
-  console.log(availableTimeSlots);
+
   useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();

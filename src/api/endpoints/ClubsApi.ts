@@ -18,6 +18,7 @@ export interface Club {
   iban?: number;
   bank_id?: number;
   name_on_bank_account?: string;
+  higher_price_for_non_subscribers: boolean;
 }
 
 export const clubsSlice = createApi({

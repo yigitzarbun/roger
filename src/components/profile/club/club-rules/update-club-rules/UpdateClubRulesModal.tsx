@@ -61,6 +61,7 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
     let trainerRequired = false;
     let playerLessonRequired = false;
     let playerRequired = false;
+    let higherPriceForNonSubscribers = false;
 
     if (Number(formData.lesson_rule_id) === 1) {
       trainerRequired = false;
@@ -87,6 +88,12 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
       is_trainer_subscription_required: trainerRequired,
       is_player_lesson_subscription_required: playerLessonRequired,
       is_player_subscription_required: playerRequired,
+      higher_price_for_non_subscribers:
+        String(formData.higher_price_for_non_subscribers) === "true"
+          ? true
+          : String(formData.higher_price_for_non_subscribers) === "false"
+          ? false
+          : "",
     };
     updateClub(updatedClubData);
   };
@@ -101,11 +108,17 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
     setSelectedPlayerRule(event.target.value);
   };
 
+  const [selectedCourtPriceRule, setSelectedCourtPriceRule] = useState(false);
+  const handleSelectedCourtPriceRule = (event) => {
+    setSelectedCourtPriceRule(event.target.value);
+  };
+
   let isButtonDisabled = false;
   if (
     (Number(selectedLessonRule) === 2 ||
       Number(selectedLessonRule) === 4 ||
-      Number(selectedPlayerRule) === 1) &&
+      Number(selectedPlayerRule) === 1 ||
+      String(selectedCourtPriceRule) === "true") &&
     clubHasSubscriptionPackages === false
   ) {
     isButtonDisabled = true;
@@ -115,13 +128,11 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
     refetch();
     handleCloseModal();
   }, [isSuccess]);
-  if (isClubsLoading) {
+
+  if (isClubsLoading || isClubSubscriptionPackagesLoading) {
     return <div>Yükleniyor..</div>;
   }
 
-  if (isClubSubscriptionPackagesLoading) {
-    return <div>Yükleniyor..</div>;
-  }
   return (
     <ReactModal
       isOpen={isModalOpen}
@@ -183,7 +194,26 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+          <div className={styles["input-container"]}>
+            <label>Kort Fiyatlandırma Kuralı</label>
+            <select
+              {...register("higher_price_for_non_subscribers")}
+              onChange={handleSelectedCourtPriceRule}
+            >
+              <option value="">-- Seçim yapın --</option>
+              <option value="true">
+                Üye olmayanlara farklı fiyat uygulanır
+              </option>
+              <option value="false">
+                Üye olmayanlara farklı fiyat uygulanmaz
+              </option>
+            </select>
+            {errors.higher_price_for_non_subscribers && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
         </div>
+
         <button
           type="submit"
           className={styles["form-button"]}
