@@ -78,6 +78,8 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
             <tr>
               <th>Kort</th>
               <th>İsim</th>
+              <th>Açılış</th>
+              <th>Kapanış</th>
               <th>Yüzey</th>
               <th>Mekan</th>
               <th>Fiyat (Saat / TL)</th>
@@ -98,6 +100,8 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                   />
                 </td>
                 <td>{`${court.court_name}`}</td>
+                <td>{court.opening_time.slice(0, 5)}</td>
+                <td>{court.closing_time.slice(0, 5)}</td>
                 <td>
                   {
                     courtSurfaceTypes?.find(
