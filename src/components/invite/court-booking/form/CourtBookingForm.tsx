@@ -36,6 +36,7 @@ const CourtBookingForm = () => {
   const courtBookingDetails = location?.state;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
+
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
 
@@ -121,31 +122,29 @@ const CourtBookingForm = () => {
   let inviteePlayerSubscribed = false;
 
   if (selectedEventType === 1 || selectedEventType === 2) {
-    if (playerSubscriptionRequired) {
-      inviterPlayerSubscribed = clubSubscriptions?.find(
-        (subscription) =>
-          subscription.player_id === user?.user_id &&
-          subscription.club_id === selectedClub?.user_id &&
-          subscription.is_active === true
-      )
-        ? true
-        : false;
-      inviteePlayerSubscribed = clubSubscriptions?.find(
-        (subscription) =>
-          subscription.player_id === selectedPlayer &&
-          subscription.club_id === selectedClub?.user_id &&
-          subscription.is_active === true
-      )
-        ? true
-        : false;
-      if (
-        inviterPlayerSubscribed === false ||
-        inviteePlayerSubscribed === false
-      ) {
-        isButtonDisabled = true;
-        buttonText =
-          "Kort kiralayabilmek için oyuncuların kulübe üye olması gerekmetkedir";
-      }
+    inviterPlayerSubscribed = clubSubscriptions?.find(
+      (subscription) =>
+        subscription.player_id === user?.user_id &&
+        subscription.club_id === selectedClub?.user_id &&
+        subscription.is_active === true
+    )
+      ? true
+      : false;
+    inviteePlayerSubscribed = clubSubscriptions?.find(
+      (subscription) =>
+        subscription.player_id === selectedPlayer &&
+        subscription.club_id === selectedClub?.user_id &&
+        subscription.is_active === true
+    )
+      ? true
+      : false;
+    if (
+      inviterPlayerSubscribed === false ||
+      inviteePlayerSubscribed === false
+    ) {
+      isButtonDisabled = true;
+      buttonText =
+        "Kort kiralayabilmek için oyuncuların kulübe üye olması gerekmetkedir";
     }
 
     const inviterPlayer = players?.find(
@@ -270,8 +269,9 @@ const CourtBookingForm = () => {
       playerPaymentDetailsExist = true;
     }
     if (
-      playerPaymentDetailsExist === false ||
-      trainerPaymentDetailsExist === false
+      (playerPaymentDetailsExist === false ||
+        trainerPaymentDetailsExist === false) &&
+      (selectedPlayer || selectedTrainer)
     ) {
       isButtonDisabled = true;
       buttonText =
@@ -310,6 +310,9 @@ const CourtBookingForm = () => {
     null
   );
 
+  console.log(inviterPlayerSubscribed);
+  console.log(inviteePlayerSubscribed);
+
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const eventDate = new Date(courtBookingDetails?.event_date);
     const eventTime = courtBookingDetails?.event_time;
@@ -341,14 +344,9 @@ const CourtBookingForm = () => {
       invitee_id: Number(formData?.invitee_id),
       lesson_price: null,
       court_price:
-        clubs?.find(
-          (club) =>
-            club.club_id ===
-            courts?.find(
-              (court) =>
-                court.court_id === Number(courtBookingDetails?.court_id)
-            )?.club_id
-        )?.higher_price_for_non_subscribers &&
+        (Number(formData?.event_type_id) === 1 ||
+          Number(formData?.event_type_id) === 2) &&
+        selectedClub?.higher_price_for_non_subscribers &&
         courts.find(
           (court) => court.court_id === Number(courtBookingDetails?.court_id)
         )?.price_hour_non_subscriber &&
@@ -357,13 +355,23 @@ const CourtBookingForm = () => {
               (court) =>
                 court.court_id === Number(courtBookingDetails?.court_id)
             )?.price_hour_non_subscriber
-          : courts?.find(
+          : Number(formData?.event_type_id) === 3 &&
+            selectedClub?.higher_price_for_non_subscribers &&
+            courts.find(
+              (court) =>
+                court.court_id === Number(courtBookingDetails?.court_id)
+            )?.price_hour_non_subscriber &&
+            (!isPlayerSubscribed || !isTrainerStaff)
+          ? courts.find(
+              (court) =>
+                court.court_id === Number(courtBookingDetails?.court_id)
+            )?.price_hour_non_subscriber
+          : courts.find(
               (court) =>
                 court.court_id === Number(courtBookingDetails?.court_id)
             )?.price_hour,
       payment_id: null,
     };
-
     setBookingFormData(bookingData);
     setModal(true);
   };

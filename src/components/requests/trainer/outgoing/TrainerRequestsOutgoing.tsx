@@ -16,6 +16,8 @@ import CancelInviteModal, {
   BookingData,
 } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
+import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+
 const TrainerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
 
@@ -34,6 +36,10 @@ const TrainerRequestsOutgoing = () => {
 
   const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
     useGetPlayerLevelsQuery({});
+
+  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
+    {}
+  );
 
   const date = new Date();
   const today = date.toLocaleDateString();
@@ -187,7 +193,13 @@ const TrainerRequestsOutgoing = () => {
                       ?.club_name
                   }
                 </td>
-                <td>{booking.lesson_price}</td>
+                <td>
+                  {
+                    payments?.find(
+                      (payment) => payment.payment_id === booking.payment_id
+                    )?.lesson_price
+                  }
+                </td>
                 <td>
                   <button
                     onClick={() => handleOpenModal(booking)}

@@ -11,6 +11,7 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 export type FormValues = {
   event_type_id: number;
@@ -50,6 +51,8 @@ const InviteModal = ({
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsQuery({});
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffQuery({});
 
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
@@ -62,16 +65,22 @@ const InviteModal = ({
       subscription.player_id === formData?.inviter_id &&
       subscription.is_active === true &&
       subscription.club_id ===
-        courts?.find((court) => court.court_id === formData.court_id)?.club_id
-  );
+        courts?.find((court) => court.court_id === Number(formData.court_id))
+          ?.club_id
+  )
+    ? true
+    : false;
 
   const isInviteeSubscribed = clubSubscriptions?.find(
     (subscription) =>
       subscription.player_id === formData?.invitee_id &&
       subscription.is_active === true &&
       subscription.club_id ===
-        courts?.find((court) => court.court_id === formData.court_id)?.club_id
-  );
+        courts?.find((court) => court.court_id === Number(formData.court_id))
+          ?.club_id
+  )
+    ? true
+    : false;
 
   const oppositionUser = isUserInviter
     ? users?.find((user) => user.user_id === formData?.invitee_id)
@@ -89,6 +98,68 @@ const InviteModal = ({
   const isEventTraining = formData?.event_type_id === 1;
   const isEventMatch = formData?.event_type_id === 2;
   const isEventLesson = formData?.event_type_id === 3;
+
+  const selectedClub = clubs?.find(
+    (club) =>
+      club.user_id ===
+      courts?.find((court) => court.court_id === Number(formData?.court_id))
+        ?.club_id
+  );
+
+  let lessonTrainerSubscribed = false;
+  let lessonPlayerSubscribed = false;
+
+  if (
+    isEventLesson &&
+    oppositionUser.user_type_id === 2 &&
+    clubStaff?.find(
+      (staff) =>
+        staff.employment_status === "accepted" &&
+        staff.user_id === oppositionUser?.user_id &&
+        staff.club_id === selectedClub?.club_id
+    )
+  ) {
+    lessonTrainerSubscribed = true;
+  }
+
+  if (
+    isEventLesson &&
+    oppositionUser.user_type_id === 2 &&
+    clubSubscriptions?.find(
+      (subscription) =>
+        subscription.club_id === selectedClub?.user_id &&
+        subscription.is_active === true &&
+        subscription.player_id === user?.user_id
+    )
+  ) {
+    lessonPlayerSubscribed = true;
+  }
+
+  if (
+    isEventLesson &&
+    oppositionUser.user_type_id === 1 &&
+    clubStaff?.find(
+      (staff) =>
+        staff.employment_status === "accepted" &&
+        staff.user_id === user?.user_id &&
+        staff.club_id === selectedClub?.club_id
+    )
+  ) {
+    lessonTrainerSubscribed = true;
+  }
+
+  if (
+    isEventLesson &&
+    oppositionUser.user_type_id === 1 &&
+    clubSubscriptions?.find(
+      (subscription) =>
+        subscription.club_id === selectedClub?.user_id &&
+        subscription.is_active === true &&
+        subscription.player_id === oppositionUser?.user_id
+    )
+  ) {
+    lessonPlayerSubscribed = true;
+  }
 
   if (
     isUsersLoading ||
@@ -175,14 +246,42 @@ const InviteModal = ({
                   ? courts?.find(
                       (court) => court.court_id === Number(formData?.court_id)
                     )?.price_hour_non_subscriber / 2
+                  : isEventLesson &&
+                    clubs?.find(
+                      (club) =>
+                        club.club_id ===
+                        courts?.find(
+                          (court) =>
+                            court.court_id === Number(formData?.court_id)
+                        )?.club_id
+                    )?.higher_price_for_non_subscribers === true &&
+                    courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.price_hour_non_subscriber &&
+                    (!lessonPlayerSubscribed || !lessonTrainerSubscribed)
+                  ? courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.price_hour_non_subscriber
+                  : isEventLesson &&
+                    clubs?.find(
+                      (club) =>
+                        club.club_id ===
+                        courts?.find(
+                          (court) =>
+                            court.court_id === Number(formData?.court_id)
+                        )?.club_id
+                    )?.higher_price_for_non_subscribers === true &&
+                    courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.price_hour_non_subscriber &&
+                    lessonPlayerSubscribed &&
+                    lessonTrainerSubscribed
+                  ? courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.price_hour
                   : courts?.find(
                       (court) => court.court_id === Number(formData?.court_id)
-                    )?.price_hour / 2}
-
-                {isEventLesson &&
-                  courts?.find(
-                    (court) => court.court_id === Number(formData?.court_id)
-                  )?.price_hour}
+                    )?.price_hour}
               </td>
             )}
 
@@ -209,13 +308,31 @@ const InviteModal = ({
             {/* toplam ücret */}
             {isUserPlayer && isEventLesson && isUserInviter && (
               <td>
-                {courts?.find(
+                {clubs?.find(
+                  (club) =>
+                    club.club_id ===
+                    courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.club_id
+                )?.higher_price_for_non_subscribers &&
+                courts?.find(
                   (court) => court.court_id === Number(formData?.court_id)
-                )?.price_hour +
-                  trainers?.find(
-                    (trainer) =>
-                      trainer.user_id === Number(formData?.invitee_id)
-                  ).price_hour}
+                )?.price_hour_non_subscriber &&
+                (!lessonPlayerSubscribed || !lessonTrainerSubscribed)
+                  ? courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.price_hour_non_subscriber +
+                    trainers?.find(
+                      (trainer) =>
+                        trainer.user_id === Number(formData?.invitee_id)
+                    ).price_hour
+                  : courts?.find(
+                      (court) => court.court_id === Number(formData?.court_id)
+                    )?.price_hour +
+                    trainers?.find(
+                      (trainer) =>
+                        trainer.user_id === Number(formData?.invitee_id)
+                    ).price_hour}
               </td>
             )}
             {isUserPlayer && isEventLesson && isUserInvitee && (

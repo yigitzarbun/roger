@@ -103,7 +103,8 @@ const PlayerRequestsOutgoing = () => {
     isEventTypesLoading ||
     isPlayersLoading ||
     isPlayerLevelTypesLoading ||
-    isTrainerExperienceTypesLoading
+    isTrainerExperienceTypesLoading ||
+    isPaymentsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -240,12 +241,9 @@ const PlayerRequestsOutgoing = () => {
                         (payment) => booking.payment_id === payment.payment_id
                       )?.payment_amount / 2
                     : booking.event_type_id === 3
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour +
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.price_hour
+                    ? payments?.find(
+                        (payment) => booking.payment_id === payment.payment_id
+                      )?.payment_amount
                     : "External Booking"}
                 </td>
                 <td>

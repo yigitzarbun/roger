@@ -286,8 +286,19 @@ const LeesonInviteForm = () => {
       lesson_price: trainers?.find(
         (trainer) => trainer.user_id === trainerUserId
       )?.price_hour,
-      court_price: courts?.find((court) => court.court_id === selectedCourt)
-        .price_hour,
+      court_price:
+        clubs?.find(
+          (club) =>
+            club.club_id ===
+            courts?.find((court) => court.court_id === selectedCourt)?.club_id
+        )?.higher_price_for_non_subscribers &&
+        courts.find((court) => court.court_id === selectedCourt)
+          ?.price_hour_non_subscriber &&
+        (!isPlayerSubscribed || !isTrainerStaff)
+          ? courts.find((court) => court.court_id === selectedCourt)
+              ?.price_hour_non_subscriber
+          : courts?.find((court) => court.court_id === selectedCourt)
+              ?.price_hour,
       payment_id: null,
     };
     setBookingFormData(bookingData);

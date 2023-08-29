@@ -42,7 +42,7 @@ const TrainingInviteForm = () => {
 
   const selectedPlayer = location.state;
 
-  const { user } = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
     {}
@@ -146,13 +146,7 @@ const TrainingInviteForm = () => {
     clubSubscriptionRequired = true;
   }
 
-  if (
-    selectedPlayer &&
-    user &&
-    clubSubscriptions &&
-    selectedClubSubscriptions &&
-    clubSubscriptionRequired
-  ) {
+  if (selectedPlayer && user && selectedClubSubscriptions) {
     if (
       selectedClubSubscriptions?.find(
         (subscription) =>

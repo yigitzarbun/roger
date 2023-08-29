@@ -145,13 +145,7 @@ const MatchInviteForm = () => {
     clubSubscriptionRequired = true;
   }
 
-  if (
-    selectedPlayer &&
-    user &&
-    clubSubscriptions &&
-    selectedClubSubscriptions &&
-    clubSubscriptionRequired
-  ) {
+  if (selectedPlayer && user && selectedClubSubscriptions) {
     if (
       selectedClubSubscriptions?.find(
         (subscription) =>

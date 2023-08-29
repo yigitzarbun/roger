@@ -151,51 +151,32 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
                 {(isEventTraining || isEventMatch) &&
                   payments?.find(
                     (payment) => payment.payment_id === bookingData?.payment_id
-                  )?.payment_amount / 2}
+                  )?.court_price / 2}
                 {isEventLesson &&
-                  courts?.find(
-                    (court) => court.court_id === Number(bookingData?.court_id)
-                  )?.price_hour}
+                  payments?.find(
+                    (payment) => payment.payment_id === bookingData?.payment_id
+                  )?.court_price}
               </td>
             )}
 
             {/* ders ücreti */}
             {isEventLesson && (
               <td>
-                {isUserTrainer &&
-                  trainers?.find((trainer) => trainer.user_id === user.user_id)
-                    ?.price_hour}
-                {isUserPlayer &&
-                  isUserInvitee &&
-                  trainers?.find(
-                    (trainer) => trainer.user_id === bookingData?.inviter_id
-                  )?.price_hour}
-                {isUserPlayer &&
-                  isUserInviter &&
-                  trainers?.find(
-                    (trainer) => trainer.user_id === bookingData?.invitee_id
-                  )?.price_hour}
+                {
+                  payments?.find(
+                    (payment) => payment.payment_id === bookingData?.payment_id
+                  )?.lesson_price
+                }
               </td>
             )}
             {/* toplam ücret */}
-            {isUserPlayer && isEventLesson && isUserInviter && (
+            {isUserPlayer && isEventLesson && (
               <td>
-                {courts?.find(
-                  (court) => court.court_id === bookingData?.court_id
-                )?.price_hour +
-                  trainers?.find(
-                    (trainer) => trainer.user_id === bookingData?.invitee_id
-                  ).price_hour}
-              </td>
-            )}
-            {isUserPlayer && isEventLesson && isUserInvitee && (
-              <td>
-                {courts?.find(
-                  (court) => court.court_id === bookingData?.court_id
-                )?.price_hour +
-                  trainers?.find(
-                    (trainer) => trainer.user_id === bookingData?.inviter_id
-                  )?.price_hour}
+                {
+                  payments?.find(
+                    (payment) => payment.payment_id === bookingData?.payment_id
+                  )?.payment_amount
+                }
               </td>
             )}
             {((isUserPlayer && isEventTraining) ||

@@ -197,6 +197,7 @@ const TrainerRequestsIncoming = () => {
     }
   }, [isAddStudentSuccess]);
 
+  console.log(incomingBookings);
   if (
     isBookingsLoading ||
     isCourtsLoading ||
@@ -308,9 +309,9 @@ const TrainerRequestsIncoming = () => {
                 </td>
                 <td>
                   {
-                    trainers?.find(
-                      (trainer) => trainer.user_id === booking.invitee_id
-                    )?.price_hour
+                    payments?.find(
+                      (payment) => payment.payment_id === booking.payment_id
+                    )?.lesson_price
                   }
                 </td>
                 <td>

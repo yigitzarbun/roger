@@ -375,22 +375,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                       (payment) => payment.payment_id === booking.payment_id
                     )?.payment_amount / 2}
                   {booking.event_type_id === 3 &&
-                  booking.inviter_id === user.user_id
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour +
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.price_hour
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user.user_id
-                    ? courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.price_hour +
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.inviter_id
-                      )?.price_hour
-                    : ""}
+                    payments?.find(
+                      (payment) => payment.payment_id === booking.payment_id
+                    )?.payment_amount}
                 </td>
                 <td>
                   {(booking.event_type_id === 1 ||
