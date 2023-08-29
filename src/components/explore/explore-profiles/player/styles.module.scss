@@ -46,4 +46,27 @@
       }
     }
   }
+  .middle-sections-container {
+    .reviews-section {
+      background-color: $roger-box-bg-color;
+      width: 100%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+
+      .club-image {
+        width: 50px;
+      }
+
+      .review-container {
+        background-color: $roger-black-dark;
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+      }
+    }
+  }
+
+  .bottom-sections-container {
+    .events-section {
+    }
+  }
 }

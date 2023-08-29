@@ -6,6 +6,8 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import { useAppSelector } from "../../../../store/hooks";
+
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
@@ -16,8 +18,8 @@ import {
 } from "../../../../api/endpoints/FavouritesApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-
-import { useAppSelector } from "../../../../store/hooks";
+import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
@@ -51,6 +53,28 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isLoading: isFavouritesLoading,
     refetch,
   } = useGetFavouritesQuery({});
+
+  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
+    {}
+  );
+
+  const { data: eventReviews, isLoading: isEventReviewsLoading } =
+    useGetEventReviewsQuery({});
+
+  const playerBookings = bookings?.filter(
+    (booking) =>
+      booking.booking_status_type_id === 5 &&
+      (booking.inviter_id === selectedPlayer.user_id ||
+        booking.invitee_id === selectedPlayer.user_id)
+  );
+
+  const playerReviewsReceived = eventReviews?.filter(
+    (review) =>
+      review.booking_id ===
+        playerBookings.find(
+          (booking) => booking.booking_id === review.booking_id
+        )?.booking_id && review.reviewer_id !== selectedPlayer?.user_id
+  );
 
   const userGender = players?.find(
     (player) => player.user_id === user?.user?.user_id
@@ -152,7 +176,9 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isPlayerLevelsLoading ||
     isFavouritesLoading ||
     isClubSubscriptionsLoading ||
-    isClubsLoading
+    isClubsLoading ||
+    isEventReviewsLoading ||
+    isBookingsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -252,6 +278,46 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
             >
               <button>Derse davet et</button>
             </Link>
+          )}
+        </div>
+      </div>
+      <div className={styles["middle-sections-container"]}>
+        <div className={styles["reviews-section"]}>
+          <h3>Oyuncu Hakkında Değerlendirmeler</h3>
+          {playerReviewsReceived?.map((review) => (
+            <div className={styles["review-container"]}>
+              <h4>{review.event_review_title}</h4>
+              <p>{review.event_review_description}</p>
+              <p>{`${review.review_score}/10`}</p>
+              <Link to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}>{`${
+                players.find((player) => player.user_id === review.reviewer_id)
+                  ?.fname
+              } ${
+                players.find((player) => player.user_id === review.reviewer_id)
+                  ?.lname
+              }`}</Link>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className={styles["bottom-sections-container"]}>
+        <div className={styles["events-sections"]}>
+          <h3>Oyuncu Geçmiş Etkinlikler</h3>
+          {playerBookings.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th>Tür</th>
+                  <th>Tarih</th>
+                  <th>Saat</th>
+                  <th>Oyuncu</th>
+                  <th>Eğitmen</th>
+                  <th>Skor</th>
+                </tr>
+              </thead>
+            </table>
+          ) : (
+            <p>Henüz tamamlanan etkinlik bulunmamaktadır.</p>
           )}
         </div>
       </div>

@@ -33,6 +33,7 @@ import { matchScoresStatusTypesSlice } from "../api/endpoints/MatchScoresStatusT
 import { studentsSlice } from "../api/endpoints/StudentsApi";
 import { studentGroupsSlice } from "../api/endpoints/StudentGroupsApi";
 import { clubExternalMembersSlice } from "../api/endpoints/ClubExternalMembersApi";
+import { eventReviewsSlice } from "../api/endpoints/EventReviewsApi";
 
 export const store = configureStore({
   reducer: {
@@ -71,6 +72,7 @@ export const store = configureStore({
     [studentsSlice.reducerPath]: studentsSlice.reducer,
     [studentGroupsSlice.reducerPath]: studentGroupsSlice.reducer,
     [clubExternalMembersSlice.reducerPath]: clubExternalMembersSlice.reducer,
+    [eventReviewsSlice.reducerPath]: eventReviewsSlice.reducer,
     user: authReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
@@ -105,7 +107,8 @@ export const store = configureStore({
       .concat(matchScoresStatusTypesSlice.middleware)
       .concat(studentsSlice.middleware)
       .concat(studentGroupsSlice.middleware)
-      .concat(clubExternalMembersSlice.middleware),
+      .concat(clubExternalMembersSlice.middleware)
+      .concat(eventReviewsSlice.middleware),
 });
 
 // Infer the `RootState` type from the store

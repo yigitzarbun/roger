@@ -154,11 +154,13 @@ const TrainerStudentsResults = () => {
                     )?.length
                   }
                 </td>
-                <button
-                  onClick={() => handleDeclineStudent(student.student_id)}
-                >
-                  Öğrenciyi Listeden Çıkar
-                </button>
+                <td>
+                  <button
+                    onClick={() => handleDeclineStudent(student.student_id)}
+                  >
+                    Öğrenciyi Listeden Çıkar
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
+
+import AddEventReviewModal from "../modals/reviews/add/AddEventReviewModal";
 
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -15,6 +17,8 @@ import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import ViewEventReviewModal from "../modals/reviews/view/ViewEventReviewModal";
 
 const PlayerPastEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -39,10 +43,14 @@ const PlayerPastEventsResults = () => {
   );
   const { data: studentGroups, isLoading: isStudentGroupsLoading } =
     useGetStudentGroupsQuery({});
+
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
+
+  const { data: eventReviews, isLoading: isEventReviewsLoading } =
+    useGetEventReviewsQuery({});
 
   const myGroups = studentGroups?.filter(
     (group) =>
@@ -63,6 +71,27 @@ const PlayerPastEventsResults = () => {
         )) &&
       booking.booking_status_type_id === 5
   );
+
+  const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+
+  const openReviewModal = (booking_id: number) => {
+    setSelectedBookingId(booking_id);
+    setIsAddReviewModalOpen(true);
+  };
+  const closeReviewModal = () => {
+    setIsAddReviewModalOpen(false);
+  };
+
+  const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
+  const openViewReviewModal = (booking_id: number) => {
+    setSelectedBookingId(booking_id);
+    setIsViewReviewModalOpen(true);
+  };
+  const closeViewReviewModal = () => {
+    setIsViewReviewModalOpen(false);
+  };
+
   if (
     isBookingsLoading ||
     isEventTypesLoading ||
@@ -74,7 +103,9 @@ const PlayerPastEventsResults = () => {
     isTrainerExperienceTypesLoading ||
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading ||
-    isPlayersLoading
+    isPlayersLoading ||
+    isStudentGroupsLoading ||
+    isEventReviewsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -239,6 +270,34 @@ const PlayerPastEventsResults = () => {
                       )?.trainer_experience_type_name
                     : "-"}
                 </td>
+                <td>
+                  {eventReviews?.find(
+                    (review) =>
+                      review.reviewer_id === user?.user?.user_id &&
+                      review.booking_id === event.booking_id
+                  ) ? (
+                    "Yorum Gönderildi"
+                  ) : (
+                    <button onClick={() => openReviewModal(event.booking_id)}>
+                      Yorum Yaz
+                    </button>
+                  )}
+                </td>
+                <td>
+                  {eventReviews?.find(
+                    (review) =>
+                      review.reviewer_id !== user?.user?.user_id &&
+                      review.booking_id === event.booking_id
+                  ) ? (
+                    <button
+                      onClick={() => openViewReviewModal(event.booking_id)}
+                    >
+                      Yorum Görüntüle
+                    </button>
+                  ) : (
+                    "Karşı tarafın yorumu bekleniyor"
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -246,6 +305,16 @@ const PlayerPastEventsResults = () => {
       ) : (
         <p>Henüz tamamlanmış etkinlik bulunmamaktadır</p>
       )}
+      <AddEventReviewModal
+        isAddReviewModalOpen={isAddReviewModalOpen}
+        closeReviewModal={closeReviewModal}
+        selectedBookingId={selectedBookingId}
+      />
+      <ViewEventReviewModal
+        isViewReviewModalOpen={isViewReviewModalOpen}
+        closeViewReviewModal={closeViewReviewModal}
+        selectedBookingId={selectedBookingId}
+      />
     </div>
   );
 };

@@ -14,6 +14,7 @@ export interface Booking {
   court_id: number;
   inviter_id: number;
   invitee_id: number;
+  invitation_note?: string;
 }
 
 export const bookingsSlice = createApi({

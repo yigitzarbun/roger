@@ -139,8 +139,9 @@ const CourtBookingForm = () => {
       ? true
       : false;
     if (
-      inviterPlayerSubscribed === false ||
-      inviteePlayerSubscribed === false
+      (inviterPlayerSubscribed === false ||
+        inviteePlayerSubscribed === false) &&
+      playerSubscriptionRequired
     ) {
       isButtonDisabled = true;
       buttonText =
@@ -309,9 +310,6 @@ const CourtBookingForm = () => {
   const [bookingFormData, setBookingFormData] = useState<FormValues | null>(
     null
   );
-
-  console.log(inviterPlayerSubscribed);
-  console.log(inviteePlayerSubscribed);
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const eventDate = new Date(courtBookingDetails?.event_date);

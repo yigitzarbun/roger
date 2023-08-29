@@ -135,9 +135,10 @@ const MatchInviteForm = () => {
   let clubSubscriptionRequired = false;
 
   const selectedClubSubscriptions = clubSubscriptions?.filter(
-    (subscription) => subscription.club_id === selectedClub
+    (subscription) =>
+      subscription.club_id ===
+      clubs?.find((club) => club.club_id === selectedClub)?.user_id
   );
-
   if (
     clubs?.find((club) => club.club_id === selectedClub)
       ?.is_player_subscription_required

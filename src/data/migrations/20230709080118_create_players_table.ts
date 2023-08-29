@@ -524,6 +524,7 @@ export async function up(knex: Knex): Promise<void> {
       table.time("event_time").notNullable();
       table.integer("court_price").notNullable();
       table.integer("lesson_price");
+      table.string("invitation_note");
       table
         .integer("payment_id")
         .unsigned()
@@ -616,6 +617,27 @@ export async function up(knex: Knex): Promise<void> {
         .unsigned()
         .references("user_id")
         .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+    .createTable("event_reviews", (table) => {
+      table.increments("event_review_id");
+      table.string("event_review_title").notNullable();
+      table.string("event_review_description").notNullable();
+      table.integer("review_score").notNullable();
+      table.boolean("is_active").defaultTo(true).notNullable();
+      table
+        .integer("reviewer_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("booking_id")
+        .unsigned()
+        .references("booking_id")
+        .inTable("bookings")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
@@ -713,6 +735,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("club_subscriptions")
     .dropTableIfExists("club_subscription_packages")
     .dropTableIfExists("club_subscription_types")
+    .dropTableIfExists("event_reviews")
     .dropTableIfExists("match_scores")
     .dropTableIfExists("bookings")
     .dropTableIfExists("payments")

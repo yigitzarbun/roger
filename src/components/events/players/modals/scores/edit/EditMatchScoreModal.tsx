@@ -8,16 +8,16 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../../store/hooks";
+import { useAppSelector } from "../../../../../../store/hooks";
 
 import {
   useUpdateMatchScoreMutation,
   useGetMatchScoresQuery,
-} from "../../../../../api/endpoints/MatchScoresApi";
+} from "../../../../../../api/endpoints/MatchScoresApi";
 
-import { useGetBookingsQuery } from "../../../../../api/endpoints/BookingsApi";
+import { useGetBookingsQuery } from "../../../../../../api/endpoints/BookingsApi";
 
-import { useGetPlayersQuery } from "../../../../../api/endpoints/PlayersApi";
+import { useGetPlayersQuery } from "../../../../../../api/endpoints/PlayersApi";
 
 interface EditMatchScoreModalProps {
   isEditScoreModalOpen: boolean;

@@ -6,6 +6,8 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("club_subscriptions").del();
   await knex("club_subscription_packages").del();
   await knex("club_subscription_types").del();
+  await knex("event_reviews").del();
+  await knex("match_scores").del();
   await knex("bookings").del();
   await knex("payments").del();
   await knex("courts").del();

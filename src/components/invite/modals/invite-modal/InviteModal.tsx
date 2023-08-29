@@ -65,8 +65,8 @@ const InviteModal = ({
       subscription.player_id === formData?.inviter_id &&
       subscription.is_active === true &&
       subscription.club_id ===
-        courts?.find((court) => court.court_id === Number(formData.court_id))
-          ?.club_id
+        clubs?.find((club) => club.club_id === Number(formData.club_id))
+          ?.user_id
   )
     ? true
     : false;
@@ -76,8 +76,8 @@ const InviteModal = ({
       subscription.player_id === formData?.invitee_id &&
       subscription.is_active === true &&
       subscription.club_id ===
-        courts?.find((court) => court.court_id === Number(formData.court_id))
-          ?.club_id
+        clubs?.find((club) => club.club_id === Number(formData.club_id))
+          ?.user_id
   )
     ? true
     : false;
@@ -101,7 +101,7 @@ const InviteModal = ({
 
   const selectedClub = clubs?.find(
     (club) =>
-      club.user_id ===
+      club.club_id ===
       courts?.find((court) => court.court_id === Number(formData?.court_id))
         ?.club_id
   );
@@ -148,6 +148,7 @@ const InviteModal = ({
     lessonTrainerSubscribed = true;
   }
 
+  console.log(selectedClub);
   if (
     isEventLesson &&
     oppositionUser.user_type_id === 1 &&
@@ -160,7 +161,6 @@ const InviteModal = ({
   ) {
     lessonPlayerSubscribed = true;
   }
-
   if (
     isUsersLoading ||
     isPlayersLoading ||
@@ -232,13 +232,8 @@ const InviteModal = ({
             {isUserPlayer && (
               <td>
                 {(isEventTraining || isEventMatch) &&
-                clubs?.find(
-                  (club) =>
-                    club.club_id ===
-                    courts?.find(
-                      (court) => court.court_id === Number(formData?.court_id)
-                    )?.club_id
-                )?.higher_price_for_non_subscribers &&
+                clubs?.find((club) => club.club_id === Number(formData.club_id))
+                  ?.higher_price_for_non_subscribers &&
                 courts?.find(
                   (court) => court.court_id === Number(formData?.court_id)
                 )?.price_hour_non_subscriber &&

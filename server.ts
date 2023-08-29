@@ -36,6 +36,7 @@ import matchScoresStatusTypesRouter from "./src/api/match-score-status-types/mat
 import studentsRouter from "./src/api/students/students-router";
 import studentGroupsRouter from "./src/api/student-groups/student-groups-router";
 import clubExternalMembersRouter from "./src/api/external-members/club-external-members-router";
+import eventReviewsRouter from "./src/api/event-reviews/event-reviews-router";
 
 const cors = require("cors");
 
@@ -88,14 +89,13 @@ async function updatePendingPayments() {
 
 async function updateCompletedBookings() {
   try {
-    // Adjust for the timezone difference (3 hours behind)
+    // TO DO: Make 3 hours dynamic
     const timezoneOffsetHours = 3;
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + timezoneOffsetHours);
     const currentTime = new Date();
     currentTime.setHours(currentTime.getHours() + timezoneOffsetHours);
 
-    // Get the current UTC time using Luxon
     const completedBookings = await db("bookings")
       .where("booking_status_type_id", "=", 2)
       .select();
@@ -174,6 +174,7 @@ server.use("/api-match-scores-status-types", matchScoresStatusTypesRouter);
 server.use("/api/students", studentsRouter);
 server.use("/api/student-groups", studentGroupsRouter);
 server.use("/api/club-external-members", clubExternalMembersRouter);
+server.use("/api/event-reviews", eventReviewsRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

@@ -267,7 +267,6 @@ const LeesonInviteForm = () => {
   const [bookingFormData, setBookingFormData] = useState<FormValues | null>(
     null
   );
-
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const bookingData = {
       event_date: new Date(formData.event_date).toISOString(),
@@ -303,34 +302,6 @@ const LeesonInviteForm = () => {
     };
     setBookingFormData(bookingData);
     setModal(true);
-  };
-  const handleModalSubmit = () => {
-    setModal(false);
-
-    if (playerPaymentDetailsExist && trainerBankDetailsExist) {
-      const paymentDetails = {
-        payment_amount:
-          bookingFormData?.court_price +
-          trainers?.find((trainer) => trainer.user_id === trainerUserId)
-            ?.price_hour,
-        court_price: bookingFormData?.court_price,
-        lesson_price: trainers?.find(
-          (trainer) => trainer.user_id === trainerUserId
-        )?.price_hour,
-        payment_status: "pending",
-        payment_type_id: 3,
-        sender_inviter_id: playerUserId,
-        recipient_trainer_id: trainerUserId,
-        recipient_club_id: clubs?.find(
-          (club) => club.club_id === Number(bookingFormData?.club_id)
-        )?.user_id,
-      };
-      addPayment(paymentDetails);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setModal(false);
   };
 
   // disabled button
@@ -391,6 +362,35 @@ const LeesonInviteForm = () => {
       isTrainerStaff = true;
     }
   }
+
+  const handleModalSubmit = () => {
+    setModal(false);
+
+    if (playerPaymentDetailsExist && trainerBankDetailsExist) {
+      const paymentDetails = {
+        payment_amount:
+          bookingFormData?.court_price +
+          trainers?.find((trainer) => trainer.user_id === trainerUserId)
+            ?.price_hour,
+        court_price: bookingFormData?.court_price,
+        lesson_price: trainers?.find(
+          (trainer) => trainer.user_id === trainerUserId
+        )?.price_hour,
+        payment_status: "pending",
+        payment_type_id: 3,
+        sender_inviter_id: playerUserId,
+        recipient_trainer_id: trainerUserId,
+        recipient_club_id: clubs?.find(
+          (club) => club.club_id === Number(bookingFormData?.club_id)
+        )?.user_id,
+      };
+      addPayment(paymentDetails);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModal(false);
+  };
 
   useEffect(() => {
     if (

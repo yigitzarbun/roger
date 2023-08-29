@@ -14,8 +14,8 @@ import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSur
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 import { useGetMatchScoresStatusTypesQuery } from "../../../../api/endpoints/MatchScoresStatusTypesApi";
-import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
-import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";
+import AddMatchScoreModal from "../modals/scores/add/AddMatchScoreModal";
+import EditMatchScoreModal from "../modals/scores/edit/EditMatchScoreModal";
 
 const PlayerScores = () => {
   const user = useAppSelector((store) => store?.user?.user);

@@ -136,7 +136,9 @@ const TrainingInviteForm = () => {
   let clubSubscriptionRequired = false;
 
   const selectedClubSubscriptions = clubSubscriptions?.filter(
-    (subscription) => subscription.club_id === selectedClub
+    (subscription) =>
+      subscription.club_id ===
+      clubs?.find((club) => club.club_id === selectedClub)?.user_id
   );
 
   if (
@@ -279,18 +281,16 @@ const TrainingInviteForm = () => {
       invitee_id: selectedPlayer?.user_id,
       lesson_price: null,
       court_price:
-        clubs?.find(
-          (club) =>
-            club.club_id ===
-            courts?.find((court) => court.court_id === selectedCourt)?.club_id
-        )?.higher_price_for_non_subscribers &&
-        courts.find((court) => court.court_id === selectedCourt)
+        clubs?.find((club) => club.club_id === Number(formData?.club_id))
+          ?.higher_price_for_non_subscribers &&
+        courts.find((court) => court.court_id === Number(formData.court_id))
           ?.price_hour_non_subscriber &&
         !isPlayersSubscribed
-          ? courts.find((court) => court.court_id === selectedCourt)
+          ? courts.find((court) => court.court_id === Number(formData.court_id))
               ?.price_hour_non_subscriber
-          : courts?.find((court) => court.court_id === selectedCourt)
-              ?.price_hour,
+          : courts?.find(
+              (court) => court.court_id === Number(formData.court_id)
+            )?.price_hour,
       payment_id: null,
     };
     setBookingFormData(bookingData);
