@@ -250,7 +250,11 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                           (trainer) => trainer.user_id === booking.inviter_id
                         )?.lname
                       }`
-                    : ""}
+                    : booking.event_type_id === 6
+                    ? myGroups?.find(
+                        (group) => group.user_id === booking.invitee_id
+                      )?.student_group_name
+                    : "-"}
                 </td>
                 <td>
                   {(booking.event_type_id === 1 ||
@@ -291,7 +295,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                             (trainer) => trainer.user_id === booking.inviter_id
                           )?.trainer_experience_type_id
                       )?.trainer_experience_type_name
-                    : ""}
+                    : "-"}
                 </td>
                 <td>
                   {(booking.event_type_id === 1 ||
@@ -316,7 +320,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                     ? trainers?.find(
                         (trainer) => trainer.user_id === booking.inviter_id
                       )?.gender
-                    : ""}
+                    : "-"}
                 </td>
                 <td>
                   {(booking.event_type_id === 1 ||
@@ -345,7 +349,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                       trainers?.find(
                         (trainer) => trainer.user_id === booking.inviter_id
                       )?.birth_year
-                    : ""}
+                    : "-"}
                 </td>
                 <td>
                   {

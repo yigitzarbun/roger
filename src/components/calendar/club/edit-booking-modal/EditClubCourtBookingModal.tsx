@@ -87,12 +87,14 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
 
   const myCourts = courts?.filter(
     (court) =>
-      court?.club_id === user?.user?.user?.user_id && court.is_active === true
+      court?.club_id === user?.user?.clubDetails?.club_id &&
+      court.is_active === true
   );
 
   const myExternalMembers = clubExternalMembers?.filter(
     (member) =>
-      member.club_id === user?.user?.user?.user_id && member.is_active === true
+      member.club_id === user?.user?.clubDetails?.club_id &&
+      member.is_active === true
   );
 
   const myGroups = groups?.filter(
@@ -108,9 +110,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     setSelectedDate(event.target.value);
   };
 
-  const [selectedTime, setSelectedTime] = useState(
-    selectedBooking?.event_time.slice(0, 5)
-  );
+  const [selectedTime, setSelectedTime] = useState("");
 
   const handleSelectedTime = (event) => {
     setSelectedTime(event.target.value);
@@ -142,7 +142,8 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
           booking.court_id === Number(selectedCourt) &&
           booking.event_date.slice(0, 10) === selectedDate &&
           (booking.booking_status_type_id === 1 ||
-            booking.booking_status_type_id === 2)
+            booking.booking_status_type_id === 2) &&
+          booking.booking_id !== selectedBooking?.booking_id
       );
       setBookedHours(filteredBookings);
     }
@@ -259,7 +260,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       ),
       booking_status_type_id: 2,
       event_type_id: Number(formData?.event_type_id),
-      club_id: user?.user?.user?.user_id,
+      club_id: user?.user?.clubDetails?.club_id,
       court_id: Number(formData?.court_id),
       inviter_id: Number(formData?.inviter_id),
       invitee_id: Number(formData?.invitee_id),
@@ -280,12 +281,9 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
         inviter_id: selectedBooking?.inviter_id,
         invitee_id: selectedBooking?.invitee_id,
       });
-
-      setSelectedTime(selectedBooking?.event_time.slice(0, 5)); // Set the default time
     }
   }, [selectedBooking]);
 
-  // for setBookedHours to be populated initially, run the useEffect below
   useEffect(() => {
     if (selectedBooking) {
       setSelectedCourt(selectedBooking.court_id);
@@ -293,7 +291,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
         new Date(selectedBooking.event_date).toISOString().slice(0, 10)
       );
       setSelectedEventType(selectedBooking.event_type_id);
-      setSelectedTime(selectedBooking?.event_time.slice(0, 5));
+
+      setSelectedTime(selectedBooking.event_time.slice(0, 5));
+
+      setSelectedGroup(selectedBooking.invitee_id);
     }
   }, [selectedBooking]);
 
@@ -311,7 +312,8 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     isBookingsLoading ||
     isEventTypesLoading ||
     isClubStaffLoading ||
-    isTrainersLoading
+    isTrainersLoading ||
+    isGroupLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

@@ -12,6 +12,8 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 export type AcceptBookingData = {
   booking_id: number;
@@ -56,6 +58,11 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
     {}
   );
+  const { data: externalMembers, isLoading: isExternalMembersLoading } =
+    useGetClubExternalMembersQuery({});
+
+  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
 
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
@@ -71,8 +78,16 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   const opposition =
     oppositionUser.user_type_id === 1
       ? players?.find((player) => player.user_id === oppositionUser.user_id)
-      : oppositionUser.user_type_id === 2 &&
-        trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
+      : oppositionUser.user_type_id === 2
+      ? trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id)
+      : oppositionUser.user_type_id === 5
+      ? externalMembers?.find(
+          (member) => member.user_id === oppositionUser.user_id
+        )
+      : oppositionUser.user_type_id === 6 &&
+        studentGroups?.find(
+          (group) => group.user_id === oppositionUser.user_id
+        );
 
   const isEventTraining = acceptBookingData?.event_type_id === 1;
   const isEventMatch = acceptBookingData?.event_type_id === 2;
@@ -85,7 +100,9 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     isClubsLoading ||
     isCourtsLoading ||
     isUserTypesLoading ||
-    isPaymentsLoading
+    isPaymentsLoading ||
+    isExternalMembersLoading ||
+    isStudentGroupsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }

@@ -13,6 +13,8 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 export type BookingData = {
   booking_id: number;
@@ -48,11 +50,16 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   );
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: userTypes, isLoading: isUserTypesLoading } =
-    useGetUserTypesQuery({});
+
   const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
     {}
   );
+  const { data: externalMembers, isLoading: isExternalMembersLoading } =
+    useGetClubExternalMembersQuery({});
+
+  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
+
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
 
@@ -67,8 +74,16 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   const opposition =
     oppositionUser.user_type_id === 1
       ? players?.find((player) => player.user_id === oppositionUser.user_id)
-      : oppositionUser.user_type_id === 2 &&
-        trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id);
+      : oppositionUser.user_type_id === 2
+      ? trainers?.find((trainer) => trainer.user_id === oppositionUser.user_id)
+      : oppositionUser.user_type_id === 5
+      ? externalMembers?.find(
+          (member) => member.user_id === oppositionUser.user_id
+        )
+      : oppositionUser.user_type_id === 6 &&
+        studentGroups?.find(
+          (group) => group.user_id === oppositionUser.user_id
+        );
 
   const isEventTraining = bookingData?.event_type_id === 1;
   const isEventMatch = bookingData?.event_type_id === 2;
@@ -80,8 +95,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     isTrainersLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isUserTypesLoading ||
-    isPaymentsLoading
+    isExternalMembersLoading ||
+    isPaymentsLoading ||
+    isStudentGroupsLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -128,7 +144,11 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             <td>
               <img />
             </td>
-            <td>{`${opposition.fname} ${opposition.lname}`}</td>
+            <td>
+              {oppositionUser?.user_type_id === 6
+                ? opposition.student_group_name
+                : `${opposition.fname} ${opposition.lname}`}
+            </td>
             <td>{new Date(bookingData?.event_date).toLocaleDateString()}</td>
             <td>{bookingData?.event_time.slice(0, 5)}</td>
             <td>

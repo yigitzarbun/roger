@@ -24,6 +24,9 @@ import {
   useGetStudentsQuery,
   useUpdateStudentMutation,
 } from "../../../../api/endpoints/StudentsApi";
+import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 interface ExploreTrainerProfileProps {
   user_id: string;
@@ -47,6 +50,8 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const { data: clubStaff, isLoading: isClubStaffLoading } =
     useGetClubStaffQuery({});
 
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
@@ -66,6 +71,28 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     isLoading: isStudentsLoading,
     refetch: refetchStudents,
   } = useGetStudentsQuery({});
+
+  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
+    {}
+  );
+
+  const { data: eventReviews, isLoading: isEventReviewsLoading } =
+    useGetEventReviewsQuery({});
+
+  const trainerBookings = bookings?.filter(
+    (booking) =>
+      booking.booking_status_type_id === 5 &&
+      (booking.inviter_id === selectedTrainer.user_id ||
+        booking.invitee_id === selectedTrainer.user_id)
+  );
+
+  const trainerReviewsReceived = eventReviews?.filter(
+    (review) =>
+      review.booking_id ===
+        trainerBookings.find(
+          (booking) => booking.booking_id === review.booking_id
+        )?.booking_id && review.reviewer_id !== selectedTrainer?.user_id
+  );
 
   const [addStudent, { isSuccess: isAddStudentSuccess }] =
     useAddStudentMutation({});
@@ -313,6 +340,28 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
               Öğrenci Ol
             </button>
           )}
+        </div>
+      </div>
+      <div className={styles["middle-sections-container"]}>
+        <div className={styles["reviews-section"]}>
+          <h3>Oyuncu Hakkında Değerlendirmeler</h3>
+          {trainerReviewsReceived?.map((review) => (
+            <div
+              className={styles["review-container"]}
+              key={review.event_review_id}
+            >
+              <h4>{review.event_review_title}</h4>
+              <p>{review.event_review_description}</p>
+              <p>{`${review.review_score}/10`}</p>
+              <Link to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}>{`${
+                players.find((player) => player.user_id === review.reviewer_id)
+                  ?.fname
+              } ${
+                players.find((player) => player.user_id === review.reviewer_id)
+                  ?.lname
+              }`}</Link>
+            </div>
+          ))}
         </div>
       </div>
     </div>

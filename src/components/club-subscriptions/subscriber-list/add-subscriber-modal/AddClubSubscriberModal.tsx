@@ -27,6 +27,7 @@ import {
 } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
+import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 interface AddClubSubscriberModalProps {
   isAddSubscriberModalOpen: boolean;
@@ -55,6 +56,8 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
 
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
+
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -136,7 +139,7 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
           is_active: true,
           player_level_id: Number(formData?.player_level_id),
           location_id: Number(formData?.location_id),
-          club_id: user?.user?.user_id,
+          club_id: user?.clubDetails?.club_id,
           user_id: newUser.user_id,
         };
         addClubExternalSubscriber(newSubscriber);

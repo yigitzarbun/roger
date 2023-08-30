@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -26,11 +26,8 @@ import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExter
 const ClubSubscribersResults = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
 
-  const {
-    data: clubSubscriptions,
-    isLoading: isClubSubscriptionsLoading,
-    refetch: refetchSubscriptions,
-  } = useGetClubSubscriptionsQuery({});
+  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
+    useGetClubSubscriptionsQuery({});
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
@@ -44,11 +41,8 @@ const ClubSubscribersResults = () => {
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
-  const {
-    data: clubExternalMembers,
-    isLoading: isExternalMembersLoading,
-    refetch: refetchExternalMembers,
-  } = useGetClubExternalMembersQuery({});
+  const { data: clubExternalMembers, isLoading: isExternalMembersLoading } =
+    useGetClubExternalMembersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});

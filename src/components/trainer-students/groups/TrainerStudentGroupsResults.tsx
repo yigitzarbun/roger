@@ -59,7 +59,7 @@ const TrainerStudentGroupsResults = () => {
           </thead>
           <tbody>
             {myGroups.map((group) => (
-              <tr>
+              <tr key={group.user_id}>
                 <td>{group.student_group_name}</td>
                 <td>
                   {group.fourth_student_id ? 4 : group.third_student_id ? 3 : 2}

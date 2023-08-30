@@ -307,13 +307,40 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
               <h4>{review.event_review_title}</h4>
               <p>{review.event_review_description}</p>
               <p>{`${review.review_score}/10`}</p>
-              <Link to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}>{`${
-                players.find((player) => player.user_id === review.reviewer_id)
-                  ?.fname
-              } ${
-                players.find((player) => player.user_id === review.reviewer_id)
-                  ?.lname
-              }`}</Link>
+              {bookings?.find(
+                (booking) =>
+                  booking.booking_id === review.booking_id &&
+                  (booking.event_type_id === 1 || booking.event_type_id === 2)
+              ) && (
+                <Link
+                  to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
+                >{`${
+                  players.find(
+                    (player) => player.user_id === review.reviewer_id
+                  )?.fname
+                } ${
+                  players.find(
+                    (player) => player.user_id === review.reviewer_id
+                  )?.lname
+                }`}</Link>
+              )}
+              {bookings?.find(
+                (booking) =>
+                  booking.booking_id === review.booking_id &&
+                  booking.event_type_id === 3
+              ) && (
+                <Link
+                  to={`${paths.EXPLORE_PROFILE}2/${review.reviewer_id}`}
+                >{`${
+                  trainers.find(
+                    (trainer) => trainer.user_id === review.reviewer_id
+                  )?.fname
+                } ${
+                  trainers.find(
+                    (trainer) => trainer.user_id === review.reviewer_id
+                  )?.lname
+                }`}</Link>
+              )}
             </div>
           ))}
         </div>

@@ -83,12 +83,14 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
 
   const myCourts = courts?.filter(
     (court) =>
-      court?.club_id === user?.user?.user?.user_id && court.is_active === true
+      court?.club_id === user?.user?.clubDetails?.club_id &&
+      court.is_active === true
   );
 
   const myExternalMembers = clubExternalMembers?.filter(
     (member) =>
-      member.club_id === user?.user?.user?.user_id && member.is_active === true
+      member.club_id === user?.user?.clubDetails?.club_id &&
+      member.is_active === true
   );
 
   const myGroups = studentGroups?.filter(
@@ -231,7 +233,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
       ),
       booking_status_type_id: 2,
       event_type_id: Number(formData?.event_type_id),
-      club_id: user?.user?.user?.user_id,
+      club_id: user?.user?.clubDetails?.club_id,
       court_id: Number(formData?.court_id),
       inviter_id: Number(formData?.inviter_id),
       invitee_id: Number(formData?.invitee_id),
