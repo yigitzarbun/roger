@@ -20,6 +20,9 @@ import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubs
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
@@ -42,12 +45,21 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
+
+  const { data: matchScores, isLoading: isMatchScoresLoading } =
+    useGetMatchScoresQuery({});
+
+  const { data: eventTypes, isLoading: isEventTypesLoading } =
+    useGetEventTypesQuery({});
+
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsQuery({});
   const selectedPlayer = players?.find(
     (player) => player.user_id === Number(user_id)
   );
-
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
@@ -178,7 +190,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isClubSubscriptionsLoading ||
     isClubsLoading ||
     isEventReviewsLoading ||
-    isBookingsLoading
+    isBookingsLoading ||
+    isTrainersLoading ||
+    isMatchScoresLoading ||
+    isEventTypesLoading
   ) {
     return <div>Yükleniyor..</div>;
   }
@@ -285,7 +300,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
         <div className={styles["reviews-section"]}>
           <h3>Oyuncu Hakkında Değerlendirmeler</h3>
           {playerReviewsReceived?.map((review) => (
-            <div className={styles["review-container"]}>
+            <div
+              className={styles["review-container"]}
+              key={review.event_review_id}
+            >
               <h4>{review.event_review_title}</h4>
               <p>{review.event_review_description}</p>
               <p>{`${review.review_score}/10`}</p>
@@ -301,7 +319,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
         </div>
       </div>
       <div className={styles["bottom-sections-container"]}>
-        <div className={styles["events-sections"]}>
+        <div className={styles["events-section"]}>
           <h3>Oyuncu Geçmiş Etkinlikler</h3>
           {playerBookings.length > 0 ? (
             <table>
@@ -315,6 +333,123 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
                   <th>Skor</th>
                 </tr>
               </thead>
+              <tbody>
+                {playerBookings?.map((booking) => (
+                  <tr key={booking.booking_id} className={styles["event-row"]}>
+                    <td>
+                      {
+                        eventTypes?.find(
+                          (type) => type.event_type_id === booking.event_type_id
+                        )?.event_type_name
+                      }
+                    </td>
+                    <td>{new Date(booking.event_date).toLocaleDateString()}</td>
+                    <td>{booking.event_time.slice(0, 5)}</td>
+                    <td>
+                      {(booking.event_type_id === 1 ||
+                        booking.event_type_id === 2) &&
+                      booking.inviter_id === selectedPlayer?.user_id
+                        ? `${
+                            players?.find(
+                              (player) => player.user_id === booking.invitee_id
+                            )?.fname
+                          } ${
+                            players?.find(
+                              (player) => player.user_id === booking.invitee_id
+                            )?.lname
+                          }`
+                        : (booking.event_type_id === 1 ||
+                            booking.event_type_id === 2) &&
+                          booking.invitee_id === selectedPlayer?.user_id
+                        ? `${
+                            players?.find(
+                              (player) => player.user_id === booking.inviter_id
+                            )?.fname
+                          } ${
+                            players?.find(
+                              (player) => player.user_id === booking.inviter_id
+                            )?.lname
+                          }`
+                        : "-"}
+                    </td>
+                    <td>
+                      {booking.event_type_id === 3 &&
+                      booking.inviter_id === selectedPlayer?.user_id
+                        ? `${
+                            trainers?.find(
+                              (trainer) =>
+                                trainer.user_id === booking.invitee_id
+                            )?.fname
+                          }
+                      ${
+                        trainers?.find(
+                          (trainer) => trainer.user_id === booking.invitee_id
+                        )?.lname
+                      }
+                      `
+                        : booking.event_type_id === 3 &&
+                          booking.invitee_id === selectedPlayer?.user_id
+                        ? `${
+                            trainers?.find(
+                              (trainer) =>
+                                trainer.user_id === booking.inviter_id
+                            )?.fname
+                          }
+                      ${
+                        trainers?.find(
+                          (trainer) => trainer.user_id === booking.inviter_id
+                        )?.lname
+                      }
+                      `
+                        : "-"}
+                    </td>
+                    <td>
+                      {booking.event_type_id === 2 &&
+                      matchScores?.find(
+                        (score) =>
+                          score.booking_id === booking.booking_id &&
+                          score.match_score_status_type_id === 3
+                      )
+                        ? `${
+                            matchScores?.find(
+                              (score) => score.booking_id === booking.booking_id
+                            )?.inviter_first_set_games_won
+                          }/${
+                            matchScores?.find(
+                              (score) => score.booking_id === booking.booking_id
+                            )?.invitee_first_set_games_won
+                          } ${
+                            matchScores?.find(
+                              (score) => score.booking_id === booking.booking_id
+                            )?.inviter_second_set_games_won
+                          }/${
+                            matchScores?.find(
+                              (score) => score.booking_id === booking.booking_id
+                            )?.invitee_second_set_games_won
+                          } ${
+                            matchScores?.find(
+                              (score) => score.booking_id === booking.booking_id
+                            )?.inviter_third_set_games_won
+                              ? matchScores?.find(
+                                  (score) =>
+                                    score.booking_id === booking.booking_id
+                                )?.inviter_third_set_games_won + "/"
+                              : "-"
+                          }${
+                            matchScores?.find(
+                              (score) => score.booking_id === booking.booking_id
+                            )?.invitee_third_set_games_won
+                              ? matchScores?.find(
+                                  (score) =>
+                                    score.booking_id === booking.booking_id
+                                )?.invitee_third_set_games_won
+                              : "-"
+                          }`
+                        : "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           ) : (
             <p>Henüz tamamlanan etkinlik bulunmamaktadır.</p>

@@ -61,12 +61,40 @@
         background-color: $roger-black-dark;
         padding: $roger-box-padding;
         border-radius: $roger-border-radius;
+        width: 500px;
       }
     }
   }
 
   .bottom-sections-container {
     .events-section {
+      background-color: $roger-box-bg-color;
+      width: 100%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      table {
+        width: 100%;
+        text-align: left;
+
+        .event-row:hover {
+          background-color: $roger-black-light;
+          cursor: pointer;
+        }
+        .event-image {
+          width: 30px;
+          height: 30px;
+        }
+
+        .accept-button {
+          font-weight: bold;
+          text-decoration: none;
+          border: none;
+          background-color: transparent;
+          font-size: 1rem;
+          color: $roger-blue;
+          cursor: pointer;
+        }
+      }
     }
   }
 }
