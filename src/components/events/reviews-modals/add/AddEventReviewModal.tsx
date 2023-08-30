@@ -8,12 +8,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../../../store/hooks";
+import { useAppSelector } from "../../../../store/hooks";
 
 import {
   useAddEventReviewMutation,
   useGetEventReviewsQuery,
-} from "../../../../../../api/endpoints/EventReviewsApi";
+} from "../../../../api/endpoints/EventReviewsApi";
 
 interface AddEventReviewModalProps {
   isAddReviewModalOpen: boolean;
@@ -74,7 +74,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
       className={styles["modal-container"]}
     >
       <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Maç Skoru Ekle</h1>
+        <h1 className={styles.title}>Değerlendirme Ekle</h1>
         <FaWindowClose
           onClick={closeReviewModal}
           className={styles["close-icon"]}

@@ -8,13 +8,13 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../../../store/hooks";
+import { useAppSelector } from "../../../../store/hooks";
 
 import {
   useAddEventReviewMutation,
   useGetEventReviewsQuery,
-} from "../../../../../../api/endpoints/EventReviewsApi";
-import { useGetBookingsQuery } from "../../../../../../api/endpoints/BookingsApi";
+} from "../../../../api/endpoints/EventReviewsApi";
+import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 
 interface ViewEventReviewModalProps {
   isViewReviewModalOpen: boolean;

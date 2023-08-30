@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
+
+import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
+import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
 
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -12,6 +15,7 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
 
 const TrainerEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -30,6 +34,8 @@ const TrainerEventsResults = () => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: eventReviews, isLoading: isEventReviewsLoading } =
+    useGetEventReviewsQuery({});
 
   const myEvents = bookings?.filter(
     (booking) =>
@@ -37,6 +43,27 @@ const TrainerEventsResults = () => {
         booking.invitee_id === user?.user?.user_id) &&
       booking.booking_status_type_id === 5
   );
+
+  const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+
+  const openReviewModal = (booking_id: number) => {
+    setSelectedBookingId(booking_id);
+    setIsAddReviewModalOpen(true);
+  };
+  const closeReviewModal = () => {
+    setIsAddReviewModalOpen(false);
+  };
+
+  const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
+  const openViewReviewModal = (booking_id: number) => {
+    setSelectedBookingId(booking_id);
+    setIsViewReviewModalOpen(true);
+  };
+  const closeViewReviewModal = () => {
+    setIsViewReviewModalOpen(false);
+  };
+
   if (
     isBookingsLoading ||
     isEventTypesLoading ||
@@ -155,6 +182,34 @@ const TrainerEventsResults = () => {
                       )?.player_level_name
                     : "-"}
                 </td>
+                <td>
+                  {eventReviews?.find(
+                    (review) =>
+                      review.reviewer_id === user?.user?.user_id &&
+                      review.booking_id === event.booking_id
+                  ) ? (
+                    "Yorum Gönderildi"
+                  ) : (
+                    <button onClick={() => openReviewModal(event.booking_id)}>
+                      Yorum Yaz
+                    </button>
+                  )}
+                </td>
+                <td>
+                  {eventReviews?.find(
+                    (review) =>
+                      review.reviewer_id !== user?.user?.user_id &&
+                      review.booking_id === event.booking_id
+                  ) ? (
+                    <button
+                      onClick={() => openViewReviewModal(event.booking_id)}
+                    >
+                      Yorum Görüntüle
+                    </button>
+                  ) : (
+                    "Karşı tarafın yorumu bekleniyor"
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -162,6 +217,16 @@ const TrainerEventsResults = () => {
       ) : (
         <p>Henüz tamamlanmış etkinlik bulunmamaktadır</p>
       )}
+      <AddEventReviewModal
+        isAddReviewModalOpen={isAddReviewModalOpen}
+        closeReviewModal={closeReviewModal}
+        selectedBookingId={selectedBookingId}
+      />
+      <ViewEventReviewModal
+        isViewReviewModalOpen={isViewReviewModalOpen}
+        closeViewReviewModal={closeViewReviewModal}
+        selectedBookingId={selectedBookingId}
+      />
     </div>
   );
 };

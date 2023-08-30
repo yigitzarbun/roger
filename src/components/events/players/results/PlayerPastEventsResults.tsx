@@ -4,7 +4,8 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
 
-import AddEventReviewModal from "../modals/reviews/add/AddEventReviewModal";
+import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
+import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
 
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -18,7 +19,6 @@ import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSur
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
-import ViewEventReviewModal from "../modals/reviews/view/ViewEventReviewModal";
 
 const PlayerPastEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
