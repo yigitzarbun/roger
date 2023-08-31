@@ -117,65 +117,22 @@ const PlayerPastEventsResults = () => {
         <table>
           <thead>
             <tr>
+              <th>Oyuncu</th>
+              <th>Seviye</th>
+              <th>Eğitmen</th>
+              <th>Tecrübe</th>
               <th>Tarih</th>
               <th>Saat</th>
               <th>Tür</th>
               <th>Konum</th>
               <th>Kort</th>
-              <th>Kort Yüzey</th>
-              <th>Kort Mekan</th>
-              <th>Oyuncu</th>
-              <th>Oyuncu Seviye</th>
-              <th>Eğitmen</th>
-              <th>Eğitmen Tecrübe</th>
+              <th>Yüzey</th>
+              <th>Mekan</th>
             </tr>
           </thead>
           <tbody>
             {myEvents?.map((event) => (
-              <tr key={event.booking_id}>
-                <td>{event.event_date.slice(0, 10)}</td>
-                <td>{event.event_time.slice(0, 5)}</td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === event.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === event.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {
-                    courts?.find((court) => court.court_id === event.court_id)
-                      ?.court_name
-                  }
-                </td>
-                <td>
-                  {
-                    courtSurfaceTypes?.find(
-                      (type) =>
-                        type.court_surface_type_id ===
-                        courts?.find(
-                          (court) => court.court_id === event.court_id
-                        )?.court_surface_type_id
-                    )?.court_surface_type_name
-                  }
-                </td>
-                <td>
-                  {
-                    courtStructureTypes?.find(
-                      (type) =>
-                        type.court_structure_type_id ===
-                        courts?.find(
-                          (court) => court.court_id === event.court_id
-                        )?.court_structure_type_id
-                    )?.court_structure_type_name
-                  }
-                </td>
+              <tr key={event.booking_id} className={styles["event-row"]}>
                 <td>
                   {(event.event_type_id === 1 || event.event_type_id === 2) &&
                   event.inviter_id === user?.user?.user_id
@@ -270,16 +227,65 @@ const PlayerPastEventsResults = () => {
                       )?.trainer_experience_type_name
                     : "-"}
                 </td>
+                <td>{event.event_date.slice(0, 10)}</td>
+                <td>{event.event_time.slice(0, 5)}</td>
+                <td>
+                  {
+                    eventTypes?.find(
+                      (type) => type.event_type_id === event.event_type_id
+                    )?.event_type_name
+                  }
+                </td>
+                <td>
+                  {
+                    clubs?.find((club) => club.club_id === event.club_id)
+                      ?.club_name
+                  }
+                </td>
+                <td>
+                  {
+                    courts?.find((court) => court.court_id === event.court_id)
+                      ?.court_name
+                  }
+                </td>
+                <td>
+                  {
+                    courtSurfaceTypes?.find(
+                      (type) =>
+                        type.court_surface_type_id ===
+                        courts?.find(
+                          (court) => court.court_id === event.court_id
+                        )?.court_surface_type_id
+                    )?.court_surface_type_name
+                  }
+                </td>
+                <td>
+                  {
+                    courtStructureTypes?.find(
+                      (type) =>
+                        type.court_structure_type_id ===
+                        courts?.find(
+                          (court) => court.court_id === event.court_id
+                        )?.court_structure_type_id
+                    )?.court_structure_type_name
+                  }
+                </td>
+
                 <td>
                   {eventReviews?.find(
                     (review) =>
                       review.reviewer_id === user?.user?.user_id &&
                       review.booking_id === event.booking_id
                   ) ? (
-                    "Yorum Gönderildi"
+                    <p className={styles["review-sent-text"]}>
+                      Yorum Gönderildi
+                    </p>
                   ) : (
-                    <button onClick={() => openReviewModal(event.booking_id)}>
-                      Yorum Yaz
+                    <button
+                      onClick={() => openReviewModal(event.booking_id)}
+                      className={styles["add-comment-button"]}
+                    >
+                      Yorum Yap
                     </button>
                   )}
                 </td>
@@ -288,14 +294,13 @@ const PlayerPastEventsResults = () => {
                     (review) =>
                       review.reviewer_id !== user?.user?.user_id &&
                       review.booking_id === event.booking_id
-                  ) ? (
+                  ) && (
                     <button
                       onClick={() => openViewReviewModal(event.booking_id)}
+                      className={styles["add-comment-button"]}
                     >
                       Yorum Görüntüle
                     </button>
-                  ) : (
-                    "Karşı tarafın yorumu bekleniyor"
                   )}
                 </td>
               </tr>

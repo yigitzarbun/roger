@@ -155,7 +155,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           <tbody>
             {filteredPlayers.map((player) => (
               <tr key={player.player_id} className={styles["player-row"]}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
                       player.image ? player.image : "/images/icons/avatar.png"

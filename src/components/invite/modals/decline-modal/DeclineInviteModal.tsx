@@ -131,7 +131,14 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
         <tbody>
           <tr>
             <td>
-              <img />
+              <img
+                src={
+                  opposition?.image
+                    ? opposition?.image
+                    : "/images/players/player1.png"
+                }
+                className={styles["player-image"]}
+              />
             </td>
             <td>{`${opposition.fname} ${opposition.lname}`}</td>
             <td>

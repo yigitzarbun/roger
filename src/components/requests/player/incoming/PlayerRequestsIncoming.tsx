@@ -278,9 +278,17 @@ const PlayerRequestsIncoming = () => {
                 <td>
                   {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                 </td>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
-                    src="/images/players/player1.png"
+                    src={
+                      players?.find(
+                        (player) => player.user_id === booking.invitee_id
+                      )
+                        ? players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.image
+                        : "/images/players/player1.png"
+                    }
                     className={styles["player-image"]}
                   />
                 </td>

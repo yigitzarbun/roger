@@ -13,13 +13,30 @@
     width: 100%;
     text-align: left;
 
-    .payment-row:hover {
+    .score-row:hover {
       background-color: $roger-black-light;
       cursor: pointer;
     }
-    .payment-image {
-      width: 30px;
-      height: 30px;
+    .add-score-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+    }
+    .add-score-button:hover {
+      background-color: $roger-blue;
+    }
+    .score-sent-text {
+      color: $roger-green;
+      font-size: 0.8rem;
+    }
+    .waiting-confirmation-text {
+      color: $roger-yellow;
+      font-size: 0.8rem;
+    }
+    .confirmed-text {
+      color: $roger-green;
+      font-size: 0.8rem;
     }
   }
 }

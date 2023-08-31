@@ -253,9 +253,9 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           <tbody>
             {clubs.map((club) => (
               <tr key={club.club_id} className={styles["club-row"]}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
-                    src={"/images/icons/avatar.png"}
+                    src={club.image ? club.image : "/images/icons/avatar.png"}
                     alt={"club-iamge"}
                     className={styles["club-image"]}
                   />

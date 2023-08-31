@@ -84,7 +84,6 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
       >
-        <h4>Başlık</h4>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Başlık</label>
@@ -95,18 +94,6 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
               type="text"
             />
             {errors.event_review_title && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Değerlendirme</label>
-            <input
-              {...register("event_review_description", {
-                required: true,
-              })}
-              type="text"
-            />
-            {errors.event_review_description && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
@@ -125,6 +112,18 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
             )}
           </div>
         </div>
+        <div className={styles["evaluation-container"]}>
+          <label>Değerlendirme</label>
+          <textarea
+            {...register("event_review_description", {
+              required: true,
+            })}
+          />
+          {errors.event_review_description && (
+            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+          )}
+        </div>
+
         <button type="submit" className={styles["form-button"]}>
           Onayla
         </button>

@@ -208,13 +208,13 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
           <div className={styles["decision-buttons-container"]}>
             <button
               onClick={() => setScoreConfirmDecision("edit")}
-              className={styles["decision-button"]}
+              className={styles["reject-button"]}
             >
               Değişiklik Talep Et
             </button>
             <button
               onClick={handleConfirmScore}
-              className={styles["decision-button"]}
+              className={styles["confirm-button"]}
             >
               Skoru Onayla
             </button>

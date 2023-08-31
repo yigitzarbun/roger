@@ -169,7 +169,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           <tbody>
             {trainers.map((trainer) => (
               <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
                       trainer.image ? trainer.image : "/images/icons/avatar.png"

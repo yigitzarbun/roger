@@ -21,20 +21,37 @@
 
     .decision-buttons-container {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       margin-top: 30px;
 
-      .decision-button {
+      .confirm-button {
         padding: $roger-box-padding;
         border-radius: $roger-border-radius;
         border: none;
         margin-top: 4vh;
         font-size: 1rem;
         font-weight: bold;
-      }
-      .decision-button:hover {
-        background-color: $roger-blue;
+        width: 45%;
+        background-color: $roger-green;
         cursor: pointer;
+        color: $roger-black-light;
+      }
+      .reject-button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+        width: 45%;
+        cursor: pointer;
+        color: $roger-black-light;
+      }
+      .confirm-button:hover {
+        background-color: $roger-blue;
+      }
+      .reject-button:hover {
+        background-color: $roger-blue;
       }
     }
 

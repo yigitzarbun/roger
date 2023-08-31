@@ -197,10 +197,34 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td>
                   {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
                 </td>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
-                    src="/images/players/player1.png"
-                    className={styles["player-image"]}
+                    src={
+                      (booking.event_type_id === 1 ||
+                        booking.event_type_id === 2) &&
+                      booking.inviter_id === user.user_id
+                        ? players.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.image
+                        : (booking.event_type_id === 1 ||
+                            booking.event_type_id === 2) &&
+                          booking.invitee_id === user.user_id
+                        ? players.find(
+                            (player) => player.user_id === booking.inviter_id
+                          )?.image
+                        : booking.event_type_id === 3 &&
+                          booking.inviter_id === user.user_id
+                        ? trainers.find(
+                            (trainer) => trainer.user_id === booking.invitee_id
+                          )?.image
+                        : booking.event_type_id === 3 &&
+                          booking.invitee_id === user.user_id
+                        ? trainers.find(
+                            (trainer) => trainer.user_id === booking.inviter_id
+                          )?.image
+                        : "/images/players/player1.png"
+                    }
+                    className={styles["profile-image"]}
                   />
                 </td>
                 <td>

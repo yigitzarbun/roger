@@ -93,24 +93,12 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
     try {
       const matchScore = {
         ...selectedMatch,
-        inviter_first_set_games_won: Number(
-          formData?.inviter_first_set_games_won
-        ),
-        inviter_second_set_games_won: Number(
-          formData?.inviter_second_set_games_won
-        ),
-        inviter_third_set_games_won: Number(
-          formData?.inviter_third_set_games_won
-        ),
-        invitee_first_set_games_won: Number(
-          formData?.invitee_first_set_games_won
-        ),
-        invitee_second_set_games_won: Number(
-          formData?.invitee_second_set_games_won
-        ),
-        invitee_third_set_games_won: Number(
-          formData?.invitee_third_set_games_won
-        ),
+        inviter_first_set_games_won: Number(firstSetInviter),
+        inviter_second_set_games_won: Number(secondSetInviter),
+        inviter_third_set_games_won: Number(thirdSetInviter),
+        invitee_first_set_games_won: Number(firstSetInvitee),
+        invitee_second_set_games_won: Number(secondSetInvitee),
+        invitee_third_set_games_won: Number(thirdSetInvitee),
         winner_id:
           firstSetInviter > firstSetInvitee &&
           secondSetInviter > secondSetInvitee
@@ -127,6 +115,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
         reporter_id: user?.user?.user_id,
       };
       updateMatchScore(matchScore);
+      console.log(matchScore);
     } catch (error) {
       console.log(error);
     }
@@ -167,7 +156,8 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
       });
       closeAddScoreModal();
     }
-  }, [isUpdateMatchScoreSuccess]);
+  }, [isUpdateMatchScoreSuccess, closeAddScoreModal]);
+
   if (isBookingsLoading || isMatchScoresLoading || isPlayersLoading) {
     return <div>Yükleniyor..</div>;
   }
@@ -192,9 +182,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
         <h4>1. Set</h4>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>
-              {`${inviter?.fname} ${inviter?.lname} 1. Set Kazandığı Oyun Adeti`}
-            </label>
+            <label>{`${inviter?.fname} ${inviter?.lname} 1. Set`}</label>
             <input
               {...register("inviter_first_set_games_won", {
                 required: true,
@@ -203,7 +191,6 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
               })}
               type="number"
               min="0"
-              value={firstSetInviter || null}
               onChange={(e) => setFirstSetInviter(Number(e.target.value))}
             />
             {errors.inviter_first_set_games_won && (
@@ -211,14 +198,11 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>
-              {`${invitee?.fname} ${invitee?.lname} 1. Set Kazandığı Oyun Adeti`}
-            </label>
+            <label>{`${invitee?.fname} ${invitee?.lname} 1. Set`}</label>
             <input
               {...register("invitee_first_set_games_won", { required: true })}
               type="number"
               min="0"
-              value={firstSetInvitee || null}
               onChange={(e) => setFirstSetInvitee(Number(e.target.value))}
             />
             {errors.invitee_first_set_games_won && (
@@ -229,14 +213,13 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
         <h4>2. Set</h4>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>{`${inviter?.fname} ${inviter?.lname} 2. Set Kazandığı Oyun Adeti`}</label>
+            <label>{`${inviter?.fname} ${inviter?.lname} 2. Set`}</label>
             <input
               {...register("inviter_second_set_games_won", {
                 min: { value: 0, message: "En az 0 olabilir" },
               })}
               type="number"
               min="0"
-              value={secondSetInviter || null}
               onChange={(e) => setSecondSetInviter(Number(e.target.value))}
             />
             {errors.inviter_second_set_games_won && (
@@ -244,16 +227,13 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>
-              {`${invitee?.fname} ${invitee?.lname} 2. Set Kazandığı Oyun Adeti`}
-            </label>
+            <label>{`${invitee?.fname} ${invitee?.lname} 2. Set`}</label>
             <input
               {...register("invitee_second_set_games_won", {
                 max: { value: 7, message: "En fazla 7 olabilir" },
               })}
               type="number"
               min="0"
-              value={secondSetInvitee || null}
               onChange={(e) => setSecondSetInvitee(Number(e.target.value))}
             />
             {errors.invitee_second_set_games_won && (
@@ -266,14 +246,13 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             <h4>3. Set</h4>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>{`${inviter?.fname} ${inviter?.lname} 3. Set Kazandığı Oyun Adeti`}</label>
+                <label>{`${inviter?.fname} ${inviter?.lname} 3. Set`}</label>
                 <input
                   {...register("inviter_third_set_games_won", {
                     min: { value: 0, message: "En az 0 olabilir" },
                   })}
                   type="number"
                   min="0"
-                  value={thirdSetInviter || null}
                   onChange={(e) => setThirdSetInviter(Number(e.target.value))}
                 />
                 {errors.inviter_third_set_games_won && (
@@ -283,16 +262,13 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>
-                  {`${invitee?.fname} ${invitee?.lname} 3. Set Kazandığı Oyun Adeti`}
-                </label>
+                <label>{`${invitee?.fname} ${invitee?.lname} 3. Set`}</label>
                 <input
                   {...register("invitee_third_set_games_won", {
                     max: { value: 7, message: "En fazla 7 olabilir" },
                   })}
                   type="number"
                   min="0"
-                  value={thirdSetInvitee || null}
                   onChange={(e) => setThirdSetInvitee(Number(e.target.value))}
                 />
                 {errors.invitee_third_set_games_won && (

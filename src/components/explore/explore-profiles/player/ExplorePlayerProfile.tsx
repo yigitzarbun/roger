@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
+import { FaGenderless, FaCalendarDays, FaLocationDot } from "react-icons/fa6";
+import { FaUserFriends } from "react-icons/fa";
+import { CgTennis } from "react-icons/cg";
+
 import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
@@ -23,6 +27,7 @@ import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
+import { baseUrl, localUrl } from "../../../../common/constants/apiConstants";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
@@ -175,6 +180,8 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     }
   };
 
+  const profileImage = selectedPlayer?.image;
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetch();
@@ -197,157 +204,194 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   ) {
     return <div>Yükleniyor..</div>;
   }
-
   return (
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
         <div className={styles["profile-section"]}>
           <h3>Oyuncu</h3>
-          <img
-            src={
-              selectedPlayer?.picture
-                ? selectedPlayer?.picture
-                : "/images/icons/avatar.png"
-            }
-            alt="club_picture"
-            className={styles["club-image"]}
-          />
-          <h2>{`${selectedPlayer?.fname} ${selectedPlayer.lname}`}</h2>
-          <p>{selectedPlayer?.player_bio_description}</p>
-          <p>{selectedPlayer?.gender}</p>
-          <p>{selectedPlayer?.birth_year}</p>
-          <p>
-            {
-              playerLevels?.find(
-                (level) =>
-                  level.player_level_id === selectedPlayer?.player_level_id
-              )?.player_level_name
-            }
-          </p>
-          <p>
-            {
-              locations?.find(
-                (location) =>
-                  location.location_id === selectedPlayer?.location_id
-              )?.location_name
-            }
-          </p>
-          <p>
-            {selectedPlayerSubscriptions?.length > 0
-              ? selectedPlayerSubscriptionClubNames?.map((clubName) => (
-                  <span key={clubName}>{clubName}</span>
-                ))
-              : "Oyuncunun kulüp üyeliği bulunmamaktadır."}
-          </p>
+          <div className={styles["profile-data-container"]}>
+            <img
+              src={
+                profileImage
+                  ? `${localUrl}/${profileImage}`
+                  : "/images/icons/avatar.png"
+              }
+              alt="player picture"
+              className={styles["profile-image"]}
+            />
+            <div className={styles["secondary-profile-data-container"]}>
+              <h2>{`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}</h2>
+
+              <div className={styles["profile-info"]}>
+                <FaGenderless className={styles.icon} />
+                <p className={styles["info-text"]}>{selectedPlayer?.gender}</p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaCalendarDays className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {selectedPlayer?.birth_year}
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <CgTennis className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    playerLevels?.find(
+                      (level) =>
+                        level.player_level_id ===
+                        selectedPlayer?.player_level_id
+                    )?.player_level_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaLocationDot className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    locations?.find(
+                      (location) =>
+                        location.location_id === selectedPlayer?.location_id
+                    )?.location_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaUserFriends className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {selectedPlayerSubscriptions?.length > 0
+                    ? selectedPlayerSubscriptionClubNames?.map((clubName) => (
+                        <span key={clubName}>{clubName}</span>
+                      ))
+                    : "Oyuncunun kulüp üyeliği bulunmamaktadır."}
+                </p>
+              </div>
+              <p>{selectedPlayer?.player_bio_description}</p>
+            </div>
+          </div>
         </div>
-        <div className={styles["subscription-section"]}>
+        <div className={styles["interaction-section"]}>
           <h3>Etkileşim</h3>
           <p>{`${playerFavouriters} kişi favorilere ekledi`}</p>
-          <button
-            onClick={() => handleToggleFavourite(selectedPlayer?.user_id)}
-          >
-            {isPlayerInMyFavourites(selectedPlayer?.user_id) === true
-              ? "Favorilerden çıkar"
-              : "Favorilere ekle"}
-          </button>
-          {isUserPlayer && (
-            <Link
-              to={paths.TRAIN_INVITE}
-              state={{
-                fname: selectedPlayer.fname,
-                lname: selectedPlayer.lname,
-                image: selectedPlayer.image,
-                court_price: "",
-                user_id: selectedPlayer.user_id,
-              }}
-              className={styles["accept-button"]}
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={() => handleToggleFavourite(selectedPlayer?.user_id)}
+              className={styles["interaction-button"]}
             >
-              <button> Antreman yap</button>
-            </Link>
-          )}
-          {isUserPlayer && selectedPlayer?.gender === userGender && (
-            <Link
-              to={paths.MATCH_INVITE}
-              state={{
-                fname: selectedPlayer.fname,
-                lname: selectedPlayer.lname,
-                image: selectedPlayer.image,
-                court_price: "",
-                user_id: selectedPlayer.user_id,
-              }}
-              className={styles["accept-button"]}
-            >
-              <button> Maç yap</button>
-            </Link>
-          )}
-          {isUserTrainer && (
-            <Link
-              to={paths.LESSON_INVITE}
-              state={{
-                fname: selectedPlayer.fname,
-                lname: selectedPlayer.lname,
-                image: selectedPlayer.image,
-                court_price: "",
-                user_id: selectedPlayer.user_id,
-              }}
-            >
-              <button>Derse davet et</button>
-            </Link>
-          )}
+              {isPlayerInMyFavourites(selectedPlayer?.user_id) === true
+                ? "Favorilerden çıkar"
+                : "Favorilere ekle"}
+            </button>
+            {isUserPlayer && (
+              <Link
+                to={paths.TRAIN_INVITE}
+                state={{
+                  fname: selectedPlayer.fname,
+                  lname: selectedPlayer.lname,
+                  image: selectedPlayer.image,
+                  court_price: "",
+                  user_id: selectedPlayer.user_id,
+                }}
+                className={styles["accept-button"]}
+              >
+                <button className={styles["interaction-button"]}>
+                  {" "}
+                  Antreman yap
+                </button>
+              </Link>
+            )}
+            {isUserPlayer && selectedPlayer?.gender === userGender && (
+              <Link
+                to={paths.MATCH_INVITE}
+                state={{
+                  fname: selectedPlayer.fname,
+                  lname: selectedPlayer.lname,
+                  image: selectedPlayer.image,
+                  court_price: "",
+                  user_id: selectedPlayer.user_id,
+                }}
+                className={styles["accept-button"]}
+              >
+                <button className={styles["interaction-button"]}>
+                  {" "}
+                  Maç yap
+                </button>
+              </Link>
+            )}
+            {isUserTrainer && (
+              <Link
+                to={paths.LESSON_INVITE}
+                state={{
+                  fname: selectedPlayer.fname,
+                  lname: selectedPlayer.lname,
+                  image: selectedPlayer.image,
+                  court_price: "",
+                  user_id: selectedPlayer.user_id,
+                }}
+              >
+                <button className={styles["interaction-button"]}>
+                  Derse davet et
+                </button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
       <div className={styles["middle-sections-container"]}>
         <div className={styles["reviews-section"]}>
-          <h3>Oyuncu Hakkında Değerlendirmeler</h3>
-          {playerReviewsReceived?.map((review) => (
-            <div
-              className={styles["review-container"]}
-              key={review.event_review_id}
-            >
-              <h4>{review.event_review_title}</h4>
-              <p>{review.event_review_description}</p>
-              <p>{`${review.review_score}/10`}</p>
-              {bookings?.find(
-                (booking) =>
-                  booking.booking_id === review.booking_id &&
-                  (booking.event_type_id === 1 || booking.event_type_id === 2)
-              ) && (
-                <Link
-                  to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
-                >{`${
-                  players.find(
-                    (player) => player.user_id === review.reviewer_id
-                  )?.fname
-                } ${
-                  players.find(
-                    (player) => player.user_id === review.reviewer_id
-                  )?.lname
-                }`}</Link>
-              )}
-              {bookings?.find(
-                (booking) =>
-                  booking.booking_id === review.booking_id &&
-                  booking.event_type_id === 3
-              ) && (
-                <Link
-                  to={`${paths.EXPLORE_PROFILE}2/${review.reviewer_id}`}
-                >{`${
-                  trainers.find(
-                    (trainer) => trainer.user_id === review.reviewer_id
-                  )?.fname
-                } ${
-                  trainers.find(
-                    (trainer) => trainer.user_id === review.reviewer_id
-                  )?.lname
-                }`}</Link>
-              )}
-            </div>
-          ))}
+          <h3>Değerlendirmeler</h3>
+          {playerReviewsReceived?.length > 0 ? (
+            playerReviewsReceived?.map((review) => (
+              <div
+                className={styles["review-container"]}
+                key={review.event_review_id}
+              >
+                <h4>{review.event_review_title}</h4>
+                <p>{review.event_review_description}</p>
+                <p>{`${review.review_score}/10`}</p>
+                {bookings?.find(
+                  (booking) =>
+                    booking.booking_id === review.booking_id &&
+                    (booking.event_type_id === 1 || booking.event_type_id === 2)
+                ) && (
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
+                  >{`${
+                    players.find(
+                      (player) => player.user_id === review.reviewer_id
+                    )?.fname
+                  } ${
+                    players.find(
+                      (player) => player.user_id === review.reviewer_id
+                    )?.lname
+                  }`}</Link>
+                )}
+                {bookings?.find(
+                  (booking) =>
+                    booking.booking_id === review.booking_id &&
+                    booking.event_type_id === 3
+                ) && (
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${review.reviewer_id}`}
+                  >{`${
+                    trainers.find(
+                      (trainer) => trainer.user_id === review.reviewer_id
+                    )?.fname
+                  } ${
+                    trainers.find(
+                      (trainer) => trainer.user_id === review.reviewer_id
+                    )?.lname
+                  }`}</Link>
+                )}
+              </div>
+            ))
+          ) : (
+            <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
+          )}
         </div>
       </div>
       <div className={styles["bottom-sections-container"]}>
         <div className={styles["events-section"]}>
-          <h3>Oyuncu Geçmiş Etkinlikler</h3>
+          <h3>Geçmiş Etkinlikler</h3>
           {playerBookings.length > 0 ? (
             <table>
               <thead>

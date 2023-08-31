@@ -142,7 +142,14 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
         <tbody>
           <tr>
             <td>
-              <img />
+              <img
+                src={
+                  opposition?.image
+                    ? opposition?.image
+                    : "images/icons/avatar.png"
+                }
+                className={styles.img}
+              />
             </td>
             <td>
               {oppositionUser?.user_type_id === 6

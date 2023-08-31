@@ -209,7 +209,14 @@ const InviteModal = ({
         <tbody>
           <tr>
             <td>
-              <img />
+              <img
+                src={
+                  opposition?.image
+                    ? opposition?.image
+                    : "/images/players/player1.png"
+                }
+                className={styles.img}
+              />
             </td>
             <td>{`${opposition.fname} ${opposition.lname}`}</td>
             <td>{new Date(formData?.event_date).toLocaleDateString()}</td>

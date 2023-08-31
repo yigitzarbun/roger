@@ -7,7 +7,7 @@
   row-gap: 10vh;
   h3 {
     margin-bottom: 2vh;
-    color: $roger-green;
+    font-size: 2rem;
   }
 
   .top-sections-container {
@@ -20,27 +20,62 @@
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
 
-      .club-image {
-        width: 50px;
+      .profile-data-container {
+        display: flex;
+        justify-content: space-between;
+        column-gap: 20px;
+
+        .secondary-profile-data-container {
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+
+          .profile-info {
+            display: flex;
+            align-items: center;
+            column-gap: 15px;
+            align-items: start;
+            .icon {
+              font-size: 20px;
+            }
+            .info-text {
+              width: 90%;
+            }
+          }
+        }
+      }
+
+      .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
       }
     }
 
-    .subscription-section {
+    .interaction-section {
       background-color: $roger-box-bg-color;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
       width: 45%;
-      button {
-        padding: $roger-box-padding;
+      display: flex;
+      flex-direction: column;
+      .buttons-container {
+        display: flex;
+        justify-content: space-evenly;
+        margin-top: 50px;
+      }
+      .interaction-button {
         border-radius: $roger-border-radius;
         border: none;
-        margin-top: 4vh;
+        width: 120px;
+        height: 70px;
         font-size: 1rem;
         font-weight: bold;
-        width: 200px;
+        padding: $roger-box-padding;
       }
 
-      button:hover {
+      .interaction-button:hover {
         background-color: $roger-blue;
         cursor: pointer;
       }
