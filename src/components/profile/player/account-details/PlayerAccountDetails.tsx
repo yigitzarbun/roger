@@ -47,6 +47,7 @@ const PlayerAccountDetails = () => {
     <div className={styles["player-account-details-container"]}>
       <h2>Hesap Bilgileri</h2>
       <button onClick={handleOpenModal}>Düzenle</button>
+      <img src={user?.playerDetails?.image} />
       <p>{`İsim: ${user?.playerDetails.fname} ${user?.playerDetails.lname}`}</p>
       <p>{`E-posta: ${user?.user.email}`}</p>
       <p>{`Doğum yılı: ${user?.playerDetails.birth_year}`}</p>

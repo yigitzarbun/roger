@@ -32,7 +32,11 @@ trainersRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newTrainer = await trainersModel.add(req.body);
+      const trainerData = req.body;
+      if (req.file) {
+        trainerData.image = req.file.path;
+      }
+      const newTrainer = await trainersModel.add(trainerData);
       res.status(201).json(newTrainer);
     } catch (error) {
       next(error);

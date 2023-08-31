@@ -53,7 +53,7 @@ export interface User {
 
   clubDetails?: {
     club_id: number;
-    picture: string;
+    image: string;
     club_address: string;
     club_bio_description: string;
     club_name: string;

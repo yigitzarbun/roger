@@ -46,9 +46,9 @@ const PlayerSubscriptions = () => {
   return (
     <div className={styles["player-stats-container"]}>
       <h2>Üyelikler ve Favoriler</h2>
-      <p>{`${mySubscriptions.length} kulüp üyeliği bulunmaktadır`}</p>
-      <p>{`${myGroups.length} kulüp oyuncu grubunda yer almaktadır`}</p>
-      <p>{`${myFavourites.length} üye favorilere eklendi`}</p>
+      <p>{`${mySubscriptions?.length} kulüp üyeliği bulunmaktadır`}</p>
+      <p>{`${myGroups?.length} kulüp oyuncu grubunda yer almaktadır`}</p>
+      <p>{`${myFavourites?.length} üye favorilere eklendi`}</p>
     </div>
   );
 };

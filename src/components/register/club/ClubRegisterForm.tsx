@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
@@ -26,11 +26,17 @@ export type FormValues = {
   club_address: string;
   club_bio_description: string;
   club_type_id: number;
+  image: string;
 };
 
 const ClubRegisterForm = () => {
   const navigate = useNavigate();
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
   const [addUser] = useAddUserMutation();
   const [addClub, { isSuccess }] = useAddClubMutation();
 
@@ -48,6 +54,7 @@ const ClubRegisterForm = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -77,10 +84,12 @@ const ClubRegisterForm = () => {
           club_bio_description: null,
           club_type_id: formData.club_type_id,
           location_id: Number(formData.location_id),
+          image: selectedImage ? selectedImage : null,
           user_id: newUser.user_id,
         };
         // register user
         await addClub(clubRegisterData);
+        console.log(clubRegisterData);
         navigate(paths.LOGIN);
         reset();
       } else {
@@ -111,6 +120,7 @@ const ClubRegisterForm = () => {
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
+          encType="multipart/form-data"
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
@@ -207,6 +217,12 @@ const ClubRegisterForm = () => {
               )}
             </div>
           </div>
+          <input
+            type="file"
+            accept="image/*"
+            name="image"
+            onChange={handleImageChange}
+          />
           <button type="submit" className={styles["form-button"]}>
             {i18n.t("registerButtonText")}
           </button>

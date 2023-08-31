@@ -41,6 +41,7 @@ const ClubAccountDetails = () => {
     <div className={styles["club-account-details-container"]}>
       <h2>Hesap Bilgileri</h2>
       <button onClick={handleOpenModal}>Düzenle</button>
+      <img src={user?.clubDetails?.image} />
       <p>{`Kulüp Adı: ${user?.clubDetails.club_name}`}</p>
       <p>{`E-posta: ${user?.user.email}`}</p>
       <p>{`Açıklama: ${

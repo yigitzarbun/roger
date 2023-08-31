@@ -35,11 +35,17 @@ export type FormValues = {
   trainer_employment_type_id: number;
   price_hour: number;
   club_id: number;
+  image: string;
 };
 
 const TrainerRegisterForm = () => {
   const navigate = useNavigate();
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
   const [employmentType, setEmploymentType] = useState(null);
 
   const handleEmploymentType = (event) => {
@@ -82,6 +88,7 @@ const TrainerRegisterForm = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -99,7 +106,6 @@ const TrainerRegisterForm = () => {
     try {
       // register user
       const response = await addUser(userRegisterData);
-
       if ("data" in response) {
         // get newly added user from db
         const newUser = response.data;
@@ -111,7 +117,7 @@ const TrainerRegisterForm = () => {
           gender: formData.gender,
           price_hour: formData.price_hour,
           phone_number: null,
-          image: null,
+          image: selectedImage ? selectedImage : null,
           trainer_bio_description: null,
           location_id: Number(formData.location_id),
           trainer_experience_type_id: Number(
@@ -183,6 +189,7 @@ const TrainerRegisterForm = () => {
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
+          encType="multipart/form-data"
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
@@ -383,6 +390,12 @@ const TrainerRegisterForm = () => {
               )}
             </div>
           </div>
+          <input
+            type="file"
+            accept="image/*"
+            name="image"
+            onChange={handleImageChange}
+          />
           <button type="submit" className={styles["form-button"]}>
             {i18n.t("registerButtonText")}
           </button>

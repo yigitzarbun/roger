@@ -29,11 +29,46 @@ export const trainersSlice = createApi({
       query: () => "/trainers",
     }),
     addTrainer: builder.mutation({
-      query: (trainer) => ({
-        url: "/trainers",
-        method: "POST",
-        body: trainer,
-      }),
+      query: (trainer) => {
+        const formData = new FormData();
+        formData.append("fname", trainer.fname);
+        formData.append("lname", trainer.lname);
+        formData.append("birth_year", trainer.birth_year.toString());
+        formData.append("gender", trainer.gender);
+        formData.append("price_hour", trainer.price_hour.toString());
+        formData.append("location_id", trainer.location_id.toString());
+        formData.append(
+          "trainer_experience_type_id",
+          trainer.trainer_experience_type_id.toString()
+        );
+        formData.append(
+          "trainer_employment_type_id",
+          trainer.trainer_employment_type_id.toString()
+        );
+        formData.append("user_id", trainer.user_id.toString());
+        if (trainer.club) {
+          formData.append("club_id", trainer.club_id.toString());
+        }
+        if (trainer.image) {
+          formData.append("image", trainer.image);
+        }
+        if (trainer.phone_number) {
+          formData.append("phone_number", trainer.phone_number);
+        }
+        if (trainer.trainer_bio_description) {
+          formData.append(
+            "trainer_bio_description",
+            trainer.trainer_bio_description
+          );
+        }
+        const requestObject = {
+          url: "/trainers",
+          method: "POST",
+          body: formData,
+        };
+
+        return requestObject;
+      },
     }),
     updateTrainer: builder.mutation({
       query: (updates) => ({

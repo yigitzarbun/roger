@@ -3,7 +3,6 @@ const db = require("../../data/dbconfig");
 const playersModel = {
   async getAll() {
     const players = await db("players");
-
     return players;
   },
 

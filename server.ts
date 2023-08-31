@@ -1,9 +1,8 @@
 import express, { Request, Response } from "express";
 import knex from "knex";
 import cron from "node-cron";
-import knexConfig from "./knexfile";
 
-const { DateTime } = require("luxon");
+import knexConfig from "./knexfile";
 
 import usersAuthRouter from "./src/api/users-auth/auth-router";
 import usersRouter from "./src/api/users/users-router";
@@ -37,10 +36,22 @@ import studentsRouter from "./src/api/students/students-router";
 import studentGroupsRouter from "./src/api/student-groups/student-groups-router";
 import clubExternalMembersRouter from "./src/api/external-members/club-external-members-router";
 import eventReviewsRouter from "./src/api/event-reviews/event-reviews-router";
+import multer from "multer";
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "Uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 const cors = require("cors");
 
 const server = express();
+
 server.use(express.json());
 server.use(cors());
 
@@ -143,19 +154,19 @@ async function updateSubscriptions() {
   }
 }
 
+server.use("/api/players", upload.single("image"), playersRouter);
+server.use("/api/trainers", upload.single("image"), trainersRouter);
+server.use("/api/clubs", upload.single("image"), clubsRouter);
+server.use("/api/courts", courtsRouter);
 server.use("/api/usersAuth", usersAuthRouter);
 server.use("/api/users", usersRouter);
-server.use("/api/players", playersRouter);
 server.use("/api/locations", locationsRouter);
 server.use("/api/player-levels", playerLevelsRouter);
 server.use("/api/user-types", userTypesRouter);
 server.use("/api/user-status-types", userStatusTypesRouter);
-server.use("/api/clubs", clubsRouter);
 server.use("/api/club-types", clubTypesRouter);
-server.use("/api/trainers", trainersRouter);
 server.use("/api/trainer-employment-types", trainerEmploymentTypesRouter);
 server.use("/api/trainer-experience-types", trainerExperienceTypesRouter);
-server.use("/api/courts", courtsRouter);
 server.use("/api/court-structure-types", courtStructureTypesRouter);
 server.use("/api/court-surface-types", courtSurfaceTypesRouter);
 server.use("/api/bookings", bookingsRouter);

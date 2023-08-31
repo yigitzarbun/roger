@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import i18n from "../../../common/i18n/i18n";
@@ -26,11 +26,17 @@ export type FormValues = {
   location_id: number;
   gender: string;
   player_level_id: number;
+  image?: string;
 };
 
 const PlayerRegisterForm = () => {
   const navigate = useNavigate();
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
   const [addUser] = useAddUserMutation();
   const [addPlayer, { isSuccess }] = useAddPlayerMutation();
 
@@ -48,11 +54,12 @@ const PlayerRegisterForm = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
-    // arrange user register data
+    //arrange user register data
     const userRegisterData = {
       email: formData.email,
       password: formData.password,
@@ -62,7 +69,6 @@ const PlayerRegisterForm = () => {
         (u) => u.user_status_type_name === "active"
       ).user_status_type_id,
     };
-
     try {
       // register user
       const response = await addUser(userRegisterData);
@@ -70,19 +76,21 @@ const PlayerRegisterForm = () => {
       if ("data" in response) {
         // get newly added user from db
         const newUser = response.data;
-        // arrange player register data
+
+        //arrange player register data
         const playerRegisterData = {
           fname: formData.fname,
           lname: formData.lname,
-          birth_year: formData.birth_year,
+          birth_year: formData.birth_year.toString(),
           gender: formData.gender,
           phone_number: null,
-          image: null,
+          image: selectedImage ? selectedImage : null,
           player_bio_description: null,
           location_id: Number(formData.location_id),
           player_level_id: Number(formData.player_level_id),
           user_id: newUser.user_id,
         };
+
         // register player
         await addPlayer(playerRegisterData);
         navigate(paths.LOGIN);
@@ -94,6 +102,7 @@ const PlayerRegisterForm = () => {
       console.error("Error while adding new user:", error);
     }
   };
+
   useEffect(() => {
     if (isSuccess) {
       refetch();
@@ -115,6 +124,7 @@ const PlayerRegisterForm = () => {
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
+          encType="multipart/form-data"
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
@@ -249,6 +259,12 @@ const PlayerRegisterForm = () => {
               )}
             </div>
           </div>
+          <input
+            type="file"
+            accept="image/*"
+            name="image"
+            onChange={handleImageChange}
+          />
           <button type="submit" className={styles["form-button"]}>
             {i18n.t("registerButtonText")}
           </button>

@@ -32,7 +32,11 @@ clubsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newClub = await clubsModel.add(req.body);
+      const clubData = req.body;
+      if (req.file) {
+        clubData.image = req.file.path;
+      }
+      const newClub = await clubsModel.add(clubData);
       res.status(201).json(newClub);
     } catch (error) {
       next(error);

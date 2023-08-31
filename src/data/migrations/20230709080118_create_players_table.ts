@@ -129,7 +129,7 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable("clubs", (table) => {
       table.increments("club_id");
-      table.string("picture");
+      table.string("image");
       table.string("club_address");
       table.string("club_bio_description");
       table.string("club_name").unique().notNullable();

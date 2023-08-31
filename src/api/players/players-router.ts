@@ -32,7 +32,11 @@ playersRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newPlayer = await playersModel.add(req.body);
+      const playerData = req.body;
+      if (req.file) {
+        playerData.image = req.file.path;
+      }
+      const newPlayer = await playersModel.add(playerData);
       res.status(201).json(newPlayer);
     } catch (error) {
       next(error);
