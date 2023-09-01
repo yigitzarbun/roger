@@ -19,6 +19,7 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -163,7 +164,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     isStudentGroupsLoading ||
     isPaymentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (
@@ -193,7 +194,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
           </thead>
           <tbody>
             {filteredBookings?.map((booking) => (
-              <tr key={booking.booking_id} className={styles["player-row"]}>
+              <tr key={booking.booking_id}>
                 <td>
                   {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
                 </td>

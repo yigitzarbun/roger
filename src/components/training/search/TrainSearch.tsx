@@ -5,6 +5,8 @@ import styles from "./styles.module.scss";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 
+import PageLoading from "../../../components/loading/PageLoading";
+
 interface TrainSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -35,7 +37,7 @@ const TrainSearch = (props: TrainSearchProps) => {
     useGetPlayerLevelsQuery({});
 
   if (isLocationsLoading || isPlayerLevelsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

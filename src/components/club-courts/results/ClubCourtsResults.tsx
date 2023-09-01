@@ -8,6 +8,7 @@ import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStru
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
@@ -70,7 +71,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     isCourtsLoading ||
     isClubsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

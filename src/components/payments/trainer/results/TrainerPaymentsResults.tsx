@@ -4,6 +4,8 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
@@ -23,7 +25,7 @@ const TrainerPaymentsResults = () => {
   );
 
   if (isPaymentsLoading || isPaymentTypesLoading || isPlayersLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

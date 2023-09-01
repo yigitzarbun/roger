@@ -14,6 +14,7 @@ import { Location } from "../../../../api/endpoints/LocationsApi";
 import { Court } from "../../../../api/endpoints/CourtsApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreCourtsProps {
   user: User;
@@ -60,7 +61,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     isCourtsLoading ||
     isCourtSurfaceTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

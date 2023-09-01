@@ -36,6 +36,8 @@ import {
   roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 const MatchInviteForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -340,7 +342,7 @@ const MatchInviteForm = () => {
     isClubSubscriptionsLoading ||
     isPlayersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["invite-page-container"]}>

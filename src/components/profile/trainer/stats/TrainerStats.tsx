@@ -10,6 +10,8 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 const TrainerStats = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -24,7 +26,7 @@ const TrainerStats = () => {
       booking.booking_status_type_id === 5
   );
   if (isBookingsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["trainer-stats-container"]}>

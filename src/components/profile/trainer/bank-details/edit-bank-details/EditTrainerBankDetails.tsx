@@ -16,6 +16,8 @@ import {
 
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
 
+import PageLoading from "../../../../../components/loading/PageLoading";
+
 interface EditTrainerBankDetailsModallProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -73,7 +75,7 @@ const EditTrainerBankDetailsModal = (
   }, [isSuccess]);
 
   if (isTrainersLoading || isBanksLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

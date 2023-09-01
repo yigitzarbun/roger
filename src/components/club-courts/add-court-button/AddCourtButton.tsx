@@ -6,6 +6,7 @@ import styles from "./styles.module.scss";
 
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useAppSelector } from "../../../store/hooks";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface AddCourtButtonProps {
   openAddCourtModal: () => void;
@@ -25,7 +26,7 @@ const AddCourtButton = (props: AddCourtButtonProps) => {
       ?.name_on_bank_account;
 
   if (isClubsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

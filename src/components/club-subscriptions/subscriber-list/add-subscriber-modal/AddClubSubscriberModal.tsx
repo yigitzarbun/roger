@@ -28,6 +28,7 @@ import {
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddClubSubscriberModalProps {
   isAddSubscriberModalOpen: boolean;
@@ -195,7 +196,7 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
     isLocationsLoading ||
     isPlayerLevelsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <Modal

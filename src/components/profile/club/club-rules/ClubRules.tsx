@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../../store/hooks";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import UpdateClubRulesModal from "./update-club-rules/UpdateClubRulesModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const ClubRules = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -28,7 +29,7 @@ const ClubRules = () => {
   };
 
   if (isClubsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["club-rules-container"]}>

@@ -4,6 +4,7 @@ import styles from "./styles.module.scss";
 
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface MatchSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -33,7 +34,7 @@ const MatchSearch = (props: MatchSearchProps) => {
     useGetPlayerLevelsQuery({});
 
   if (isLocationsLoading || isPlayerLevelsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

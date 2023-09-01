@@ -19,6 +19,8 @@ import { useGetBookingsQuery } from "../../../../../api/endpoints/BookingsApi";
 
 import { useGetPlayersQuery } from "../../../../../api/endpoints/PlayersApi";
 
+import PageLoading from "../../../../../components/loading/PageLoading";
+
 interface EditMatchScoreModalProps {
   isEditScoreModalOpen: boolean;
   closeEditScoreModal: () => void;
@@ -161,8 +163,12 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
     }
   }, [isUpdateMatchScoreSuccess]);
 
+  useEffect(() => {
+    setScoreConfirmDecision("");
+  }, [isEditScoreModalOpen]);
+
   if (isBookingsLoading || isMatchScoresLoading || isPlayersLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

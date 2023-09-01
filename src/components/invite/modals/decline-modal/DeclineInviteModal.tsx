@@ -13,6 +13,7 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 export type DeclineBookingData = {
   booking_id: number;
@@ -88,7 +89,7 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
     isUserTypesLoading ||
     isPaymentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

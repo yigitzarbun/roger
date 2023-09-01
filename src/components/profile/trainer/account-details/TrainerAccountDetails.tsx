@@ -5,6 +5,7 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
 
 import UpdateTrainerProfileModal from "../../../../components/profile/update-profile-modals/trainer/UpdateTrainerProfileModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetTrainerEmploymentTypesQuery } from "../../../../api/endpoints/TrainerEmploymentTypesApi";
@@ -70,7 +71,7 @@ const TrainerAccountDetails = () => {
     isClubsLoading ||
     isClubStaffLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["trainer-account-details-container"]}>

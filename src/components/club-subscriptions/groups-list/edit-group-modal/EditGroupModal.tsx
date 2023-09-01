@@ -20,6 +20,7 @@ import {
 } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface EditGroupModalProps {
   isEditGroupModalOpen: boolean;
@@ -164,7 +165,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
     isPlayersLoading ||
     isClubSubscriptionsLoading
   ) {
-    return <div>Yükleniyor</div>;
+    return <PageLoading />;
   }
 
   return (

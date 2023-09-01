@@ -12,6 +12,8 @@ import DeclineInviteModal, {
   DeclineBookingData,
 } from "../../../invite/modals/decline-modal/DeclineInviteModal";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import {
   useGetBookingsQuery,
   useUpdateBookingMutation,
@@ -197,7 +199,6 @@ const TrainerRequestsIncoming = () => {
     }
   }, [isAddStudentSuccess]);
 
-  console.log(incomingBookings);
   if (
     isBookingsLoading ||
     isCourtsLoading ||
@@ -209,7 +210,7 @@ const TrainerRequestsIncoming = () => {
     isPaymentsLoading ||
     isStudentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

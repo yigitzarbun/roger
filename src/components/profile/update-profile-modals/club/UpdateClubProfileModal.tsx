@@ -16,6 +16,8 @@ import { useAppDispatch } from "../../../../store/hooks";
 
 import { updateClubDetails } from "../../../../store/slices/authSlice";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 interface UpdateClubProfileModallProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -80,7 +82,7 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
   }, [isSuccess]);
 
   if (isLocationsLoading || isClubsLoading || isClubTypesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

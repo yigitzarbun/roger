@@ -12,6 +12,7 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 export type FormValues = {
   event_type_id: number;
@@ -169,7 +170,7 @@ const InviteModal = ({
     isCourtsLoading ||
     isClubSubscriptionsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

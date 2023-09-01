@@ -14,6 +14,8 @@ import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 const PlayerHomeLeaderboard = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -129,7 +131,7 @@ const PlayerHomeLeaderboard = () => {
     isBookingsLoading ||
     isMatchScoresLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

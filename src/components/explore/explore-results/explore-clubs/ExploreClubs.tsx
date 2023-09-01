@@ -27,6 +27,7 @@ import {
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreClubsProps {
   user: User;
@@ -228,7 +229,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isClubStaffLoading ||
     isPlayersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
@@ -306,19 +307,24 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                       (subscriptionPackage) =>
                         subscriptionPackage.club_id === club.user_id
                     ) && isUserSubscribedToClub(club.user_id) === true ? (
-                      "Üyelik Var"
+                      <p className={styles["subscribed-text"]}>Üyelik Var</p>
                     ) : clubSubscriptionPackages?.find(
                         (subscriptionPackage) =>
                           subscriptionPackage.club_id === club.user_id
                       ) ? (
-                      <button
-                        onClick={() => handleOpenSubscribeModal(club.user_id)}
-                        disabled={!playerPaymentDetailsExist}
-                      >
-                        {playerPaymentDetailsExist
-                          ? "Üye Ol"
-                          : "Üye olmak için ödeme bilgilerini ekle"}
-                      </button>
+                      playerPaymentDetailsExist ? (
+                        <button
+                          onClick={() => handleOpenSubscribeModal(club.user_id)}
+                          disabled={!playerPaymentDetailsExist}
+                          className={styles["subscribe-button"]}
+                        >
+                          Üye Ol
+                        </button>
+                      ) : (
+                        <p className={styles["add-payment-details-text"]}>
+                          Üye olmak için ödeme bilgilerini ekle
+                        </p>
+                      )
                     ) : (
                       <p className={styles["no-subscription-text"]}>
                         Kulübün üyelik paketi bulunmamaktadır

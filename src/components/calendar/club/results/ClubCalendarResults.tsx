@@ -6,6 +6,7 @@ import { FaPlusSquare } from "react-icons/fa";
 
 import AddClubCourtBookingModal from "../add-booking-modal/AddClubCourtBookingModal";
 import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookingModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
@@ -136,7 +137,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     isClubExternalMembersLoading ||
     isStudentGroupsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>

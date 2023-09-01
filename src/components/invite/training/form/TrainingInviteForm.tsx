@@ -34,6 +34,7 @@ import {
   formatTime,
   roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const TrainingInviteForm = () => {
   const navigate = useNavigate();
@@ -342,7 +343,7 @@ const TrainingInviteForm = () => {
     isPlayersLoading ||
     isClubSubscriptionsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["invite-page-container"]}>

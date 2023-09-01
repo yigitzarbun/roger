@@ -35,36 +35,62 @@
   .nav-container {
     display: flex;
     border-radius: $roger-border-radius;
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
 
     .active-button {
       background-color: $roger-blue;
-      padding: $roger-box-padding;
+      padding: 10px;
       border-radius: $roger-border-radius;
       border: none;
       font-weight: bold;
       font-size: 1rem;
       cursor: pointer;
-      width: 48%;
+      width: 49%;
     }
     .inactive-button {
-      padding: $roger-box-padding;
+      padding: 10px;
       border-radius: $roger-border-radius;
-
       border: none;
       font-weight: bold;
       font-size: 1rem;
       cursor: pointer;
-      width: 48%;
+      width: 49%;
     }
     .inactive-button:hover {
       background-color: $roger-black-light;
     }
   }
 
+  .card-details-container {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+  .payments-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    .view-all-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 200px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 1rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+    .view-all-button:hover {
+      background-color: $roger-black-light;
+    }
+  }
   table {
     width: 100%;
     text-align: left;

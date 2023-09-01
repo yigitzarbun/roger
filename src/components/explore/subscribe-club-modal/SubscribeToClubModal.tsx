@@ -21,6 +21,7 @@ import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../api/endpoints/PaymentsApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface SubscribeToClubModalProps {
   openSubscribeModal: boolean;
@@ -175,7 +176,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
     isPlayersLoading ||
     isPaymentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <Modal

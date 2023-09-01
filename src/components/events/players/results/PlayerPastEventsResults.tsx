@@ -2,6 +2,10 @@ import React, { useState } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 
+import { AiOutlineEye } from "react-icons/ai";
+
+import { BiCommentAdd } from "react-icons/bi";
+
 import styles from "./styles.module.scss";
 
 import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
@@ -19,6 +23,7 @@ import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSur
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const PlayerPastEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -107,7 +112,7 @@ const PlayerPastEventsResults = () => {
     isStudentGroupsLoading ||
     isEventReviewsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (
@@ -132,7 +137,7 @@ const PlayerPastEventsResults = () => {
           </thead>
           <tbody>
             {myEvents?.map((event) => (
-              <tr key={event.booking_id} className={styles["event-row"]}>
+              <tr key={event.booking_id}>
                 <td>
                   {(event.event_type_id === 1 || event.event_type_id === 2) &&
                   event.inviter_id === user?.user?.user_id
@@ -281,12 +286,10 @@ const PlayerPastEventsResults = () => {
                       Yorum Gönderildi
                     </p>
                   ) : (
-                    <button
+                    <BiCommentAdd
                       onClick={() => openReviewModal(event.booking_id)}
-                      className={styles["add-comment-button"]}
-                    >
-                      Yorum Yap
-                    </button>
+                      className={styles["view-icon"]}
+                    />
                   )}
                 </td>
                 <td>
@@ -295,12 +298,10 @@ const PlayerPastEventsResults = () => {
                       review.reviewer_id !== user?.user?.user_id &&
                       review.booking_id === event.booking_id
                   ) && (
-                    <button
+                    <AiOutlineEye
                       onClick={() => openViewReviewModal(event.booking_id)}
-                      className={styles["add-comment-button"]}
-                    >
-                      Yorum Görüntüle
-                    </button>
+                      className={styles["view-icon"]}
+                    />
                   )}
                 </td>
               </tr>

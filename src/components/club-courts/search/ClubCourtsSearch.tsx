@@ -4,6 +4,7 @@ import styles from "./styles.module.scss";
 
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubCourtSearchProps {
   handleSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -33,7 +34,7 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
     useGetCourtSurfaceTypesQuery({});
 
   if (isCourtStructureTypesLoading || isCourtSurfaceTypesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

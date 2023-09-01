@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { AiOutlineEdit, AiOutlineMail } from "react-icons/ai";
+import { FaGenderless, FaCalendarDays, FaLocationDot } from "react-icons/fa6";
+import { CgTennis } from "react-icons/cg";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -7,6 +11,7 @@ import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 
 import UpdateProfileModal from "../../update-profile-modals/player/UpdatePlayerProfileModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const PlayerAccountDetails = () => {
   const user = useAppSelector((store) => store.user.user);
@@ -41,34 +46,63 @@ const PlayerAccountDetails = () => {
   };
 
   if (isLocationsLoading || isPlayerLevelsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["player-account-details-container"]}>
-      <h2>Hesap Bilgileri</h2>
-      <button onClick={handleOpenModal}>Düzenle</button>
-      <img
-        src={user?.playerDetails?.image}
-        alt="player-image"
-        className={styles["profile-image"]}
-      />
-      <p>{`İsim: ${user?.playerDetails.fname} ${user?.playerDetails.lname}`}</p>
-      <p>{`E-posta: ${user?.user.email}`}</p>
-      <p>{`Doğum yılı: ${user?.playerDetails.birth_year}`}</p>
-      <p>{`Cinsiyet: ${user?.playerDetails.gender}`}</p>
-      <p>{`Konum: ${
-        locations?.find(
-          (location) =>
-            location.location_id === Number(user?.playerDetails.location_id)
-        )?.location_name
-      }`}</p>
-      <p>{`Seviye: ${
-        playerLevels?.find(
-          (level) =>
-            level.player_level_id ===
-            Number(user?.playerDetails.player_level_id)
-        )?.player_level_name
-      }`}</p>
+      <div className={styles["title-container"]}>
+        <h2>Hesap</h2>
+        <AiOutlineEdit
+          onClick={handleOpenModal}
+          className={styles["edit-button"]}
+        />
+      </div>
+      <div className={styles["profile-data-container"]}>
+        <img
+          src={user?.playerDetails?.image}
+          alt="player-image"
+          className={styles["profile-image"]}
+        />
+        <div className={styles["profile-info-container"]}>
+          <h2>{`${user?.playerDetails.fname} ${user?.playerDetails.lname}`}</h2>
+          <div className={styles["profile-info"]}>
+            <AiOutlineMail className={styles.icon} />
+            <p>{user?.user.email}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaCalendarDays className={styles.icon} />
+            <p className={styles["info-text"]}>
+              {user?.playerDetails.birth_year}
+            </p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaGenderless className={styles.icon} />
+            <p className={styles["info-text"]}>{user?.playerDetails.gender}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaLocationDot className={styles.icon} />
+            <p className={styles["info-text"]}>
+              {
+                locations?.find(
+                  (location) =>
+                    location.location_id ===
+                    Number(user?.playerDetails.location_id)
+                )?.location_name
+              }
+            </p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <CgTennis className={styles.icon} />
+            <p className={styles["info-text"]}>{`Seviye: ${
+              playerLevels?.find(
+                (level) =>
+                  level.player_level_id ===
+                  Number(user?.playerDetails.player_level_id)
+              )?.player_level_name
+            }`}</p>
+          </div>
+        </div>
+      </div>
       <UpdateProfileModal
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}

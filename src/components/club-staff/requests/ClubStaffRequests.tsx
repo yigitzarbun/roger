@@ -12,6 +12,7 @@ import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 
 import AcceptClubStaffModal from "./accept-staff-modal/AcceptClubStaffModal";
 import DeclineClubStaffModal from "./decline-staff-moda/DeclineClubStaffModal";
+import PageLoading from "../../../components/loading/PageLoading";
 
 const ClubStaffRequests = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -83,7 +84,7 @@ const ClubStaffRequests = () => {
     isTrainerExperienceTypesLoading ||
     isTrainersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

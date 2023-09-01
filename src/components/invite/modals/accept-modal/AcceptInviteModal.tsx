@@ -14,6 +14,7 @@ import { useAppSelector } from "../../../../store/hooks";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 export type AcceptBookingData = {
   booking_id: number;
@@ -104,7 +105,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     isExternalMembersLoading ||
     isStudentGroupsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

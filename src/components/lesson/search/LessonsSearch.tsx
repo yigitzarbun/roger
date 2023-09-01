@@ -5,6 +5,7 @@ import styles from "./styles.module.scss";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface TrainSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -50,7 +51,7 @@ const LessonSearch = (props: TrainSearchProps) => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   if (isLocationsLoading || istrainerExperienceTypesLoading || isClubsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

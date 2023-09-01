@@ -9,6 +9,7 @@ import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi"
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
 import { useGetMatchScoresQuery } from "../../../api/endpoints/MatchScoresApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 const PlayersLeaderboardResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -125,10 +126,8 @@ const PlayersLeaderboardResults = () => {
     isBookingsLoading ||
     isMatchScoresLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
-
-  console.log(rankedPlayersList);
   return (
     <div className={styles["result-container"]}>
       <h2 className={styles["result-title"]}>Lidrelik Tablosu</h2>

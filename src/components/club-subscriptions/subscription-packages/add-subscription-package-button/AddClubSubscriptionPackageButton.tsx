@@ -5,6 +5,7 @@ import { FaPlusSquare } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddClubSubscriptionPackageButtonProps {
   openAddClubSubscriptionPackageModal: () => void;
@@ -26,7 +27,7 @@ const AddClubSubscriptionPackageButton = (
       ?.name_on_bank_account;
 
   if (isClubsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

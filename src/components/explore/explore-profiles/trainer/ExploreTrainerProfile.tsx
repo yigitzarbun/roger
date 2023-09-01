@@ -27,6 +27,7 @@ import {
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreTrainerProfileProps {
   user_id: string;
@@ -229,7 +230,7 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     isClubStaffLoading ||
     isStudentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles.profile}>

@@ -2,6 +2,7 @@ import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ClubCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -40,7 +41,7 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
     useGetEventTypesQuery({});
 
   if (isCourtsLoading || isEventTypesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

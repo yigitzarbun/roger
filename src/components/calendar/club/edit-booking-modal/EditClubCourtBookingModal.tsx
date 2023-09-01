@@ -10,6 +10,8 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import {
   addMinutes,
   formatTime,
@@ -27,7 +29,6 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
-import { group } from "console";
 
 interface EditClubCourtBookingModalProps {
   editBookingModalOpen: boolean;
@@ -315,7 +316,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     isTrainersLoading ||
     isGroupLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <Modal

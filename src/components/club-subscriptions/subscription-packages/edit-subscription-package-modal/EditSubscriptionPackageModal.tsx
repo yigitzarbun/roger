@@ -17,6 +17,7 @@ import {
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface EditSubscriptionPackageModalProps {
   openEditPackageModal: boolean;
@@ -105,7 +106,7 @@ const EditSubscriptionPackageModal = (
   }, [isSuccess]);
 
   if (isClubSubscriptionPackagesLoading || isClubSubscriptionTypesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

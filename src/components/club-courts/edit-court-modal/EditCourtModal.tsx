@@ -19,6 +19,7 @@ import {
   useUpdateCourtMutation,
 } from "../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface EditCourtModalProps {
   isEditCourtModalOpen: boolean;
@@ -129,7 +130,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     isCourtStructureTypesLoading ||
     isCourtSurfaceTypesLoading
   ) {
-    <div>Yükleniyor..</div>;
+    <PageLoading />;
   }
 
   return (

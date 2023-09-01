@@ -16,6 +16,8 @@ import {
 
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
 
+import PageLoading from "../../../../../components/loading/PageLoading";
+
 interface EditClubBankDetailsModallProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -69,7 +71,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
   }, [isSuccess]);
 
   if (isClubsLoading || isBanksLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

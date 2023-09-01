@@ -6,6 +6,7 @@ import styles from "./styles.module.scss";
 
 import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
 import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -74,7 +75,7 @@ const TrainerEventsResults = () => {
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["results-container"]}>

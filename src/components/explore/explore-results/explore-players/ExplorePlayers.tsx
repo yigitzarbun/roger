@@ -18,6 +18,7 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExplorePlayersProps {
   user: User;
@@ -135,7 +136,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     isPlayerLevelsLoading ||
     isFavouritesLoading
   ) {
-    return <div>Yükleniyor ..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
@@ -184,76 +185,58 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     ).location_name
                   }
                 </td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
-                    className={styles["view-icon"]}
-                  >
-                    <AiOutlineEye />
-                  </Link>
-                </td>
-                {
-                  <td onClick={() => handleToggleFavourite(player.user_id)}>
-                    {isPlayerInMyFavourites(player.user_id) === true ? (
-                      <AiFillStar className={styles["remove-fav-icon"]} />
-                    ) : (
-                      <AiOutlineStar className={styles["add-fav-icon"]} />
-                    )}
-                  </td>
-                }
-                {isUserPlayer && player.gender !== userGender && (
-                  <td>
+                <td className={styles["vertical-center"]}>
+                  <div className={styles["action-buttons-container"]}>
                     <Link
-                      to={paths.TRAIN_INVITE}
-                      state={{
-                        fname: player.fname,
-                        lname: player.lname,
-                        image: player.image,
-                        court_price: "",
-                        user_id: player.user_id,
-                      }}
-                      className={styles["training-button"]}
+                      to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
+                      className={styles["view-icon"]}
                     >
-                      Antreman yap
+                      <AiOutlineEye />
                     </Link>
-                  </td>
-                )}
-                {isUserPlayer && player.gender === userGender && (
-                  <td>
-                    <div className={styles["action-buttons-container"]}>
-                      {isUserPlayer && (
-                        <Link
-                          to={paths.TRAIN_INVITE}
-                          state={{
-                            fname: player.fname,
-                            lname: player.lname,
-                            image: player.image,
-                            court_price: "",
-                            user_id: player.user_id,
-                          }}
-                          className={styles["training-button"]}
-                        >
-                          Antreman yap
-                        </Link>
-                      )}
-                      {isUserPlayer && player.gender === userGender && (
-                        <Link
-                          to={paths.MATCH_INVITE}
-                          state={{
-                            fname: player.fname,
-                            lname: player.lname,
-                            image: player.image,
-                            court_price: "",
-                            user_id: player.user_id,
-                          }}
-                          className={styles["match-button"]}
-                        >
-                          Maç yap
-                        </Link>
-                      )}
-                    </div>
-                  </td>
-                )}
+                    {isPlayerInMyFavourites(player.user_id) === true ? (
+                      <AiFillStar
+                        className={styles["remove-fav-icon"]}
+                        onClick={() => handleToggleFavourite(player.user_id)}
+                      />
+                    ) : (
+                      <AiOutlineStar
+                        className={styles["add-fav-icon"]}
+                        onClick={() => handleToggleFavourite(player.user_id)}
+                      />
+                    )}
+                    {isUserPlayer && (
+                      <Link
+                        to={paths.TRAIN_INVITE}
+                        state={{
+                          fname: player.fname,
+                          lname: player.lname,
+                          image: player.image,
+                          court_price: "",
+                          user_id: player.user_id,
+                        }}
+                        className={styles["training-button"]}
+                      >
+                        Antreman yap
+                      </Link>
+                    )}
+                    {isUserPlayer && player.gender === userGender && (
+                      <Link
+                        to={paths.MATCH_INVITE}
+                        state={{
+                          fname: player.fname,
+                          lname: player.lname,
+                          image: player.image,
+                          court_price: "",
+                          user_id: player.user_id,
+                        }}
+                        className={styles["match-button"]}
+                      >
+                        Maç yap
+                      </Link>
+                    )}
+                  </div>
+                </td>
+
                 {isUserTrainer && (
                   <td>
                     <Link

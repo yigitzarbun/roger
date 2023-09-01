@@ -20,6 +20,8 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useAppDispatch } from "../../../../store/hooks";
 import { updateTrainerDetails } from "../../../../store/slices/authSlice";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 interface UpdateTrainerProfileModalProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -116,7 +118,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
     isTrainerEmploymentTypesLoading ||
     isTrainerExperienceTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

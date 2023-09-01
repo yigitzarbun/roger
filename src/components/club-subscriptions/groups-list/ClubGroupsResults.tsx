@@ -13,6 +13,7 @@ import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExternalMembersApi";
 import EditGroupModal from "./edit-group-modal/EditGroupModal";
+import PageLoading from "../../../components/loading/PageLoading";
 
 const ClubGroupsResults = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -64,7 +65,7 @@ const ClubGroupsResults = () => {
     isPlayersLoading ||
     isExternalMembersLoading
   ) {
-    return <div>Yükleniyor</div>;
+    return <PageLoading />;
   }
 
   return (

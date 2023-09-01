@@ -56,6 +56,22 @@
     .add-student-button:hover {
       background-color: $roger-blue;
     }
+    .cancel-student-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 150px;
+      background-color: $roger-red;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+
+    .cancel-student-button:hover {
+      background-color: $roger-black-dark;
+    }
     .pending-confirmation-text {
       color: $roger-yellow;
       font-size: 0.8rem;

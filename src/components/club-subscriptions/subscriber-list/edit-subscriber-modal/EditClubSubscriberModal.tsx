@@ -28,6 +28,8 @@ import {
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 interface EditClubSubscriberModalProps {
   isEditSubscriberModalOpen: boolean;
   closeEditClubSubscriberModal: () => void;
@@ -230,7 +232,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
     isLocationsLoading ||
     isPlayerLevelsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

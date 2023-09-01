@@ -17,11 +17,6 @@
     width: 100%;
     text-align: left;
 
-    .player-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-
     .vertical-center {
       display: flex;
       align-items: center;
@@ -34,12 +29,21 @@
     }
 
     .cancel-button {
-      font-weight: bold;
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-red;
+      width: 100px;
+      background-color: $roger-red;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+    }
+
+    .cancel-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
     }
   }
 }

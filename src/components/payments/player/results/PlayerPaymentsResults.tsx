@@ -4,6 +4,8 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
@@ -35,7 +37,7 @@ const PlayerPaymentsResults = () => {
     isTrainersLoading ||
     isClubsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["payment-results-container"]}>

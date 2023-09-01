@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface TrainerCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -25,7 +26,7 @@ const TrainerCalendarSearch = (props: TrainerCalendarSearchProps) => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   if (isClubsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

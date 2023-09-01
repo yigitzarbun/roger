@@ -31,6 +31,7 @@ import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useAppSelector } from "../../../../store/hooks";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreClubProfileProps {
   user_id: string;
@@ -284,7 +285,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     isClubStaffLoading ||
     isPlayersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

@@ -11,6 +11,8 @@ import {
   useUpdateStudentMutation,
 } from "../../../api/endpoints/StudentsApi";
 
+import PageLoading from "../../../components/loading/PageLoading";
+
 const TrainerStudentRequests = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -76,7 +78,7 @@ const TrainerStudentRequests = () => {
     isLocationsLoading ||
     isStudentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
@@ -96,10 +98,16 @@ const TrainerStudentRequests = () => {
           <tbody>
             {myStudents?.map((student) => (
               <tr key={student.student_id}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
-                      student.image ? student.image : "/images/icons/avatar.png"
+                      players?.find(
+                        (player) => player.user_id === student.player_id
+                      )?.image
+                        ? players?.find(
+                            (player) => player.user_id === student.player_id
+                          )?.image
+                        : "/images/icons/avatar.png"
                     }
                     alt={student.name}
                     className={styles["student-image"]}
@@ -150,16 +158,20 @@ const TrainerStudentRequests = () => {
                   }
                 </td>
                 <td>
-                  <button onClick={() => handleAddStudent(student.student_id)}>
-                    Kabul Et
-                  </button>
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleDeclineStudent(student.student_id)}
-                  >
-                    Reddet
-                  </button>
+                  <div className={styles["action-buttons-container"]}>
+                    <button
+                      onClick={() => handleAddStudent(student.student_id)}
+                      className={styles["accept-button"]}
+                    >
+                      Kabul Et
+                    </button>
+                    <button
+                      onClick={() => handleDeclineStudent(student.student_id)}
+                      className={styles["decline-button"]}
+                    >
+                      Reddet
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

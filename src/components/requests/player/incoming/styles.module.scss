@@ -17,11 +17,6 @@
     width: 100%;
     text-align: left;
 
-    .player-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-
     .vertical-center {
       display: flex;
       align-items: center;
@@ -34,20 +29,42 @@
       object-fit: cover;
     }
     .accept-button {
-      font-weight: bold;
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
+      width: 100px;
+      background-color: $roger-green;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+    }
+
+    .accept-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
     }
     .decline-button {
-      font-weight: bold;
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-red;
+      width: 100px;
+      background-color: $roger-red;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+    }
+
+    .decline-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
+    }
+    .pending-confirmation-text {
+      font-size: 0.8rem;
+      color: $roger-yellow;
     }
     .fee {
       color: $roger-green;

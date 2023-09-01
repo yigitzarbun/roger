@@ -18,6 +18,7 @@ import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface TrainerCalendarResultsProps {
   date: string;
@@ -143,7 +144,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     isStudentGroupsLoading ||
     isExternalMembersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>

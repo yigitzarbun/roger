@@ -27,6 +27,7 @@ import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../../api/endpoints/PaymentsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const CourtBookingForm = () => {
   const navigate = useNavigate();
@@ -472,7 +473,7 @@ const CourtBookingForm = () => {
     isClubSubscriptionsLoading ||
     isClubStaffLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

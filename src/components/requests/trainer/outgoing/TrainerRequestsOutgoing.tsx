@@ -15,6 +15,7 @@ import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi"
 import CancelInviteModal, {
   BookingData,
 } from "../../../invite/modals/cancel-modal/CancelInviteModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 
@@ -95,7 +96,7 @@ const TrainerRequestsOutgoing = () => {
     isPlayersLoading ||
     isPlayerLevelTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

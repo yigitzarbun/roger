@@ -19,6 +19,7 @@ import {
   useGetStudentsQuery,
   useUpdateStudentMutation,
 } from "../../../api/endpoints/StudentsApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -173,7 +174,7 @@ const LessonResults = (props: TrainSearchProps) => {
     isClubStaffLoading ||
     isStudentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (
@@ -278,6 +279,7 @@ const LessonResults = (props: TrainSearchProps) => {
                     ) ? (
                     <button
                       onClick={() => handleDeclineStudent(trainer.user_id)}
+                      className={styles["cancel-student-button"]}
                     >
                       Öğrenciliği sil
                     </button>

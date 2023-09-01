@@ -20,6 +20,7 @@
     .vertical-center {
       display: flex;
       align-items: center;
+      vertical-align: middle;
     }
 
     .player-image {
@@ -30,13 +31,13 @@
     }
 
     .view-icon {
-      border: none;
-      width: 200px;
-      border-radius: $roger-border-radius;
       font-size: 1.5rem;
       cursor: pointer;
       text-decoration: none;
       color: white;
+      vertical-align: middle;
+      display: flex;
+      align-content: center;
     }
     .view-icon:hover {
       color: $roger-blue;
@@ -45,52 +46,55 @@
       color: $roger-blue;
       cursor: pointer;
       font-size: 1.5rem;
+      vertical-align: middle;
     }
     .add-fav-icon {
       cursor: pointer;
       font-size: 1.5rem;
+      vertical-align: middle;
     }
     .add-fav-icon:hover {
       color: $roger-blue;
     }
     .action-buttons-container {
       display: flex;
-      gap: 10px;
+      gap: 30px;
       align-items: center;
-    }
+      margin-left: auto;
 
-    .training-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 150px;
-      background-color: $roger-black-dark;
-      font-size: 0.8rem;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-      text-align: center;
-    }
+      .training-button {
+        padding: 10px;
+        border-radius: $roger-border-radius;
+        border: none;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+      }
 
-    .training-button:hover {
-      background-color: $roger-blue;
-    }
+      .training-button:hover {
+        background-color: $roger-blue;
+      }
 
-    .match-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 150px;
-      background-color: $roger-black-dark;
-      font-size: 0.8rem;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-      text-align: center;
-    }
+      .match-button {
+        padding: 10px;
+        border-radius: $roger-border-radius;
+        border: none;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+      }
 
-    .match-button:hover {
-      background-color: $roger-blue;
+      .match-button:hover {
+        background-color: $roger-blue;
+      }
     }
   }
 }

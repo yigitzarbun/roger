@@ -4,17 +4,13 @@ import Modal from "react-modal";
 
 import { FaWindowClose } from "react-icons/fa";
 
-import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import {
-  useAddEventReviewMutation,
-  useGetEventReviewsQuery,
-} from "../../../../api/endpoints/EventReviewsApi";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ViewEventReviewModalProps {
   isViewReviewModalOpen: boolean;
@@ -31,18 +27,14 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetEventReviewsQuery({});
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-
   const selectedEventReview = eventReviews?.find(
     (review) =>
       review.booking_id === selectedBookingId &&
       review.reviewer_id !== user?.user?.user_id
   );
 
-  if (isEventReviewsLoading || isBookingsLoading) {
-    return <div>Yükleniyor..</div>;
+  if (isEventReviewsLoading) {
+    return <PageLoading />;
   }
 
   return (

@@ -36,6 +36,7 @@ import {
   formatTime,
   roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const LeesonInviteForm = () => {
   const navigate = useNavigate();
@@ -453,7 +454,7 @@ const LeesonInviteForm = () => {
     isTrainersLoading ||
     isPlayersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["invite-page-container"]}>

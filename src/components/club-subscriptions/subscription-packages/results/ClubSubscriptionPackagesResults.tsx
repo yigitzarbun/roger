@@ -7,6 +7,8 @@ import { useAppSelector } from "../../../../store/hooks";
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 interface ClubSubscriptionPackagesResultsProps {
   openEditClubSubscriptionPackageModal: (value: number) => void;
 }
@@ -34,7 +36,7 @@ const ClubSubscriptionPackagesResults = (
   );
 
   if (isClubSubscriptionTypesLoading || isClubSubscriptionPackagesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

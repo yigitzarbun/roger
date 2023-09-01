@@ -9,6 +9,7 @@ import { useGetClubTypesQuery } from "../../../../api/endpoints/ClubTypesApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import UpdateClubProfileModall from "../../../../components/profile/update-profile-modals/club/UpdateClubProfileModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const ClubAccountDetails = () => {
   const user = useAppSelector((store) => store.user.user);
@@ -35,7 +36,7 @@ const ClubAccountDetails = () => {
   };
 
   if (isLocationsLoading || isClubTypesLoading || isClubsLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["club-account-details-container"]}>

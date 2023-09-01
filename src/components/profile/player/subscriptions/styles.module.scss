@@ -1,7 +1,7 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.player-stats-container {
+.player-subscriptions-container {
   background-color: $roger-box-bg-color;
   width: 48%;
   border-radius: $roger-border-radius;
@@ -20,7 +20,22 @@
     font-size: 1rem;
   }
 
-  button {
+  .stats-container {
+    display: flex;
+    justify-content: space-between;
+    .stat {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      width: 20%;
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: $roger-blue;
+      }
+    }
+  }
+  .view-all-button {
     background-color: $roger-black-dark;
     border: none;
     width: 200px;
@@ -28,8 +43,11 @@
     border-radius: $roger-border-radius;
     font-size: 1rem;
     cursor: pointer;
+    color: white;
+    text-decoration: none;
+    text-align: center;
   }
-  button:hover {
+  .view-all-button:hover {
     background-color: $roger-black-light;
   }
 }

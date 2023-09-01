@@ -10,6 +10,7 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import AddPlayerCardDetails from "./add-card-details/AddPlayerCardDetails";
 import EditPlayerCardDetails from "./edit-card-details/EditPlayerCardDetails";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
@@ -87,12 +88,12 @@ const PlayerCardPayments = () => {
     isTrainersLoading ||
     isClubsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (
     <div className={styles["player-payment-details-container"]}>
-      <h2>Kart ve Ödeme Bilgileri</h2>
+      <h2>Kart ve Ödeme</h2>
       <div className={styles["nav-container"]}>
         <button
           onClick={() => handleDisplay("card")}
@@ -118,9 +119,11 @@ const PlayerCardPayments = () => {
       {display === "card" && (
         <>
           {cardDetailsExist ? (
-            <div>
-              <p>
-                {`${selectedPlayer?.card_number}
+            <div className={styles["card-details-container"]}>
+              <p className={styles["card-exists-text"]}>
+                {`${(selectedPlayer?.card_number)
+                  .toString()
+                  .slice((selectedPlayer?.card_number).toString().length - 4)}
             ile biten kartınız aktiftir`}
               </p>
               <button onClick={handleOpenEditCardModal}>
@@ -141,7 +144,7 @@ const PlayerCardPayments = () => {
       )}
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <>
+          <div className={styles["payments-container"]}>
             <table>
               <thead>
                 <tr>
@@ -214,8 +217,10 @@ const PlayerCardPayments = () => {
                 ))}
               </tbody>
             </table>
-            <Link to={paths.PAYMENTS}>Tümünü Görüntüle</Link>
-          </>
+            <Link to={paths.PAYMENTS} className={styles["view-all-button"]}>
+              Tümünü Görüntüle
+            </Link>
+          </div>
         ) : (
           <p>Henüz ödemeniz bulunmamaktadır.</p>
         ))}

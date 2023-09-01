@@ -18,6 +18,7 @@ import {
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddSubscriptionPackageModalProps {
   openAddPackageModal: boolean;
@@ -103,7 +104,7 @@ const AddSubscriptionPackageModal = (
     isClubSubscriptionPackagesLoading ||
     isClubsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

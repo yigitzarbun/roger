@@ -7,6 +7,7 @@ import styles from "./styles.module.scss";
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const ClubPaymentsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -23,7 +24,7 @@ const ClubPaymentsResults = () => {
   );
 
   if (isPaymentsLoading || isPaymentTypesLoading || isPlayersLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

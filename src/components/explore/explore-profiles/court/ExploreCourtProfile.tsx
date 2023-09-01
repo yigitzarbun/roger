@@ -13,6 +13,7 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreCourtProfileProps {
   court_id: string;
@@ -112,7 +113,7 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles.profile}>

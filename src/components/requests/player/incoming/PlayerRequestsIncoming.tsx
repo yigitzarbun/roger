@@ -36,6 +36,8 @@ import {
   useGetStudentsQuery,
 } from "../../../../api/endpoints/StudentsApi";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 const PlayerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
 
@@ -242,7 +244,7 @@ const PlayerRequestsIncoming = () => {
     isPaymentsLoading ||
     isStudentsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (
@@ -253,246 +255,254 @@ const PlayerRequestsIncoming = () => {
       {incomingBookings?.length === 0 ? (
         <div>Gelen antreman, maç veya ders daveti bulunmamaktadır</div>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Durum</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Tür</th>
-              <th>Tarih</th>
-              <th>Saat </th>
-              <th>Kort</th>
-              <th>Konum</th>
-              <th>
-                Ücret<span className={styles["fee"]}>*</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {incomingBookings?.map((booking) => (
-              <tr key={booking.booking_id} className={styles["player-row"]}>
-                <td>
-                  {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
-                </td>
-                <td className={styles["vertical-center"]}>
-                  <img
-                    src={
-                      players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )
-                        ? players?.find(
-                            (player) => player.user_id === booking.invitee_id
-                          )?.image
-                        : "/images/players/player1.png"
-                    }
-                    className={styles["player-image"]}
-                  />
-                </td>
-                <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user?.user_id
-                    ? `${
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Durum</th>
+                <th>Oyuncu</th>
+                <th>İsim</th>
+                <th>Seviye</th>
+                <th>Cinsiyet</th>
+                <th>Yaş</th>
+                <th>Tür</th>
+                <th>Tarih</th>
+                <th>Saat </th>
+                <th>Kort</th>
+                <th>Konum</th>
+                <th>
+                  Ücret<span className={styles["fee"]}>*</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {incomingBookings?.map((booking) => (
+                <tr key={booking.booking_id}>
+                  <td className={styles["pending-confirmation-text"]}>
+                    {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
+                  </td>
+                  <td className={styles["vertical-center"]}>
+                    <img
+                      src={
                         players?.find(
                           (player) => player.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.lname
-                      }`
-                    : ""}
-                  {booking.event_type_id === 3 &&
-                  booking.inviter_id === user?.user_id
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user?.user_id
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.inviter_id
-                        )?.lname
-                      }`
-                    : ""}
-                </td>
-                <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user?.user_id
-                    ? playerLevelTypes?.find(
-                        (level) =>
-                          level.player_level_id ===
+                        )
+                          ? players?.find(
+                              (player) => player.user_id === booking.invitee_id
+                            )?.image
+                          : "/images/players/player1.png"
+                      }
+                      className={styles["player-image"]}
+                    />
+                  </td>
+                  <td>
+                    {(booking.event_type_id === 1 ||
+                      booking.event_type_id === 2) &&
+                    booking.inviter_id === user?.user_id
+                      ? `${
                           players?.find(
                             (player) => player.user_id === booking.invitee_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user?.user_id
-                    ? playerLevelTypes?.find(
-                        (level) =>
-                          level.player_level_id ===
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.lname
+                        }`
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2) &&
+                        booking.invitee_id === user?.user_id
+                      ? `${
                           players?.find(
                             (player) => player.user_id === booking.inviter_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : ""}
-
-                  {booking.event_type_id === 3 &&
-                  booking.inviter_id === user?.user_id
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === booking.inviter_id
+                          )?.lname
+                        }`
+                      : ""}
+                    {booking.event_type_id === 3 &&
+                    booking.inviter_id === user?.user_id
+                      ? `${
                           trainers?.find(
                             (trainer) => trainer.user_id === booking.invitee_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user?.user_id
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
+                          )?.fname
+                        } ${
+                          trainers?.find(
+                            (trainer) => trainer.user_id === booking.invitee_id
+                          )?.lname
+                        }`
+                      : booking.event_type_id === 3 &&
+                        booking.invitee_id === user?.user_id
+                      ? `${
                           trainers?.find(
                             (trainer) => trainer.user_id === booking.inviter_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : ""}
-                </td>
-                <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user?.user_id
-                    ? players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )?.gender
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user?.user_id
-                    ? players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.gender
-                    : ""}
-                  {booking.event_type_id === 3 &&
-                  booking.inviter_id === user?.user_id
-                    ? trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.gender
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user?.user_id
-                    ? trainers?.find(
-                        (trainer) => trainer.user_id === booking.inviter_id
-                      )?.gender
-                    : ""}
-                </td>
-                <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user?.user_id
-                    ? currentYear -
-                      players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )?.birth_year
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user?.user_id
-                    ? currentYear -
-                      players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.birth_year
-                    : ""}
-                  {booking.event_type_id === 3 &&
-                  booking.inviter_id === user?.user_id
-                    ? currentYear -
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.invitee_id
-                      )?.birth_year
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user?.user_id
-                    ? currentYear -
-                      trainers?.find(
-                        (trainer) => trainer.user_id === booking.inviter_id
-                      )?.birth_year
-                    : ""}
-                </td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === booking.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
-                <td>{new Date(booking.event_date).toLocaleDateString()}</td>
-                <td>{booking.event_time.slice(0, 5)}</td>
-                <td>
-                  {
-                    courts?.find((court) => court.court_id === booking.court_id)
-                      ?.court_name
-                  }
-                </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === booking.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                    payments?.find(
-                      (payment) => booking.payment_id === payment.payment_id
-                    )?.payment_amount / 2}
-                  {booking.event_type_id === 3 &&
-                    payments?.find(
-                      (payment) => payment.payment_id === booking.payment_id
-                    )?.payment_amount}
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleOpenAcceptModal(booking)}
-                    className={styles["accept-button"]}
-                  >
-                    Kabul et
-                  </button>
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleOpenDeclineModal(booking)}
-                    className={styles["decline-button"]}
-                  >
-                    Reddet
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                          )?.fname
+                        } ${
+                          trainers?.find(
+                            (trainer) => trainer.user_id === booking.inviter_id
+                          )?.lname
+                        }`
+                      : ""}
+                  </td>
+                  <td>
+                    {(booking.event_type_id === 1 ||
+                      booking.event_type_id === 2) &&
+                    booking.inviter_id === user?.user_id
+                      ? playerLevelTypes?.find(
+                          (level) =>
+                            level.player_level_id ===
+                            players?.find(
+                              (player) => player.user_id === booking.invitee_id
+                            )?.player_level_id
+                        )?.player_level_name
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2) &&
+                        booking.invitee_id === user?.user_id
+                      ? playerLevelTypes?.find(
+                          (level) =>
+                            level.player_level_id ===
+                            players?.find(
+                              (player) => player.user_id === booking.inviter_id
+                            )?.player_level_id
+                        )?.player_level_name
+                      : ""}
+
+                    {booking.event_type_id === 3 &&
+                    booking.inviter_id === user?.user_id
+                      ? trainerExperienceTypes?.find(
+                          (type) =>
+                            type.trainer_experience_type_id ===
+                            trainers?.find(
+                              (trainer) =>
+                                trainer.user_id === booking.invitee_id
+                            )?.trainer_experience_type_id
+                        )?.trainer_experience_type_name
+                      : booking.event_type_id === 3 &&
+                        booking.invitee_id === user?.user_id
+                      ? trainerExperienceTypes?.find(
+                          (type) =>
+                            type.trainer_experience_type_id ===
+                            trainers?.find(
+                              (trainer) =>
+                                trainer.user_id === booking.inviter_id
+                            )?.trainer_experience_type_id
+                        )?.trainer_experience_type_name
+                      : ""}
+                  </td>
+                  <td>
+                    {(booking.event_type_id === 1 ||
+                      booking.event_type_id === 2) &&
+                    booking.inviter_id === user?.user_id
+                      ? players?.find(
+                          (player) => player.user_id === booking.invitee_id
+                        )?.gender
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2) &&
+                        booking.invitee_id === user?.user_id
+                      ? players?.find(
+                          (player) => player.user_id === booking.inviter_id
+                        )?.gender
+                      : ""}
+                    {booking.event_type_id === 3 &&
+                    booking.inviter_id === user?.user_id
+                      ? trainers?.find(
+                          (trainer) => trainer.user_id === booking.invitee_id
+                        )?.gender
+                      : booking.event_type_id === 3 &&
+                        booking.invitee_id === user?.user_id
+                      ? trainers?.find(
+                          (trainer) => trainer.user_id === booking.inviter_id
+                        )?.gender
+                      : ""}
+                  </td>
+                  <td>
+                    {(booking.event_type_id === 1 ||
+                      booking.event_type_id === 2) &&
+                    booking.inviter_id === user?.user_id
+                      ? currentYear -
+                        players?.find(
+                          (player) => player.user_id === booking.invitee_id
+                        )?.birth_year
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2) &&
+                        booking.invitee_id === user?.user_id
+                      ? currentYear -
+                        players?.find(
+                          (player) => player.user_id === booking.inviter_id
+                        )?.birth_year
+                      : ""}
+                    {booking.event_type_id === 3 &&
+                    booking.inviter_id === user?.user_id
+                      ? currentYear -
+                        trainers?.find(
+                          (trainer) => trainer.user_id === booking.invitee_id
+                        )?.birth_year
+                      : booking.event_type_id === 3 &&
+                        booking.invitee_id === user?.user_id
+                      ? currentYear -
+                        trainers?.find(
+                          (trainer) => trainer.user_id === booking.inviter_id
+                        )?.birth_year
+                      : ""}
+                  </td>
+                  <td>
+                    {
+                      eventTypes?.find(
+                        (type) => type.event_type_id === booking.event_type_id
+                      )?.event_type_name
+                    }
+                  </td>
+                  <td>{new Date(booking.event_date).toLocaleDateString()}</td>
+                  <td>{booking.event_time.slice(0, 5)}</td>
+                  <td>
+                    {
+                      courts?.find(
+                        (court) => court.court_id === booking.court_id
+                      )?.court_name
+                    }
+                  </td>
+                  <td>
+                    {
+                      clubs?.find((club) => club.club_id === booking.club_id)
+                        ?.club_name
+                    }
+                  </td>
+                  <td>
+                    {(booking.event_type_id === 1 ||
+                      booking.event_type_id === 2) &&
+                      payments?.find(
+                        (payment) => booking.payment_id === payment.payment_id
+                      )?.payment_amount / 2}
+                    {booking.event_type_id === 3 &&
+                      payments?.find(
+                        (payment) => payment.payment_id === booking.payment_id
+                      )?.payment_amount}
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => handleOpenDeclineModal(booking)}
+                      className={styles["decline-button"]}
+                    >
+                      Reddet
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => handleOpenAcceptModal(booking)}
+                      className={styles["accept-button"]}
+                    >
+                      Kabul et
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className={styles["fee-text"]}>
+            (*) Kort ücreti ve diğer tüm masraflar dahil ödeyeceğin tutar.
+          </p>
+        </>
       )}
       <AcceptInviteModal
         isAcceptModalOpen={isAcceptModalOpen}
@@ -506,9 +516,6 @@ const PlayerRequestsIncoming = () => {
         declineBookingData={declineBookingData}
         handleDeclineBooking={handleDeclineBooking}
       />
-      <p className={styles["fee-text"]}>
-        (*) Kort ücreti ve diğer tüm masraflar dahil ödeyeceğin tutar.
-      </p>
     </div>
   );
 };

@@ -12,6 +12,8 @@ import {
 } from "../../../api/endpoints/StudentsApi";
 import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
 
+import PageLoading from "../../../components/loading/PageLoading";
+
 const TrainerStudentsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -67,7 +69,7 @@ const TrainerStudentsResults = () => {
     isStudentsLoading ||
     isBookingsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

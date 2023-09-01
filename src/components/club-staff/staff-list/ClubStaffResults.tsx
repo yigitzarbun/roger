@@ -8,6 +8,7 @@ import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 const ClubStaffResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -43,7 +44,7 @@ const ClubStaffResults = () => {
     isLocationsLoading ||
     isTrainersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

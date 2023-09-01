@@ -13,15 +13,17 @@
     width: 100%;
     text-align: left;
 
-    .score-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
     .add-score-button {
       padding: 10px;
       border-radius: $roger-border-radius;
       border: none;
+      width: 150px;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
     }
     .add-score-button:hover {
       background-color: $roger-blue;

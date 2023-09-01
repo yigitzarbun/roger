@@ -14,6 +14,8 @@ import {
   useUpdatePlayerMutation,
 } from "../../../../../api/endpoints/PlayersApi";
 
+import PageLoading from "../../../../../components/loading/PageLoading";
+
 interface AddPlayerCardDetailsModallProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -76,7 +78,7 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
   }, [isSuccess]);
 
   if (isPlayersLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

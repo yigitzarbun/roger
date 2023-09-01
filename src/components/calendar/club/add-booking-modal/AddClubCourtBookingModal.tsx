@@ -27,6 +27,7 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddClubCourtBookingModalProps {
   addBookingModalOpen: boolean;
@@ -262,7 +263,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     isTrainersLoading ||
     isStudentGroupsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

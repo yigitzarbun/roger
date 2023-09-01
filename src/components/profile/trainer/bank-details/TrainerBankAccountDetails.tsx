@@ -10,6 +10,7 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import AddTrainerBankDetailsModal from "./add-bank-details/AddTrainerBankDetails";
 import EditTrainerBankDetailsModal from "./edit-bank-details/EditTrainerBankDetails";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
@@ -86,7 +87,7 @@ const TrainerBankAccountDetails = () => {
     isPaymentsLoading ||
     isPaymentTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["trainer-bank-details-container"]}>

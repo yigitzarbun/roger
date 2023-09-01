@@ -22,6 +22,7 @@ import {
   useAddUserMutation,
   useGetUsersQuery,
 } from "../../../../store/auth/apiSlice";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddGroupModalProps {
   isAddGroupModalOpen: boolean;
@@ -147,7 +148,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
     isPlayersLoading ||
     isClubSubscriptionsLoading
   ) {
-    return <div>Yükleniyor</div>;
+    return <PageLoading />;
   }
 
   return (

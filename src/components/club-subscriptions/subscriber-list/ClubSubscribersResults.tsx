@@ -22,6 +22,7 @@ import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/Club
 import { useGetUsersQuery } from "../../../store/auth/apiSlice";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExternalMembersApi";
+import PageLoading from "../../../components/loading/PageLoading";
 
 const ClubSubscribersResults = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -117,7 +118,7 @@ const ClubSubscribersResults = () => {
     isExternalMembersLoading ||
     isUserTypesLoading
   ) {
-    return <div>Yükleniyor</div>;
+    return <PageLoading />;
   }
 
   return (

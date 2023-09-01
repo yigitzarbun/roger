@@ -20,6 +20,7 @@ import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfac
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 
 import { generateTimesArray } from "../../../common/util/TimeFunctions";
+import PageLoading from "../../../components/loading/PageLoading";
 
 interface AddCourtModalProps {
   isAddCourtModalOpen: boolean;
@@ -117,7 +118,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     isCourtSurfaceTypesLoading ||
     isClubsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

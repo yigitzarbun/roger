@@ -28,6 +28,7 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 import { baseUrl, localUrl } from "../../../../common/constants/apiConstants";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
@@ -202,7 +203,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isMatchScoresLoading ||
     isEventTypesLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles.profile}>

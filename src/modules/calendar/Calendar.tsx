@@ -8,6 +8,8 @@ import { useAppSelector } from "../../store/hooks";
 
 import { useGetUserTypesQuery } from "../../api/endpoints/UserTypesApi";
 
+import PageLoading from "../../components/loading/PageLoading";
+
 const Calendar = () => {
   const user = useAppSelector((store) => store.user.user.user);
 
@@ -19,7 +21,7 @@ const Calendar = () => {
   const isUserClub = user.user_type_id === 3;
 
   if (isUserTypesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div>

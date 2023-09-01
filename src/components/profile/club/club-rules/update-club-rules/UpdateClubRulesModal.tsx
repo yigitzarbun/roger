@@ -15,6 +15,7 @@ import {
 import { useGetClubSubscriptionPackagesQuery } from "../../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 import { useAppSelector } from "../../../../../store/hooks";
+import PageLoading from "../../../../../components/loading/PageLoading";
 
 interface UpdateClubRulesModallProps {
   isModalOpen: boolean;
@@ -130,7 +131,7 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
   }, [isSuccess]);
 
   if (isClubsLoading || isClubSubscriptionPackagesLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

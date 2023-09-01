@@ -10,6 +10,7 @@ import {
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AcceptClubStaffModalProps {
   isAcceptClubStaffModalOpen: boolean;
@@ -56,7 +57,7 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
   }, [isSuccess]);
 
   if (isClubStaffLoading) {
-    return <div>Yükleniyor...</div>;
+    return <PageLoading />;
   }
 
   return (

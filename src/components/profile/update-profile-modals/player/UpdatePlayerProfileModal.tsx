@@ -17,6 +17,8 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useAppDispatch } from "../../../../store/hooks";
 import { updatePlayerDetails } from "../../../../store/slices/authSlice";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 interface UpdatePlayerProfileModalProps {
   isModalOpen: boolean;
   handleCloseModal: () => void;
@@ -84,7 +86,7 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
   }, [isSuccess]);
 
   if (isLocationsLoading || isPlayerLevelsLoading || isPlayersLoading) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal

@@ -20,6 +20,8 @@ import {
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 interface ExploreTrainersProps {
   user: User;
   trainers: Trainer[];
@@ -141,7 +143,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     isClubStaffLoading ||
     isClubsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
@@ -230,9 +232,9 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 {trainer.user_id !== user?.user?.user_id ? (
                   <td onClick={() => handleToggleFavourite(trainer.user_id)}>
                     {isTrainerInMyFavourites(trainer.user_id) === true ? (
-                      <AiFillStar />
+                      <AiFillStar className={styles["remove-fav-icon"]} />
                     ) : (
-                      <AiOutlineStar />
+                      <AiOutlineStar className={styles["add-fav-icon"]} />
                     )}
                   </td>
                 ) : (

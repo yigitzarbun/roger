@@ -17,6 +17,8 @@ import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import AddClubBankDetailsModal from "./add-bank-details/AddClubBankDetailsModal";
 import EditClubBankDetailsModal from "./edit-bank-details/EditClubBankDetails";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 const ClubBankAccountDetails = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -85,7 +87,7 @@ const ClubBankAccountDetails = () => {
     isPaymentTypesLoading ||
     isPlayersLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (

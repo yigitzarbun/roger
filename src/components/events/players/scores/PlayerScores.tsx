@@ -13,9 +13,10 @@ import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
-import { useGetMatchScoresStatusTypesQuery } from "../../../../api/endpoints/MatchScoresStatusTypesApi";
+
 import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
 import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 const PlayerScores = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -86,7 +87,7 @@ const PlayerScores = () => {
     isPlayersLoading ||
     isMatchScoresLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
 
   return (
@@ -112,7 +113,7 @@ const PlayerScores = () => {
           </thead>
           <tbody>
             {myEvents?.map((event) => (
-              <tr key={event.booking_id} className={styles["score-row"]}>
+              <tr key={event.booking_id}>
                 <td>
                   {(event.event_type_id === 1 || event.event_type_id === 2) &&
                   event.inviter_id === user?.user?.user_id

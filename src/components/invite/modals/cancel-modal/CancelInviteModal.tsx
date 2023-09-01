@@ -15,6 +15,7 @@ import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 export type BookingData = {
   booking_id: number;
@@ -99,7 +100,7 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     isPaymentsLoading ||
     isStudentGroupsLoading
   ) {
-    return <div>Yükleniyor..</div>;
+    return <PageLoading />;
   }
   return (
     <ReactModal
