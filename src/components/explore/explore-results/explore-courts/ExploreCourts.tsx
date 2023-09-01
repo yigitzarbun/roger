@@ -1,5 +1,7 @@
 import React from "react";
 
+import { AiOutlineEye } from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
@@ -92,9 +94,9 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           <tbody>
             {courts.map((court) => (
               <tr key={court.court_id} className={styles["court-row"]}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
-                    src={"/images/icons/avatar.png"}
+                    src={court.image ? court.image : "/images/icons/avatar.png"}
                     alt={"court-iamge"}
                     className={styles["court-image"]}
                   />
@@ -148,9 +150,10 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                 {court.is_active && (
                   <td>
                     <Link
-                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
+                      className={styles["view-icon"]}
                     >
-                      Görüntüle
+                      <AiOutlineEye />
                     </Link>
                   </td>
                 )}

@@ -439,6 +439,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("price_hour").notNullable();
       table.integer("price_hour_non_subscriber");
       table.boolean("is_active").defaultTo(true).notNullable();
+      table.string("image");
       table
         .integer("court_structure_type_id")
         .unsigned()
@@ -461,6 +462,18 @@ export async function up(knex: Knex): Promise<void> {
         .notNullable()
         .references("club_id")
         .inTable("clubs")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+    .createTable("court_images", (table) => {
+      table.increments("court_image_id");
+      table.string("court_image").notNullable();
+      table.boolean("is_active").defaultTo(true).notNullable();
+      table
+        .integer("court_id")
+        .unsigned()
+        .references("court_id")
+        .inTable("courts")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
@@ -739,6 +752,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("match_scores")
     .dropTableIfExists("bookings")
     .dropTableIfExists("payments")
+    .dropTableIfExists("court_images")
     .dropTableIfExists("courts")
     .dropTableIfExists("club_external_members")
     .dropTableIfExists("permissions")

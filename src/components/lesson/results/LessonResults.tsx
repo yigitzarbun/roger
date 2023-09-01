@@ -205,7 +205,7 @@ const LessonResults = (props: TrainSearchProps) => {
           </thead>
           <tbody>
             {filteredTrainers.map((trainer) => (
-              <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
+              <tr key={trainer.trainer_id}>
                 <td>
                   <img
                     src={
@@ -255,7 +255,7 @@ const LessonResults = (props: TrainSearchProps) => {
                       court_price: "",
                       user_id: trainer.user_id,
                     }}
-                    className={styles["accept-button"]}
+                    className={styles["lesson-button"]}
                   >
                     Davet gönder
                   </Link>
@@ -267,7 +267,9 @@ const LessonResults = (props: TrainSearchProps) => {
                       student.trainer_id === trainer.user_id &&
                       student.student_status === "pending"
                   ) ? (
-                    "Öğrencilik için eğitmen onayı bekleniyor"
+                    <p className={styles["pending-confirmation-text"]}>
+                      Öğrencilik için eğitmen onayı bekleniyor
+                    </p>
                   ) : students?.find(
                       (student) =>
                         student.player_id === user?.user?.user_id &&
@@ -280,7 +282,10 @@ const LessonResults = (props: TrainSearchProps) => {
                       Öğrenciliği sil
                     </button>
                   ) : (
-                    <button onClick={() => handleAddStudent(trainer.user_id)}>
+                    <button
+                      onClick={() => handleAddStudent(trainer.user_id)}
+                      className={styles["add-student-button"]}
+                    >
                       Öğrenci Ol
                     </button>
                   )}

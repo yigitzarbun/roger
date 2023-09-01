@@ -26,7 +26,7 @@ export type FormValues = {
   club_address: string;
   club_bio_description: string;
   club_type_id: number;
-  image: string;
+  image?: string;
 };
 
 const ClubRegisterForm = () => {

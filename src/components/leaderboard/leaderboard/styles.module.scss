@@ -28,8 +28,14 @@
         color: $roger-yellow;
       }
       .player-image {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .vertical-center {
+        display: flex;
+        align-items: center;
       }
     }
     .player-row:hover {

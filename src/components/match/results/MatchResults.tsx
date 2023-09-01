@@ -74,7 +74,6 @@ const MatchResults = (props: MatchResultsProps) => {
         }
       });
 
-  console.log(filteredPlayers);
   if (
     isPlayersLoading ||
     isLocationsLoading ||
@@ -111,8 +110,8 @@ const MatchResults = (props: MatchResultsProps) => {
           </thead>
           <tbody>
             {filteredPlayers.map((player) => (
-              <tr key={player.player_id} className={styles["player-row"]}>
-                <td>
+              <tr key={player.player_id}>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
                       player.image ? player.image : "/images/icons/avatar.png"
@@ -149,7 +148,7 @@ const MatchResults = (props: MatchResultsProps) => {
                       court_price: "",
                       user_id: player.user_id,
                     }}
-                    className={styles["accept-button"]}
+                    className={styles["match-button"]}
                   >
                     Davet gönder
                   </Link>

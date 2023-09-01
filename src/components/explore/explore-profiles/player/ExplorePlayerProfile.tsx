@@ -88,7 +88,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const playerReviewsReceived = eventReviews?.filter(
     (review) =>
       review.booking_id ===
-        playerBookings.find(
+        playerBookings?.find(
           (booking) => booking.booking_id === review.booking_id
         )?.booking_id && review.reviewer_id !== selectedPlayer?.user_id
   );

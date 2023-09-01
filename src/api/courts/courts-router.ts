@@ -32,7 +32,11 @@ courtsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newCourt = await courtsModel.add(req.body);
+      const courtData = req.body;
+      if (req.file) {
+        courtData.image = req.file.path;
+      }
+      const newCourt = await courtsModel.add(courtData);
       res.status(201).json(newCourt);
     } catch (error) {
       next(error);

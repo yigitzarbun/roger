@@ -157,7 +157,7 @@ async function updateSubscriptions() {
 server.use("/api/players", upload.single("image"), playersRouter);
 server.use("/api/trainers", upload.single("image"), trainersRouter);
 server.use("/api/clubs", upload.single("image"), clubsRouter);
-server.use("/api/courts", courtsRouter);
+server.use("/api/courts", upload.single("image"), courtsRouter);
 server.use("/api/usersAuth", usersAuthRouter);
 server.use("/api/users", usersRouter);
 server.use("/api/locations", locationsRouter);

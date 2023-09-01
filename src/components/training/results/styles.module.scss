@@ -17,23 +17,33 @@
     width: 100%;
     text-align: left;
 
-    .player-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-    .player-image {
-      width: 30px;
-      height: 30px;
+    .vertical-center {
+      display: flex;
+      align-items: center;
     }
 
-    .accept-button {
-      font-weight: bold;
+    .player-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .training-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      text-decoration: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
+      width: 150px;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+
+    .training-button:hover {
+      background-color: $roger-blue;
     }
   }
 }

@@ -46,7 +46,7 @@ const PlayersLeaderboardResults = () => {
       const playerStats = {
         id: player.user_id,
         rank: null,
-        picture: player.picutre,
+        image: player.image,
         name: `${player.fname} ${player.lname}`,
         level: playerLevels?.find(
           (level) => level.player_level_id === player.player_level_id
@@ -128,6 +128,7 @@ const PlayersLeaderboardResults = () => {
     return <div>Yükleniyor..</div>;
   }
 
+  console.log(rankedPlayersList);
   return (
     <div className={styles["result-container"]}>
       <h2 className={styles["result-title"]}>Lidrelik Tablosu</h2>
@@ -151,7 +152,7 @@ const PlayersLeaderboardResults = () => {
           <tbody>
             {rankedPlayersList.map((player) => (
               <tr key={player.id} className={styles["player-row"]}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
                       player.image ? player.image : "/images/icons/avatar.png"

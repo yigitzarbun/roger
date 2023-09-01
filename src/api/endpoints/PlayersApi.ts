@@ -55,7 +55,6 @@ export const playersSlice = createApi({
         return requestObject;
       },
     }),
-
     updatePlayer: builder.mutation({
       query: (updatedPlayer) => ({
         url: "/players",

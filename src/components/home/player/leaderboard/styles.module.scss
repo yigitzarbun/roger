@@ -28,23 +28,31 @@
         color: $roger-yellow;
       }
       .player-image {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .vertical-center {
+        display: flex;
+        align-items: center;
       }
     }
     .player-row:hover {
       background-color: $roger-black-light;
       cursor: pointer;
     }
-
-    .accept-button {
-      font-weight: bold;
-      text-decoration: none;
-      border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
-      cursor: pointer;
-    }
+  }
+  .view-all-button {
+    background-color: $roger-black-dark;
+    border: none;
+    width: 200px;
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .view-all-button:hover {
+    background-color: $roger-black-light;
   }
 }

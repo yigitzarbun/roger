@@ -35,13 +35,19 @@ type FormValues = {
   court_surface_type_id: number;
   club_id: number;
   price_hour_non_subscriber?: number;
+  image?: string;
 };
 
 const AddCourtModal = (props: AddCourtModalProps) => {
   const { isAddCourtModalOpen, closeAddCourtModal } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const clubBankDetailsExist =
@@ -70,6 +76,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -87,6 +94,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
         price_hour_non_subscriber: formData.price_hour_non_subscriber
           ? Number(formData.price_hour_non_subscriber)
           : null,
+        image: selectedImage ? selectedImage : null,
       };
       if (clubBankDetailsExist) {
         addCourt(newCourtData);
@@ -261,7 +269,12 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             </div>
           </div>
         )}
-
+        <input
+          type="file"
+          accept="image/*"
+          name="image"
+          onChange={handleImageChange}
+        />
         <button
           type="submit"
           className={styles["form-button"]}

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { AiOutlineEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
@@ -283,14 +285,19 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                 </td>
                 {
                   <td onClick={() => handleToggleFavourite(club.user_id)}>
-                    {isClubInMyFavourites(club.user_id) === true
-                      ? "Favorilerden çıkar"
-                      : "Favorilere ekle"}
+                    {isClubInMyFavourites(club.user_id) === true ? (
+                      <AiFillStar className={styles["remove-fav-icon"]} />
+                    ) : (
+                      <AiOutlineStar className={styles["add-fav-icon"]} />
+                    )}
                   </td>
                 }
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}>
-                    Görüntüle
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}
+                    className={styles["view-icon"]}
+                  >
+                    <AiOutlineEye />
                   </Link>
                 </td>
                 {isUserPlayer && (
@@ -313,7 +320,9 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                           : "Üye olmak için ödeme bilgilerini ekle"}
                       </button>
                     ) : (
-                      "Kulübün üyelik paketi bulunmamaktadır"
+                      <p className={styles["no-subscription-text"]}>
+                        Kulübün üyelik paketi bulunmamaktadır
+                      </p>
                     )}
                   </td>
                 )}

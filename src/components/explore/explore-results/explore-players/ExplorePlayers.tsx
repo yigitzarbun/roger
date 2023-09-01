@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import { AiOutlineEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
@@ -183,18 +185,23 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                   }
                 </td>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
-                    Görüntüle
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
+                    className={styles["view-icon"]}
+                  >
+                    <AiOutlineEye />
                   </Link>
                 </td>
                 {
                   <td onClick={() => handleToggleFavourite(player.user_id)}>
-                    {isPlayerInMyFavourites(player.user_id) === true
-                      ? "Favorilerden çıkar"
-                      : "Favorilere ekle"}
+                    {isPlayerInMyFavourites(player.user_id) === true ? (
+                      <AiFillStar className={styles["remove-fav-icon"]} />
+                    ) : (
+                      <AiOutlineStar className={styles["add-fav-icon"]} />
+                    )}
                   </td>
                 }
-                {isUserPlayer && (
+                {isUserPlayer && player.gender !== userGender && (
                   <td>
                     <Link
                       to={paths.TRAIN_INVITE}
@@ -205,6 +212,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                         court_price: "",
                         user_id: player.user_id,
                       }}
+                      className={styles["training-button"]}
                     >
                       Antreman yap
                     </Link>
@@ -212,18 +220,38 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                 )}
                 {isUserPlayer && player.gender === userGender && (
                   <td>
-                    <Link
-                      to={paths.MATCH_INVITE}
-                      state={{
-                        fname: player.fname,
-                        lname: player.lname,
-                        image: player.image,
-                        court_price: "",
-                        user_id: player.user_id,
-                      }}
-                    >
-                      Maç yap
-                    </Link>
+                    <div className={styles["action-buttons-container"]}>
+                      {isUserPlayer && (
+                        <Link
+                          to={paths.TRAIN_INVITE}
+                          state={{
+                            fname: player.fname,
+                            lname: player.lname,
+                            image: player.image,
+                            court_price: "",
+                            user_id: player.user_id,
+                          }}
+                          className={styles["training-button"]}
+                        >
+                          Antreman yap
+                        </Link>
+                      )}
+                      {isUserPlayer && player.gender === userGender && (
+                        <Link
+                          to={paths.MATCH_INVITE}
+                          state={{
+                            fname: player.fname,
+                            lname: player.lname,
+                            image: player.image,
+                            court_price: "",
+                            user_id: player.user_id,
+                          }}
+                          className={styles["match-button"]}
+                        >
+                          Maç yap
+                        </Link>
+                      )}
+                    </div>
                   </td>
                 )}
                 {isUserTrainer && (

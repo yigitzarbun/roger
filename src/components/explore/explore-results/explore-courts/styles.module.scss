@@ -17,23 +17,29 @@
     width: 100%;
     text-align: left;
 
-    .court-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-    .court-image {
-      width: 30px;
-      height: 30px;
+    .vertical-center {
+      display: flex;
+      align-items: center;
     }
 
-    .accept-button {
-      font-weight: bold;
-      text-decoration: none;
+    .court-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .view-icon {
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
+      width: 200px;
+      border-radius: $roger-border-radius;
+      font-size: 1.5rem;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
+    }
+    .view-icon:hover {
+      color: $roger-blue;
     }
   }
 }

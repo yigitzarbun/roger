@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import { AiOutlineEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
@@ -219,6 +221,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                         court_price: "",
                         user_id: trainer.user_id,
                       }}
+                      className={styles["lesson-button"]}
                     >
                       Derse davet et
                     </Link>
@@ -226,16 +229,21 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 )}
                 {trainer.user_id !== user?.user?.user_id ? (
                   <td onClick={() => handleToggleFavourite(trainer.user_id)}>
-                    {isTrainerInMyFavourites(trainer.user_id) === true
-                      ? "Favorilerden çıkar"
-                      : "Favorilere ekle"}
+                    {isTrainerInMyFavourites(trainer.user_id) === true ? (
+                      <AiFillStar />
+                    ) : (
+                      <AiOutlineStar />
+                    )}
                   </td>
                 ) : (
                   "(Kendi profilim)"
                 )}
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
-                    Görüntüle
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                    className={styles["view-icon"]}
+                  >
+                    <AiOutlineEye />
                   </Link>
                 </td>
               </tr>

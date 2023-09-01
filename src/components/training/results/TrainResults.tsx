@@ -113,8 +113,8 @@ const TrainResults = (props: TrainResultsProps) => {
           </thead>
           <tbody>
             {filteredPlayers.map((player) => (
-              <tr key={player.player_id} className={styles["player-row"]}>
-                <td>
+              <tr key={player.player_id}>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
                       player.image ? player.image : "/images/icons/avatar.png"
@@ -151,7 +151,7 @@ const TrainResults = (props: TrainResultsProps) => {
                       court_price: "",
                       user_id: player.user_id,
                     }}
-                    className={styles["accept-button"]}
+                    className={styles["training-button"]}
                   >
                     Davet gönder
                   </Link>

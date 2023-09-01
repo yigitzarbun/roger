@@ -50,7 +50,7 @@ const PlayerHomeLeaderboard = () => {
       const playerStats = {
         id: player.user_id,
         rank: null,
-        picture: player.picutre,
+        image: player.image,
         name: `${player.fname} ${player.lname}`,
         level: playerLevels?.find(
           (level) => level.player_level_id === player.player_level_id
@@ -155,7 +155,7 @@ const PlayerHomeLeaderboard = () => {
           <tbody>
             {rankedPlayersList.slice(0, 5).map((player) => (
               <tr key={player.id} className={styles["player-row"]}>
-                <td>
+                <td className={styles["vertical-center"]}>
                   <img
                     src={
                       player.image ? player.image : "/images/icons/avatar.png"
@@ -179,7 +179,9 @@ const PlayerHomeLeaderboard = () => {
           </tbody>
         )}
       </table>
-      <Link to={paths.PLAYERS_LEADERBOARD}>Tümünü Gör</Link>
+      <Link to={paths.PLAYERS_LEADERBOARD}>
+        <button className={styles["view-all-button"]}>Tümünü Görüntüle</button>
+      </Link>
     </div>
   );
 };
