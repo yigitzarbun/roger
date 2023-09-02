@@ -10,7 +10,11 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import { localUrl } from "../../../../common/constants/apiConstants";
+
 import { useAppSelector } from "../../../../store/hooks";
+
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
@@ -27,8 +31,7 @@ import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
-import { baseUrl, localUrl } from "../../../../common/constants/apiConstants";
-import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
@@ -42,6 +45,8 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -63,9 +68,11 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
 
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsQuery({});
+
   const selectedPlayer = players?.find(
     (player) => player.user_id === Number(user_id)
   );
+
   const {
     data: favourites,
     isLoading: isFavouritesLoading,
@@ -201,7 +208,8 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     isBookingsLoading ||
     isTrainersLoading ||
     isMatchScoresLoading ||
-    isEventTypesLoading
+    isEventTypesLoading ||
+    isUsersLoading
   ) {
     return <PageLoading />;
   }
@@ -209,7 +217,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
         <div className={styles["profile-section"]}>
-          <h3>Oyuncu</h3>
+          <h2>Oyuncu</h2>
           <div className={styles["profile-data-container"]}>
             <img
               src={
@@ -271,7 +279,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
           </div>
         </div>
         <div className={styles["interaction-section"]}>
-          <h3>Etkileşim</h3>
+          <h2>Etkileşim</h2>
           <p>{`${playerFavouriters} kişi favorilere ekledi`}</p>
           <div className={styles["buttons-container"]}>
             <button
@@ -295,7 +303,6 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
                 className={styles["accept-button"]}
               >
                 <button className={styles["interaction-button"]}>
-                  {" "}
                   Antreman yap
                 </button>
               </Link>
@@ -313,7 +320,6 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
                 className={styles["accept-button"]}
               >
                 <button className={styles["interaction-button"]}>
-                  {" "}
                   Maç yap
                 </button>
               </Link>
@@ -339,69 +345,123 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
       </div>
       <div className={styles["middle-sections-container"]}>
         <div className={styles["reviews-section"]}>
-          <h3>Değerlendirmeler</h3>
-          {playerReviewsReceived?.length > 0 ? (
-            playerReviewsReceived?.map((review) => (
-              <div
-                className={styles["review-container"]}
-                key={review.event_review_id}
-              >
-                <h4>{review.event_review_title}</h4>
-                <p>{review.event_review_description}</p>
-                <p>{`${review.review_score}/10`}</p>
-                {bookings?.find(
-                  (booking) =>
-                    booking.booking_id === review.booking_id &&
-                    (booking.event_type_id === 1 || booking.event_type_id === 2)
-                ) && (
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
-                  >{`${
-                    players.find(
-                      (player) => player.user_id === review.reviewer_id
-                    )?.fname
-                  } ${
-                    players.find(
-                      (player) => player.user_id === review.reviewer_id
-                    )?.lname
-                  }`}</Link>
-                )}
-                {bookings?.find(
-                  (booking) =>
-                    booking.booking_id === review.booking_id &&
-                    booking.event_type_id === 3
-                ) && (
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${review.reviewer_id}`}
-                  >{`${
-                    trainers.find(
-                      (trainer) => trainer.user_id === review.reviewer_id
-                    )?.fname
-                  } ${
-                    trainers.find(
-                      (trainer) => trainer.user_id === review.reviewer_id
-                    )?.lname
-                  }`}</Link>
-                )}
-              </div>
-            ))
-          ) : (
-            <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
-          )}
+          <h2>Değerlendirmeler</h2>
+          <div className={styles["reviews-container"]}>
+            {playerReviewsReceived?.length > 0 ? (
+              playerReviewsReceived?.map((review) => (
+                <div
+                  className={styles["review-container"]}
+                  key={review.event_review_id}
+                >
+                  <h4>{review.event_review_title}</h4>
+                  <p>{review.event_review_description}</p>
+                  <p>{`${review.review_score}/10`}</p>
+                  {bookings?.find(
+                    (booking) =>
+                      booking.booking_id === review.booking_id &&
+                      (booking.event_type_id === 1 ||
+                        booking.event_type_id === 2 ||
+                        booking.event_type_id === 3)
+                  ) && (
+                    <div className={styles["reviewer-container"]}>
+                      <img
+                        src={
+                          users?.find(
+                            (user) => user.user_id === review.reviewer_id
+                          )?.user_type_id === 1 &&
+                          players?.find(
+                            (player) => player.user_id === review.reviewer_id
+                          )?.image
+                            ? `${localUrl}/${
+                                players.find(
+                                  (player) =>
+                                    player.user_id === review.reviewer_id
+                                )?.image
+                              }`
+                            : users?.find(
+                                (user) => user.user_id === review.reviewer_id
+                              )?.user_type_id === 2 &&
+                              trainers?.find(
+                                (trainer) =>
+                                  trainer.user_id === review.reviewer_id
+                              )?.image
+                            ? `${localUrl}/${
+                                trainers.find(
+                                  (trainer) =>
+                                    trainer.user_id === review.reviewer_id
+                                )?.image
+                              }`
+                            : "/images/icons/avatar.png"
+                        }
+                        className={styles["reviewer-image"]}
+                      />
+                      <Link
+                        to={
+                          users?.find(
+                            (user) => user.user_id === review.reviewer_id
+                          )?.user_type_id === 1
+                            ? `${paths.EXPLORE_PROFILE}1/${review.reviewer_id} `
+                            : users?.find(
+                                (user) => user.user_id === review.reviewer_id
+                              )?.user_type_id === 2
+                            ? `${paths.EXPLORE_PROFILE}2/${review.reviewer_id} `
+                            : ""
+                        }
+                        className={styles["reviewer-name"]}
+                      >
+                        {users?.find(
+                          (user) => user.user_id === review.reviewer_id
+                        )?.user_type_id === 1
+                          ? `${
+                              players?.find(
+                                (player) =>
+                                  player.user_id === review.reviewer_id
+                              )?.fname
+                            } ${
+                              players.find(
+                                (player) =>
+                                  player.user_id === review.reviewer_id
+                              )?.lname
+                            }`
+                          : users?.find(
+                              (user) => user.user_id === review.reviewer_id
+                            )?.user_type_id === 2
+                          ? `${
+                              trainers?.find(
+                                (trainer) =>
+                                  trainer.user_id === review.reviewer_id
+                              )?.fname
+                            } ${
+                              trainers.find(
+                                (trainer) =>
+                                  trainer.user_id === review.reviewer_id
+                              )?.lname
+                            }`
+                          : ""}
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
+            )}
+          </div>
         </div>
       </div>
       <div className={styles["bottom-sections-container"]}>
         <div className={styles["events-section"]}>
-          <h3>Geçmiş Etkinlikler</h3>
+          <h2>Geçmiş Etkinlikler</h2>
           {playerBookings.length > 0 ? (
             <table>
               <thead>
                 <tr>
+                  <th></th>
+                  <th>Oyuncu</th>
+                  <th>Eğitmen</th>
                   <th>Tür</th>
                   <th>Tarih</th>
                   <th>Saat</th>
-                  <th>Oyuncu</th>
-                  <th>Eğitmen</th>
                   <th>Skor</th>
                 </tr>
               </thead>
@@ -409,14 +469,62 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
                 {playerBookings?.map((booking) => (
                   <tr key={booking.booking_id} className={styles["event-row"]}>
                     <td>
-                      {
-                        eventTypes?.find(
-                          (type) => type.event_type_id === booking.event_type_id
-                        )?.event_type_name
-                      }
+                      <img
+                        src={
+                          (booking.event_type_id === 1 ||
+                            booking.event_type_id === 2) &&
+                          booking.inviter_id === selectedPlayer?.user_id &&
+                          players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.image
+                            ? `${localUrl}/${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === booking.invitee_id
+                                )?.image
+                              }`
+                            : (booking.event_type_id === 1 ||
+                                booking.event_type_id === 2) &&
+                              booking.invitee_id === selectedPlayer?.user_id &&
+                              players?.find(
+                                (player) =>
+                                  player.user_id === booking.inviter_id
+                              )?.image
+                            ? `${localUrl}/${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === booking.inviter_id
+                                )?.image
+                              }`
+                            : booking.event_type_id === 3 &&
+                              booking.inviter_id === selectedPlayer?.user_id &&
+                              trainers?.find(
+                                (trainer) =>
+                                  trainer.user_id === booking.invitee_id
+                              )?.image
+                            ? `${localUrl}/${
+                                trainers?.find(
+                                  (trainer) =>
+                                    trainer.user_id === booking.invitee_id
+                                )?.image
+                              }`
+                            : booking.event_type_id === 3 &&
+                              booking.invitee_id === selectedPlayer?.user_id &&
+                              trainers?.find(
+                                (trainer) =>
+                                  trainer.user_id === booking.inviter_id
+                              )?.image
+                            ? `${localUrl}/${
+                                trainers?.find(
+                                  (trainer) =>
+                                    trainer.user_id === booking.inviter_id
+                                )?.image
+                              }`
+                            : "/images/icons/avatar.png"
+                        }
+                        className={styles["event-image"]}
+                      />
                     </td>
-                    <td>{new Date(booking.event_date).toLocaleDateString()}</td>
-                    <td>{booking.event_time.slice(0, 5)}</td>
                     <td>
                       {(booking.event_type_id === 1 ||
                         booking.event_type_id === 2) &&
@@ -475,6 +583,16 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
                       `
                         : "-"}
                     </td>
+                    <td>
+                      {
+                        eventTypes?.find(
+                          (type) => type.event_type_id === booking.event_type_id
+                        )?.event_type_name
+                      }
+                    </td>
+                    <td>{new Date(booking.event_date).toLocaleDateString()}</td>
+                    <td>{booking.event_time.slice(0, 5)}</td>
+
                     <td>
                       {booking.event_type_id === 2 &&
                       matchScores?.find(

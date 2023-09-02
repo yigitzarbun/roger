@@ -128,7 +128,7 @@ const TrainerRequestsOutgoing = () => {
           </thead>
           <tbody>
             {outgoingBookings?.map((booking) => (
-              <tr key={booking.booking_id} className={styles["player-row"]}>
+              <tr key={booking.booking_id}>
                 <td>
                   {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                 </td>

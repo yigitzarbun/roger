@@ -5,10 +5,6 @@
   display: flex;
   flex-direction: column;
   row-gap: 10vh;
-  h3 {
-    margin-bottom: 2vh;
-    color: $roger-green;
-  }
 
   .top-sections-container {
     display: flex;
@@ -20,29 +16,177 @@
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
 
-      .trainer-image {
-        width: 50px;
+      .profile-data-container {
+        display: flex;
+        column-gap: 50px;
+
+        .secondary-profile-data-container {
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+
+          table {
+            width: 100%;
+            text-align: left;
+            .profile-info {
+              display: flex;
+              align-items: center;
+              column-gap: 15px;
+              align-items: start;
+              .icon {
+                font-size: 20px;
+              }
+              .info-text {
+                width: 90%;
+              }
+            }
+          }
+          .club-info {
+            display: flex;
+            align-items: center;
+            column-gap: 15px;
+            align-items: start;
+            .icon {
+              font-size: 20px;
+            }
+            .info-text {
+              width: 90%;
+            }
+          }
+        }
+      }
+
+      .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
       }
     }
 
-    .subscription-section {
+    .interaction-section {
       background-color: $roger-box-bg-color;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
       width: 45%;
-      button {
-        padding: $roger-box-padding;
-        border-radius: $roger-border-radius;
-        border: none;
-        margin-top: 4vh;
-        font-size: 1rem;
-        font-weight: bold;
-        width: 200px;
+      display: flex;
+      flex-direction: column;
+      .buttons-container {
+        display: flex;
+        justify-content: space-evenly;
+        margin-top: 50px;
+        .interaction-button {
+          border-radius: $roger-border-radius;
+          border: none;
+          height: 50px;
+          font-size: 1rem;
+          font-weight: bold;
+          padding: $roger-box-padding;
+        }
+        .interaction-button:hover {
+          background-color: $roger-blue;
+          cursor: pointer;
+        }
+        .cancel-student-button {
+          border-radius: $roger-border-radius;
+          background-color: $roger-red;
+          border: none;
+          height: 50px;
+          font-size: 1rem;
+          font-weight: bold;
+          padding: $roger-box-padding;
+        }
+        .cancel-student-button:hover {
+          background-color: $roger-black-dark;
+          cursor: pointer;
+        }
+      }
+      .pending-confirmation-text {
+        font-size: 0.8rem;
+        color: $roger-yellow;
+        margin-top: auto;
       }
 
-      button:hover {
-        background-color: $roger-blue;
+      .accept-button {
+        font-weight: bold;
+        text-decoration: none;
+        border: none;
+        background-color: transparent;
+        font-size: 1rem;
+        color: $roger-blue;
         cursor: pointer;
+      }
+    }
+  }
+
+  .middle-sections-container {
+    display: flex;
+    justify-content: space-between;
+    .reviews-section {
+      background-color: $roger-box-bg-color;
+      width: 50%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      row-gap: 30px;
+
+      .reviews-container {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 10px;
+        width: 100%;
+        .review-container {
+          background-color: $roger-black-dark;
+          padding: $roger-box-padding;
+          border-radius: $roger-border-radius;
+          row-gap: 20px;
+          display: flex;
+          flex-direction: column;
+          .reviewer-container {
+            display: flex;
+            align-items: center;
+            column-gap: 10px;
+
+            .reviewer-image {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+            .reviewer-name {
+              font-size: 0.8rem;
+              color: white;
+              text-decoration: none;
+            }
+            .reviewer-name:hover {
+              color: $roger-blue;
+            }
+          }
+        }
+      }
+    }
+    .events-section {
+      background-color: $roger-box-bg-color;
+      width: 45%;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      row-gap: 30px;
+      display: flex;
+      flex-direction: column;
+
+      .stats-container {
+        display: flex;
+        justify-content: space-between;
+        .stat {
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          width: 20%;
+          .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: $roger-blue;
+          }
+        }
       }
     }
   }

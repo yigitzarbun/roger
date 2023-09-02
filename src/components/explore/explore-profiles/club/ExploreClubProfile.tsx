@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
+import { AiOutlineEye } from "react-icons/ai";
+
+import { FaLocationDot } from "react-icons/fa6";
+import { CgTennis } from "react-icons/cg";
+
 import paths from "../../../../routing/Paths";
+
+import { localUrl } from "../../../../common/constants/apiConstants";
 
 import styles from "./styles.module.scss";
 
@@ -32,6 +39,9 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
+import ExploreClubCourtsModal from "./modals/courts/ExploreClubCourtsModal";
+import ExploreClubTrainerModal from "./modals/trainers/ExploreClubTrainersModal";
+import ExploreClubSubscribersModal from "./modals/subscribers/ExploreClubSubscribersModal";
 
 interface ExploreClubProfileProps {
   user_id: string;
@@ -110,6 +120,8 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   }
 
   const selectedClub = clubs?.find((club) => club.user_id === Number(user_id));
+
+  const profileImage = selectedClub?.image;
 
   // club trainers
   const clubStaffTrainers = clubStaff?.filter(
@@ -230,8 +242,10 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   );
 
   const selectedClubSubscribers = clubSubscriptions?.filter(
-    (subscription) => subscription.club_id === selectedClub?.user_id
-  ).length;
+    (subscription) =>
+      subscription.club_id === selectedClub?.user_id &&
+      subscription.is_active === true
+  );
 
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
 
@@ -254,6 +268,39 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
         subscription.is_active === true
     );
     return activeSubscription ? true : false;
+  };
+
+  const [isCourtsModalOpen, setIsCourtsModalOpen] = useState(false);
+  const openCourtsModal = () => {
+    setIsCourtsModalOpen(true);
+  };
+  const closeCourtsModal = () => {
+    setIsCourtsModalOpen(false);
+  };
+
+  const [isTrainersModalOpen, setIsTrainersModalOpen] = useState(false);
+  const openTrainersModal = () => {
+    setIsTrainersModalOpen(true);
+  };
+  const closeTrainersModal = () => {
+    setIsTrainersModalOpen(false);
+  };
+
+  const [isSubscribersModalOpen, setIsSubscribersModalOpen] = useState(false);
+  const openSubscribersModal = () => {
+    setIsSubscribersModalOpen(true);
+  };
+  const closeSubscribersModal = () => {
+    setIsSubscribersModalOpen(false);
+  };
+
+  const [isSubscriptionsModalOpen, setIsSubscriptionsModalOpen] =
+    useState(false);
+  const openSubscriptionsModal = () => {
+    setIsSubscriptionsModalOpen(true);
+  };
+  const closeSubscriptionsModal = () => {
+    setIsSubscriptionsModalOpen(false);
   };
 
   useEffect(() => {
@@ -292,74 +339,89 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
         <div className={styles["profile-section"]}>
-          <h3>Kulüp</h3>
-          <img
-            src={
-              selectedClub?.picture
-                ? selectedClub?.picture
-                : "/images/icons/avatar.png"
-            }
-            alt="club_picture"
-            className={styles["club-image"]}
-          />
-          <h2>{selectedClub?.club_name}</h2>
-          <p>{selectedClub?.club_bio_description}</p>
-          <p>
-            {
-              clubTypes?.find(
-                (type) => type.club_type_id === selectedClub?.club_type_id
-              )?.club_type_name
-            }
-          </p>
-          <p>
-            {
-              locations?.find(
-                (location) => location.location_id === selectedClub?.location_id
-              )?.location_name
-            }
-          </p>
-          <address>{selectedClub?.club_address}</address>
-          <p>{`Antreman ve Maç kuralı: ${
-            selectedClub?.is_player_subscription_required
-              ? "Oyuncuların kort kiralamak için kulübe üye olmaları gerekir"
-              : "Oyuncuların kort kiralamak için kulübe üye olmalarına gerek yoktur"
-          } `}</p>
-          <p>{`Ders kuralı: ${
-            selectedClub?.is_player_lesson_subscription_required &&
-            selectedClub?.is_trainer_subscription_required
-              ? "Kort kiralamak için eğitmenin kulüp çalışanı, oyuncunun kulüp üyesi olması gerekir"
-              : selectedClub?.is_player_lesson_subscription_required ===
-                  false &&
-                selectedClub?.is_trainer_subscription_required === true
-              ? "Kort kiralamak için eğitmenin kulüp çalışanı olması yeterlidir"
-              : selectedClub?.is_player_lesson_subscription_required === true &&
-                selectedClub?.is_trainer_subscription_required === false
-              ? "Kort kiralamak için oyuncunun kulüp üyesi olması yeterlidir"
-              : selectedClub?.is_player_lesson_subscription_required ===
-                  false &&
-                selectedClub?.is_trainer_subscription_required === false
-              ? "Kort kiralamak için oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur"
-              : ""
-          } `}</p>
+          <h2>Kulüp</h2>
+          <div className={styles["profile-data-container"]}>
+            <img
+              src={
+                profileImage
+                  ? `${localUrl}/${profileImage}`
+                  : "/images/icons/avatar.png"
+              }
+              alt="club picture"
+              className={styles["profile-image"]}
+            />
+            <div className={styles["secondary-profile-data-container"]}>
+              <h3>{selectedClub?.club_name}</h3>
+              <div className={styles["profile-info"]}>
+                <CgTennis className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    clubTypes?.find(
+                      (type) => type.club_type_id === selectedClub?.club_type_id
+                    )?.club_type_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaLocationDot className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    locations?.find(
+                      (location) =>
+                        location.location_id === selectedClub?.location_id
+                    )?.location_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaLocationDot className={styles.icon} />
+                <address className={styles["info-text"]}>
+                  {selectedClub?.club_address}
+                </address>
+              </div>
+            </div>
+          </div>
         </div>
         <div className={styles["courts-section"]}>
-          <h3>Kortlar</h3>
+          <h2>Kortlar</h2>
           {courts?.filter((court) => court.club_id === selectedClub?.club_id)
             .length > 0 ? (
             <table>
               <thead>
                 <tr>
+                  <th></th>
                   <th>Kort</th>
                   <th>Yüzey</th>
                   <th>Mekan</th>
-                  <th>Fiyat (TL / Saat)</th>
+                  {selectedClub?.higher_price_for_non_subscribers && (
+                    <th>Fiyat (Üye değil)</th>
+                  )}
+                  <th>Fiyat</th>
                 </tr>
               </thead>
               <tbody>
                 {courts
                   ?.filter((court) => court.club_id === selectedClub?.club_id)
+                  .slice(
+                    courts?.filter(
+                      (court) => court.club_id === selectedClub?.club_id
+                    ).length - 3
+                  )
                   .map((court) => (
                     <tr key={court.court_id}>
+                      <td>
+                        {
+                          <img
+                            src={
+                              court.image
+                                ? `${localUrl}/${court.image}`
+                                : "/images/icons/avatar.png"
+                            }
+                            alt="court picture"
+                            className={styles["court-image"]}
+                          />
+                        }
+                      </td>
                       <td>{court.court_name}</td>
                       <td>
                         {
@@ -379,12 +441,22 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                           )?.court_structure_type_name
                         }
                       </td>
+                      {selectedClub?.higher_price_for_non_subscribers &&
+                      court.price_hour_non_subscriber ? (
+                        <td>{court.price_hour_non_subscriber}</td>
+                      ) : (
+                        selectedClub?.higher_price_for_non_subscribers &&
+                        court.price_hour_non_subscriber &&
+                        "-"
+                      )}
+
                       <td>{court.price_hour}</td>
                       <td>
                         <Link
                           to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                          className={styles["view-icon"]}
                         >
-                          Görüntüle
+                          <AiOutlineEye />
                         </Link>
                       </td>
                     </tr>
@@ -394,11 +466,12 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           ) : (
             <p>Henüz kulübe ait kort bulunmamaktadır</p>
           )}
+          <button onClick={openCourtsModal}>Tümünü Görüntüle</button>
         </div>
       </div>
-      <div className={styles["mid-sections-container"]}>
+      <div className={styles["mid-top-sections-container"]}>
         <div className={styles["favourites-section"]}>
-          <h3>Favoriler</h3>
+          <h2>Favoriler</h2>
           <p>{`${clubFavouriters} kişi favorilere ekledi`}</p>
           <button onClick={() => handleToggleFavourite(selectedClub?.user_id)}>
             {isClubInMyFavourites(selectedClub?.user_id) === true
@@ -408,7 +481,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
         </div>
         <div className={styles["trainers-section"]}>
           <div className={styles["trainers-section-title-container"]}>
-            <h3>Eğitmenler</h3>
+            <h2>Eğitmenler</h2>
             {isUserTrainer &&
             clubStaff?.find(
               (staff) =>
@@ -437,68 +510,90 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
             <table>
               <thead>
                 <tr>
+                  <th></th>
                   <th>İsim</th>
                   <th>Soyisim</th>
                   <th>Cinsiyet</th>
                   <th>Tecrübe</th>
-                  <th>Fiyat (TL / Saat)</th>
+                  <th>Fiyat</th>
                 </tr>
               </thead>
               <tbody>
-                {confirmedClubTrainers?.map((trainer) => (
-                  <tr key={trainer.user_id}>
-                    <td>{trainer.fname}</td>
-                    <td>{trainer.lname}</td>
-                    <td>{trainer.gender}</td>
-                    <td>
-                      {
-                        trainerExperienceTypes?.find(
-                          (type) =>
-                            type.trainer_experience_type_id ===
-                            trainer.trainer_experience_type_id
-                        )?.trainer_experience_type_name
-                      }
-                    </td>
-                    <td>{trainer.price_hour}</td>
-                    <td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
-                      >
-                        Görüntüle
-                      </Link>
-                    </td>
-                    {isUserPlayer && (
+                {confirmedClubTrainers
+                  ?.slice(confirmedClubTrainers.length - 3)
+                  ?.map((trainer) => (
+                    <tr key={trainer.user_id}>
                       <td>
                         <Link
-                          to={paths.LESSON_INVITE}
-                          state={{
-                            fname: trainer.fname,
-                            lname: trainer.lname,
-                            image: trainer.image,
-                            court_price: "",
-                            user_id: trainer.user_id,
-                          }}
+                          to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
                         >
-                          Derse davet et
+                          <img
+                            src={
+                              trainer.image
+                                ? `${localUrl}/${trainer.image}`
+                                : "/images/icons/avatar.png"
+                            }
+                            alt="trainer picture"
+                            className={styles["trainer-image"]}
+                          />
                         </Link>
                       </td>
-                    )}
-                  </tr>
-                ))}
+                      <td>{trainer.fname}</td>
+                      <td>{trainer.lname}</td>
+                      <td>{trainer.gender}</td>
+                      <td>
+                        {
+                          trainerExperienceTypes?.find(
+                            (type) =>
+                              type.trainer_experience_type_id ===
+                              trainer.trainer_experience_type_id
+                          )?.trainer_experience_type_name
+                        }
+                      </td>
+                      <td>{trainer.price_hour}</td>
+                      <td>
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                          className={styles["view-icon"]}
+                        >
+                          <AiOutlineEye />
+                        </Link>
+                      </td>
+                      {isUserPlayer && (
+                        <td>
+                          <Link
+                            to={paths.LESSON_INVITE}
+                            state={{
+                              fname: trainer.fname,
+                              lname: trainer.lname,
+                              image: trainer.image,
+                              court_price: "",
+                              user_id: trainer.user_id,
+                            }}
+                            className={styles["lesson-button"]}
+                          >
+                            Derse davet et
+                          </Link>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           ) : (
             <p>Henüz kulübe bağlı çalışan eğitmen bulunmamaktadır</p>
           )}
+          <button onClick={openTrainersModal}>Tümünü Görüntüle</button>
         </div>
       </div>
-      <div className={styles["bottom-sections-container"]}>
+      <div className={styles["mid-bottom-sections-container"]}>
         <div className={styles["subscribers-section"]}>
-          <h3>Üyeler</h3>
-          <p>{`${selectedClubSubscribers} kişi abone oldu`}</p>
+          <h2>Üyeler</h2>
+          <p>{`${selectedClubSubscribers?.length} kişi abone oldu`}</p>
+          <button onClick={openSubscribersModal}>Tümünü Gör</button>
         </div>
         <div className={styles["subscriptions-section"]}>
-          <h3>Üyelikler</h3>
+          <h2>Üyelikler</h2>
           {selectedClubSubscriptionPackages?.length > 0 ? (
             <table>
               <thead>
@@ -555,12 +650,72 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           ) : (
             <p>Henüz kulübe ait abonelik paketi bulunmamaktadır</p>
           )}
+          <button onClick={openSubscriptionsModal}>Tümünü Görüntüle</button>
+        </div>
+      </div>
+      <div className={styles["bottom-section-container"]}>
+        <h2>Kurallar</h2>
+        <div className={styles["rules-container"]}>
+          <div className={styles["rule-container"]}>
+            <h4>Antreman / Maç</h4>
+            <p className={styles["rule-text"]}>{`${
+              selectedClub?.is_player_subscription_required
+                ? "Oyuncuların kort kiralamak için kulübe üye olmaları gerekir"
+                : "Oyuncuların kort kiralamak için kulübe üye olmalarına gerek yoktur"
+            } `}</p>
+          </div>
+          <div className={styles["rule-container"]}>
+            <h4>Ders</h4>
+            <p className={styles["rule-text"]}>{`${
+              selectedClub?.is_player_lesson_subscription_required &&
+              selectedClub?.is_trainer_subscription_required
+                ? "Eğitmenin kulüp çalışanı, oyuncunun kulüp üyesi olması gerekir"
+                : selectedClub?.is_player_lesson_subscription_required ===
+                    false &&
+                  selectedClub?.is_trainer_subscription_required === true
+                ? "Eğitmenin kulüp çalışanı olması yeterlidir"
+                : selectedClub?.is_player_lesson_subscription_required ===
+                    true &&
+                  selectedClub?.is_trainer_subscription_required === false
+                ? "Oyuncunun kulüp üyesi olması yeterlidir"
+                : selectedClub?.is_player_lesson_subscription_required ===
+                    false &&
+                  selectedClub?.is_trainer_subscription_required === false
+                ? "Oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur"
+                : ""
+            } `}</p>
+          </div>
+          <div className={styles["rule-container"]}>
+            <h4>Ücret</h4>
+            <p className={styles["rule-text"]}>
+              {selectedClub?.higher_price_for_non_subscribers
+                ? "Üyelere farklı fiyat uygulanır"
+                : "Üyelere farklı fiyat uygulanmaz"}
+            </p>
+          </div>
         </div>
       </div>
       <SubscribeToClubModal
         openSubscribeModal={openSubscribeModal}
         handleCloseSubscribeModal={handleCloseSubscribeModal}
         selectedClubId={selectedClubId}
+      />
+      <ExploreClubCourtsModal
+        isCourtsModalOpen={isCourtsModalOpen}
+        closeCourtsModal={closeCourtsModal}
+        selectedClub={selectedClub}
+      />
+      <ExploreClubTrainerModal
+        isTrainersModalOpen={isTrainersModalOpen}
+        closeTrainersModal={closeTrainersModal}
+        selectedClub={selectedClub}
+        confirmedClubTrainers={confirmedClubTrainers}
+      />
+      <ExploreClubSubscribersModal
+        isSubscribersModalOpen={isSubscribersModalOpen}
+        closeSubscribersModal={closeSubscribersModal}
+        selectedClub={selectedClub}
+        selectedClubSubscribers={selectedClubSubscribers}
       />
     </div>
   );

@@ -79,28 +79,43 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Kort</th>
               <th>İsim</th>
               <th>Açılış</th>
               <th>Kapanış</th>
               <th>Yüzey</th>
               <th>Mekan</th>
+              <th>Fiyat - Üye (Saat / TL)</th>
               <th>Fiyat (Saat / TL)</th>
-              <th>Fiyat - Üye Olmayan (Saat / TL)</th>
               <th>Kulüp</th>
               <th>Konum</th>
-              <th>Kort Statüsü</th>
+              <th>Statüsü</th>
             </tr>
           </thead>
           <tbody>
             {courts.map((court) => (
               <tr key={court.court_id} className={styles["court-row"]}>
+                {court.is_active && (
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
+                      className={styles["view-icon"]}
+                    >
+                      <AiOutlineEye />
+                    </Link>
+                  </td>
+                )}
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={court.image ? court.image : "/images/icons/avatar.png"}
-                    alt={"court-iamge"}
-                    className={styles["court-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}>
+                    <img
+                      src={
+                        court.image ? court.image : "/images/icons/avatar.png"
+                      }
+                      alt={"court-iamge"}
+                      className={styles["court-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>{`${court.court_name}`}</td>
                 <td>{court.opening_time.slice(0, 5)}</td>
@@ -148,16 +163,6 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                   }
                 </td>
                 <td>{court.is_active ? "Aktif" : "Bloke"}</td>
-                {court.is_active && (
-                  <td>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
-                      className={styles["view-icon"]}
-                    >
-                      <AiOutlineEye />
-                    </Link>
-                  </td>
-                )}
               </tr>
             ))}
           </tbody>

@@ -22,8 +22,10 @@
       cursor: pointer;
     }
     .student-image {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
     }
     .accept-button {
       font-weight: bold;
@@ -34,12 +36,21 @@
       cursor: pointer;
     }
     .decline-button {
-      font-weight: bold;
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-red;
+      width: 150px;
+      background-color: $roger-red;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+    }
+
+    .decline-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
     }
     .fee {
       color: $roger-green;

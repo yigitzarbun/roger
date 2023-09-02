@@ -147,6 +147,8 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
         <table>
           <thead>
             <tr>
+              <th></th>
+              <th></th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>
@@ -158,14 +160,37 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           <tbody>
             {filteredPlayers.map((player) => (
               <tr key={player.player_id} className={styles["player-row"]}>
+                <td>
+                  {isPlayerInMyFavourites(player.user_id) === true ? (
+                    <AiFillStar
+                      className={styles["remove-fav-icon"]}
+                      onClick={() => handleToggleFavourite(player.user_id)}
+                    />
+                  ) : (
+                    <AiOutlineStar
+                      className={styles["add-fav-icon"]}
+                      onClick={() => handleToggleFavourite(player.user_id)}
+                    />
+                  )}
+                </td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
+                    className={styles["view-icon"]}
+                  >
+                    <AiOutlineEye />
+                  </Link>
+                </td>
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={
-                      player.image ? player.image : "/images/icons/avatar.png"
-                    }
-                    alt={player.fname}
-                    className={styles["player-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
+                    <img
+                      src={
+                        player.image ? player.image : "/images/icons/avatar.png"
+                      }
+                      alt={player.fname}
+                      className={styles["player-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>{`${player.fname} ${player.lname}`}</td>
                 <td>
@@ -187,23 +212,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                 </td>
                 <td className={styles["vertical-center"]}>
                   <div className={styles["action-buttons-container"]}>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
-                      className={styles["view-icon"]}
-                    >
-                      <AiOutlineEye />
-                    </Link>
-                    {isPlayerInMyFavourites(player.user_id) === true ? (
-                      <AiFillStar
-                        className={styles["remove-fav-icon"]}
-                        onClick={() => handleToggleFavourite(player.user_id)}
-                      />
-                    ) : (
-                      <AiOutlineStar
-                        className={styles["add-fav-icon"]}
-                        onClick={() => handleToggleFavourite(player.user_id)}
-                      />
-                    )}
                     {isUserPlayer && (
                       <Link
                         to={paths.TRAIN_INVITE}

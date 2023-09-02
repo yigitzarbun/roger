@@ -94,7 +94,13 @@ const TrainerStudentsResults = () => {
                 <td>
                   <img
                     src={
-                      student.image ? student.image : "/images/icons/avatar.png"
+                      players?.find(
+                        (player) => player.user_id === student.player_id
+                      )?.image
+                        ? players?.find(
+                            (player) => player.user_id === student.player_id
+                          )?.image
+                        : "/images/icons/avatar.png"
                     }
                     alt={student.name}
                     className={styles["student-image"]}
@@ -159,8 +165,9 @@ const TrainerStudentsResults = () => {
                 <td>
                   <button
                     onClick={() => handleDeclineStudent(student.student_id)}
+                    className={styles["decline-button"]}
                   >
-                    Öğrenciyi Listeden Çıkar
+                    Öğrenciyi Sil
                   </button>
                 </td>
               </tr>

@@ -23,6 +23,7 @@ import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/C
 import {
   useGetClubStaffQuery,
   useAddClubStaffMutation,
+  ClubStaff,
 } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
@@ -35,10 +36,12 @@ interface ExploreClubsProps {
   locations: Location[];
   clubTypes: ClubType[];
   courts: Court[];
+  clubStaff: ClubStaff[];
   isClubsLoading: boolean;
   isLocationsLoading: boolean;
   isClubTypesLoading: boolean;
   isCourtsLoading: boolean;
+  isClubStaffLoading: boolean;
 }
 const ExploreClubs = (props: ExploreClubsProps) => {
   const {
@@ -47,10 +50,12 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     locations,
     clubTypes,
     courts,
+    clubStaff,
     isClubsLoading,
     isLocationsLoading,
     isClubTypesLoading,
     isCourtsLoading,
+    isClubStaffLoading,
   } = props;
 
   let isUserPlayer = false;
@@ -85,11 +90,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       playerPaymentDetailsExist = true;
     }
   }
-  const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch: clubStaffRefetch,
-  } = useGetClubStaffQuery({});
+  const { refetch: clubStaffRefetch } = useGetClubStaffQuery({});
 
   // add club staff
 
@@ -246,22 +247,43 @@ const ExploreClubs = (props: ExploreClubsProps) => {
         <table>
           <thead>
             <tr>
+              <th></th>
+              <th></th>
               <th>Kulüp</th>
               <th>İsim</th>
               <th>Tür</th>
               <th>Konum</th>
-              <th>Kort Adet</th>
+              <th>Kort</th>
+              <th>Eğitmen</th>
+              <th>Üye</th>
             </tr>
           </thead>
           <tbody>
             {clubs.map((club) => (
               <tr key={club.club_id} className={styles["club-row"]}>
+                <td onClick={() => handleToggleFavourite(club.user_id)}>
+                  {isClubInMyFavourites(club.user_id) === true ? (
+                    <AiFillStar className={styles["remove-fav-icon"]} />
+                  ) : (
+                    <AiOutlineStar className={styles["add-fav-icon"]} />
+                  )}
+                </td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}
+                    className={styles["view-icon"]}
+                  >
+                    <AiOutlineEye />
+                  </Link>
+                </td>
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={club.image ? club.image : "/images/icons/avatar.png"}
-                    alt={"club-iamge"}
-                    className={styles["club-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}>
+                    <img
+                      src={club.image ? club.image : "/images/icons/avatar.png"}
+                      alt={"club-iamge"}
+                      className={styles["club-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>{`${club.club_name}`}</td>
                 <td>
@@ -284,22 +306,23 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                       ?.length
                   }
                 </td>
-                {
-                  <td onClick={() => handleToggleFavourite(club.user_id)}>
-                    {isClubInMyFavourites(club.user_id) === true ? (
-                      <AiFillStar className={styles["remove-fav-icon"]} />
-                    ) : (
-                      <AiOutlineStar className={styles["add-fav-icon"]} />
-                    )}
-                  </td>
-                }
                 <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}
-                    className={styles["view-icon"]}
-                  >
-                    <AiOutlineEye />
-                  </Link>
+                  {
+                    clubStaff?.filter(
+                      (staff) =>
+                        staff.employment_status === "accepted" &&
+                        staff.club_id === club.club_id
+                    ).length
+                  }
+                </td>
+                <td>
+                  {
+                    clubSubscriptions.filter(
+                      (subscription) =>
+                        subscription.is_active === true &&
+                        subscription.club_id === club.club_id
+                    )?.length
+                  }
                 </td>
                 {isUserPlayer && (
                   <td>

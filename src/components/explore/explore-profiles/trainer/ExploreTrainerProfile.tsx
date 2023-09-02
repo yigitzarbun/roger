@@ -2,9 +2,17 @@ import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
+import { FaGenderless, FaCalendarDays, FaLocationDot } from "react-icons/fa6";
+import { FaUserFriends } from "react-icons/fa";
+import { CgTennis } from "react-icons/cg";
+import { PiMoney } from "react-icons/pi";
+import { MdSportsTennis } from "react-icons/md";
+
 import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
+
+import { localUrl } from "../../../../common/constants/apiConstants";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -90,7 +98,7 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const trainerReviewsReceived = eventReviews?.filter(
     (review) =>
       review.booking_id ===
-        trainerBookings.find(
+        trainerBookings?.find(
           (booking) => booking.booking_id === review.booking_id
         )?.booking_id && review.reviewer_id !== selectedTrainer?.user_id
   );
@@ -153,14 +161,14 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
 
   const isTrainerInMyFavourites = (user_id: number) => {
     if (
-      myFavouriteTrainers.find(
+      myFavouriteTrainers?.find(
         (favourite) =>
           favourite.favouritee_id === user_id && favourite.is_active === false
       )
     ) {
       return "deactivated";
     } else if (
-      myFavouriteTrainers.find(
+      myFavouriteTrainers?.find(
         (favourite) =>
           favourite.favouritee_id === user_id && favourite.is_active === true
       )
@@ -228,7 +236,10 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     isTrainerEmploymentTypesLoading ||
     isFavouritesLoading ||
     isClubStaffLoading ||
-    isStudentsLoading
+    isStudentsLoading ||
+    isBookingsLoading ||
+    isEventReviewsLoading ||
+    isPlayersLoading
   ) {
     return <PageLoading />;
   }
@@ -236,133 +247,263 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
         <div className={styles["profile-section"]}>
-          <h3>Eğitmen</h3>
-          <img
-            src={
-              selectedTrainer?.picture
-                ? selectedTrainer?.picture
-                : "/images/icons/avatar.png"
-            }
-            alt="trainer_picture"
-            className={styles["trainer-image"]}
-          />
-          <h2>{`${selectedTrainer?.fname} ${selectedTrainer.lname}`}</h2>
-          <p>{selectedTrainer?.trainer_bio_description}</p>
-          <p>{selectedTrainer?.gender}</p>
-          <p>{selectedTrainer?.birth_year}</p>
-          <p>
-            {
-              trainerExperienceTypes?.find(
-                (type) =>
-                  type.trainer_experience_type_id ===
-                  selectedTrainer?.trainer_experience_type_id
-              )?.trainer_experience_type_name
-            }
-          </p>
-          <p>
-            {
-              locations?.find(
-                (location) =>
-                  location.location_id === selectedTrainer?.location_id
-              )?.location_name
-            }
-          </p>
-          <p>
-            {
-              trainerEmploymentTypes?.find(
-                (type) =>
-                  type.trainer_employment_type_id ===
-                  selectedTrainer?.trainer_employment_type_id
-              )?.trainer_employment_type_name
-            }
-          </p>
-          <p>
-            {trainerEmploymentTypes?.find(
-              (type) =>
-                type.trainer_employment_type_id ===
-                selectedTrainer?.trainer_employment_type_id
-            )?.trainer_employment_type_id !== 1 &&
-            clubStaff?.find(
-              (staff) =>
-                staff.user_id === selectedTrainer?.user_id &&
-                staff.employment_status === "accepted"
-            )
-              ? clubs?.find((club) => club.club_id === selectedTrainer?.club_id)
-                  ?.club_name
-              : "Bağlı olduğu kulüp bulunmamaktadır."}
-          </p>
-          <p>{`${selectedTrainer?.price_hour} TL / Saat`}</p>
+          <h2>Eğitmen</h2>
+          <div className={styles["profile-data-container"]}>
+            <img
+              src={
+                selectedTrainer?.image
+                  ? `${localUrl}/${selectedTrainer?.image}`
+                  : "/images/icons/avatar.png"
+              }
+              alt="trainer_picture"
+              className={styles["profile-image"]}
+            />
+            <div className={styles["secondary-profile-data-container"]}>
+              <h3>{`${selectedTrainer?.fname} ${selectedTrainer.lname}`}</h3>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div className={styles["profile-info"]}>
+                        <FaGenderless className={styles.icon} />
+                        <p>{selectedTrainer?.gender}</p>
+                      </div>
+                      <div className={styles["profile-info"]}>
+                        <FaCalendarDays className={styles.icon} />
+                        <p className={styles["info-text"]}>
+                          {selectedTrainer?.birth_year}
+                        </p>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles["profile-info"]}>
+                        <CgTennis className={styles.icon} />
+                        <p className={styles["info-text"]}>
+                          {
+                            trainerExperienceTypes?.find(
+                              (type) =>
+                                type.trainer_experience_type_id ===
+                                selectedTrainer?.trainer_experience_type_id
+                            )?.trainer_experience_type_name
+                          }
+                        </p>
+                      </div>
+                      <div className={styles["profile-info"]}>
+                        <FaLocationDot className={styles.icon} />
+                        <p className={styles["info-text"]}>
+                          {
+                            locations?.find(
+                              (location) =>
+                                location.location_id ===
+                                selectedTrainer?.location_id
+                            )?.location_name
+                          }
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div className={styles["profile-info"]}>
+                        <FaUserFriends className={styles.icon} />
+                        <p className={styles["info-text"]}>
+                          {
+                            trainerEmploymentTypes?.find(
+                              (type) =>
+                                type.trainer_employment_type_id ===
+                                selectedTrainer?.trainer_employment_type_id
+                            )?.trainer_employment_type_name
+                          }
+                        </p>
+                      </div>
+                      <div className={styles["profile-info"]}>
+                        <PiMoney className={styles.icon} />
+                        <p
+                          className={styles["info-text"]}
+                        >{`${selectedTrainer?.price_hour} TL / Saat`}</p>
+                      </div>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div className={styles["club-info"]}>
+                <MdSportsTennis className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {trainerEmploymentTypes?.find(
+                    (type) =>
+                      type.trainer_employment_type_id ===
+                      selectedTrainer?.trainer_employment_type_id
+                  )?.trainer_employment_type_id !== 1 &&
+                  clubStaff?.find(
+                    (staff) =>
+                      staff.user_id === selectedTrainer?.user_id &&
+                      staff.employment_status === "accepted"
+                  )
+                    ? clubs?.find(
+                        (club) => club.club_id === selectedTrainer?.club_id
+                      )?.club_name
+                    : "Bağlı olduğu kulüp bulunmamaktadır."}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className={styles["subscription-section"]}>
-          <h3>Favoriler</h3>
+        <div className={styles["interaction-section"]}>
+          <h2>Favoriler</h2>
           <p>{`${trainerFavouriters} kişi favorilere ekledi`}</p>
-          <button
-            onClick={() => handleToggleFavourite(selectedTrainer?.user_id)}
-          >
-            {isTrainerInMyFavourites(selectedTrainer?.user_id) === true
-              ? "Favorilerden çıkar"
-              : "Favorilere ekle"}
-          </button>
-          {isUserPlayer && (
-            <Link
-              to={paths.LESSON_INVITE}
-              state={{
-                fname: selectedTrainer.fname,
-                lname: selectedTrainer.lname,
-                image: selectedTrainer.image,
-                court_price: "",
-                user_id: selectedTrainer.user_id,
-              }}
-              className={styles["accept-button"]}
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={() => handleToggleFavourite(selectedTrainer?.user_id)}
+              className={styles["interaction-button"]}
             >
-              <button>Ders al</button>
-            </Link>
-          )}
+              {isTrainerInMyFavourites(selectedTrainer?.user_id) === true
+                ? "Favorilerden çıkar"
+                : "Favorilere ekle"}
+            </button>
+            {isUserPlayer && (
+              <Link
+                to={paths.LESSON_INVITE}
+                state={{
+                  fname: selectedTrainer.fname,
+                  lname: selectedTrainer.lname,
+                  image: selectedTrainer.image,
+                  court_price: "",
+                  user_id: selectedTrainer.user_id,
+                }}
+                className={styles["accept-button"]}
+              >
+                <button className={styles["interaction-button"]}>
+                  Ders al
+                </button>
+              </Link>
+            )}
+            <td>
+              {students?.find(
+                (student) =>
+                  student.player_id === user?.user?.user_id &&
+                  student.trainer_id === selectedTrainer?.user_id &&
+                  student.student_status === "pending"
+              ) ? (
+                ""
+              ) : students?.find(
+                  (student) =>
+                    student.player_id === user?.user?.user_id &&
+                    student.trainer_id === selectedTrainer?.user_id &&
+                    student.student_status === "accepted"
+                ) ? (
+                <button
+                  onClick={() => handleDeclineStudent(selectedTrainer?.user_id)}
+                  className={styles["cancel-student-button"]}
+                >
+                  Öğrenciliği sil
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleAddStudent(selectedTrainer?.user_id)}
+                  className={styles["interaction-button"]}
+                >
+                  Öğrenci Ol
+                </button>
+              )}
+            </td>
+          </div>
           {students?.find(
             (student) =>
               student.player_id === user?.user?.user_id &&
               student.trainer_id === selectedTrainer.user_id &&
               student.student_status === "pending"
-          ) ? (
-            "Öğrencilik için eğitmen onayı bekleniyor"
-          ) : students?.find(
-              (student) =>
-                student.player_id === user?.user?.user_id &&
-                student.trainer_id === selectedTrainer.user_id &&
-                student.student_status === "accepted"
-            ) ? (
-            <button
-              onClick={() => handleDeclineStudent(selectedTrainer.user_id)}
-            >
-              Öğrenciliği sil
-            </button>
-          ) : (
-            <button onClick={() => handleAddStudent(selectedTrainer.user_id)}>
-              Öğrenci Ol
-            </button>
+          ) && (
+            <p className={styles["pending-confirmation-text"]}>
+              Öğrencilik için eğitmen onayı bekleniyor
+            </p>
           )}
         </div>
       </div>
       <div className={styles["middle-sections-container"]}>
         <div className={styles["reviews-section"]}>
-          <h3>Oyuncu Hakkında Değerlendirmeler</h3>
-          {trainerReviewsReceived?.map((review) => (
-            <div
-              className={styles["review-container"]}
-              key={review.event_review_id}
-            >
-              <h4>{review.event_review_title}</h4>
-              <p>{review.event_review_description}</p>
-              <p>{`${review.review_score}/10`}</p>
-              <Link to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}>{`${
-                players.find((player) => player.user_id === review.reviewer_id)
-                  ?.fname
-              } ${
-                players.find((player) => player.user_id === review.reviewer_id)
-                  ?.lname
-              }`}</Link>
+          <h2>Eğitmen Hakkında Değerlendirmeler</h2>
+          <div className={styles["reviews-container"]}>
+            {trainerReviewsReceived?.length > 0 ? (
+              trainerReviewsReceived?.map((review) => (
+                <div
+                  className={styles["review-container"]}
+                  key={review.event_review_id}
+                >
+                  <h4>{review.event_review_title}</h4>
+                  <p>{review.event_review_description}</p>
+                  <p>{`${review.review_score}/10`}</p>
+                  <div className={styles["reviewer-container"]}>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
+                    >
+                      <img
+                        src={
+                          players?.find(
+                            (player) => player.user_id === review.reviewer_id
+                          )?.image
+                            ? `${localUrl}/${
+                                players.find(
+                                  (player) =>
+                                    player.user_id === review.reviewer_id
+                                )?.image
+                              }`
+                            : "/images/icons/avatar.png"
+                        }
+                        className={styles["reviewer-image"]}
+                      />
+                    </Link>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
+                      className={styles["reviewer-name"]}
+                    >{`${
+                      players?.find(
+                        (player) => player.user_id === review.reviewer_id
+                      )?.fname
+                    } ${
+                      players?.find(
+                        (player) => player.user_id === review.reviewer_id
+                      )?.lname
+                    }`}</Link>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>Henüz eğitmen hakkında değerlendirme yapılmamıştır.</p>
+            )}
+          </div>
+        </div>
+        <div className={styles["events-section"]}>
+          <h2>Geçmiş Etkinlikler</h2>
+          <div className={styles["stats-container"]}>
+            <div className={styles.stat}>
+              <p className={styles["stat-number"]}>
+                {
+                  trainerBookings?.filter((event) => event.event_type_id === 3)
+                    .length
+                }
+              </p>
+              <p>Özel Ders</p>
             </div>
-          ))}
+            <div className={styles.stat}>
+              <p className={styles["stat-number"]}>
+                {
+                  trainerBookings?.filter((event) => event.event_type_id === 5)
+                    .length
+                }
+              </p>
+              <p>Kulüp Ders</p>
+            </div>{" "}
+            <div className={styles.stat}>
+              <p className={styles["stat-number"]}>
+                {
+                  trainerBookings?.filter((event) => event.event_type_id === 5)
+                    .length
+                }
+              </p>
+              <p>Grup Ders</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

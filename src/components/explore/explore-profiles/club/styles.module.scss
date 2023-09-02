@@ -5,10 +5,6 @@
   display: flex;
   flex-direction: column;
   row-gap: 10vh;
-  h3 {
-    margin-bottom: 2vh;
-    color: $roger-green;
-  }
 
   .top-sections-container {
     display: flex;
@@ -16,29 +12,92 @@
 
     .profile-section {
       background-color: $roger-box-bg-color;
-      width: 30%;
+      width: 40%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .profile-data-container {
+        display: flex;
+        column-gap: 20px;
 
-      .club-image {
-        width: 50px;
+        .secondary-profile-data-container {
+          display: flex;
+          flex-direction: column;
+          row-gap: 10px;
+          width: 50%;
+
+          .profile-info {
+            display: flex;
+            align-items: center;
+            column-gap: 15px;
+            align-items: start;
+            .icon {
+              font-size: 20px;
+            }
+            .info-text {
+              width: 90%;
+            }
+          }
+        }
+      }
+
+      .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
       }
     }
 
     .courts-section {
       background-color: $roger-box-bg-color;
-      width: 65%;
+      width: 55%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
-
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       table {
         width: 100%;
         text-align: left;
+        .view-icon {
+          border: none;
+          border-radius: $roger-border-radius;
+          font-size: 1.5rem;
+          cursor: pointer;
+          text-decoration: none;
+          color: white;
+        }
+        .view-icon:hover {
+          color: $roger-blue;
+        }
+        .court-image {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+      button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+        width: 200px;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
       }
     }
   }
 
-  .mid-sections-container {
+  .mid-top-sections-container {
     display: flex;
     justify-content: space-between;
 
@@ -46,7 +105,10 @@
       background-color: $roger-box-bg-color;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
-      width: 30%;
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       button {
         padding: $roger-box-padding;
         border-radius: $roger-border-radius;
@@ -64,9 +126,12 @@
     }
     .trainers-section {
       background-color: $roger-box-bg-color;
-      width: 65%;
+      width: 55%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
 
       .trainers-section-title-container {
         display: flex;
@@ -76,17 +141,68 @@
       table {
         width: 100%;
         text-align: left;
+
+        .trainer-image {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .view-icon {
+          border: none;
+          border-radius: $roger-border-radius;
+          font-size: 1.5rem;
+          cursor: pointer;
+          text-decoration: none;
+          color: white;
+        }
+        .view-icon:hover {
+          color: $roger-blue;
+        }
+        .lesson-button {
+          padding: 10px;
+          border-radius: $roger-border-radius;
+          border: none;
+          width: 150px;
+          background-color: $roger-black-dark;
+          font-size: 0.8rem;
+          cursor: pointer;
+          text-decoration: none;
+          color: white;
+        }
+        .lesson-button:hover {
+          background-color: $roger-blue;
+        }
+      }
+      button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+        width: 200px;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
       }
     }
   }
-  .bottom-sections-container {
+  .mid-bottom-sections-container {
     display: flex;
     justify-content: space-between;
+
     .subscribers-section {
       background-color: $roger-box-bg-color;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
-      width: 30%;
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
       button {
         padding: $roger-box-padding;
         border-radius: $roger-border-radius;
@@ -104,13 +220,45 @@
     }
     .subscriptions-section {
       background-color: $roger-box-bg-color;
-      width: 65%;
+      width: 55%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
-
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       table {
         width: 100%;
         text-align: left;
+      }
+      button {
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        margin-top: 4vh;
+        font-size: 1rem;
+        font-weight: bold;
+        width: 200px;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
+    }
+  }
+  .bottom-section-container {
+    background-color: $roger-box-bg-color;
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    width: 100%;
+
+    .rules-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .rule-container {
+        width: 33%;
       }
     }
   }

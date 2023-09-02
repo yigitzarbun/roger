@@ -160,6 +160,8 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
         <table>
           <thead>
             <tr>
+              <th></th>
+              <th></th>
               <th>Eğitmen</th>
               <th>İsim</th>
               <th>Seviye</th>
@@ -173,14 +175,33 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           <tbody>
             {trainers.map((trainer) => (
               <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
+                <td onClick={() => handleToggleFavourite(trainer.user_id)}>
+                  {isTrainerInMyFavourites(trainer.user_id) === true ? (
+                    <AiFillStar className={styles["remove-fav-icon"]} />
+                  ) : (
+                    <AiOutlineStar className={styles["add-fav-icon"]} />
+                  )}
+                </td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                    className={styles["view-icon"]}
+                  >
+                    <AiOutlineEye />
+                  </Link>
+                </td>
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={
-                      trainer.image ? trainer.image : "/images/icons/avatar.png"
-                    }
-                    alt={trainer.fname}
-                    className={styles["trainer-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
+                    <img
+                      src={
+                        trainer.image
+                          ? trainer.image
+                          : "/images/icons/avatar.png"
+                      }
+                      alt={trainer.fname}
+                      className={styles["trainer-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>{`${trainer.fname} ${trainer.lname}`}</td>
                 <td>
@@ -229,25 +250,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     </Link>
                   </td>
                 )}
-                {trainer.user_id !== user?.user?.user_id ? (
-                  <td onClick={() => handleToggleFavourite(trainer.user_id)}>
-                    {isTrainerInMyFavourites(trainer.user_id) === true ? (
-                      <AiFillStar className={styles["remove-fav-icon"]} />
-                    ) : (
-                      <AiOutlineStar className={styles["add-fav-icon"]} />
-                    )}
-                  </td>
-                ) : (
-                  "(Kendi profilim)"
-                )}
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
-                    className={styles["view-icon"]}
-                  >
-                    <AiOutlineEye />
-                  </Link>
-                </td>
               </tr>
             ))}
           </tbody>

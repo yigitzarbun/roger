@@ -107,10 +107,12 @@ const Explore = () => {
           clubs={clubs}
           clubTypes={clubTypes}
           courts={courts}
+          clubStaff={clubStaff}
           isLocationsLoading={isLocationsLoading}
           isClubsLoading={isClubsLoading}
           isClubTypesLoading={isClubTypesLoading}
           isCourtsLoading={isCourtsLoading}
+          isClubStaffLoading={isClubStaffLoading}
         />
       )}
       {display === "courts" && (

@@ -21,7 +21,6 @@ import {
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import {
@@ -46,9 +45,7 @@ const TrainerRequestsIncoming = () => {
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
+
   const {
     data: students,
     isLoading: isStudentsLoading,
@@ -203,7 +200,6 @@ const TrainerRequestsIncoming = () => {
     isBookingsLoading ||
     isCourtsLoading ||
     isClubsLoading ||
-    isTrainersLoading ||
     isEventTypesLoading ||
     isPlayersLoading ||
     isPlayerLevelTypesLoading ||
@@ -244,7 +240,13 @@ const TrainerRequestsIncoming = () => {
             {incomingBookings?.map((booking) => (
               <tr key={booking.booking_id} className={styles["trainer-row"]}>
                 <td>
-                  {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
+                  {booking.booking_status_type_id === 1 ? (
+                    <p className={styles["pending-confirmation-text"]}>
+                      Bekleniyor
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </td>
                 <td>
                   <img

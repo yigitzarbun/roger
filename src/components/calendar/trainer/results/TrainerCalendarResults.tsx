@@ -173,9 +173,13 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
           </thead>
           <tbody>
             {filteredBookings?.map((booking) => (
-              <tr key={booking.booking_id} className={styles["player-row"]}>
+              <tr key={booking.booking_id}>
                 <td>
-                  {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
+                  {booking.booking_status_type_id === 2 ? (
+                    <p className={styles["confirmed-text"]}>Onaylandı</p>
+                  ) : (
+                    ""
+                  )}
                 </td>
                 <td>
                   <img
