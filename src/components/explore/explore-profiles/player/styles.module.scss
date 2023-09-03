@@ -61,13 +61,16 @@
         margin-top: 50px;
       }
       .interaction-button {
+        padding: 10px;
         border-radius: $roger-border-radius;
         border: none;
-        width: 120px;
-        height: 70px;
-        font-size: 1rem;
-        font-weight: bold;
-        padding: $roger-box-padding;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
       }
 
       .interaction-button:hover {

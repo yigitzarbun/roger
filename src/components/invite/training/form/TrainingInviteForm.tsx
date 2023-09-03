@@ -353,9 +353,19 @@ const TrainingInviteForm = () => {
           <img src="/images/icons/prev.png" className={styles["prev-button"]} />
         </Link>
       </div>
-      <p
-        className={styles["player-name"]}
-      >{`Rakip: ${selectedPlayer.fname} ${selectedPlayer.lname}`}</p>
+      <div className={styles["opponent-container"]}>
+        <img
+          src={
+            selectedPlayer?.image
+              ? selectedPlayer?.image
+              : "/images/icons/avatar.png"
+          }
+          className={styles["opponent-image"]}
+        />
+        <p
+          className={styles["player-name"]}
+        >{`${selectedPlayer.fname} ${selectedPlayer.lname}`}</p>
+      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}

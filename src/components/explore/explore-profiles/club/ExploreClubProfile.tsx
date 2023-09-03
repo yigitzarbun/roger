@@ -42,6 +42,7 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import ExploreClubCourtsModal from "./modals/courts/ExploreClubCourtsModal";
 import ExploreClubTrainerModal from "./modals/trainers/ExploreClubTrainersModal";
 import ExploreClubSubscribersModal from "./modals/subscribers/ExploreClubSubscribersModal";
+import ExploreClubSubscriptionsModal from "./modals/subscriptions/ExploreClubSubscriptionsModal";
 
 interface ExploreClubProfileProps {
   user_id: string;
@@ -238,7 +239,8 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   // subscriptions
   const selectedClubSubscriptionPackages = clubSubscriptionPackages?.filter(
     (subscriptionPackage) =>
-      subscriptionPackage.club_id === selectedClub?.user_id
+      subscriptionPackage.club_id === selectedClub?.user_id &&
+      subscriptionPackage.is_active === true
   );
 
   const selectedClubSubscribers = clubSubscriptions?.filter(
@@ -253,6 +255,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
 
   const handleOpenSubscribeModal = (value: number) => {
     setOpenSubscribeModal(true);
+    setIsSubscriptionsModalOpen(false);
     setSelectedClubId(value);
   };
   const handleCloseSubscribeModal = () => {
@@ -601,6 +604,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                   <th>Abonelik Türü</th>
                   <th>Abonelik Süresi</th>
                   <th>Fiyat (TL)</th>
+                  <th>Üyelik</th>
                 </tr>
               </thead>
               <tbody>
@@ -628,7 +632,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                     {isUserPlayer && (
                       <td>
                         {isUserSubscribedToClub() === true ? (
-                          ""
+                          <p className={styles["subscribed-text"]}>
+                            Üyelik var
+                          </p>
                         ) : (
                           <button
                             onClick={() =>
@@ -716,6 +722,14 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
         closeSubscribersModal={closeSubscribersModal}
         selectedClub={selectedClub}
         selectedClubSubscribers={selectedClubSubscribers}
+      />
+      <ExploreClubSubscriptionsModal
+        isSubscriptionsModalOpen={isSubscriptionsModalOpen}
+        closeSubscriptionsModal={closeSubscriptionsModal}
+        selectedClub={selectedClub}
+        selectedClubSubscriptionPackages={selectedClubSubscriptionPackages}
+        playerPaymentDetailsExist={playerPaymentDetailsExist}
+        handleOpenSubscribeModal={handleOpenSubscribeModal}
       />
     </div>
   );

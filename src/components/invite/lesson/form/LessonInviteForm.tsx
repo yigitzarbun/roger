@@ -466,15 +466,28 @@ const LeesonInviteForm = () => {
           onClick={navigateToPreviousPage}
         />
       </div>
+
       {isUserPlayer && (
-        <p
-          className={styles["player-name"]}
-        >{`Eğitmen: ${trainer?.fname} ${trainer?.lname}`}</p>
+        <div className={styles["opponent-container"]}>
+          <img
+            src={trainer?.image ? trainer?.image : "/images/icons/avatar.png"}
+            className={styles["opponent-image"]}
+          />
+          <p
+            className={styles["player-name"]}
+          >{`${trainer.fname} ${trainer.lname}`}</p>
+        </div>
       )}
       {isUserTrainer && (
-        <p
-          className={styles["player-name"]}
-        >{`Öğrenci: ${player?.fname} ${player?.lname}`}</p>
+        <div className={styles["opponent-container"]}>
+          <img
+            src={player?.image ? player?.image : "/images/icons/avatar.png"}
+            className={styles["opponent-image"]}
+          />
+          <p
+            className={styles["player-name"]}
+          >{`${player.fname} ${player.lname}`}</p>
+        </div>
       )}
       <form
         onSubmit={handleSubmit(onSubmit)}

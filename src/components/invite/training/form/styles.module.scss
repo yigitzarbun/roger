@@ -26,7 +26,17 @@
       cursor: pointer;
     }
   }
-
+  .opponent-container {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    .opponent-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
   .player-name {
     color: $roger-blue;
   }

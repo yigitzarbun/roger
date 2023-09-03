@@ -256,9 +256,10 @@ const LessonResults = (props: TrainSearchProps) => {
                       court_price: "",
                       user_id: trainer.user_id,
                     }}
-                    className={styles["lesson-button"]}
                   >
-                    Davet gönder
+                    <button className={styles["lesson-button"]}>
+                      Davet gönder
+                    </button>
                   </Link>
                 </td>
                 <td>

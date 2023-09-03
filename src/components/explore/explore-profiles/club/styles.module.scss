@@ -18,6 +18,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      row-gap: 20px;
       .profile-data-container {
         display: flex;
         column-gap: 20px;
@@ -59,6 +60,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      row-gap: 20px;
       table {
         width: 100%;
         text-align: left;
@@ -81,13 +83,16 @@
         }
       }
       button {
-        padding: $roger-box-padding;
+        padding: 10px;
         border-radius: $roger-border-radius;
         border: none;
-        margin-top: 4vh;
-        font-size: 1rem;
-        font-weight: bold;
-        width: 200px;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
       }
 
       button:hover {
@@ -109,14 +114,18 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      row-gap: 20px;
       button {
-        padding: $roger-box-padding;
+        padding: 10px;
         border-radius: $roger-border-radius;
         border: none;
-        margin-top: 4vh;
-        font-size: 1rem;
-        font-weight: bold;
-        width: 200px;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
       }
 
       button:hover {
@@ -132,7 +141,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
+      row-gap: 20px;
       .trainers-section-title-container {
         display: flex;
         justify-content: space-between;
@@ -175,13 +184,16 @@
         }
       }
       button {
-        padding: $roger-box-padding;
+        padding: 10px;
         border-radius: $roger-border-radius;
         border: none;
-        margin-top: 4vh;
-        font-size: 1rem;
-        font-weight: bold;
-        width: 200px;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
       }
 
       button:hover {
@@ -202,15 +214,18 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
+      row-gap: 20px;
       button {
-        padding: $roger-box-padding;
+        padding: 10px;
         border-radius: $roger-border-radius;
         border: none;
-        margin-top: 4vh;
-        font-size: 1rem;
-        font-weight: bold;
-        width: 200px;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
       }
 
       button:hover {
@@ -226,23 +241,30 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      row-gap: 20px;
       table {
         width: 100%;
         text-align: left;
       }
       button {
-        padding: $roger-box-padding;
+        padding: 10px;
         border-radius: $roger-border-radius;
         border: none;
-        margin-top: 4vh;
-        font-size: 1rem;
-        font-weight: bold;
-        width: 200px;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
       }
 
       button:hover {
         background-color: $roger-blue;
         cursor: pointer;
+      }
+      .subscribed-text {
+        color: $roger-green;
       }
     }
   }
@@ -251,6 +273,10 @@
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    row-gap: 20px;
 
     .rules-container {
       display: flex;
@@ -258,7 +284,7 @@
       justify-content: space-between;
 
       .rule-container {
-        width: 33%;
+        width: 25%;
       }
     }
   }
