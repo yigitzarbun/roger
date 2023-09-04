@@ -2,6 +2,13 @@ import React from "react";
 
 import { Link } from "react-router-dom";
 
+import { MdMoney, MdSportsTennis } from "react-icons/md";
+import { PiMoney } from "react-icons/pi";
+import { GiTennisCourt } from "react-icons/gi";
+import { FaClock } from "react-icons/fa";
+
+import { localUrl } from "../../../../common/constants/apiConstants";
+
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
@@ -44,6 +51,8 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
   const selectedCourt = courts?.find(
     (court) => court.court_id === Number(court_id)
   );
+
+  const profileImage = selectedCourt?.image;
 
   const date = new Date();
 
@@ -119,52 +128,73 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
         <div className={styles["profile-section"]}>
-          <h3>Kort</h3>
+          <h2>Kort</h2>
           <img
             src={
-              selectedCourt?.picture
-                ? selectedCourt?.picture
+              profileImage
+                ? `${localUrl}/${profileImage}`
                 : "/images/icons/avatar.png"
             }
             alt="court_picture"
-            className={styles["court-image"]}
+            className={styles["profile-image"]}
           />
-          <h2>{selectedCourt?.court_name}</h2>
-          <p>
-            {
-              clubs?.find((club) => club.club_id === selectedCourt?.club_id)
-                ?.club_name
-            }
-          </p>
-          <p>{selectedCourt?.opening_time.slice(0, 5)}</p>
-          <p>{selectedCourt?.closing_time.slice(0, 5)}</p>
-          <p>{`${selectedCourt?.price_hour} TL / Saat`}</p>
+          <h3>{selectedCourt?.court_name}</h3>
+          <div className={styles["profile-info"]}>
+            <FaClock className={styles.icon} />
+            <p>{selectedCourt?.opening_time.slice(0, 5)}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaClock className={styles.icon} />
+            <p>{selectedCourt?.closing_time.slice(0, 5)}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <MdMoney className={styles.icon} />
+            <p>{`${selectedCourt?.price_hour} TL / Saat`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <MdSportsTennis className={styles.icon} />
+            <p>
+              {
+                clubs?.find((club) => club.club_id === selectedCourt?.club_id)
+                  ?.club_name
+              }
+            </p>
+          </div>
           {clubs?.find((club) => club.club_id === selectedCourt?.club_id)
             ?.higher_price_for_non_subscribers &&
             selectedCourt?.price_hour_non_subscriber && (
-              <p>{`${selectedCourt?.price_hour_non_subscriber} TL / Saat (Üye Olmayanlar)`}</p>
+              <div className={styles["profile-info"]}>
+                <PiMoney className={styles.icon} />
+                <p>{`${selectedCourt?.price_hour_non_subscriber} TL / Saat (Üye Olmayanlar)`}</p>
+              </div>
             )}
-          <p>
-            {
-              courtSurfaceTypes?.find(
-                (type) =>
-                  type.court_surface_type_id ===
-                  selectedCourt?.court_surface_type_id
-              )?.court_surface_type_name
-            }
-          </p>
-          <p>
-            {
-              courtStructureTypes?.find(
-                (type) =>
-                  type.court_structure_type_id ===
-                  selectedCourt?.court_structure_type_id
-              )?.court_structure_type_name
-            }
-          </p>
+          <div className={styles["profile-info"]}>
+            <GiTennisCourt className={styles.icon} />
+            <p>
+              {
+                courtSurfaceTypes?.find(
+                  (type) =>
+                    type.court_surface_type_id ===
+                    selectedCourt?.court_surface_type_id
+                )?.court_surface_type_name
+              }
+            </p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <GiTennisCourt className={styles.icon} />
+            <p>
+              {
+                courtStructureTypes?.find(
+                  (type) =>
+                    type.court_structure_type_id ===
+                    selectedCourt?.court_structure_type_id
+                )?.court_structure_type_name
+              }
+            </p>
+          </div>
         </div>
         <div className={styles["courts-section"]}>
-          <h3>Takvim</h3>
+          <h2>Takvim</h2>
           <table>
             <thead>
               <tr>
@@ -201,8 +231,14 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                             court_id: selectedCourt?.court_id,
                             court_price: selectedCourt?.price_hour,
                           }}
+                          className={
+                            slotAvailabilityChecker(day, hour) ===
+                              "available" && styles.available
+                          }
                         >
-                          {slotAvailabilityChecker(day, hour)}
+                          {slotAvailabilityChecker(day, hour) === "available"
+                            ? "Uygun"
+                            : "Hayır"}
                         </Link>
                       ) : isUserClub &&
                         slotAvailabilityChecker(day, hour) === "available" &&

@@ -5,10 +5,6 @@
   display: flex;
   flex-direction: column;
   row-gap: 10vh;
-  h3 {
-    margin-bottom: 2vh;
-    color: $roger-green;
-  }
 
   .top-sections-container {
     display: flex;
@@ -17,11 +13,44 @@
     .profile-section {
       background-color: $roger-box-bg-color;
       width: 30%;
+      height: 90vh;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+      .profile-info {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+        align-items: start;
 
-      .court-image {
-        width: 50px;
+        .icon {
+          font-size: 20px;
+        }
+        .info-text {
+          width: 90%;
+        }
+      }
+
+      .club-info {
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
+        align-items: start;
+        .icon {
+          font-size: 20px;
+        }
+        .info-text {
+          width: 90%;
+        }
+      }
+
+      .profile-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
       }
     }
 
@@ -45,6 +74,8 @@
           border-radius: $roger-border-radius;
           text-align: center;
           cursor: pointer;
+          text-decoration: none;
+          color: white;
         }
       }
     }

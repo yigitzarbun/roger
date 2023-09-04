@@ -1,7 +1,5 @@
 import React from "react";
 
-import { AiOutlineEye } from "react-icons/ai";
-
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
@@ -79,7 +77,6 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Kort</th>
               <th>İsim</th>
               <th>Açılış</th>
@@ -96,16 +93,6 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           <tbody>
             {courts.map((court) => (
               <tr key={court.court_id} className={styles["court-row"]}>
-                {court.is_active && (
-                  <td>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
-                      className={styles["view-icon"]}
-                    >
-                      <AiOutlineEye />
-                    </Link>
-                  </td>
-                )}
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}>
                     <img
@@ -117,7 +104,12 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                     />
                   </Link>
                 </td>
-                <td>{`${court.court_name}`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
+                    className={styles["court-name"]}
+                  >{`${court.court_name}`}</Link>
+                </td>
                 <td>{court.opening_time.slice(0, 5)}</td>
                 <td>{court.closing_time.slice(0, 5)}</td>
                 <td>

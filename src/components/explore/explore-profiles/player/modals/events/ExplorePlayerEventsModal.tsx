@@ -48,7 +48,7 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
   const { data: matchScores, isLoading: isMatchScoresLoading } =
     useGetMatchScoresQuery({});
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-  if (isEventTypesLoading || isMatchScoresLoading) {
+  if (isEventTypesLoading || isMatchScoresLoading || isUsersLoading) {
     return <PageLoading />;
   }
 

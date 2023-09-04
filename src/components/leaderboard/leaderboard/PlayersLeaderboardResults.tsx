@@ -1,6 +1,10 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import styles from "./styles.module.scss";
+
+import paths from "../../../routing/Paths";
 
 import { useAppSelector } from "../../../store/hooks";
 
@@ -152,16 +156,25 @@ const PlayersLeaderboardResults = () => {
             {rankedPlayersList.map((player) => (
               <tr key={player.id} className={styles["player-row"]}>
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={
-                      player.image ? player.image : "/images/icons/avatar.png"
-                    }
-                    alt={player.name}
-                    className={styles["player-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.id}`}>
+                    <img
+                      src={
+                        player.image ? player.image : "/images/icons/avatar.png"
+                      }
+                      alt={player.name}
+                      className={styles["player-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>{player.rank}</td>
-                <td>{player.name}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${player.id}`}
+                    className={styles["player-name"]}
+                  >
+                    {player.name}
+                  </Link>
+                </td>
                 <td>{player.level}</td>
                 <td>{player.location}</td>
                 <td>{player.gender}</td>

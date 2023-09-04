@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -13,6 +13,8 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 
 import { localUrl } from "../../../../common/constants/apiConstants";
+
+import ExploreTrainerReviewsModal from "./modals/reviews/ExploreTrainerReviewsModal";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -36,6 +38,10 @@ import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsA
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
+import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import ExploreTrainerEventsModal from "./modals/events/ExploreTrainerEventsModal";
 
 interface ExploreTrainerProfileProps {
   user_id: string;
@@ -55,6 +61,12 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
+
+  const { data: eventTypes, isLoading: isEventTypesLoading } =
+    useGetEventTypesQuery({});
+
+  const { data: groups, isLoading: isStudentGroupsLoading } =
+    useGetStudentGroupsQuery({});
 
   const { data: clubStaff, isLoading: isClubStaffLoading } =
     useGetClubStaffQuery({});
@@ -88,11 +100,27 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetEventReviewsQuery({});
 
+  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const trainerGroups = groups?.filter(
+    (group) =>
+      group.trainer_id === selectedTrainer.user_id && group.is_active === true
+  );
+
+  const trainerStudents = students?.filter(
+    (student) =>
+      student.trainer_id === selectedTrainer?.user_id &&
+      student.student_status === "accepted"
+  ).length;
+
   const trainerBookings = bookings?.filter(
     (booking) =>
       booking.booking_status_type_id === 5 &&
       (booking.inviter_id === selectedTrainer.user_id ||
-        booking.invitee_id === selectedTrainer.user_id)
+        booking.invitee_id === selectedTrainer.user_id ||
+        booking.invitee_id ===
+          trainerGroups?.find((group) => group.user_id === booking.invitee_id)
+            ?.user_id)
   );
 
   const trainerReviewsReceived = eventReviews?.filter(
@@ -215,6 +243,22 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     }
   };
 
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const openReviewsModal = () => {
+    setIsReviewsModalOpen(true);
+  };
+  const closeReviewsModal = () => {
+    setIsReviewsModalOpen(false);
+  };
+
+  const [isEventsModalOpen, setIsEventsModalOpen] = useState(false);
+  const openEventsModal = () => {
+    setIsEventsModalOpen(true);
+  };
+  const closeEventsModal = () => {
+    setIsEventsModalOpen(false);
+  };
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetch();
@@ -239,7 +283,10 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
     isStudentsLoading ||
     isBookingsLoading ||
     isEventReviewsLoading ||
-    isPlayersLoading
+    isPlayersLoading ||
+    isEventTypesLoading ||
+    isStudentGroupsLoading ||
+    isCourtsLoading
   ) {
     return <PageLoading />;
   }
@@ -267,7 +314,9 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
                     <td>
                       <div className={styles["profile-info"]}>
                         <FaGenderless className={styles.icon} />
-                        <p>{selectedTrainer?.gender}</p>
+                        <p className={styles["info-text"]}>
+                          {selectedTrainer?.gender}
+                        </p>
                       </div>
                       <div className={styles["profile-info"]}>
                         <FaCalendarDays className={styles.icon} />
@@ -353,8 +402,9 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
           </div>
         </div>
         <div className={styles["interaction-section"]}>
-          <h2>Favoriler</h2>
+          <h2>Favoriler ve Öğrenciler</h2>
           <p>{`${trainerFavouriters} kişi favorilere ekledi`}</p>
+          <p>{`${trainerStudents} öğrencisi var`}</p>
           <div className={styles["buttons-container"]}>
             <button
               onClick={() => handleToggleFavourite(selectedTrainer?.user_id)}
@@ -475,40 +525,215 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
               <p>Henüz eğitmen hakkında değerlendirme yapılmamıştır.</p>
             )}
           </div>
-        </div>
-        <div className={styles["events-section"]}>
-          <h2>Geçmiş Etkinlikler</h2>
-          <div className={styles["stats-container"]}>
-            <div className={styles.stat}>
-              <p className={styles["stat-number"]}>
-                {
-                  trainerBookings?.filter((event) => event.event_type_id === 3)
-                    .length
-                }
-              </p>
-              <p>Özel Ders</p>
-            </div>
-            <div className={styles.stat}>
-              <p className={styles["stat-number"]}>
-                {
-                  trainerBookings?.filter((event) => event.event_type_id === 5)
-                    .length
-                }
-              </p>
-              <p>Kulüp Ders</p>
-            </div>{" "}
-            <div className={styles.stat}>
-              <p className={styles["stat-number"]}>
-                {
-                  trainerBookings?.filter((event) => event.event_type_id === 5)
-                    .length
-                }
-              </p>
-              <p>Grup Ders</p>
-            </div>
-          </div>
+          <button onClick={openReviewsModal}>Tümünü Görüntüle</button>
         </div>
       </div>
+      <div className={styles["bottom-sections-container"]}>
+        <div className={styles["events-section"]}>
+          <h2>Geçmiş Etkinlikler</h2>
+          {trainerBookings?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Oyuncu</th>
+                  <th>Tür</th>
+                  <th>Tarih</th>
+                  <th>Saat</th>
+                  <th>Konum</th>
+                  <th>Kort</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trainerBookings
+                  ?.slice(trainerBookings.length - 4)
+                  ?.map((booking) => (
+                    <tr key={booking.booking_id}>
+                      <td>
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}${
+                            booking.event_type_id === 3
+                              ? 1
+                              : booking.event_type_id === 6
+                              ? 3
+                              : ""
+                          }/${
+                            booking.inviter_id === selectedTrainer.user_id &&
+                            booking.event_type_id === 3
+                              ? booking.invitee_id
+                              : booking.invitee_id ===
+                                  selectedTrainer.user_id &&
+                                booking.event_type_id === 3
+                              ? booking.inviter_id
+                              : booking.event_type_id === 6
+                              ? trainerGroups?.find(
+                                  (group) =>
+                                    group.user_id === booking.invitee_id
+                                )?.club_id
+                              : ""
+                          }`}
+                        >
+                          <img
+                            src={
+                              booking.event_type_id === 3 &&
+                              booking.inviter_id === selectedTrainer?.user_id &&
+                              players?.find(
+                                (player) =>
+                                  player.user_id === booking.invitee_id
+                              )?.image
+                                ? `${localUrl}/${
+                                    players.find(
+                                      (player) =>
+                                        player.user_id === booking.invitee_id
+                                    )?.image
+                                  }`
+                                : booking.event_type_id === 3 &&
+                                  booking.invitee_id ===
+                                    selectedTrainer?.user_id &&
+                                  players?.find(
+                                    (player) =>
+                                      player.user_id === booking.inviter_id
+                                  )?.image
+                                ? `${localUrl}/${
+                                    players.find(
+                                      (player) =>
+                                        player.user_id === booking.inviter_id
+                                    )?.image
+                                  }`
+                                : booking.event_type_id === 6 &&
+                                  clubs?.find(
+                                    (club) =>
+                                      club.user_id ===
+                                      trainerGroups?.find(
+                                        (group) =>
+                                          group.user_id === booking.invitee_id
+                                      )?.club_id
+                                  )?.image
+                                ? `${localUrl}/${
+                                    clubs?.find(
+                                      (club) =>
+                                        club.user_id ===
+                                        trainerGroups?.find(
+                                          (group) =>
+                                            group.user_id === booking.invitee_id
+                                        )?.club_id
+                                    )?.image
+                                  }`
+                                : "/images/icons/avatar.png"
+                            }
+                            className={styles["player-image"]}
+                          />
+                        </Link>
+                      </td>
+                      <td>
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}${
+                            booking.event_type_id === 3
+                              ? 1
+                              : booking.event_type_id === 6
+                              ? 3
+                              : ""
+                          }/${
+                            booking.inviter_id === selectedTrainer.user_id &&
+                            booking.event_type_id === 3
+                              ? booking.invitee_id
+                              : booking.invitee_id ===
+                                  selectedTrainer.user_id &&
+                                booking.event_type_id === 3
+                              ? booking.inviter_id
+                              : booking.event_type_id === 6
+                              ? trainerGroups?.find(
+                                  (group) =>
+                                    group.user_id === booking.invitee_id
+                                )?.club_id
+                              : ""
+                          }`}
+                          className={styles["player-name"]}
+                        >
+                          {booking.event_type_id === 3 &&
+                          booking.inviter_id === selectedTrainer.user_id
+                            ? `${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === booking.invitee_id
+                                )?.fname
+                              } ${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === booking.invitee_id
+                                )?.lname
+                              }`
+                            : booking.event_type_id === 3 &&
+                              booking.invitee_id === selectedTrainer.user_id
+                            ? `${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === booking.inviter_id
+                                )?.fname
+                              } ${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === booking.inviter_id
+                                )?.lname
+                              }`
+                            : booking.event_type_id === 6
+                            ? trainerGroups?.find(
+                                (group) => group.user_id === booking.invitee_id
+                              )?.student_group_name
+                            : "-"}
+                        </Link>
+                      </td>
+                      <td>
+                        {
+                          eventTypes?.find(
+                            (type) =>
+                              type.event_type_id === booking.event_type_id
+                          )?.event_type_name
+                        }
+                      </td>
+                      <td>{booking.event_date.slice(0, 10)}</td>
+                      <td>{booking.event_time.slice(0, 5)}</td>
+                      <td>
+                        {
+                          clubs?.find(
+                            (club) => club.club_id === booking.club_id
+                          )?.club_name
+                        }
+                      </td>
+                      <td>
+                        {
+                          courts?.find(
+                            (court) => court.court_id === booking.court_id
+                          )?.court_name
+                        }
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Henüz tamamlanan ders bulunmamaktadır.</p>
+          )}
+          <button onClick={openEventsModal}>Tümünü Görüntüle</button>
+        </div>
+      </div>
+      <ExploreTrainerReviewsModal
+        isReviewsModalOpen={isReviewsModalOpen}
+        closeReviewsModal={closeReviewsModal}
+        trainerReviewsReceived={trainerReviewsReceived}
+        bookings={bookings}
+        players={players}
+      />
+      <ExploreTrainerEventsModal
+        isEventsModalOpen={isEventsModalOpen}
+        closeEventsModal={closeEventsModal}
+        trainerBookings={trainerBookings}
+        selectedTrainer={selectedTrainer}
+        trainerGroups={trainerGroups}
+        players={players}
+        clubs={clubs}
+        courts={courts}
+      />
     </div>
   );
 };

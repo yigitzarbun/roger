@@ -137,14 +137,15 @@
     justify-content: space-between;
     .reviews-section {
       background-color: $roger-box-bg-color;
-      width: 50%;
+      width: 100%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
       row-gap: 30px;
+      display: flex;
+      flex-direction: column;
 
       .reviews-container {
         display: flex;
-        flex-wrap: wrap;
         column-gap: 10px;
         width: 100%;
         .review-container {
@@ -154,6 +155,8 @@
           row-gap: 20px;
           display: flex;
           flex-direction: column;
+          width: 50%;
+          justify-content: space-between;
           .reviewer-container {
             display: flex;
             align-items: center;
@@ -176,31 +179,67 @@
           }
         }
       }
+      button {
+        padding: 10px;
+        border-radius: $roger-border-radius;
+        border: none;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
     }
+  }
+
+  .bottom-sections-container {
     .events-section {
       background-color: $roger-box-bg-color;
-      width: 45%;
+      width: 100%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
       row-gap: 30px;
       display: flex;
       flex-direction: column;
 
-      .stats-container {
-        display: flex;
-        justify-content: space-between;
-        .stat {
-          display: flex;
-          flex-direction: column;
-          text-align: center;
-          width: 20%;
-          .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: $roger-blue;
-          }
+      table {
+        width: 100%;
+        text-align: left;
+        .player-image {
+          height: 40px;
+          width: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .player-name {
+          color: white;
+          text-decoration: none;
         }
       }
+    }
+    button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 150px;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+
+    button:hover {
+      background-color: $roger-blue;
+      cursor: pointer;
     }
   }
 }

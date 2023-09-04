@@ -484,15 +484,34 @@ const CourtBookingForm = () => {
           <img src="/images/icons/prev.png" className={styles["prev-button"]} />
         </Link>
       </div>
-
-      <p className={styles["court-name"]}>{`Kort: ${
-        courts?.find(
-          (court) => court.court_id === courtBookingDetails?.court_id
-        )?.court_name
-      } - Kulüp: ${
-        clubs?.find((club) => club.club_id === courtBookingDetails?.club_id)
-          ?.club_name
-      }`}</p>
+      <div className={styles["court-container"]}>
+        <img
+          src={
+            courts?.find(
+              (court) => court.court_id === courtBookingDetails?.court_id
+            )?.image
+              ? courts?.find(
+                  (court) => court.court_id === courtBookingDetails?.court_id
+                )?.image
+              : clubs?.find(
+                  (club) => club.club_id === courtBookingDetails?.club_id
+                )?.image
+              ? clubs?.find(
+                  (club) => club.club_id === courtBookingDetails?.club_id
+                )?.image
+              : "/images/icons/avatar.png"
+          }
+          className={styles["court-image"]}
+        />
+        <p className={styles["court-name"]}>{`Kort: ${
+          courts?.find(
+            (court) => court.court_id === courtBookingDetails?.court_id
+          )?.court_name
+        } - Kulüp: ${
+          clubs?.find((club) => club.club_id === courtBookingDetails?.club_id)
+            ?.club_name
+        }`}</p>
+      </div>
       <p className={styles["court-name"]}>{`Tarih: ${
         courtBookingDetails?.event_date
       } - Saat: ${String(courtBookingDetails?.event_time).slice(0, 2)}:${String(
