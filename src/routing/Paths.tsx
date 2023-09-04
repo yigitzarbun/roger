@@ -24,5 +24,6 @@ export default {
   PAYMENTS: "/odemeler",
   PERFORMANCE: "/performans",
   PLAYERS_LEADERBOARD: "/oyuncu-liderlik-tablosu",
+  SOCIAL: "/favoriler-ve-baglantilar",
   NOT_FOUND: "*",
 } as Paths;

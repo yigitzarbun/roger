@@ -44,6 +44,7 @@ const Events = lazy(() => import("../modules/events/Events"));
 const PlayersLeaderboard = lazy(
   () => import("../modules/leaderboard/PlayersLeaderboard")
 );
+const Social = lazy(() => import("../modules/social/Social"));
 
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
@@ -93,6 +94,7 @@ const routes: Route[] = [
     path: paths.PLAYERS_LEADERBOARD,
     element: getRouteElement(PlayersLeaderboard),
   },
+  { path: paths.SOCIAL, element: getRouteElement(Social) },
 ];
 
 export default createBrowserRouter(routes);

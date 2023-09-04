@@ -28,10 +28,14 @@
           table {
             width: 100%;
             text-align: left;
+            td,
+            tr {
+              vertical-align: ceil($number: 0);
+            }
             .profile-info {
               display: flex;
               align-items: center;
-              column-gap: 15px;
+              column-gap: 10px;
               align-items: start;
               .icon {
                 font-size: 20px;
@@ -94,16 +98,19 @@
           cursor: pointer;
         }
         .cancel-student-button {
+          padding: 10px;
           border-radius: $roger-border-radius;
-          background-color: $roger-red;
           border: none;
-          height: 50px;
-          font-size: 1rem;
-          font-weight: bold;
-          padding: $roger-box-padding;
+          width: 150px;
+          background-color: $roger-red;
+          font-size: 0.8rem;
+          cursor: pointer;
+          text-decoration: none;
+          color: white;
+          text-align: center;
         }
         .cancel-student-button:hover {
-          background-color: $roger-black-dark;
+          background-color: $roger-blue;
           cursor: pointer;
         }
       }

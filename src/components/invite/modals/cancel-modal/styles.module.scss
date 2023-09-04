@@ -10,7 +10,7 @@
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   width: 80%;
-  height: 45%;
+  min-height: 50vh;
   margin: 150px auto 0 auto;
   margin-top: calc(10vh + 20px);
 
@@ -56,5 +56,9 @@
   }
   button:hover {
     background-color: $roger-blue;
+  }
+  .fee-text {
+    color: $roger-green;
+    font-size: 0.8rem;
   }
 }

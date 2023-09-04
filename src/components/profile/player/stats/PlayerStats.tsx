@@ -37,7 +37,7 @@ const PlayerStats = () => {
     (booking) =>
       (booking.inviter_id === user?.user?.user_id ||
         booking.invitee_id === user?.user?.user_id ||
-        myGroups.find((group) => group.user_id === booking.invitee_id)) &&
+        myGroups?.find((group) => group.user_id === booking.invitee_id)) &&
       booking.booking_status_type_id === 5
   );
 

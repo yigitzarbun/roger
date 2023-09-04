@@ -1,0 +1,31 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 20px;
+
+  .result-title {
+    font-size: 2rem;
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+
+    .club-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .club-name {
+      color: white;
+      text-decoration: none;
+    }
+  }
+}

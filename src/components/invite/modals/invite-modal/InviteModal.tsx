@@ -149,7 +149,6 @@ const InviteModal = ({
     lessonTrainerSubscribed = true;
   }
 
-  console.log(selectedClub);
   if (
     isEventLesson &&
     oppositionUser.user_type_id === 1 &&
@@ -168,7 +167,8 @@ const InviteModal = ({
     isTrainersLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isClubSubscriptionsLoading
+    isClubSubscriptionsLoading ||
+    isClubStaffLoading
   ) {
     return <PageLoading />;
   }
@@ -214,7 +214,7 @@ const InviteModal = ({
                 src={
                   opposition?.image
                     ? opposition?.image
-                    : "/images/players/player1.png"
+                    : "/images/icons/avatar.png"
                 }
                 className={styles.img}
               />
@@ -373,6 +373,13 @@ const InviteModal = ({
           </tr>
         </tbody>
       </table>
+      {isUserPlayer &&
+        (formData?.event_type_id === 1 || formData?.event_type_id === 2) && (
+          <p className={styles["fee-text"]}>
+            Kort ücreti oyuncular arasında yarı yarıya bölüşülür. Tahsil
+            edilecek tutar Toplam Tutar'dır.
+          </p>
+        )}
       <button onClick={handleModalSubmit}>Davet gönder</button>
     </Modal>
   );

@@ -243,6 +243,7 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
@@ -323,29 +324,31 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
                         >{`${selectedTrainer?.price_hour} TL / Saat`}</p>
                       </div>
                     </td>
-                    <td></td>
+                    <td>
+                      <div className={styles["club-info"]}>
+                        <MdSportsTennis className={styles.icon} />
+                        <p className={styles["info-text"]}>
+                          {selectedTrainer?.trainer_employment_type_id !== 1 &&
+                          clubStaff?.find(
+                            (staff) =>
+                              staff.user_id === selectedTrainer?.user_id &&
+                              staff.employment_status === "accepted"
+                          )
+                            ? clubs?.find(
+                                (club) =>
+                                  club.club_id ===
+                                  clubStaff.find(
+                                    (staff) =>
+                                      staff.user_id === selectedTrainer.user_id
+                                  )?.club_id
+                              )?.club_name
+                            : "Bağımsız"}
+                        </p>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              <div className={styles["club-info"]}>
-                <MdSportsTennis className={styles.icon} />
-                <p className={styles["info-text"]}>
-                  {trainerEmploymentTypes?.find(
-                    (type) =>
-                      type.trainer_employment_type_id ===
-                      selectedTrainer?.trainer_employment_type_id
-                  )?.trainer_employment_type_id !== 1 &&
-                  clubStaff?.find(
-                    (staff) =>
-                      staff.user_id === selectedTrainer?.user_id &&
-                      staff.employment_status === "accepted"
-                  )
-                    ? clubs?.find(
-                        (club) => club.club_id === selectedTrainer?.club_id
-                      )?.club_name
-                    : "Bağlı olduğu kulüp bulunmamaktadır."}
-                </p>
-              </div>
             </div>
           </div>
         </div>

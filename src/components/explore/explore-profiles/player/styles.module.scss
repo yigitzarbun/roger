@@ -85,14 +85,33 @@
       width: 100%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
+      display: flex;
+      flex-direction: column;
       row-gap: 30px;
+      button {
+        padding: 10px;
+        border-radius: $roger-border-radius;
+        border: none;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+      }
 
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
       .reviews-container {
         display: flex;
         flex-wrap: wrap;
         column-gap: 10px;
         row-gap: 10px;
         justify-content: space-between;
+
         .review-container {
           background-color: $roger-black-dark;
           padding: $roger-box-padding;
@@ -132,19 +151,37 @@
       width: 100%;
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;
+      button {
+        padding: 10px;
+        border-radius: $roger-border-radius;
+        border: none;
+        width: 150px;
+        background-color: $roger-black-dark;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        text-align: center;
+      }
+
+      button:hover {
+        background-color: $roger-blue;
+        cursor: pointer;
+      }
       table {
         width: 100%;
         text-align: left;
 
-        .event-row:hover {
-          background-color: $roger-black-light;
-          cursor: pointer;
-        }
         .event-image {
           width: 40px;
           height: 40px;
           border-radius: 50%;
           object-fit: cover;
+        }
+
+        .opponent-name {
+          color: white;
+          text-decoration: none;
         }
 
         .accept-button {

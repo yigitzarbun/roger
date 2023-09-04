@@ -40,18 +40,14 @@
     .add-fav-icon:hover {
       color: $roger-blue;
     }
-    .view-icon {
-      border: none;
-      width: 200px;
-      border-radius: $roger-border-radius;
-      font-size: 1.5rem;
+    .trainer-name {
+      font-size: 1rem;
       cursor: pointer;
       text-decoration: none;
       color: white;
+      vertical-align: middle;
     }
-    .view-icon:hover {
-      color: $roger-blue;
-    }
+
     .lesson-button {
       padding: 10px;
       border-radius: $roger-border-radius;

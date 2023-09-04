@@ -162,7 +162,10 @@ const PlayerPastEventsResults = () => {
                           (player) => player.user_id === event.inviter_id
                         )?.lname
                       }`
-                    : "-"}
+                    : event.event_type_id === 6 &&
+                      myGroups?.find(
+                        (group) => group.user_id === event.invitee_id
+                      )?.student_group_name}
                 </td>
                 <td>
                   {(event.event_type_id === 1 || event.event_type_id === 2) &&
@@ -275,35 +278,42 @@ const PlayerPastEventsResults = () => {
                     )?.court_structure_type_name
                   }
                 </td>
-
-                <td>
-                  {eventReviews?.find(
-                    (review) =>
-                      review.reviewer_id === user?.user?.user_id &&
-                      review.booking_id === event.booking_id
-                  ) ? (
-                    <p className={styles["review-sent-text"]}>
-                      Yorum Gönderildi
-                    </p>
-                  ) : (
-                    <BiCommentAdd
-                      onClick={() => openReviewModal(event.booking_id)}
-                      className={styles["view-icon"]}
-                    />
-                  )}
-                </td>
-                <td>
-                  {eventReviews?.find(
-                    (review) =>
-                      review.reviewer_id !== user?.user?.user_id &&
-                      review.booking_id === event.booking_id
-                  ) && (
-                    <AiOutlineEye
-                      onClick={() => openViewReviewModal(event.booking_id)}
-                      className={styles["view-icon"]}
-                    />
-                  )}
-                </td>
+                {(event.event_type_id === 1 ||
+                  event.event_type_id === 2 ||
+                  event.event_type_id === 3) && (
+                  <td>
+                    {eventReviews?.find(
+                      (review) =>
+                        review.reviewer_id === user?.user?.user_id &&
+                        review.booking_id === event.booking_id
+                    ) ? (
+                      <p className={styles["review-sent-text"]}>
+                        Yorum Gönderildi
+                      </p>
+                    ) : (
+                      <BiCommentAdd
+                        onClick={() => openReviewModal(event.booking_id)}
+                        className={styles["view-icon"]}
+                      />
+                    )}
+                  </td>
+                )}
+                {(event.event_type_id === 1 ||
+                  event.event_type_id === 2 ||
+                  event.event_type_id === 3) && (
+                  <td>
+                    {eventReviews?.find(
+                      (review) =>
+                        review.reviewer_id !== user?.user?.user_id &&
+                        review.booking_id === event.booking_id
+                    ) && (
+                      <AiOutlineEye
+                        onClick={() => openViewReviewModal(event.booking_id)}
+                        className={styles["view-icon"]}
+                      />
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

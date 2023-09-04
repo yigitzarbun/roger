@@ -24,18 +24,14 @@
       object-fit: cover;
     }
 
-    .view-icon {
-      font-size: 1.5rem;
+    .player-name {
+      font-size: 1rem;
       cursor: pointer;
       text-decoration: none;
       color: white;
       vertical-align: middle;
-      display: flex;
-      align-content: center;
     }
-    .view-icon:hover {
-      color: $roger-blue;
-    }
+
     .remove-fav-icon {
       color: $roger-blue;
       cursor: pointer;

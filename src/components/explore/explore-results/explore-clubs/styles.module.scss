@@ -27,17 +27,14 @@
       border-radius: 50%;
       object-fit: cover;
     }
-    .view-icon {
-      border: none;
-      border-radius: $roger-border-radius;
-      font-size: 1.5rem;
+    .club-name {
+      font-size: 1rem;
       cursor: pointer;
       text-decoration: none;
       color: white;
+      vertical-align: middle;
     }
-    .view-icon:hover {
-      color: $roger-blue;
-    }
+
     .remove-fav-icon {
       color: $roger-blue;
       cursor: pointer;

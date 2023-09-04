@@ -37,10 +37,10 @@
         display: flex;
         align-items: center;
       }
-    }
-    .player-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
+      .player-name {
+        color: white;
+        text-decoration: none;
+      }
     }
   }
   .view-all-button {

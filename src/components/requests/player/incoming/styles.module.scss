@@ -28,11 +28,14 @@
       border-radius: 50%;
       object-fit: cover;
     }
+    .inviter-name {
+      color: white;
+      text-decoration: none;
+    }
     .accept-button {
       padding: 10px;
       border-radius: $roger-border-radius;
       border: none;
-      width: 100px;
       background-color: $roger-green;
       font-size: 0.8rem;
       cursor: pointer;
@@ -49,7 +52,6 @@
       padding: 10px;
       border-radius: $roger-border-radius;
       border: none;
-      width: 100px;
       background-color: $roger-red;
       font-size: 0.8rem;
       cursor: pointer;

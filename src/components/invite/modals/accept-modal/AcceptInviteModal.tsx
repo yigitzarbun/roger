@@ -182,16 +182,12 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
             {/* kort ücreti */}
             {isUserPlayer && (
               <td>
-                {(isEventTraining || isEventMatch) &&
+                {
                   payments?.find(
                     (payment) =>
                       payment.payment_id === acceptBookingData?.payment_id
-                  )?.court_price / 2}
-                {isEventLesson &&
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === acceptBookingData?.payment_id
-                  )?.court_price}
+                  )?.court_price
+                }
               </td>
             )}
 
@@ -230,6 +226,14 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
           </tr>
         </tbody>
       </table>
+      {isUserPlayer &&
+        (acceptBookingData?.event_type_id === 1 ||
+          acceptBookingData?.event_type_id === 2) && (
+          <p className={styles["fee-text"]}>
+            Kort ücreti oyuncular arasında yarı yarıya bölüşülür. Tahsil
+            edilecek tutar Toplam Tutar'dır.
+          </p>
+        )}
       <button onClick={handleAcceptBooking}>Onayla</button>
     </ReactModal>
   );

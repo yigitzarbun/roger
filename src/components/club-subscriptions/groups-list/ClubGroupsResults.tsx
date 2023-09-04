@@ -31,7 +31,9 @@ const ClubGroupsResults = () => {
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
 
-  const myGroups = groups?.filter((group) => group.club_id === user?.user_id);
+  const myGroups = groups?.filter(
+    (group) => group.club_id === user?.user_id && group.is_active === true
+  );
 
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
 

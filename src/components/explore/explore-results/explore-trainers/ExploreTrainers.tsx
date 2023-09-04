@@ -182,14 +182,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     <AiOutlineStar className={styles["add-fav-icon"]} />
                   )}
                 </td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
-                    className={styles["view-icon"]}
-                  >
-                    <AiOutlineEye />
-                  </Link>
-                </td>
+                <td></td>
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
                     <img
@@ -203,7 +196,14 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     />
                   </Link>
                 </td>
-                <td>{`${trainer.fname} ${trainer.lname}`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                    className={styles["trainer-name"]}
+                  >
+                    <p> {`${trainer.fname} ${trainer.lname}`}</p>
+                  </Link>
+                </td>
                 <td>
                   {
                     trainerExperienceTypes?.find(

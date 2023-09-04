@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { AiOutlineEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import { Link } from "react-router-dom";
 
@@ -248,7 +248,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           <thead>
             <tr>
               <th></th>
-              <th></th>
+
               <th>Kulüp</th>
               <th>İsim</th>
               <th>Tür</th>
@@ -268,14 +268,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     <AiOutlineStar className={styles["add-fav-icon"]} />
                   )}
                 </td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}
-                    className={styles["view-icon"]}
-                  >
-                    <AiOutlineEye />
-                  </Link>
-                </td>
+
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}>
                     <img
@@ -285,7 +278,14 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     />
                   </Link>
                 </td>
-                <td>{`${club.club_name}`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}
+                    className={styles["club-name"]}
+                  >
+                    {`${club.club_name}`}
+                  </Link>
+                </td>
                 <td>
                   {
                     clubTypes?.find(

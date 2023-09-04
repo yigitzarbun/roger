@@ -126,7 +126,10 @@ const PlayerCardPayments = () => {
                   .slice((selectedPlayer?.card_number).toString().length - 4)}
             ile biten kartınız aktiftir`}
               </p>
-              <button onClick={handleOpenEditCardModal}>
+              <button
+                onClick={handleOpenEditCardModal}
+                className={styles["view-all-button"]}
+              >
                 Kart Bilgilerini Düzenle
               </button>
             </div>
@@ -137,7 +140,12 @@ const PlayerCardPayments = () => {
                 Antreman, maç ve özel ders etkinlikleri ile kulüp üyeliği
                 işlemleri için kart bilgisi eklemek zorunludur.
               </p>
-              <button onClick={handleOpenAddCardModal}>Yeni Kart Ekle</button>
+              <button
+                onClick={handleOpenAddCardModal}
+                className={styles["view-all-button"]}
+              >
+                Yeni Kart Ekle
+              </button>
             </div>
           )}
         </>
@@ -157,11 +165,8 @@ const PlayerCardPayments = () => {
                 </tr>
               </thead>
               <tbody>
-                {myPayments?.map((payment) => (
-                  <tr
-                    key={payment.payment_id}
-                    className={styles["payment-row"]}
-                  >
+                {myPayments.slice(myPayments.length - 1)?.map((payment) => (
+                  <tr key={payment.payment_id}>
                     <td>{payment.registered_at.slice(0, 10)}</td>
                     <td>{payment.payment_status}</td>
                     <td>
@@ -217,8 +222,10 @@ const PlayerCardPayments = () => {
                 ))}
               </tbody>
             </table>
-            <Link to={paths.PAYMENTS} className={styles["view-all-button"]}>
-              Tümünü Görüntüle
+            <Link to={paths.PAYMENTS}>
+              <button className={styles["view-all-button"]}>
+                Tümünü Görüntüle
+              </button>
             </Link>
           </div>
         ) : (

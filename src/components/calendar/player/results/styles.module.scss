@@ -28,11 +28,14 @@
       object-fit: cover;
     }
 
+    .opponent-name {
+      text-decoration: none;
+      color: white;
+    }
     .cancel-button {
       padding: 10px;
       border-radius: $roger-border-radius;
       border: none;
-      width: 100px;
       background-color: $roger-red;
       font-size: 0.8rem;
       cursor: pointer;

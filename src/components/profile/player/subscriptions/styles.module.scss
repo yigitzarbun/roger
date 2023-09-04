@@ -4,11 +4,12 @@
 .player-subscriptions-container {
   background-color: $roger-box-bg-color;
   width: 48%;
+  height: 50vh;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  //justify-content: space-between;
   row-gap: 2vh;
 
   h2 {
@@ -55,7 +56,8 @@
   table {
     width: 100%;
     text-align: left;
-    .favourite-image {
+
+    .image {
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -68,6 +70,7 @@
       vertical-align: middle;
     }
   }
+
   .view-all-button {
     background-color: $roger-black-dark;
     border: none;
@@ -79,6 +82,7 @@
     color: white;
     text-decoration: none;
     text-align: center;
+    margin-top: auto;
   }
   .view-all-button:hover {
     background-color: $roger-black-light;

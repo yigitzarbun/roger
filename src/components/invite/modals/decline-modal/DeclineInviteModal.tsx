@@ -164,16 +164,12 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
             {/* kort ücreti */}
             {isUserPlayer && (
               <td>
-                {(isEventTraining || isEventMatch) &&
+                {
                   payments?.find(
                     (payment) =>
                       payment.payment_id === declineBookingData?.payment_id
-                  )?.court_price / 2}
-                {isEventLesson &&
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === declineBookingData?.payment_id
-                  )?.court_price}
+                  )?.court_price
+                }
               </td>
             )}
 
@@ -211,6 +207,14 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
           </tr>
         </tbody>
       </table>
+      {isUserPlayer &&
+        (declineBookingData?.event_type_id === 1 ||
+          declineBookingData?.event_type_id === 2) && (
+          <p className={styles["fee-text"]}>
+            Kort ücreti oyuncular arasında yarı yarıya bölüşülür. Tahsil
+            edilecek tutar Toplam Tutar'dır.
+          </p>
+        )}
       <button onClick={handleDeclineBooking}>Onayla</button>
     </ReactModal>
   );

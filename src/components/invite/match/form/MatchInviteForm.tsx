@@ -468,6 +468,7 @@ const MatchInviteForm = () => {
             : "Davet Gönder"}
         </button>
       </form>
+
       <InviteModal
         modal={modal}
         handleModalSubmit={handleModalSubmit}

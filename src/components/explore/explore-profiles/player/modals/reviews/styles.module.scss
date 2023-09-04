@@ -1,0 +1,64 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  row-gap: 4vh;
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 50%;
+  min-height: 40vh;
+  max-height: 80vh;
+  margin: 150px auto 0 auto;
+  margin-top: calc(10vh + 20px);
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .close-button {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+  }
+  .reviews-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    height: 50vh;
+    overflow-y: auto;
+    .review-container {
+      background-color: $roger-black-dark;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      width: 100%;
+      row-gap: 20px;
+      display: flex;
+      flex-direction: column;
+      .reviewer-container {
+        display: flex;
+        align-items: center;
+        column-gap: 10px;
+
+        .reviewer-image {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .reviewer-name {
+          font-size: 0.8rem;
+          color: white;
+          text-decoration: none;
+        }
+        .reviewer-name:hover {
+          color: $roger-blue;
+        }
+      }
+    }
+  }
+}

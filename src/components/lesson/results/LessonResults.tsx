@@ -148,7 +148,7 @@ const LessonResults = (props: TrainSearchProps) => {
             clubStaff?.find((staff) => staff.user_id === trainer.user_id)
               ?.employment_status === "accepted") ||
             clubIdValue === 0) &&
-          (trainerPriceValue <= trainer.price_hour ||
+          (trainerPriceValue >= trainer.price_hour ||
             trainerPriceValue === 100) &&
           ((favourite === true &&
             myFavourites.find(

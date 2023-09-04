@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { AiOutlineEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import { Link } from "react-router-dom";
 
@@ -148,7 +148,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           <thead>
             <tr>
               <th></th>
-              <th></th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>
@@ -173,26 +172,24 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     />
                   )}
                 </td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
-                    className={styles["view-icon"]}
-                  >
-                    <AiOutlineEye />
-                  </Link>
-                </td>
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
                     <img
                       src={
                         player.image ? player.image : "/images/icons/avatar.png"
                       }
-                      alt={player.fname}
                       className={styles["player-image"]}
                     />
                   </Link>
                 </td>
-                <td>{`${player.fname} ${player.lname}`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}
+                    className={styles["player-name"]}
+                  >
+                    <p>{`${player.fname} ${player.lname}`}</p>
+                  </Link>
+                </td>
                 <td>
                   {
                     playerLevels?.find(

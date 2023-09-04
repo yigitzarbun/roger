@@ -209,7 +209,7 @@ const PlayerScores = () => {
                   {matchScores?.find(
                     (match) =>
                       match.booking_id === event.booking_id &&
-                      match.inviter_third_set_games_won === null
+                      match.inviter_third_set_games_won === 0
                   )?.match_score_status_type_id === 3
                     ? `${
                         matchScores?.find(

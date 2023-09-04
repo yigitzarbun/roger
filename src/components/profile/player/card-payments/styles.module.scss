@@ -4,6 +4,7 @@
 .player-payment-details-container {
   background-color: $roger-box-bg-color;
   width: 48%;
+  height: 50vh;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
@@ -94,14 +95,5 @@
   table {
     width: 100%;
     text-align: left;
-
-    .payment-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-    .payment-image {
-      width: 30px;
-      height: 30px;
-    }
   }
 }
