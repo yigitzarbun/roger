@@ -6,12 +6,13 @@ import { CgTennis } from "react-icons/cg";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+import UpdateProfileModal from "../../update-profile-modals/player/UpdatePlayerProfileModal";
+
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-
-import UpdateProfileModal from "../../update-profile-modals/player/UpdatePlayerProfileModal";
-import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 const PlayerAccountDetails = () => {
   const user = useAppSelector((store) => store.user.user);
@@ -36,6 +37,8 @@ const PlayerAccountDetails = () => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
 
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -45,7 +48,7 @@ const PlayerAccountDetails = () => {
     setIsModalOpen(false);
   };
 
-  if (isLocationsLoading || isPlayerLevelsLoading) {
+  if (isLocationsLoading || isPlayerLevelsLoading || isPlayersLoading) {
     return <PageLoading />;
   }
   return (
@@ -59,7 +62,14 @@ const PlayerAccountDetails = () => {
       </div>
       <div className={styles["profile-data-container"]}>
         <img
-          src={user?.playerDetails?.image}
+          src={
+            players?.find((player) => player.user_id === user?.user?.user_id)
+              ?.image
+              ? players?.find(
+                  (player) => player.user_id === user?.user?.user_id
+                )?.image
+              : "/images/icons/avatar.png"
+          }
           alt="player-image"
           className={styles["profile-image"]}
         />

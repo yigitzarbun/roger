@@ -99,7 +99,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("player_bio_description");
       table.boolean("is_premium").defaultTo(false).notNullable();
       table.string("name_on_card");
-      table.integer("card_number");
+      table.string("card_number");
       table.integer("cvc");
       table.string("card_expiry");
       table

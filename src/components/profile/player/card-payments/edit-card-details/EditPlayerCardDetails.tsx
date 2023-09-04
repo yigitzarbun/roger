@@ -54,7 +54,6 @@ const EditPlayerCardDetails = (props: EditPlayerCardDetailsModallProps) => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -69,7 +68,7 @@ const EditPlayerCardDetails = (props: EditPlayerCardDetailsModallProps) => {
     const playerCardDetails = {
       ...selectedPlayer,
       name_on_card: formData?.name_on_card,
-      card_number: Number(formData?.card_number),
+      card_number: formData?.card_number,
       cvc: Number(formData?.cvc),
       card_expiry: formData?.card_expiry,
     };
@@ -111,39 +110,62 @@ const EditPlayerCardDetails = (props: EditPlayerCardDetailsModallProps) => {
               type="text"
             />
             {errors.name_on_card && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+              </span>
             )}
           </div>
           <div className={styles["input-container"]}>
             <label>Kart Numarası</label>
             <input
-              {...register("card_number", { required: true })}
+              {...register("card_number", {
+                required: "Bu alan zorunludur",
+                minLength: 16,
+                maxLength: 16,
+              })}
               type="number"
             />
             {errors.card_number && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+              </span>
             )}
           </div>
         </div>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>CVC</label>
-            <input {...register("cvc", { required: true })} type="number" />
+            <input
+              {...register("cvc", {
+                required: true,
+                minLength: 3,
+                maxLength: 3,
+              })}
+              type="number"
+            />
             {errors.cvc && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+              </span>
             )}
           </div>
           <div className={styles["input-container"]}>
             <label>Son Kullanma Tarihi</label>
             <input
-              {...register("card_expiry", { required: true })}
+              {...register("card_expiry", {
+                required: true,
+                minLength: 5,
+                maxLength: 5,
+              })}
               type="text"
               placeholder="AA/YY"
               value={expiryValue}
               onChange={handleExpiryChange}
             />
             {errors.card_expiry && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+              </span>
             )}
           </div>
         </div>

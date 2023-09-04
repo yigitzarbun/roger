@@ -24,6 +24,7 @@ interface UpdatePlayerProfileModalProps {
   handleCloseModal: () => void;
   profileData: Player;
 }
+
 const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
   const { isModalOpen, handleCloseModal, profileData } = props;
 
@@ -39,10 +40,20 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
 
+  const existingImage = profileData?.image ? profileData?.image : null;
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<Player>({
     defaultValues: {
@@ -66,7 +77,7 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
       birth_year: formData?.birth_year,
       gender: formData?.gender,
       phone_number: null,
-      image: null,
+      image: selectedImage ? selectedImage : existingImage,
       player_bio_description: null,
       location_id: Number(formData?.location_id),
       player_level_id: Number(formData?.player_level_id),
@@ -78,6 +89,7 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
 
   useEffect(() => {
     if (isSuccess) {
+      delete updatedProfile.image;
       dispatch(updatePlayerDetails(updatedProfile));
       refetch();
       reset(updatedProfile);
@@ -105,6 +117,7 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
+        encType="multipart/form-data"
       >
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
@@ -121,8 +134,6 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Cinsiyet</label>
             <select {...register("gender", { required: true })}>
@@ -134,6 +145,8 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Doğum Yılı</label>
             <input
@@ -156,8 +169,6 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
               </span>
             )}
           </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Seviye</label>
             <select {...register("player_level_id", { required: true })}>
@@ -188,6 +199,23 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
             {errors.location_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
+          </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Profil Resmi</label>
+            <div className={styles["profile-picture-container"]}>
+              <img
+                src={existingImage ? existingImage : "/images/icons/avatar.png"}
+                className={styles["profile-image"]}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
           </div>
         </div>
         <button type="submit" className={styles["form-button"]}>

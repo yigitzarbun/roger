@@ -11,7 +11,7 @@ export interface Player {
   location_id: number;
   user_id: number;
   name_on_card?: string;
-  card_number?: number;
+  card_number?: string;
   cvc?: number;
   card_expiry?: string;
   image?: string;
@@ -56,11 +56,48 @@ export const playersSlice = createApi({
       },
     }),
     updatePlayer: builder.mutation({
-      query: (updatedPlayer) => ({
-        url: "/players",
-        method: "PUT",
-        body: updatedPlayer,
-      }),
+      query: (player) => {
+        const formData = new FormData();
+        formData.append("player_id", player.player_id);
+        formData.append("fname", player.fname);
+        formData.append("lname", player.lname);
+        formData.append("birth_year", player.birth_year.toString());
+        formData.append("gender", player.gender);
+        formData.append("location_id", player.location_id.toString());
+        formData.append("player_level_id", player.player_level_id.toString());
+        formData.append("user_id", player.user_id.toString());
+        if (player.image) {
+          formData.append("image", player.image);
+        }
+        if (player.phone_number) {
+          formData.append("phone_number", player.phone_number);
+        }
+        if (player.player_bio_description) {
+          formData.append(
+            "player_bio_description",
+            player.player_bio_description
+          );
+        }
+        if (player.name_on_card) {
+          formData.append("name_on_card", player.name_on_card);
+        }
+        if (player.card_number) {
+          formData.append("card_number", player.card_number);
+        }
+        if (player.cvc) {
+          formData.append("cvc", player.cvc);
+        }
+        if (player.card_expiry) {
+          formData.append("card_expiry", player.card_expiry);
+        }
+        const requestObject = {
+          url: "/players",
+          method: "PUT",
+          body: formData,
+        };
+
+        return requestObject;
+      },
     }),
   }),
 });

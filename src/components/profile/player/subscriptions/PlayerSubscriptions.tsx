@@ -215,7 +215,7 @@ const PlayerSubscriptions = () => {
             </tbody>
           </table>
         ) : display === "subscriptions" && mySubscriptions?.length === 0 ? (
-          <p>Henüz kulüp üyeliği bulunmamaktadır</p>
+          <h4>Kulüp üyeliği bulunmamaktadır</h4>
         ) : (
           ""
         ))}
@@ -342,7 +342,7 @@ const PlayerSubscriptions = () => {
           </tbody>
         </table>
       ) : display === "favourites" && myFavourites?.length === 0 ? (
-        <p>Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır</p>
+        <h4>Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır</h4>
       ) : (
         ""
       )}
@@ -406,7 +406,7 @@ const PlayerSubscriptions = () => {
           </tbody>
         </table>
       ) : display === "groups" && myGroups?.length === 0 ? (
-        <p>Kulüp oyuncu grubu üyeliği bulunmamaktadır</p>
+        <h4>Kulüp oyuncu grubu üyeliği bulunmamaktadır</h4>
       ) : (
         ""
       )}

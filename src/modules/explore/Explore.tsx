@@ -31,11 +31,7 @@ const Explore = () => {
     setDisplay(value);
   };
 
-  const {
-    data: players,
-    isLoading: isPlayersLoading,
-    isError,
-  } = useGetPlayersQuery({});
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});

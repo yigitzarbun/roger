@@ -66,16 +66,21 @@
   }
 
   .card-details-container {
-    margin-top: auto;
     display: flex;
     flex-direction: column;
-    row-gap: 10px;
+    row-gap: 20px;
   }
+  .card-missing-text {
+    color: $roger-yellow;
+    font-size: 0.8rem;
+  }
+
   .payments-container {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+
     .view-all-button {
       background-color: $roger-black-dark;
       border: none;
@@ -92,6 +97,7 @@
       background-color: $roger-black-light;
     }
   }
+
   table {
     width: 100%;
     text-align: left;

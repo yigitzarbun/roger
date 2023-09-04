@@ -121,9 +121,9 @@ const PlayerCardPayments = () => {
           {cardDetailsExist ? (
             <div className={styles["card-details-container"]}>
               <p className={styles["card-exists-text"]}>
-                {`${(selectedPlayer?.card_number)
-                  .toString()
-                  .slice((selectedPlayer?.card_number).toString().length - 4)}
+                {`${(selectedPlayer?.card_number).slice(
+                  (selectedPlayer?.card_number).length - 4
+                )}
             ile biten kartınız aktiftir`}
               </p>
               <button
@@ -134,9 +134,9 @@ const PlayerCardPayments = () => {
               </button>
             </div>
           ) : (
-            <div>
-              <h4>Henüz sisteme eklenmiş kart bulunmamaktadır</h4>
-              <p>
+            <div className={styles["card-details-container"]}>
+              <h4>Kayıtlı kart bulunmamaktadır</h4>
+              <p className={styles["card-missing-text"]}>
                 Antreman, maç ve özel ders etkinlikleri ile kulüp üyeliği
                 işlemleri için kart bilgisi eklemek zorunludur.
               </p>
@@ -229,7 +229,7 @@ const PlayerCardPayments = () => {
             </Link>
           </div>
         ) : (
-          <p>Henüz ödemeniz bulunmamaktadır.</p>
+          <h4>Henüz ödemeniz bulunmamaktadır.</h4>
         ))}
 
       <AddPlayerCardDetails

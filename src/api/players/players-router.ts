@@ -48,7 +48,11 @@ playersRouter.put(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await playersModel.update(req.body);
+      const updatedPlayerData = req.body;
+      if (req.file) {
+        updatedPlayerData.image = req.file.path;
+      }
+      await playersModel.update(updatedPlayerData);
       const updatedPlayer = await playersModel.getById(req.body.player_id);
       res.status(200).json(updatedPlayer);
     } catch (error) {
