@@ -17,13 +17,53 @@
     width: 100%;
     text-align: left;
 
-    .request-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
+    .trainer-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
     }
-    .request-image {
-      width: 30px;
-      height: 30px;
+    .trainer-name {
+      color: white;
+      text-decoration: none;
+    }
+    .confirmed-text {
+      color: $roger-green;
+    }
+    .pending-text {
+      color: $roger-yellow;
+    }
+    .accept-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-green;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+    }
+
+    .accept-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
+    }
+    .decline-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-red;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+    }
+
+    .decline-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
     }
   }
 }

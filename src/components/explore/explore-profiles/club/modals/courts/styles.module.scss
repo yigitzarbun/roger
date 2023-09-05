@@ -43,6 +43,16 @@
         border-radius: 50%;
         object-fit: cover;
       }
+      .court-name {
+        color: white;
+        text-decoration: none;
+      }
+      .active-text {
+        color: $roger-green;
+      }
+      .inactive-text {
+        color: $roger-red;
+      }
       .book-button {
         padding: 10px;
         border-radius: $roger-border-radius;

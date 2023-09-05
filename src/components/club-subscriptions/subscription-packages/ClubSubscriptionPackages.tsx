@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 
-import AddClubSubscriptionPackageButton from "./add-subscription-package-button/AddClubSubscriptionPackageButton";
-import AddSubscriptionPackageModal from "./add-subscription-package-modal/AddSubscriptionPackageModal";
 import ClubSubscriptionPackagesResults from "./results/ClubSubscriptionPackagesResults";
 import EditSubscriptionPackageModal from "./edit-subscription-package-modal/EditSubscriptionPackageModal";
+import PageLoading from "../../../components/loading/PageLoading";
 
 import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 
@@ -15,14 +14,6 @@ const ClubSubscriptionPackages = () => {
     data: clubSubscriptionPackages,
     isLoading: isClubSubscriptionPackagesLoading,
   } = useGetClubSubscriptionPackagesQuery({});
-  const [openAddPackageModal, setOpenAddPackageModal] = useState(false);
-
-  const openAddClubSubscriptionPackageModal = () => {
-    setOpenAddPackageModal(true);
-  };
-  const closeAddClubSubscriptionPackageModal = () => {
-    setOpenAddPackageModal(false);
-  };
 
   const [openEditPackageModal, setOpenEditPackageModal] = useState(false);
 
@@ -45,24 +36,17 @@ const ClubSubscriptionPackages = () => {
     setOpenEditPackageModal(false);
   };
 
+  if (isClubSubscriptionPackagesLoading) {
+    return <PageLoading />;
+  }
   return (
     <div>
-      <AddClubSubscriptionPackageButton
-        openAddClubSubscriptionPackageModal={
-          openAddClubSubscriptionPackageModal
-        }
-      />
       <ClubSubscriptionPackagesResults
         openEditClubSubscriptionPackageModal={
           openEditClubSubscriptionPackageModal
         }
       />
-      <AddSubscriptionPackageModal
-        openAddPackageModal={openAddPackageModal}
-        closeAddClubSubscriptionPackageModal={
-          closeAddClubSubscriptionPackageModal
-        }
-      />
+
       <EditSubscriptionPackageModal
         openEditPackageModal={openEditPackageModal}
         closeEditClubSubscriptionPackageModal={

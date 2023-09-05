@@ -17,13 +17,32 @@
     width: 100%;
     text-align: left;
 
-    .staff-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
     .staff-image {
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .staff-name {
+      color: white;
+      text-decoration: none;
+    }
+    .delete-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-red;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+      width: 100px;
+    }
+
+    .delete-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
     }
   }
 }

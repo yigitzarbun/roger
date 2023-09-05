@@ -32,7 +32,6 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
-
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
@@ -89,7 +88,9 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                 .map((court) => (
                   <tr key={court.court_id}>
                     <td>
-                      {
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                      >
                         <img
                           src={
                             court.image
@@ -99,12 +100,23 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                           alt="court picture"
                           className={styles["court-image"]}
                         />
-                      }
+                      </Link>
                     </td>
                     <td>
-                      {court.is_active === true ? <p>Aktif</p> : <p>Bloke</p>}
+                      {court.is_active === true ? (
+                        <p className={styles["active-text"]}>Aktif</p>
+                      ) : (
+                        <p className={styles["inactive-text"]}>Bloke</p>
+                      )}
                     </td>
-                    <td>{court.court_name}</td>
+                    <td>
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                        className={styles["court-name"]}
+                      >
+                        {court.court_name}
+                      </Link>
+                    </td>
                     <td>
                       {
                         courtSurfaceTypes?.find(
@@ -134,17 +146,17 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                       "-"
                     )}
                     <td>{court.price_hour}</td>
-                    {isUserPlayer ||
-                      (isUserTrainer && (
-                        <td>
-                          <Link
-                            to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                            className={styles["book-button"]}
-                          >
-                            Rezerve et
-                          </Link>
-                        </td>
-                      ))}
+
+                    <td>
+                      {(isUserPlayer || isUserTrainer) && (
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                          className={styles["book-button"]}
+                        >
+                          Rezerve et
+                        </Link>
+                      )}
+                    </td>
                   </tr>
                 ))}
             </tbody>

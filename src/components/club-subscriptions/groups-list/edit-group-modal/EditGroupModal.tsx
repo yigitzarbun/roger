@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 
 import { FaWindowClose } from "react-icons/fa";
+import { AiOutlineUserAdd } from "react-icons/ai";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -387,7 +388,13 @@ const EditGroupModal = (props: EditGroupModalProps) => {
             </div>
           </div>
         ) : (
-          <button onClick={handleAddMoreUsers}>Daha fazla oyuncu ekle</button>
+          <div
+            onClick={handleAddMoreUsers}
+            className={styles["more-players-container"]}
+          >
+            <AiOutlineUserAdd />
+            Daha fazla oyuncu ekle
+          </div>
         )}
 
         <button type="submit" className={styles["form-button"]}>

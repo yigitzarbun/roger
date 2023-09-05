@@ -5,17 +5,23 @@
   border: none;
   display: flex;
   justify-content: flex-end;
+  font-size: 0.8rem;
 
   .add-subscription-package-button {
     display: flex;
     align-items: center;
-    background-color: $roger-blue;
+    background-color: $roger-green;
     border-radius: $roger-border-radius;
-    padding: $roger-box-padding;
+    padding: 10px;
     border: none;
     cursor: pointer;
+    color: black;
   }
 
+  .add-subscription-package-button:hover {
+    background-color: $roger-blue;
+    color: white;
+  }
   .add-icon {
     width: 30px;
   }

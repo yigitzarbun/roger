@@ -308,96 +308,76 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
             />
             <div className={styles["secondary-profile-data-container"]}>
               <h3>{`${selectedTrainer?.fname} ${selectedTrainer.lname}`}</h3>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div className={styles["profile-info"]}>
-                        <FaGenderless className={styles.icon} />
-                        <p className={styles["info-text"]}>
-                          {selectedTrainer?.gender}
-                        </p>
-                      </div>
-                      <div className={styles["profile-info"]}>
-                        <FaCalendarDays className={styles.icon} />
-                        <p className={styles["info-text"]}>
-                          {selectedTrainer?.birth_year}
-                        </p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className={styles["profile-info"]}>
-                        <CgTennis className={styles.icon} />
-                        <p className={styles["info-text"]}>
-                          {
-                            trainerExperienceTypes?.find(
-                              (type) =>
-                                type.trainer_experience_type_id ===
-                                selectedTrainer?.trainer_experience_type_id
-                            )?.trainer_experience_type_name
-                          }
-                        </p>
-                      </div>
-                      <div className={styles["profile-info"]}>
-                        <FaLocationDot className={styles.icon} />
-                        <p className={styles["info-text"]}>
-                          {
-                            locations?.find(
-                              (location) =>
-                                location.location_id ===
-                                selectedTrainer?.location_id
-                            )?.location_name
-                          }
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className={styles["profile-info"]}>
-                        <FaUserFriends className={styles.icon} />
-                        <p className={styles["info-text"]}>
-                          {
-                            trainerEmploymentTypes?.find(
-                              (type) =>
-                                type.trainer_employment_type_id ===
-                                selectedTrainer?.trainer_employment_type_id
-                            )?.trainer_employment_type_name
-                          }
-                        </p>
-                      </div>
-                      <div className={styles["profile-info"]}>
-                        <PiMoney className={styles.icon} />
-                        <p
-                          className={styles["info-text"]}
-                        >{`${selectedTrainer?.price_hour} TL / Saat`}</p>
-                      </div>
-                    </td>
-                    <td>
-                      <div className={styles["club-info"]}>
-                        <MdSportsTennis className={styles.icon} />
-                        <p className={styles["info-text"]}>
-                          {selectedTrainer?.trainer_employment_type_id !== 1 &&
-                          clubStaff?.find(
-                            (staff) =>
-                              staff.user_id === selectedTrainer?.user_id &&
-                              staff.employment_status === "accepted"
-                          )
-                            ? clubs?.find(
-                                (club) =>
-                                  club.club_id ===
-                                  clubStaff.find(
-                                    (staff) =>
-                                      staff.user_id === selectedTrainer.user_id
-                                  )?.club_id
-                              )?.club_name
-                            : "Bağımsız"}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className={styles["profile-info"]}>
+                <FaGenderless className={styles.icon} />
+                <p className={styles["info-text"]}>{selectedTrainer?.gender}</p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaCalendarDays className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {selectedTrainer?.birth_year}
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <CgTennis className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    trainerExperienceTypes?.find(
+                      (type) =>
+                        type.trainer_experience_type_id ===
+                        selectedTrainer?.trainer_experience_type_id
+                    )?.trainer_experience_type_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaLocationDot className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    locations?.find(
+                      (location) =>
+                        location.location_id === selectedTrainer?.location_id
+                    )?.location_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <FaUserFriends className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {
+                    trainerEmploymentTypes?.find(
+                      (type) =>
+                        type.trainer_employment_type_id ===
+                        selectedTrainer?.trainer_employment_type_id
+                    )?.trainer_employment_type_name
+                  }
+                </p>
+              </div>
+              <div className={styles["profile-info"]}>
+                <PiMoney className={styles.icon} />
+                <p
+                  className={styles["info-text"]}
+                >{`${selectedTrainer?.price_hour} TL / Saat`}</p>
+              </div>
+              <div className={styles["club-info"]}>
+                <MdSportsTennis className={styles.icon} />
+                <p className={styles["info-text"]}>
+                  {selectedTrainer?.trainer_employment_type_id !== 1 &&
+                  clubStaff?.find(
+                    (staff) =>
+                      staff.user_id === selectedTrainer?.user_id &&
+                      staff.employment_status === "accepted"
+                  )
+                    ? clubs?.find(
+                        (club) =>
+                          club.club_id ===
+                          clubStaff.find(
+                            (staff) => staff.user_id === selectedTrainer.user_id
+                          )?.club_id
+                      )?.club_name
+                    : "Bağımsız"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -431,35 +411,39 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
                 </button>
               </Link>
             )}
-            <td>
-              {students?.find(
-                (student) =>
-                  student.player_id === user?.user?.user_id &&
-                  student.trainer_id === selectedTrainer?.user_id &&
-                  student.student_status === "pending"
-              ) ? (
-                ""
-              ) : students?.find(
+            {isUserPlayer && (
+              <td>
+                {students?.find(
                   (student) =>
                     student.player_id === user?.user?.user_id &&
                     student.trainer_id === selectedTrainer?.user_id &&
-                    student.student_status === "accepted"
+                    student.student_status === "pending"
                 ) ? (
-                <button
-                  onClick={() => handleDeclineStudent(selectedTrainer?.user_id)}
-                  className={styles["cancel-student-button"]}
-                >
-                  Öğrenciliği sil
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleAddStudent(selectedTrainer?.user_id)}
-                  className={styles["interaction-button"]}
-                >
-                  Öğrenci Ol
-                </button>
-              )}
-            </td>
+                  ""
+                ) : students?.find(
+                    (student) =>
+                      student.player_id === user?.user?.user_id &&
+                      student.trainer_id === selectedTrainer?.user_id &&
+                      student.student_status === "accepted"
+                  ) ? (
+                  <button
+                    onClick={() =>
+                      handleDeclineStudent(selectedTrainer?.user_id)
+                    }
+                    className={styles["cancel-student-button"]}
+                  >
+                    Öğrenciliği sil
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleAddStudent(selectedTrainer?.user_id)}
+                    className={styles["interaction-button"]}
+                  >
+                    Öğrenci Ol
+                  </button>
+                )}
+              </td>
+            )}
           </div>
           {students?.find(
             (student) =>

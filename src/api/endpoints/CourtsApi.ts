@@ -60,11 +60,41 @@ export const courtsSlice = createApi({
       },
     }),
     updateCourt: builder.mutation({
-      query: (updatedCourt) => ({
-        url: `/courts/${updatedCourt.court_id}`,
-        method: "PUT",
-        body: updatedCourt,
-      }),
+      query: (court) => {
+        const formData = new FormData();
+        formData.append("court_id", court.court_id);
+        formData.append("court_name", court.court_name);
+        formData.append("opening_time", court.opening_time.toString());
+        formData.append("closing_time", court.closing_time.toString());
+        formData.append("price_hour", court.price_hour.toString());
+        formData.append("is_active", court.is_active);
+        formData.append(
+          "court_structure_type_id",
+          court.court_structure_type_id.toString()
+        );
+        formData.append(
+          "court_surface_type_id",
+          court.court_surface_type_id.toString()
+        );
+        formData.append("club_id", court.club_id.toString());
+
+        if (court.price_hour_non_subscriber) {
+          formData.append(
+            "price_hour_non_subscriber",
+            court.price_hour_non_subscriber.toString()
+          );
+        }
+        if (court.image) {
+          formData.append("image", court.image);
+        }
+        const requestObject = {
+          url: "/courts",
+          method: "PUT",
+          body: formData,
+        };
+
+        return requestObject;
+      },
     }),
   }),
 });

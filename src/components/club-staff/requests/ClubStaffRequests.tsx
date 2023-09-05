@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
@@ -94,14 +98,14 @@ const ClubStaffRequests = () => {
       </div>
 
       {clubStaff && myStaffRequests.length === 0 && (
-        <p>Yeni personel bulunmamaktadır.</p>
+        <p>Yeni personel başvurusu bulunmamaktadır.</p>
       )}
       {clubStaff && clubStaffRoleTypes && myStaffRequests.length > 0 && (
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Personel</th>
-              <th>Personel Adı</th>
               <th>Yaş</th>
               <th>Cinsiyet</th>
               <th>Tecrübe</th>
@@ -114,14 +118,28 @@ const ClubStaffRequests = () => {
             {myStaffRequests.map((request) => (
               <tr key={request.club_staff_id} className={styles["request-row"]}>
                 <td>
-                  <img
-                    src={"/images/icons/avatar.png"}
-                    alt="request"
-                    className={styles["request-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}2/${request.user_id}`}>
+                    <img
+                      src={
+                        trainers?.find(
+                          (trainer) => trainer.user_id === request.user_id
+                        )?.image
+                          ? trainers?.find(
+                              (trainer) => trainer.user_id === request.user_id
+                            )?.image
+                          : "/images/icons/avatar.png"
+                      }
+                      alt="request"
+                      className={styles["trainer-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>
-                  {`
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${request.user_id}`}
+                    className={styles["trainer-name"]}
+                  >
+                    {`
                     ${
                       trainers?.find(
                         (trainer) => trainer.user_id === request.user_id
@@ -134,6 +152,7 @@ const ClubStaffRequests = () => {
                    }
                   
                   `}
+                  </Link>
                 </td>
                 <td>
                   {year -
@@ -182,26 +201,30 @@ const ClubStaffRequests = () => {
                   }
                 </td>
                 <td>
-                  {request.employment_status === "pending"
-                    ? "Onay Bekliyor"
-                    : "Onaylandı"}
-                </td>
-                <td>
-                  <button
-                    onClick={() =>
-                      openAcceptClubStaffModal(request.club_staff_id)
-                    }
-                  >
-                    Onay Ver
-                  </button>
+                  {request.employment_status === "pending" ? (
+                    <p className={styles["pending-text"]}>Onay Bekliyor</p>
+                  ) : (
+                    <p className={styles["confirmed-text"]}>Onaylandı</p>
+                  )}
                 </td>
                 <td>
                   <button
                     onClick={() =>
                       openDeclineClubStaffModal(request.club_staff_id)
                     }
+                    className={styles["decline-button"]}
                   >
                     Reddet
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() =>
+                      openAcceptClubStaffModal(request.club_staff_id)
+                    }
+                    className={styles["accept-button"]}
+                  >
+                    Onay Ver
                   </button>
                 </td>
               </tr>

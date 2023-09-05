@@ -141,12 +141,11 @@ const ExploreClubSubscribersModal = (
         />
       </div>
       <div className={styles["table-container"]}>
-        {selectedClubSubscribers?.filter(
-          (subscriber) => subscriber.player_id !== user?.user?.user_id
-        )?.length > 0 ? (
+        {selectedClubSubscribers?.length > 0 ? (
           <table>
             <thead>
               <tr>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th>İsim</th>
@@ -157,112 +156,113 @@ const ExploreClubSubscribersModal = (
               </tr>
             </thead>
             <tbody>
-              {selectedClubSubscribers
-                ?.filter(
-                  (subscriber) => subscriber.player_id !== user?.user?.user_id
-                )
-                ?.map((subscriber) => (
-                  <tr key={subscriber.player_id}>
-                    <td>
-                      {myFavourites?.find(
+              {selectedClubSubscribers?.map((subscriber) => (
+                <tr key={subscriber.player_id}>
+                  <td>
+                    {myFavourites?.find(
+                      (favourite) =>
+                        favourite.favouritee_id === subscriber.player_id &&
+                        favourite.is_active === true
+                    ) && subscriber.player_id !== user?.user?.user_id ? (
+                      <AiFillStar
+                        onClick={() =>
+                          handleToggleFavourite(subscriber.player_id)
+                        }
+                        className={styles["remove-fav-icon"]}
+                      />
+                    ) : subscriber.player_id !== user?.user?.user_id &&
+                      !myFavourites?.find(
                         (favourite) =>
                           favourite.favouritee_id === subscriber.player_id &&
                           favourite.is_active === true
                       ) ? (
-                        <AiFillStar
-                          onClick={() =>
-                            handleToggleFavourite(subscriber.player_id)
-                          }
-                          className={styles["remove-fav-icon"]}
-                        />
-                      ) : (
-                        <AiOutlineStar
-                          onClick={() =>
-                            handleToggleFavourite(subscriber.player_id)
-                          }
-                          className={styles["add-fav-icon"]}
-                        />
-                      )}
-                    </td>
-                    <td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${subscriber.player_id} `}
-                        className={styles["view-icon"]}
-                      >
-                        <AiOutlineEye />
-                      </Link>
-                    </td>
-                    <td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${subscriber.player_id} `}
-                      >
-                        <img
-                          src={
-                            players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.image
-                              ? `${localUrl}/${
-                                  players?.find(
-                                    (player) =>
-                                      player.user_id === subscriber.player_id
-                                  )?.image
-                                }`
-                              : "/images/icons/avatar.png"
-                          }
-                          alt="subscriber picture"
-                          className={styles["subscriber-image"]}
-                        />
-                      </Link>
-                    </td>
-                    <td>{`${
-                      players?.find(
-                        (player) => player.user_id === subscriber.player_id
-                      )?.fname
-                    } ${
-                      players?.find(
-                        (player) => player.user_id === subscriber.player_id
-                      )?.lname
-                    }`}</td>
-                    <td>
-                      {currentYear -
-                        players.find(
-                          (player) => player.user_id === subscriber.player_id
-                        )?.birth_year}
-                    </td>
-                    <td>
-                      {
+                      <AiOutlineStar
+                        onClick={() =>
+                          handleToggleFavourite(subscriber.player_id)
+                        }
+                        className={styles["add-fav-icon"]}
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                  <td></td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${subscriber.player_id} `}
+                    >
+                      <img
+                        src={
+                          players?.find(
+                            (player) => player.user_id === subscriber.player_id
+                          )?.image
+                            ? `${localUrl}/${
+                                players?.find(
+                                  (player) =>
+                                    player.user_id === subscriber.player_id
+                                )?.image
+                              }`
+                            : "/images/icons/avatar.png"
+                        }
+                        alt="subscriber picture"
+                        className={styles["subscriber-image"]}
+                      />
+                    </Link>
+                  </td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${subscriber.player_id}`}
+                      className={styles["subscriber-name"]}
+                    >
+                      {`${
                         players?.find(
                           (player) => player.user_id === subscriber.player_id
-                        )?.gender
-                      }
-                    </td>
+                        )?.fname
+                      } ${
+                        players?.find(
+                          (player) => player.user_id === subscriber.player_id
+                        )?.lname
+                      }`}
+                    </Link>
+                  </td>
+                  <td>
+                    {currentYear -
+                      players.find(
+                        (player) => player.user_id === subscriber.player_id
+                      )?.birth_year}
+                  </td>
+                  <td>
+                    {
+                      players?.find(
+                        (player) => player.user_id === subscriber.player_id
+                      )?.gender
+                    }
+                  </td>
+                  <td>
+                    {
+                      playerLevels?.find(
+                        (level) =>
+                          level.player_level_id ===
+                          players?.find(
+                            (player) => player.user_id === subscriber.player_id
+                          )?.player_level_id
+                      )?.player_level_name
+                    }
+                  </td>
+                  <td>
+                    {
+                      locations?.find(
+                        (location) =>
+                          location.location_id ===
+                          players?.find(
+                            (player) => player.user_id === subscriber.player_id
+                          )?.location_id
+                      )?.location_name
+                    }
+                  </td>
+                  {isUserPlayer && (
                     <td>
-                      {
-                        playerLevels?.find(
-                          (level) =>
-                            level.player_level_id ===
-                            players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.player_level_id
-                        )?.player_level_name
-                      }
-                    </td>
-                    <td>
-                      {
-                        locations?.find(
-                          (location) =>
-                            location.location_id ===
-                            players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.location_id
-                        )?.location_name
-                      }
-                    </td>
-                    {isUserPlayer && (
-                      <td>
+                      {subscriber.player_id !== user?.user?.user_id && (
                         <Link
                           to={paths.TRAIN_INVITE}
                           state={{
@@ -285,10 +285,12 @@ const ExploreClubSubscribersModal = (
                         >
                           Antreman yap
                         </Link>
-                      </td>
-                    )}
-                    {isUserPlayer && (
-                      <td>
+                      )}
+                    </td>
+                  )}
+                  {isUserPlayer && (
+                    <td>
+                      {subscriber.player_id !== user?.user?.user_id && (
                         <Link
                           to={paths.MATCH_INVITE}
                           state={{
@@ -311,35 +313,33 @@ const ExploreClubSubscribersModal = (
                         >
                           Maç yap
                         </Link>
-                      </td>
-                    )}
-                    {isUserTrainer && (
-                      <td>
-                        <Link
-                          to={paths.LESSON_INVITE}
-                          state={{
-                            fname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.fname,
-                            lname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.lname,
-                            image: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.image,
-                            court_price: "",
-                            user_id: subscriber?.user_id,
-                          }}
-                        >
-                          Derse davet et
-                        </Link>
-                      </td>
-                    )}
-                  </tr>
-                ))}
+                      )}
+                    </td>
+                  )}
+                  {isUserTrainer && (
+                    <td>
+                      <Link
+                        to={paths.LESSON_INVITE}
+                        state={{
+                          fname: players?.find(
+                            (player) => player.user_id === subscriber.player_id
+                          )?.fname,
+                          lname: players?.find(
+                            (player) => player.user_id === subscriber.player_id
+                          )?.lname,
+                          image: players?.find(
+                            (player) => player.user_id === subscriber.player_id
+                          )?.image,
+                          court_price: "",
+                          user_id: subscriber?.user_id,
+                        }}
+                      >
+                        Derse davet et
+                      </Link>
+                    </td>
+                  )}
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (

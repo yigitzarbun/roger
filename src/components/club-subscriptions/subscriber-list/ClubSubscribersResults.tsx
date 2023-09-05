@@ -124,6 +124,7 @@ const ClubSubscribersResults = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["add-subscription-package-container"]}>
+        <h2 className={styles["result-title"]}>Üyeler</h2>
         <button
           onClick={openAddClubSubscriberModal}
           className={styles["add-subscription-package-button"]}
@@ -137,9 +138,7 @@ const ClubSubscribersResults = () => {
           </h2>
         </button>
       </div>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Üyeler</h2>
-      </div>
+      <div className={styles["top-container"]}></div>
       {(isPlayersLoading || isClubSubscriptionsLoading) && <p>Yükleniyor...</p>}
       {players && clubSubscriptions && mySubscriptions.length === 0 && (
         <p>Kayıtlı aktif üye bulunmamaktadır.</p>
@@ -155,8 +154,8 @@ const ClubSubscribersResults = () => {
             <thead>
               <tr>
                 <th>Oyuncu</th>
-                <th>Üye Tipi</th>
                 <th>İsim</th>
+                <th>Üye Tipi</th>
                 <th>Seviye</th>
                 <th>Cinsiyet</th>
                 <th>Yaş</th>
@@ -164,21 +163,78 @@ const ClubSubscribersResults = () => {
                 <th>Üyelik Tipi</th>
                 <th>Üyelik Başlangıç</th>
                 <th>Üyelik Bitiş</th>
-                <th>Üyelik Durumu</th>
               </tr>
             </thead>
             <tbody>
               {mySubscriptions.map((subscription) => (
-                <tr
-                  key={subscription.club_subscription_id}
-                  className={styles["subscription-row"]}
-                >
+                <tr key={subscription.club_subscription_id}>
                   <td>
-                    <img
-                      src={"/images/icons/avatar.png"}
-                      alt="subsciption"
-                      className={styles["subscription-image"]}
-                    />
+                    {users?.find(
+                      (user) => user.user_id === subscription.player_id
+                    )?.user_type_id === 1 ? (
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}1/${subscription.player_id}`}
+                      >
+                        <img
+                          src={
+                            players?.find(
+                              (player) =>
+                                player.user_id === subscription.player_id
+                            )?.image
+                              ? players?.find(
+                                  (player) =>
+                                    player.user_id === subscription.player_id
+                                )?.image
+                              : "/images/icons/avatar.png"
+                          }
+                          alt="subsciption"
+                          className={styles["subscription-image"]}
+                        />
+                      </Link>
+                    ) : (
+                      <img
+                        src="/images/icons/avatar.png"
+                        className={styles["subscription-image"]}
+                      />
+                    )}
+                  </td>
+                  <td>
+                    {users?.find(
+                      (user) => user.user_id === subscription?.player_id
+                    )?.user_type_id === 1 ? (
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}1/${subscription.player_id}`}
+                        className={styles["subscriber-name"]}
+                      >
+                        {`${
+                          players?.find(
+                            (player) =>
+                              player.user_id === subscription.player_id
+                          )?.fname
+                        }
+                        ${
+                          players?.find(
+                            (player) =>
+                              player.user_id === subscription.player_id
+                          )?.lname
+                        }
+                        `}
+                      </Link>
+                    ) : users?.find(
+                        (user) => user.user_id === subscription?.player_id
+                      )?.user_type_id === 5 ? (
+                      `${
+                        clubExternalMembers?.find(
+                          (member) => member.user_id === subscription.player_id
+                        )?.fname
+                      } ${
+                        clubExternalMembers?.find(
+                          (member) => member.user_id === subscription.player_id
+                        )?.lname
+                      }`
+                    ) : (
+                      ""
+                    )}
                   </td>
                   <td>
                     {
@@ -190,37 +246,6 @@ const ClubSubscribersResults = () => {
                           )?.user_type_id
                       )?.user_type_name
                     }
-                  </td>
-                  <td>
-                    {users?.find(
-                      (user) => user.user_id === subscription?.player_id
-                    )?.user_type_id === 1
-                      ? `${
-                          players?.find(
-                            (player) =>
-                              player.user_id === subscription.player_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) =>
-                              player.user_id === subscription.player_id
-                          )?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === subscription?.player_id
-                        )?.user_type_id === 5
-                      ? `${
-                          clubExternalMembers?.find(
-                            (member) =>
-                              member.user_id === subscription.player_id
-                          )?.fname
-                        } ${
-                          clubExternalMembers?.find(
-                            (member) =>
-                              member.user_id === subscription.player_id
-                          )?.lname
-                        }`
-                      : ""}
                   </td>
                   <td>
                     {users?.find(
@@ -329,16 +354,15 @@ const ClubSubscribersResults = () => {
                   <td>{subscription.start_date.slice(0, 10)}</td>
                   <td>{subscription.end_date.slice(0, 10)}</td>
                   <td>
-                    {subscription.is_active === true ? "Aktif" : "Sonlandı"}
-                  </td>
-                  <td>
                     {users?.find(
                       (user) => user.user_id === subscription?.player_id
                     )?.user_type_id === 1 ? (
                       <Link
                         to={`${paths.EXPLORE_PROFILE}1/${subscription.player_id} `}
                       >
-                        Görüntüle
+                        <button className={styles["view-button"]}>
+                          Görüntüle
+                        </button>
                       </Link>
                     ) : users?.find(
                         (user) => user.user_id === subscription?.player_id
@@ -349,6 +373,7 @@ const ClubSubscribersResults = () => {
                             subscription.club_subscription_id
                           )
                         }
+                        className={styles["view-button"]}
                       >
                         Güncelle
                       </button>

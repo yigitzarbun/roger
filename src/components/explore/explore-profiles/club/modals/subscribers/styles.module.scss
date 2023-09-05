@@ -90,16 +90,10 @@
       .match-button:hover {
         background-color: $roger-blue;
       }
-      .view-icon {
-        border: none;
-        border-radius: $roger-border-radius;
-        font-size: 1.5rem;
-        cursor: pointer;
-        text-decoration: none;
+
+      .subscriber-name {
         color: white;
-      }
-      .view-icon:hover {
-        color: $roger-blue;
+        text-decoration: none;
       }
     }
   }

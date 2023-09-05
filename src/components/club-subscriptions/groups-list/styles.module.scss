@@ -12,18 +12,27 @@
   .add-group-container {
     border: none;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
 
     .add-group-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-green;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: black;
+      text-align: center;
       display: flex;
       align-items: center;
-      background-color: $roger-blue;
-      border-radius: $roger-border-radius;
-      padding: $roger-box-padding;
-      border: none;
-      cursor: pointer;
     }
 
+    .add-group-button:hover {
+      background-color: $roger-blue;
+      color: white;
+    }
     .add-icon {
       width: 30px;
     }
@@ -50,14 +59,23 @@
       height: 30px;
     }
 
-    .accept-button {
-      font-weight: bold;
-      border: none;
+    .name {
+      color: white;
       text-decoration: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
+    }
+    .edit-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+    .edit-button:hover {
+      background-color: $roger-blue;
     }
   }
 }

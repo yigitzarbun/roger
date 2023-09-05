@@ -28,24 +28,16 @@
           flex-direction: column;
           row-gap: 10px;
 
-          table {
-            width: 100%;
-            text-align: left;
-            td,
-            tr {
-              vertical-align: ceil($number: 0);
+          .profile-info {
+            display: flex;
+            align-items: center;
+            column-gap: 10px;
+            align-items: start;
+            .icon {
+              font-size: 20px;
             }
-            .profile-info {
-              display: flex;
-              align-items: center;
-              column-gap: 10px;
-              align-items: start;
-              .icon {
-                font-size: 20px;
-              }
-              .info-text {
-                width: 90%;
-              }
+            .info-text {
+              width: 90%;
             }
           }
           .club-info {
@@ -83,7 +75,7 @@
 
       .buttons-container {
         display: flex;
-        justify-content: space-evenly;
+        column-gap: 2vw;
         margin-top: 50px;
         align-items: center;
         .interaction-button {

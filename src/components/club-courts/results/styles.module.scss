@@ -9,31 +9,43 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
 
-  .result-title {
-    font-size: 2rem;
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .result-title {
+      font-size: 2rem;
+    }
   }
 
   table {
     width: 100%;
     text-align: left;
 
-    .court-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
     .court-image {
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
-    .accept-button {
-      font-weight: bold;
+    .name {
+      color: white;
       text-decoration: none;
+    }
+    .edit-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+    .edit-button:hover {
+      background-color: $roger-blue;
     }
   }
 }

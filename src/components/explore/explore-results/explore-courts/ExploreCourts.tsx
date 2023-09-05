@@ -83,8 +83,8 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
               <th>Kapanış</th>
               <th>Yüzey</th>
               <th>Mekan</th>
-              <th>Fiyat - Üye (Saat / TL)</th>
-              <th>Fiyat (Saat / TL)</th>
+              <th>Fiyat</th>
+              <th>Fiyat (misafir)</th>
               <th>Kulüp</th>
               <th>Konum</th>
               <th>Statüsü</th>
@@ -155,6 +155,14 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                   }
                 </td>
                 <td>{court.is_active ? "Aktif" : "Bloke"}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
+                    className={styles["book-button"]}
+                  >
+                    Rezerve et
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

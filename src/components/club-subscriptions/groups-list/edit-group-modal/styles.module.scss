@@ -56,6 +56,22 @@
         }
       }
     }
+    .more-players-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: $roger-green;
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      color: black;
+      width: 250px;
+      cursor: pointer;
+      margin-top: 4vh;
+    }
+    .more-players-container:hover {
+      background-color: $roger-blue;
+      color: white;
+    }
     .form-button {
       padding: $roger-box-padding;
       border-radius: $roger-border-radius;

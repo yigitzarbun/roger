@@ -4,7 +4,6 @@ import styles from "./styles.module.scss";
 
 import ClubCourtseHero from "../../components/club-courts/hero/ClubCourtsHero";
 import ClubCourtsSearch from "../../components/club-courts/search/ClubCourtsSearch";
-import AddCourtButton from "../../components/club-courts/add-court-button/AddCourtButton";
 import ClubCourtsResults from "../../components/club-courts/results/ClubCourtsResults";
 import AddCourtModal from "../../components/club-courts/add-court-modal/AddCourtModal";
 import EditCourtModal from "../../components/club-courts/edit-court-modal/EditCourtModal";
@@ -68,12 +67,13 @@ const ClubCourts = () => {
         structureTypeId={structureTypeId}
         price={price}
       />
-      <AddCourtButton openAddCourtModal={openAddCourtModal} />
+
       <ClubCourtsResults
         surfaceTypeId={surfaceTypeId}
         structureTypeId={structureTypeId}
         price={price}
         openEditCourtModal={openEditCourtModal}
+        openAddCourtModal={openAddCourtModal}
       />
       <AddCourtModal
         isAddCourtModalOpen={isAddCourtModalOpen}

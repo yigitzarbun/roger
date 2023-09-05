@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 
 import { FaWindowClose } from "react-icons/fa";
+import { AiOutlineUserAdd } from "react-icons/ai";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -174,6 +175,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
             <input
               {...register("student_group_name", { required: true })}
               type="text"
+              placeholder="örn. Yıldızlar Grubu"
             />
             {errors.student_group_name && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
@@ -370,7 +372,13 @@ const AddGroupModal = (props: AddGroupModalProps) => {
             </div>
           </div>
         ) : (
-          <button onClick={handleAddMoreUsers}>Daha fazla oyuncu ekle</button>
+          <div
+            onClick={handleAddMoreUsers}
+            className={styles["more-players-container"]}
+          >
+            <AiOutlineUserAdd />
+            Daha fazla oyuncu ekle
+          </div>
         )}
 
         <button type="submit" className={styles["form-button"]}>

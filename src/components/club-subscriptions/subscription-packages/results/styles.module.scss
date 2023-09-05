@@ -9,31 +9,33 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
 
-  .result-title {
-    font-size: 2rem;
+  .top-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .result-title {
+      font-size: 2rem;
+    }
   }
 
   table {
     width: 70%;
     text-align: left;
+  }
+  .edit-package-button {
+    padding: 10px;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 150px;
+    background-color: $roger-black-dark;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+  }
 
-    .court-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-    .court-image {
-      width: 30px;
-      height: 30px;
-    }
-
-    .accept-button {
-      font-weight: bold;
-      text-decoration: none;
-      border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-blue;
-      cursor: pointer;
-    }
+  .edit-package-button:hover {
+    background-color: $roger-blue;
   }
 }

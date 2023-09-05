@@ -45,10 +45,14 @@ courtsRouter.post(
 );
 
 courtsRouter.put(
-  "/:court_id",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await courtsModel.update(req.body);
+      const updatedCourtData = req.body;
+      if (req.file) {
+        updatedCourtData.image = req.file.path;
+      }
+      await courtsModel.update(updatedCourtData);
       const updatedCourt = await courtsModel.getById(req.body.court_id);
       res.status(200).json(updatedCourt);
     } catch (error) {

@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: 50%;
+  width: 70vw;
   row-gap: 2vh;
   margin: 70px auto;
   background-color: $roger-box-bg-color;
@@ -30,6 +30,23 @@
     }
     .close-icon:hover {
       color: $roger-red;
+    }
+    .delete-subscriber-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-red;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: $roger-black-dark;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .delete-subscriber-button:hover {
+      background-color: $roger-black-dark;
+      color: white;
     }
   }
   .form-container {

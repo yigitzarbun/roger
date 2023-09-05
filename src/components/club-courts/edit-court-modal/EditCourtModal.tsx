@@ -37,6 +37,7 @@ type FormValues = {
   club_id: number;
   is_active: boolean;
   price_hour_non_subscriber?: number;
+  image?: string;
 };
 
 // TO DO: set selectedCourtId to null after editing court
@@ -64,6 +65,15 @@ const EditCourtModal = (props: EditCourtModalProps) => {
 
   const selectedCourt = courts?.find((court) => court.court_id === court_id);
 
+  const existingImage = selectedCourt?.image ? selectedCourt?.image : null;
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
+
   const [openingTime, setOpeningTime] = useState<string>("00:00");
   const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setOpeningTime(event.target.value);
@@ -73,6 +83,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -88,6 +99,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         court_surface_type_id: Number(formData.court_surface_type_id),
         is_active: formData.is_active,
         club_id: user.clubDetails.club_id,
+        image: selectedImage ? selectedImage : existingImage,
         price_hour_non_subscriber: formData?.price_hour_non_subscriber
           ? Number(formData.price_hour_non_subscriber)
           : null,
@@ -117,6 +129,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
       });
     }
   }, [selectedCourt, courts, reset]);
+
   useEffect(() => {
     if (isSuccess) {
       refetch();
@@ -128,7 +141,8 @@ const EditCourtModal = (props: EditCourtModalProps) => {
   if (
     isCourtsLoading ||
     isCourtStructureTypesLoading ||
-    isCourtSurfaceTypesLoading
+    isCourtSurfaceTypesLoading ||
+    isClubsLoading
   ) {
     <PageLoading />;
   }
@@ -149,6 +163,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
+        encType="multipart/form-data"
       >
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
@@ -289,6 +304,23 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               )}
             </div>
           )}
+        </div>
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Kort Resmi</label>
+            <div className={styles["court-picture-container"]}>
+              <img
+                src={existingImage ? existingImage : "/images/icons/avatar.png"}
+                className={styles["court-image"]}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
+          </div>
         </div>
         <button type="submit" className={styles["form-button"]}>
           Tamamla

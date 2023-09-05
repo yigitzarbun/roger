@@ -413,19 +413,30 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                   .map((court) => (
                     <tr key={court.court_id}>
                       <td>
-                        {
-                          <img
-                            src={
-                              court.image
-                                ? `${localUrl}/${court.image}`
-                                : "/images/icons/avatar.png"
-                            }
-                            alt="court picture"
-                            className={styles["court-image"]}
-                          />
-                        }
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                        >
+                          {
+                            <img
+                              src={
+                                court.image
+                                  ? `${localUrl}/${court.image}`
+                                  : "/images/icons/avatar.png"
+                              }
+                              alt="court picture"
+                              className={styles["court-image"]}
+                            />
+                          }
+                        </Link>
                       </td>
-                      <td>{court.court_name}</td>
+                      <td>
+                        <Link
+                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
+                          className={styles["court-name"]}
+                        >
+                          {court.court_name}
+                        </Link>
+                      </td>
                       <td>
                         {
                           courtSurfaceTypes?.find(
@@ -454,14 +465,6 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                       )}
 
                       <td>{court.price_hour}</td>
-                      <td>
-                        <Link
-                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                          className={styles["view-icon"]}
-                        >
-                          <AiOutlineEye />
-                        </Link>
-                      </td>
                     </tr>
                   ))}
               </tbody>

@@ -6,11 +6,13 @@ import { FaWindowClose } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import {
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 
 interface DeclineClubStaffModalProps {
   isDeclineClubStaffModalOpen: boolean;
@@ -30,6 +32,10 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
 
   const selectedClubStaff = clubStaff?.find(
     (staff) => staff.club_staff_id === selectedClubStaffId
+  );
+
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
   );
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
@@ -55,7 +61,7 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
     }
   }, [isSuccess]);
 
-  if (isClubStaffLoading) {
+  if (isClubStaffLoading || isTrainersLoading) {
     return <PageLoading />;
   }
 
@@ -72,7 +78,29 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
           className={styles["close-icon"]}
         />
       </div>
-      <h4>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</h4>
+      <div className={styles["bottom-container"]}>
+        <img
+          src={
+            trainers?.find(
+              (trainer) =>
+                trainer.user_id ===
+                clubStaff?.find(
+                  (staff) => staff.club_staff_id === selectedClubStaffId
+                )?.user_id
+            )?.image
+              ? trainers?.find(
+                  (trainer) =>
+                    trainer.user_id ===
+                    clubStaff?.find(
+                      (staff) => staff.club_staff_id === selectedClubStaffId
+                    )?.user_id
+                )?.image
+              : "images/icons/avatar.png"
+          }
+          className={styles["trainer-image"]}
+        />
+        <h4>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu reddetmek istediğinize emin misiniz?`}</h4>
+      </div>
       <button onClick={handleDeclineClubStaff} className={styles["button"]}>
         Reddet
       </button>

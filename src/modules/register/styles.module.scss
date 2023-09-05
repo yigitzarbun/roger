@@ -11,6 +11,10 @@
     font-size: 0.9rem;
     color: $roger-text-color;
     cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 30px;
+    color: $roger-yellow;
   }
 
   .change-user-type-button:hover {

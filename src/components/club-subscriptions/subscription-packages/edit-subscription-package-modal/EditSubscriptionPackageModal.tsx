@@ -122,7 +122,7 @@ const EditSubscriptionPackageModal = (
           className={styles["close-icon"]}
         />
       </div>
-      <p>
+      <h3>
         {
           clubSubscriptionTypes?.find(
             (type) =>
@@ -130,7 +130,7 @@ const EditSubscriptionPackageModal = (
               selectedPackage?.club_subscription_type_id
           )?.club_subscription_type_name
         }
-      </p>
+      </h3>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}

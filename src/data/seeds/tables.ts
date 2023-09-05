@@ -214,15 +214,15 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("court_structure_types").insert([
     {
       court_structure_type_id: 1,
-      court_structure_type_name: "Kapalı (İç mekan)",
+      court_structure_type_name: "Kapalı",
     },
     {
       court_structure_type_id: 2,
-      court_structure_type_name: "Açık (Dış mekan)",
+      court_structure_type_name: "Açık",
     },
     {
       court_structure_type_id: 3,
-      court_structure_type_name: "Hibrit (Üstü açılır - kapanır)",
+      court_structure_type_name: "Hibrit",
     },
   ]);
 

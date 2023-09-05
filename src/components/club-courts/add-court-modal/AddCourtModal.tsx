@@ -160,8 +160,6 @@ const AddCourtModal = (props: AddCourtModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Kort Yüzeyi</label>
             <select {...register("court_surface_type_id", { required: true })}>
@@ -179,6 +177,8 @@ const AddCourtModal = (props: AddCourtModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Mekan Tipi</label>
             <select
@@ -198,8 +198,6 @@ const AddCourtModal = (props: AddCourtModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Açılış Saati</label>
             <select
@@ -247,16 +245,12 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             )}
           </div>
         </div>
-        {clubs?.find((club) => club.user_id === user?.user?.user_id)
-          ?.higher_price_for_non_subscribers && (
-          <div className={styles["input-outer-container"]}>
+        <div className={styles["input-outer-container"]}>
+          {clubs?.find((club) => club.user_id === user?.user?.user_id)
+            ?.higher_price_for_non_subscribers && (
             <div className={styles["input-container"]}>
               <label>Üye Olmayanlar İçin Fiyat (TL / saat)</label>
-              <p className={styles["description-text"]}>
-                Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
-                kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı
-                eklemek için profilinizdeki kurallar bölümünü ziyaret edin.
-              </p>
+
               <input
                 {...register("price_hour_non_subscriber", { required: true })}
                 type="number"
@@ -268,14 +262,22 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                 </span>
               )}
             </div>
+          )}
+          <div className={styles["input-container"]}>
+            <label>Kort Resmi</label>
+            <input
+              type="file"
+              accept="image/*"
+              name="image"
+              onChange={handleImageChange}
+            />
           </div>
-        )}
-        <input
-          type="file"
-          accept="image/*"
-          name="image"
-          onChange={handleImageChange}
-        />
+        </div>
+        <p className={styles["description-text"]}>
+          Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
+          kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı eklemek
+          için profilinizdeki kurallar bölümünü ziyaret edin.
+        </p>
         <button
           type="submit"
           className={styles["form-button"]}

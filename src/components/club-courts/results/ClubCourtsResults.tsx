@@ -1,23 +1,35 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import styles from "./styles.module.scss";
+import paths from "../../../routing/Paths";
 
 import { useAppSelector } from "../../../store/hooks";
+
+import PageLoading from "../../../components/loading/PageLoading";
+import AddCourtButton from "../add-court-button/AddCourtButton";
 
 import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
-import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
   structureTypeId: number;
   price: number;
   openEditCourtModal: (value: number) => void;
+  openAddCourtModal: () => void;
 }
 const ClubCourtsResults = (props: ClubCourtResultsProps) => {
-  const { surfaceTypeId, structureTypeId, price, openEditCourtModal } = props;
+  const {
+    surfaceTypeId,
+    structureTypeId,
+    price,
+    openEditCourtModal,
+    openAddCourtModal,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -78,6 +90,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Kortlar</h2>
+        <AddCourtButton openAddCourtModal={openAddCourtModal} />
       </div>
       {isCourtsLoading && <p>Yükleniyor...</p>}
       {isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>}
@@ -105,8 +118,8 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                 <th>Mekan</th>
                 <th>Açılış</th>
                 <th>Kapanış</th>
-                <th>Fiyat (saat / TL)</th>
-                <th>Fiyat - Üye Olmayanlar (saat / TL)</th>
+                <th>Fiyat </th>
+                <th>Fiyat - (misafir)</th>
                 <th>Durum</th>
               </tr>
             </thead>
@@ -114,13 +127,26 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
               {filteredCourts.map((court) => (
                 <tr key={court.court_id} className={styles["court-row"]}>
                   <td>
-                    <img
-                      src="/images/icons/avatar.png"
-                      alt="kort"
-                      className={styles["court-image"]}
-                    />
+                    <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}>
+                      <img
+                        src={
+                          court?.image
+                            ? court?.image
+                            : "/images/icons/avatar.png"
+                        }
+                        alt="kort"
+                        className={styles["court-image"]}
+                      />
+                    </Link>
                   </td>
-                  <td>{court.court_name}</td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
+                      className={styles.name}
+                    >
+                      {court.court_name}
+                    </Link>
+                  </td>
                   <td>
                     {
                       courtSurfaceTypes.find(
@@ -158,7 +184,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                   </td>
                   <td>{court.is_active ? "Aktif" : "Bloke"}</td>
                   <td onClick={() => openEditCourtModal(court.court_id)}>
-                    Düzenle
+                    <button className={styles["edit-button"]}>Düzenle</button>
                   </td>
                 </tr>
               ))}

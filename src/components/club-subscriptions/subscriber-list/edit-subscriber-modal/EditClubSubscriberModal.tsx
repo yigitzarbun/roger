@@ -244,7 +244,12 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
       <div className={styles["top-container"]}>
         <div>
           <h1 className={styles.title}>Üye Düzenle</h1>
-          <button onClick={handleDeleteExternalMember}>Üyeyi sil</button>
+          <button
+            onClick={handleDeleteExternalMember}
+            className={styles["delete-subscriber-button"]}
+          >
+            Üyeyi sil
+          </button>
         </div>
         <FaWindowClose
           onClick={closeEditClubSubscriberModal}
