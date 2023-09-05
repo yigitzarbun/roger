@@ -327,7 +327,12 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       <div className={styles["top-container"]}>
         <div>
           <h1 className={styles.title}>Kort Rezervasyonunu Düzenle</h1>
-          <button onClick={handleDeleteBooking}>Rezervasyonu sil</button>
+          <button
+            onClick={handleDeleteBooking}
+            className={styles["delete-button"]}
+          >
+            Rezervasyonu sil
+          </button>
         </div>
         <FaWindowClose
           onClick={closeEditBookingModal}

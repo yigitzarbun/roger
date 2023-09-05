@@ -31,6 +31,22 @@
     .close-icon:hover {
       color: $roger-red;
     }
+    .delete-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-red;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .delete-button:hover {
+      background-color: $roger-black-dark;
+    }
   }
   .form-container {
     display: flex;

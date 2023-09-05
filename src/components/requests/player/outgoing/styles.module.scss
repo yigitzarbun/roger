@@ -33,6 +33,10 @@
       object-fit: cover;
     }
 
+    .name {
+      color: white;
+      text-decoration: none;
+    }
     .cancel-button {
       padding: 10px;
       border-radius: $roger-border-radius;

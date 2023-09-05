@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 
+import { Link } from "react-router-dom";
+
+import Paths from "../../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -19,6 +23,7 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 
 const PlayerRequestsOutgoing = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -29,6 +34,7 @@ const PlayerRequestsOutgoing = () => {
     refetch,
   } = useGetBookingsQuery({});
 
+  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
@@ -104,7 +110,8 @@ const PlayerRequestsOutgoing = () => {
     isPlayersLoading ||
     isPlayerLevelTypesLoading ||
     isTrainerExperienceTypesLoading ||
-    isPaymentsLoading
+    isPaymentsLoading ||
+    isUsersLoading
   ) {
     return <PageLoading />;
   }
@@ -144,41 +151,81 @@ const PlayerRequestsOutgoing = () => {
                     {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                   </td>
                   <td className={styles["vertical-center"]}>
-                    <img
-                      src={
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )
-                          ? players?.find(
-                              (player) => player.user_id === booking.invitee_id
-                            )?.image
-                          : "/images/players/player1.png"
-                      }
-                      className={styles["player-image"]}
-                    />
+                    <Link
+                      to={`${Paths.EXPLORE_PROFILE}${
+                        users?.find(
+                          (user) => user.user_id === booking.invitee_id
+                        )?.user_type_id === 1
+                          ? 1
+                          : users?.find(
+                              (user) => user.user_id === booking.invitee_id
+                            )?.user_type_id === 2
+                          ? 2
+                          : ""
+                      }/${booking.invitee_id}`}
+                    >
+                      <img
+                        src={
+                          players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )
+                            ? players?.find(
+                                (player) =>
+                                  player.user_id === booking.invitee_id
+                              )?.image
+                            : trainers?.find(
+                                (trainer) =>
+                                  trainer.user_id === booking.invitee_id
+                              )?.image
+                            ? trainers?.find(
+                                (trainer) =>
+                                  trainer.user_id === booking.invitee_id
+                              )?.image
+                            : "/images/players/player1.png"
+                        }
+                        className={styles["player-image"]}
+                      />
+                    </Link>
                   </td>
                   <td>
-                    {booking.event_type_id === 1 || booking.event_type_id === 2
-                      ? `${
+                    {booking.event_type_id === 1 ||
+                    booking.event_type_id === 2 ? (
+                      <Link
+                        to={`${Paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}
+                        className={styles.name}
+                      >
+                        {`${
                           players?.find(
                             (player) => player.user_id === booking.invitee_id
                           )?.fname
-                        } ${
+                        }
+                        ${
                           players?.find(
                             (player) => player.user_id === booking.invitee_id
                           )?.lname
-                        }`
-                      : booking.event_type_id === 3
-                      ? `${
+                        }
+                        `}
+                      </Link>
+                    ) : booking.event_type_id === 3 ? (
+                      <Link
+                        to={`${Paths.EXPLORE_PROFILE}2/${booking.invitee_id}`}
+                        className={styles.name}
+                      >
+                        {`${
                           trainers?.find(
                             (trainer) => trainer.user_id === booking.invitee_id
                           )?.fname
-                        } ${
+                        }
+                        ${
                           trainers?.find(
                             (trainer) => trainer.user_id === booking.invitee_id
                           )?.lname
-                        }`
-                      : ""}
+                        }
+                        `}
+                      </Link>
+                    ) : (
+                      ""
+                    )}
                   </td>
                   <td>
                     {booking.event_type_id === 1 || booking.event_type_id === 2

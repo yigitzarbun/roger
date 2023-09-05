@@ -59,7 +59,8 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
               (type) =>
                 type.event_type_id === 1 ||
                 type.event_type_id === 2 ||
-                type.event_type_id === 3
+                type.event_type_id === 3 ||
+                type.event_type_id === 6
             )
             .map((type) => (
               <option key={type.event_type_id} value={type.event_type_id}>

@@ -9,19 +9,26 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
 
-  .add-booking-package-container {
+  .add-booking-container {
     border: none;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
 
-    .add-booking-package-button {
+    .add-booking-button {
       display: flex;
       align-items: center;
-      background-color: $roger-blue;
+      background-color: $roger-green;
       border-radius: $roger-border-radius;
-      padding: $roger-box-padding;
+      padding: 10px;
       border: none;
       cursor: pointer;
+      color: black;
+      font-size: 0.8rem;
+    }
+    .add-booking-button:hover {
+      background-color: $roger-blue;
+      color: white;
     }
 
     .add-icon {
@@ -40,22 +47,30 @@
     width: 100%;
     text-align: left;
 
-    .player-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
-    }
-    .player-image {
-      width: 50px;
-      height: 50px;
+    .image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
-    .cancel-button {
-      font-weight: bold;
+    .name {
+      color: white;
+      text-decoration: none;
+    }
+    .edit-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
       border: none;
-      background-color: transparent;
-      font-size: 1rem;
-      color: $roger-red;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
       cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+    .edit-button:hover {
+      background-color: $roger-blue;
     }
   }
 }

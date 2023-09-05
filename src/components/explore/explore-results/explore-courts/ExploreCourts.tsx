@@ -160,7 +160,11 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                     to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
                     className={styles["book-button"]}
                   >
-                    Rezerve et
+                    {isUserPlayer || isUserTrainer
+                      ? " Rezerve et"
+                      : isUserClub
+                      ? "Görüntüle"
+                      : ""}
                   </Link>
                 </td>
               </tr>

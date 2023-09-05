@@ -84,7 +84,7 @@ const ExploreClubSubscriptionsModal = (
                 <th>Abonelik Süresi (Ay)</th>
                 <th>Üye Sayısı</th>
                 <th>Fiyat (TL)</th>
-                <th>Üyelik</th>
+                <th>{isUserPlayer && "Üyelik"}</th>
               </tr>
             </thead>
             <tbody>

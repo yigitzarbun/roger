@@ -39,14 +39,13 @@
       font-size: 0.8rem;
       cursor: pointer;
       text-decoration: none;
-      color: $roger-black-dark;
+      color: white;
       text-align: center;
       margin-top: 10px;
     }
 
     .delete-subscriber-button:hover {
       background-color: $roger-black-dark;
-      color: white;
     }
   }
   .form-container {
