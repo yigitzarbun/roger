@@ -27,6 +27,7 @@ export type FormValues = {
   gender: string;
   player_level_id: number;
   image?: string;
+  repeat_password: string;
 };
 
 const PlayerRegisterForm = () => {
@@ -50,11 +51,14 @@ const PlayerRegisterForm = () => {
     useGetUserStatusTypesQuery({});
   const { refetch } = useGetPlayersQuery({});
 
+  const [password, setPassword] = useState("");
+
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -72,7 +76,6 @@ const PlayerRegisterForm = () => {
     try {
       // register user
       const response = await addUser(userRegisterData);
-
       if ("data" in response) {
         // get newly added user from db
         const newUser = response.data;
@@ -108,6 +111,7 @@ const PlayerRegisterForm = () => {
       refetch();
     }
   }, [isSuccess]);
+
   if (
     isLocationsLoading ||
     isPlayerLevelsLoading ||
@@ -116,6 +120,7 @@ const PlayerRegisterForm = () => {
   ) {
     return <div>Loading...</div>;
   }
+
   return (
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court3.jpeg" />
@@ -251,6 +256,7 @@ const PlayerRegisterForm = () => {
               <input
                 {...register("password", { required: true })}
                 type="password"
+                onChange={(e) => setPassword(e.target.value)}
               />
               {errors.password && (
                 <span className={styles["error-field"]}>
@@ -259,12 +265,35 @@ const PlayerRegisterForm = () => {
               )}
             </div>
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            name="image"
-            onChange={handleImageChange}
-          />
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Şifre</label>
+              <input
+                {...register("repeat_password", {
+                  required: true,
+                  validate: {
+                    passEqual: (value) =>
+                      value === getValues().password || "Passwords don't match",
+                  },
+                })}
+                type="password"
+              />
+              {errors.repeat_password && (
+                <span className={styles["error-field"]}>
+                  Şifreyi doğru girdiğinizden emin olun
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Profil Resmi</label>
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
+          </div>
           <button type="submit" className={styles["form-button"]}>
             {i18n.t("registerButtonText")}
           </button>

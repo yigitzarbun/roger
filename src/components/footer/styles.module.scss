@@ -1,0 +1,73 @@
+@import "/src/common/styles/colors.scss";
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 10vh 0 5vh 0;
+  row-gap: 20px;
+  border-top: 1px solid white;
+  padding-top: 5vh;
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    .intro-container {
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+    }
+
+    .navigation-container {
+      nav {
+        display: flex;
+        width: 30%;
+        column-gap: 15px;
+        .left-nav {
+          display: flex;
+          flex-direction: column;
+        }
+        .right-nav {
+          display: flex;
+          flex-direction: column;
+        }
+        a {
+          color: white;
+          text-decoration: none;
+        }
+        a:hover {
+          color: $roger-blue;
+        }
+      }
+    }
+
+    .social-container {
+      display: flex;
+      column-gap: 10px;
+    }
+    .corporate-container {
+      display: flex;
+      flex-direction: column;
+
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      a:hover {
+        color: $roger-blue;
+      }
+    }
+  }
+  .bottom-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .copyright-container {
+      display: flex;
+      align-items: center;
+      column-gap: 5px;
+    }
+    .sponsor-logo {
+      width: 150px;
+    }
+  }
+}
