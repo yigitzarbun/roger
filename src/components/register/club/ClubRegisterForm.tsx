@@ -27,6 +27,7 @@ export type FormValues = {
   club_bio_description: string;
   club_type_id: number;
   image?: string;
+  repeat_password: string;
 };
 
 const ClubRegisterForm = () => {
@@ -55,6 +56,7 @@ const ClubRegisterForm = () => {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -217,12 +219,35 @@ const ClubRegisterForm = () => {
               )}
             </div>
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            name="image"
-            onChange={handleImageChange}
-          />
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Şifre Tekrar</label>
+              <input
+                {...register("repeat_password", {
+                  required: true,
+                  validate: {
+                    passEqual: (value) =>
+                      value === getValues().password || "Passwords don't match",
+                  },
+                })}
+                type="password"
+              />
+              {errors.repeat_password && (
+                <span className={styles["error-field"]}>
+                  Şifreyi doğru girdiğinizden emin olun
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Profil Resmi</label>
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
+          </div>
           <button type="submit" className={styles["form-button"]}>
             {i18n.t("registerButtonText")}
           </button>

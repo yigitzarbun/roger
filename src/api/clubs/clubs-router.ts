@@ -48,7 +48,11 @@ clubsRouter.put(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await clubsModel.update(req.body);
+      const updatedClubData = req.body;
+      if (req.file) {
+        updatedClubData.image = req.file.path;
+      }
+      await clubsModel.update(updatedClubData);
       const updatedClub = await clubsModel.getById(req.body.club_id);
       res.status(200).json(updatedClub);
     } catch (error) {

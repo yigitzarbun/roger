@@ -3,7 +3,7 @@
 
 .club-rules-container {
   background-color: $roger-box-bg-color;
-  width: 48%;
+  width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
@@ -20,14 +20,35 @@
     font-size: 1rem;
   }
 
-  table {
-    width: 100%;
-    text-align: left;
+  .tables-container {
+    display: flex;
+    column-gap: 15px;
+    .player-rules-table,
+    .lesson-rules-table,
+    .court-rules-table {
+      width: 100%;
+      text-align: left;
+      border: 1px solid white;
+      border-radius: $roger-border-radius;
+      .green-text {
+        color: $roger-green;
+      }
+      .red-text {
+        color: $roger-red;
+      }
 
-    .rule-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
+      td,
+      tr {
+        vertical-align: top;
+      }
     }
+  }
+
+  .player-rules-table:hover,
+  .lesson-rules-table:hover,
+  .court-rules-table:hover {
+    border-color: $roger-blue;
+    cursor: pointer;
   }
 
   button {

@@ -92,7 +92,7 @@ const ClubBankAccountDetails = () => {
 
   return (
     <div className={styles["club-bank-details-container"]}>
-      <h2>Hesap ve Ödeme Bilgileri</h2>
+      <h2>Banka Hesabı ve Ödeme</h2>
       <div className={styles["nav-container"]}>
         <button
           onClick={() => handleDisplay("bankDetails")}
@@ -102,7 +102,7 @@ const ClubBankAccountDetails = () => {
               : styles["inactive-button"]
           }
         >
-          Kart Bilgileri
+          Hesap Bilgileri
         </button>
         <button
           onClick={() => handleDisplay("payments")}
@@ -116,7 +116,7 @@ const ClubBankAccountDetails = () => {
         </button>
       </div>
       {display === "bankDetails" && (
-        <>
+        <div className={styles.section}>
           {bankDetailsExist ? (
             <>
               <p>{`Banka Adı: ${
@@ -130,9 +130,9 @@ const ClubBankAccountDetails = () => {
               </button>
             </>
           ) : (
-            <div>
+            <div className={styles.section}>
               <h3>Kayıtlı banka hesabınız bulunmamaktadır</h3>
-              <p>
+              <p className={styles["bank-missing-text"]}>
                 Kort kiralamak ve üyelik satışı yapmak için banka hesap
                 bilgilerinizi eklemeniz gerekmektedir
               </p>
@@ -141,12 +141,12 @@ const ClubBankAccountDetails = () => {
               </button>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <>
+          <div className={styles.section}>
             <table>
               <thead>
                 <tr>
@@ -154,12 +154,12 @@ const ClubBankAccountDetails = () => {
                   <th>Durum</th>
                   <th>Konu</th>
                   <th>Tutar</th>
-                  <th>Gönderen 1</th>
-                  <th>Gönderen 2</th>
+                  <th>Oyuncu 1</th>
+                  <th>Oyuncu 2</th>
                 </tr>
               </thead>
               <tbody>
-                {myPayments?.map((payment) => (
+                {myPayments?.slice(myPayments.length - 1)?.map((payment) => (
                   <tr
                     key={payment.payment_id}
                     className={styles["payment-row"]}
@@ -281,10 +281,12 @@ const ClubBankAccountDetails = () => {
                 ))}
               </tbody>
             </table>
-            <Link to={paths.PAYMENTS}>Tümünü Görüntüle</Link>
-          </>
+            <Link to={paths.PAYMENTS}>
+              <button>Tümünü Görüntüle</button>
+            </Link>
+          </div>
         ) : (
-          <p>Henüz ödemeniz bulunmamaktadır.</p>
+          <h3>Henüz ödemeniz bulunmamaktadır</h3>
         ))}
       <AddClubBankDetailsModal
         isModalOpen={isAddBankModalOpen}

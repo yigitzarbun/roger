@@ -51,8 +51,6 @@ const PlayerRegisterForm = () => {
     useGetUserStatusTypesQuery({});
   const { refetch } = useGetPlayersQuery({});
 
-  const [password, setPassword] = useState("");
-
   const {
     register,
     handleSubmit,
@@ -256,7 +254,6 @@ const PlayerRegisterForm = () => {
               <input
                 {...register("password", { required: true })}
                 type="password"
-                onChange={(e) => setPassword(e.target.value)}
               />
               {errors.password && (
                 <span className={styles["error-field"]}>
@@ -267,7 +264,7 @@ const PlayerRegisterForm = () => {
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Şifre</label>
+              <label>Şifre Tekrar</label>
               <input
                 {...register("repeat_password", {
                   required: true,

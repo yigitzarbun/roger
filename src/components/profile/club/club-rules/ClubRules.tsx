@@ -34,94 +34,148 @@ const ClubRules = () => {
   return (
     <div className={styles["club-rules-container"]}>
       <h2>Kulüp Kuralları</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Antreman ve Maç Kuralları</th>
-            <th>Durum</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className={styles["rule-row"]}>
-            <td>Oyuncuların kort kiralamak için üye olmasına gerek yok</td>
-            <td>
-              {clubDetails?.is_player_subscription_required === false
-                ? "Evet"
-                : "Hayır"}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <table>
-        <thead>
-          <tr>
-            <th>Ders Kuralları</th>
-            <th>Durum</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className={styles["rule-row"]}>
-            <td>
-              Eğtimenin kulüp çalışanı veya oyuncunun üye olmasına gerek yok
-            </td>
-            <td>
-              {clubDetails?.is_trainer_subscription_required === false &&
-              clubDetails?.is_player_lesson_subscription_required === false
-                ? "Evet"
-                : "Hayır"}
-            </td>
-          </tr>
-          <tr className={styles["rule-row"]}>
-            <td>
-              Eğitmenin kulüp çalışanı değil, oyuncu üye ise kort kiralanabilir
-            </td>
-            <td>
-              {clubDetails?.is_trainer_subscription_required === false &&
-              clubDetails?.is_player_lesson_subscription_required === true
-                ? "Evet"
-                : "Hayır"}
-            </td>
-          </tr>
-          <tr className={styles["rule-row"]}>
-            <td>
-              Eğitmenin kulüp çalışanı, oyuncu üye değil ise kort kiralanabilir{" "}
-            </td>
-            <td>
-              {clubDetails?.is_trainer_subscription_required === true &&
-              clubDetails?.is_player_lesson_subscription_required === false
-                ? "Evet"
-                : "Hayır"}
-            </td>
-          </tr>
-          <tr className={styles["rule-row"]}>
-            <td>Eğitmenin kulüp çalışanı, oyuncunun üye olması zorunludur</td>
-            <td>
-              {clubDetails?.is_trainer_subscription_required === true &&
-              clubDetails?.is_player_lesson_subscription_required === true
-                ? "Evet"
-                : "Hayır"}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <table>
-        <thead>
-          <tr>
-            <th>Kort Fiyat Kuralları</th>
-            <th>Durum</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className={styles["rule-row"]}>
-            <td>Üye olmayanlara farklı fiyat politikası uygulanır</td>
-            <td>
-              {clubDetails?.higher_price_for_non_subscribers === true
-                ? "Evet"
-                : "Hayır"}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className={styles["tables-container"]}>
+        <table
+          className={styles["player-rules-table"]}
+          onClick={handleOpenModal}
+        >
+          <thead>
+            <tr>
+              <th>Antreman ve Maç Kuralları</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className={styles["rule-row"]}>
+              <td>Oyuncuların kort kiralamak için üye olmasına gerek yok</td>
+              <td
+                className={
+                  clubDetails?.is_player_subscription_required === false
+                    ? styles["green-text"]
+                    : styles["red-text"]
+                }
+              >
+                {clubDetails?.is_player_subscription_required === false
+                  ? "Evet"
+                  : "Hayır"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table
+          className={styles["lesson-rules-table"]}
+          onClick={handleOpenModal}
+        >
+          <thead>
+            <tr>
+              <th>Ders Kuralları</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className={styles["rule-row"]}>
+              <td>
+                Eğtimenin kulüp çalışanı veya oyuncunun üye olmasına gerek yok
+              </td>
+              <td
+                className={
+                  clubDetails?.is_trainer_subscription_required === false &&
+                  clubDetails?.is_player_lesson_subscription_required === false
+                    ? styles["green-text"]
+                    : styles["red-text"]
+                }
+              >
+                {clubDetails?.is_trainer_subscription_required === false &&
+                clubDetails?.is_player_lesson_subscription_required === false
+                  ? "Evet"
+                  : "Hayır"}
+              </td>
+            </tr>
+            <tr className={styles["rule-row"]}>
+              <td>
+                Eğitmenin kulüp çalışanı değil, oyuncu üye ise kort
+                kiralanabilir
+              </td>
+              <td
+                className={
+                  clubDetails?.is_trainer_subscription_required === false &&
+                  clubDetails?.is_player_lesson_subscription_required === true
+                    ? styles["green-text"]
+                    : styles["red-text"]
+                }
+              >
+                {clubDetails?.is_trainer_subscription_required === false &&
+                clubDetails?.is_player_lesson_subscription_required === true
+                  ? "Evet"
+                  : "Hayır"}
+              </td>
+            </tr>
+            <tr className={styles["rule-row"]}>
+              <td>
+                Eğitmenin kulüp çalışanı, oyuncu üye değil ise kort
+                kiralanabilir
+              </td>
+              <td
+                className={
+                  clubDetails?.is_trainer_subscription_required === true &&
+                  clubDetails?.is_player_lesson_subscription_required === false
+                    ? styles["green-text"]
+                    : styles["red-text"]
+                }
+              >
+                {clubDetails?.is_trainer_subscription_required === true &&
+                clubDetails?.is_player_lesson_subscription_required === false
+                  ? "Evet"
+                  : "Hayır"}
+              </td>
+            </tr>
+            <tr className={styles["rule-row"]}>
+              <td>Eğitmenin kulüp çalışanı, oyuncunun üye olması zorunludur</td>
+              <td
+                className={
+                  clubDetails?.is_trainer_subscription_required === true &&
+                  clubDetails?.is_player_lesson_subscription_required === true
+                    ? styles["green-text"]
+                    : styles["red-text"]
+                }
+              >
+                {clubDetails?.is_trainer_subscription_required === true &&
+                clubDetails?.is_player_lesson_subscription_required === true
+                  ? "Evet"
+                  : "Hayır"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table
+          className={styles["court-rules-table"]}
+          onClick={handleOpenModal}
+        >
+          <thead>
+            <tr>
+              <th>Kort Fiyat Kuralları</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className={styles["rule-row"]}>
+              <td>Üye olmayanlara farklı fiyat politikası uygulanır</td>
+              <td
+                className={
+                  clubDetails?.higher_price_for_non_subscribers === true
+                    ? styles["green-text"]
+                    : styles["red-text"]
+                }
+              >
+                {clubDetails?.higher_price_for_non_subscribers === true
+                  ? "Evet"
+                  : "Hayır"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <button onClick={handleOpenModal}>Düzenle</button>
       <UpdateClubRulesModal
         isModalOpen={isModalOpen}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import ReactModal from "react-modal";
 
@@ -38,7 +38,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
 
   const selectedClub = clubs?.find((club) => club.user_id === user?.user_id);
 
-  const [updateClub, { isSuccess }] = useUpdateClubMutation({});
+  const [updateClub, { data, isSuccess }] = useUpdateClubMutation({});
 
   const {
     register,
@@ -56,7 +56,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
   const onSubmit: SubmitHandler<Club> = (formData) => {
     const clubBankDetails = {
       ...selectedClub,
-      iban: Number(formData?.iban),
+      iban: formData?.iban,
       name_on_bank_account: formData?.name_on_bank_account,
       bank_id: Number(formData?.bank_id),
     };
@@ -64,9 +64,14 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && data) {
       refetch();
       handleCloseModal();
+      reset({
+        iban: data.iban,
+        name_on_bank_account: data.name_on_bank_account,
+        bank_id: data.bank_id,
+      });
     }
   }, [isSuccess]);
 
@@ -94,9 +99,24 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>IBAN no</label>
-            <input {...register("iban", { required: true })} type="number" />
+            <input
+              {...register("iban", {
+                required: "Bu alan zorunludur",
+                minLength: {
+                  value: 26,
+                  message: "Bilgileri doğru girdiğinizden emin olun",
+                },
+                maxLength: {
+                  value: 26,
+                  message: "Bilgileri doğru girdiğinizden emin olun",
+                },
+              })}
+              type="number"
+            />
             {errors.iban && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+              </span>
             )}
           </div>
           <div className={styles["input-container"]}>

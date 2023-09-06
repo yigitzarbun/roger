@@ -58,11 +58,67 @@ export const clubsSlice = createApi({
       },
     }),
     updateClub: builder.mutation({
-      query: (updates) => ({
-        url: "/clubs",
-        method: "PUT",
-        body: updates,
-      }),
+      query: (club) => {
+        const formData = new FormData();
+        formData.append("club_id", club.club_id);
+        formData.append("club_name", club.club_name);
+        formData.append("location_id", club.location_id);
+        formData.append("club_type_id", club.club_type_id);
+        formData.append("user_id", club.user_id);
+
+        if (club.image) {
+          formData.append("image", club.image);
+        }
+        if (club.club_address) {
+          formData.append("club_address", club.club_address);
+        }
+        if (club.club_bio_description) {
+          formData.append("club_bio_description", club.club_bio_description);
+        }
+        if (club.phone_number) {
+          formData.append("phone_number", club.phone_number.toString());
+        }
+        if (club.is_trainer_subscription_required) {
+          formData.append(
+            "is_trainer_subscription_required",
+            club.is_trainer_subscription_required
+          );
+        }
+        if (club.is_player_lesson_subscription_required) {
+          formData.append(
+            "is_player_lesson_subscription_required",
+            club.is_player_lesson_subscription_required
+          );
+        }
+        if (club.is_player_subscription_required) {
+          formData.append(
+            "is_player_subscription_required",
+            club.is_player_subscription_required
+          );
+        }
+        if (club.iban) {
+          formData.append("iban", club.iban.toString());
+        }
+        if (club.bank_id) {
+          formData.append("bank_id", club.bank_id.toString());
+        }
+        if (club.name_on_bank_account) {
+          formData.append("name_on_bank_account", club.name_on_bank_account);
+        }
+        if (club.higher_price_for_non_subscribers) {
+          formData.append(
+            "higher_price_for_non_subscribers",
+            club.higher_price_for_non_subscribers
+          );
+        }
+        const requestObject = {
+          url: "/clubs",
+          method: "PUT",
+          body: formData,
+        };
+
+        return requestObject;
+      },
     }),
   }),
 });

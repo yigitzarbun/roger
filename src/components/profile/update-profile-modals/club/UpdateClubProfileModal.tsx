@@ -38,10 +38,20 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
   const { data: clubTypes, isLoading: isClubTypesLoading } =
     useGetClubTypesQuery({});
 
+  const existingImage = profileData?.image ? profileData?.image : null;
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<Club>({
     defaultValues: {
@@ -52,6 +62,7 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
         : "",
       location_id: profileData?.location_id,
       club_type_id: profileData?.club_type_id,
+      image: profileData?.image,
     },
   });
 
@@ -67,6 +78,7 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
       location_id: Number(formData?.location_id),
       club_type_id: Number(formData?.club_type_id),
       user_id: profileData?.user_id,
+      image: selectedImage ? selectedImage : existingImage,
     };
     updateClub(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
@@ -101,6 +113,7 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
+        encType="multipart/form-data"
       >
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
@@ -149,6 +162,21 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
           <div className={styles["input-container"]}>
             <label>Açıklama</label>
             <input {...register("club_bio_description")} type="text" />
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Profil Resmi</label>
+            <div className={styles["profile-picture-container"]}>
+              <img
+                src={existingImage ? existingImage : "/images/icons/avatar.png"}
+                className={styles["profile-image"]}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
           </div>
         </div>
         <button type="submit" className={styles["form-button"]}>

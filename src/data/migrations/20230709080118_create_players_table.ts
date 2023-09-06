@@ -135,7 +135,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("club_name").unique().notNullable();
       table.boolean("is_premium").defaultTo(false).notNullable();
       table.integer("phone_number");
-      table.integer("iban");
+      table.string("iban");
       table.string("name_on_bank_account");
       table
         .boolean("higher_price_for_non_subscribers")
@@ -195,7 +195,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("phone_number");
       table.string("image");
       table.string("trainer_bio_description");
-      table.integer("iban");
+      table.string("iban");
       table.string("name_on_bank_account");
       table.boolean("is_premium").defaultTo(false).notNullable();
       table

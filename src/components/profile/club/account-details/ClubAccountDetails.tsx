@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+import { AiOutlineEdit, AiOutlineMail, AiFillInfoCircle } from "react-icons/ai";
+import { FaLocationDot } from "react-icons/fa6";
+import { CgTennis } from "react-icons/cg";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -40,32 +43,67 @@ const ClubAccountDetails = () => {
   }
   return (
     <div className={styles["club-account-details-container"]}>
-      <h2>Hesap Bilgileri</h2>
-      <button onClick={handleOpenModal}>Düzenle</button>
-      <img src={user?.clubDetails?.image} />
-      <p>{`Kulüp Adı: ${user?.clubDetails.club_name}`}</p>
-      <p>{`E-posta: ${user?.user.email}`}</p>
-      <p>{`Açıklama: ${
-        user?.clubDetails.club_bio_description
-          ? user?.clubDetails.club_bio_description
-          : "Belirtilmedi"
-      }`}</p>
-      <p>{`Konum: ${
-        locations?.find(
-          (location) =>
-            location.location_id === Number(user?.clubDetails.location_id)
-        )?.location_name
-      }`}</p>
-      <p>{`Adres: ${
-        user?.clubDetails.club_address
-          ? user?.clubDetails.club_address
-          : "Adres belirtilmedi"
-      }`}</p>
-      <p>{`Kulüp Türü: ${
-        clubTypes?.find(
-          (type) => type.club_type_id === Number(user?.clubDetails.club_type_id)
-        )?.club_type_name
-      }`}</p>
+      <div className={styles["title-container"]}>
+        <h2>Profil</h2>
+        <AiOutlineEdit
+          onClick={handleOpenModal}
+          className={styles["edit-button"]}
+        />
+      </div>
+      <div className={styles["profile-data-container"]}>
+        <img
+          src={
+            clubs?.find((club) => club.user_id === user?.user?.user_id)?.image
+              ? clubs?.find((club) => club.user_id === user?.user?.user_id)
+                  ?.image
+              : "/images/icons/avatar.png"
+          }
+          alt="club-image"
+          className={styles["profile-image"]}
+        />
+        <div className={styles["profile-info-container"]}>
+          <h2>{`${user?.clubDetails.club_name}`}</h2>
+          <div className={styles["profile-info"]}>
+            <AiOutlineMail className={styles.icon} />
+            <p>{`${user?.user.email}`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaLocationDot className={styles.icon} />
+            <p>{`${
+              locations?.find(
+                (location) =>
+                  location.location_id === Number(user?.clubDetails.location_id)
+              )?.location_name
+            }`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaLocationDot className={styles.icon} />
+            <p>{`${
+              user?.clubDetails.club_address
+                ? user?.clubDetails.club_address
+                : "Adres belirtilmedi"
+            }`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <CgTennis className={styles.icon} />
+            <p>{`${
+              clubTypes?.find(
+                (type) =>
+                  type.club_type_id === Number(user?.clubDetails.club_type_id)
+              )?.club_type_name
+            }`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <AiFillInfoCircle />
+            <p>{`${
+              user?.clubDetails.club_bio_description
+                ? user?.clubDetails.club_bio_description
+                : "Belirtilmedi"
+            }`}</p>
+          </div>
+        </div>
+      </div>
+
       {
         <UpdateClubProfileModall
           isModalOpen={isModalOpen}

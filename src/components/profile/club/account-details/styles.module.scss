@@ -11,25 +11,54 @@
   justify-content: space-between;
   row-gap: 2vh;
 
-  h2 {
-    font-weight: bold;
-    font-size: 2rem;
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      font-weight: bold;
+      font-size: 2rem;
+    }
+    .edit-button {
+      font-size: 2rem;
+      color: $roger-blue;
+      cursor: pointer;
+    }
+    .edit-button:hover {
+      color: white;
+    }
   }
 
   p {
     font-size: 1rem;
   }
-
-  button {
-    background-color: $roger-black-dark;
-    border: none;
+  .profile-image {
+    border-radius: 50%;
     width: 200px;
-    padding: $roger-button-padding;
-    border-radius: $roger-border-radius;
-    font-size: 1rem;
-    cursor: pointer;
+    height: 200px;
+    object-fit: cover;
   }
-  button:hover {
-    background-color: $roger-black-light;
+
+  .profile-data-container {
+    display: flex;
+    column-gap: 50px;
+    .profile-info-container {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+      .profile-info {
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
+        align-items: center;
+        .icon {
+          font-size: 20px;
+        }
+        .info-text {
+          width: 90%;
+        }
+      }
+    }
   }
 }
