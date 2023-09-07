@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -249,21 +252,36 @@ const TrainerRequestsIncoming = () => {
                   )}
                 </td>
                 <td>
-                  <img
-                    src="/images/players/player1.png"
-                    className={styles["trainer-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}>
+                    <img
+                      src={
+                        players?.find(
+                          (player) => player.user_id === booking.inviter_id
+                        )?.image
+                          ? players?.find(
+                              (player) => player.user_id === booking.inviter_id
+                            )?.image
+                          : "/images/icons/avatar.png"
+                      }
+                      className={styles["player-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>
-                  {`${
-                    players?.find(
-                      (player) => player.user_id === booking.inviter_id
-                    )?.fname
-                  } ${
-                    players?.find(
-                      (player) => player.user_id === booking.inviter_id
-                    )?.lname
-                  }`}
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}
+                    className={styles["player-name"]}
+                  >
+                    {`${
+                      players?.find(
+                        (player) => player.user_id === booking.inviter_id
+                      )?.fname
+                    } ${
+                      players?.find(
+                        (player) => player.user_id === booking.inviter_id
+                      )?.lname
+                    }`}
+                  </Link>
                 </td>
                 <td>
                   {
@@ -322,7 +340,7 @@ const TrainerRequestsIncoming = () => {
                     onClick={() => handleOpenAcceptModal(booking)}
                     className={styles["accept-button"]}
                   >
-                    Kabul et
+                    Onay
                   </button>
                 </td>
                 <td>

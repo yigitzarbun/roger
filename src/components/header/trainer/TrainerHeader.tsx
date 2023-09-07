@@ -47,6 +47,16 @@ const TrainerHeader = () => {
         >
           Öğrenciler
         </NavLink>
+        <NavLink
+          to={paths.PERFORMANCE}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-trainer"]}`
+              : `${styles["nav-link-trainer"]}`
+          }
+        >
+          Performans
+        </NavLink>
       </div>
     </nav>
   );

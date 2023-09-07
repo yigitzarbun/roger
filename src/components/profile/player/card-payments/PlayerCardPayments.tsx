@@ -117,9 +117,9 @@ const PlayerCardPayments = () => {
         </button>
       </div>
       {display === "card" && (
-        <>
+        <div className={styles.section}>
           {cardDetailsExist ? (
-            <div className={styles["card-details-container"]}>
+            <div className={styles.section}>
               <p className={styles["card-exists-text"]}>
                 {`${(selectedPlayer?.card_number).slice(
                   (selectedPlayer?.card_number).length - 4
@@ -134,7 +134,7 @@ const PlayerCardPayments = () => {
               </button>
             </div>
           ) : (
-            <div className={styles["card-details-container"]}>
+            <div className={styles.section}>
               <h4>Kayıtlı kart bulunmamaktadır</h4>
               <p className={styles["card-missing-text"]}>
                 Antreman, maç ve özel ders etkinlikleri ile kulüp üyeliği
@@ -148,11 +148,11 @@ const PlayerCardPayments = () => {
               </button>
             </div>
           )}
-        </>
+        </div>
       )}
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <div className={styles["payments-container"]}>
+          <div className={styles.section}>
             <table>
               <thead>
                 <tr>

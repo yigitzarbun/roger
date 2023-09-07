@@ -105,7 +105,6 @@ const AddClubBankDetailsModal = (props: AddClubBankDetailsModallProps) => {
             />
             {errors.iban && (
               <span className={styles["error-field"]}>
-                {" "}
                 Bilgileri eksiksiz ve doğru girdiğinizden emin olun
               </span>
             )}

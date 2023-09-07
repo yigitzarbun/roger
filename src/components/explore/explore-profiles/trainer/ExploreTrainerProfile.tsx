@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { FaGenderless, FaCalendarDays, FaLocationDot } from "react-icons/fa6";
-import { FaUserFriends } from "react-icons/fa";
 import { CgTennis } from "react-icons/cg";
+import { FaUserFriends } from "react-icons/fa";
 import { PiMoney } from "react-icons/pi";
 import { MdSportsTennis } from "react-icons/md";
 

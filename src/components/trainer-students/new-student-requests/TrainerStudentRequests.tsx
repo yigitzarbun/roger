@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
@@ -99,29 +103,36 @@ const TrainerStudentRequests = () => {
             {myStudents?.map((student) => (
               <tr key={student.student_id}>
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={
-                      players?.find(
-                        (player) => player.user_id === student.player_id
-                      )?.image
-                        ? players?.find(
-                            (player) => player.user_id === student.player_id
-                          )?.image
-                        : "/images/icons/avatar.png"
-                    }
-                    alt={student.name}
-                    className={styles["student-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}>
+                    <img
+                      src={
+                        players?.find(
+                          (player) => player.user_id === student.player_id
+                        )?.image
+                          ? players?.find(
+                              (player) => player.user_id === student.player_id
+                            )?.image
+                          : "/images/icons/avatar.png"
+                      }
+                      alt={student.name}
+                      className={styles["student-image"]}
+                    />
+                  </Link>
                 </td>
-                <td>{`${
-                  players?.find(
-                    (player) => player.user_id === student.player_id
-                  )?.fname
-                } ${
-                  players?.find(
-                    (player) => player.user_id === student.player_id
-                  )?.lname
-                }`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}
+                    className={styles["student-name"]}
+                  >{`${
+                    players?.find(
+                      (player) => player.user_id === student.player_id
+                    )?.fname
+                  } ${
+                    players?.find(
+                      (player) => player.user_id === student.player_id
+                    )?.lname
+                  }`}</Link>
+                </td>
                 <td>
                   {currentYear -
                     players?.find(
@@ -178,7 +189,7 @@ const TrainerStudentRequests = () => {
           </tbody>
         </table>
       ) : (
-        <p>Henüz aktif öğrenci bulunmamaktadır</p>
+        <p>Yeni öğrenci başvurusu bulunmamaktadır</p>
       )}
     </div>
   );

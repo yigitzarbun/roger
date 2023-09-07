@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
@@ -27,8 +27,11 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
     selectedClubStaffId,
   } = props;
 
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
+  const {
+    data: clubStaff,
+    isLoading: isClubStaffLoading,
+    refetch: refetchStaffData,
+  } = useGetClubStaffQuery({});
 
   const selectedClubStaff = clubStaff?.find(
     (staff) => staff.club_staff_id === selectedClubStaffId
@@ -40,23 +43,17 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
-  const [updatedClubStaffData, setUpdatedClubStaffData] = useState(null);
-
   const handleDeclineClubStaff = () => {
-    setUpdatedClubStaffData({
+    const updatedStaffData = {
       ...selectedClubStaff,
       employment_status: "declined",
-    });
+    };
+    updateClubStaff(updatedStaffData);
   };
 
   useEffect(() => {
-    if (updatedClubStaffData) {
-      updateClubStaff(updatedClubStaffData);
-    }
-  }, [updatedClubStaffData]);
-
-  useEffect(() => {
     if (isSuccess) {
+      refetchStaffData();
       closeDeclineClubStaffModal();
     }
   }, [isSuccess]);

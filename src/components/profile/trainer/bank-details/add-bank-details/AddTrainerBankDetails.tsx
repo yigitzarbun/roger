@@ -92,9 +92,24 @@ const AddTrainerBankDetailsModal = (
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>IBAN no</label>
-            <input {...register("iban", { required: true })} type="number" />
+            <input
+              {...register("iban", {
+                required: "Bu alan zorunludur",
+                minLength: {
+                  value: 26,
+                  message: "Bilgileri doğru girdiğinizden emin olun",
+                },
+                maxLength: {
+                  value: 26,
+                  message: "Bilgileri doğru girdiğinizden emin olun",
+                },
+              })}
+              type="number"
+            />
             {errors.iban && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+              </span>
             )}
           </div>
           <div className={styles["input-container"]}>

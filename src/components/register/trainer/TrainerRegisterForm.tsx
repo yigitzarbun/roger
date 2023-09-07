@@ -36,6 +36,7 @@ export type FormValues = {
   price_hour: number;
   club_id: number;
   image: string;
+  repeat_password;
 };
 
 const TrainerRegisterForm = () => {
@@ -89,6 +90,7 @@ const TrainerRegisterForm = () => {
     handleSubmit,
     reset,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -390,12 +392,35 @@ const TrainerRegisterForm = () => {
               )}
             </div>
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            name="image"
-            onChange={handleImageChange}
-          />
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Şifre Tekrar</label>
+              <input
+                {...register("repeat_password", {
+                  required: true,
+                  validate: {
+                    passEqual: (value) =>
+                      value === getValues().password || "Passwords don't match",
+                  },
+                })}
+                type="password"
+              />
+              {errors.repeat_password && (
+                <span className={styles["error-field"]}>
+                  Şifreyi doğru girdiğinizden emin olun
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Profil Resmi</label>
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
+          </div>
           <button type="submit" className={styles["form-button"]}>
             {i18n.t("registerButtonText")}
           </button>

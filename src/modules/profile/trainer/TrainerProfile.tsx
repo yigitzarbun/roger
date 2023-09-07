@@ -5,6 +5,7 @@ import TrainerProfileHero from "../../../components/profile/trainer/hero/Trainer
 import TrainerAccountDetails from "../../../components/profile/trainer/account-details/TrainerAccountDetails";
 import TrainerBankAccountDetails from "../../../components/profile/trainer/bank-details/TrainerBankAccountDetails";
 import TrainerStats from "../../../components/profile/trainer/stats/TrainerStats";
+import TrainerFavourites from "../../../components/profile/trainer/favourites/TrainerFavourites";
 
 const TrainerProfile = () => {
   return (
@@ -13,6 +14,7 @@ const TrainerProfile = () => {
       <TrainerAccountDetails />
       <TrainerBankAccountDetails />
       <TrainerStats />
+      <TrainerFavourites />
     </div>
   );
 };

@@ -44,7 +44,7 @@ const Header = () => {
             : `${styles["logo-title"]}`
         }
       >
-        Roger
+        Raket
       </NavLink>
       {isLoggedIn && <SearchBar />}
       {isUserPlayer && <PlayerHeader />}

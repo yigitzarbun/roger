@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 
+import { AiOutlineEdit, AiOutlineMail } from "react-icons/ai";
+import { FaGenderless, FaCalendarDays, FaLocationDot } from "react-icons/fa6";
+import { CgTennis } from "react-icons/cg";
+import { FaUserFriends } from "react-icons/fa";
+import { PiMoney } from "react-icons/pi";
+import { MdSportsTennis } from "react-icons/md";
+
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -12,26 +19,10 @@ import { useGetTrainerEmploymentTypesQuery } from "../../../../api/endpoints/Tra
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 
 const TrainerAccountDetails = () => {
   const user = useAppSelector((store) => store?.user?.user);
-
-  const profileData = {
-    trainer_id: user?.trainerDetails.trainer_id,
-    fname: user?.trainerDetails.fname,
-    lname: user?.trainerDetails.lname,
-    birth_year: user?.trainerDetails.birth_year,
-    gender: user?.trainerDetails.gender,
-    price_hour: user?.trainerDetails.price_hour,
-    phone_number: user?.trainerDetails.phone_number,
-    image: user?.trainerDetails.image,
-    trainer_bio_description: user?.trainerDetails.trainer_bio_description,
-    club_id: user?.trainerDetails.club_id,
-    trainer_experience_type_id: user?.trainerDetails.trainer_experience_type_id,
-    trainer_employment_type_id: user?.trainerDetails.trainer_employment_type_id,
-    location_id: user?.trainerDetails.location_id,
-    user_id: user?.user.user_id,
-  };
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -51,6 +42,31 @@ const TrainerAccountDetails = () => {
   const { data: clubStaff, isLoading: isClubStaffLoading } =
     useGetClubStaffQuery({});
 
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
+
+  const currentTrainer = trainers?.find(
+    (trainer) => trainer.user_id === user?.user?.user_id
+  );
+
+  const profileData = {
+    trainer_id: currentTrainer?.trainer_id,
+    fname: currentTrainer?.fname,
+    lname: currentTrainer?.lname,
+    birth_year: currentTrainer?.birth_year,
+    gender: currentTrainer?.gender,
+    price_hour: currentTrainer?.price_hour,
+    phone_number: currentTrainer?.phone_number,
+    image: currentTrainer?.image,
+    trainer_bio_description: currentTrainer?.trainer_bio_description,
+    club_id: currentTrainer?.club_id,
+    trainer_experience_type_id: currentTrainer?.trainer_experience_type_id,
+    trainer_employment_type_id: currentTrainer?.trainer_employment_type_id,
+    location_id: currentTrainer?.location_id,
+    user_id: user?.user.user_id,
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -69,56 +85,99 @@ const TrainerAccountDetails = () => {
     isTrainerEmploymentTypesLoading ||
     isTrainerExperienceTypesLoading ||
     isClubsLoading ||
-    isClubStaffLoading
+    isClubStaffLoading ||
+    isTrainersLoading
   ) {
     return <PageLoading />;
   }
   return (
     <div className={styles["trainer-account-details-container"]}>
-      <h2>Hesap Bilgileri</h2>
-      <button onClick={handleOpenModal}>Düzenle</button>
-      <img src={user?.trainerDetails?.image} />
-      <p>{`İsim: ${user?.trainerDetails.fname} ${user?.trainerDetails.lname}`}</p>
-      <p>{`E-posta: ${user?.user.email}`}</p>
-      <p>{`Doğum yılı: ${user?.trainerDetails.birth_year}`}</p>
-      <p>{`Cinsiyet: ${user?.trainerDetails.gender}`}</p>
-      <p>{`Konum: ${
-        locations?.find(
-          (location) =>
-            location.location_id === Number(user?.trainerDetails.location_id)
-        )?.location_name
-      }`}</p>
-      <p>{`Seviye: ${
-        trainerExperienceTypes?.find(
-          (type) =>
-            type.trainer_experience_type_id ===
-            Number(user?.trainerDetails.trainer_experience_type_id)
-        )?.trainer_experience_type_name
-      }`}</p>
-      <p>{`Ders ücreti: ${user?.trainerDetails.price_hour} TL / Saat`}</p>
-      <p>{`Çalışma şekli: ${
-        trainerEmploymentTypes?.find(
-          (type) =>
-            type.trainer_employment_type_id ===
-            user?.trainerDetails.trainer_employment_type_id
-        )?.trainer_employment_type_name
-      }`}</p>
-      {(user?.trainerDetails.trainer_employment_type_id === 2 ||
-        user?.trainerDetails.trainer_employment_type_id === 3) &&
-        isTrainerClubsStaff === "accepted" && (
-          <p>{`Kulüp: ${
-            clubs?.find((club) => club.club_id === user?.trainerDetails.club_id)
-              ?.club_name
-          }`}</p>
-        )}
-      {(user?.trainerDetails.trainer_employment_type_id === 2 ||
-        user?.trainerDetails.trainer_employment_type_id === 3) &&
-        isTrainerClubsStaff === "pending" && (
-          <p>{`Kulüp: ${
-            clubs?.find((club) => club.club_id === user?.trainerDetails.club_id)
-              ?.club_name
-          } (onay bekleniyor)`}</p>
-        )}
+      <div className={styles["title-container"]}>
+        <h2>Profil</h2>
+        <AiOutlineEdit
+          onClick={handleOpenModal}
+          className={styles["edit-button"]}
+        />
+      </div>
+      <div className={styles["profile-data-container"]}>
+        <img
+          src={
+            currentTrainer?.image
+              ? currentTrainer?.image
+              : "/images/icons/avatar.png"
+          }
+          alt="trainer-image"
+          className={styles["profile-image"]}
+        />
+        <div className={styles["profile-info-container"]}>
+          <h2>{`${user?.trainerDetails.fname} ${user?.trainerDetails.lname}`}</h2>
+          <div className={styles["profile-info"]}>
+            <AiOutlineMail className={styles.icon} />
+            <p>{`${user?.user.email}`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaCalendarDays className={styles.icon} />
+            <p>{`${currentTrainer?.birth_year}`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaGenderless className={styles.icon} />
+            <p>{`${currentTrainer?.gender}`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaLocationDot className={styles.icon} />
+            <p>{`${
+              locations?.find(
+                (location) =>
+                  location.location_id === Number(currentTrainer?.location_id)
+              )?.location_name
+            }`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <CgTennis className={styles.icon} />
+            <p>{`${
+              trainerExperienceTypes?.find(
+                (type) =>
+                  type.trainer_experience_type_id ===
+                  Number(user?.trainerDetails.trainer_experience_type_id)
+              )?.trainer_experience_type_name
+            }`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <PiMoney className={styles.icon} />
+            <p>{`${user?.trainerDetails.price_hour} TL / Saat`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <FaUserFriends className={styles.icon} />
+            <p>{`${
+              trainerEmploymentTypes?.find(
+                (type) =>
+                  type.trainer_employment_type_id ===
+                  user?.trainerDetails.trainer_employment_type_id
+              )?.trainer_employment_type_name
+            }`}</p>
+          </div>
+          <div className={styles["profile-info"]}>
+            <MdSportsTennis className={styles.icon} />
+            {(currentTrainer?.trainer_employment_type_id === 2 ||
+              currentTrainer?.trainer_employment_type_id === 3) &&
+            isTrainerClubsStaff === "accepted" ? (
+              <p>{`Kulüp: ${
+                clubs?.find((club) => club.club_id === currentTrainer?.club_id)
+                  ?.club_name
+              }`}</p>
+            ) : (currentTrainer?.trainer_employment_type_id === 2 ||
+                currentTrainer?.trainer_employment_type_id === 3) &&
+              isTrainerClubsStaff === "pending" ? (
+              <p>{`Kulüp: ${
+                clubs?.find((club) => club.club_id === currentTrainer?.club_id)
+                  ?.club_name
+              } (onay bekleniyor)`}</p>
+            ) : (
+              <p>Başvurunuz kulüp tarafından kabul edilmedi.</p>
+            )}
+          </div>
+        </div>
+      </div>
       <UpdateTrainerProfileModal
         isModalOpen={isModalOpen}
         handleCloseModal={handleCloseModal}

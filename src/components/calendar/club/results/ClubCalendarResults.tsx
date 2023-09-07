@@ -217,7 +217,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                               (trainer) =>
                                 trainer.user_id === booking.inviter_id
                             )?.image
-                          : "/images/players/player1.png"
+                          : "/images/icons/avatar.png"
                       }
                       className={styles.image}
                     />
@@ -343,7 +343,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                                     group.user_id === booking.invitee_id
                                 )?.club_id
                             )?.image
-                          : "/images/players/player1.png"
+                          : "/images/icons/avatar.png"
                       }
                       className={styles.image}
                     />

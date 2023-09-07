@@ -27,8 +27,11 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
     selectedClubStaffId,
   } = props;
 
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
+  const {
+    data: clubStaff,
+    isLoading: isClubStaffLoading,
+    refetch: refetchClubStaff,
+  } = useGetClubStaffQuery({});
 
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
@@ -40,24 +43,17 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
-  const [updatedClubStaffData, setUpdatedClubStaffData] = useState(null);
-
   const handleAcceptClubStaff = () => {
-    setUpdatedClubStaffData({
+    const updatedStaffData = {
       ...selectedClubStaff,
       employment_status: "accepted",
-    });
-    updateClubStaff(updatedClubStaffData);
+    };
+    updateClubStaff(updatedStaffData);
   };
 
   useEffect(() => {
-    if (updatedClubStaffData) {
-      updateClubStaff(updatedClubStaffData);
-    }
-  }, [updatedClubStaffData]);
-
-  useEffect(() => {
     if (isSuccess) {
+      refetchClubStaff();
       closeAcceptClubStaffModal();
     }
   }, [isSuccess]);

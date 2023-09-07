@@ -88,7 +88,10 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
 
   const isEventTraining = bookingData?.event_type_id === 1;
   const isEventMatch = bookingData?.event_type_id === 2;
-  const isEventLesson = bookingData?.event_type_id === 3;
+  const isEventLesson =
+    bookingData?.event_type_id === 3 ||
+    bookingData?.event_type_id === 5 ||
+    bookingData?.event_type_id === 6;
 
   if (
     isUsersLoading ||
@@ -145,7 +148,13 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             <td>
               <img
                 src={
-                  opposition?.image
+                  bookingData?.event_type_id === 5 &&
+                  clubs?.find((club) => club.club_id === bookingData?.club_id)
+                    ?.image
+                    ? clubs?.find(
+                        (club) => club.club_id === bookingData?.club_id
+                      )?.image
+                    : opposition?.image
                     ? opposition?.image
                     : "images/icons/avatar.png"
                 }
@@ -187,11 +196,14 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             {/* ders ücreti */}
             {isEventLesson && (
               <td>
-                {
-                  payments?.find(
-                    (payment) => payment.payment_id === bookingData?.payment_id
-                  )?.lesson_price
-                }
+                {payments?.find(
+                  (payment) => payment.payment_id === bookingData?.payment_id
+                )?.lesson_price
+                  ? payments?.find(
+                      (payment) =>
+                        payment.payment_id === bookingData?.payment_id
+                    )?.lesson_price
+                  : "-"}
               </td>
             )}
             {/* toplam ücret */}

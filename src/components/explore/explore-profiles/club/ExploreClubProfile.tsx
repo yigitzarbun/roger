@@ -43,6 +43,7 @@ import ExploreClubCourtsModal from "./modals/courts/ExploreClubCourtsModal";
 import ExploreClubTrainerModal from "./modals/trainers/ExploreClubTrainersModal";
 import ExploreClubSubscribersModal from "./modals/subscribers/ExploreClubSubscribersModal";
 import ExploreClubSubscriptionsModal from "./modals/subscriptions/ExploreClubSubscriptionsModal";
+import ClubEmploymentModal from "../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
 
 interface ExploreClubProfileProps {
   user_id: string;
@@ -80,9 +81,6 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     isLoading: isClubStaffLoading,
     refetch: clubStaffRefetch,
   } = useGetClubStaffQuery({});
-
-  const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
-    useAddClubStaffMutation({});
 
   const {
     data: clubSubscriptionTypes,
@@ -141,27 +139,6 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
       confirmedClubTrainers.push(trainerDetails);
     }
   });
-
-  const handleAddClubStaff = (club_id: number) => {
-    if (isUserTrainer) {
-      const clubStaffData = {
-        fname: user?.trainerDetails?.fname,
-        lname: user?.trainerDetails?.lname,
-        birth_year: user?.trainerDetails?.birth_year,
-        gender: user?.trainerDetails?.gender,
-        employment_status: "pending",
-        gross_salary_month: null,
-        iban: null,
-        bank_id: null,
-        phone_number: null,
-        image: null,
-        club_id: club_id,
-        club_staff_role_type_id: 2,
-        user_id: user?.user?.user_id,
-      };
-      addClubStaff(clubStaffData);
-    }
-  };
 
   // favourites
   const {
@@ -273,6 +250,16 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     return activeSubscription ? true : false;
   };
 
+  const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
+  const [trainerEmploymentClubId, setTrainerEmploymentClubId] = useState(null);
+  const openEmploymentModal = (club_id: number) => {
+    setTrainerEmploymentClubId(club_id);
+    setEmploymentModalOpen(true);
+  };
+  const closeEmploymentModal = () => {
+    setEmploymentModalOpen(false);
+  };
+
   const [isCourtsModalOpen, setIsCourtsModalOpen] = useState(false);
   const openCourtsModal = () => {
     setIsCourtsModalOpen(true);
@@ -311,12 +298,6 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
       favouritesRefetch();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
-
-  useEffect(() => {
-    if (isAddClubStaffSuccess) {
-      clubStaffRefetch();
-    }
-  }, [isAddClubStaffSuccess]);
 
   if (
     isClubsLoading ||
@@ -491,26 +472,30 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
             {isUserTrainer &&
             clubStaff?.find(
               (staff) =>
-                staff.club_id === selectedClub.club_id &&
+                staff.club_id === selectedClub?.club_id &&
                 staff.user_id === user?.user?.user_id &&
                 staff.employment_status === "accepted"
-            )
-              ? "Bu kulüpte çalışıyorsun"
-              : isUserTrainer &&
-                clubStaff?.find(
-                  (staff) =>
-                    staff.club_id === selectedClub.club_id &&
-                    staff.user_id === user?.user?.user_id &&
-                    staff.employment_status === "pending"
-                )
-              ? "Başvurun henüz yanıtlanmadı"
-              : isUserTrainer && (
-                  <button
-                    onClick={() => handleAddClubStaff(selectedClub.club_id)}
-                  >
-                    Bu kulüpte çalıştığına dair kulübe başvur
-                  </button>
-                )}
+            ) ? (
+              <p className={styles["employed-text"]}>Bu kulüpte çalışıyorsun</p>
+            ) : isUserTrainer &&
+              clubStaff?.find(
+                (staff) =>
+                  staff.club_id === selectedClub?.club_id &&
+                  staff.user_id === user?.user?.user_id &&
+                  staff.employment_status === "pending"
+              ) ? (
+              <p className={styles["employment-pending-text"]}>
+                Başvurun henüz yanıtlanmadı
+              </p>
+            ) : (
+              isUserTrainer && (
+                <button
+                  onClick={() => openEmploymentModal(selectedClub?.club_id)}
+                >
+                  Bu kulüpte çalıştığına dair kulübe başvur
+                </button>
+              )
+            )}
           </div>
           {confirmedClubTrainers?.length > 0 ? (
             <table>
@@ -733,6 +718,11 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
         selectedClubSubscriptionPackages={selectedClubSubscriptionPackages}
         playerPaymentDetailsExist={playerPaymentDetailsExist}
         handleOpenSubscribeModal={handleOpenSubscribeModal}
+      />
+      <ClubEmploymentModal
+        employmentModalOpen={employmentModalOpen}
+        closeEmploymentModal={closeEmploymentModal}
+        trainerEmploymentClubId={trainerEmploymentClubId}
       />
     </div>
   );

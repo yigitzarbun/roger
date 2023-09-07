@@ -319,7 +319,7 @@ const PlayerPastEventsResults = () => {
           </tbody>
         </table>
       ) : (
-        <p>Henüz tamamlanmış etkinlik bulunmamaktadır</p>
+        <p>Tamamlanmış etkinlik bulunmamaktadır</p>
       )}
       <AddEventReviewModal
         isAddReviewModalOpen={isAddReviewModalOpen}

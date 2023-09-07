@@ -34,47 +34,63 @@
   .nav-container {
     display: flex;
     border-radius: $roger-border-radius;
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
 
     .active-button {
       background-color: $roger-blue;
-      padding: $roger-box-padding;
+      padding: 10px;
       border-radius: $roger-border-radius;
       border: none;
       font-weight: bold;
       font-size: 1rem;
       cursor: pointer;
-      width: 48%;
+      width: 49%;
     }
     .inactive-button {
-      padding: $roger-box-padding;
+      padding: 10px;
       border-radius: $roger-border-radius;
-
       border: none;
       font-weight: bold;
       font-size: 1rem;
       cursor: pointer;
-      width: 48%;
+      width: 49%;
     }
     .inactive-button:hover {
       background-color: $roger-black-light;
     }
   }
+  .section {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-  table {
-    width: 100%;
-    text-align: left;
-
-    .payment-row:hover {
-      background-color: $roger-black-light;
-      cursor: pointer;
+    .bank-details-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+      justify-content: center;
     }
-    .payment-image {
-      width: 30px;
-      height: 30px;
+    .bank-missing-text {
+      color: $roger-yellow;
+      font-size: 0.8rem;
+    }
+    table {
+      width: 100%;
+      text-align: left;
+
+      .payment-row:hover {
+        background-color: $roger-black-light;
+        cursor: pointer;
+      }
+      .payment-image {
+        width: 30px;
+        height: 30px;
+      }
     }
   }
 }

@@ -140,6 +140,14 @@
         justify-content: space-between;
         align-items: center;
       }
+      .employed-text {
+        color: $roger-green;
+        font-size: 0.8rem;
+      }
+      .employment-pending-text {
+        color: $roger-yellow;
+        font-size: 0.8rem;
+      }
       table {
         width: 100%;
         text-align: left;
@@ -150,6 +158,7 @@
           border-radius: 50%;
           object-fit: cover;
         }
+
         .view-icon {
           border: none;
           border-radius: $roger-border-radius;

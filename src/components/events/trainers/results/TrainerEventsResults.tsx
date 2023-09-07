@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 
+import { AiOutlineEye } from "react-icons/ai";
+
+import { BiCommentAdd } from "react-icons/bi";
+
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
+
 import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
@@ -17,6 +25,8 @@ import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 const TrainerEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -37,6 +47,11 @@ const TrainerEventsResults = () => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetEventReviewsQuery({});
+  const { data: externalMembers, isLoading: isExternalMembersLoading } =
+    useGetClubExternalMembersQuery({});
+  const { data: groups, isLoading: isGroupsLoading } = useGetStudentGroupsQuery(
+    {}
+  );
 
   const myEvents = bookings?.filter(
     (booking) =>
@@ -73,7 +88,11 @@ const TrainerEventsResults = () => {
     isPlayerLevelsLoading ||
     isClubsLoading ||
     isCourtSurfaceTypesLoading ||
-    isCourtStructureTypesLoading
+    isCourtStructureTypesLoading ||
+    isPlayersLoading ||
+    isEventReviewsLoading ||
+    isExternalMembersLoading ||
+    isGroupsLoading
   ) {
     return <PageLoading />;
   }
@@ -142,30 +161,66 @@ const TrainerEventsResults = () => {
                   }
                 </td>
                 <td>
-                  {event.inviter_id === user?.user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === event.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === event.invitee_id
-                        )?.lname
-                      }`
-                    : event.invitee_id === user?.user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === event.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === event.inviter_id
-                        )?.lname
-                      }`
-                    : "-"}
+                  <Link
+                    to={
+                      event.event_type_id === 3 &&
+                      event.inviter_id === user?.user?.user_id
+                        ? `${paths.EXPLORE_PROFILE}1/${event.invitee_id}`
+                        : event.event_type_id === 3 &&
+                          event.invitee_id === user?.user?.user_id
+                        ? `${paths.EXPLORE_PROFILE}1/${event.inviter_id}`
+                        : event.event_type_id === 5 || event.event_type_id === 6
+                        ? `${paths.EXPLORE_PROFILE}3/${
+                            clubs?.find(
+                              (club) => club.club_id === event.club_id
+                            )?.user_id
+                          }`
+                        : ""
+                    }
+                    className={styles["student-name"]}
+                  >
+                    {event.event_type_id === 3 &&
+                    event.inviter_id === user?.user?.user_id
+                      ? `${
+                          players?.find(
+                            (player) => player.user_id === event.invitee_id
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === event.invitee_id
+                          )?.lname
+                        }`
+                      : event.event_type_id === 3 &&
+                        event.invitee_id === user?.user?.user_id
+                      ? `${
+                          players?.find(
+                            (player) => player.user_id === event.inviter_id
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === event.inviter_id
+                          )?.lname
+                        }`
+                      : event.event_type_id === 5
+                      ? `${
+                          externalMembers?.find(
+                            (member) => member.user_id === event.invitee_id
+                          )?.fname
+                        } ${
+                          externalMembers?.find(
+                            (member) => member.user_id === event.invitee_id
+                          )?.lname
+                        }`
+                      : event.event_type_id === 6
+                      ? groups?.find(
+                          (group) => group.user_id === event.invitee_id
+                        )?.student_group_name
+                      : "-"}
+                  </Link>
                 </td>
                 <td>
-                  {event.inviter_id === user?.user?.user_id
+                  {event.event_type_id === 3 &&
+                  event.inviter_id === user?.user?.user_id
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
@@ -173,7 +228,8 @@ const TrainerEventsResults = () => {
                             (player) => player.user_id === event.invitee_id
                           )?.player_level_id
                       )?.player_level_name
-                    : event.invitee_id === user?.user?.user_id
+                    : event.event_type_id === 3 &&
+                      event.invitee_id === user?.user?.user_id
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
@@ -181,42 +237,54 @@ const TrainerEventsResults = () => {
                             (player) => player.user_id === event.inviter_id
                           )?.player_level_id
                       )?.player_level_name
+                    : event.event_type_id === 5
+                    ? playerLevels?.find(
+                        (level) =>
+                          level.player_level_id ===
+                          externalMembers?.find(
+                            (member) => member.user_id === event.invitee_id
+                          )?.player_level_id
+                      )?.player_level_name
                     : "-"}
                 </td>
-                <td>
-                  {eventReviews?.find(
-                    (review) =>
-                      review.reviewer_id === user?.user?.user_id &&
-                      review.booking_id === event.booking_id
-                  ) ? (
-                    "Yorum Gönderildi"
-                  ) : (
-                    <button onClick={() => openReviewModal(event.booking_id)}>
-                      Yorum Yaz
-                    </button>
-                  )}
-                </td>
-                <td>
-                  {eventReviews?.find(
-                    (review) =>
-                      review.reviewer_id !== user?.user?.user_id &&
-                      review.booking_id === event.booking_id
-                  ) ? (
-                    <button
-                      onClick={() => openViewReviewModal(event.booking_id)}
-                    >
-                      Yorum Görüntüle
-                    </button>
-                  ) : (
-                    "Karşı tarafın yorumu bekleniyor"
-                  )}
-                </td>
+                {event.event_type_id === 3 && (
+                  <td>
+                    {eventReviews?.find(
+                      (review) =>
+                        review.reviewer_id === user?.user?.user_id &&
+                        review.booking_id === event.booking_id
+                    ) ? (
+                      <p className={styles["review-sent-text"]}>
+                        Yorum Gönderildi
+                      </p>
+                    ) : (
+                      <BiCommentAdd
+                        onClick={() => openReviewModal(event.booking_id)}
+                        className={styles["view-icon"]}
+                      />
+                    )}
+                  </td>
+                )}{" "}
+                {event.event_type_id === 3 && (
+                  <td>
+                    {eventReviews?.find(
+                      (review) =>
+                        review.reviewer_id !== user?.user?.user_id &&
+                        review.booking_id === event.booking_id
+                    ) && (
+                      <AiOutlineEye
+                        onClick={() => openViewReviewModal(event.booking_id)}
+                        className={styles["view-icon"]}
+                      />
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>Henüz tamamlanmış etkinlik bulunmamaktadır</p>
+        <p>Tamamlanmış etkinlik bulunmamaktadır</p>
       )}
       <AddEventReviewModal
         isAddReviewModalOpen={isAddReviewModalOpen}

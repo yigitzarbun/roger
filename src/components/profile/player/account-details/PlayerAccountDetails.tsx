@@ -17,20 +17,6 @@ import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 const PlayerAccountDetails = () => {
   const user = useAppSelector((store) => store.user.user);
 
-  const profileData = {
-    player_id: user?.playerDetails.player_id,
-    fname: user?.playerDetails.fname,
-    lname: user?.playerDetails.lname,
-    birth_year: user?.playerDetails.birth_year,
-    gender: user?.playerDetails.gender,
-    phone_number: user?.playerDetails.phone_number,
-    image: user?.playerDetails.image,
-    player_bio_description: user?.playerDetails.player_bio_description,
-    location_id: user?.playerDetails.location_id,
-    player_level_id: user?.playerDetails.player_level_id,
-    user_id: user?.user.user_id,
-  };
-
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -39,6 +25,23 @@ const PlayerAccountDetails = () => {
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
+  const currentPlayer = players?.find(
+    (player) => player.user_id === user?.user?.user_id
+  );
+
+  const profileData = {
+    player_id: currentPlayer?.player_id,
+    fname: currentPlayer?.fname,
+    lname: currentPlayer?.lname,
+    birth_year: currentPlayer?.birth_year,
+    gender: currentPlayer?.gender,
+    phone_number: currentPlayer?.phone_number,
+    image: currentPlayer?.image,
+    player_bio_description: currentPlayer?.player_bio_description,
+    location_id: currentPlayer?.location_id,
+    player_level_id: currentPlayer?.player_level_id,
+    user_id: user?.user.user_id,
+  };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -63,11 +66,8 @@ const PlayerAccountDetails = () => {
       <div className={styles["profile-data-container"]}>
         <img
           src={
-            players?.find((player) => player.user_id === user?.user?.user_id)
-              ?.image
-              ? players?.find(
-                  (player) => player.user_id === user?.user?.user_id
-                )?.image
+            currentPlayer?.image
+              ? currentPlayer?.image
               : "/images/icons/avatar.png"
           }
           alt="player-image"
@@ -81,9 +81,7 @@ const PlayerAccountDetails = () => {
           </div>
           <div className={styles["profile-info"]}>
             <FaCalendarDays className={styles.icon} />
-            <p className={styles["info-text"]}>
-              {user?.playerDetails.birth_year}
-            </p>
+            <p className={styles["info-text"]}>{currentPlayer?.birth_year}</p>
           </div>
           <div className={styles["profile-info"]}>
             <FaGenderless className={styles.icon} />

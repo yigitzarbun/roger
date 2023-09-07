@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import {
-  useGetStudentsQuery,
-  useUpdateStudentMutation,
-} from "../../../api/endpoints/StudentsApi";
+import { useGetStudentsQuery } from "../../../api/endpoints/StudentsApi";
 import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
 
 import PageLoading from "../../../components/loading/PageLoading";
+import DeleteTrainerStudentModal from "./delete-student-modal/DeleteTrainerStudentModal";
 
 const TrainerStudentsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -31,9 +32,6 @@ const TrainerStudentsResults = () => {
   const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
     {}
   );
-  const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
-    useUpdateStudentMutation({});
-
   const date = new Date();
   const currentYear = date.getFullYear();
 
@@ -43,25 +41,16 @@ const TrainerStudentsResults = () => {
       student.student_status === "accepted"
   );
 
-  const handleDeclineStudent = (student_id: number) => {
-    const selectedStudent = students?.find(
-      (student) =>
-        student.student_id === student_id &&
-        student.trainer_id === user?.user?.user_id &&
-        student.student_status === "accepted"
-    );
-    const updatedStudentData = {
-      ...selectedStudent,
-      student_status: "declined",
-    };
-    updateStudent(updatedStudentData);
+  const [deleteStudentId, setDeleteStudentId] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const openDeleteModal = (student_id: number) => {
+    setDeleteStudentId(student_id);
+    setDeleteModalOpen(true);
+  };
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
   };
 
-  useEffect(() => {
-    if (isUpdateStudentSuccess) {
-      refetchStudents();
-    }
-  }, [isUpdateStudentSuccess]);
   if (
     isPlayersLoading ||
     isPlayerLevelsLoading ||
@@ -92,29 +81,38 @@ const TrainerStudentsResults = () => {
             {myStudents?.map((student) => (
               <tr key={student.student_id}>
                 <td>
-                  <img
-                    src={
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}>
+                    <img
+                      src={
+                        players?.find(
+                          (player) => player.user_id === student.player_id
+                        )?.image
+                          ? players?.find(
+                              (player) => player.user_id === student.player_id
+                            )?.image
+                          : "/images/icons/avatar.png"
+                      }
+                      alt={student.name}
+                      className={styles["student-image"]}
+                    />
+                  </Link>
+                </td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}
+                    className={styles["student-name"]}
+                  >
+                    {`${
                       players?.find(
                         (player) => player.user_id === student.player_id
-                      )?.image
-                        ? players?.find(
-                            (player) => player.user_id === student.player_id
-                          )?.image
-                        : "/images/icons/avatar.png"
-                    }
-                    alt={student.name}
-                    className={styles["student-image"]}
-                  />
+                      )?.fname
+                    } ${
+                      players?.find(
+                        (player) => player.user_id === student.player_id
+                      )?.lname
+                    }`}
+                  </Link>
                 </td>
-                <td>{`${
-                  players?.find(
-                    (player) => player.user_id === student.player_id
-                  )?.fname
-                } ${
-                  players?.find(
-                    (player) => player.user_id === student.player_id
-                  )?.lname
-                }`}</td>
                 <td>
                   {currentYear -
                     players?.find(
@@ -164,11 +162,34 @@ const TrainerStudentsResults = () => {
                 </td>
                 <td>
                   <button
-                    onClick={() => handleDeclineStudent(student.student_id)}
+                    onClick={() => openDeleteModal(student.student_id)}
                     className={styles["decline-button"]}
                   >
                     Öğrenciyi Sil
                   </button>
+                </td>
+                <td>
+                  <Link
+                    to={paths.LESSON_INVITE}
+                    state={{
+                      fname: players?.find(
+                        (player) => player.user_id === student.player_id
+                      ).fname,
+                      lname: players?.find(
+                        (player) => player.user_id === student.player_id
+                      ).lname,
+                      image: players?.find(
+                        (player) => player.user_id === student.player_id
+                      ).image,
+                      court_price: "",
+                      user_id: players?.find(
+                        (player) => player.user_id === student.player_id
+                      ).user_id,
+                    }}
+                    className={styles["lesson-button"]}
+                  >
+                    Derse davet et
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -177,6 +198,14 @@ const TrainerStudentsResults = () => {
       ) : (
         <p>Henüz aktif öğrenci bulunmamaktadır</p>
       )}
+      <DeleteTrainerStudentModal
+        deleteModalOpen={deleteModalOpen}
+        closeDeleteModal={closeDeleteModal}
+        deleteStudentId={deleteStudentId}
+        trainerUserId={user?.user?.user_id}
+        students={students}
+        players={players}
+      />
     </div>
   );
 };

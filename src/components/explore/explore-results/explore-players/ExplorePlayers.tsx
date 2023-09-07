@@ -239,25 +239,23 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                         Maç yap
                       </Link>
                     )}
+                    {isUserTrainer && (
+                      <Link
+                        to={paths.LESSON_INVITE}
+                        state={{
+                          fname: player.fname,
+                          lname: player.lname,
+                          image: player.image,
+                          court_price: "",
+                          user_id: player.user_id,
+                        }}
+                        className={styles["match-button"]}
+                      >
+                        Derse davet et
+                      </Link>
+                    )}
                   </div>
                 </td>
-
-                {isUserTrainer && (
-                  <td>
-                    <Link
-                      to={paths.LESSON_INVITE}
-                      state={{
-                        fname: player.fname,
-                        lname: player.lname,
-                        image: player.image,
-                        court_price: "",
-                        user_id: player.user_id,
-                      }}
-                    >
-                      Derse davet et
-                    </Link>
-                  </td>
-                )}
               </tr>
             ))}
           </tbody>

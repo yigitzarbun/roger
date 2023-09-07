@@ -85,13 +85,14 @@ const TrainerBankAccountDetails = () => {
     isTrainersLoading ||
     isBanksLoading ||
     isPaymentsLoading ||
-    isPaymentTypesLoading
+    isPaymentTypesLoading ||
+    isPlayersLoading
   ) {
     return <PageLoading />;
   }
   return (
     <div className={styles["trainer-bank-details-container"]}>
-      <h2>Hesap ve Ödeme Bilgileri</h2>
+      <h2>Banka Hesabı ve Ödemeler</h2>
       <div className={styles["nav-container"]}>
         <button
           onClick={() => handleDisplay("bankDetails")}
@@ -115,23 +116,25 @@ const TrainerBankAccountDetails = () => {
         </button>
       </div>
       {display === "bankDetails" && (
-        <>
+        <div className={styles.section}>
           {bankDetailsExist ? (
-            <>
-              <p>{`Banka Adı: ${
-                banks?.find((bank) => bank.bank_id === bankDetails?.bank_id)
-                  ?.bank_name
-              }`}</p>
-              <p>{`Hesap / IBAN no: ${bankDetails?.iban}`}</p>
-              <p>{`Hesap adı: ${bankDetails?.name_on_bank_account}`}</p>
+            <div className={styles.section}>
+              <div className={styles["bank-details-container"]}>
+                <p>{`Banka Adı: ${
+                  banks?.find((bank) => bank.bank_id === bankDetails?.bank_id)
+                    ?.bank_name
+                }`}</p>
+                <p>{`Hesap / IBAN no: ${bankDetails?.iban}`}</p>
+                <p>{`Hesap adı: ${bankDetails?.name_on_bank_account}`}</p>
+              </div>
               <button onClick={handleOpenEditBankModal}>
                 Hesap Bilgilerini Düzenle
               </button>
-            </>
+            </div>
           ) : (
-            <div>
+            <div className={styles.section}>
               <h3>Kayıtlı banka hesabınız bulunmamaktadır</h3>
-              <p>
+              <p className={styles["bank-missing-text"]}>
                 Kort kiralamak ve ders satışı yapmak için banka hesap
                 bilgilerinizi eklemeniz gerekmektedir
               </p>
@@ -140,11 +143,11 @@ const TrainerBankAccountDetails = () => {
               </button>
             </div>
           )}
-        </>
+        </div>
       )}
       {display === "payments" &&
         (myPayments?.length > 0 ? (
-          <>
+          <div className={styles.section}>
             <table>
               <thead>
                 <tr>
@@ -156,7 +159,7 @@ const TrainerBankAccountDetails = () => {
                 </tr>
               </thead>
               <tbody>
-                {myPayments?.map((payment) => (
+                {myPayments?.slice(myPayments.length - 3)?.map((payment) => (
                   <tr
                     key={payment.payment_id}
                     className={styles["payment-row"]}
@@ -208,10 +211,12 @@ const TrainerBankAccountDetails = () => {
                 ))}
               </tbody>
             </table>
-            <Link to={paths.PAYMENTS}>Tümünü Görüntüle</Link>
-          </>
+            <Link to={paths.PAYMENTS}>
+              <button>Tümünü Görüntüle</button>
+            </Link>
+          </div>
         ) : (
-          <p>Henüz ödemeniz bulunmamaktadır.</p>
+          <h3>Henüz ödemeniz bulunmamaktadır.</h3>
         ))}
       <AddTrainerBankDetailsModal
         isModalOpen={isAddBankModalOpen}

@@ -1,0 +1,60 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.modal-container {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 50%;
+  row-gap: 2vh;
+  margin: 20vh auto;
+  height: 60vh;
+  background-color: $roger-box-bg-color;
+  padding: $roger-modal-padding;
+  border-radius: $roger-border-radius;
+  color: $roger-text-color;
+  justify-content: space-between;
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .close-icon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    .close-icon:hover {
+      color: $roger-red;
+    }
+  }
+  .bottom-container {
+    display: flex;
+    column-gap: 10px;
+    align-items: center;
+    .trainer-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+  .button {
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+    margin-top: 4vh;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .button:hover {
+    background-color: $roger-blue;
+    cursor: pointer;
+  }
+}

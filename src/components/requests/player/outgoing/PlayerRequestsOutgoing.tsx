@@ -168,7 +168,7 @@ const PlayerRequestsOutgoing = () => {
                         src={
                           players?.find(
                             (player) => player.user_id === booking.invitee_id
-                          )
+                          )?.image
                             ? players?.find(
                                 (player) =>
                                   player.user_id === booking.invitee_id
@@ -181,7 +181,7 @@ const PlayerRequestsOutgoing = () => {
                                 (trainer) =>
                                   trainer.user_id === booking.invitee_id
                               )?.image
-                            : "/images/players/player1.png"
+                            : "/images/icons/avatar.png"
                         }
                         className={styles["player-image"]}
                       />

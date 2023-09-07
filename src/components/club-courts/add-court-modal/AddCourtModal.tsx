@@ -273,11 +273,14 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             />
           </div>
         </div>
-        <p className={styles["description-text"]}>
-          Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
-          kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı eklemek
-          için profilinizdeki kurallar bölümünü ziyaret edin.
-        </p>
+        {clubs?.find((club) => club.user_id === user?.user?.user_id)
+          ?.higher_price_for_non_subscribers && (
+          <p className={styles["description-text"]}>
+            Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
+            kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı
+            eklemek için profilinizdeki kurallar bölümünü ziyaret edin.
+          </p>
+        )}
         <button
           type="submit"
           className={styles["form-button"]}

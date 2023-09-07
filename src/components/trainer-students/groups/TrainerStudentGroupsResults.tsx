@@ -1,8 +1,14 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import { useAppSelector } from "../../../store/hooks";
 
 import styles from "./styles.module.scss";
+
+import paths from "../../../routing/Paths";
+
+import PageLoading from "../../../components/loading/PageLoading";
 
 import { useGetStudentGroupsQuery } from "../../../api/endpoints/StudentGroupsApi";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
@@ -41,6 +47,15 @@ const TrainerStudentGroupsResults = () => {
         myGroupUserIds.includes(booking.inviter_id))
   );
 
+  if (
+    isUsersLoading ||
+    isStudentGroupsLoading ||
+    isPlayersLoading ||
+    isExternalMembersLoading ||
+    isBookingsLoading
+  ) {
+    return <PageLoading />;
+  }
   return (
     <div className={styles["result-container"]}>
       <h2 className={styles["result-title"]}>Öğrenciler</h2>
@@ -74,132 +89,168 @@ const TrainerStudentGroupsResults = () => {
                   }
                 </td>
                 <td>
-                  {group.first_student_id
-                    ? users?.find(
+                  {group.first_student_id ? (
+                    users?.find(
+                      (user) => user.user_id === group.first_student_id
+                    )?.user_type_id === 1 ? (
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}1/${group.first_student_id}`}
+                        className={styles["student-name"]}
+                      >
+                        {`${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.first_student_id
+                          )?.fname
+                        }
+                        ${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.first_student_id
+                          )?.lname
+                        }
+                        `}
+                      </Link>
+                    ) : (
+                      users?.find(
                         (user) => user.user_id === group.first_student_id
-                      )?.user_type_id === 1
-                      ? `${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.first_student_id
-                          )?.fname
-                        } ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.first_student_id
-                          )?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === group.first_student_id
-                        )?.user_type_id === 5 &&
-                        `${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.first_student_id
-                          )?.fname
-                        } ${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.first_student_id
-                          )?.lname
-                        }`
-                    : "-"}
+                      )?.user_type_id === 5 &&
+                      `${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.first_student_id
+                        )?.fname
+                      } ${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.first_student_id
+                        )?.lname
+                      }`
+                    )
+                  ) : (
+                    "-"
+                  )}
                 </td>
                 <td>
-                  {group.second_student_id
-                    ? users?.find(
+                  {group.second_student_id ? (
+                    users?.find(
+                      (user) => user.user_id === group.second_student_id
+                    )?.user_type_id === 1 ? (
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}1/${group.second_student_id}`}
+                        className={styles["student-name"]}
+                      >
+                        {`${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.second_student_id
+                          )?.fname
+                        }
+                        ${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.second_student_id
+                          )?.lname
+                        }
+                        `}
+                      </Link>
+                    ) : (
+                      users?.find(
                         (user) => user.user_id === group.second_student_id
-                      )?.user_type_id === 1
-                      ? `${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.second_student_id
-                          )?.fname
-                        } ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.second_student_id
-                          )?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === group.second_student_id
-                        )?.user_type_id === 5 &&
-                        `${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.second_student_id
-                          )?.fname
-                        } ${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.second_student_id
-                          )?.lname
-                        }`
-                    : "-"}
+                      )?.user_type_id === 5 &&
+                      `${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.second_student_id
+                        )?.fname
+                      } ${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.second_student_id
+                        )?.lname
+                      }`
+                    )
+                  ) : (
+                    "-"
+                  )}
                 </td>
                 <td>
-                  {group.third_student_id
-                    ? users?.find(
+                  {group.third_student_id ? (
+                    users?.find(
+                      (user) => user.user_id === group.third_student_id
+                    )?.user_type_id === 1 ? (
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}1/${group.third_student_id}`}
+                        className={styles["student-name"]}
+                      >
+                        {`${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.third_student_id
+                          )?.fname
+                        }
+                        ${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.third_student_id
+                          )?.lname
+                        }
+                        `}
+                      </Link>
+                    ) : (
+                      users?.find(
                         (user) => user.user_id === group.third_student_id
-                      )?.user_type_id === 1
-                      ? `${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.third_student_id
-                          )?.fname
-                        } ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.third_student_id
-                          )?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === group.third_student_id
-                        )?.user_type_id === 5 &&
-                        `${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.third_student_id
-                          )?.fname
-                        } ${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.third_student_id
-                          )?.lname
-                        }`
-                    : "-"}
+                      )?.user_type_id === 5 &&
+                      `${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.third_student_id
+                        )?.fname
+                      } ${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.third_student_id
+                        )?.lname
+                      }`
+                    )
+                  ) : (
+                    "-"
+                  )}
                 </td>
                 <td>
-                  {group.fourth_student_id
-                    ? users?.find(
+                  {group.fourth_student_id ? (
+                    users?.find(
+                      (user) => user.user_id === group.fourth_student_id
+                    )?.user_type_id === 1 ? (
+                      <Link
+                        to={`${paths.EXPLORE_PROFILE}1/${group.fourth_student_id}`}
+                        className={styles["student-name"]}
+                      >
+                        {`${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.fourth_student_id
+                          )?.fname
+                        }
+                        ${
+                          players.find(
+                            (player) =>
+                              player.user_id === group.fourth_student_id
+                          )?.lname
+                        }
+                        `}
+                      </Link>
+                    ) : (
+                      users?.find(
                         (user) => user.user_id === group.fourth_student_id
-                      )?.user_type_id === 1
-                      ? `${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.fourth_student_id
-                          )?.fname
-                        } ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.fourth_student_id
-                          )?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === group.fourth_student_id
-                        )?.user_type_id === 5 &&
-                        `${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.fourth_student_id
-                          )?.fname
-                        } ${
-                          externalMembers?.find(
-                            (member) =>
-                              member.user_id === group.fourth_student_id
-                          )?.lname
-                        }`
-                    : "-"}
+                      )?.user_type_id === 5 &&
+                      `${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.fourth_student_id
+                        )?.fname
+                      } ${
+                        externalMembers?.find(
+                          (member) => member.user_id === group.fourth_student_id
+                        )?.lname
+                      }`
+                    )
+                  ) : (
+                    "-"
+                  )}
                 </td>
               </tr>
             ))}

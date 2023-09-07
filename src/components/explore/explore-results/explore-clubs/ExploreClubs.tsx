@@ -20,15 +20,12 @@ import {
 } from "../../../../api/endpoints/FavouritesApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
-import {
-  useGetClubStaffQuery,
-  useAddClubStaffMutation,
-  ClubStaff,
-} from "../../../../api/endpoints/ClubStaffApi";
+import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
+import ClubEmploymentModal from "./employment-modal/ClubEmploymentModal";
 
 interface ExploreClubsProps {
   user: User;
@@ -70,9 +67,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isLoading: isClubSubscriptionPackageLoading,
   } = useGetClubSubscriptionPackagesQuery({});
 
-  const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
-    useAddClubStaffMutation({});
-
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   let playerPaymentDetailsExist = false;
@@ -90,29 +84,15 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       playerPaymentDetailsExist = true;
     }
   }
-  const { refetch: clubStaffRefetch } = useGetClubStaffQuery({});
-
   // add club staff
-
-  const handleAddClubStaff = (club_id: number) => {
-    if (isUserTrainer) {
-      const clubStaffData = {
-        fname: user?.trainerDetails?.fname,
-        lname: user?.trainerDetails?.lname,
-        birth_year: user?.trainerDetails?.birth_year,
-        gender: user?.trainerDetails?.gender,
-        employment_status: "pending",
-        gross_salary_month: null,
-        iban: null,
-        bank_id: null,
-        phone_number: null,
-        image: null,
-        club_id: club_id,
-        club_staff_role_type_id: 2,
-        user_id: user?.user?.user_id,
-      };
-      addClubStaff(clubStaffData);
-    }
+  const [trainerEmploymentClubId, setTrainerEmploymentClubId] = useState(null);
+  const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
+  const openEmploymentModal = (club_id: number) => {
+    setTrainerEmploymentClubId(club_id);
+    setEmploymentModalOpen(true);
+  };
+  const closeEmploymentModal = () => {
+    setEmploymentModalOpen(false);
   };
 
   // favourites
@@ -214,11 +194,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
-  useEffect(() => {
-    if (isAddClubStaffSuccess) {
-      clubStaffRefetch();
-    }
-  }, [isAddClubStaffSuccess]);
   if (
     isClubsLoading ||
     isLocationsLoading ||
@@ -248,7 +223,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           <thead>
             <tr>
               <th></th>
-
               <th>Kulüp</th>
               <th>İsim</th>
               <th>Tür</th>
@@ -355,27 +329,38 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     )}
                   </td>
                 )}
-                {isUserTrainer &&
-                clubStaff?.find(
-                  (staff) =>
-                    staff.club_id === club.club_id &&
-                    staff.user_id === user?.user?.user_id &&
-                    staff.employment_status === "accepted"
-                )
-                  ? "Bu kulüpte çalışıyorsun"
-                  : isUserTrainer &&
+                <td>
+                  {isUserTrainer &&
+                  clubStaff?.find(
+                    (staff) =>
+                      staff.club_id === club.club_id &&
+                      staff.user_id === user?.user?.user_id &&
+                      staff.employment_status === "accepted"
+                  ) ? (
+                    <p className={styles["employed-text"]}>
+                      Bu kulüpte çalışıyorsun
+                    </p>
+                  ) : isUserTrainer &&
                     clubStaff?.find(
                       (staff) =>
                         staff.club_id === club.club_id &&
                         staff.user_id === user?.user?.user_id &&
                         staff.employment_status === "pending"
-                    )
-                  ? "Başvurun henüz yanıtlanmadı"
-                  : isUserTrainer && (
-                      <button onClick={() => handleAddClubStaff(club.club_id)}>
+                    ) ? (
+                    <p className={styles["employment-pending-text"]}>
+                      Başvurun henüz yanıtlanmadı
+                    </p>
+                  ) : (
+                    isUserTrainer && (
+                      <button
+                        onClick={() => openEmploymentModal(club.club_id)}
+                        className={styles["subscribe-button"]}
+                      >
                         Bu kulüpte çalıştığına dair kulübe başvur
                       </button>
-                    )}
+                    )
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -385,6 +370,11 @@ const ExploreClubs = (props: ExploreClubsProps) => {
         openSubscribeModal={openSubscribeModal}
         handleCloseSubscribeModal={handleCloseSubscribeModal}
         selectedClubId={selectedClubId}
+      />
+      <ClubEmploymentModal
+        employmentModalOpen={employmentModalOpen}
+        closeEmploymentModal={closeEmploymentModal}
+        trainerEmploymentClubId={trainerEmploymentClubId}
       />
     </div>
   );

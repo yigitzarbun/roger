@@ -17,10 +17,6 @@
     width: 100%;
     text-align: left;
 
-    .vertical-center {
-      display: flex;
-      align-items: center;
-    }
     .club-image {
       width: 40px;
       height: 40px;
@@ -47,7 +43,8 @@
     .add-fav-icon:hover {
       color: $roger-blue;
     }
-    .no-subscription-text {
+    .no-subscription-text,
+    .employment-pending-text {
       font-size: 0.8rem;
       color: $roger-yellow;
     }
@@ -71,7 +68,8 @@
     .subscribe-button:hover {
       background-color: $roger-blue;
     }
-    .subscribed-text {
+    .subscribed-text,
+    .employed-text {
       font-size: 0.8rem;
       color: $roger-green;
     }

@@ -46,7 +46,7 @@ export const trainersSlice = createApi({
           trainer.trainer_employment_type_id.toString()
         );
         formData.append("user_id", trainer.user_id.toString());
-        if (trainer.club) {
+        if (trainer.club_id) {
           formData.append("club_id", trainer.club_id.toString());
         }
         if (trainer.image) {

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
+
 import styles from "./styles.module.scss";
 
 import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
@@ -182,67 +186,172 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                   )}
                 </td>
                 <td>
-                  <img
-                    src="/images/players/player1.png"
-                    className={styles["player-image"]}
-                  />
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}${
+                      booking.event_type_id === 3
+                        ? 1
+                        : booking.event_type_id === 5 ||
+                          booking.event_type_id === 6
+                        ? 3
+                        : ""
+                    }/${
+                      booking.event_type_id === 3 &&
+                      booking.inviter_id === user?.user_id
+                        ? booking.invitee_id
+                        : booking.event_type_id === 3 &&
+                          booking.invitee_id === user?.user_id
+                        ? booking.inviter_id
+                        : booking.event_type_id === 5
+                        ? clubs?.find(
+                            (club) => club.club_id === booking.club_id
+                          )?.user_id
+                        : booking.event_type_id === 6
+                        ? clubs?.find(
+                            (club) =>
+                              club.user_id ===
+                              myGroups?.find(
+                                (group) => group.user_id === booking.invitee_id
+                              )?.club_id
+                          )?.user_id
+                        : ""
+                    }`}
+                  >
+                    <img
+                      src={
+                        booking.event_type_id === 3 &&
+                        booking.inviter_id === user?.user_id &&
+                        players?.find(
+                          (player) => player.user_id === booking.invitee_id
+                        )?.image
+                          ? players?.find(
+                              (player) => player.user_id === booking.invitee_id
+                            )?.image
+                          : booking.event_type_id === 3 &&
+                            booking.invitee_id === user?.user_id &&
+                            players?.find(
+                              (player) => player.user_id === booking.inviter_id
+                            )?.image
+                          ? players?.find(
+                              (player) => player.user_id === booking.inviter_id
+                            )?.image
+                          : booking.event_type_id === 5 &&
+                            clubs?.find(
+                              (club) => club.club_id === booking.club_id
+                            )?.image
+                          ? clubs?.find(
+                              (club) => club.club_id === booking.club_id
+                            )?.image
+                          : booking.event_type_id === 6 &&
+                            clubs?.find(
+                              (club) =>
+                                club.user_id ===
+                                myGroups?.find(
+                                  (group) =>
+                                    group.user_id === booking.invitee_id
+                                )?.club_id
+                            )?.image
+                          ? clubs?.find(
+                              (club) =>
+                                club.user_id ===
+                                myGroups?.find(
+                                  (group) =>
+                                    group.user_id === booking.invitee_id
+                                )?.club_id
+                            )?.image
+                          : "/images/icons/avatar.png"
+                      }
+                      className={styles["player-image"]}
+                    />
+                  </Link>
                 </td>
                 <td>
-                  {booking.inviter_id === user.user_id &&
-                  booking.event_type_id === 3
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : booking.invitee_id === user.user_id &&
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}${
                       booking.event_type_id === 3
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.lname
-                      }`
-                    : booking.inviter_id === user.user_id &&
-                      booking.event_type_id === 5
-                    ? `${
-                        externalMembers?.find(
-                          (member) => member.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === booking.invitee_id
-                        )?.lname
-                      }`
-                    : booking.invitee_id === user.user_id &&
-                      booking.event_type_id === 5
-                    ? `${
-                        externalMembers?.find(
-                          (member) => member.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === booking.inviter_id
-                        )?.lname
-                      }`
-                    : booking.inviter_id === user.user_id &&
-                      booking.event_type_id === 6
-                    ? studentGroups?.find(
-                        (group) => group.user_id === booking.invitee_id
-                      )?.student_group_name
-                    : booking.invitee_id === user.user_id &&
-                      booking.event_type_id === 6
-                    ? studentGroups?.find(
-                        (group) => group.user_id === booking.inviter_id
-                      )?.student_group_name
-                    : ""}
+                        ? 1
+                        : booking.event_type_id === 5 ||
+                          booking.event_type_id === 6
+                        ? 3
+                        : ""
+                    }/${
+                      booking.event_type_id === 3 &&
+                      booking.inviter_id === user?.user_id
+                        ? booking.invitee_id
+                        : booking.event_type_id === 3 &&
+                          booking.invitee_id === user?.user_id
+                        ? booking.inviter_id
+                        : booking.event_type_id === 5
+                        ? clubs?.find(
+                            (club) => club.club_id === booking.club_id
+                          )?.user_id
+                        : booking.event_type_id === 6
+                        ? clubs?.find(
+                            (club) =>
+                              club.user_id ===
+                              myGroups?.find(
+                                (group) => group.user_id === booking.invitee_id
+                              )?.club_id
+                          )?.user_id
+                        : ""
+                    }`}
+                    className={styles["player-name"]}
+                  >
+                    {booking.inviter_id === user.user_id &&
+                    booking.event_type_id === 3
+                      ? `${
+                          players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === booking.invitee_id
+                          )?.lname
+                        }`
+                      : booking.invitee_id === user.user_id &&
+                        booking.event_type_id === 3
+                      ? `${
+                          players?.find(
+                            (player) => player.user_id === booking.inviter_id
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === booking.inviter_id
+                          )?.lname
+                        }`
+                      : booking.inviter_id === user.user_id &&
+                        booking.event_type_id === 5
+                      ? `${
+                          externalMembers?.find(
+                            (member) => member.user_id === booking.invitee_id
+                          )?.fname
+                        } ${
+                          externalMembers?.find(
+                            (member) => member.user_id === booking.invitee_id
+                          )?.lname
+                        }`
+                      : booking.invitee_id === user.user_id &&
+                        booking.event_type_id === 5
+                      ? `${
+                          externalMembers?.find(
+                            (member) => member.user_id === booking.inviter_id
+                          )?.fname
+                        } ${
+                          externalMembers?.find(
+                            (member) => member.user_id === booking.inviter_id
+                          )?.lname
+                        }`
+                      : booking.inviter_id === user.user_id &&
+                        booking.event_type_id === 6
+                      ? studentGroups?.find(
+                          (group) => group.user_id === booking.invitee_id
+                        )?.student_group_name
+                      : booking.invitee_id === user.user_id &&
+                        booking.event_type_id === 6
+                      ? studentGroups?.find(
+                          (group) => group.user_id === booking.inviter_id
+                        )?.student_group_name
+                      : ""}
+                  </Link>
                 </td>
                 <td>
                   {booking.inviter_id === user.user_id &&
@@ -366,7 +475,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                     onClick={() => handleOpenModal(booking)}
                     className={styles["cancel-button"]}
                   >
-                    İptal et
+                    İptal
                   </button>
                 </td>
               </tr>
