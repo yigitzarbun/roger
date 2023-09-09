@@ -149,7 +149,7 @@ const PlayerHeader = () => {
           }
         >
           Performans
-          {(myEvents.length > myReviews.length ||
+          {(myEvents?.length > myReviews?.length ||
             missingScores?.length > 0) && (
             <FaCircle className={styles["notification"]} />
           )}

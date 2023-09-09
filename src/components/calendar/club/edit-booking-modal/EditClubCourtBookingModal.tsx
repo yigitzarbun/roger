@@ -17,6 +17,7 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import {
   addMinutes,
   formatTime,
+  generateAvailableTimeSlots,
   roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
 
@@ -152,78 +153,13 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     }
   }, [selectedCourt, selectedDate, bookings, selectedBooking]);
 
-  // Determine the available time slots based on the opening and closing times and the booked hours
-  const availableTimeSlots = [];
-  if (selectedCourt && selectedDate && courts) {
-    const selectedCourtInfo = courts.find(
-      (court) => court.court_id === selectedCourt
-    );
-    const openingTime = selectedCourtInfo.opening_time; // Make sure this is in "HH:mm" format
-    const closingTime = selectedCourtInfo.closing_time; // Make sure this is in "HH:mm" format
-    const slotDurationInMinutes = 60;
-
-    // Loop through the time slots to create available time slots
-    let startTime = roundToNearestHour(openingTime);
-
-    // Check if the selected date is the same as the current date
-    const currentDate = new Date();
-    const selectedDateObj = new Date(selectedDate);
-    const isCurrentDate =
-      selectedDateObj.toDateString() === currentDate.toDateString();
-
-    if (isCurrentDate) {
-      // Find the next available time slot after the current hour
-      while (startTime < closingTime) {
-        const endTime = addMinutes(startTime, slotDurationInMinutes);
-
-        // Check if the startTime is not earlier than the current time
-        if (
-          startTime >= currentTime &&
-          startTime !== "24:00" &&
-          startTime !== "25:00"
-        ) {
-          const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
-            (booking) =>
-              (startTime <= booking.event_time &&
-                booking.event_time < endTime) ||
-              (startTime < booking.end_time && booking.end_time <= endTime)
-          );
-
-          if (!isBooked) {
-            availableTimeSlots.push({
-              start: startTime,
-              end: endTime,
-            });
-          }
-        }
-        startTime = roundToNearestHour(endTime);
-      }
-    } else {
-      // If the selected date is in the future, show all time slots from opening to closing
-      while (startTime < closingTime) {
-        const endTime = addMinutes(startTime, slotDurationInMinutes);
-
-        // Exclude the 24:00-25:00 time slot
-        if (startTime !== "24:00" && startTime !== "25:00") {
-          const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
-            (booking) =>
-              (startTime <= booking.event_time &&
-                booking.event_time < endTime) ||
-              (startTime < booking.end_time && booking.end_time <= endTime)
-          );
-
-          if (!isBooked) {
-            availableTimeSlots.push({
-              start: startTime,
-              end: endTime,
-            });
-          }
-        }
-
-        startTime = roundToNearestHour(endTime);
-      }
-    }
-  }
+  const availableTimeSlots = generateAvailableTimeSlots(
+    selectedCourt,
+    selectedDate,
+    courts,
+    currentTime,
+    bookedHoursForSelectedCourtOnSelectedDate
+  );
 
   const handleDeleteBooking = () => {
     const deletedBookingData = {
@@ -304,7 +240,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   useEffect(() => {
     if (isUpdateBookingSuccess) {
       refetchBookings();
-      toast.success("Kort güncellendi");
+      toast.success("Rezervasyon güncellendi");
       closeEditBookingModal();
       reset();
     }
