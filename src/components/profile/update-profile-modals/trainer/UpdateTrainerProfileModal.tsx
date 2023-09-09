@@ -2,6 +2,8 @@ import React, { useEffect, useState, ChangeEventHandler } from "react";
 
 import ReactModal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
@@ -58,11 +60,20 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
     const selectedValue: number = parseInt(event.target.value, 10);
     setSelectedEmploymentType(selectedValue);
   };
+  const existingImage = profileData?.image ? profileData?.image : null;
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    setSelectedImage(imageFile);
+    setValue("image", imageFile);
+  };
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<Trainer>({
     defaultValues: {
@@ -89,7 +100,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
       birth_year: formData?.birth_year,
       gender: formData?.gender,
       phone_number: null,
-      image: null,
+      image: selectedImage ? selectedImage : existingImage,
       trainer_bio_description: null,
       location_id: Number(formData?.location_id),
       club_id: Number(formData?.club_id),
@@ -106,6 +117,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
     if (isSuccess) {
       dispatch(updateTrainerDetails(updatedProfile));
       refetch();
+      toast.success("Başarıyla güncellendi");
       reset(updatedProfile);
       handleCloseModal();
     }
@@ -137,6 +149,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
+        encType="multipart/form-data"
       >
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
@@ -164,8 +177,6 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Doğum Yılı</label>
             <input
@@ -188,6 +199,8 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
               </span>
             )}
           </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Konum</label>
             <select {...register("location_id", { required: true })}>
@@ -202,18 +215,6 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-          <div className={styles["input-container"]}>
-            <label>Ücret (TL / saat)</label>
-            <input
-              {...register("price_hour", { required: true })}
-              type="number"
-            />
-            {errors.price_hour && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Tecrübe</label>
             <select
@@ -230,6 +231,16 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
               ))}
             </select>
             {errors.trainer_experience_type_id && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Ücret (TL / saat)</label>
+            <input
+              {...register("price_hour", { required: true })}
+              type="number"
+            />
+            {errors.price_hour && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
@@ -253,6 +264,8 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Kulüp</label>
             <select
@@ -271,6 +284,21 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
             {errors.trainer_experience_type_id && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
+          </div>
+          <div className={styles["input-container"]}>
+            <label>Profil Resmi</label>
+            <div className={styles["profile-picture-container"]}>
+              <img
+                src={existingImage ? existingImage : "/images/icons/avatar.png"}
+                className={styles["profile-image"]}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleImageChange}
+              />
+            </div>
           </div>
         </div>
         <button type="submit" className={styles["form-button"]}>

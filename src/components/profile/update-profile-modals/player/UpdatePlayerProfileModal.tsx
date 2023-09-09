@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { toast } from "react-toastify";
+
 import ReactModal from "react-modal";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -91,6 +93,7 @@ const UpdatePlayerProfileModal = (props: UpdatePlayerProfileModalProps) => {
     if (isSuccess) {
       delete updatedProfile.image;
       dispatch(updatePlayerDetails(updatedProfile));
+      toast.success("Profil güncellendi");
       refetch();
       reset(updatedProfile);
       handleCloseModal();

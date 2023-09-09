@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import { toast } from "react-toastify";
+
 import Modal from "react-modal";
 
 import { FaWindowClose } from "react-icons/fa";
@@ -61,6 +63,7 @@ const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
   useEffect(() => {
     if (isUpdateStudentSuccess) {
       refetch();
+      toast.success("Öğrenci silindi");
       closeDeleteModal();
     }
   }, [isUpdateStudentSuccess]);

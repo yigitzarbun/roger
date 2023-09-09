@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { toast } from "react-toastify";
+
 import { useLocation, Link, useNavigate } from "react-router-dom";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -370,6 +372,9 @@ const CourtBookingForm = () => {
                 court.court_id === Number(courtBookingDetails?.court_id)
             )?.price_hour,
       payment_id: null,
+      invitation_note: formData?.invitation_note
+        ? formData?.invitation_note
+        : "",
     };
     setBookingFormData(bookingData);
     setModal(true);
@@ -459,6 +464,7 @@ const CourtBookingForm = () => {
   useEffect(() => {
     if (isBookingSuccess) {
       refetchBookings();
+      toast.success("Davet gönderildi");
       navigate(paths.REQUESTS);
     }
   }, [isBookingSuccess, refetchBookings, navigate]);
@@ -641,6 +647,15 @@ const CourtBookingForm = () => {
             )}
           </div>
         )}
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Not</label>
+            <textarea
+              {...register("invitation_note")}
+              placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
+            />
+          </div>
+        </div>
         <button
           type="submit"
           className={styles["form-button"]}

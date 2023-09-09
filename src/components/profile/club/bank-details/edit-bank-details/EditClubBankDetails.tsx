@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import ReactModal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
@@ -67,6 +69,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
     if (isSuccess && data) {
       refetch();
       handleCloseModal();
+      toast.success("Başarıyla güncellendi");
       reset({
         iban: data.iban,
         name_on_bank_account: data.name_on_bank_account,

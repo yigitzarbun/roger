@@ -112,15 +112,24 @@ const MatchResults = (props: MatchResultsProps) => {
             {filteredPlayers.map((player) => (
               <tr key={player.player_id}>
                 <td className={styles["vertical-center"]}>
-                  <img
-                    src={
-                      player.image ? player.image : "/images/icons/avatar.png"
-                    }
-                    alt={player.name}
-                    className={styles["player-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
+                    <img
+                      src={
+                        player.image ? player.image : "/images/icons/avatar.png"
+                      }
+                      alt={player.name}
+                      className={styles["player-image"]}
+                    />
+                  </Link>
                 </td>
-                <td>{`${player.fname} ${player.lname}`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}
+                    className={styles["player-name"]}
+                  >
+                    {`${player.fname} ${player.lname}`}{" "}
+                  </Link>
+                </td>
                 <td>
                   {
                     playerLevels?.find(

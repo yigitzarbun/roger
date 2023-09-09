@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -219,6 +221,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
 
   useEffect(() => {
     if (isEditClubSubscriptionSuccess) {
+      toast.success("İşlem başarılı");
       refetchClubExternalSubscribers();
       refetchClubSubscribers();
       closeEditClubSubscriberModal();

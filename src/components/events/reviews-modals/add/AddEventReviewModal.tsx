@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -62,6 +64,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
   useEffect(() => {
     if (isAddReviewSuccess) {
       reset();
+      toast.success("Değerlendirme başarılı");
       refetchReviews();
       closeReviewModal();
     }

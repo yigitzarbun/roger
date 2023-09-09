@@ -37,15 +37,7 @@
       object-fit: cover;
     }
   }
-  .player-name {
-    color: $roger-blue;
-  }
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 2vh;
-  }
-  .player-name {
+  .coach-name {
     color: $roger-blue;
   }
   .form-container {
@@ -72,6 +64,12 @@
     width: 95%;
   }
 
+  textArea {
+    height: 13vh;
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    border: none;
+  }
   .form-button {
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;

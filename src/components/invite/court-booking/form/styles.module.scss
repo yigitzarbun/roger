@@ -59,7 +59,12 @@
       border: none;
       width: 95%;
     }
-
+    textArea {
+      height: 13vh;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      border: none;
+    }
     .error-field {
       color: $roger-red;
       font-size: 0.8rem;

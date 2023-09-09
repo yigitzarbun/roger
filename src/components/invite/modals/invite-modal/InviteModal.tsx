@@ -26,6 +26,7 @@ export type FormValues = {
   invitee_id: number;
   inviter_id: number;
   payment_id: number;
+  invitation_note?: string;
 };
 
 interface ModalProps {

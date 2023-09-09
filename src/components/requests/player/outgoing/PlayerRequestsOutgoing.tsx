@@ -309,7 +309,7 @@ const PlayerRequestsOutgoing = () => {
                       onClick={() => handleOpenModal(booking)}
                       className={styles["cancel-button"]}
                     >
-                      İptal et
+                      İptal
                     </button>
                   </td>
                 </tr>

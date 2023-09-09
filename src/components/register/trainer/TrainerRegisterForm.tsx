@@ -5,7 +5,10 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddUserMutation } from "../../../store/auth/apiSlice";
+import {
+  useAddUserMutation,
+  useGetUsersQuery,
+} from "../../../store/auth/apiSlice";
 import {
   useAddTrainerMutation,
   useGetTrainersQuery,
@@ -56,6 +59,8 @@ const TrainerRegisterForm = () => {
 
   const [addTrainer, { isSuccess: isAddTrainerSuccess }] =
     useAddTrainerMutation();
+
+  const { refetch: refetchUsers } = useGetUsersQuery({});
 
   const { refetch: refetchTrainers } = useGetTrainersQuery({});
 
@@ -164,6 +169,7 @@ const TrainerRegisterForm = () => {
 
   useEffect(() => {
     if (isAddTrainerSuccess) {
+      refetchUsers();
       refetchTrainers();
     }
   }, [isAddTrainerSuccess]);

@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import { toast } from "react-toastify";
+
 import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
@@ -291,6 +293,9 @@ const MatchInviteForm = () => {
           : courts?.find((court) => court.court_id === selectedCourt)
               ?.price_hour,
       payment_id: null,
+      invitation_note: formData?.invitation_note
+        ? formData?.invitation_note
+        : "",
     };
     setBookingFormData(bookingData);
     setModal(true);
@@ -331,6 +336,7 @@ const MatchInviteForm = () => {
   useEffect(() => {
     if (isBookingSuccess) {
       refetchBookings();
+      toast.success("Başarıyla gönderildi");
       navigate(paths.REQUESTS);
     }
   }, [isBookingSuccess, refetchBookings, navigate]);
@@ -449,6 +455,15 @@ const MatchInviteForm = () => {
                 {errors.event_time.message}
               </span>
             )}
+          </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Not</label>
+            <textarea
+              {...register("invitation_note")}
+              placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
+            />
           </div>
         </div>
         <button

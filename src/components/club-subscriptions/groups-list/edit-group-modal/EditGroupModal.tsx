@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 import { AiOutlineUserAdd } from "react-icons/ai";
 
@@ -147,6 +149,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
 
   useEffect(() => {
     if (isUpdateGroupSuccess) {
+      toast.success("İşlem başarılı");
       refetchGroups();
       reset();
       closeEditGroupModal();

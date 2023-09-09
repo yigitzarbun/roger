@@ -1,8 +1,15 @@
 import React, { useEffect } from "react";
+
 import { useNavigate, Link } from "react-router-dom";
+
 import i18n from "../../common/i18n/i18n";
+
 import styles from "./styles.module.scss";
+
 import paths from "../../routing/Paths";
+
+import { toast } from "react-toastify";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useLoginUserMutation } from "../../store/auth/apiSlice";
 import { useAppDispatch } from "../../store/hooks";
@@ -39,6 +46,7 @@ const LoginForm = () => {
       dispatch(
         setCredentials({ user: credentials.user, token: credentials.token })
       );
+      toast.success("Giriş başarılı");
       navigate(paths.HOME);
     }
   }, [isSuccess]);

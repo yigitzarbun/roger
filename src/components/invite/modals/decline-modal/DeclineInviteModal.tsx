@@ -28,6 +28,7 @@ export type DeclineBookingData = {
   invitee_id: number;
   inviter_id: number;
   payment_id: number;
+  invitation_note: string;
 };
 
 interface DeclineInviteModalProps {
@@ -53,8 +54,6 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
   );
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: userTypes, isLoading: isUserTypesLoading } =
-    useGetUserTypesQuery({});
   const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
     {}
   );
@@ -86,7 +85,6 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
     isTrainersLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isUserTypesLoading ||
     isPaymentsLoading
   ) {
     return <PageLoading />;
@@ -100,10 +98,10 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
       <div className={styles["top-container"]}>
         <h1>
           {Number(declineBookingData?.event_type_id) === 3
-            ? "Ders İptal"
+            ? "Ders Davetini Reddet"
             : Number(declineBookingData?.event_type_id) === 2
-            ? "Maç İptal"
-            : "Antreman İptal"}
+            ? "Maç Davetini Reddet"
+            : "Antreman Davetini Reddet"}
         </h1>
         <img
           src="/images/icons/close.png"
@@ -207,6 +205,12 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
           </tr>
         </tbody>
       </table>
+      {declineBookingData?.invitation_note && (
+        <div className={styles["note-container"]}>
+          <h4 className={styles["invitation-title"]}>Davet Notu: </h4>
+          <p>{`${declineBookingData?.invitation_note}`}</p>
+        </div>
+      )}
       {isUserPlayer &&
         (declineBookingData?.event_type_id === 1 ||
           declineBookingData?.event_type_id === 2) && (

@@ -97,6 +97,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
+
   const handleUpdateFavourite = (userId: number) => {
     const selectedFavourite = myFavouritePlayers?.find(
       (favourite) => favourite.favouritee_id === userId

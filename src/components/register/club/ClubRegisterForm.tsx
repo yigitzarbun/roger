@@ -5,7 +5,10 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddUserMutation } from "../../../store/auth/apiSlice";
+import {
+  useAddUserMutation,
+  useGetUsersQuery,
+} from "../../../store/auth/apiSlice";
 import {
   useAddClubMutation,
   useGetClubsQuery,
@@ -49,7 +52,8 @@ const ClubRegisterForm = () => {
     useGetUserTypesQuery({});
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
-  const { refetch } = useGetClubsQuery({});
+  const { refetch: refetchClubs } = useGetClubsQuery({});
+  const { refetch: refetchUsers } = useGetUsersQuery({});
 
   const {
     register,
@@ -103,7 +107,8 @@ const ClubRegisterForm = () => {
   };
   useEffect(() => {
     if (isSuccess) {
-      refetch();
+      refetchUsers();
+      refetchClubs();
     }
   }, [isSuccess]);
   if (

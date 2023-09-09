@@ -28,7 +28,10 @@
       border-radius: 50%;
       object-fit: cover;
     }
-
+    .player-name {
+      color: white;
+      text-decoration: none;
+    }
     .training-button {
       padding: 10px;
       border-radius: $roger-border-radius;

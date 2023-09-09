@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 import { AiOutlineUserAdd } from "react-icons/ai";
 
@@ -59,6 +61,8 @@ const AddGroupModal = (props: AddGroupModalProps) => {
 
   const { isLoading: isGroupsLoading, refetch: refetchGroups } =
     useGetStudentGroupsQuery({});
+
+  const { refetch: refetchUsers } = useGetUsersQuery({});
 
   const [addGroup, { isSuccess: isAddGroupSuccess }] =
     useAddStudentGroupMutation({});
@@ -124,12 +128,14 @@ const AddGroupModal = (props: AddGroupModalProps) => {
   useEffect(() => {
     if (isAddUserSuccess) {
       newGroup.user_id = newUserData?.user_id;
+      refetchUsers();
       addGroup(newGroup);
     }
   }, [isAddUserSuccess]);
 
   useEffect(() => {
     if (isAddGroupSuccess) {
+      toast.success("Grup eklendi");
       refetchGroups();
       reset();
       closeAddGroupModal();

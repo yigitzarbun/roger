@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
+
 import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
@@ -115,30 +119,39 @@ const PlayerScores = () => {
             {myEvents?.map((event) => (
               <tr key={event.booking_id}>
                 <td>
-                  {(event.event_type_id === 1 || event.event_type_id === 2) &&
-                  event.inviter_id === user?.user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === event.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === event.invitee_id
-                        )?.lname
-                      }`
-                    : (event.event_type_id === 1 ||
-                        event.event_type_id === 2) &&
-                      event.invitee_id === user?.user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === event.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === event.inviter_id
-                        )?.lname
-                      }`
-                    : "-"}
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${
+                      event.inviter_id === user?.user?.user_id
+                        ? event.invitee_id
+                        : event.inviter_id
+                    }`}
+                    className={styles["player-name"]}
+                  >
+                    {(event.event_type_id === 1 || event.event_type_id === 2) &&
+                    event.inviter_id === user?.user?.user_id
+                      ? `${
+                          players?.find(
+                            (player) => player.user_id === event.invitee_id
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === event.invitee_id
+                          )?.lname
+                        }`
+                      : (event.event_type_id === 1 ||
+                          event.event_type_id === 2) &&
+                        event.invitee_id === user?.user?.user_id
+                      ? `${
+                          players?.find(
+                            (player) => player.user_id === event.inviter_id
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === event.inviter_id
+                          )?.lname
+                        }`
+                      : "-"}
+                  </Link>
                 </td>
                 <td>
                   {(event.event_type_id === 1 || event.event_type_id === 2) &&

@@ -5,12 +5,13 @@
   background-color: $roger-box-bg-color;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
+  max-width: 100%;
+  overflow-x: auto;
 
   .title {
     font-size: 2rem;
   }
   table {
-    width: 100%;
     text-align: left;
     .view-icon {
       border: none;
@@ -24,7 +25,10 @@
     .view-icon:hover {
       color: $roger-blue;
     }
-
+    .name {
+      color: white;
+      text-decoration: none;
+    }
     .add-comment-button {
       padding: 10px;
       border-radius: $roger-border-radius;

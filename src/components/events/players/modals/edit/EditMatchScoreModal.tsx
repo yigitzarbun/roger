@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -158,6 +160,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
       refetchMatchScores();
+      toast.success("Başarıyla gönderildi");
       closeEditScoreModal();
       reset();
     }

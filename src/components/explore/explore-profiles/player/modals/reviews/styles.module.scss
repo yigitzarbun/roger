@@ -39,26 +39,6 @@
       row-gap: 20px;
       display: flex;
       flex-direction: column;
-      .reviewer-container {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-
-        .reviewer-image {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          object-fit: cover;
-        }
-        .reviewer-name {
-          font-size: 0.8rem;
-          color: white;
-          text-decoration: none;
-        }
-        .reviewer-name:hover {
-          color: $roger-blue;
-        }
-      }
     }
   }
 }

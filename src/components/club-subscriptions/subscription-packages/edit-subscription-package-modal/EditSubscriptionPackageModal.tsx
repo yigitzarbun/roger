@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Modal from "react-modal";
+
+import { toast } from "react-toastify";
 
 import { FaWindowClose } from "react-icons/fa";
 
@@ -101,6 +103,7 @@ const EditSubscriptionPackageModal = (
     if (isSuccess && updatedClubSubscription) {
       refetch();
       closeEditClubSubscriptionPackageModal();
+      toast.success("İşlem başarılı");
       reset({ price: updatedClubSubscription?.price });
     }
   }, [isSuccess]);

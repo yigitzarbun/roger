@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { AiOutlineEye, AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import { Link } from "react-router-dom";
 

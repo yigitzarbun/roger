@@ -48,7 +48,11 @@ trainersRouter.put(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await trainersModel.update(req.body);
+      const updatedTrainerData = req.body;
+      if (req.file) {
+        updatedTrainerData.image = req.file.path;
+      }
+      await trainersModel.update(updatedTrainerData);
       const updatedTrainer = await trainersModel.getById(req.body.trainer_id);
       res.status(200).json(updatedTrainer);
     } catch (error) {

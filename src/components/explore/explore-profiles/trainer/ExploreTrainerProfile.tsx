@@ -41,7 +41,9 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+
 import ExploreTrainerEventsModal from "./modals/events/ExploreTrainerEventsModal";
+import ReviewCard from "../../../../components/common/reviews/ReviewCard";
 
 interface ExploreTrainerProfileProps {
   user_id: string;
@@ -104,7 +106,7 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
 
   const trainerGroups = groups?.filter(
     (group) =>
-      group.trainer_id === selectedTrainer.user_id && group.is_active === true
+      group.trainer_id === selectedTrainer?.user_id && group.is_active === true
   );
 
   const trainerStudents = students?.filter(
@@ -116,8 +118,8 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const trainerBookings = bookings?.filter(
     (booking) =>
       booking.booking_status_type_id === 5 &&
-      (booking.inviter_id === selectedTrainer.user_id ||
-        booking.invitee_id === selectedTrainer.user_id ||
+      (booking.inviter_id === selectedTrainer?.user_id ||
+        booking.invitee_id === selectedTrainer?.user_id ||
         booking.invitee_id ===
           trainerGroups?.find((group) => group.user_id === booking.invitee_id)
             ?.user_id)
@@ -412,7 +414,7 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
               </Link>
             )}
             {isUserPlayer && (
-              <td>
+              <p>
                 {students?.find(
                   (student) =>
                     student.player_id === user?.user?.user_id &&
@@ -442,7 +444,7 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
                     Öğrenci Ol
                   </button>
                 )}
-              </td>
+              </p>
             )}
           </div>
           {students?.find(
@@ -464,45 +466,10 @@ const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
             {trainerReviewsReceived?.length > 0 ? (
               trainerReviewsReceived?.map((review) => (
                 <div
-                  className={styles["review-container"]}
+                  className={styles["review-container-wrapper"]}
                   key={review.event_review_id}
                 >
-                  <h4>{review.event_review_title}</h4>
-                  <p>{review.event_review_description}</p>
-                  <p>{`${review.review_score}/10`}</p>
-                  <div className={styles["reviewer-container"]}>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
-                    >
-                      <img
-                        src={
-                          players?.find(
-                            (player) => player.user_id === review.reviewer_id
-                          )?.image
-                            ? `${localUrl}/${
-                                players.find(
-                                  (player) =>
-                                    player.user_id === review.reviewer_id
-                                )?.image
-                              }`
-                            : "/images/icons/avatar.png"
-                        }
-                        className={styles["reviewer-image"]}
-                      />
-                    </Link>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${review.reviewer_id}`}
-                      className={styles["reviewer-name"]}
-                    >{`${
-                      players?.find(
-                        (player) => player.user_id === review.reviewer_id
-                      )?.fname
-                    } ${
-                      players?.find(
-                        (player) => player.user_id === review.reviewer_id
-                      )?.lname
-                    }`}</Link>
-                  </div>
+                  <ReviewCard review={review} />
                 </div>
               ))
             ) : (

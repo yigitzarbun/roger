@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { toast } from "react-toastify";
+
 import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
@@ -274,8 +276,7 @@ const LeesonInviteForm = () => {
       event_time: formData.event_time,
       booking_status_type_id: 1,
       event_type_id: 3,
-      club_id: clubs?.find((club) => club.user_id === Number(formData.club_id))
-        ?.club_id,
+      club_id: selectedClub,
       court_id: formData.court_id,
       inviter_id: user?.user?.user_id,
       invitee_id: isUserTrainer
@@ -300,6 +301,9 @@ const LeesonInviteForm = () => {
           : courts?.find((court) => court.court_id === selectedCourt)
               ?.price_hour,
       payment_id: null,
+      invitation_note: formData?.invitation_note
+        ? formData?.invitation_note
+        : "",
     };
     setBookingFormData(bookingData);
     setModal(true);
@@ -385,6 +389,7 @@ const LeesonInviteForm = () => {
           (club) => club.club_id === Number(bookingFormData?.club_id)
         )?.user_id,
       };
+      console.log(bookingFormData?.club_id);
       addPayment(paymentDetails);
     }
   };
@@ -441,6 +446,7 @@ const LeesonInviteForm = () => {
   useEffect(() => {
     if (isBookingSuccess) {
       refetchBookings();
+      toast.success("Başarıyla gönderildi");
       navigate(paths.REQUESTS);
     }
   }, [isBookingSuccess]);
@@ -516,7 +522,7 @@ const LeesonInviteForm = () => {
             >
               <option value="">-- Seçim yapın --</option>
               {clubs?.map((club) => (
-                <option key={club.user_id} value={club.user_id}>
+                <option key={club.user_id} value={club.club_id}>
                   {club.club_name}
                 </option>
               ))}
@@ -539,8 +545,7 @@ const LeesonInviteForm = () => {
                 courts
                   ?.filter(
                     (court) =>
-                      court.club_id === clubs?.find((club) => club)?.club_id &&
-                      court.is_active === true
+                      court.club_id === selectedClub && court.is_active === true
                   )
                   .map((court) => (
                     <option key={court.court_id} value={court.court_id}>
@@ -574,6 +579,15 @@ const LeesonInviteForm = () => {
                 {errors.event_time.message}
               </span>
             )}
+          </div>
+        </div>
+        <div className={styles["input-outer-container"]}>
+          <div className={styles["input-container"]}>
+            <label>Not</label>
+            <textarea
+              {...register("invitation_note")}
+              placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
+            />
           </div>
         </div>
         <button

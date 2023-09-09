@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { toast } from "react-toastify";
+
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
@@ -86,7 +88,7 @@ const TrainerRequestsOutgoing = () => {
   useEffect(() => {
     if (isSuccess) {
       refetch();
-
+      toast.success("Davet iptal edildi");
       handleCloseModal();
     }
   }, [isSuccess]);

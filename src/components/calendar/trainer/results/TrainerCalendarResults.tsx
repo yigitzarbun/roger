@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { toast } from "react-toastify";
+
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
@@ -131,7 +133,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetch();
-
+      toast.success("Ders iptal edildi");
       handleCloseModal();
     }
   }, [isSuccess]);

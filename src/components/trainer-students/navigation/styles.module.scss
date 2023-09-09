@@ -18,16 +18,30 @@
     font-size: 1rem;
     cursor: pointer;
     width: 30%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    column-gap: 5px;
+    .notification {
+      font-size: 0.7rem;
+    }
   }
   .inactive-button {
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
-
     border: none;
     font-weight: bold;
     font-size: 1rem;
     cursor: pointer;
     width: 30%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    column-gap: 5px;
+    .notification {
+      font-size: 0.7rem;
+      color: $roger-yellow;
+    }
   }
   .inactive-button:hover {
     background-color: $roger-black-light;

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
+import { toast } from "react-toastify";
+
 import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 
@@ -163,6 +165,7 @@ const TrainerRequestsIncoming = () => {
 
   useEffect(() => {
     if (isUpdateBookingSuccess) {
+      toast.success("İşlem başarılı");
       // check if player is not student. add if not
       const selectedPlayerId = players?.find(
         (player) => player.user_id === acceptBookingData.inviter_id

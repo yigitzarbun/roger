@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { Link } from "react-router-dom";
+
+import paths from "../../../../routing/Paths";
+
 import { useAppSelector } from "../../../../store/hooks";
 
 import { AiOutlineEye } from "react-icons/ai";
@@ -10,20 +14,18 @@ import styles from "./styles.module.scss";
 
 import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
 import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
-import PageLoading from "../../../../components/loading/PageLoading";
 
 const PlayerPastEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -40,19 +42,13 @@ const PlayerPastEventsResults = () => {
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
   const { data: studentGroups, isLoading: isStudentGroupsLoading } =
     useGetStudentGroupsQuery({});
-
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
 
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetEventReviewsQuery({});
@@ -102,10 +98,8 @@ const PlayerPastEventsResults = () => {
     isEventTypesLoading ||
     isCourtsLoading ||
     isCourtsLoading ||
-    isPlayerLevelsLoading ||
     isClubsLoading ||
     isTrainersLoading ||
-    isTrainerExperienceTypesLoading ||
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading ||
     isPlayersLoading ||
@@ -123,9 +117,7 @@ const PlayerPastEventsResults = () => {
           <thead>
             <tr>
               <th>Oyuncu</th>
-              <th>Seviye</th>
               <th>Eğitmen</th>
-              <th>Tecrübe</th>
               <th>Tarih</th>
               <th>Saat</th>
               <th>Tür</th>
@@ -133,107 +125,126 @@ const PlayerPastEventsResults = () => {
               <th>Kort</th>
               <th>Yüzey</th>
               <th>Mekan</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {myEvents?.map((event) => (
               <tr key={event.booking_id}>
                 <td>
-                  {(event.event_type_id === 1 || event.event_type_id === 2) &&
-                  event.inviter_id === user?.user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === event.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === event.invitee_id
-                        )?.lname
-                      }`
-                    : (event.event_type_id === 1 ||
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}${
+                      event.event_type_id === 1 || event.event_type_id === 2
+                        ? 1
+                        : event.event_type_id === 6
+                        ? 3
+                        : ""
+                    }/${
+                      (event.event_type_id === 1 ||
                         event.event_type_id === 2) &&
-                      event.invitee_id === user?.user?.user_id
-                    ? `${
-                        players?.find(
-                          (player) => player.user_id === event.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === event.inviter_id
-                        )?.lname
-                      }`
-                    : event.event_type_id === 6 &&
-                      myGroups?.find(
-                        (group) => group.user_id === event.invitee_id
-                      )?.student_group_name}
-                </td>
-                <td>
-                  {(event.event_type_id === 1 || event.event_type_id === 2) &&
-                  event.inviter_id === user?.user?.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id ===
+                      event.inviter_id === user?.user?.user_id
+                        ? event.invitee_id
+                        : (event.event_type_id === 1 ||
+                            event.event_type_id === 2) &&
+                          event.invitee_id === user?.user?.user_id
+                        ? event.inviter_id
+                        : event.event_type_id === 6
+                        ? myGroups?.find(
+                            (group) => group.user_id === event.invitee_id
+                          )?.user_id
+                        : ""
+                    }`}
+                    className={styles.name}
+                  >
+                    {(event.event_type_id === 1 || event.event_type_id === 2) &&
+                    event.inviter_id === user?.user?.user_id
+                      ? `${
                           players?.find(
                             (player) => player.user_id === event.invitee_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : (event.event_type_id === 1 ||
-                        event.event_type_id === 2) &&
-                      event.invitee_id === user?.user?.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id ===
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === event.invitee_id
+                          )?.lname
+                        }`
+                      : (event.event_type_id === 1 ||
+                          event.event_type_id === 2) &&
+                        event.invitee_id === user?.user?.user_id
+                      ? `${
                           players?.find(
                             (player) => player.user_id === event.inviter_id
-                          )?.player_level_id
-                      )?.player_level_name
-                    : "-"}
+                          )?.fname
+                        } ${
+                          players?.find(
+                            (player) => player.user_id === event.inviter_id
+                          )?.lname
+                        }`
+                      : event.event_type_id === 6
+                      ? myGroups?.find(
+                          (group) => group.user_id === event.invitee_id
+                        )?.student_group_name
+                      : ""}
+                  </Link>
                 </td>
                 <td>
-                  {event.event_type_id === 3 &&
-                  event.inviter_id === user?.user?.user_id
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === event.invitee_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === event.invitee_id
-                        )?.lname
-                      }`
-                    : event.event_type_id === 3 &&
-                      event.invitee_id === user?.user?.user_id
-                    ? `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === event.inviter_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === event.inviter_id
-                        )?.lname
-                      }`
-                    : "-"}
-                </td>
-                <td>
-                  {event.event_type_id === 3 &&
-                  event.inviter_id === user?.user?.user_id
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${
+                      event.event_type_id === 3 &&
+                      event.inviter_id === user?.user?.user_id
+                        ? event.invitee_id
+                        : event.event_type_id === 3 &&
+                          event.invitee_id === user?.user?.user_id
+                        ? event.inviter_id
+                        : event.event_type_id === 6 &&
+                          myGroups?.find(
+                            (group) => group.user_id === event.invitee_id
+                          )?.trainer_id
+                    }`}
+                    className={styles.name}
+                  >
+                    {event.event_type_id === 3 &&
+                    event.inviter_id === user?.user?.user_id
+                      ? `${
                           trainers?.find(
                             (trainer) => trainer.user_id === event.invitee_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : event.event_type_id === 3 &&
-                      event.invitee_id === user?.user?.user_id
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
+                          )?.fname
+                        } ${
+                          trainers?.find(
+                            (trainer) => trainer.user_id === event.invitee_id
+                          )?.lname
+                        }`
+                      : event.event_type_id === 3 &&
+                        event.invitee_id === user?.user?.user_id
+                      ? `${
                           trainers?.find(
                             (trainer) => trainer.user_id === event.inviter_id
-                          )?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : "-"}
+                          )?.fname
+                        } ${
+                          trainers?.find(
+                            (trainer) => trainer.user_id === event.inviter_id
+                          )?.lname
+                        }`
+                      : event.event_type_id === 6
+                      ? `${
+                          trainers?.find(
+                            (trainer) =>
+                              trainer.user_id ===
+                              myGroups?.find(
+                                (group) => group.user_id === event.invitee_id
+                              )?.trainer_id
+                          )?.fname
+                        } ${
+                          trainers?.find(
+                            (trainer) =>
+                              trainer.user_id ===
+                              myGroups?.find(
+                                (group) => group.user_id === event.invitee_id
+                              )?.trainer_id
+                          )?.lname
+                        }`
+                      : ""}
+                  </Link>
                 </td>
                 <td>{event.event_date.slice(0, 10)}</td>
                 <td>{event.event_time.slice(0, 5)}</td>
@@ -278,11 +289,11 @@ const PlayerPastEventsResults = () => {
                     )?.court_structure_type_name
                   }
                 </td>
-                {(event.event_type_id === 1 ||
-                  event.event_type_id === 2 ||
-                  event.event_type_id === 3) && (
-                  <td>
-                    {eventReviews?.find(
+                <td>
+                  {(event.event_type_id === 1 ||
+                    event.event_type_id === 2 ||
+                    event.event_type_id === 3) &&
+                    (eventReviews?.find(
                       (review) =>
                         review.reviewer_id === user?.user?.user_id &&
                         review.booking_id === event.booking_id
@@ -295,14 +306,13 @@ const PlayerPastEventsResults = () => {
                         onClick={() => openReviewModal(event.booking_id)}
                         className={styles["view-icon"]}
                       />
-                    )}
-                  </td>
-                )}
-                {(event.event_type_id === 1 ||
-                  event.event_type_id === 2 ||
-                  event.event_type_id === 3) && (
-                  <td>
-                    {eventReviews?.find(
+                    ))}
+                </td>
+                <td>
+                  {(event.event_type_id === 1 ||
+                    event.event_type_id === 2 ||
+                    event.event_type_id === 3) &&
+                    eventReviews?.find(
                       (review) =>
                         review.reviewer_id !== user?.user?.user_id &&
                         review.booking_id === event.booking_id
@@ -312,8 +322,7 @@ const PlayerPastEventsResults = () => {
                         className={styles["view-icon"]}
                       />
                     )}
-                  </td>
-                )}
+                </td>
               </tr>
             ))}
           </tbody>

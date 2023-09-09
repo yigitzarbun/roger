@@ -21,15 +21,19 @@ const TrainerStudentRequests = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
+
   const {
     data: students,
     isLoading: isStudentsLoading,
     refetch: refetchStudents,
   } = useGetStudentsQuery({});
+
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 

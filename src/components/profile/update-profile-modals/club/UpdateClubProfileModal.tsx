@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import ReactModal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
@@ -87,6 +89,7 @@ const UpdateClubProfileModall = (props: UpdateClubProfileModallProps) => {
   useEffect(() => {
     if (isSuccess) {
       dispatch(updateClubDetails(updatedProfile));
+      toast.success("Başarıyla güncellendi");
       refetch();
       reset(updatedProfile);
       handleCloseModal();

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { toast } from "react-toastify";
+
 import Modal from "react-modal";
 
 import { FaWindowClose } from "react-icons/fa";
@@ -147,6 +149,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
       refetchMatchScores();
+      toast.success("Başarıyla gönderildi");
       reset({
         inviter_first_set_games_won: null,
         inviter_second_set_games_won: null,
@@ -158,7 +161,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
       });
       closeAddScoreModal();
     }
-  }, [isUpdateMatchScoreSuccess, closeAddScoreModal]);
+  }, [isUpdateMatchScoreSuccess]);
 
   if (isBookingsLoading || isMatchScoresLoading || isPlayersLoading) {
     return <PageLoading />;

@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
@@ -54,6 +56,7 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetchStaffData();
+      toast.success("İşlem başarılı");
       closeDeclineClubStaffModal();
     }
   }, [isSuccess]);

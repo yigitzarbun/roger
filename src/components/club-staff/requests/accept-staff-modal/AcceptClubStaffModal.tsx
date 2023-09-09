@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Modal from "react-modal";
+
+import { toast } from "react-toastify";
 
 import { FaWindowClose } from "react-icons/fa";
 
@@ -54,6 +56,7 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetchClubStaff();
+      toast.success("Personel eklendi");
       closeAcceptClubStaffModal();
     }
   }, [isSuccess]);

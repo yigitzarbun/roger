@@ -7,13 +7,13 @@ import paths from "../../../../routing/Paths";
 
 const PlayerLesson = () => {
   return (
-    <div className={styles["player-lesson-container"]}>
+    <Link to={paths.LESSON} className={styles["player-lesson-container"]}>
       <h2>{i18n.t("lessonTitle")}</h2>
       <p>{i18n.t("lessonText")}</p>
       <Link to={paths.LESSON}>
         <button>{i18n.t("lessonButtonText")}</button>
       </Link>
-    </div>
+    </Link>
   );
 };
 

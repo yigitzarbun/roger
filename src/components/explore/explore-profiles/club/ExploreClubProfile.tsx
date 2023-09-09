@@ -108,6 +108,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     const currentPlayer = players?.find(
       (player) => player.user_id === user?.user?.user_id
     );
+
     if (
       currentPlayer?.name_on_card &&
       currentPlayer?.card_number &&

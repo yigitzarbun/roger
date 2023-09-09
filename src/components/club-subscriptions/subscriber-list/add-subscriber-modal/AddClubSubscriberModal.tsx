@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -17,7 +19,10 @@ import {
 
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
-import { useAddUserMutation } from "../../../../store/auth/apiSlice";
+import {
+  useAddUserMutation,
+  useGetUsersQuery,
+} from "../../../../store/auth/apiSlice";
 import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useGetUserStatusTypesQuery } from "../../../../api/endpoints/UserStatusTypesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
@@ -27,7 +32,6 @@ import {
 } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddClubSubscriberModalProps {
@@ -58,8 +62,6 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -67,6 +69,8 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
     useGetPlayerLevelsQuery({});
 
   const { refetch: refetchClubSubscribers } = useGetClubSubscriptionsQuery({});
+
+  const { refetch: refetchUsers } = useGetUsersQuery({});
 
   const {
     data: clubSubscriptionTypes,
@@ -181,6 +185,8 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
 
   useEffect(() => {
     if (isAddSubscriptionSuccess) {
+      toast.success("Üye eklendi");
+      refetchUsers();
       refetchClubExternalSubscribers();
       refetchClubSubscribers();
       reset();

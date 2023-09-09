@@ -639,6 +639,8 @@ export async function up(knex: Knex): Promise<void> {
       table.string("event_review_description").notNullable();
       table.integer("review_score").notNullable();
       table.boolean("is_active").defaultTo(true).notNullable();
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+
       table
         .integer("reviewer_id")
         .unsigned()

@@ -250,9 +250,9 @@ const TrainerEventsResults = () => {
                 {event.event_type_id === 3 && (
                   <td>
                     {eventReviews?.find(
-                      (review) =>
-                        review.reviewer_id === user?.user?.user_id &&
-                        review.booking_id === event.booking_id
+                      (eventReview) =>
+                        eventReview.reviewer_id === user?.user?.user_id &&
+                        eventReview.booking_id === event.booking_id
                     ) ? (
                       <p className={styles["review-sent-text"]}>
                         Yorum Gönderildi
@@ -268,9 +268,9 @@ const TrainerEventsResults = () => {
                 {event.event_type_id === 3 && (
                   <td>
                     {eventReviews?.find(
-                      (review) =>
-                        review.reviewer_id !== user?.user?.user_id &&
-                        review.booking_id === event.booking_id
+                      (eventReview) =>
+                        eventReview.reviewer_id !== user?.user?.user_id &&
+                        eventReview.booking_id === event.booking_id
                     ) && (
                       <AiOutlineEye
                         onClick={() => openViewReviewModal(event.booking_id)}

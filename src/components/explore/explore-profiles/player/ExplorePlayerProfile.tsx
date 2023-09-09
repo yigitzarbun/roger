@@ -33,8 +33,10 @@ import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+
 import ExplorePlayerEventsModal from "./modals/events/ExplorePlayerEventsModal";
 import ExplorePlayerReviewsModal from "./modals/reviews/ExplorePlayerReviewsModal";
+import ReviewCard from "../../../../components/common/reviews/ReviewCard";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
@@ -42,7 +44,7 @@ interface ExplorePlayerProfileProps {
 const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const { user_id } = props;
 
-  const user = useAppSelector((store) => store.user?.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
@@ -386,97 +388,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
                 ?.slice(playerReviewsReceived.length - 2)
                 ?.map((review) => (
                   <div
-                    className={styles["review-container"]}
+                    className={styles["review-container-wrapper"]}
                     key={review.event_review_id}
                   >
-                    <h4>{review.event_review_title}</h4>
-                    <p>{review.event_review_description}</p>
-                    <p>{`${review.review_score}/10`}</p>
-                    {bookings?.find(
-                      (booking) =>
-                        booking.booking_id === review.booking_id &&
-                        (booking.event_type_id === 1 ||
-                          booking.event_type_id === 2 ||
-                          booking.event_type_id === 3)
-                    ) && (
-                      <div className={styles["reviewer-container"]}>
-                        <img
-                          src={
-                            users?.find(
-                              (user) => user.user_id === review.reviewer_id
-                            )?.user_type_id === 1 &&
-                            players?.find(
-                              (player) => player.user_id === review.reviewer_id
-                            )?.image
-                              ? `${localUrl}/${
-                                  players.find(
-                                    (player) =>
-                                      player.user_id === review.reviewer_id
-                                  )?.image
-                                }`
-                              : users?.find(
-                                  (user) => user.user_id === review.reviewer_id
-                                )?.user_type_id === 2 &&
-                                trainers?.find(
-                                  (trainer) =>
-                                    trainer.user_id === review.reviewer_id
-                                )?.image
-                              ? `${localUrl}/${
-                                  trainers.find(
-                                    (trainer) =>
-                                      trainer.user_id === review.reviewer_id
-                                  )?.image
-                                }`
-                              : "/images/icons/avatar.png"
-                          }
-                          className={styles["reviewer-image"]}
-                        />
-                        <Link
-                          to={
-                            users?.find(
-                              (user) => user.user_id === review.reviewer_id
-                            )?.user_type_id === 1
-                              ? `${paths.EXPLORE_PROFILE}1/${review.reviewer_id} `
-                              : users?.find(
-                                  (user) => user.user_id === review.reviewer_id
-                                )?.user_type_id === 2
-                              ? `${paths.EXPLORE_PROFILE}2/${review.reviewer_id} `
-                              : ""
-                          }
-                          className={styles["reviewer-name"]}
-                        >
-                          {users?.find(
-                            (user) => user.user_id === review.reviewer_id
-                          )?.user_type_id === 1
-                            ? `${
-                                players?.find(
-                                  (player) =>
-                                    player.user_id === review.reviewer_id
-                                )?.fname
-                              } ${
-                                players.find(
-                                  (player) =>
-                                    player.user_id === review.reviewer_id
-                                )?.lname
-                              }`
-                            : users?.find(
-                                (user) => user.user_id === review.reviewer_id
-                              )?.user_type_id === 2
-                            ? `${
-                                trainers?.find(
-                                  (trainer) =>
-                                    trainer.user_id === review.reviewer_id
-                                )?.fname
-                              } ${
-                                trainers.find(
-                                  (trainer) =>
-                                    trainer.user_id === review.reviewer_id
-                                )?.lname
-                              }`
-                            : ""}
-                        </Link>
-                      </div>
-                    )}
+                    <ReviewCard review={review} />
                   </div>
                 ))
             ) : (
@@ -886,9 +801,6 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
         isReviewsModalOpen={isReviewsModalOpen}
         closeReviewsModal={closeReviewsModal}
         playerReviewsReceived={playerReviewsReceived}
-        bookings={bookings}
-        players={players}
-        trainers={trainers}
       />
     </div>
   );

@@ -8,13 +8,13 @@ import paths from "../../../../routing/Paths";
 
 const PlayerMatch = () => {
   return (
-    <div className={styles["player-match-container"]}>
+    <Link to={paths.MATCH} className={styles["player-match-container"]}>
       <h2>{i18n.t("matchTitle")}</h2>
       <p>{i18n.t("matchText")}</p>
       <Link to={paths.MATCH}>
         <button>{i18n.t("matchButtonText")}</button>
       </Link>
-    </div>
+    </Link>
   );
 };
 

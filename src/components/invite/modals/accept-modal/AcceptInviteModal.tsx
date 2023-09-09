@@ -9,7 +9,6 @@ import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
@@ -29,6 +28,7 @@ export type AcceptBookingData = {
   invitee_id: number;
   inviter_id: number;
   payment_id: number;
+  invitation_note: string;
 };
 
 interface AcceptInviteModalProps {
@@ -37,6 +37,7 @@ interface AcceptInviteModalProps {
   handleAcceptBooking: () => void;
   acceptBookingData: AcceptBookingData;
 }
+
 const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   const {
     isAcceptModalOpen,
@@ -54,8 +55,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   );
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: userTypes, isLoading: isUserTypesLoading } =
-    useGetUserTypesQuery({});
+
   const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
     {}
   );
@@ -100,7 +100,6 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     isTrainersLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isUserTypesLoading ||
     isPaymentsLoading ||
     isExternalMembersLoading ||
     isStudentGroupsLoading
@@ -226,6 +225,12 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
           </tr>
         </tbody>
       </table>
+      {acceptBookingData?.invitation_note && (
+        <div className={styles["note-container"]}>
+          <h4 className={styles["invitation-title"]}>Davet Notu: </h4>
+          <p>{`${acceptBookingData?.invitation_note}`}</p>
+        </div>
+      )}
       {isUserPlayer &&
         (acceptBookingData?.event_type_id === 1 ||
           acceptBookingData?.event_type_id === 2) && (

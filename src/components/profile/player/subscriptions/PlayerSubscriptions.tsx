@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import { toast } from "react-toastify";
+
 import { AiFillStar } from "react-icons/ai";
 
 import { Link } from "react-router-dom";
@@ -101,6 +103,7 @@ const PlayerSubscriptions = () => {
   useEffect(() => {
     if (isUpdateFavouriteSuccess) {
       refetchFavourites();
+      toast.success("İşlem başarılı");
     }
   }, [isUpdateFavouriteSuccess]);
 
@@ -196,8 +199,8 @@ const PlayerSubscriptions = () => {
                       }
                     </td>
                     <td>
-                      {
-                        clubSubscriptionTypes?.find(
+                      {clubSubscriptionTypes
+                        ?.find(
                           (type) =>
                             type.club_subscription_type_id ===
                             clubSubscriptionPackages?.find(
@@ -205,8 +208,10 @@ const PlayerSubscriptions = () => {
                                 subscriptionPackage.club_subscription_package_id ===
                                 subscription.club_subscription_package_id
                             )?.club_subscription_type_id
-                        )?.club_subscription_type_name
-                      }
+                        )
+                        ?.club_subscription_type_name?.split(" ")
+                        .slice(0, 2)
+                        .join(" ")}
                     </td>
                     <td>{subscription.start_date.slice(0, 10)}</td>
                     <td>{subscription.end_date.slice(0, 10)}</td>
@@ -354,7 +359,7 @@ const PlayerSubscriptions = () => {
               <th></th>
               <th>Kulüp</th>
               <th>Grup</th>
-              <th>Oyuncu Sayısı</th>
+              <th>Oyuncular</th>
               <th>Eğitmen</th>
             </tr>
           </thead>

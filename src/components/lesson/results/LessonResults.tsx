@@ -208,15 +208,24 @@ const LessonResults = (props: TrainSearchProps) => {
             {filteredTrainers.map((trainer) => (
               <tr key={trainer.trainer_id}>
                 <td>
-                  <img
-                    src={
-                      trainer.image ? trainer.image : "/images/icons/avatar.png"
-                    }
-                    alt={trainer.name}
-                    className={styles["trainer-image"]}
-                  />
+                  <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id}`}>
+                    <img
+                      src={
+                        trainer.image
+                          ? trainer.image
+                          : "/images/icons/avatar.png"
+                      }
+                      alt={trainer.name}
+                      className={styles["trainer-image"]}
+                    />
+                  </Link>
                 </td>
-                <td>{`${trainer.fname} ${trainer.lname}`}</td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id}`}
+                    className={styles["trainer-name"]}
+                  >{`${trainer.fname} ${trainer.lname}`}</Link>
+                </td>
                 <td>
                   {clubStaff?.find(
                     (staff) =>

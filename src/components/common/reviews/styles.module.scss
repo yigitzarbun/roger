@@ -1,0 +1,44 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.review-container {
+  background-color: $roger-black-dark;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 100%;
+  row-gap: 20px;
+  display: flex;
+  flex-direction: column;
+  .title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .score-type-container {
+    display: flex;
+    column-gap: 15px;
+    .subtitle {
+      font-weight: bold;
+    }
+    .score-text {
+      color: $roger-blue;
+    }
+  }
+  .reviewer-container {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+
+    .reviewer-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .reviewer-name {
+      font-size: 0.8rem;
+      color: white;
+      text-decoration: none;
+    }
+  }
+}

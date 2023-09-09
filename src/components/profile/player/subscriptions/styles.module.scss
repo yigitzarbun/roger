@@ -9,8 +9,9 @@
   padding: $roger-box-padding;
   display: flex;
   flex-direction: column;
-  //justify-content: space-between;
+  justify-content: space-between;
   row-gap: 2vh;
+  height: 55vh;
 
   h2 {
     font-weight: bold;

@@ -5,7 +5,10 @@ import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { useAddUserMutation } from "../../../store/auth/apiSlice";
+import {
+  useAddUserMutation,
+  useGetUsersQuery,
+} from "../../../store/auth/apiSlice";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
@@ -41,6 +44,7 @@ const PlayerRegisterForm = () => {
   const [addUser] = useAddUserMutation();
   const [addPlayer, { isSuccess }] = useAddPlayerMutation();
 
+  const { refetch: refetchUsers } = useGetUsersQuery({});
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
@@ -49,7 +53,7 @@ const PlayerRegisterForm = () => {
     useGetUserTypesQuery({});
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
-  const { refetch } = useGetPlayersQuery({});
+  const { refetch: refetchPlayers } = useGetPlayersQuery({});
 
   const {
     register,
@@ -106,7 +110,8 @@ const PlayerRegisterForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetch();
+      refetchUsers();
+      refetchPlayers();
     }
   }, [isSuccess]);
 

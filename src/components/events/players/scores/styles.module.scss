@@ -12,7 +12,10 @@
   table {
     width: 100%;
     text-align: left;
-
+    .player-name {
+      color: white;
+      text-decoration: none;
+    }
     .add-score-button {
       padding: 10px;
       border-radius: $roger-border-radius;

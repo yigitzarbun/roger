@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .header-container {
   position: fixed;
@@ -11,7 +12,7 @@
   width: 100%;
   padding: 20px 55px;
   align-items: center;
-  z-index: 9999;
+  z-index: $header-z-index;
   background-color: $roger-bg-color;
   height: 10vh;
 

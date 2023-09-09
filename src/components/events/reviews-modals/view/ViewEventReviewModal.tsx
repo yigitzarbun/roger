@@ -11,6 +11,7 @@ import { useAppSelector } from "../../../../store/hooks";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
 
 import PageLoading from "../../../../components/loading/PageLoading";
+import ReviewCard from "../../../../components/common/reviews/ReviewCard";
 
 interface ViewEventReviewModalProps {
   isViewReviewModalOpen: boolean;
@@ -51,9 +52,7 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
         />
       </div>
       <div>
-        <h2>{selectedEventReview?.event_review_title}</h2>
-        <p>{selectedEventReview?.event_review_description}</p>
-        <p>{`${selectedEventReview?.review_score}/10`}</p>
+        <ReviewCard review={selectedEventReview} />
       </div>
     </Modal>
   );
