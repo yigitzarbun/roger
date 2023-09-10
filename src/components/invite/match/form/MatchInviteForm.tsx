@@ -186,7 +186,6 @@ const MatchInviteForm = () => {
     selectedCourt,
     selectedDate,
     courts,
-    currentTime,
     bookedHoursForSelectedCourtOnSelectedDate
   );
 

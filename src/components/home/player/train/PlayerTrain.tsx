@@ -10,9 +10,7 @@ const PlayerTrain = () => {
     <Link to={paths.TRAIN} className={styles["player-train-container"]}>
       <h2>{i18n.t("trainTitle")}</h2>
       <p>{i18n.t("trainText")}</p>
-      <Link to={paths.TRAIN}>
-        <button>{i18n.t("trainButtonText")}</button>
-      </Link>
+      <button>{i18n.t("trainButtonText")}</button>
     </Link>
   );
 };

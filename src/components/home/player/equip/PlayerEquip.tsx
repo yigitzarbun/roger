@@ -12,9 +12,7 @@ const PlayerEquip = () => {
     >
       <h2>{i18n.t("equipTitle")}</h2>
       <p>{i18n.t("equipText")}</p>
-      <a href="https://www.spx.com.tr/sporlar-tenis/" target="_blank">
-        <button>{i18n.t("equipButtonText")}</button>
-      </a>
+      <button>{i18n.t("equipButtonText")}</button>
     </a>
   );
 };

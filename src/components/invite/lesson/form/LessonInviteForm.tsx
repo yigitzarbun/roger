@@ -191,7 +191,6 @@ const LeesonInviteForm = () => {
     selectedCourt,
     selectedDate,
     courts,
-    currentTime,
     bookedHoursForSelectedCourtOnSelectedDate
   );
 

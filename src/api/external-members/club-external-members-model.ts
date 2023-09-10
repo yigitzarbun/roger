@@ -7,10 +7,23 @@ const clubExternalMembersModel = {
   },
 
   async getByFilter(filter) {
-    const externalMember = await db("club_external_members")
-      .where(filter)
-      .first();
-    return externalMember;
+    const clubExternalMembers = await db("club_external_members").where(
+      (builder) => {
+        if (filter.club_id) {
+          builder.where("club_id", filter.club_id);
+        }
+        if (filter.is_active) {
+          builder.where("is_active", filter.is_active);
+        }
+
+        if (filter.sortBy) {
+          // handle sorting here if required
+          builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+        }
+      }
+    );
+
+    return clubExternalMembers;
   },
 
   async getById(club_external_member_id) {

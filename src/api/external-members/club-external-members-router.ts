@@ -15,7 +15,20 @@ clubExternalMembersRouter.get(
     }
   }
 );
-
+clubExternalMembersRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const externalMembers = await clubExternalMembersModel.getByFilter(
+        filter
+      );
+      res.status(200).json(externalMembers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 clubExternalMembersRouter.get(
   "/:club_external_member_id",
   async (req: Request, res: Response, next: NextFunction) => {

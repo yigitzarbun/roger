@@ -15,23 +15,25 @@ import { useAppSelector } from "../../../../store/hooks";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import {
-  addMinutes,
+  currentDay,
   formatTime,
   generateAvailableTimeSlots,
-  roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
 
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import {
+  useGetCourtsByFilterQuery,
+  useGetCourtsQuery,
+} from "../../../../api/endpoints/CourtsApi";
+import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   Booking,
   useUpdateBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 interface EditClubCourtBookingModalProps {
   editBookingModalOpen: boolean;
@@ -46,8 +48,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   const user = useAppSelector((store) => store?.user);
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
 
   const {
     data: bookings,
@@ -58,53 +58,33 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
-
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
 
-  const { data: groups, isLoading: isGroupLoading } = useGetStudentGroupsQuery(
-    {}
-  );
+  const { data: myTrainers, isLoading: isMyTrainersLoading } =
+    useGetClubStaffByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      employment_status: "accepted",
+    });
 
-  const today = new Date();
-  let day = String(today.getDate());
-  let month = String(today.getMonth() + 1);
-  const year = today.getFullYear();
+  const { data: myCourts, isLoading: isMyCourtsLoading } =
+    useGetCourtsByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
-  day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
-  month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
+  const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
+    useGetClubExternalMembersByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
-  const currentDay = `${year}-${month}-${day}`;
-
-  const currentHour = String(today.getHours()).padStart(2, "0");
-  const currentMinute = String(today.getMinutes()).padStart(2, "0");
-  const currentTime = `${currentHour}:${currentMinute}`;
-
-  const myTrainers = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === user?.user?.clubDetails?.club_id &&
-      staff.employment_status === "accepted"
-  );
-
-  const myCourts = courts?.filter(
-    (court) =>
-      court?.club_id === user?.user?.clubDetails?.club_id &&
-      court.is_active === true
-  );
-
-  const myExternalMembers = clubExternalMembers?.filter(
-    (member) =>
-      member.club_id === user?.user?.clubDetails?.club_id &&
-      member.is_active === true
-  );
-
-  const myGroups = groups?.filter(
-    (group) =>
-      group.club_id === user?.user?.user?.user_id && group.is_active === true
-  );
+  const { data: myGroups, isLoading: isMyGroupsLoading } =
+    useGetStudentGroupsByFilterQuery({
+      club_id: user?.user?.user?.user_id,
+      is_active: true,
+    });
 
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
@@ -157,7 +137,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     selectedCourt,
     selectedDate,
     courts,
-    currentTime,
     bookedHoursForSelectedCourtOnSelectedDate
   );
 
@@ -248,12 +227,13 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
 
   if (
     isCourtsLoading ||
-    isClubExternalMembersLoading ||
+    isMyExternalMembersLoading ||
     isBookingsLoading ||
     isEventTypesLoading ||
-    isClubStaffLoading ||
+    isMyTrainersLoading ||
     isTrainersLoading ||
-    isGroupLoading
+    isMyGroupsLoading ||
+    isMyCourtsLoading
   ) {
     return <PageLoading />;
   }

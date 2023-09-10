@@ -17,6 +17,19 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredBookings = await bookingsModel.getByFilter(filter);
+      res.status(200).json(filteredBookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
   "/:booking_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

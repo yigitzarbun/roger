@@ -187,7 +187,6 @@ const TrainingInviteForm = () => {
     selectedCourt,
     selectedDate,
     courts,
-    currentTime,
     bookedHoursForSelectedCourtOnSelectedDate
   );
 

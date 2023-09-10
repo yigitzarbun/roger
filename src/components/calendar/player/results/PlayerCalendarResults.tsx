@@ -23,9 +23,14 @@ import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsA
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import {
+  currentDayLocale,
+  currentTimeLocale,
+  currentYear,
+} from "../../../../common/util/TimeFunctions";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -35,7 +40,6 @@ interface PlayerCalendarResultsProps {
 const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const { date, eventTypeId, clubId } = props;
 
-  // fetch data
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const {
@@ -49,9 +53,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
-
-  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
-    useGetStudentGroupsQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -74,28 +75,11 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  // date
-  const currentDate = new Date();
-
-  const currentYear = currentDate.getFullYear();
-  const today = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
-
-  const currentTime = currentDate.toLocaleTimeString();
-
-  // const club groups
-
-  const myGroups = studentGroups?.filter(
-    (group) =>
-      group.is_active === true &&
-      (group.first_student_id === user?.user_id ||
-        group.second_student_id === user?.user_id ||
-        group.third_student_id === user?.user_id ||
-        group.fourth_student_id === user?.user_id)
-  );
+  const { data: myGroups, isLoading: isMyGroupsLoading } =
+    useGetStudentGroupsByFilterQuery({
+      is_active: true,
+      student_id: user?.user_id,
+    });
 
   // bookings
   const myBookings = bookings?.filter(
@@ -108,11 +92,10 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
             group.user_id === booking.invitee_id
         )) &&
       booking.booking_status_type_id === 2 &&
-      (new Date(booking.event_date).toLocaleDateString() >
-        today.toLocaleDateString() ||
+      (new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
         (new Date(booking.event_date).toLocaleDateString() ===
-          today.toLocaleDateString() &&
-          booking.event_time > currentTime))
+          currentDayLocale &&
+          booking.event_time > currentTimeLocale))
   );
 
   const filteredBookings = myBookings?.filter((booking) => {
@@ -170,8 +153,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     isPlayerLevelsLoading ||
     isTrainerExperienceTypesLoading ||
     isCourtsLoading ||
-    isStudentGroupsLoading ||
-    isPaymentsLoading
+    isMyGroupsLoading ||
+    isPaymentsLoading ||
+    isUsersLoading
   ) {
     return <PageLoading />;
   }

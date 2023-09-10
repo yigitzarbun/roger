@@ -17,6 +17,19 @@ courtsRouter.get(
 );
 
 courtsRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredCourts = await courtsModel.getByFilter(filter);
+      res.status(200).json(filteredCourts);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+courtsRouter.get(
   "/:court_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

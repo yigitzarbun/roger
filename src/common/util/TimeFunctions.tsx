@@ -1,3 +1,26 @@
+const today = new Date();
+
+const currentHour = String(today.getHours()).padStart(2, "0");
+const currentMinute = String(today.getMinutes()).padStart(2, "0");
+
+let day = String(today.getDate());
+let month = String(today.getMonth() + 1);
+const year = today.getFullYear();
+
+day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
+month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
+
+export const currentTime = `${currentHour}:${currentMinute}`;
+export const currentDay = `${year}-${month}-${day}`;
+export const currentDayObject = new Date(
+  today.getFullYear(),
+  today.getMonth(),
+  today.getDate()
+);
+export const currentYear = today.getFullYear();
+export const currentDayLocale = new Date(currentDay).toLocaleDateString();
+export const currentTimeLocale = currentDayObject.toLocaleTimeString();
+
 // Utility function to add minutes to a given time
 export function addMinutes(time, minutes) {
   const [hours, mins] = time.split(":").map(Number);
@@ -43,11 +66,15 @@ export const generateAvailableTimeSlots = (
   selectedCourt,
   selectedDate,
   courts,
-  currentTime,
   bookedHoursForSelectedCourtOnSelectedDate
 ) => {
   const availableTimeSlots = [];
-  if (selectedCourt && selectedDate && courts) {
+  if (
+    selectedCourt &&
+    selectedDate &&
+    courts &&
+    Array.isArray(bookedHoursForSelectedCourtOnSelectedDate)
+  ) {
     const selectedCourtInfo = courts.find(
       (court) => court.court_id === selectedCourt
     );
@@ -75,7 +102,7 @@ export const generateAvailableTimeSlots = (
           startTime !== "24:00" &&
           startTime !== "25:00"
         ) {
-          const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
+          const isBooked = bookedHoursForSelectedCourtOnSelectedDate?.some(
             (booking) =>
               (startTime <= booking.event_time &&
                 booking.event_time < endTime) ||
@@ -99,7 +126,7 @@ export const generateAvailableTimeSlots = (
 
         // Exclude the 24:00-25:00 time slot
         if (startTime !== "24:00" && startTime !== "25:00") {
-          const isBooked = bookedHoursForSelectedCourtOnSelectedDate.some(
+          const isBooked = bookedHoursForSelectedCourtOnSelectedDate?.some(
             (booking) =>
               (startTime <= booking.event_time &&
                 booking.event_time < endTime) ||

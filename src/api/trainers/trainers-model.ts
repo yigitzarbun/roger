@@ -8,8 +8,25 @@ const trainersModel = {
   },
 
   async getByFilter(filter) {
-    const trainer = await db("trainers").where(filter).first();
-    return trainer;
+    const trainers = await db("trainers").where((builder) => {
+      if (filter.fname) {
+        builder.where("fname", filter.fname);
+      }
+      if (filter.lname) {
+        builder.where("lname", filter.lname);
+      }
+
+      if (filter.club_id) {
+        builder.where("club_id", filter.club_id);
+      }
+
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+
+    return trainers;
   },
 
   async getById(trainer_id) {

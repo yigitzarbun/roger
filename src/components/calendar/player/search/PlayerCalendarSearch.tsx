@@ -3,6 +3,10 @@ import styles from "./styles.module.scss";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import {
+  currentDayLocale,
+  currentDayObject,
+} from "../../../../common/util/TimeFunctions";
 
 interface PlayerCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -24,18 +28,12 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
     clubId,
   } = props;
 
-  // date filter
-  const currentDate = new Date();
-  const today = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  const tomorrow = new Date(currentDayObject);
+  tomorrow.setDate(currentDayObject.getDate() + 1);
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   if (isEventTypesLoading || isClubsLoading) {
@@ -47,7 +45,7 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
       <div className={styles["input-container"]}>
         <select onChange={handleDate} value={date}>
           <option value="">-- Tarih --</option>
-          <option value={today.toLocaleDateString()}>Bugün</option>
+          <option value={currentDayLocale}>Bugün</option>
           <option value={tomorrow.toLocaleDateString()}>Yarın</option>
         </select>
       </div>

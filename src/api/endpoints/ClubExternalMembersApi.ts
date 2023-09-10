@@ -23,6 +23,10 @@ export const clubExternalMembersSlice = createApi({
     getClubExternalMembers: builder.query({
       query: () => "/club-external-members",
     }),
+    getClubExternalMembersByFilter: builder.query({
+      query: (filter) =>
+        `/club-external-members/filter?${new URLSearchParams(filter)}`,
+    }),
     addClubExternalMember: builder.mutation({
       query: (member) => ({
         url: "/club-external-members",
@@ -42,6 +46,7 @@ export const clubExternalMembersSlice = createApi({
 
 export const {
   useGetClubExternalMembersQuery,
+  useGetClubExternalMembersByFilterQuery,
   useAddClubExternalMemberMutation,
   useUpdateClubExternalMemberMutation,
 } = clubExternalMembersSlice;

@@ -4,7 +4,7 @@ import { FaPlusSquare } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 import { useAppSelector } from "../../../store/hooks";
 import PageLoading from "../../../components/loading/PageLoading";
 
@@ -17,15 +17,15 @@ const AddCourtButton = (props: AddCourtButtonProps) => {
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: currentClub, isLoading: isCurrentClubLoading } =
+    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
   const clubBankDetailsExist =
-    clubs?.find((club) => club.user_id === user?.user?.user_id)?.iban &&
-    clubs?.find((club) => club.user_id === user?.user?.user_id)?.bank_id &&
-    clubs?.find((club) => club.user_id === user?.user?.user_id)
-      ?.name_on_bank_account;
+    currentClub?.[0]["iban"] &&
+    currentClub?.[0]["bank_id"] &&
+    currentClub?.[0]["name_on_bank_account"];
 
-  if (isClubsLoading) {
+  if (isCurrentClubLoading) {
     return <PageLoading />;
   }
 

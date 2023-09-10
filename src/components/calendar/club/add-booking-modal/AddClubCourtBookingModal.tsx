@@ -10,25 +10,31 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { useAppSelector } from "../../../../store/hooks";
 
 import {
+  currentDay,
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
 
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import {
+  useGetCourtsByFilterQuery,
+  useGetCourtsQuery,
+} from "../../../../api/endpoints/CourtsApi";
+import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   Booking,
   useAddBookingMutation,
+  useGetBookingsByFilterQuery,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 interface AddClubCourtBookingModalProps {
   addBookingModalOpen: boolean;
@@ -41,64 +47,44 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   const user = useAppSelector((store) => store?.user);
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
 
-  const {
-    data: bookings,
-    isLoading: isBookingsLoading,
-    refetch: refetchBookings,
-  } = useGetBookingsQuery({});
+  const { refetch: refetchBookings } = useGetBookingsQuery({});
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
-
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
 
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
 
-  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
-    useGetStudentGroupsQuery({});
+  const { data: myTrainers, isLoading: isMyTrainersLoading } =
+    useGetClubStaffByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      employment_status: "accepted",
+    });
 
-  const myTrainers = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === user?.user?.clubDetails?.club_id &&
-      staff.employment_status === "accepted"
-  );
+  const { data: myCourts, isLoading: isMyCourtsLoading } =
+    useGetCourtsByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
-  const today = new Date();
-  let day = String(today.getDate());
-  let month = String(today.getMonth() + 1);
-  const year = today.getFullYear();
+  const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
+    useGetClubExternalMembersByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
-  day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
-  month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
+  const { data: myGroups, isLoading: isMyGroupsLoading } =
+    useGetStudentGroupsByFilterQuery({
+      club_id: user?.user?.user?.user_id,
+      is_active: true,
+    });
 
-  const currentDay = `${year}-${month}-${day}`;
-
-  const currentHour = String(today.getHours()).padStart(2, "0");
-  const currentMinute = String(today.getMinutes()).padStart(2, "0");
-  const currentTime = `${currentHour}:${currentMinute}`;
-
-  const myCourts = courts?.filter(
-    (court) =>
-      court?.club_id === user?.user?.clubDetails?.club_id &&
-      court.is_active === true
-  );
-
-  const myExternalMembers = clubExternalMembers?.filter(
-    (member) =>
-      member.club_id === user?.user?.clubDetails?.club_id &&
-      member.is_active === true
-  );
-
-  const myGroups = studentGroups?.filter(
-    (group) =>
-      group.club_id === user?.user?.user?.user_id && group.is_active === true
-  );
+  const { data: myBookings, isLoading: isMyBookingsLoading } =
+    useGetBookingsByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+    });
 
   const [addBooking, { isSuccess: isAddBookingSuccess }] =
     useAddBookingMutation({});
@@ -132,23 +118,23 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     []
   );
   useEffect(() => {
-    if (selectedCourt && selectedDate && bookings) {
-      const filteredBookings = bookings.filter(
+    if (selectedCourt && selectedDate && myBookings) {
+      const filteredBookings = myBookings.filter(
         (booking) =>
           booking.court_id === Number(selectedCourt) &&
           booking.event_date.slice(0, 10) === selectedDate &&
           (booking.booking_status_type_id === 1 ||
             booking.booking_status_type_id === 2)
       );
+
       setBookedHours(filteredBookings);
     }
-  }, [selectedCourt, selectedDate, bookings]);
+  }, [selectedCourt, selectedDate, myBookings]);
 
   const availableTimeSlots = generateAvailableTimeSlots(
     selectedCourt,
     selectedDate,
     courts,
-    currentTime,
     bookedHoursForSelectedCourtOnSelectedDate
   );
 
@@ -164,7 +150,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
       event_date: new Date(formData.event_date).toISOString(),
       event_time: selectedTime,
       court_price: Number(
-        courts?.find((court) => court.court_id === Number(selectedCourt))
+        myCourts?.find((court) => court.court_id === Number(selectedCourt))
           ?.price_hour
       ),
       booking_status_type_id: 2,
@@ -192,12 +178,13 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
 
   if (
     isCourtsLoading ||
-    isClubExternalMembersLoading ||
-    isBookingsLoading ||
     isEventTypesLoading ||
-    isClubStaffLoading ||
     isTrainersLoading ||
-    isStudentGroupsLoading
+    isMyCourtsLoading ||
+    isMyTrainersLoading ||
+    isMyExternalMembersLoading ||
+    isMyGroupsLoading ||
+    isMyBookingsLoading
   ) {
     return <PageLoading />;
   }

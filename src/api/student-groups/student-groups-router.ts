@@ -17,6 +17,19 @@ studentGroupsRouter.get(
 );
 
 studentGroupsRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredGroups = await studentGroupsModel.getByFilter(filter);
+      res.status(200).json(filteredGroups);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+studentGroupsRouter.get(
   "/:student_group_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

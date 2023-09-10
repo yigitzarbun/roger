@@ -23,6 +23,12 @@ export const courtsSlice = createApi({
     getCourts: builder.query({
       query: () => "/courts",
     }),
+    getCourtById: builder.query({
+      query: (court_id) => `/courts/${court_id}`,
+    }),
+    getCourtsByFilter: builder.query({
+      query: (filter) => `/courts/filter?${new URLSearchParams(filter)}`,
+    }),
     addCourt: builder.mutation({
       query: (court) => {
         const formData = new FormData();
@@ -101,6 +107,8 @@ export const courtsSlice = createApi({
 
 export const {
   useGetCourtsQuery,
+  useGetCourtByIdQuery,
+  useGetCourtsByFilterQuery,
   useAddCourtMutation,
   useUpdateCourtMutation,
 } = courtsSlice;

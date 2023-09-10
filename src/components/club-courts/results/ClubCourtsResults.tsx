@@ -10,15 +10,20 @@ import { useAppSelector } from "../../../store/hooks";
 import PageLoading from "../../../components/loading/PageLoading";
 import AddCourtButton from "../add-court-button/AddCourtButton";
 
-import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetCourtsQuery } from "../../../api/endpoints/CourtsApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import {
+  useGetCourtsByFilterQuery,
+  useGetCourtsQuery,
+} from "../../../api/endpoints/CourtsApi";
+import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
   structureTypeId: number;
   price: number;
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
   openEditCourtModal: (value: number) => void;
   openAddCourtModal: () => void;
 }
@@ -27,62 +32,48 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     surfaceTypeId,
     structureTypeId,
     price,
+    courtStructureTypes,
+    courtSurfaceTypes,
     openEditCourtModal,
     openAddCourtModal,
   } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
+  const { data: currentClub, isLoading: isCurrentClubLoading } =
+    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
+  const higher_price_for_non_subscribers =
+    currentClub?.[0]["higher_price_for_non_subscribers"];
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const {
-    data: courts,
-    isLoading: isCourtsLoading,
-    isError,
-  } = useGetCourtsQuery({});
+  const { data: currentClubCourts, isLoading: isCurrentClubCourtsLoading } =
+    useGetCourtsByFilterQuery({
+      club_id: user?.clubDetails.club_id,
+    });
 
   const courtStructureIdValue = Number(structureTypeId) ?? null;
   const courtSurfaceIdValue = Number(surfaceTypeId) ?? null;
   const courtPriceValue = Number(price) ?? null;
 
-  const filteredCourts =
-    courts &&
-    courts
-      .filter((court) => court.club_id === user.clubDetails.club_id)
-      .filter((court) => {
-        if (
-          courtStructureIdValue === 0 &&
-          courtSurfaceIdValue === 0 &&
-          courtPriceValue === 0
-        ) {
-          return court;
-        } else if (
-          (courtStructureIdValue === court.court_structure_type_id ||
-            courtStructureIdValue === 0) &&
-          (courtSurfaceIdValue === court.court_surface_type_id ||
-            courtSurfaceIdValue === 0) &&
-          (courtPriceValue <= court.price_hour || courtPriceValue === 0)
-        ) {
-          return court;
-        }
-      });
+  const filteredCourts = currentClubCourts?.filter((court) => {
+    if (
+      courtStructureIdValue === 0 &&
+      courtSurfaceIdValue === 0 &&
+      courtPriceValue === 0
+    ) {
+      return court;
+    } else if (
+      (courtStructureIdValue === court.court_structure_type_id ||
+        courtStructureIdValue === 0) &&
+      (courtSurfaceIdValue === court.court_surface_type_id ||
+        courtSurfaceIdValue === 0) &&
+      (courtPriceValue <= court.price_hour || courtPriceValue === 0)
+    ) {
+      return court;
+    }
+  });
 
-  const myCourts = courts?.filter(
-    (court) => court.club_id === user.clubDetails.club_id
-  );
-
-  if (
-    isCourtStructureTypesLoading ||
-    isCourtSurfaceTypesLoading ||
-    isCourtsLoading ||
-    isClubsLoading
-  ) {
+  if (isCurrentClubLoading || isCurrentClubCourtsLoading) {
     return <PageLoading />;
   }
 
@@ -92,12 +83,10 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
         <h2 className={styles["result-title"]}>Kortlar</h2>
         <AddCourtButton openAddCourtModal={openAddCourtModal} />
       </div>
-      {isCourtsLoading && <p>Yükleniyor...</p>}
-      {isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>}
-      {courts && myCourts.length === 0 ? (
+      {isCurrentClubCourtsLoading && <p>Yükleniyor...</p>}
+      {currentClubCourts?.length === 0 ? (
         <p>Henüz sisteme eklenmiş kortunuz bulunmamaktadır.</p>
       ) : (
-        courts &&
         filteredCourts.length === 0 && (
           <p>
             Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
@@ -105,8 +94,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
           </p>
         )
       )}
-      {courts &&
-        courtStructureTypes &&
+      {courtStructureTypes &&
         courtSurfaceTypes &&
         filteredCourts.length > 0 && (
           <table>
@@ -169,18 +157,13 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                   <td>{court.closing_time.slice(0, 5)}</td>
                   <td>{court.price_hour}</td>
                   <td>
-                    {clubs?.find((club) => club.user_id === user?.user?.user_id)
-                      ?.higher_price_for_non_subscribers &&
+                    {higher_price_for_non_subscribers &&
                     court.price_hour_non_subscriber
                       ? court.price_hour_non_subscriber
-                      : clubs?.find(
-                          (club) => club.user_id === user?.user?.user_id
-                        )?.higher_price_for_non_subscribers &&
+                      : higher_price_for_non_subscribers &&
                         !court.price_hour_non_subscriber
                       ? "Fiyat Girin"
-                      : clubs?.find(
-                          (club) => club.user_id === user?.user?.user_id
-                        )?.higher_price_for_non_subscribers === false && "-"}
+                      : higher_price_for_non_subscribers === false && "-"}
                   </td>
                   <td>{court.is_active ? "Aktif" : "Bloke"}</td>
                   <td onClick={() => openEditCourtModal(court.court_id)}>

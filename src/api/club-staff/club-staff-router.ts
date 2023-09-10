@@ -15,7 +15,18 @@ clubStaffRouter.get(
     }
   }
 );
-
+clubStaffRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredStaff = await clubStaffModel.getByFilter(filter);
+      res.status(200).json(filteredStaff);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 clubStaffRouter.get(
   "/:club_staff_id",
   async (req: Request, res: Response, next: NextFunction) => {

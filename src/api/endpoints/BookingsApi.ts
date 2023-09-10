@@ -24,6 +24,9 @@ export const bookingsSlice = createApi({
     getBookings: builder.query({
       query: () => "/bookings",
     }),
+    getBookingsByFilter: builder.query({
+      query: (filter) => `/bookings/filter?${new URLSearchParams(filter)}`,
+    }),
     addBooking: builder.mutation({
       query: (booking) => ({
         url: "/bookings",
@@ -43,6 +46,7 @@ export const bookingsSlice = createApi({
 
 export const {
   useGetBookingsQuery,
+  useGetBookingsByFilterQuery,
   useAddBookingMutation,
   useUpdateBookingMutation,
 } = bookingsSlice;

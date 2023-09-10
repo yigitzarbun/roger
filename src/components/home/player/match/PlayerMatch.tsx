@@ -11,9 +11,7 @@ const PlayerMatch = () => {
     <Link to={paths.MATCH} className={styles["player-match-container"]}>
       <h2>{i18n.t("matchTitle")}</h2>
       <p>{i18n.t("matchText")}</p>
-      <Link to={paths.MATCH}>
-        <button>{i18n.t("matchButtonText")}</button>
-      </Link>
+      <button>{i18n.t("matchButtonText")}</button>
     </Link>
   );
 };

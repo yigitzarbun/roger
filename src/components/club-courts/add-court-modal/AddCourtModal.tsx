@@ -10,23 +10,25 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../components/loading/PageLoading";
+
 import { useAppSelector } from "../../../store/hooks";
 
 import {
   useAddCourtMutation,
   useGetCourtsQuery,
 } from "../../../api/endpoints/CourtsApi";
-
-import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 import { generateTimesArray } from "../../../common/util/TimeFunctions";
-import PageLoading from "../../../components/loading/PageLoading";
 
 interface AddCourtModalProps {
   isAddCourtModalOpen: boolean;
   closeAddCourtModal: () => void;
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
 }
 
 type FormValues = {
@@ -42,32 +44,33 @@ type FormValues = {
 };
 
 const AddCourtModal = (props: AddCourtModalProps) => {
-  const { isAddCourtModalOpen, closeAddCourtModal } = props;
+  const {
+    isAddCourtModalOpen,
+    closeAddCourtModal,
+    courtStructureTypes,
+    courtSurfaceTypes,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
     setSelectedImage(imageFile);
     setValue("image", imageFile);
   };
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
+  const { data: currentClub, isLoading: isCurrentClubLoading } =
+    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
   const clubBankDetailsExist =
-    clubs?.find((club) => club.user_id === user?.user?.user_id)?.iban &&
-    clubs?.find((club) => club.user_id === user?.user?.user_id)?.bank_id &&
-    clubs?.find((club) => club.user_id === user?.user?.user_id)
-      ?.name_on_bank_account;
+    currentClub?.[0]["iban"] &&
+    currentClub?.[0]["bank_id"] &&
+    currentClub?.[0]["name_on_bank_account"];
 
   const [addCourt, { isSuccess }] = useAddCourtMutation({});
 
   const { refetch } = useGetCourtsQuery({});
-
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
-
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
 
   const [openingTime, setOpeningTime] = useState<string>("00:00");
 
@@ -116,11 +119,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     }
   }, [isSuccess]);
 
-  if (
-    isCourtStructureTypesLoading ||
-    isCourtSurfaceTypesLoading ||
-    isClubsLoading
-  ) {
+  if (isCurrentClubLoading) {
     return <PageLoading />;
   }
 
@@ -249,8 +248,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
           </div>
         </div>
         <div className={styles["input-outer-container"]}>
-          {clubs?.find((club) => club.user_id === user?.user?.user_id)
-            ?.higher_price_for_non_subscribers && (
+          {currentClub?.[0]["higher_price_for_non_subscribers"] && (
             <div className={styles["input-container"]}>
               <label>Üye Olmayanlar İçin Fiyat (TL / saat)</label>
 
@@ -276,8 +274,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             />
           </div>
         </div>
-        {clubs?.find((club) => club.user_id === user?.user?.user_id)
-          ?.higher_price_for_non_subscribers && (
+        {currentClub?.[0]["higher_price_for_non_subscribers"] && (
           <p className={styles["description-text"]}>
             Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
             kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı

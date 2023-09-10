@@ -14,19 +14,22 @@ import { generateTimesArray } from "../../../common/util/TimeFunctions";
 
 import styles from "./styles.module.scss";
 
-import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
 import {
+  useGetCourtByIdQuery,
   useGetCourtsQuery,
   useUpdateCourtMutation,
 } from "../../../api/endpoints/CourtsApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import PageLoading from "../../../components/loading/PageLoading";
+import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 interface EditCourtModalProps {
   isEditCourtModalOpen: boolean;
   closeEditCourtModal: () => void;
   court_id: number;
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
 }
 
 type FormValues = {
@@ -42,32 +45,30 @@ type FormValues = {
   image?: string;
 };
 
-// TO DO: set selectedCourtId to null after editing court
-
 const EditCourtModal = (props: EditCourtModalProps) => {
-  const { isEditCourtModalOpen, closeEditCourtModal, court_id } = props;
+  const {
+    isEditCourtModalOpen,
+    closeEditCourtModal,
+    court_id,
+    courtStructureTypes,
+    courtSurfaceTypes,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
   const [updateCourt, { isSuccess }] = useUpdateCourtMutation({});
 
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
+  const { data: currentClub, isLoading: isCurrentClubLoading } =
+    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
+  const { refetch: refetchCourts } = useGetCourtsQuery({});
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
+    useGetCourtByIdQuery(court_id);
 
-  const {
-    data: courts,
-    isLoading: isCourtsLoading,
-    refetch,
-  } = useGetCourtsQuery({});
-
-  const selectedCourt = courts?.find((court) => court.court_id === court_id);
-
-  const existingImage = selectedCourt?.image ? selectedCourt?.image : null;
+  const existingImage = selectedCourt?.[0]["image"]
+    ? selectedCourt?.[0]["image"]
+    : null;
 
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
@@ -100,7 +101,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         court_structure_type_id: Number(formData.court_structure_type_id),
         court_surface_type_id: Number(formData.court_surface_type_id),
         is_active: formData.is_active,
-        club_id: user.clubDetails.club_id,
+        club_id: user?.clubDetails.club_id,
         image: selectedImage ? selectedImage : existingImage,
         price_hour_non_subscriber: formData?.price_hour_non_subscriber
           ? Number(formData.price_hour_non_subscriber)
@@ -113,40 +114,36 @@ const EditCourtModal = (props: EditCourtModalProps) => {
   };
 
   useEffect(() => {
-    if (courts && selectedCourt) {
+    if (selectedCourt) {
       const openingTimePart =
-        selectedCourt.opening_time?.substring(0, 5) || "00:00";
+        selectedCourt?.[0]["opening_time"]?.substring(0, 5) || "00:00";
       const closingTimePart =
-        selectedCourt.closing_time?.substring(0, 5) || "00:00";
+        selectedCourt?.[0]["closing_time"]?.substring(0, 5) || "00:00";
       reset({
-        court_name: selectedCourt.court_name || "",
+        court_name: selectedCourt?.[0]["court_name"] || "",
         opening_time: openingTimePart,
         closing_time: closingTimePart,
-        price_hour: selectedCourt.price_hour || 0,
-        court_structure_type_id: selectedCourt.court_structure_type_id || 0,
-        court_surface_type_id: selectedCourt.court_surface_type_id || 0,
-        is_active: selectedCourt.is_active ? true : false,
+        price_hour: selectedCourt?.[0]["price_hour"] || 0,
+        court_structure_type_id:
+          selectedCourt?.[0]["court_structure_type_id"] || 0,
+        court_surface_type_id: selectedCourt?.[0]["court_surface_type_id"] || 0,
+        is_active: selectedCourt?.[0]["is_active"] ? true : false,
         price_hour_non_subscriber:
-          selectedCourt?.price_hour_non_subscriber || 0,
+          selectedCourt?.[0]["price_hour_non_subscriber"] || 0,
       });
     }
-  }, [selectedCourt, courts, reset]);
+  }, [selectedCourt, reset]);
 
   useEffect(() => {
     if (isSuccess) {
-      refetch();
+      refetchCourts();
       toast.success("Kort güncellendi");
       reset();
       closeEditCourtModal();
     }
   }, [isSuccess]);
 
-  if (
-    isCourtsLoading ||
-    isCourtStructureTypesLoading ||
-    isCourtSurfaceTypesLoading ||
-    isClubsLoading
-  ) {
+  if (isCurrentClubLoading || isSelectedCourtLoading) {
     <PageLoading />;
   }
 
@@ -291,8 +288,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-          {clubs?.find((club) => club.user_id === user?.user?.user_id)
-            ?.higher_price_for_non_subscribers && (
+          {currentClub?.[0]["higher_price_for_non_subscribers"] && (
             <div className={styles["input-container"]}>
               <label>Fiyat - Üye Olmayanlar (TL / saat)</label>
               <input

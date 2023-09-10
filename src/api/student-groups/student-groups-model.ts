@@ -7,8 +7,29 @@ const studentGroupsModel = {
   },
 
   async getByFilter(filter) {
-    const studentGroup = await db("student_groups").where(filter).first();
-    return studentGroup;
+    const studentGroups = await db("student_groups").where((builder) => {
+      if (filter.club_id) {
+        builder.where("club_id", filter.club_id);
+      }
+      if (filter.is_active) {
+        builder.where("is_active", filter.is_active);
+      }
+
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+      if (filter.student_id) {
+        builder.where(function () {
+          this.where("first_student_id", filter.student_id)
+            .orWhere("second_student_id", filter.student_id)
+            .orWhere("third_student_id", filter.student_id)
+            .orWhere("fourth_student_id", filter.student_id);
+        });
+      }
+    });
+
+    return studentGroups;
   },
 
   async getById(student_group_id) {

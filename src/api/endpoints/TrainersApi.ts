@@ -70,6 +70,9 @@ export const trainersSlice = createApi({
         return requestObject;
       },
     }),
+    getTrainersByFilter: builder.query({
+      query: (filter) => `/trainers/filter?${new URLSearchParams(filter)}`,
+    }),
     updateTrainer: builder.mutation({
       query: (trainer) => {
         const formData = new FormData();
@@ -128,6 +131,7 @@ export const trainersSlice = createApi({
 
 export const {
   useGetTrainersQuery,
+  useGetTrainersByFilterQuery,
   useAddTrainerMutation,
   useUpdateTrainerMutation,
 } = trainersSlice;

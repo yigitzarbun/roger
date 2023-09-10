@@ -7,8 +7,24 @@ const courtsModel = {
   },
 
   async getByFilter(filter) {
-    const court = await db("courts").where(filter).first();
-    return court;
+    const courts = await db("courts").where((builder) => {
+      if (filter.club_id) {
+        builder.where("club_id", filter.club_id);
+      }
+      if (filter.is_active) {
+        builder.where("is_active", filter.is_active);
+      }
+
+      if (filter.price_hour) {
+        builder.where("price_hour", filter.price_hour);
+      }
+
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+    return courts;
   },
 
   async getById(court_id) {

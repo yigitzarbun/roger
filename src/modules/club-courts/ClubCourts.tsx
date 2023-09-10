@@ -7,6 +7,8 @@ import ClubCourtsSearch from "../../components/club-courts/search/ClubCourtsSear
 import ClubCourtsResults from "../../components/club-courts/results/ClubCourtsResults";
 import AddCourtModal from "../../components/club-courts/add-court-modal/AddCourtModal";
 import EditCourtModal from "../../components/club-courts/edit-court-modal/EditCourtModal";
+import { useGetCourtStructureTypesQuery } from "../../api/endpoints/CourtStructureTypesApi";
+import { useGetCourtSurfaceTypesQuery } from "../../api/endpoints/CourtSurfaceTypesApi";
 
 const ClubCourts = () => {
   const [surfaceTypeId, setSurfaceTypeId] = useState<number | null>(null);
@@ -55,6 +57,10 @@ const ClubCourts = () => {
     setIsEditCourtModalOpen(false);
   };
 
+  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
+    useGetCourtStructureTypesQuery({});
+  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
+    useGetCourtSurfaceTypesQuery({});
   return (
     <div className={styles["club-courts-container"]}>
       <ClubCourtseHero />
@@ -66,6 +72,8 @@ const ClubCourts = () => {
         surfaceTypeId={surfaceTypeId}
         structureTypeId={structureTypeId}
         price={price}
+        courtStructureTypes={courtStructureTypes}
+        courtSurfaceTypes={courtSurfaceTypes}
       />
 
       <ClubCourtsResults
@@ -74,16 +82,24 @@ const ClubCourts = () => {
         price={price}
         openEditCourtModal={openEditCourtModal}
         openAddCourtModal={openAddCourtModal}
+        courtStructureTypes={courtStructureTypes}
+        courtSurfaceTypes={courtSurfaceTypes}
       />
       <AddCourtModal
         isAddCourtModalOpen={isAddCourtModalOpen}
         closeAddCourtModal={closeAddCourtModal}
+        courtStructureTypes={courtStructureTypes}
+        courtSurfaceTypes={courtSurfaceTypes}
       />
-      <EditCourtModal
-        court_id={selectedCourtId}
-        isEditCourtModalOpen={isEditCourtModalOpen}
-        closeEditCourtModal={closeEditCourtModal}
-      />
+      {isEditCourtModalOpen && (
+        <EditCourtModal
+          court_id={selectedCourtId}
+          isEditCourtModalOpen={isEditCourtModalOpen}
+          closeEditCourtModal={closeEditCourtModal}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+        />
+      )}
     </div>
   );
 };

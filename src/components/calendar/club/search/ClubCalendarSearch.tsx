@@ -1,8 +1,15 @@
 import React, { ChangeEvent } from "react";
+
 import styles from "./styles.module.scss";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+
+import { useGetCourtsByFilterQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import {
+  currentDayLocale,
+  currentDayObject,
+} from "../../../../common/util/TimeFunctions";
+import { useAppSelector } from "../../../../store/hooks";
 
 interface ClubCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -25,22 +32,20 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
   } = props;
 
   // date filter
-  const currentDate = new Date();
-  const today = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
+  const user = useAppSelector((store) => store?.user);
+  const tomorrow = new Date(currentDayObject);
+  tomorrow.setDate(currentDayObject.getDate() + 1);
 
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+  const { data: myCourts, isLoading: isMyCourtsLoading } =
+    useGetCourtsByFilterQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
-  if (isCourtsLoading || isEventTypesLoading) {
+  if (isMyCourtsLoading || isEventTypesLoading) {
     return <PageLoading />;
   }
 
@@ -49,14 +54,14 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
       <div className={styles["input-container"]}>
         <select onChange={handleDate} value={date}>
           <option value="">-- Tarih --</option>
-          <option value={today.toLocaleDateString()}>Bugün</option>
+          <option value={currentDayLocale}>Bugün</option>
           <option value={tomorrow.toLocaleDateString()}>Yarın</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleCourt} value={courtId ?? ""}>
           <option value="">-- Kort --</option>
-          {courts?.map((court) => (
+          {myCourts?.map((court) => (
             <option key={court.court_id} value={court.court_id}>
               {court.court_name}
             </option>

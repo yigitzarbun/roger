@@ -2,6 +2,10 @@ import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import {
+  currentDayLocale,
+  currentDayObject,
+} from "../../../../common/util/TimeFunctions";
 
 interface TrainerCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -14,14 +18,8 @@ const TrainerCalendarSearch = (props: TrainerCalendarSearchProps) => {
   const { handleDate, handleClub, handleClear, date, clubId } = props;
 
   // date filter
-  const currentDate = new Date();
-  const today = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  const tomorrow = new Date(currentDayObject);
+  tomorrow.setDate(currentDayObject.getDate() + 1);
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -34,7 +32,7 @@ const TrainerCalendarSearch = (props: TrainerCalendarSearchProps) => {
       <div className={styles["input-container"]}>
         <select onChange={handleDate} value={date}>
           <option value="">-- Tarih --</option>
-          <option value={today.toLocaleDateString()}>Bugün</option>
+          <option value={currentDayLocale}>Bugün</option>
           <option value={tomorrow.toLocaleDateString()}>Yarın</option>
         </select>
       </div>

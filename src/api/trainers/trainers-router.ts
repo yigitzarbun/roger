@@ -15,6 +15,18 @@ trainersRouter.get(
     }
   }
 );
+trainersRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredTrainers = await trainersModel.getByFilter(filter);
+      res.status(200).json(filteredTrainers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 trainersRouter.get(
   "/:trainer_id",

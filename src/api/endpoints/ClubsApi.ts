@@ -28,6 +28,9 @@ export const clubsSlice = createApi({
     getClubs: builder.query({
       query: () => "/clubs",
     }),
+    getClubByClubId: builder.query({
+      query: (club_id) => `/clubs/${club_id}`,
+    }),
     addClub: builder.mutation({
       query: (club) => {
         const formData = new FormData();
@@ -123,5 +126,9 @@ export const clubsSlice = createApi({
   }),
 });
 
-export const { useGetClubsQuery, useAddClubMutation, useUpdateClubMutation } =
-  clubsSlice;
+export const {
+  useGetClubsQuery,
+  useGetClubByClubIdQuery,
+  useAddClubMutation,
+  useUpdateClubMutation,
+} = clubsSlice;

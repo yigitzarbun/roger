@@ -8,8 +8,30 @@ const clubStaffModel = {
   },
 
   async getByFilter(filter) {
-    const clubStaff = await db("club_staff").where(filter).first();
-    return clubStaff;
+    const club_staff = await db("club_staff").where((builder) => {
+      if (filter.club_id) {
+        builder.where("club_id", filter.club_id);
+      }
+      if (filter.employment_status) {
+        builder.where("employment_status", filter.employment_status);
+      }
+
+      if (filter.club_staff_role_type_id) {
+        builder.where(
+          "club_staff_role_type_id",
+          filter.club_staff_role_type_id
+        );
+      }
+      if (filter.user_id) {
+        builder.where("user_id", filter.user_id);
+      }
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+
+    return club_staff;
   },
 
   async getById(club_staff_id) {

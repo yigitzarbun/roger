@@ -9,6 +9,7 @@ import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -22,9 +23,16 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import {
+  useGetStudentGroupsByFilterQuery,
+  useGetStudentGroupsQuery,
+} from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import {
+  currentDayLocale,
+  currentTimeLocale,
+  currentYear,
+} from "../../../../common/util/TimeFunctions";
 
 interface TrainerCalendarResultsProps {
   date: string;
@@ -58,25 +66,14 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
-    useGetStudentGroupsQuery({});
-
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
-  // date
-  const currentDate = new Date();
 
-  const currentYear = currentDate.getFullYear();
-  const today = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
-  const currentTime = currentDate.toLocaleTimeString();
-
-  const myGroups = studentGroups?.filter(
-    (group) => group.trainer_id === user?.user_id && group.is_active === true
-  );
+  const { data: myGroups, isLoading: isMyGroupsLoading } =
+    useGetStudentGroupsByFilterQuery({
+      trainer_id: user?.user_id,
+      is_active: true,
+    });
 
   // bookings
   const myBookings = bookings?.filter(
@@ -87,11 +84,10 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
       (booking.event_type_id === 3 ||
         booking.event_type_id === 5 ||
         booking.event_type_id === 6) &&
-      (new Date(booking.event_date).toLocaleDateString() >
-        today.toLocaleDateString() ||
+      (new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
         (new Date(booking.event_date).toLocaleDateString() ===
-          today.toLocaleDateString() &&
-          booking.event_time > currentTime))
+          currentDayLocale &&
+          booking.event_time > currentTimeLocale))
   );
 
   const filteredBookings = myBookings?.filter((booking) => {
@@ -147,7 +143,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     isEventTypesLoading ||
     isPlayerLevelsLoading ||
     isCourtsLoading ||
-    isStudentGroupsLoading ||
+    isMyGroupsLoading ||
     isExternalMembersLoading
   ) {
     return <PageLoading />;
@@ -181,10 +177,8 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
             {filteredBookings?.map((booking) => (
               <tr key={booking.booking_id}>
                 <td>
-                  {booking.booking_status_type_id === 2 ? (
+                  {booking.booking_status_type_id === 2 && (
                     <p className={styles["confirmed-text"]}>Onaylandı</p>
-                  ) : (
-                    ""
                   )}
                 </td>
                 <td>
@@ -344,12 +338,12 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                         }`
                       : booking.inviter_id === user.user_id &&
                         booking.event_type_id === 6
-                      ? studentGroups?.find(
+                      ? myGroups?.find(
                           (group) => group.user_id === booking.invitee_id
                         )?.student_group_name
                       : booking.invitee_id === user.user_id &&
                         booking.event_type_id === 6
-                      ? studentGroups?.find(
+                      ? myGroups?.find(
                           (group) => group.user_id === booking.inviter_id
                         )?.student_group_name
                       : ""}

@@ -264,7 +264,7 @@ const TrainerEventsResults = () => {
                       />
                     )}
                   </td>
-                )}{" "}
+                )}
                 {event.event_type_id === 3 && (
                   <td>
                     {eventReviews?.find(

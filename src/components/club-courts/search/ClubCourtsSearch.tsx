@@ -2,8 +2,14 @@ import React, { ChangeEvent } from "react";
 
 import styles from "./styles.module.scss";
 
-import { useGetCourtStructureTypesQuery } from "../../../api/endpoints/CourtStructureTypesApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import {
+  CourtStructureType,
+  useGetCourtStructureTypesQuery,
+} from "../../../api/endpoints/CourtStructureTypesApi";
+import {
+  CourtSurfaceType,
+  useGetCourtSurfaceTypesQuery,
+} from "../../../api/endpoints/CourtSurfaceTypesApi";
 import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubCourtSearchProps {
@@ -14,6 +20,8 @@ interface ClubCourtSearchProps {
   surfaceTypeId: number;
   structureTypeId: number;
   price: number;
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
 }
 
 const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
@@ -25,17 +33,9 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
     surfaceTypeId,
     structureTypeId,
     price,
+    courtStructureTypes,
+    courtSurfaceTypes,
   } = props;
-
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
-
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
-
-  if (isCourtStructureTypesLoading || isCourtSurfaceTypesLoading) {
-    return <PageLoading />;
-  }
 
   return (
     <div className={styles["courts-page-container"]}>
