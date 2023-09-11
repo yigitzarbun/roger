@@ -13,18 +13,21 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
 
 import {
+  ClubSubscriptionPackage,
   useAddClubSubscriptionPackageMutation,
-  useGetClubSubscriptionPackagesQuery,
+  useGetClubSubscriptionPackagesByFilterQuery,
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
 
-import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddSubscriptionPackageModalProps {
   openAddPackageModal: boolean;
   closeAddClubSubscriptionPackageModal: () => void;
+  clubSubscriptionTypes: ClubSubscriptionTypes[];
+  myPackages: ClubSubscriptionPackage[];
 }
 
 type FormValues = {
@@ -35,37 +38,32 @@ type FormValues = {
 const AddSubscriptionPackageModal = (
   props: AddSubscriptionPackageModalProps
 ) => {
-  const { openAddPackageModal, closeAddClubSubscriptionPackageModal } = props;
+  const {
+    openAddPackageModal,
+    closeAddClubSubscriptionPackageModal,
+    clubSubscriptionTypes,
+    myPackages,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
+
+  const { refetch: refetchMyPackages } =
+    useGetClubSubscriptionPackagesByFilterQuery({
+      is_active: true,
+      club_id: user?.user?.user_id,
+    });
 
   const clubBankDetailsExist =
-    clubs?.find((club) => club.user_id === user?.user?.user_id)?.iban &&
-    clubs?.find((club) => club.user_id === user?.user?.user_id)?.bank_id &&
-    clubs?.find((club) => club.user_id === user?.user?.user_id)
-      ?.name_on_bank_account;
+    selectedClub?.[0]?.iban &&
+    selectedClub?.[0]?.bank_id &&
+    selectedClub?.[0]?.name_on_bank_account;
 
   const [addClubSubscriptionPackage, { isSuccess }] =
     useAddClubSubscriptionPackageMutation({});
 
-  const {
-    data: clubSubscriptionTypes,
-    isLoading: isClubSubscriptionTypesLoading,
-  } = useGetClubSubscriptionTypesQuery({});
-
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-    refetch,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const myPackages = clubSubscriptionPackages?.filter(
-    (subscriptionPackage) =>
-      subscriptionPackage.club_id === user?.user?.user_id &&
-      subscriptionPackage.is_active === true
-  );
   const myPackageTypes = [];
   myPackages?.forEach((myPackage) =>
     myPackageTypes.push(myPackage.club_subscription_type_id)
@@ -95,18 +93,14 @@ const AddSubscriptionPackageModal = (
 
   useEffect(() => {
     if (isSuccess) {
-      refetch();
+      refetchMyPackages();
       reset();
       toast.success("Üyelik paketi eklendi");
       closeAddClubSubscriptionPackageModal();
     }
   }, [isSuccess]);
 
-  if (
-    isClubSubscriptionTypesLoading ||
-    isClubSubscriptionPackagesLoading ||
-    isClubsLoading
-  ) {
+  if (isSelectedClubLoading) {
     return <PageLoading />;
   }
 

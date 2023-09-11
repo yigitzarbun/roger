@@ -16,7 +16,19 @@ clubSubscriptionPackagesRouter.get(
     }
   }
 );
-
+clubSubscriptionPackagesRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredClubSubscriptionPackage =
+        await clubSubscriptionPackagesModel.getByFilter(filter);
+      res.status(200).json(filteredClubSubscriptionPackage);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 clubSubscriptionPackagesRouter.get(
   "/:club_subscription_package_id",
   async (req: Request, res: Response, next: NextFunction) => {

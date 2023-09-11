@@ -12,10 +12,7 @@ import AddCourtButton from "../add-court-button/AddCourtButton";
 
 import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
-import {
-  useGetCourtsByFilterQuery,
-  useGetCourtsQuery,
-} from "../../../api/endpoints/CourtsApi";
+import { useGetCourtsByFilterQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 interface ClubCourtResultsProps {
@@ -46,10 +43,13 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   const higher_price_for_non_subscribers =
     currentClub?.[0]["higher_price_for_non_subscribers"];
 
-  const { data: currentClubCourts, isLoading: isCurrentClubCourtsLoading } =
-    useGetCourtsByFilterQuery({
-      club_id: user?.clubDetails.club_id,
-    });
+  const {
+    data: currentClubCourts,
+    isLoading: isCurrentClubCourtsLoading,
+    refetch: refetchClubCourts,
+  } = useGetCourtsByFilterQuery({
+    club_id: user?.clubDetails.club_id,
+  });
 
   const courtStructureIdValue = Number(structureTypeId) ?? null;
   const courtSurfaceIdValue = Number(surfaceTypeId) ?? null;

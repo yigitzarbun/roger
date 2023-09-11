@@ -20,6 +20,14 @@ const trainersModel = {
         builder.where("club_id", filter.club_id);
       }
 
+      if (filter.user_id) {
+        builder.where("user_id", filter.user_id);
+      }
+
+      if (filter.trainer_id) {
+        builder.where("trainer_id");
+      }
+
       if (filter.sortBy) {
         // handle sorting here if required
         builder.orderBy(filter.sortBy, filter.sortDirection || "asc");

@@ -11,43 +11,44 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import {
-  useGetClubStaffQuery,
+  useGetClubStaffByFilterQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
 
 interface DeclineClubStaffModalProps {
   isDeclineClubStaffModalOpen: boolean;
   closeDeclineClubStaffModal: () => void;
-  selectedClubStaffId: number;
+  selectedClubStaffUserId: number;
 }
 
 const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
   const {
     isDeclineClubStaffModalOpen,
     closeDeclineClubStaffModal,
-    selectedClubStaffId,
+    selectedClubStaffUserId,
   } = props;
 
   const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch: refetchStaffData,
-  } = useGetClubStaffQuery({});
+    data: selectedClubStaff,
+    isLoading: isSelectedClubStaffLoading,
+    refetch: refetchClubStaff,
+  } = useGetClubStaffByFilterQuery({
+    user_id: selectedClubStaffUserId,
+  });
 
-  const selectedClubStaff = clubStaff?.find(
-    (staff) => staff.club_staff_id === selectedClubStaffId
-  );
+  const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
+    useGetTrainersByFilterQuery({
+      user_id: selectedClubStaffUserId,
+    });
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
+  const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
   const handleDeclineClubStaff = () => {
     const updatedStaffData = {
-      ...selectedClubStaff,
+      ...selectedClubStaff?.[0],
       employment_status: "declined",
     };
     updateClubStaff(updatedStaffData);
@@ -55,13 +56,13 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetchStaffData();
-      toast.success("İşlem başarılı");
+      refetchClubStaff();
+      toast.success("Personel eklendi");
       closeDeclineClubStaffModal();
     }
   }, [isSuccess]);
 
-  if (isClubStaffLoading || isTrainersLoading) {
+  if (isSelectedClubStaffLoading || isSelectedTrainerLoading) {
     return <PageLoading />;
   }
 
@@ -81,25 +82,13 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
       <div className={styles["bottom-container"]}>
         <img
           src={
-            trainers?.find(
-              (trainer) =>
-                trainer.user_id ===
-                clubStaff?.find(
-                  (staff) => staff.club_staff_id === selectedClubStaffId
-                )?.user_id
-            )?.image
-              ? trainers?.find(
-                  (trainer) =>
-                    trainer.user_id ===
-                    clubStaff?.find(
-                      (staff) => staff.club_staff_id === selectedClubStaffId
-                    )?.user_id
-                )?.image
+            selectedTrainerImage
+              ? selectedTrainerImage
               : "images/icons/avatar.png"
           }
           className={styles["trainer-image"]}
         />
-        <h4>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu reddetmek istediğinize emin misiniz?`}</h4>
+        <h4>{`${selectedTrainer?.[0]?.["fname"]} ${selectedTrainer?.[0]?.["lname"]} kulübünüzde çalıştığını belirtti. Başvuruyu reddetmek istediğinize emin misiniz?`}</h4>
       </div>
       <button onClick={handleDeclineClubStaff} className={styles["button"]}>
         Reddet

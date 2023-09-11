@@ -58,7 +58,9 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
   const isPastApplicationExist = clubStaff?.find(
     (staff) =>
       staff.club_id === trainerEmploymentClubId &&
-      staff.employment_status === "declined"
+      staff.user_id === user?.user?.user_id &&
+      (staff.employment_status === "declined" ||
+        staff.employment_status === "terminated_by_club")
   );
 
   const handleAddClubStaff = () => {

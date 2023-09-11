@@ -14,18 +14,18 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import {
   ClubSubscriptionPackage,
-  useGetClubSubscriptionPackagesQuery,
+  useGetClubSubscriptionPackagesByFilterQuery,
   useUpdateClubSubscriptionPackageMutation,
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
-import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 
 interface EditSubscriptionPackageModalProps {
   openEditPackageModal: boolean;
   closeEditClubSubscriptionPackageModal: () => void;
   clubSubscriptionPackageId: number;
   selectedSubscriptionPackage: ClubSubscriptionPackage;
+  clubSubscriptionTypes: ClubSubscriptionTypes[];
 }
 
 type FormValues = {
@@ -40,37 +40,21 @@ const EditSubscriptionPackageModal = (
     closeEditClubSubscriptionPackageModal,
     clubSubscriptionPackageId,
     selectedSubscriptionPackage,
+    clubSubscriptionTypes,
   } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { refetch: refetchMyPackages } =
+    useGetClubSubscriptionPackagesByFilterQuery({
+      is_active: true,
+      club_id: user?.user?.user_id,
+    });
 
   const [
     updateClubSubscriptionPackage,
     { data: updatedClubSubscription, isSuccess },
   ] = useUpdateClubSubscriptionPackageMutation({});
-
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-    refetch,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const {
-    data: clubSubscriptionTypes,
-    isLoading: isClubSubscriptionTypesLoading,
-  } = useGetClubSubscriptionTypesQuery({});
-
-  const myPackages = clubSubscriptionPackages?.filter(
-    (subscriptionPackage) =>
-      subscriptionPackage.club_id === user?.user?.user_id &&
-      subscriptionPackage.is_active === true
-  );
-
-  const selectedPackage = myPackages?.find(
-    (myPackage) =>
-      myPackage.club_subscription_package_id === clubSubscriptionPackageId &&
-      myPackage.is_active === true
-  );
 
   const {
     register,
@@ -90,7 +74,8 @@ const EditSubscriptionPackageModal = (
         club_subscription_package_id: clubSubscriptionPackageId,
         price: Number(formData.price),
         is_active: true,
-        club_subscription_type_id: selectedPackage?.club_subscription_type_id,
+        club_subscription_type_id:
+          selectedSubscriptionPackage?.club_subscription_type_id,
         club_id: user?.user?.user_id,
       };
       updateClubSubscriptionPackage(updatedSubscriptionPackageData);
@@ -101,16 +86,16 @@ const EditSubscriptionPackageModal = (
 
   useEffect(() => {
     if (isSuccess && updatedClubSubscription) {
-      refetch();
+      refetchMyPackages();
       closeEditClubSubscriptionPackageModal();
       toast.success("İşlem başarılı");
       reset({ price: updatedClubSubscription?.price });
     }
   }, [isSuccess]);
 
-  if (isClubSubscriptionPackagesLoading || isClubSubscriptionTypesLoading) {
-    return <PageLoading />;
-  }
+  useEffect(() => {
+    reset({ price: selectedSubscriptionPackage?.price });
+  }, [closeEditClubSubscriptionPackageModal]);
 
   return (
     <Modal
@@ -130,7 +115,7 @@ const EditSubscriptionPackageModal = (
           clubSubscriptionTypes?.find(
             (type) =>
               type.club_subscription_type_id ===
-              selectedPackage?.club_subscription_type_id
+              selectedSubscriptionPackage?.club_subscription_type_id
           )?.club_subscription_type_name
         }
       </h3>
@@ -141,12 +126,7 @@ const EditSubscriptionPackageModal = (
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
             <label>Fiyat (TL)</label>
-            <input
-              {...register("price", { required: true })}
-              type="number"
-              min="0"
-              defaultValue={selectedSubscriptionPackage?.price}
-            />
+            <input {...register("price", { required: true })} type="number" />
             {errors.price && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}

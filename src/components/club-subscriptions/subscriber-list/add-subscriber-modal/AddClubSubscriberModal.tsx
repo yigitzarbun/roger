@@ -14,29 +14,38 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import {
   useAddClubExternalMemberMutation,
+  useGetClubExternalMembersByFilterQuery,
   useGetClubExternalMembersQuery,
 } from "../../../../api/endpoints/ClubExternalMembersApi";
 
-import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { ClubSubscriptionPackage } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 import {
   useAddUserMutation,
   useGetUsersQuery,
 } from "../../../../store/auth/apiSlice";
-import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
-import { useGetUserStatusTypesQuery } from "../../../../api/endpoints/UserStatusTypesApi";
-import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import {
+  UserType,
+  useGetUserStatusTypesQuery,
+} from "../../../../api/endpoints/UserStatusTypesApi";
+import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 import {
   useAddClubSubscriptionMutation,
+  useGetClubSubscriptionsByFilterQuery,
   useGetClubSubscriptionsQuery,
 } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
+import { Location } from "../../../../api/endpoints/LocationsApi";
+import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddClubSubscriberModalProps {
   isAddSubscriberModalOpen: boolean;
   closeAddClubSubscriberModal: () => void;
+  userTypes: UserType[];
+  locations: Location[];
+  playerLevels: PlayerLevel[];
+  clubSubscriptionTypes: ClubSubscriptionTypes[];
+  mySubscriptionPackages: ClubSubscriptionPackage[];
 }
 
 type FormValues = {
@@ -52,38 +61,36 @@ type FormValues = {
 };
 
 const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
-  const { isAddSubscriberModalOpen, closeAddClubSubscriberModal } = props;
+  const {
+    isAddSubscriberModalOpen,
+    closeAddClubSubscriberModal,
+    userTypes,
+    locations,
+    playerLevels,
+    clubSubscriptionTypes,
+    mySubscriptionPackages,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: userTypes, isLoading: isUserTypesLoading } =
-    useGetUserTypesQuery({});
 
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
 
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-
   const { refetch: refetchClubSubscribers } = useGetClubSubscriptionsQuery({});
+
+  const { refetch: refetchMySubscribers } =
+    useGetClubSubscriptionsByFilterQuery({
+      club_id: user?.user?.user_id,
+      is_active: true,
+    });
 
   const { refetch: refetchUsers } = useGetUsersQuery({});
 
-  const {
-    data: clubSubscriptionTypes,
-    isLoading: isClubSubscriptionTypesLoading,
-  } = useGetClubSubscriptionTypesQuery({});
-
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const { refetch: refetchClubExternalSubscribers } =
-    useGetClubExternalMembersQuery({});
+  const { refetch: refetchClubExternalSubscriber } =
+    useGetClubExternalMembersByFilterQuery({
+      club_id: user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
   const [
     addClubExternalSubscriber,
@@ -94,12 +101,6 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
 
   const [addSubscription, { isSuccess: isAddSubscriptionSuccess }] =
     useAddClubSubscriptionMutation({});
-
-  const myPackages = clubSubscriptionPackages?.filter(
-    (subscriptionPackage) =>
-      subscriptionPackage.club_id === user?.user?.user_id &&
-      subscriptionPackage.is_active === true
-  );
 
   const [selectedClubPackage, setSelectedClubPackage] = useState(null);
 
@@ -122,7 +123,7 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
       ).user_status_type_id,
     };
     try {
-      const selectedPackage = myPackages?.find(
+      const selectedPackage = mySubscriptionPackages?.find(
         (selectedPackage) =>
           selectedPackage.club_subscription_package_id ===
           Number(formData?.club_subscription_package_id)
@@ -186,22 +187,15 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
   useEffect(() => {
     if (isAddSubscriptionSuccess) {
       toast.success("Üye eklendi");
-      refetchUsers();
-      refetchClubExternalSubscribers();
       refetchClubSubscribers();
-      reset();
+      refetchMySubscribers();
+      refetchClubExternalSubscriber();
+      refetchUsers();
       closeAddClubSubscriberModal();
     }
-  }, [isAddSubscriptionSuccess, isAddClubExternalSubscriberSuccess]);
+  }, [isAddSubscriptionSuccess]);
 
-  if (
-    isClubSubscriptionPackagesLoading ||
-    isUserTypesLoading ||
-    isUserStatusTypesLoading ||
-    isClubSubscriptionTypesLoading ||
-    isLocationsLoading ||
-    isPlayerLevelsLoading
-  ) {
+  if (isUserStatusTypesLoading) {
     return <PageLoading />;
   }
   return (
@@ -275,7 +269,7 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
               {...register("club_subscription_package_id", { required: true })}
             >
               <option value="">-- Üyelik Türü --</option>
-              {myPackages?.map((clubPackage) => (
+              {mySubscriptionPackages?.map((clubPackage) => (
                 <option
                   key={clubPackage.club_subscription_package_id}
                   value={clubPackage.club_subscription_package_id}

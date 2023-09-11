@@ -16,6 +16,7 @@ import { useAppSelector } from "../../../store/hooks";
 
 import {
   useAddCourtMutation,
+  useGetCourtsByFilterQuery,
   useGetCourtsQuery,
 } from "../../../api/endpoints/CourtsApi";
 import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
@@ -70,8 +71,11 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   const [addCourt, { isSuccess }] = useAddCourtMutation({});
 
-  const { refetch } = useGetCourtsQuery({});
+  const { refetch: refetchAllCourts } = useGetCourtsQuery({});
 
+  const { refetch: refetchClubCourts } = useGetCourtsByFilterQuery({
+    club_id: user?.clubDetails?.club_id,
+  });
   const [openingTime, setOpeningTime] = useState<string>("00:00");
 
   const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -112,7 +116,8 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetch();
+      refetchAllCourts();
+      refetchClubCourts();
       toast.success("Kort eklendi");
       reset();
       closeAddCourtModal();

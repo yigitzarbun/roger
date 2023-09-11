@@ -12,24 +12,29 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { Trainer } from "../../../../api/endpoints/TrainersApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
+import {
+  ClubExternalMember,
+  useGetClubExternalMembersByFilterQuery,
+} from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   useAddStudentGroupMutation,
   useGetStudentGroupsQuery,
 } from "../../../../api/endpoints/StudentGroupsApi";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import {
   useAddUserMutation,
   useGetUsersQuery,
 } from "../../../../store/auth/apiSlice";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { User } from "store/slices/authSlice";
 
 interface AddGroupModalProps {
   isAddGroupModalOpen: boolean;
   closeAddGroupModal: () => void;
+  myTrainers: Trainer[];
+  myExternalMembers: ClubExternalMember[];
 }
 
 type FormValues = {
@@ -42,22 +47,24 @@ type FormValues = {
 };
 
 const AddGroupModal = (props: AddGroupModalProps) => {
-  const { isAddGroupModalOpen, closeAddGroupModal } = props;
-  const user = useAppSelector((store) => store?.user?.user);
+  const {
+    isAddGroupModalOpen,
+    closeAddGroupModal,
+    myTrainers,
+    myExternalMembers,
+  } = props;
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
+  const user = useAppSelector((store) => store?.user?.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: externalMembers, isLoading: isExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
+
+  const { data: mySubscribers, isLoading: isMySubscribersLoading } =
+    useGetClubSubscriptionsByFilterQuery({
+      club_id: user?.user?.user_id,
+      is_active: true,
+    });
 
   const { isLoading: isGroupsLoading, refetch: refetchGroups } =
     useGetStudentGroupsQuery({});
@@ -76,18 +83,6 @@ const AddGroupModal = (props: AddGroupModalProps) => {
   };
 
   const [newGroup, setNewGroup] = useState(null);
-
-  const myTrainers = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === user?.clubDetails?.club_id &&
-      staff.employment_status === "accepted"
-  );
-
-  const mySubscribers = clubSubscriptions?.filter(
-    (subscriber) =>
-      subscriber.club_id === user?.user?.user_id &&
-      subscriber.is_active === true
-  );
 
   const {
     register,
@@ -125,6 +120,10 @@ const AddGroupModal = (props: AddGroupModalProps) => {
     }
   };
 
+  const selectedExternalMember = (user_id: number) => {
+    return myExternalMembers?.find((member) => member.user_id === user_id);
+  };
+
   useEffect(() => {
     if (isAddUserSuccess) {
       newGroup.user_id = newUserData?.user_id;
@@ -148,12 +147,9 @@ const AddGroupModal = (props: AddGroupModalProps) => {
 
   if (
     isGroupsLoading ||
-    isClubStaffLoading ||
-    isExternalMembersLoading ||
-    isTrainersLoading ||
     isUsersLoading ||
     isPlayersLoading ||
-    isClubSubscriptionsLoading
+    isMySubscribersLoading
   ) {
     return <PageLoading />;
   }
@@ -197,8 +193,13 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               <option value="">-- Eğitmen --</option>
               {myTrainers?.map((staff) => (
                 <option key={staff.user_id} value={staff.user_id}>{`${
-                  trainers?.find((trainer) => trainer.user_id === staff.user_id)
-                    ?.fname
+                  myTrainers?.find(
+                    (trainer) => trainer.user_id === staff.user_id
+                  )?.fname
+                } ${
+                  myTrainers?.find(
+                    (trainer) => trainer.user_id === staff.user_id
+                  )?.lname
                 }`}</option>
               ))}
             </select>
@@ -220,14 +221,8 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 <option key={subscriber.player_id} value={subscriber.player_id}>
                   {users?.find((user) => user.user_id === subscriber.player_id)
                     ?.user_type_id === 5
-                    ? `${
-                        externalMembers?.find(
-                          (member) => member.user_id === subscriber.player_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === subscriber.player_id
-                        )?.lname
+                    ? `${selectedExternalMember(subscriber.player_id)?.fname} ${
+                        selectedExternalMember(subscriber.player_id)?.lname
                       }`
                     : users?.find(
                         (user) => user.user_id === subscriber.player_id
@@ -260,14 +255,8 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 <option key={subscriber.player_id} value={subscriber.player_id}>
                   {users?.find((user) => user.user_id === subscriber.player_id)
                     ?.user_type_id === 5
-                    ? `${
-                        externalMembers?.find(
-                          (member) => member.user_id === subscriber.player_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === subscriber.player_id
-                        )?.lname
+                    ? `${selectedExternalMember(subscriber.player_id)?.fname} ${
+                        selectedExternalMember(subscriber.player_id)?.lname
                       }`
                     : users?.find(
                         (user) => user.user_id === subscriber.player_id
@@ -305,13 +294,9 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                       (user) => user.user_id === subscriber.player_id
                     )?.user_type_id === 5
                       ? `${
-                          externalMembers?.find(
-                            (member) => member.user_id === subscriber.player_id
-                          )?.fname
+                          selectedExternalMember(subscriber.player_id)?.fname
                         } ${
-                          externalMembers?.find(
-                            (member) => member.user_id === subscriber.player_id
-                          )?.lname
+                          selectedExternalMember(subscriber.player_id)?.lname
                         }`
                       : users?.find(
                           (user) => user.user_id === subscriber.player_id
@@ -347,13 +332,9 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                       (user) => user.user_id === subscriber.player_id
                     )?.user_type_id === 5
                       ? `${
-                          externalMembers?.find(
-                            (member) => member.user_id === subscriber.player_id
-                          )?.fname
+                          selectedExternalMember(subscriber.player_id)?.fname
                         } ${
-                          externalMembers?.find(
-                            (member) => member.user_id === subscriber.player_id
-                          )?.lname
+                          selectedExternalMember(subscriber.player_id)?.lname
                         }`
                       : users?.find(
                           (user) => user.user_id === subscriber.player_id

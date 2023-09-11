@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
-import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
+import {
+  useGetClubStaffByFilterQuery,
+  useGetClubStaffQuery,
+} from "../../../api/endpoints/ClubStaffApi";
 import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubStaffNavigationProps {
@@ -17,19 +20,24 @@ const ClubStaffNavigation = ({
 }: ClubStaffNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
+  const { data: clubStaffRequests, refetch: refetchClubStaffRequests } =
+    useGetClubStaffQuery({});
+
   const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch,
-  } = useGetClubStaffQuery({});
+    data: myStaffRequests,
+    isLoading: isMyStaffRequestsLoading,
+    refetch: refetchMyStaffRequests,
+  } = useGetClubStaffByFilterQuery({
+    club_id: user?.clubDetails?.club_id,
+    employment_status: "pending",
+  });
 
-  const myStaffRequests = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === user?.clubDetails?.club_id &&
-      staff.employment_status === "pending"
-  );
+  useEffect(() => {
+    refetchMyStaffRequests();
+    refetchClubStaffRequests();
+  }, [clubStaffRequests]);
 
-  if (isClubStaffLoading) {
+  if (isMyStaffRequestsLoading) {
     return <PageLoading />;
   }
 

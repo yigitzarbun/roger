@@ -8,7 +8,10 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 
-import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
+import {
+  useGetClubStaffByFilterQuery,
+  useGetClubStaffQuery,
+} from "../../../api/endpoints/ClubStaffApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
@@ -17,15 +20,10 @@ import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import AcceptClubStaffModal from "./accept-staff-modal/AcceptClubStaffModal";
 import DeclineClubStaffModal from "./decline-staff-moda/DeclineClubStaffModal";
 import PageLoading from "../../../components/loading/PageLoading";
+import { currentYear } from "../../../common/util/TimeFunctions";
 
 const ClubStaffRequests = () => {
   const user = useAppSelector((store) => store?.user?.user);
-
-  const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch,
-  } = useGetClubStaffQuery({});
 
   const { data: clubStaffRoleTypes, isLoading: isClubStaffRoleTypesLoading } =
     useGetClubStaffRoleTypesQuery({});
@@ -33,6 +31,10 @@ const ClubStaffRequests = () => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
+
+  const selectedTrainer = (user_id: number) => {
+    return trainers?.find((trainer) => trainer.user_id === user_id);
+  };
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -42,28 +44,27 @@ const ClubStaffRequests = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  const myStaffRequests = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === user?.clubDetails?.club_id &&
-      staff.employment_status === "pending"
-  );
+  const {
+    data: myStaffRequests,
+    isLoading: isMyStaffRequestsLoading,
+    refetch,
+  } = useGetClubStaffByFilterQuery({
+    club_id: user?.clubDetails?.club_id,
+    employment_status: "pending",
+  });
 
-  const today = new Date();
-  const year = today.getFullYear();
-
-  const [selectedClubStaffId, setSelectedClubStaffId] = useState(null);
+  const [selectedClubStaffUserId, setSelectedClubStaffUserId] = useState(null);
 
   const [isAcceptClubStaffModalOpen, setIsAcceptClubStaffModalOpen] =
     useState(false);
 
   const openAcceptClubStaffModal = (club_staff_id: number) => {
-    setSelectedClubStaffId(club_staff_id);
+    setSelectedClubStaffUserId(club_staff_id);
     setIsAcceptClubStaffModalOpen(true);
   };
-
   const closeAcceptClubStaffModal = () => {
     setIsAcceptClubStaffModalOpen(false);
-    setSelectedClubStaffId(null);
+    setSelectedClubStaffUserId(null);
     refetch();
   };
 
@@ -71,18 +72,18 @@ const ClubStaffRequests = () => {
     useState(false);
 
   const openDeclineClubStaffModal = (club_staff_id: number) => {
-    setSelectedClubStaffId(club_staff_id);
+    setSelectedClubStaffUserId(club_staff_id);
     setIsDeclineClubStaffModalOpen(true);
   };
 
   const closeDeclineClubStaffModal = () => {
     setIsDeclineClubStaffModalOpen(false);
-    setSelectedClubStaffId(null);
+    setSelectedClubStaffUserId(null);
     refetch();
   };
 
   if (
-    isClubStaffLoading ||
+    isMyStaffRequestsLoading ||
     isClubStaffRoleTypesLoading ||
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
@@ -97,10 +98,10 @@ const ClubStaffRequests = () => {
         <h2 className={styles["result-title"]}>Başvurular</h2>
       </div>
 
-      {clubStaff && myStaffRequests.length === 0 && (
+      {myStaffRequests?.length === 0 && (
         <p>Yeni personel başvurusu bulunmamaktadır.</p>
       )}
-      {clubStaff && clubStaffRoleTypes && myStaffRequests.length > 0 && (
+      {clubStaffRoleTypes && myStaffRequests.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -121,12 +122,8 @@ const ClubStaffRequests = () => {
                   <Link to={`${paths.EXPLORE_PROFILE}2/${request.user_id}`}>
                     <img
                       src={
-                        trainers?.find(
-                          (trainer) => trainer.user_id === request.user_id
-                        )?.image
-                          ? trainers?.find(
-                              (trainer) => trainer.user_id === request.user_id
-                            )?.image
+                        selectedTrainer(request.user_id)?.image
+                          ? selectedTrainer(request.user_id)?.image
                           : "/images/icons/avatar.png"
                       }
                       alt="request"
@@ -140,43 +137,25 @@ const ClubStaffRequests = () => {
                     className={styles["trainer-name"]}
                   >
                     {`
-                    ${
-                      trainers?.find(
-                        (trainer) => trainer.user_id === request.user_id
-                      )?.fname
+                    ${selectedTrainer(request.user_id)?.fname} ${
+                      selectedTrainer(request.user_id)?.lname
                     }
-                   ${
-                     trainers?.find(
-                       (trainer) => trainer.user_id === request.user_id
-                     )?.lname
-                   }
                   
                   `}
                   </Link>
                 </td>
                 <td>
-                  {year -
-                    Number(
-                      trainers?.find(
-                        (trainer) => trainer.user_id === request.user_id
-                      )?.birth_year
-                    )}
+                  {currentYear -
+                    Number(selectedTrainer(request.user_id)?.birth_year)}
                 </td>
-                <td>
-                  {
-                    trainers?.find(
-                      (trainer) => trainer.user_id === request.user_id
-                    )?.gender
-                  }
-                </td>
+                <td>{selectedTrainer(request.user_id)?.gender}</td>
                 <td>
                   {
                     trainerExperienceTypes?.find(
                       (type) =>
                         type.trainer_experience_type_id ===
-                        trainers?.find(
-                          (trainer) => trainer.user_id === request.user_id
-                        )?.trainer_experience_type_id
+                        selectedTrainer(request.user_id)
+                          ?.trainer_experience_type_id
                     )?.trainer_experience_type_name
                   }
                 </td>
@@ -185,9 +164,7 @@ const ClubStaffRequests = () => {
                     locations?.find(
                       (location) =>
                         location.location_id ===
-                        trainers?.find(
-                          (trainer) => trainer.user_id === request.user_id
-                        )?.location_id
+                        selectedTrainer(request.user_id)?.location_id
                     )?.location_name
                   }
                 </td>
@@ -209,9 +186,7 @@ const ClubStaffRequests = () => {
                 </td>
                 <td>
                   <button
-                    onClick={() =>
-                      openDeclineClubStaffModal(request.club_staff_id)
-                    }
+                    onClick={() => openDeclineClubStaffModal(request.user_id)}
                     className={styles["decline-button"]}
                   >
                     Reddet
@@ -219,9 +194,7 @@ const ClubStaffRequests = () => {
                 </td>
                 <td>
                   <button
-                    onClick={() =>
-                      openAcceptClubStaffModal(request.club_staff_id)
-                    }
+                    onClick={() => openAcceptClubStaffModal(request.user_id)}
                     className={styles["accept-button"]}
                   >
                     Onay Ver
@@ -232,16 +205,21 @@ const ClubStaffRequests = () => {
           </tbody>
         </table>
       )}
-      <AcceptClubStaffModal
-        isAcceptClubStaffModalOpen={isAcceptClubStaffModalOpen}
-        closeAcceptClubStaffModal={closeAcceptClubStaffModal}
-        selectedClubStaffId={selectedClubStaffId}
-      />
-      <DeclineClubStaffModal
-        isDeclineClubStaffModalOpen={isDeclineClubStaffModalOpen}
-        closeDeclineClubStaffModal={closeDeclineClubStaffModal}
-        selectedClubStaffId={selectedClubStaffId}
-      />
+      {isAcceptClubStaffModalOpen && (
+        <AcceptClubStaffModal
+          isAcceptClubStaffModalOpen={isAcceptClubStaffModalOpen}
+          closeAcceptClubStaffModal={closeAcceptClubStaffModal}
+          selectedClubStaffUserId={selectedClubStaffUserId}
+        />
+      )}
+
+      {isDeclineClubStaffModalOpen && (
+        <DeclineClubStaffModal
+          isDeclineClubStaffModalOpen={isDeclineClubStaffModalOpen}
+          closeDeclineClubStaffModal={closeDeclineClubStaffModal}
+          selectedClubStaffUserId={selectedClubStaffUserId}
+        />
+      )}
     </div>
   );
 };

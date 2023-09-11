@@ -28,6 +28,12 @@ export const trainersSlice = createApi({
     getTrainers: builder.query({
       query: () => "/trainers",
     }),
+    getTrainerById: builder.query({
+      query: (trainer_id) => `/trainers/${trainer_id}`,
+    }),
+    getTrainersByFilter: builder.query({
+      query: (filter) => `/trainers/filter?${new URLSearchParams(filter)}`,
+    }),
     addTrainer: builder.mutation({
       query: (trainer) => {
         const formData = new FormData();
@@ -70,9 +76,7 @@ export const trainersSlice = createApi({
         return requestObject;
       },
     }),
-    getTrainersByFilter: builder.query({
-      query: (filter) => `/trainers/filter?${new URLSearchParams(filter)}`,
-    }),
+
     updateTrainer: builder.mutation({
       query: (trainer) => {
         const formData = new FormData();
@@ -131,6 +135,7 @@ export const trainersSlice = createApi({
 
 export const {
   useGetTrainersQuery,
+  useGetTrainerByIdQuery,
   useGetTrainersByFilterQuery,
   useAddTrainerMutation,
   useUpdateTrainerMutation,

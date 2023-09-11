@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -12,38 +12,28 @@ import styles from "./styles.module.scss";
 
 import AddClubSubscriberModal from "./add-subscriber-modal/AddClubSubscriberModal";
 import EditClubSubscriberModal from "./edit-subscriber-modal/EditClubSubscriberModal";
+import PageLoading from "../../../components/loading/PageLoading";
+import { currentYear } from "../../../common/util/TimeFunctions";
 
-import { useGetClubSubscriptionsQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
-import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetUsersQuery } from "../../../store/auth/apiSlice";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
-import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExternalMembersApi";
-import PageLoading from "../../../components/loading/PageLoading";
+import { useGetClubExternalMembersByFilterQuery } from "../../../api/endpoints/ClubExternalMembersApi";
 
 const ClubSubscribersResults = () => {
-  const user = useAppSelector((store) => store?.user?.user?.user);
-
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
+  const user = useAppSelector((store) => store?.user?.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
 
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
-
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: clubExternalMembers, isLoading: isExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -54,10 +44,17 @@ const ClubSubscribersResults = () => {
   const { data: subscriptionTypes, isLoading: isSubscriptionTypesLoading } =
     useGetClubSubscriptionTypesQuery({});
 
-  const mySubscriptions = clubSubscriptions?.filter(
-    (subscription) =>
-      subscription.club_id === user?.user_id && subscription.is_active === true
-  );
+  const { data: mySubscriptions, isLoading: isMySubscriptionsLoading } =
+    useGetClubSubscriptionsByFilterQuery({
+      club_id: user?.user?.user_id,
+      is_active: true,
+    });
+
+  const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
+    useGetClubExternalMembersByFilterQuery({
+      club_id: user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
   const [isAddSubscriberModalOpen, setIsAddSubscriberModalOpen] =
     useState(false);
@@ -83,10 +80,10 @@ const ClubSubscribersResults = () => {
     setIsEditSubscriberModalOpen(true);
     setSelectedClubSubscriptionId(selectedClubSubscriptionId);
     setSelectedExternalSubscriber(
-      clubExternalMembers?.find(
+      myExternalMembers?.find(
         (member) =>
           member.user_id ===
-          clubSubscriptions?.find(
+          mySubscriptions?.find(
             (subscription) =>
               subscription.club_subscription_id === selectedClubSubscriptionId
           )?.player_id
@@ -98,24 +95,26 @@ const ClubSubscribersResults = () => {
     setIsEditSubscriberModalOpen(false);
   };
 
-  const clubSubscriptionPackageExists = clubSubscriptionPackages?.find(
-    (subscriptionPackage) =>
-      subscriptionPackage.is_active === true &&
-      subscriptionPackage.club_id === user?.user_id
-  );
+  const {
+    data: mySubscriptionPackages,
+    isLoading: isMySubscriptionPackagesLoading,
+  } = useGetClubSubscriptionPackagesByFilterQuery({
+    is_active: true,
+    club_id: user?.user?.user_id,
+  });
 
-  const today = new Date();
-  const year = today.getFullYear();
-
+  const selectedExternalMember = (user_id: number) => {
+    return myExternalMembers?.find((member) => member.user_id === user_id);
+  };
   if (
-    isClubSubscriptionsLoading ||
+    isMySubscriptionsLoading ||
     isPlayersLoading ||
     isLocationsLoading ||
     isPlayerLevelsLoading ||
     isSubscriptionTypesLoading ||
-    isClubSubscriptionPackagesLoading ||
+    isMySubscriptionPackagesLoading ||
     isUsersLoading ||
-    isExternalMembersLoading ||
+    isMyExternalMembersLoading ||
     isUserTypesLoading
   ) {
     return <PageLoading />;
@@ -128,27 +127,24 @@ const ClubSubscribersResults = () => {
         <button
           onClick={openAddClubSubscriberModal}
           className={styles["add-subscription-package-button"]}
-          disabled={!clubSubscriptionPackageExists}
+          disabled={mySubscriptionPackages?.length === 0}
         >
           <FaPlusSquare className={styles["add-icon"]} />
           <h2 className={styles["add-title"]}>
-            {clubSubscriptionPackageExists
+            {mySubscriptionPackages?.length > 0
               ? "Yeni Üye Ekle"
               : "Üyelik Eklemek İçin Üyelik Paketi Ekleyin"}
           </h2>
         </button>
       </div>
       <div className={styles["top-container"]}></div>
-      {(isPlayersLoading || isClubSubscriptionsLoading) && <p>Yükleniyor...</p>}
-      {players && clubSubscriptions && mySubscriptions.length === 0 && (
+      {players && mySubscriptions.length === 0 && (
         <p>Kayıtlı aktif üye bulunmamaktadır.</p>
       )}
       {players &&
-        clubSubscriptions &&
         locations &&
         playerLevels &&
         subscriptionTypes &&
-        clubSubscriptionPackages &&
         mySubscriptions.length > 0 && (
           <table>
             <thead>
@@ -224,13 +220,9 @@ const ClubSubscribersResults = () => {
                         (user) => user.user_id === subscription?.player_id
                       )?.user_type_id === 5 ? (
                       `${
-                        clubExternalMembers?.find(
-                          (member) => member.user_id === subscription.player_id
-                        )?.fname
+                        selectedExternalMember(subscription?.player_id)?.fname
                       } ${
-                        clubExternalMembers?.find(
-                          (member) => member.user_id === subscription.player_id
-                        )?.lname
+                        selectedExternalMember(subscription?.player_id)?.lname
                       }`
                     ) : (
                       ""
@@ -265,10 +257,8 @@ const ClubSubscribersResults = () => {
                       ? playerLevels?.find(
                           (level) =>
                             level.player_level_id ===
-                            clubExternalMembers?.find(
-                              (member) =>
-                                member.user_id === subscription?.player_id
-                            )?.player_level_id
+                            selectedExternalMember(subscription?.player_id)
+                              ?.player_level_id
                         )?.player_level_name
                       : "-"}
                   </td>
@@ -282,34 +272,27 @@ const ClubSubscribersResults = () => {
                       : users?.find(
                           (user) => user.user_id === subscription?.player_id
                         )?.user_type_id === 5 &&
-                        clubExternalMembers?.find(
-                          (member) => member.user_id === subscription.player_id
-                        )?.gender
-                      ? clubExternalMembers?.find(
-                          (member) => member.user_id === subscription.player_id
-                        )?.gender
+                        selectedExternalMember(subscription?.player_id)?.gender
+                      ? selectedExternalMember(subscription?.player_id)?.gender
                       : "-"}
                   </td>
                   <td>
                     {users?.find(
                       (user) => user.user_id === subscription?.player_id
                     )?.user_type_id === 1
-                      ? year -
+                      ? currentYear -
                         players?.find(
                           (player) => player.user_id === subscription.player_id
                         )?.birth_year
                       : users?.find(
                           (user) => user.user_id === subscription?.player_id
                         )?.user_type_id === 5 &&
-                        clubExternalMembers?.find(
-                          (member) => member.user_id === subscription.player_id
-                        )?.birth_year
-                      ? year -
+                        selectedExternalMember(subscription?.player_id)
+                          ?.birth_year
+                      ? currentYear -
                         Number(
-                          clubExternalMembers?.find(
-                            (member) =>
-                              member.user_id === subscription.player_id
-                          )?.birth_year
+                          selectedExternalMember(subscription?.player_id)
+                            ?.birth_year
                         )
                       : "-"}
                   </td>
@@ -331,10 +314,8 @@ const ClubSubscribersResults = () => {
                       ? locations?.find(
                           (location) =>
                             location.location_id ===
-                            clubExternalMembers?.find(
-                              (member) =>
-                                member.user_id === subscription?.player_id
-                            )?.location_id
+                            selectedExternalMember(subscription?.player_id)
+                              ?.location_id
                         )?.location_name
                       : "-"}
                   </td>
@@ -343,7 +324,7 @@ const ClubSubscribersResults = () => {
                       subscriptionTypes?.find(
                         (type) =>
                           type.club_subscription_type_id ===
-                          clubSubscriptionPackages?.find(
+                          mySubscriptionPackages?.find(
                             (subscriptionPackage) =>
                               subscriptionPackage.club_subscription_package_id ===
                               subscription.club_subscription_package_id
@@ -386,16 +367,28 @@ const ClubSubscribersResults = () => {
             </tbody>
           </table>
         )}
-      <AddClubSubscriberModal
-        isAddSubscriberModalOpen={isAddSubscriberModalOpen}
-        closeAddClubSubscriberModal={closeAddClubSubscriberModal}
-      />
-      <EditClubSubscriberModal
-        isEditSubscriberModalOpen={isEditSubscriberModalOpen}
-        closeEditClubSubscriberModal={closeEditClubSubscriberModal}
-        selectedClubSubscriptionId={selectedClubSubscriptionId}
-        selectedExternalSubscriber={selectedExternalSubscriber}
-      />
+      {isAddSubscriberModalOpen && (
+        <AddClubSubscriberModal
+          isAddSubscriberModalOpen={isAddSubscriberModalOpen}
+          closeAddClubSubscriberModal={closeAddClubSubscriberModal}
+          userTypes={userTypes}
+          locations={locations}
+          playerLevels={playerLevels}
+          clubSubscriptionTypes={subscriptionTypes}
+          mySubscriptionPackages={mySubscriptionPackages}
+        />
+      )}
+      {isEditSubscriberModalOpen && (
+        <EditClubSubscriberModal
+          isEditSubscriberModalOpen={isEditSubscriberModalOpen}
+          closeEditClubSubscriberModal={closeEditClubSubscriberModal}
+          selectedClubSubscriptionId={selectedClubSubscriptionId}
+          selectedExternalSubscriber={selectedExternalSubscriber}
+          locations={locations}
+          playerLevels={playerLevels}
+          mySubscriptionPackages={mySubscriptionPackages}
+        />
+      )}
     </div>
   );
 };

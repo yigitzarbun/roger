@@ -9,35 +9,41 @@ import paths from "../../../routing/Paths";
 import { useAppSelector } from "../../../store/hooks";
 
 import styles from "./styles.module.scss";
-import AddGroupModal from "./add-group-modal/AddGroupModal";
 
-import { useGetStudentGroupsQuery } from "../../../api/endpoints/StudentGroupsApi";
-import { useGetUsersQuery } from "../../../store/auth/apiSlice";
-import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExternalMembersApi";
+import AddGroupModal from "./add-group-modal/AddGroupModal";
 import EditGroupModal from "./edit-group-modal/EditGroupModal";
 import PageLoading from "../../../components/loading/PageLoading";
 
-const ClubGroupsResults = () => {
-  const user = useAppSelector((store) => store?.user?.user?.user);
+import { useGetStudentGroupsByFilterQuery } from "../../../api/endpoints/StudentGroupsApi";
+import { useGetUsersQuery } from "../../../store/auth/apiSlice";
+import { useGetTrainersByFilterQuery } from "../../../api/endpoints/TrainersApi";
+import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import { useGetClubExternalMembersByFilterQuery } from "../../../api/endpoints/ClubExternalMembersApi";
 
-  const { data: groups, isLoading: isGroupsLoading } = useGetStudentGroupsQuery(
-    {}
-  );
+const ClubGroupsResults = () => {
+  const user = useAppSelector((store) => store?.user?.user);
+
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
-  const { data: externalMembers, isLoading: isExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
+  const { data: myTrainers, isLoading: isMyTrainersLoading } =
+    useGetTrainersByFilterQuery({
+      club_id: user?.clubDetails?.club_id,
+      employment_status: "accepted",
+    });
 
-  const myGroups = groups?.filter(
-    (group) => group.club_id === user?.user_id && group.is_active === true
-  );
+  const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
+    useGetClubExternalMembersByFilterQuery({
+      club_id: user?.clubDetails?.club_id,
+      is_active: true,
+    });
+
+  const { data: myGroups, isLoading: isMyGroupsLoading } =
+    useGetStudentGroupsByFilterQuery({
+      club_id: user?.user?.user_id,
+      is_active: true,
+    });
 
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
 
@@ -64,12 +70,19 @@ const ClubGroupsResults = () => {
     setIsEditGroupModalOpen(false);
   };
 
+  const selectedExternalMember = (user_id: number) => {
+    return myExternalMembers?.find((member) => member.user_id === user_id);
+  };
+
+  const selectedTrainer = (user_id: number) => {
+    return myTrainers?.find((trainer) => trainer.user_id === user_id);
+  };
   if (
-    isGroupsLoading ||
+    isMyGroupsLoading ||
     isUsersLoading ||
-    isTrainersLoading ||
+    isMyTrainersLoading ||
     isPlayersLoading ||
-    isExternalMembersLoading
+    isMyExternalMembersLoading
   ) {
     return <PageLoading />;
   }
@@ -109,14 +122,8 @@ const ClubGroupsResults = () => {
                     className={styles.name}
                   >
                     {`
-                    ${
-                      trainers?.find(
-                        (trainer) => trainer.user_id === group.trainer_id
-                      )?.fname
-                    } ${
-                      trainers?.find(
-                        (trainer) => trainer.user_id === group.trainer_id
-                      )?.lname
+                    ${selectedTrainer(group.trainer_id)?.fname} ${
+                      selectedTrainer(group.trainer_id)?.lname
                     }`}
                   </Link>
                 </td>
@@ -148,13 +155,9 @@ const ClubGroupsResults = () => {
                         (user) => user.user_id === group.first_student_id
                       )?.user_type_id === 5 &&
                       `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.first_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.first_student_id
-                        )?.lname
+                        selectedExternalMember(group.first_student_id)?.fname
+                      } ${
+                        selectedExternalMember(group.first_student_id)?.lname
                       }`
                     )
                   ) : (
@@ -189,13 +192,9 @@ const ClubGroupsResults = () => {
                         (user) => user.user_id === group.second_student_id
                       )?.user_type_id === 5 &&
                       `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.second_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.second_student_id
-                        )?.lname
+                        selectedExternalMember(group.second_student_id)?.fname
+                      } ${
+                        selectedExternalMember(group.second_student_id)?.lname
                       }`
                     )
                   ) : (
@@ -229,13 +228,9 @@ const ClubGroupsResults = () => {
                         (user) => user.user_id === group.third_student_id
                       )?.user_type_id === 5 &&
                       `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.third_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.third_student_id
-                        )?.lname
+                        selectedExternalMember(group.third_student_id)?.fname
+                      } ${
+                        selectedExternalMember(group.third_student_id)?.lname
                       }`
                     )
                   ) : (
@@ -270,13 +265,9 @@ const ClubGroupsResults = () => {
                         (user) => user.user_id === group.fourth_student_id
                       )?.user_type_id === 5 &&
                       `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.fourth_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.fourth_student_id
-                        )?.lname
+                        selectedExternalMember(group.fourth_student_id)?.fname
+                      } ${
+                        selectedExternalMember(group.fourth_student_id)?.lname
                       }`
                     )
                   ) : (
@@ -301,11 +292,15 @@ const ClubGroupsResults = () => {
       <AddGroupModal
         isAddGroupModalOpen={isAddGroupModalOpen}
         closeAddGroupModal={closeAddGroupModal}
+        myTrainers={myTrainers}
+        myExternalMembers={myExternalMembers}
       />
       <EditGroupModal
         isEditGroupModalOpen={isEditGroupModalOpen}
         closeEditGroupModal={closeEditGroupModal}
         selectedGroup={selectedGroup}
+        myTrainers={myTrainers}
+        myExternalMembers={myExternalMembers}
       />
     </div>
   );

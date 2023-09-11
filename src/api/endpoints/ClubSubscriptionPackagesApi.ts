@@ -7,6 +7,7 @@ export interface ClubSubscriptionPackage {
   registered_at: string;
   club_subscription_type_id: number;
   club_id: number;
+  is_active: boolean;
 }
 
 export const clubSubscriptionPackagesSlice = createApi({
@@ -15,6 +16,10 @@ export const clubSubscriptionPackagesSlice = createApi({
   endpoints: (builder) => ({
     getClubSubscriptionPackages: builder.query({
       query: () => "/club-subscription-packages",
+    }),
+    getClubSubscriptionPackagesByFilter: builder.query({
+      query: (filter) =>
+        `/club-subscription-packages/filter?${new URLSearchParams(filter)}`,
     }),
     addClubSubscriptionPackage: builder.mutation({
       query: (club) => ({
@@ -35,6 +40,7 @@ export const clubSubscriptionPackagesSlice = createApi({
 
 export const {
   useGetClubSubscriptionPackagesQuery,
+  useGetClubSubscriptionPackagesByFilterQuery,
   useAddClubSubscriptionPackageMutation,
   useUpdateClubSubscriptionPackageMutation,
 } = clubSubscriptionPackagesSlice;

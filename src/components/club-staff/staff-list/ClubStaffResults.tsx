@@ -6,26 +6,20 @@ import paths from "../../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../store/hooks";
-
-import {
-  useGetClubStaffQuery,
-  useUpdateClubStaffMutation,
-} from "../../../api/endpoints/ClubStaffApi";
-import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import DeleteClubStaffModal from "./delete-staff-modal/DeleteClubStaffModal";
 
+import { useAppSelector } from "../../../store/hooks";
+
+import { currentYear } from "../../../common/util/TimeFunctions";
+
+import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
+import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
+import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
+
 const ClubStaffResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
-
-  const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch,
-  } = useGetClubStaffQuery({});
 
   const { data: clubStaffRoleTypes, isLoading: isClubStaffRoleTypesLoading } =
     useGetClubStaffRoleTypesQuery({});
@@ -37,11 +31,9 @@ const ClubStaffResults = () => {
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
-  const [updateStaff, { isSuccess: isUpdateStaffSuccess }] =
-    useUpdateClubStaffMutation({});
-
   const [selectedStaffUserId, setSelectedStaffUserId] = useState(null);
   const [isDeleteStaffModalOpen, setIsDeleteStaffModalOpen] = useState(false);
+
   const openDeleteStaffModal = (staffId: number) => {
     setSelectedStaffUserId(staffId);
     setIsDeleteStaffModalOpen(true);
@@ -49,33 +41,17 @@ const ClubStaffResults = () => {
   const closeDeleteStaffModal = () => {
     setIsDeleteStaffModalOpen(false);
   };
-  const myStaff = clubStaff?.filter(
-    (staff) =>
-      staff.employment_status === "accepted" &&
-      staff.club_id === user?.clubDetails?.club_id
-  );
 
-  const handleRemoveStaff = (staff_id: number) => {
-    const selectedStaff = myStaff?.find(
-      (staff) => staff.club_staff_id === staff_id
-    );
-    const updatedStaffData = {
-      ...selectedStaff,
-      employment_status: "terminated_by_club",
-    };
-    updateStaff(updatedStaffData);
+  const { data: myStaff, isLoading: isMyStaffLoading } = useGetClubStaffQuery({
+    club_id: user?.clubDetails?.club_id,
+    employment_status: "accepted",
+  });
+
+  const selectedTrainer = (user_id: number) => {
+    return trainers?.find((trainer) => trainer.user_id === user_id);
   };
-
-  const today = new Date();
-  const year = today.getFullYear();
-
-  useEffect(() => {
-    if (isUpdateStaffSuccess) {
-      refetch();
-    }
-  }, [isUpdateStaffSuccess]);
   if (
-    isClubStaffLoading ||
+    isMyStaffLoading ||
     isClubStaffRoleTypesLoading ||
     isLocationsLoading ||
     isTrainersLoading
@@ -88,10 +64,8 @@ const ClubStaffResults = () => {
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Personel</h2>
       </div>
-      {clubStaff && myStaff.length === 0 && (
-        <p>Kayıtlı personel bulunmamaktadır.</p>
-      )}
-      {clubStaff && clubStaffRoleTypes && myStaff.length > 0 && (
+      {myStaff?.length === 0 && <p>Kayıtlı personel bulunmamaktadır.</p>}
+      {clubStaffRoleTypes && myStaff?.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -111,12 +85,8 @@ const ClubStaffResults = () => {
                   <Link to={`${paths.EXPLORE_PROFILE}2/${staff.user_id}`}>
                     <img
                       src={
-                        trainers?.find(
-                          (trainer) => trainer.user_id === staff.user_id
-                        )?.image
-                          ? trainers?.find(
-                              (trainer) => trainer.user_id === staff.user_id
-                            )?.image
+                        selectedTrainer(staff.user_id)?.image
+                          ? selectedTrainer(staff.user_id)?.image
                           : "/images/icons/avatar.png"
                       }
                       alt="staff_image"
@@ -130,43 +100,23 @@ const ClubStaffResults = () => {
                     className={styles["staff-name"]}
                   >
                     {`
-                    ${
-                      trainers?.find(
-                        (trainer) => trainer.user_id === staff.user_id
-                      )?.fname
-                    }
-                   ${
-                     trainers?.find(
-                       (trainer) => trainer.user_id === staff.user_id
-                     )?.lname
-                   }
+                    ${selectedTrainer(staff.user_id)?.fname}
+                   ${selectedTrainer(staff.user_id)?.lname}
                   
                   `}
                   </Link>
                 </td>
                 <td>
-                  {year -
-                    Number(
-                      trainers?.find(
-                        (trainer) => trainer.user_id === staff.user_id
-                      )?.birth_year
-                    )}
+                  {currentYear -
+                    Number(selectedTrainer(staff.user_id)?.birth_year)}
                 </td>
-                <td>
-                  {
-                    trainers?.find(
-                      (trainer) => trainer.user_id === staff.user_id
-                    )?.gender
-                  }
-                </td>
+                <td>{selectedTrainer(staff.user_id)?.gender}</td>
                 <td>
                   {
                     locations?.find(
                       (location) =>
                         location.location_id ===
-                        trainers?.find(
-                          (trainer) => trainer.user_id === staff.user_id
-                        )?.location_id
+                        selectedTrainer(staff.user_id)?.location_id
                     )?.location_name
                   }
                 </td>
@@ -199,7 +149,7 @@ const ClubStaffResults = () => {
       <DeleteClubStaffModal
         isDeleteStaffModalOpen={isDeleteStaffModalOpen}
         closeDeleteStaffModal={closeDeleteStaffModal}
-        selectedStaffUserId={selectedStaffUserId}
+        selectedClubStaffUserId={selectedStaffUserId}
       />
     </div>
   );

@@ -16,19 +16,22 @@ import {
   useUpdateClubExternalMemberMutation,
   useGetClubExternalMembersQuery,
   ClubExternalMember,
+  useGetClubExternalMembersByFilterQuery,
 } from "../../../../api/endpoints/ClubExternalMembersApi";
 
-import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { ClubSubscriptionPackage } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 
+import { Location } from "../../../../api/endpoints/LocationsApi";
+
 import {
+  useGetClubSubscriptionsByFilterQuery,
   useGetClubSubscriptionsQuery,
   useUpdateClubSubscriptionMutation,
 } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
+import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
@@ -37,6 +40,9 @@ interface EditClubSubscriberModalProps {
   closeEditClubSubscriberModal: () => void;
   selectedClubSubscriptionId: number;
   selectedExternalSubscriber: ClubExternalMember;
+  locations: Location[];
+  playerLevels: PlayerLevel[];
+  mySubscriptionPackages: ClubSubscriptionPackage[];
 }
 
 type FormValues = {
@@ -57,9 +63,14 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
     closeEditClubSubscriberModal,
     selectedClubSubscriptionId,
     selectedExternalSubscriber,
+    locations,
+    playerLevels,
+    mySubscriptionPackages,
   } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const [selectedClubPackage, setSelectedClubPackage] = useState(null);
 
   const { refetch: refetchClubSubscribers } = useGetClubSubscriptionsQuery({});
 
@@ -68,22 +79,14 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
     isLoading: isClubSubscriptionTypesLoading,
   } = useGetClubSubscriptionTypesQuery({});
 
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
-
   const { refetch: refetchClubExternalSubscribers } =
     useGetClubExternalMembersQuery({});
 
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
+  const { refetch: refetchClubExternalSubscriber } =
+    useGetClubExternalMembersByFilterQuery({
+      club_id: user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
   const [
     editClubExternalSubscriber,
@@ -93,21 +96,16 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
     },
   ] = useUpdateClubExternalMemberMutation({});
 
+  const {
+    data: selectedSubscription,
+    isLoading: isSelectedSubscriptionLoading,
+  } = useGetClubSubscriptionsByFilterQuery({
+    club_subscription_id: selectedClubSubscriptionId,
+    is_active: true,
+  });
+
   const [editClubSubscription, { isSuccess: isEditClubSubscriptionSuccess }] =
     useUpdateClubSubscriptionMutation({});
-
-  const selectedSubscription = clubSubscriptions?.find(
-    (subscription) =>
-      subscription.club_subscription_id === selectedClubSubscriptionId
-  );
-
-  const myPackages = clubSubscriptionPackages?.filter(
-    (subscriptionPackage) =>
-      subscriptionPackage.club_id === user?.user?.user_id &&
-      subscriptionPackage.is_active === true
-  );
-
-  const [selectedClubPackage, setSelectedClubPackage] = useState(null);
 
   const {
     register,
@@ -123,7 +121,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
       birth_year: Number(selectedExternalSubscriber?.birth_year),
       gender: selectedExternalSubscriber?.gender || "",
       club_subscription_package_id: Number(
-        selectedSubscription?.club_subscription_package_id
+        selectedSubscription?.[0]?.club_subscription_package_id
       ),
       player_level_id: Number(selectedExternalSubscriber?.player_level_id),
       location_id: Number(selectedExternalSubscriber?.location_id),
@@ -132,7 +130,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
-      const selectedPackage = myPackages?.find(
+      const selectedPackage = mySubscriptionPackages?.find(
         (selectedPackage) =>
           selectedPackage.club_subscription_package_id ===
           Number(formData?.club_subscription_package_id)
@@ -157,14 +155,8 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
     }
   };
   const handleDeleteExternalMember = () => {
-    const selectedPackage = myPackages?.find(
-      (selectedPackage) =>
-        selectedPackage.club_subscription_package_id ===
-        clubSubscriptions?.find(
-          (clubSubscription) =>
-            clubSubscription.club_subscription_id === selectedClubSubscriptionId
-        )?.club_subscription_package_id
-    );
+    const selectedPackage =
+      selectedSubscription?.[0]?.club_subscription_package_id;
 
     setSelectedClubPackage(selectedPackage);
 
@@ -176,7 +168,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
   };
 
   useEffect(() => {
-    if (selectedExternalSubscriber) {
+    if (selectedExternalSubscriber && selectedSubscription) {
       reset({
         member_id: selectedExternalSubscriber?.member_id,
         email: selectedExternalSubscriber?.email || "",
@@ -185,12 +177,13 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
         birth_year: Number(selectedExternalSubscriber?.birth_year),
         gender: selectedExternalSubscriber?.gender || "",
         club_subscription_package_id:
-          Number(selectedSubscription?.club_subscription_package_id) || null,
+          Number(selectedSubscription?.[0]?.club_subscription_package_id) ||
+          null,
         location_id: selectedExternalSubscriber?.location_id || null,
         player_level_id: selectedExternalSubscriber?.player_level_id || null,
       });
     }
-  }, [selectedExternalSubscriber]);
+  }, [selectedExternalSubscriber, selectedSubscription]);
 
   useEffect(() => {
     if (
@@ -208,7 +201,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
       endDate.setMonth(endDate.getMonth() + Number(packageDurationMonths));
 
       const updatedClubSubscription = {
-        ...selectedSubscription,
+        ...selectedSubscription?.[0],
         start_date: startDate,
         end_date: endDate,
         club_subscription_package_id:
@@ -222,19 +215,19 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
   useEffect(() => {
     if (isEditClubSubscriptionSuccess) {
       toast.success("İşlem başarılı");
-      refetchClubExternalSubscribers();
       refetchClubSubscribers();
       closeEditClubSubscriberModal();
     }
   }, [isEditClubSubscriptionSuccess]);
 
-  if (
-    isClubSubscriptionPackagesLoading ||
-    isClubSubscriptionTypesLoading ||
-    isClubSubscriptionsLoading ||
-    isLocationsLoading ||
-    isPlayerLevelsLoading
-  ) {
+  useEffect(() => {
+    if (isUpdateClubExternalSubscriberSuccess) {
+      refetchClubExternalSubscribers();
+      refetchClubExternalSubscriber();
+    }
+  }, [isUpdateClubExternalSubscriberSuccess]);
+
+  if (isClubSubscriptionTypesLoading || isSelectedSubscriptionLoading) {
     return <PageLoading />;
   }
 
@@ -316,8 +309,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
             <select
               {...register("club_subscription_package_id", { required: true })}
             >
-              <option value="">-- Üyelik Türü --</option>
-              {myPackages?.map((clubPackage) => (
+              {mySubscriptionPackages?.map((clubPackage) => (
                 <option
                   key={clubPackage.club_subscription_package_id}
                   value={clubPackage.club_subscription_package_id}

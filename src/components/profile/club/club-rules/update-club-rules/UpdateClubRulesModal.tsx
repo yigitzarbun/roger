@@ -128,9 +128,11 @@ const UpdateClubRulesModal = (props: UpdateClubRulesModallProps) => {
   }
 
   useEffect(() => {
-    refetch();
-    handleCloseModal();
-    toast.success("Kural güncellendi");
+    if (isSuccess) {
+      refetch();
+      handleCloseModal();
+      toast.success("Kural güncellendi");
+    }
   }, [isSuccess]);
 
   if (isClubsLoading || isClubSubscriptionPackagesLoading) {

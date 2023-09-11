@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Modal from "react-modal";
 
@@ -11,43 +11,47 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import {
+  useGetClubStaffByFilterQuery,
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
 
 interface AcceptClubStaffModalProps {
   isAcceptClubStaffModalOpen: boolean;
   closeAcceptClubStaffModal: () => void;
-  selectedClubStaffId: number;
+  selectedClubStaffUserId: number;
 }
 
 const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
   const {
     isAcceptClubStaffModalOpen,
     closeAcceptClubStaffModal,
-    selectedClubStaffId,
+    selectedClubStaffUserId,
   } = props;
 
+  const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
+
   const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
+    data: selectedClubStaff,
+    isLoading: isSelectedClubStaffLoading,
     refetch: refetchClubStaff,
-  } = useGetClubStaffQuery({});
+  } = useGetClubStaffByFilterQuery({
+    user_id: selectedClubStaffUserId,
+  });
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
+  const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
+    useGetTrainersByFilterQuery({
+      user_id: selectedClubStaffUserId,
+    });
 
-  const selectedClubStaff = clubStaff?.find(
-    (staff) => staff.club_staff_id === selectedClubStaffId
-  );
+  const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
   const handleAcceptClubStaff = () => {
     const updatedStaffData = {
-      ...selectedClubStaff,
+      ...selectedClubStaff?.[0],
       employment_status: "accepted",
     };
     updateClubStaff(updatedStaffData);
@@ -56,12 +60,13 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetchClubStaff();
+      refetchAllClubStaff();
       toast.success("Personel eklendi");
       closeAcceptClubStaffModal();
     }
   }, [isSuccess]);
 
-  if (isClubStaffLoading || isTrainersLoading) {
+  if (isSelectedClubStaffLoading || isSelectedTrainerLoading) {
     return <PageLoading />;
   }
 
@@ -81,25 +86,13 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
       <div className={styles["bottom-container"]}>
         <img
           src={
-            trainers?.find(
-              (trainer) =>
-                trainer.user_id ===
-                clubStaff?.find(
-                  (staff) => staff.club_staff_id === selectedClubStaffId
-                )?.user_id
-            )?.image
-              ? trainers?.find(
-                  (trainer) =>
-                    trainer.user_id ===
-                    clubStaff?.find(
-                      (staff) => staff.club_staff_id === selectedClubStaffId
-                    )?.user_id
-                )?.image
+            selectedTrainerImage
+              ? selectedTrainerImage
               : "images/icons/avatar.png"
           }
           className={styles["trainer-image"]}
         />
-        <h4>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</h4>
+        <h4>{`${selectedTrainer?.[0]?.["fname"]} ${selectedTrainer?.[0]?.["lname"]} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</h4>
       </div>
       <button onClick={handleAcceptClubStaff} className={styles["button"]}>
         Onayla

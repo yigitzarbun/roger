@@ -25,6 +25,11 @@ const clubStaffModel = {
       if (filter.user_id) {
         builder.where("user_id", filter.user_id);
       }
+
+      if (filter.club_staff_id) {
+        builder.where("club_staff_id", filter.club_staff_id);
+      }
+
       if (filter.sortBy) {
         // handle sorting here if required
         builder.orderBy(filter.sortBy, filter.sortDirection || "asc");

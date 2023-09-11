@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
+import { toast } from "react-toastify";
+
 import { FaWindowClose } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
@@ -9,57 +11,62 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import {
+  useGetClubStaffByFilterQuery,
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
 
 interface DeleteClubStaffModalProps {
   isDeleteStaffModalOpen: boolean;
   closeDeleteStaffModal: () => void;
-  selectedStaffUserId: number;
+  selectedClubStaffUserId: number;
 }
 
 const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
-  const { isDeleteStaffModalOpen, closeDeleteStaffModal, selectedStaffUserId } =
-    props;
+  const {
+    isDeleteStaffModalOpen,
+    closeDeleteStaffModal,
+    selectedClubStaffUserId,
+  } = props;
+
+  const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
   const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch: refetchStaff,
-  } = useGetClubStaffQuery({});
+    data: selectedClubStaff,
+    isLoading: isSelectedClubStaffLoading,
+    refetch: refetchClubStaff,
+  } = useGetClubStaffByFilterQuery({
+    user_id: selectedClubStaffUserId,
+  });
 
-  const selectedClubStaff = clubStaff?.find(
-    (staff) => staff.user_id === selectedStaffUserId
-  );
+  const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
+    useGetTrainersByFilterQuery({
+      user_id: selectedClubStaffUserId,
+    });
 
-  const {
-    data: trainers,
-    isLoading: isTrainersLoading,
-    refetch: refetchTrainers,
-  } = useGetTrainersQuery({});
+  const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
 
-  const [updateClubStaff, { isSuccess: isUpdateStaffSuccess }] =
-    useUpdateClubStaffMutation({});
+  const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
   const handleDeleteStaff = () => {
     const updatedStaffData = {
-      ...selectedClubStaff,
+      ...selectedClubStaff?.[0],
       employment_status: "terminated_by_club",
     };
     updateClubStaff(updatedStaffData);
   };
 
   useEffect(() => {
-    if (isUpdateStaffSuccess) {
-      refetchStaff();
-      refetchTrainers();
+    if (isSuccess) {
+      refetchClubStaff();
+      refetchAllClubStaff();
+      toast.success("Personel eklendi");
       closeDeleteStaffModal();
     }
-  }, [isUpdateStaffSuccess]);
+  }, [isSuccess]);
 
-  if (isTrainersLoading || isClubStaffLoading) {
+  if (isSelectedClubStaffLoading || isSelectedTrainerLoading) {
     return <PageLoading />;
   }
 
@@ -79,16 +86,13 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
       <div className={styles["bottom-container"]}>
         <img
           src={
-            trainers?.find((trainer) => trainer.user_id === selectedStaffUserId)
-              ?.image
-              ? trainers?.find(
-                  (trainer) => trainer.user_id === selectedStaffUserId
-                )?.image
+            selectedTrainerImage
+              ? selectedTrainerImage
               : "images/icons/avatar.png"
           }
           className={styles["trainer-image"]}
         />
-        <h4>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} isimli eğitmeni kulüp çalışanlarınız arasından çıkarmak istediğinize emin misiniz?`}</h4>
+        <h4>{`${selectedTrainer?.[0]?.["fname"]} ${selectedTrainer?.[0]?.["lname"]} isimli eğitmeni kulüp çalışanlarınız arasından çıkarmak istediğinize emin misiniz?`}</h4>
       </div>
       <button onClick={handleDeleteStaff} className={styles["button"]}>
         Personeli Sil
