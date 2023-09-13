@@ -7,12 +7,28 @@ const playersModel = {
   },
 
   async getByFilter(filter) {
-    const player = await db("players").where(filter).first();
+    const players = await db("players").where((builder) => {
+      if (filter.player_id) {
+        builder.where("player_id", filter.player_id);
+      }
+      if (filter.user_id) {
+        builder.where("user_id", filter.user_id);
+      }
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+    return players;
+  },
+
+  async getByPlayerId(player_id) {
+    const player = await db("players").where("player_id", player_id);
     return player;
   },
 
-  async getById(player_id) {
-    const player = await db("players").where("player_id", player_id);
+  async getByUserId(user_id) {
+    const player = await db("players").where("user_id", user_id);
     return player;
   },
 

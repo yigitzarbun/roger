@@ -4,36 +4,26 @@ import { Link } from "react-router-dom";
 
 import { AiOutlineEye } from "react-icons/ai";
 
-import { FaLocationDot } from "react-icons/fa6";
-import { CgTennis } from "react-icons/cg";
-
 import paths from "../../../../routing/Paths";
 
 import { localUrl } from "../../../../common/constants/apiConstants";
 
 import styles from "./styles.module.scss";
 
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubTypesQuery } from "../../../../api/endpoints/ClubTypesApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetClubByUserIdQuery } from "../../../../api/endpoints/ClubsApi";
+
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import {
   useAddFavouriteMutation,
-  useGetFavouritesQuery,
+  useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
-import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import {
-  useGetClubStaffQuery,
-  useAddClubStaffMutation,
-} from "../../../../api/endpoints/ClubStaffApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -44,6 +34,9 @@ import ExploreClubTrainerModal from "./modals/trainers/ExploreClubTrainersModal"
 import ExploreClubSubscribersModal from "./modals/subscribers/ExploreClubSubscribersModal";
 import ExploreClubSubscriptionsModal from "./modals/subscriptions/ExploreClubSubscriptionsModal";
 import ClubEmploymentModal from "../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
+import ExploreClubsProfileSection from "./sections/profile/ExploreClubsProfileSection";
+import ExploreClubsCourtsSection from "./sections/courts/ExploreClubsCourtsSection";
+import ExploreClubsFavouritesSection from "./sections/favourites/ExploreClubsFavouritesSection";
 
 interface ExploreClubProfileProps {
   user_id: string;
@@ -56,31 +49,19 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-
-  const { data: clubTypes, isLoading: isClubTypesLoading } =
-    useGetClubTypesQuery({});
-
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
-
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByUserIdQuery(user_id);
 
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
 
-  const {
-    data: clubStaff,
-    isLoading: isClubStaffLoading,
-    refetch: clubStaffRefetch,
-  } = useGetClubStaffQuery({});
+  const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
+    useGetClubStaffByFilterQuery({
+      club_id: selectedClub?.[0]?.club_id,
+      employment_status: "accepted",
+      club_staff_role_type_id: 2,
+    });
 
   const {
     data: clubSubscriptionTypes,
@@ -88,48 +69,33 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   } = useGetClubSubscriptionTypesQuery({});
 
   const {
-    data: clubSubscriptionPackages,
+    data: selectedClubSubscriptionPackages,
     isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
+  } = useGetClubSubscriptionPackagesByFilterQuery({
+    club_id: selectedClub?.[0]?.user_id,
+    is_active: true,
+  });
 
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const { data: currentPlayer, isLoading: isPlayersLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
 
   let playerPaymentDetailsExist = false;
 
   if (isUserPlayer) {
-    const currentPlayer = players?.find(
-      (player) => player.user_id === user?.user?.user_id
-    );
-
     if (
-      currentPlayer?.name_on_card &&
-      currentPlayer?.card_number &&
-      currentPlayer?.cvc &&
-      currentPlayer?.card_expiry
+      currentPlayer?.[0]?.name_on_card &&
+      currentPlayer?.[0]?.card_number &&
+      currentPlayer?.[0]?.cvc &&
+      currentPlayer?.[0]?.card_expiry
     ) {
       playerPaymentDetailsExist = true;
     }
   }
-
-  const selectedClub = clubs?.find((club) => club.user_id === Number(user_id));
-
-  const profileImage = selectedClub?.image;
-
-  // club trainers
-  const clubStaffTrainers = clubStaff?.filter(
-    (staff) =>
-      staff.club_id === Number(user_id) &&
-      staff.employment_status === "accepted" &&
-      staff.club_staff_role_type_id === 2
-  );
 
   let confirmedClubTrainers = [];
   clubStaffTrainers?.forEach((clubTrainer) => {
@@ -141,91 +107,15 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     }
   });
 
-  // favourites
-  const {
-    data: favourites,
-    isLoading: isFavouritesLoading,
-    refetch: favouritesRefetch,
-  } = useGetFavouritesQuery({});
-
-  const clubFavouriters = favourites?.filter(
-    (favourite) =>
-      favourite.favouritee_id === Number(user_id) &&
-      favourite.is_active === true
-  )?.length;
-
-  const myFavouriteClubs = favourites?.filter(
-    (favourite) => favourite.favouriter_id === user?.user?.user_id
-  );
-
-  const isClubInMyFavourites = (user_id: number) => {
-    if (
-      myFavouriteClubs.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === false
-      )
-    ) {
-      return "deactivated";
-    } else if (
-      myFavouriteClubs.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === true
-      )
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
-    useAddFavouriteMutation();
-
-  const handleAddFavourite = (favouritee_id: number) => {
-    const favouriteData = {
-      is_active: true,
-      favouriter_id: user?.user?.user_id,
-      favouritee_id: favouritee_id,
-    };
-    addFavourite(favouriteData);
-  };
-
-  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
-    useUpdateFavouriteMutation();
-
-  const handleUpdateFavourite = (userId: number) => {
-    const selectedFavourite = myFavouriteClubs?.find(
-      (favourite) => favourite.favouritee_id === userId
-    );
-    const favouriteData = {
-      favourite_id: selectedFavourite.favourite_id,
-      registered_at: selectedFavourite.registered_at,
-      is_active: selectedFavourite.is_active === true ? false : true,
-      favouriter_id: selectedFavourite.favouriter_id,
-      favouritee_id: selectedFavourite.favouritee_id,
-    };
-    updateFavourite(favouriteData);
-  };
-
-  const handleToggleFavourite = (userId: number) => {
-    if (isClubInMyFavourites(userId)) {
-      handleUpdateFavourite(userId);
-    } else {
-      handleAddFavourite(userId);
-    }
-  };
-
   // subscriptions
-  const selectedClubSubscriptionPackages = clubSubscriptionPackages?.filter(
-    (subscriptionPackage) =>
-      subscriptionPackage.club_id === selectedClub?.user_id &&
-      subscriptionPackage.is_active === true
-  );
 
-  const selectedClubSubscribers = clubSubscriptions?.filter(
-    (subscription) =>
-      subscription.club_id === selectedClub?.user_id &&
-      subscription.is_active === true
-  );
+  const {
+    data: selectedClubSubscribers,
+    isLoading: isSelectedClubSubscriptionsLoading,
+  } = useGetClubSubscriptionsByFilterQuery({
+    is_active: true,
+    club_id: selectedClub?.[0]?.user_id,
+  });
 
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
 
@@ -241,14 +131,15 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     setSelectedClubId(null);
   };
 
-  const isUserSubscribedToClub = () => {
-    const activeSubscription = clubSubscriptions?.find(
+  const isUserSubscribedToClub = (club_subscription_package_id: number) => {
+    return selectedClubSubscribers?.find(
       (subscription) =>
-        subscription.club_id === selectedClub?.user_id &&
         subscription.player_id === user?.user?.user_id &&
-        subscription.is_active === true
-    );
-    return activeSubscription ? true : false;
+        subscription.club_subscription_package_id ===
+          club_subscription_package_id
+    )
+      ? true
+      : false;
   };
 
   const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
@@ -294,28 +185,15 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     setIsSubscriptionsModalOpen(false);
   };
 
-  useEffect(() => {
-    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      favouritesRefetch();
-    }
-  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
-
   if (
-    isClubsLoading ||
-    isCourtsLoading ||
-    isClubTypesLoading ||
-    isLocationsLoading ||
-    isLocationsLoading ||
-    isCourtSurfaceTypesLoading ||
-    isCourtStructureTypesLoading ||
     isTrainersLoading ||
     isTrainerExperienceTypesLoading ||
-    isFavouritesLoading ||
     isClubSubscriptionTypesLoading ||
     isClubSubscriptionPackagesLoading ||
-    isClubSubscriptionsLoading ||
+    isSelectedClubSubscriptionsLoading ||
     isClubStaffLoading ||
-    isPlayersLoading
+    isPlayersLoading ||
+    isSelectedClubLoading
   ) {
     return <PageLoading />;
   }
@@ -323,165 +201,32 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   return (
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
-        <div className={styles["profile-section"]}>
-          <h2>Kulüp</h2>
-          <div className={styles["profile-data-container"]}>
-            <img
-              src={
-                profileImage
-                  ? `${localUrl}/${profileImage}`
-                  : "/images/icons/avatar.png"
-              }
-              alt="club picture"
-              className={styles["profile-image"]}
-            />
-            <div className={styles["secondary-profile-data-container"]}>
-              <h3>{selectedClub?.club_name}</h3>
-              <div className={styles["profile-info"]}>
-                <CgTennis className={styles.icon} />
-                <p className={styles["info-text"]}>
-                  {
-                    clubTypes?.find(
-                      (type) => type.club_type_id === selectedClub?.club_type_id
-                    )?.club_type_name
-                  }
-                </p>
-              </div>
-              <div className={styles["profile-info"]}>
-                <FaLocationDot className={styles.icon} />
-                <p className={styles["info-text"]}>
-                  {
-                    locations?.find(
-                      (location) =>
-                        location.location_id === selectedClub?.location_id
-                    )?.location_name
-                  }
-                </p>
-              </div>
-              <div className={styles["profile-info"]}>
-                <FaLocationDot className={styles.icon} />
-                <address className={styles["info-text"]}>
-                  {selectedClub?.club_address}
-                </address>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={styles["courts-section"]}>
-          <h2>Kortlar</h2>
-          {courts?.filter((court) => court.club_id === selectedClub?.club_id)
-            .length > 0 ? (
-            <table>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Kort</th>
-                  <th>Yüzey</th>
-                  <th>Mekan</th>
-                  {selectedClub?.higher_price_for_non_subscribers && (
-                    <th>Fiyat (Üye değil)</th>
-                  )}
-                  <th>Fiyat</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courts
-                  ?.filter((court) => court.club_id === selectedClub?.club_id)
-                  .slice(
-                    courts?.filter(
-                      (court) => court.club_id === selectedClub?.club_id
-                    ).length - 3
-                  )
-                  .map((court) => (
-                    <tr key={court.court_id}>
-                      <td>
-                        <Link
-                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                        >
-                          {
-                            <img
-                              src={
-                                court.image
-                                  ? `${localUrl}/${court.image}`
-                                  : "/images/icons/avatar.png"
-                              }
-                              alt="court picture"
-                              className={styles["court-image"]}
-                            />
-                          }
-                        </Link>
-                      </td>
-                      <td>
-                        <Link
-                          to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                          className={styles["court-name"]}
-                        >
-                          {court.court_name}
-                        </Link>
-                      </td>
-                      <td>
-                        {
-                          courtSurfaceTypes?.find(
-                            (type) =>
-                              type.court_surface_type_id ===
-                              court.court_surface_type_id
-                          )?.court_surface_type_name
-                        }
-                      </td>
-                      <td>
-                        {
-                          courtStructureTypes?.find(
-                            (type) =>
-                              type.court_structure_type_id ===
-                              court.court_structure_type_id
-                          )?.court_structure_type_name
-                        }
-                      </td>
-                      {selectedClub?.higher_price_for_non_subscribers &&
-                      court.price_hour_non_subscriber ? (
-                        <td>{court.price_hour_non_subscriber}</td>
-                      ) : (
-                        selectedClub?.higher_price_for_non_subscribers &&
-                        court.price_hour_non_subscriber &&
-                        "-"
-                      )}
-
-                      <td>{court.price_hour}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>Henüz kulübe ait kort bulunmamaktadır</p>
-          )}
-          <button onClick={openCourtsModal}>Tümünü Görüntüle</button>
-        </div>
+        <ExploreClubsProfileSection selectedClub={selectedClub} />
+        <ExploreClubsCourtsSection
+          selectedClub={selectedClub}
+          openCourtsModal={openCourtsModal}
+        />
       </div>
       <div className={styles["mid-top-sections-container"]}>
-        <div className={styles["favourites-section"]}>
-          <h2>Favoriler</h2>
-          <p>{`${clubFavouriters} kişi favorilere ekledi`}</p>
-          <button onClick={() => handleToggleFavourite(selectedClub?.user_id)}>
-            {isClubInMyFavourites(selectedClub?.user_id) === true
-              ? "Favorilerden çıkar"
-              : "Favorilere ekle"}
-          </button>
-        </div>
+        <ExploreClubsFavouritesSection
+          user_id={Number(user_id)}
+          selectedClub={selectedClub}
+        />
         <div className={styles["trainers-section"]}>
           <div className={styles["trainers-section-title-container"]}>
             <h2>Eğitmenler</h2>
             {isUserTrainer &&
-            clubStaff?.find(
+            clubStaffTrainers?.find(
               (staff) =>
-                staff.club_id === selectedClub?.club_id &&
+                staff.club_id === selectedClub?.[0]?.club_id &&
                 staff.user_id === user?.user?.user_id &&
                 staff.employment_status === "accepted"
             ) ? (
               <p className={styles["employed-text"]}>Bu kulüpte çalışıyorsun</p>
             ) : isUserTrainer &&
-              clubStaff?.find(
+              clubStaffTrainers?.find(
                 (staff) =>
-                  staff.club_id === selectedClub?.club_id &&
+                  staff.club_id === selectedClub?.[0]?.club_id &&
                   staff.user_id === user?.user?.user_id &&
                   staff.employment_status === "pending"
               ) ? (
@@ -491,7 +236,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
             ) : (
               isUserTrainer && (
                 <button
-                  onClick={() => openEmploymentModal(selectedClub?.club_id)}
+                  onClick={() =>
+                    openEmploymentModal(selectedClub?.[0]?.club_id)
+                  }
                 >
                   Bu kulüpte çalıştığına dair kulübe başvur
                 </button>
@@ -512,7 +259,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
               </thead>
               <tbody>
                 {confirmedClubTrainers
-                  ?.slice(confirmedClubTrainers.length - 3)
+                  ?.slice(confirmedClubTrainers.length - 2)
                   ?.map((trainer) => (
                     <tr key={trainer.user_id}>
                       <td>
@@ -597,49 +344,55 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
                 </tr>
               </thead>
               <tbody>
-                {selectedClubSubscriptionPackages?.map((clubPackage) => (
-                  <tr key={clubPackage.club_subscription_package_id}>
-                    <td>
-                      {
-                        clubSubscriptionTypes?.find(
-                          (type) =>
-                            type.club_subscription_type_id ===
-                            clubPackage.club_subscription_type_id
-                        )?.club_subscription_type_name
-                      }
-                    </td>
-                    <td>
-                      {
-                        clubSubscriptionTypes?.find(
-                          (type) =>
-                            type.club_subscription_type_id ===
-                            clubPackage.club_subscription_type_id
-                        )?.club_subscription_duration_months
-                      }
-                    </td>
-                    <td>{clubPackage.price}</td>
-                    {isUserPlayer && (
+                {selectedClubSubscriptionPackages
+                  ?.slice(selectedClubSubscriptionPackages?.length - 2)
+                  ?.map((clubPackage) => (
+                    <tr key={clubPackage.club_subscription_package_id}>
                       <td>
-                        {isUserSubscribedToClub() === true ? (
-                          <p className={styles["subscribed-text"]}>
-                            Üyelik var
-                          </p>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleOpenSubscribeModal(selectedClub?.user_id)
-                            }
-                            disabled={!playerPaymentDetailsExist}
-                          >
-                            {playerPaymentDetailsExist
-                              ? "Üye Ol"
-                              : "Üye olmak için ödeme bilgilerini ekle"}
-                          </button>
-                        )}
+                        {
+                          clubSubscriptionTypes?.find(
+                            (type) =>
+                              type.club_subscription_type_id ===
+                              clubPackage.club_subscription_type_id
+                          )?.club_subscription_type_name
+                        }
                       </td>
-                    )}
-                  </tr>
-                ))}
+                      <td>
+                        {
+                          clubSubscriptionTypes?.find(
+                            (type) =>
+                              type.club_subscription_type_id ===
+                              clubPackage.club_subscription_type_id
+                          )?.club_subscription_duration_months
+                        }
+                      </td>
+                      <td>{clubPackage.price}</td>
+                      {isUserPlayer && (
+                        <td>
+                          {isUserSubscribedToClub(
+                            clubPackage.club_subscription_package_id
+                          ) === true ? (
+                            <p className={styles["subscribed-text"]}>
+                              Üyelik var
+                            </p>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                handleOpenSubscribeModal(
+                                  selectedClub?.[0]?.user_id
+                                )
+                              }
+                              disabled={!playerPaymentDetailsExist}
+                            >
+                              {playerPaymentDetailsExist
+                                ? "Üye Ol"
+                                : "Üye olmak için ödeme bilgilerini ekle"}
+                            </button>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           ) : (
@@ -654,7 +407,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           <div className={styles["rule-container"]}>
             <h4>Antreman / Maç</h4>
             <p className={styles["rule-text"]}>{`${
-              selectedClub?.is_player_subscription_required
+              selectedClub?.[0]?.is_player_subscription_required
                 ? "Oyuncuların kort kiralamak için kulübe üye olmaları gerekir"
                 : "Oyuncuların kort kiralamak için kulübe üye olmalarına gerek yoktur"
             } `}</p>
@@ -662,20 +415,20 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           <div className={styles["rule-container"]}>
             <h4>Ders</h4>
             <p className={styles["rule-text"]}>{`${
-              selectedClub?.is_player_lesson_subscription_required &&
-              selectedClub?.is_trainer_subscription_required
+              selectedClub?.[0]?.is_player_lesson_subscription_required &&
+              selectedClub?.[0]?.is_trainer_subscription_required
                 ? "Eğitmenin kulüp çalışanı, oyuncunun kulüp üyesi olması gerekir"
-                : selectedClub?.is_player_lesson_subscription_required ===
+                : selectedClub?.[0]?.is_player_lesson_subscription_required ===
                     false &&
-                  selectedClub?.is_trainer_subscription_required === true
+                  selectedClub?.[0]?.is_trainer_subscription_required === true
                 ? "Eğitmenin kulüp çalışanı olması yeterlidir"
-                : selectedClub?.is_player_lesson_subscription_required ===
+                : selectedClub?.[0]?.is_player_lesson_subscription_required ===
                     true &&
-                  selectedClub?.is_trainer_subscription_required === false
+                  selectedClub?.[0]?.is_trainer_subscription_required === false
                 ? "Oyuncunun kulüp üyesi olması yeterlidir"
-                : selectedClub?.is_player_lesson_subscription_required ===
+                : selectedClub?.[0]?.is_player_lesson_subscription_required ===
                     false &&
-                  selectedClub?.is_trainer_subscription_required === false
+                  selectedClub?.[0]?.is_trainer_subscription_required === false
                 ? "Oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur"
                 : ""
             } `}</p>
@@ -683,48 +436,59 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
           <div className={styles["rule-container"]}>
             <h4>Ücret</h4>
             <p className={styles["rule-text"]}>
-              {selectedClub?.higher_price_for_non_subscribers
+              {selectedClub?.[0]?.higher_price_for_non_subscribers
                 ? "Üyelere farklı fiyat uygulanır"
                 : "Üyelere farklı fiyat uygulanmaz"}
             </p>
           </div>
         </div>
       </div>
-      <SubscribeToClubModal
-        openSubscribeModal={openSubscribeModal}
-        handleCloseSubscribeModal={handleCloseSubscribeModal}
-        selectedClubId={selectedClubId}
-      />
-      <ExploreClubCourtsModal
-        isCourtsModalOpen={isCourtsModalOpen}
-        closeCourtsModal={closeCourtsModal}
-        selectedClub={selectedClub}
-      />
-      <ExploreClubTrainerModal
-        isTrainersModalOpen={isTrainersModalOpen}
-        closeTrainersModal={closeTrainersModal}
-        selectedClub={selectedClub}
-        confirmedClubTrainers={confirmedClubTrainers}
-      />
-      <ExploreClubSubscribersModal
-        isSubscribersModalOpen={isSubscribersModalOpen}
-        closeSubscribersModal={closeSubscribersModal}
-        selectedClub={selectedClub}
-        selectedClubSubscribers={selectedClubSubscribers}
-      />
-      <ExploreClubSubscriptionsModal
-        isSubscriptionsModalOpen={isSubscriptionsModalOpen}
-        closeSubscriptionsModal={closeSubscriptionsModal}
-        selectedClub={selectedClub}
-        selectedClubSubscriptionPackages={selectedClubSubscriptionPackages}
-        playerPaymentDetailsExist={playerPaymentDetailsExist}
-        handleOpenSubscribeModal={handleOpenSubscribeModal}
-      />
-      <ClubEmploymentModal
-        employmentModalOpen={employmentModalOpen}
-        closeEmploymentModal={closeEmploymentModal}
-        trainerEmploymentClubId={trainerEmploymentClubId}
-      />
+      {openSubscribeModal && (
+        <SubscribeToClubModal
+          openSubscribeModal={openSubscribeModal}
+          handleCloseSubscribeModal={handleCloseSubscribeModal}
+          selectedClubId={selectedClubId}
+        />
+      )}
+      {isCourtsModalOpen && (
+        <ExploreClubCourtsModal
+          isCourtsModalOpen={isCourtsModalOpen}
+          closeCourtsModal={closeCourtsModal}
+          selectedClub={selectedClub}
+        />
+      )}
+      {isTrainersModalOpen && (
+        <ExploreClubTrainerModal
+          isTrainersModalOpen={isTrainersModalOpen}
+          closeTrainersModal={closeTrainersModal}
+          confirmedClubTrainers={confirmedClubTrainers}
+        />
+      )}
+      {isSubscribersModalOpen && (
+        <ExploreClubSubscribersModal
+          isSubscribersModalOpen={isSubscribersModalOpen}
+          closeSubscribersModal={closeSubscribersModal}
+          selectedClub={selectedClub}
+          selectedClubSubscribers={selectedClubSubscribers}
+        />
+      )}
+      {isSubscriptionsModalOpen && (
+        <ExploreClubSubscriptionsModal
+          isSubscriptionsModalOpen={isSubscriptionsModalOpen}
+          closeSubscriptionsModal={closeSubscriptionsModal}
+          selectedClub={selectedClub}
+          selectedClubSubscriptionPackages={selectedClubSubscriptionPackages}
+          playerPaymentDetailsExist={playerPaymentDetailsExist}
+          handleOpenSubscribeModal={handleOpenSubscribeModal}
+        />
+      )}
+      {employmentModalOpen && (
+        <ClubEmploymentModal
+          employmentModalOpen={employmentModalOpen}
+          closeEmploymentModal={closeEmploymentModal}
+          trainerEmploymentClubId={trainerEmploymentClubId}
+        />
+      )}
     </div>
   );
 };

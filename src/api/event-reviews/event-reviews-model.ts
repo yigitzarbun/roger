@@ -7,8 +7,25 @@ const eventReviewsModel = {
   },
 
   async getByFilter(filter) {
-    const eventReview = await db("event_reviews").where(filter).first();
-    return eventReview;
+    const eventReviews = await db("event_reviews").where((builder) => {
+      if (filter.reviewer_id) {
+        builder.where("reviewer_id", filter.reviewer_id);
+      }
+      if (filter.booking_id) {
+        builder.where("booking_id", filter.booking_id);
+      }
+      if (filter.is_active) {
+        builder.where("is_active", filter.is_active);
+      }
+      if (filter.reviewer_id_not_equal) {
+        builder.whereNot("reviewer_id", filter.reviewer_id_not_equal);
+      }
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+    return eventReviews;
   },
 
   async getById(event_review_id) {

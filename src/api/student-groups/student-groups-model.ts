@@ -14,10 +14,8 @@ const studentGroupsModel = {
       if (filter.is_active) {
         builder.where("is_active", filter.is_active);
       }
-
-      if (filter.sortBy) {
-        // handle sorting here if required
-        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      if (filter.user_id) {
+        builder.where("user_id", filter.user_id);
       }
       if (filter.student_id) {
         builder.where(function () {
@@ -26,6 +24,10 @@ const studentGroupsModel = {
             .orWhere("third_student_id", filter.student_id)
             .orWhere("fourth_student_id", filter.student_id);
         });
+      }
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
       }
     });
 

@@ -39,7 +39,6 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
   const { data: myCourts, isLoading: isMyCourtsLoading } =
     useGetCourtsByFilterQuery({
       club_id: user?.user?.clubDetails?.club_id,
-      is_active: true,
     });
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =

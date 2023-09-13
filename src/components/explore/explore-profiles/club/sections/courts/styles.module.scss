@@ -1,0 +1,43 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+.courts-section {
+  background-color: $roger-box-bg-color;
+  width: 55%;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 20px;
+  table {
+    width: 100%;
+    text-align: left;
+    .court-name {
+      color: white;
+      text-decoration: none;
+    }
+    .court-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+  button {
+    padding: 10px;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 150px;
+    background-color: $roger-black-dark;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+  }
+
+  button:hover {
+    background-color: $roger-blue;
+    cursor: pointer;
+  }
+}

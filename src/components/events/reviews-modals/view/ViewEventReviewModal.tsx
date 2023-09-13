@@ -8,7 +8,10 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import {
+  useGetEventReviewsByFilterQuery,
+  useGetEventReviewsQuery,
+} from "../../../../api/endpoints/EventReviewsApi";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 import ReviewCard from "../../../../components/common/reviews/ReviewCard";
@@ -25,16 +28,13 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetEventReviewsQuery({});
+  const { data: selectedEventReview, isLoading: isSelectedEventReviewLoading } =
+    useGetEventReviewsByFilterQuery({
+      booking_id: selectedBookingId,
+      reviewer_id_not_equal: user?.user?.user_id,
+    });
 
-  const selectedEventReview = eventReviews?.find(
-    (review) =>
-      review.booking_id === selectedBookingId &&
-      review.reviewer_id !== user?.user?.user_id
-  );
-
-  if (isEventReviewsLoading) {
+  if (isSelectedEventReviewLoading) {
     return <PageLoading />;
   }
 
@@ -52,7 +52,7 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
         />
       </div>
       <div>
-        <ReviewCard review={selectedEventReview} />
+        <ReviewCard review={selectedEventReview?.[0]} />
       </div>
     </Modal>
   );

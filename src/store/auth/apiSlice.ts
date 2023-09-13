@@ -8,6 +8,9 @@ export const apiSlice = createApi({
     getUsers: builder.query({
       query: () => "/users",
     }),
+    getUserById: builder.query({
+      query: (user_id) => `/users/${user_id}`,
+    }),
     addUser: builder.mutation({
       query: (user) => ({
         url: "/usersAuth/register",
@@ -25,5 +28,9 @@ export const apiSlice = createApi({
   }),
 });
 
-export const { useGetUsersQuery, useAddUserMutation, useLoginUserMutation } =
-  apiSlice;
+export const {
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+  useAddUserMutation,
+  useLoginUserMutation,
+} = apiSlice;

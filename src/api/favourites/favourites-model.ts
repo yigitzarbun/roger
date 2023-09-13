@@ -7,8 +7,26 @@ const favouritesModel = {
   },
 
   async getByFilter(filter) {
-    const favourite = await db("favourites").where(filter).first();
-    return favourite;
+    const favourites = await db("favourites").where((builder) => {
+      if (filter.favourite_id) {
+        builder.where("favourite_id", filter.favourite_id);
+      }
+      if (filter.is_active) {
+        builder.where("is_active", filter.is_active);
+      }
+
+      if (filter.favouriter_id) {
+        builder.where("favouriter_id", filter.favouriter_id);
+      }
+      if (filter.favouritee_id) {
+        builder.where("favouritee_id", filter.favouritee_id);
+      }
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+    return favourites;
   },
 
   async getById(favourite_id) {

@@ -12,8 +12,13 @@ const clubsModel = {
     return club;
   },
 
-  async getById(club_id) {
+  async getByClubId(club_id) {
     const club = await db("clubs").where("club_id", club_id);
+    return club;
+  },
+
+  async getByUserId(user_id) {
+    const club = await db("clubs").where("user_id", user_id);
     return club;
   },
 

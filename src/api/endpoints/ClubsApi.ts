@@ -29,7 +29,10 @@ export const clubsSlice = createApi({
       query: () => "/clubs",
     }),
     getClubByClubId: builder.query({
-      query: (club_id) => `/clubs/${club_id}`,
+      query: (club_id) => `/clubs/club/${club_id}`,
+    }),
+    getClubByUserId: builder.query({
+      query: (user_id) => `/clubs/user/${user_id}`,
     }),
     addClub: builder.mutation({
       query: (club) => {
@@ -129,6 +132,7 @@ export const clubsSlice = createApi({
 export const {
   useGetClubsQuery,
   useGetClubByClubIdQuery,
+  useGetClubByUserIdQuery,
   useAddClubMutation,
   useUpdateClubMutation,
 } = clubsSlice;

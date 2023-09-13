@@ -16,6 +16,9 @@ export const favouritesSlice = createApi({
     getFavourites: builder.query({
       query: () => "/favourites",
     }),
+    getFavouritesByFilter: builder.query({
+      query: (filter) => `/favourites/filter?${new URLSearchParams(filter)}`,
+    }),
     addFavourite: builder.mutation({
       query: (favourite) => ({
         url: "/favourites",
@@ -35,6 +38,7 @@ export const favouritesSlice = createApi({
 
 export const {
   useGetFavouritesQuery,
+  useGetFavouritesByFilterQuery,
   useAddFavouriteMutation,
   useUpdateFavouriteMutation,
 } = favouritesSlice;

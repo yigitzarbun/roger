@@ -15,7 +15,18 @@ eventReviewsRouter.get(
     }
   }
 );
-
+eventReviewsRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredReviews = await eventReviewsModel.getByFilter(filter);
+      res.status(200).json(filteredReviews);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 eventReviewsRouter.get(
   "/:event_review_id",
   async (req: Request, res: Response, next: NextFunction) => {

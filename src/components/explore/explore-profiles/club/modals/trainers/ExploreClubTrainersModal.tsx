@@ -18,40 +18,28 @@ import PageLoading from "../../../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../../../store/hooks";
 
-import {
-  Trainer,
-  useGetTrainersQuery,
-} from "../../../../../../api/endpoints/TrainersApi";
+import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../../../api/endpoints/TrainerExperienceTypesApi";
 
 interface ExploreClubTrainersModalProps {
   isTrainersModalOpen: boolean;
   closeTrainersModal: () => void;
-  selectedClub: Club;
   confirmedClubTrainers: Trainer[];
 }
 
 const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
-  const {
-    isTrainersModalOpen,
-    closeTrainersModal,
-    selectedClub,
-    confirmedClubTrainers,
-  } = props;
+  const { isTrainersModalOpen, closeTrainersModal, confirmedClubTrainers } =
+    props;
   const user = useAppSelector((store) => store?.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
-
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
 
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  if (isTrainersLoading || isTrainerExperienceTypesLoading) {
+  if (isTrainerExperienceTypesLoading) {
     return <PageLoading />;
   }
 
@@ -98,8 +86,22 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                       />
                     </Link>
                   </td>
-                  <td>{trainer.fname}</td>
-                  <td>{trainer.lname}</td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                      className={styles["trainer-name"]}
+                    >
+                      {trainer.fname}
+                    </Link>
+                  </td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                      className={styles["trainer-name"]}
+                    >
+                      {trainer.lname}{" "}
+                    </Link>
+                  </td>
                   <td>{trainer.gender}</td>
                   <td>
                     {
@@ -111,14 +113,6 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                     }
                   </td>
                   <td>{trainer.price_hour}</td>
-                  <td>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
-                      className={styles["view-icon"]}
-                    >
-                      <AiOutlineEye />
-                    </Link>
-                  </td>
                   {isUserPlayer && (
                     <td>
                       <Link

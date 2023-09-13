@@ -18,7 +18,7 @@ import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesAp
 import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
 import {
   useGetCourtByIdQuery,
-  useGetCourtsQuery,
+  useGetCourtsByFilterQuery,
   useUpdateCourtMutation,
 } from "../../../api/endpoints/CourtsApi";
 import PageLoading from "../../../components/loading/PageLoading";
@@ -61,7 +61,9 @@ const EditCourtModal = (props: EditCourtModalProps) => {
   const { data: currentClub, isLoading: isCurrentClubLoading } =
     useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
-  const { refetch: refetchCourts } = useGetCourtsQuery({});
+  const { refetch: refetchCourts } = useGetCourtsByFilterQuery({
+    club_id: user?.clubDetails?.club_id,
+  });
 
   const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
     useGetCourtByIdQuery(court_id);

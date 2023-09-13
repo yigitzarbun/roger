@@ -26,6 +26,14 @@ const ReviewCard = ({ review }) => {
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
+  const selectedPlayer = (user_id: number) => {
+    return players?.find((player) => player.user_id === user_id);
+  };
+
+  const selectedTrainer = (user_id: number) => {
+    return trainers?.find((trainer) => trainer.user_id === user_id);
+  };
+
   if (
     isUsersLoading ||
     isPlayersLoading ||
@@ -40,7 +48,7 @@ const ReviewCard = ({ review }) => {
     <div className={styles["review-container"]} key={review.event_review_id}>
       <div className={styles["title-container"]}>
         <h4>{review.event_review_title}</h4>
-        <p>{review.registered_at.slice(0, 10)}</p>
+        <p>{review.registered_at?.slice(0, 10)}</p>
       </div>
       <p>{review.event_review_description}</p>
       <div className={styles["score-type-container"]}>
@@ -86,23 +94,12 @@ const ReviewCard = ({ review }) => {
               src={
                 users?.find((user) => user.user_id === review.reviewer_id)
                   ?.user_type_id === 1 &&
-                players?.find((player) => player.user_id === review.reviewer_id)
-                  ?.image
-                  ? `${localUrl}/${
-                      players.find(
-                        (player) => player.user_id === review.reviewer_id
-                      )?.image
-                    }`
+                selectedPlayer(review.reviewer_id)?.image
+                  ? `${localUrl}/${selectedPlayer(review.reviewer_id)?.image}`
                   : users?.find((user) => user.user_id === review.reviewer_id)
                       ?.user_type_id === 2 &&
-                    trainers?.find(
-                      (trainer) => trainer.user_id === review.reviewer_id
-                    )?.image
-                  ? `${localUrl}/${
-                      trainers.find(
-                        (trainer) => trainer.user_id === review.reviewer_id
-                      )?.image
-                    }`
+                    selectedTrainer(review.reviewer_id)?.image
+                  ? `${localUrl}/${selectedTrainer(review.reviewer_id)?.image}`
                   : "/images/icons/avatar.png"
               }
               className={styles["reviewer-image"]}
@@ -122,25 +119,13 @@ const ReviewCard = ({ review }) => {
           >
             {users?.find((user) => user.user_id === review.reviewer_id)
               ?.user_type_id === 1
-              ? `${
-                  players?.find(
-                    (player) => player.user_id === review.reviewer_id
-                  )?.fname
-                } ${
-                  players.find(
-                    (player) => player.user_id === review.reviewer_id
-                  )?.lname
+              ? `${selectedPlayer(review.reviewer_id)?.fname} ${
+                  selectedPlayer(review.reviewer_id)?.lname
                 }`
               : users?.find((user) => user.user_id === review.reviewer_id)
                   ?.user_type_id === 2
-              ? `${
-                  trainers?.find(
-                    (trainer) => trainer.user_id === review.reviewer_id
-                  )?.fname
-                } ${
-                  trainers.find(
-                    (trainer) => trainer.user_id === review.reviewer_id
-                  )?.lname
+              ? `${selectedTrainer(review.reviewer_id)?.fname} ${
+                  selectedTrainer(review.reviewer_id)?.lname
                 }`
               : ""}
           </Link>

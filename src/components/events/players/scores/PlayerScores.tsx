@@ -8,7 +8,7 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
@@ -25,9 +25,12 @@ import PageLoading from "../../../../components/loading/PageLoading";
 const PlayerScores = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
+  const { data: myEvents, isLoading: isMyEventsLoading } =
+    useGetBookingsByFilterQuery({
+      booking_player_id: user?.user?.user_id,
+      event_type_id: 2,
+      booking_status_type_id: 5,
+    });
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
@@ -41,14 +44,6 @@ const PlayerScores = () => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: matchScores, isLoading: isMatchScoresLoading } =
     useGetMatchScoresQuery({});
-
-  const myEvents = bookings?.filter(
-    (booking) =>
-      (booking.inviter_id === user?.user?.user_id ||
-        booking.invitee_id === user?.user?.user_id) &&
-      booking.event_type_id === 2 &&
-      booking.booking_status_type_id === 5
-  );
 
   const [isAddScoreModalOpen, setIsAddScoreModalOpen] = useState(false);
 
@@ -79,8 +74,28 @@ const PlayerScores = () => {
     setIsEditScoreModalOpen(false);
   };
 
+  const selectedPlayer = (user_id: number) => {
+    return players?.find((player) => player.user_id === user_id);
+  };
+
+  const selectedEventType = (event_type_id: number) => {
+    return eventTypes?.find((type) => type.event_type_id === event_type_id);
+  };
+
+  const selectedClub = (club_id: number) => {
+    return clubs?.find((club) => club.club_id === club_id);
+  };
+
+  const selectedCourt = (court_id: number) => {
+    return courts?.find((court) => court.court_id === court_id);
+  };
+
+  const selectedScore = (booking_id: number) => {
+    return matchScores?.find((score) => score.booking_id === booking_id);
+  };
+
   if (
-    isBookingsLoading ||
+    isMyEventsLoading ||
     isEventTypesLoading ||
     isCourtsLoading ||
     isCourtsLoading ||
@@ -129,26 +144,14 @@ const PlayerScores = () => {
                   >
                     {(event.event_type_id === 1 || event.event_type_id === 2) &&
                     event.inviter_id === user?.user?.user_id
-                      ? `${
-                          players?.find(
-                            (player) => player.user_id === event.invitee_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) => player.user_id === event.invitee_id
-                          )?.lname
+                      ? `${selectedPlayer(event.invitee_id)?.fname} ${
+                          selectedPlayer(event.invitee_id)?.lname
                         }`
                       : (event.event_type_id === 1 ||
                           event.event_type_id === 2) &&
                         event.invitee_id === user?.user?.user_id
-                      ? `${
-                          players?.find(
-                            (player) => player.user_id === event.inviter_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) => player.user_id === event.inviter_id
-                          )?.lname
+                      ? `${selectedPlayer(event.inviter_id)?.fname} ${
+                          selectedPlayer(event.inviter_id)?.lname
                         }`
                       : "-"}
                   </Link>
@@ -159,9 +162,7 @@ const PlayerScores = () => {
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === event.invitee_id
-                          )?.player_level_id
+                          selectedPlayer(event.invitee_id)?.player_level_id
                       )?.player_level_name
                     : (event.event_type_id === 1 ||
                         event.event_type_id === 2) &&
@@ -169,41 +170,23 @@ const PlayerScores = () => {
                     ? playerLevels?.find(
                         (level) =>
                           level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === event.inviter_id
-                          )?.player_level_id
+                          selectedPlayer(event.inviter_id)?.player_level_id
                       )?.player_level_name
                     : "-"}
                 </td>
                 <td>{event.event_date.slice(0, 10)}</td>
                 <td>{event.event_time.slice(0, 5)}</td>
                 <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === event.event_type_id
-                    )?.event_type_name
-                  }
+                  {selectedEventType(event.event_type_id)?.event_type_name}
                 </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === event.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {
-                    courts?.find((court) => court.court_id === event.court_id)
-                      ?.court_name
-                  }
-                </td>
+                <td>{selectedClub(event.club_id)?.club_name}</td>
+                <td>{selectedCourt(event.court_id)?.court_name}</td>
                 <td>
                   {
                     courtSurfaceTypes?.find(
                       (type) =>
                         type.court_surface_type_id ===
-                        courts?.find(
-                          (court) => court.court_id === event.court_id
-                        )?.court_surface_type_id
+                        selectedCourt(event.court_id)?.court_surface_type_id
                     )?.court_surface_type_name
                   }
                 </td>
@@ -212,9 +195,7 @@ const PlayerScores = () => {
                     courtStructureTypes?.find(
                       (type) =>
                         type.court_structure_type_id ===
-                        courts?.find(
-                          (court) => court.court_id === event.court_id
-                        )?.court_structure_type_id
+                        selectedCourt(event.court_id)?.court_structure_type_id
                     )?.court_structure_type_name
                   }
                 </td>
@@ -225,21 +206,17 @@ const PlayerScores = () => {
                       match.inviter_third_set_games_won === 0
                   )?.match_score_status_type_id === 3
                     ? `${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.inviter_first_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.inviter_first_set_games_won
                       }-${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.invitee_first_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.invitee_first_set_games_won
                       } ${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.inviter_second_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.inviter_second_set_games_won
                       }-${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.invitee_second_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.invitee_second_set_games_won
                       } `
                     : matchScores?.find(
                         (match) =>
@@ -248,29 +225,23 @@ const PlayerScores = () => {
                           match.inviter_third_set_games_won
                       )
                     ? `${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.inviter_first_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.inviter_first_set_games_won
                       }-${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.invitee_first_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.invitee_first_set_games_won
                       } ${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.inviter_second_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.inviter_second_set_games_won
                       }-${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.invitee_second_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.invitee_second_set_games_won
                       } ${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.inviter_third_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.inviter_third_set_games_won
                       }-${
-                        matchScores?.find(
-                          (match) => match.booking_id === event.booking_id
-                        )?.invitee_third_set_games_won
+                        selectedScore(event.booking_id)
+                          ?.invitee_third_set_games_won
                       }`
                     : "-"}
                 </td>
@@ -281,28 +252,19 @@ const PlayerScores = () => {
                       match.match_score_status_type_id === 3
                   )?.winner_id
                     ? `${
-                        players?.find(
-                          (player) =>
-                            player.user_id ===
-                            matchScores?.find(
-                              (match) => match.booking_id === event.booking_id
-                            )?.winner_id
+                        selectedPlayer(
+                          selectedScore(event.booking_id)?.winner_id
                         )?.fname
                       } ${
-                        players?.find(
-                          (player) =>
-                            player.user_id ===
-                            matchScores?.find(
-                              (match) => match.booking_id === event.booking_id
-                            )?.winner_id
+                        selectedPlayer(
+                          selectedScore(event.booking_id)?.winner_id
                         )?.lname
                       }`
                     : "-"}
                 </td>
                 <td>
-                  {matchScores?.find(
-                    (match) => match.booking_id === event.booking_id
-                  )?.match_score_status_type_id === 1 ? (
+                  {selectedScore(event.booking_id)
+                    ?.match_score_status_type_id === 1 ? (
                     <button
                       onClick={() => openAddScoreModal(event.booking_id)}
                       className={styles["add-score-button"]}
@@ -328,9 +290,8 @@ const PlayerScores = () => {
                     >
                       Onayla / Değişiklik Talep Et
                     </button>
-                  ) : matchScores?.find(
-                      (match) => match.booking_id === event.booking_id
-                    )?.match_score_status_type_id === 3 ? (
+                  ) : selectedScore(event.booking_id)
+                      ?.match_score_status_type_id === 3 ? (
                     <p className={styles["confirmed-text"]}>Skor onaylandı</p>
                   ) : (
                     ""
@@ -341,18 +302,22 @@ const PlayerScores = () => {
           </tbody>
         </table>
       ) : (
-        <p>Henüz tamamlanmış etkinlik bulunmamaktadır</p>
+        <p>Tamamlanan etkinlik bulunmamaktadır</p>
       )}
-      <AddMatchScoreModal
-        isAddScoreModalOpen={isAddScoreModalOpen}
-        closeAddScoreModal={closeAddScoreModal}
-        selectedMatchScoreId={selectedMatchScoreId}
-      />
-      <EditMatchScoreModal
-        isEditScoreModalOpen={isEditScoreModalOpen}
-        closeEditScoreModal={closeEditScoreModal}
-        selectedMatchScoreId={selectedMatchScoreId}
-      />
+      {isAddScoreModalOpen && (
+        <AddMatchScoreModal
+          isAddScoreModalOpen={isAddScoreModalOpen}
+          closeAddScoreModal={closeAddScoreModal}
+          selectedMatchScoreId={selectedMatchScoreId}
+        />
+      )}
+      {isEditScoreModalOpen && (
+        <EditMatchScoreModal
+          isEditScoreModalOpen={isEditScoreModalOpen}
+          closeEditScoreModal={closeEditScoreModal}
+          selectedMatchScoreId={selectedMatchScoreId}
+        />
+      )}
     </div>
   );
 };

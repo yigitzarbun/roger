@@ -24,6 +24,15 @@ export const playersSlice = createApi({
     getPlayers: builder.query({
       query: () => "/players",
     }),
+    getPlayerByPlayerId: builder.query({
+      query: (player_id) => `/players/player/${player_id}`,
+    }),
+    getPlayerByUserId: builder.query({
+      query: (user_id) => `/players/user/${user_id}`,
+    }),
+    getPlayersByFilter: builder.query({
+      query: (filter) => `/players/filter?${new URLSearchParams(filter)}`,
+    }),
     addPlayer: builder.mutation({
       query: (player) => {
         const formData = new FormData();
@@ -104,6 +113,9 @@ export const playersSlice = createApi({
 
 export const {
   useGetPlayersQuery,
+  useGetPlayerByPlayerIdQuery,
+  useGetPlayerByUserIdQuery,
+  useGetPlayersByFilterQuery,
   useAddPlayerMutation,
   useUpdatePlayerMutation,
 } = playersSlice;

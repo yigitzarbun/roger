@@ -15,7 +15,18 @@ favouritesRouter.get(
     }
   }
 );
-
+favouritesRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredFavourites = await favouritesModel.getByFilter(filter);
+      res.status(200).json(filteredFavourites);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 favouritesRouter.get(
   "/:favourite_id",
   async (req: Request, res: Response, next: NextFunction) => {

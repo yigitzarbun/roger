@@ -14,12 +14,13 @@ import { useAppSelector } from "../../../../../store/hooks";
 
 import {
   useUpdateMatchScoreMutation,
+  useGetMatchScoreByIdQuery,
   useGetMatchScoresQuery,
 } from "../../../../../api/endpoints/MatchScoresApi";
 
-import { useGetBookingsQuery } from "../../../../../api/endpoints/BookingsApi";
+import { useGetBookingByIdQuery } from "../../../../../api/endpoints/BookingsApi";
 
-import { useGetPlayersQuery } from "../../../../../api/endpoints/PlayersApi";
+import { useGetPlayersByFilterQuery } from "../../../../../api/endpoints/PlayersApi";
 
 import PageLoading from "../../../../../components/loading/PageLoading";
 
@@ -48,33 +49,28 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   const [updateMatchScore, { isSuccess: isUpdateMatchScoreSuccess }] =
     useUpdateMatchScoreMutation({});
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
+  const {
+    data: selectedMatch,
+    isLoading: isSelectedMatchLoading,
+    refetch: refetchMatchScore,
+  } = useGetMatchScoreByIdQuery(selectedMatchScoreId);
+
+  const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
 
   const {
-    data: matchScores,
-    isLoading: isMatchScoresLoading,
-    refetch: refetchMatchScores,
-  } = useGetMatchScoresQuery({});
+    data: selectedMatchBookingDetails,
+    isLoading: isSelectedMatchBookingDetailsLoading,
+  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const { data: inviter, isLoading: isInviterLoading } =
+    useGetPlayersByFilterQuery({
+      user_id: selectedMatchBookingDetails?.[0]?.inviter_id,
+    });
 
-  const selectedMatch = matchScores?.find(
-    (match) => match.match_score_id === selectedMatchScoreId
-  );
-
-  const selectedMatchBookingDetails = bookings?.find(
-    (booking) => booking.booking_id === selectedMatch?.booking_id
-  );
-
-  const inviter = players?.find(
-    (player) => player.user_id === selectedMatchBookingDetails?.inviter_id
-  );
-
-  const invitee = players?.find(
-    (player) => player.user_id === selectedMatchBookingDetails?.invitee_id
-  );
+  const { data: invitee, isLoading: isInviteeLoading } =
+    useGetPlayersByFilterQuery({
+      user_id: selectedMatchBookingDetails?.[0]?.invitee_id,
+    });
 
   const [firstSetInviter, setFirstSetInviter] = useState(null);
   const [firstSetInvitee, setFirstSetInvitee] = useState(null);
@@ -96,7 +92,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const matchScore = {
-        ...selectedMatch,
+        ...selectedMatch?.[0],
         inviter_first_set_games_won: Number(firstSetInviter),
         inviter_second_set_games_won: Number(secondSetInviter),
         inviter_third_set_games_won: Number(thirdSetInviter),
@@ -106,20 +102,19 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
         winner_id:
           firstSetInviter > firstSetInvitee &&
           secondSetInviter > secondSetInvitee
-            ? inviter?.user_id
+            ? inviter?.[0]?.user_id
             : firstSetInviter < firstSetInvitee &&
               secondSetInviter < secondSetInvitee
-            ? invitee?.user_id
+            ? invitee?.[0]?.user_id
             : thirdSetInviter > thirdSetInvitee
-            ? inviter?.user_id
+            ? inviter?.[0]?.user_id
             : thirdSetInviter < thirdSetInvitee
-            ? invitee?.user_id
+            ? invitee?.[0]?.user_id
             : null,
         match_score_status_type_id: 2,
         reporter_id: user?.user?.user_id,
       };
       updateMatchScore(matchScore);
-      console.log(matchScore);
     } catch (error) {
       console.log(error);
     }
@@ -133,10 +128,10 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
       secondSetInvitee
     ) {
       const firstSetWinner =
-        firstSetInviter > firstSetInvitee ? inviter : invitee;
+        firstSetInviter > firstSetInvitee ? inviter?.[0] : invitee?.[0];
 
       const secondSetWinner =
-        secondSetInviter > secondSetInvitee ? inviter : invitee;
+        secondSetInviter > secondSetInvitee ? inviter?.[0] : invitee?.[0];
 
       if (firstSetWinner?.user_id !== secondSetWinner?.user_id) {
         setThirdSetVisible(true);
@@ -149,6 +144,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
       refetchMatchScores();
+      refetchMatchScore();
       toast.success("Başarıyla gönderildi");
       reset({
         inviter_first_set_games_won: null,
@@ -163,7 +159,12 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
     }
   }, [isUpdateMatchScoreSuccess]);
 
-  if (isBookingsLoading || isMatchScoresLoading || isPlayersLoading) {
+  if (
+    isSelectedMatchBookingDetailsLoading ||
+    isInviterLoading ||
+    isInviteeLoading ||
+    isSelectedMatchLoading
+  ) {
     return <PageLoading />;
   }
 
@@ -187,7 +188,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
         <h4>1. Set</h4>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>{`${inviter?.fname} ${inviter?.lname} 1. Set`}</label>
+            <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 1. Set`}</label>
             <input
               {...register("inviter_first_set_games_won", {
                 required: true,
@@ -203,7 +204,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>{`${invitee?.fname} ${invitee?.lname} 1. Set`}</label>
+            <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 1. Set`}</label>
             <input
               {...register("invitee_first_set_games_won", { required: true })}
               type="number"
@@ -218,7 +219,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
         <h4>2. Set</h4>
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>{`${inviter?.fname} ${inviter?.lname} 2. Set`}</label>
+            <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 2. Set`}</label>
             <input
               {...register("inviter_second_set_games_won", {
                 min: { value: 0, message: "En az 0 olabilir" },
@@ -232,7 +233,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>{`${invitee?.fname} ${invitee?.lname} 2. Set`}</label>
+            <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 2. Set`}</label>
             <input
               {...register("invitee_second_set_games_won", {
                 max: { value: 7, message: "En fazla 7 olabilir" },
@@ -251,7 +252,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             <h4>3. Set</h4>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>{`${inviter?.fname} ${inviter?.lname} 3. Set`}</label>
+                <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 3. Set`}</label>
                 <input
                   {...register("inviter_third_set_games_won", {
                     min: { value: 0, message: "En az 0 olabilir" },
@@ -267,7 +268,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>{`${invitee?.fname} ${invitee?.lname} 3. Set`}</label>
+                <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 3. Set`}</label>
                 <input
                   {...register("invitee_third_set_games_won", {
                     max: { value: 7, message: "En fazla 7 olabilir" },

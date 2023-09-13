@@ -16,7 +16,7 @@ import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
 import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
@@ -26,39 +26,43 @@ import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSur
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
-import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 const TrainerEventsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: myEvents, isLoading: isMyEventsLoading } =
+    useGetBookingsByFilterQuery({
+      booking_player_id: user?.user?.user_id,
+      booking_status_type_id: 5,
+    });
+
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetEventReviewsQuery({});
+
+  const { data: eventTypes, isLoading: isEventTypesLoading } =
+    useGetEventTypesQuery({});
+
+  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
+    useGetCourtSurfaceTypesQuery({});
+
+  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
+    useGetCourtStructureTypesQuery({});
+
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
+    useGetPlayerLevelsQuery({});
+
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
-  const { data: groups, isLoading: isGroupsLoading } = useGetStudentGroupsQuery(
-    {}
-  );
 
-  const myEvents = bookings?.filter(
-    (booking) =>
-      (booking.inviter_id === user?.user?.user_id ||
-        booking.invitee_id === user?.user?.user_id) &&
-      booking.booking_status_type_id === 5
-  );
+  const { data: myGroups, isLoading: isMyGroupsLoading } =
+    useGetStudentGroupsByFilterQuery({ trainer_id: user?.user?.user_id });
 
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
@@ -80,8 +84,54 @@ const TrainerEventsResults = () => {
     setIsViewReviewModalOpen(false);
   };
 
+  const selectedPlayer = (user_id: number) => {
+    return players?.find((player) => player.user_id === user_id);
+  };
+
+  const selectedExternalMember = (user_id: number) => {
+    return externalMembers?.find((member) => member.user_id === user_id);
+  };
+
+  const selectedClub = (club_id: number) => {
+    return clubs?.find((club) => club.club_id === club_id);
+  };
+
+  const selectedCourt = (court_id: number) => {
+    return courts?.find((court) => court.court_id === court_id);
+  };
+
+  const selectedPlayerLevel = (player_level_id: number) => {
+    return playerLevels?.find(
+      (level) => level.player_level_id === player_level_id
+    );
+  };
+
+  const isEventLesson = (event_type_id: number) => {
+    return event_type_id === 3 ? true : false;
+  };
+
+  const isEventExternalLesson = (event_type_id: number) => {
+    return event_type_id === 5 ? true : false;
+  };
+
+  const isEventGroupLesson = (event_type_id: number) => {
+    return event_type_id === 6 ? true : false;
+  };
+
+  const isTrainerInviter = (inviter_id: number) => {
+    return inviter_id === user?.user?.user_id ? true : false;
+  };
+
+  const isTrainerInvitee = (invitee_id: number) => {
+    return invitee_id === user?.user?.user_id;
+  };
+
+  const selectedGroup = (invitee_id: number) => {
+    return myGroups?.find((group) => group.user_id === invitee_id);
+  };
+
   if (
-    isBookingsLoading ||
+    isMyEventsLoading ||
     isEventTypesLoading ||
     isCourtsLoading ||
     isCourtsLoading ||
@@ -92,7 +142,7 @@ const TrainerEventsResults = () => {
     isPlayersLoading ||
     isEventReviewsLoading ||
     isExternalMembersLoading ||
-    isGroupsLoading
+    isMyGroupsLoading
   ) {
     return <PageLoading />;
   }
@@ -126,26 +176,14 @@ const TrainerEventsResults = () => {
                     )?.event_type_name
                   }
                 </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === event.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {
-                    courts?.find((court) => court.court_id === event.court_id)
-                      ?.court_name
-                  }
-                </td>
+                <td>{selectedClub(event.club_id)?.club_name}</td>
+                <td>{selectedCourt(event.court_id)?.court_name}</td>
                 <td>
                   {
                     courtSurfaceTypes?.find(
                       (type) =>
                         type.court_surface_type_id ===
-                        courts?.find(
-                          (court) => court.court_id === event.court_id
-                        )?.court_surface_type_id
+                        selectedCourt(event.court_id)?.court_surface_type_id
                     )?.court_surface_type_name
                   }
                 </td>
@@ -154,100 +192,66 @@ const TrainerEventsResults = () => {
                     courtStructureTypes?.find(
                       (type) =>
                         type.court_structure_type_id ===
-                        courts?.find(
-                          (court) => court.court_id === event.court_id
-                        )?.court_structure_type_id
+                        selectedCourt(event.court_id)?.court_structure_type_id
                     )?.court_structure_type_name
                   }
                 </td>
                 <td>
                   <Link
                     to={
-                      event.event_type_id === 3 &&
-                      event.inviter_id === user?.user?.user_id
+                      isEventLesson(event.event_type_id) &&
+                      isTrainerInviter(event.inviter_id)
                         ? `${paths.EXPLORE_PROFILE}1/${event.invitee_id}`
-                        : event.event_type_id === 3 &&
-                          event.invitee_id === user?.user?.user_id
+                        : isEventLesson(event.event_type_id) &&
+                          isTrainerInvitee(event.invitee_id)
                         ? `${paths.EXPLORE_PROFILE}1/${event.inviter_id}`
-                        : event.event_type_id === 5 || event.event_type_id === 6
+                        : isEventExternalLesson(event.event_type_id) ||
+                          isEventGroupLesson(event.event_type_id)
                         ? `${paths.EXPLORE_PROFILE}3/${
-                            clubs?.find(
-                              (club) => club.club_id === event.club_id
-                            )?.user_id
+                            selectedClub(event.club_id)?.user_id
                           }`
                         : ""
                     }
                     className={styles["student-name"]}
                   >
-                    {event.event_type_id === 3 &&
-                    event.inviter_id === user?.user?.user_id
-                      ? `${
-                          players?.find(
-                            (player) => player.user_id === event.invitee_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) => player.user_id === event.invitee_id
-                          )?.lname
+                    {isEventLesson(event.event_type_id) &&
+                    isTrainerInviter(event.inviter_id)
+                      ? `${selectedPlayer(event.invitee_id)?.fname} ${
+                          selectedPlayer(event.invitee_id)?.lname
                         }`
-                      : event.event_type_id === 3 &&
-                        event.invitee_id === user?.user?.user_id
-                      ? `${
-                          players?.find(
-                            (player) => player.user_id === event.inviter_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) => player.user_id === event.inviter_id
-                          )?.lname
+                      : isEventLesson(event.event_type_id) &&
+                        isTrainerInvitee(event.inviter_id)
+                      ? `${selectedPlayer(event.inviter_id)?.fname} ${
+                          selectedPlayer(event.inviter_id)?.lname
                         }`
-                      : event.event_type_id === 5
-                      ? `${
-                          externalMembers?.find(
-                            (member) => member.user_id === event.invitee_id
-                          )?.fname
-                        } ${
-                          externalMembers?.find(
-                            (member) => member.user_id === event.invitee_id
-                          )?.lname
+                      : isEventExternalLesson(event.event_type_id)
+                      ? `${selectedExternalMember(event.invitee_id)?.fname} ${
+                          selectedExternalMember(event.invitee_id)?.lname
                         }`
-                      : event.event_type_id === 6
-                      ? groups?.find(
-                          (group) => group.user_id === event.invitee_id
-                        )?.student_group_name
+                      : isEventGroupLesson(event.event_type_id)
+                      ? selectedGroup(event.invitee_id)?.student_group_name
                       : "-"}
                   </Link>
                 </td>
                 <td>
-                  {event.event_type_id === 3 &&
-                  event.inviter_id === user?.user?.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === event.invitee_id
-                          )?.player_level_id
+                  {isEventLesson(event.event_type_id) &&
+                  isTrainerInviter(event.inviter_id)
+                    ? selectedPlayerLevel(
+                        selectedPlayer(event.invitee_id)?.player_level_id
                       )?.player_level_name
-                    : event.event_type_id === 3 &&
-                      event.invitee_id === user?.user?.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id ===
-                          players?.find(
-                            (player) => player.user_id === event.inviter_id
-                          )?.player_level_id
+                    : isEventLesson(event.event_type_id) &&
+                      isTrainerInvitee(event.inviter_id)
+                    ? selectedPlayerLevel(
+                        selectedPlayer(event.inviter_id)?.player_level_id
                       )?.player_level_name
-                    : event.event_type_id === 5
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id ===
-                          externalMembers?.find(
-                            (member) => member.user_id === event.invitee_id
-                          )?.player_level_id
+                    : isEventExternalLesson(event.event_type_id)
+                    ? selectedPlayerLevel(
+                        selectedExternalMember(event.invitee_id)
+                          ?.player_level_id
                       )?.player_level_name
                     : "-"}
                 </td>
-                {event.event_type_id === 3 && (
+                {isEventLesson(event.event_type_id) && (
                   <td>
                     {eventReviews?.find(
                       (eventReview) =>
@@ -265,7 +269,7 @@ const TrainerEventsResults = () => {
                     )}
                   </td>
                 )}
-                {event.event_type_id === 3 && (
+                {isEventLesson(event.event_type_id) && (
                   <td>
                     {eventReviews?.find(
                       (eventReview) =>
@@ -286,16 +290,20 @@ const TrainerEventsResults = () => {
       ) : (
         <p>Tamamlanmış etkinlik bulunmamaktadır</p>
       )}
-      <AddEventReviewModal
-        isAddReviewModalOpen={isAddReviewModalOpen}
-        closeReviewModal={closeReviewModal}
-        selectedBookingId={selectedBookingId}
-      />
-      <ViewEventReviewModal
-        isViewReviewModalOpen={isViewReviewModalOpen}
-        closeViewReviewModal={closeViewReviewModal}
-        selectedBookingId={selectedBookingId}
-      />
+      {isAddReviewModalOpen && (
+        <AddEventReviewModal
+          isAddReviewModalOpen={isAddReviewModalOpen}
+          closeReviewModal={closeReviewModal}
+          selectedBookingId={selectedBookingId}
+        />
+      )}
+      {isViewReviewModalOpen && (
+        <ViewEventReviewModal
+          isViewReviewModalOpen={isViewReviewModalOpen}
+          closeViewReviewModal={closeViewReviewModal}
+          selectedBookingId={selectedBookingId}
+        />
+      )}
     </div>
   );
 };

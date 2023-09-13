@@ -14,7 +14,6 @@ const bookingsModel = {
       if (filter.event_date) {
         builder.where("event_date", filter.event_date);
       }
-
       if (filter.event_time) {
         builder.where("event_time", filter.event_time);
       }
@@ -36,6 +35,15 @@ const bookingsModel = {
       if (filter.invitee_id) {
         builder.where("invitee_id", filter.invitee_id);
       }
+      if (filter.booking_player_id) {
+        builder.where(function () {
+          this.where("inviter_id", filter.booking_player_id).orWhere(
+            "invitee_id",
+            filter.booking_player_id
+          );
+        });
+      }
+
       if (filter.sortBy) {
         // handle sorting here if required
         builder.orderBy(filter.sortBy, filter.sortDirection || "asc");

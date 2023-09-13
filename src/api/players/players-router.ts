@@ -17,17 +17,40 @@ playersRouter.get(
 );
 
 playersRouter.get(
-  "/:player_id",
+  "/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const player = await playersModel.getById(req.params.player_id);
-      res.status(200).json(player);
+      const filter = req.query;
+      const filteredPlayers = await playersModel.getByFilter(filter);
+      res.status(200).json(filteredPlayers);
     } catch (error) {
       next(error);
     }
   }
 );
 
+playersRouter.get(
+  "/player/:player_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const player = await playersModel.getByPlayerId(req.params.player_id);
+      res.status(200).json(player);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+playersRouter.get(
+  "/user/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const player = await playersModel.getByUserId(req.params.user_id);
+      res.status(200).json(player);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 playersRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -53,7 +76,9 @@ playersRouter.put(
         updatedPlayerData.image = req.file.path;
       }
       await playersModel.update(updatedPlayerData);
-      const updatedPlayer = await playersModel.getById(req.body.player_id);
+      const updatedPlayer = await playersModel.getByPlayerId(
+        req.body.player_id
+      );
       res.status(200).json(updatedPlayer);
     } catch (error) {
       next(error);

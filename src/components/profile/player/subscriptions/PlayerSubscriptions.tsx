@@ -364,7 +364,7 @@ const PlayerSubscriptions = () => {
             </tr>
           </thead>
           <tbody>
-            {myGroups?.map((group) => (
+            {myGroups?.slice(myGroups?.length - 1)?.map((group) => (
               <tr key={group.student_group_id}>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}3/${group.club_id}`}>

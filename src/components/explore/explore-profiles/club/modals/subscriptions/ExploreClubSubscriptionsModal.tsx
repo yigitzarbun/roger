@@ -1,4 +1,3 @@
-//selectedClubSubscriptionPackages
 import React from "react";
 
 import ReactModal from "react-modal";
@@ -13,7 +12,10 @@ import { useAppSelector } from "../../../../../../store/hooks";
 
 import { ClubSubscriptionPackage } from "../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../../../api/endpoints/ClubSubscriptionTypesApi";
-import { useGetClubSubscriptionsQuery } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
+import {
+  useGetClubSubscriptionsByFilterQuery,
+  useGetClubSubscriptionsQuery,
+} from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface ExploreClubSubscriptionsModalProps {
   isSubscriptionsModalOpen: boolean;
@@ -46,18 +48,29 @@ const ExploreClubSubscriptionsModal = (
   } = useGetClubSubscriptionTypesQuery({});
 
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
+    useGetClubSubscriptionsByFilterQuery({
+      is_active: true,
+      club_id: selectedClub?.[0]?.user_id,
+    });
 
-  const isUserSubscribedToClub = () => {
+  const isUserSubscribedToClub = (club_subscription_package_id: number) => {
     const activeSubscription = clubSubscriptions?.find(
       (subscription) =>
-        subscription.club_id === selectedClub?.user_id &&
         subscription.player_id === user?.user?.user_id &&
-        subscription.is_active === true
+        subscription.is_active === true &&
+        subscription.club_subscription_package_id ===
+          club_subscription_package_id
     );
     return activeSubscription ? true : false;
   };
 
+  const numberOfSubscribers = (club_subscription_package_id: number) => {
+    return clubSubscriptions?.filter(
+      (subscription) =>
+        subscription.club_subscription_package_id ===
+        club_subscription_package_id
+    )?.length;
+  };
   if (isClubSubscriptionsLoading || isClubSubscriptionTypesLoading) {
     return <PageLoading />;
   }
@@ -109,25 +122,23 @@ const ExploreClubSubscriptionsModal = (
                     }
                   </td>
                   <td>
-                    {
-                      clubSubscriptions?.filter(
-                        (subscription) =>
-                          subscription.club_id === selectedClub?.user_id &&
-                          subscription.is_active === true
-                      )?.length
-                    }
+                    {numberOfSubscribers(
+                      clubPackage.club_subscription_package_id
+                    )}
                   </td>
                   <td>{clubPackage.price}</td>
                   {isUserPlayer && (
                     <td>
-                      {isUserSubscribedToClub() === true ? (
+                      {isUserSubscribedToClub(
+                        clubPackage.club_subscription_package_id
+                      ) === true ? (
                         <p className={styles["subscribed-text"]}>Üyelik var</p>
                       ) : (
                         <button
                           disabled={!playerPaymentDetailsExist}
                           className={styles["subscribe-button"]}
                           onClick={() =>
-                            handleOpenSubscribeModal(selectedClub?.user_id)
+                            handleOpenSubscribeModal(selectedClub?.[0]?.user_id)
                           }
                         >
                           {playerPaymentDetailsExist

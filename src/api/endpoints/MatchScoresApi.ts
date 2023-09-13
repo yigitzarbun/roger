@@ -22,6 +22,9 @@ export const matchScoresSlice = createApi({
     getMatchScores: builder.query({
       query: () => "/match-scores",
     }),
+    getMatchScoreById: builder.query({
+      query: (match_score_id) => `/match-scores/${match_score_id}`,
+    }),
     addMatchScore: builder.mutation({
       query: (matchScore) => ({
         url: "/match-scores",
@@ -41,6 +44,7 @@ export const matchScoresSlice = createApi({
 
 export const {
   useGetMatchScoresQuery,
+  useGetMatchScoreByIdQuery,
   useAddMatchScoreMutation,
   useUpdateMatchScoreMutation,
 } = matchScoresSlice;

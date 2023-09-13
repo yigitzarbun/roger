@@ -2,9 +2,11 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { useAppSelector } from "../../../../store/hooks";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
+import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetEventReviewsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
 
 interface PlayerEventsNavigationProps {
@@ -18,11 +20,11 @@ const PlayerEventsNavigation = ({
 }: PlayerEventsNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-  const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetEventReviewsQuery({});
+  const { data: bookings, isLoading: isBookingsLoading } =
+    useGetBookingsByFilterQuery({
+      booking_player_id: user?.user?.user_id,
+      booking_status_type_id: 5,
+    });
 
   const { data: scores, isLoading: isScoresLoading } = useGetMatchScoresQuery(
     {}
@@ -30,12 +32,9 @@ const PlayerEventsNavigation = ({
 
   const myEvents = bookings?.filter(
     (booking) =>
-      (booking.inviter_id === user?.user?.user_id ||
-        booking.invitee_id === user?.user?.user_id) &&
-      booking.booking_status_type_id === 5 &&
-      (booking.event_type_id === 1 ||
-        booking.event_type_id === 2 ||
-        booking.event_type_id === 3)
+      booking.event_type_id === 1 ||
+      booking.event_type_id === 2 ||
+      booking.event_type_id === 3
   );
 
   const missingScores = scores?.filter(
@@ -53,10 +52,19 @@ const PlayerEventsNavigation = ({
         ))
   );
 
-  const myReviews = eventReviews?.filter(
-    (review) =>
-      review.is_active === true && review.reviewer_id === user?.user?.user_id
-  );
+  const { data: myReviews, isLoading: isMyReviewsLoading } =
+    useGetEventReviewsByFilterQuery({
+      is_active: true,
+      reviewer_id: user?.user?.user_id,
+    });
+
+  const myEventsLength = myEvents?.length;
+  const myReviewsLength = myReviews?.length;
+  const missingScoresLength = missingScores?.length;
+
+  if (isBookingsLoading || isScoresLoading || isMyReviewsLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className={styles["nav-container"]}>
@@ -70,8 +78,7 @@ const PlayerEventsNavigation = ({
       >
         Geçmiş Etkinlikler
         <span className={styles.notification}>
-          {myEvents?.length > myReviews?.length &&
-            myEvents?.length - myReviews?.length}
+          {myEventsLength > myReviewsLength && myEventsLength - myReviewsLength}
         </span>
       </button>
       <button
@@ -84,7 +91,7 @@ const PlayerEventsNavigation = ({
       >
         Skorlar{" "}
         <span className={styles.notification}>
-          {missingScores?.length > 0 && missingScores?.length}
+          {missingScoresLength > 0 && missingScoresLength}
         </span>
       </button>
     </div>

@@ -17,10 +17,21 @@ clubsRouter.get(
 );
 
 clubsRouter.get(
-  "/:club_id",
+  "/club/:club_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const club = await clubsModel.getById(req.params.club_id);
+      const club = await clubsModel.getByClubId(req.params.club_id);
+      res.status(200).json(club);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubsRouter.get(
+  "/user/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const club = await clubsModel.getByUserId(req.params.user_id);
       res.status(200).json(club);
     } catch (error) {
       next(error);
@@ -53,7 +64,7 @@ clubsRouter.put(
         updatedClubData.image = req.file.path;
       }
       await clubsModel.update(updatedClubData);
-      const updatedClub = await clubsModel.getById(req.body.club_id);
+      const updatedClub = await clubsModel.getByClubId(req.body.club_id);
       res.status(200).json(updatedClub);
     } catch (error) {
       next(error);

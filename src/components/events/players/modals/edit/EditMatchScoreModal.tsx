@@ -14,12 +14,13 @@ import { useAppSelector } from "../../../../../store/hooks";
 
 import {
   useUpdateMatchScoreMutation,
+  useGetMatchScoreByIdQuery,
   useGetMatchScoresQuery,
 } from "../../../../../api/endpoints/MatchScoresApi";
 
-import { useGetBookingsQuery } from "../../../../../api/endpoints/BookingsApi";
+import { useGetBookingByIdQuery } from "../../../../../api/endpoints/BookingsApi";
 
-import { useGetPlayersQuery } from "../../../../../api/endpoints/PlayersApi";
+import { useGetPlayersByFilterQuery } from "../../../../../api/endpoints/PlayersApi";
 
 import PageLoading from "../../../../../components/loading/PageLoading";
 
@@ -48,33 +49,30 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
   const [updateMatchScore, { isSuccess: isUpdateMatchScoreSuccess }] =
     useUpdateMatchScoreMutation({});
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
+  const { data: selectedMatch, isLoading: isSelectedMatchLoading } =
+    useGetMatchScoreByIdQuery(selectedMatchScoreId);
+
+  const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
 
   const {
-    data: matchScores,
-    isLoading: isMatchScoresLoading,
-    refetch: refetchMatchScores,
-  } = useGetMatchScoresQuery({});
+    data: selectedMatchBookingDetails,
+    isLoading: isSelectedMatchBookingDetailsLoading,
+  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const { data: inviter, isLoading: isInviterLoading } =
+    useGetPlayersByFilterQuery({
+      user_id: selectedMatchBookingDetails?.[0]?.inviter_id,
+    });
 
-  const selectedMatch = matchScores?.find(
-    (match) => match.match_score_id === selectedMatchScoreId
-  );
+  const { data: invitee, isLoading: isInviteeLoading } =
+    useGetPlayersByFilterQuery({
+      user_id: selectedMatchBookingDetails?.[0]?.invitee_id,
+    });
 
-  const selectedMatchBookingDetails = bookings?.find(
-    (booking) => booking.booking_id === selectedMatch?.booking_id
-  );
-
-  const inviter = players.find(
-    (player) => player.user_id === selectedMatchBookingDetails?.inviter_id
-  );
-
-  const invitee = players.find(
-    (player) => player.user_id === selectedMatchBookingDetails?.invitee_id
-  );
+  const { data: reporter, isLoading: isReporterLoading } =
+    useGetPlayersByFilterQuery({
+      user_id: selectedMatch?.[0]?.reporter_id,
+    });
 
   const [scoreConfirmDecision, setScoreConfirmDecision] = useState("");
 
@@ -90,7 +88,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
 
   const handleConfirmScore = () => {
     const score = {
-      ...selectedMatch,
+      ...selectedMatch?.[0],
       match_score_status_type_id: 3,
       reporter_id: user?.user?.user_id,
     };
@@ -107,7 +105,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const matchScore = {
-        ...selectedMatch,
+        ...selectedMatch?.[0],
         inviter_first_set_games_won: Number(firstSetInviter),
         inviter_second_set_games_won: Number(secondSetInviter),
         inviter_third_set_games_won: Number(thirdSetInviter),
@@ -117,20 +115,19 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
         winner_id:
           firstSetInviter > firstSetInvitee &&
           secondSetInviter > secondSetInvitee
-            ? inviter?.user_id
+            ? inviter?.[0]?.user_id
             : firstSetInviter < firstSetInvitee &&
               secondSetInviter < secondSetInvitee
-            ? invitee?.user_id
+            ? invitee?.[0]?.user_id
             : thirdSetInviter > thirdSetInvitee
-            ? inviter?.user_id
+            ? inviter?.[0]?.user_id
             : thirdSetInviter < thirdSetInvitee
-            ? invitee?.user_id
+            ? invitee?.[0]?.user_id
             : null,
         match_score_status_type_id: 2,
         reporter_id: user?.user?.user_id,
       };
       updateMatchScore(matchScore);
-      console.log("matchScore: ", matchScore);
     } catch (error) {
       console.log(error);
     }
@@ -144,10 +141,10 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
       secondSetInvitee
     ) {
       const firstSetWinner =
-        firstSetInviter > firstSetInvitee ? inviter : invitee;
+        firstSetInviter > firstSetInvitee ? inviter?.[0] : invitee?.[0];
 
       const secondSetWinner =
-        secondSetInviter > secondSetInvitee ? inviter : invitee;
+        secondSetInviter > secondSetInvitee ? inviter?.[0] : invitee?.[0];
 
       if (firstSetWinner?.user_id !== secondSetWinner?.user_id) {
         setThirdSetVisible(true);
@@ -168,9 +165,16 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
 
   useEffect(() => {
     setScoreConfirmDecision("");
+    reset();
   }, [isEditScoreModalOpen]);
 
-  if (isBookingsLoading || isMatchScoresLoading || isPlayersLoading) {
+  if (
+    isSelectedMatchBookingDetailsLoading ||
+    isSelectedMatchLoading ||
+    isInviterLoading ||
+    isInviteeLoading ||
+    isReporterLoading
+  ) {
     return <PageLoading />;
   }
 
@@ -183,15 +187,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
       {scoreConfirmDecision === "" && (
         <div className={styles["decision-container"]}>
           <h2>Maç Skorunu Doğru Mu?</h2>
-          <p>{`${
-            players?.find(
-              (player) => player.user_id === selectedMatch?.reporter_id
-            )?.fname
-          } ${
-            players?.find(
-              (player) => player.user_id === selectedMatch?.reporter_id
-            )?.lname
-          } maç skorunu şu şekilde kayıt etti:`}</p>
+          <p>{`${reporter?.[0]?.fname} ${reporter?.[0]?.lname} maç skorunu şu şekilde kayıt etti:`}</p>
           <table>
             <thead>
               <tr>
@@ -204,13 +200,15 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
             </thead>
             <tbody>
               <tr>
-                <td>{`${inviter?.fname} ${inviter?.lname}`}</td>
-                <td>{`${invitee?.fname} ${invitee?.lname}`}</td>
-                <td>{`${selectedMatch?.inviter_first_set_games_won}-${selectedMatch?.invitee_first_set_games_won}`}</td>
-                <td>{`${selectedMatch?.inviter_second_set_games_won}-${selectedMatch?.invitee_second_set_games_won}`}</td>
-                {
-                  <td>{`${selectedMatch?.inviter_third_set_games_won}-${selectedMatch?.invitee_third_set_games_won}`}</td>
-                }
+                <td>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</td>
+                <td>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</td>
+                <td>{`${selectedMatch?.[0]?.inviter_first_set_games_won}-${selectedMatch?.[0]?.invitee_first_set_games_won}`}</td>
+                <td>{`${selectedMatch?.[0]?.inviter_second_set_games_won}-${selectedMatch?.[0]?.invitee_second_set_games_won}`}</td>
+                {thirdSetVisible ? (
+                  <td>{`${selectedMatch?.[0]?.inviter_third_set_games_won}-${selectedMatch?.[0]?.invitee_third_set_games_won}`}</td>
+                ) : (
+                  "-"
+                )}
               </tr>
             </tbody>
           </table>
@@ -247,7 +245,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
                 <label>
-                  {`${inviter?.fname} ${inviter?.lname} 1. Set Kazandığı Oyun Adeti`}
+                  {`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 1. Set`}
                 </label>
                 <input
                   {...register("inviter_first_set_games_won", {
@@ -268,7 +266,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
               </div>
               <div className={styles["input-container"]}>
                 <label>
-                  {`${invitee?.fname} ${invitee?.lname} 1. Set Kazandığı Oyun Adeti`}
+                  {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 1. Set`}
                 </label>
                 <input
                   {...register("invitee_first_set_games_won", {
@@ -288,7 +286,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
             <h4>2. Set</h4>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>{`${inviter?.fname} ${inviter?.lname} 2. Set Kazandığı Oyun Adeti`}</label>
+                <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 2. Set`}</label>
                 <input
                   {...register("inviter_second_set_games_won")}
                   type="number"
@@ -303,7 +301,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
               </div>
               <div className={styles["input-container"]}>
                 <label>
-                  {`${invitee?.fname} ${invitee?.lname} 2. Set Kazandığı Oyun Adeti`}
+                  {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 2. Set`}
                 </label>
                 <input
                   {...register("invitee_second_set_games_won")}
@@ -323,7 +321,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
                 <h4>3. Set</h4>
                 <div className={styles["input-outer-container"]}>
                   <div className={styles["input-container"]}>
-                    <label>{`${inviter?.fname} ${inviter?.lname} 3. Set Kazandığı Oyun Adeti`}</label>
+                    <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 3. Set`}</label>
                     <input
                       {...register("inviter_third_set_games_won")}
                       type="number"
@@ -340,7 +338,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
                   </div>
                   <div className={styles["input-container"]}>
                     <label>
-                      {`${invitee?.fname} ${invitee?.lname} 3. Set Kazandığı Oyun Adeti`}
+                      {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 3. Set`}
                     </label>
                     <input
                       {...register("invitee_third_set_games_won")}
