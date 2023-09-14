@@ -1,19 +1,15 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.subscriptions-section {
+.events-section {
   background-color: $roger-box-bg-color;
-  width: 55%;
+  width: 100%;
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  row-gap: 20px;
-  table {
-    width: 100%;
-    text-align: left;
-  }
+  row-gap: 30px;
   button {
     padding: 10px;
     border-radius: $roger-border-radius;
@@ -31,7 +27,30 @@
     background-color: $roger-blue;
     cursor: pointer;
   }
-  .subscribed-text {
-    color: $roger-green;
+  table {
+    width: 100%;
+    text-align: left;
+
+    .event-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .opponent-name {
+      color: white;
+      text-decoration: none;
+    }
+
+    .accept-button {
+      font-weight: bold;
+      text-decoration: none;
+      border: none;
+      background-color: transparent;
+      font-size: 1rem;
+      color: $roger-blue;
+      cursor: pointer;
+    }
   }
 }

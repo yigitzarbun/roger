@@ -19,6 +19,9 @@ const clubSubscriptionsModel = {
         if (filter.club_subscription_id) {
           builder.where("club_subscription_id", filter.club_subscription_id);
         }
+        if (filter.player_id) {
+          builder.where("player_id", filter.player_id);
+        }
         if (filter.sortBy) {
           // handle sorting here if required
           builder.orderBy(filter.sortBy, filter.sortDirection || "asc");

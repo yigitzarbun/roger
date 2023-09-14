@@ -1,56 +1,59 @@
-import React from "react";
-
-import ReactModal from "react-modal";
+import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
-
-import styles from "./styles.module.scss";
 
 import paths from "../../../../../../routing/Paths";
 
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 
-import PageLoading from "../../../../../loading/PageLoading";
+import styles from "./styles.module.scss";
+
+import ExplorePlayerEventsModal from "../../modals/events/ExplorePlayerEventsModal";
 
 import { Booking } from "../../../../../../api/endpoints/BookingsApi";
-import { StudentGroup } from "../../../../../../api/endpoints/StudentGroupsApi";
-import { Player } from "../../../../../../api/endpoints/PlayersApi";
-import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
-import { Club } from "../../../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../../../api/endpoints/EventTypesApi";
+import { useGetTrainersQuery } from "../../../../../../api/endpoints/TrainersApi";
 import { useGetMatchScoresQuery } from "../../../../../../api/endpoints/MatchScoresApi";
 import { useGetUsersQuery } from "../../../../../../store/auth/apiSlice";
+import {
+  Player,
+  useGetPlayersQuery,
+} from "../../../../../../api/endpoints/PlayersApi";
+import { StudentGroup } from "../../../../../../api/endpoints/StudentGroupsApi";
+import { Club } from "../../../../../../api/endpoints/ClubsApi";
+import PageLoading from "../../../../../../components/loading/PageLoading";
 
-interface ExplorePlayerEventsModalProps {
-  isEventsModalOpen: boolean;
-  closeEventsModal: () => void;
+interface ExplorePlayerProfilesEventsSectionProps {
   playerBookings: Booking[];
-  playerGroups: StudentGroup[];
   selectedPlayer: Player;
-  players: Player[];
-  trainers: Trainer[];
+  playerGroups: StudentGroup[];
   clubs: Club[];
 }
+const ExplorePlayerProfilesEventsSection = (
+  props: ExplorePlayerProfilesEventsSectionProps
+) => {
+  const { playerBookings, selectedPlayer, playerGroups, clubs } = props;
 
-const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
-  const {
-    isEventsModalOpen,
-    closeEventsModal,
-    playerBookings,
-    playerGroups,
-    selectedPlayer,
-    players,
-    trainers,
-    clubs,
-  } = props;
+  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
+  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
+  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
+    {}
+  );
 
   const { data: matchScores, isLoading: isMatchScoresLoading } =
     useGetMatchScoresQuery({});
 
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
+  const { data: eventTypes, isLoading: isEventTypesLoading } =
+    useGetEventTypesQuery({});
+
+  const [isEventsModalOpen, setIsEventModalOpen] = useState(false);
+  const openEventsModal = () => {
+    setIsEventModalOpen(true);
+  };
+  const closeEventsModal = () => {
+    setIsEventModalOpen(false);
+  };
 
   const player = (user_id: number) => {
     return players?.find((player) => player.user_id === user_id);
@@ -79,41 +82,37 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
     );
   };
 
-  if (isEventTypesLoading || isMatchScoresLoading || isUsersLoading) {
+  if (
+    isPlayersLoading ||
+    isUsersLoading ||
+    isTrainersLoading ||
+    isMatchScoresLoading ||
+    isEventTypesLoading
+  ) {
     return <PageLoading />;
   }
 
   return (
-    <ReactModal
-      isOpen={isEventsModalOpen}
-      onRequestClose={closeEventsModal}
-      className={styles["modal-container"]}
-    >
-      <div className={styles["top-container"]}>
-        <h1>Geçmiş Etkinlikler</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={closeEventsModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <div className={styles["table-container"]}>
-        {playerBookings.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Oyuncu</th>
-                <th>Eğitmen</th>
-                <th>Tür</th>
-                <th>Tarih</th>
-                <th>Saat</th>
-                <th>Skor</th>
-                <th>Kazanan</th>
-              </tr>
-            </thead>
-            <tbody>
-              {playerBookings?.map((booking) => (
+    <div className={styles["events-section"]}>
+      <h2>Geçmiş Etkinlikler</h2>
+      {playerBookings.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Oyuncu</th>
+              <th>Eğitmen</th>
+              <th>Tür</th>
+              <th>Tarih</th>
+              <th>Saat</th>
+              <th>Skor</th>
+              <th>Kazanan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {playerBookings
+              ?.slice(playerBookings.length - 4)
+              ?.map((booking) => (
                 <tr key={booking.booking_id}>
                   <td>
                     <Link
@@ -142,7 +141,6 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             )?.user_id
                           : ""
                       }`}
-                      onClick={closeEventsModal}
                     >
                       <img
                         src={
@@ -289,6 +287,7 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                   </td>
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
+
                   <td>
                     {booking.event_type_id === 2 &&
                     matchWinner(booking.booking_id)
@@ -333,13 +332,24 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>Henüz tamamlanan etkinlik bulunmamaktadır.</p>
-        )}
-      </div>
-    </ReactModal>
+          </tbody>
+        </table>
+      ) : (
+        <p>Henüz tamamlanan etkinlik bulunmamaktadır.</p>
+      )}
+      <button onClick={openEventsModal}>Tümünü Görüntüle</button>
+      <ExplorePlayerEventsModal
+        isEventsModalOpen={isEventsModalOpen}
+        closeEventsModal={closeEventsModal}
+        playerBookings={playerBookings}
+        playerGroups={playerGroups}
+        selectedPlayer={selectedPlayer}
+        players={players}
+        trainers={trainers}
+        clubs={clubs}
+      />
+    </div>
   );
 };
-export default ExplorePlayerEventsModal;
+
+export default ExplorePlayerProfilesEventsSection;

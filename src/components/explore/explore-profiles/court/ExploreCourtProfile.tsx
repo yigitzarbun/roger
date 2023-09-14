@@ -10,16 +10,23 @@ import { FaClock } from "react-icons/fa";
 import { localUrl } from "../../../../common/constants/apiConstants";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
+
+import {
+  daysOfWeek,
+  openHours,
+  slotAvailabilityChecker,
+} from "../../../../common/util/TimeFunctions";
 
 import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
+
 import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreCourtProfileProps {
@@ -36,7 +43,8 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+  const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
+    useGetCourtByIdQuery(Number(court_id));
 
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
@@ -44,86 +52,21 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
+  const { data: bookings, isLoading: isBookingsLoading } =
+    useGetBookingsByFilterQuery({ court_id: court_id });
 
-  const selectedCourt = courts?.find(
-    (court) => court.court_id === Number(court_id)
-  );
-
-  const profileImage = selectedCourt?.image;
-
-  const date = new Date();
-
-  let daysOfWeek = [];
-  for (let i = 0; i < 7; i++) {
-    const nextDate = new Date(date);
-    nextDate.setDate(date.getDate() + i);
-    const day = nextDate.getDate();
-    const month = nextDate.getMonth() + 1;
-    const year = nextDate.getFullYear();
-    daysOfWeek.push(`${year}-${month}-${day}`);
-  }
-
-  let openHours = [];
-
-  const openingTime = Number(
-    selectedCourt?.opening_time.slice(0, 5).split(":").join("")
-  );
-
-  const closingTime = Number(
-    selectedCourt?.closing_time.slice(0, 5).split(":").join("")
-  );
-
-  for (let i = openingTime; i < closingTime; i += 100) {
-    openHours.push(String(i).padStart(4, "0"));
-  }
-  const slotAvailabilityChecker = (date, time) => {
-    const [year, month, day] = date
-      .split("-")
-      .map((part) => part.padStart(2, "0"));
-    const selectedDate = new Date(`${year}-${month}-${day}`);
-    const selectedTime = `${String(time).slice(0, 2)}:${String(time).slice(2)}`;
-
-    const currentTime = new Date();
-    const currentTimeString = `${String(currentTime.getHours()).padStart(
-      2,
-      "0"
-    )}:${String(currentTime.getMinutes()).padStart(2, "0")}`;
-
-    if (
-      selectedDate.toDateString() === currentTime.toDateString() &&
-      selectedTime < currentTimeString
-    ) {
-      return "reserved";
-    }
-
-    const bookingExists = bookings.find((booking) => {
-      const bookingDate = new Date(booking.event_date.slice(0, 10));
-      const bookingTime = booking.event_time.slice(0, 5);
-
-      return (
-        booking.court_id === selectedCourt.court_id &&
-        bookingDate.getTime() === selectedDate.getTime() &&
-        bookingTime === selectedTime &&
-        (booking.booking_status_type_id === 1 ||
-          booking.booking_status_type_id === 2)
-      );
-    });
-
-    return bookingExists ? "reserved" : "available";
-  };
+  const profileImage = selectedCourt?.[0]?.image;
 
   if (
     isClubsLoading ||
-    isCourtsLoading ||
+    isSelectedCourtLoading ||
     isBookingsLoading ||
     isCourtSurfaceTypesLoading ||
     isCourtStructureTypesLoading
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
@@ -138,34 +81,35 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
             alt="court_picture"
             className={styles["profile-image"]}
           />
-          <h3>{selectedCourt?.court_name}</h3>
+          <h3>{selectedCourt?.[0]?.court_name}</h3>
           <div className={styles["profile-info"]}>
             <FaClock className={styles.icon} />
-            <p>{selectedCourt?.opening_time.slice(0, 5)}</p>
+            <p>{selectedCourt?.[0]?.opening_time.slice(0, 5)}</p>
           </div>
           <div className={styles["profile-info"]}>
             <FaClock className={styles.icon} />
-            <p>{selectedCourt?.closing_time.slice(0, 5)}</p>
+            <p>{selectedCourt?.[0]?.closing_time.slice(0, 5)}</p>
           </div>
           <div className={styles["profile-info"]}>
             <MdMoney className={styles.icon} />
-            <p>{`${selectedCourt?.price_hour} TL / Saat`}</p>
+            <p>{`${selectedCourt?.[0]?.price_hour} TL / Saat`}</p>
           </div>
           <div className={styles["profile-info"]}>
             <MdSportsTennis className={styles.icon} />
             <p>
               {
-                clubs?.find((club) => club.club_id === selectedCourt?.club_id)
-                  ?.club_name
+                clubs?.find(
+                  (club) => club.club_id === selectedCourt?.[0]?.club_id
+                )?.club_name
               }
             </p>
           </div>
-          {clubs?.find((club) => club.club_id === selectedCourt?.club_id)
+          {clubs?.find((club) => club.club_id === selectedCourt?.[0]?.club_id)
             ?.higher_price_for_non_subscribers &&
-            selectedCourt?.price_hour_non_subscriber && (
+            selectedCourt?.[0]?.price_hour_non_subscriber && (
               <div className={styles["profile-info"]}>
                 <PiMoney className={styles.icon} />
-                <p>{`${selectedCourt?.price_hour_non_subscriber} TL / Saat (Üye Olmayanlar)`}</p>
+                <p>{`${selectedCourt?.[0]?.price_hour_non_subscriber} TL / Saat (Üye Olmayanlar)`}</p>
               </div>
             )}
           <div className={styles["profile-info"]}>
@@ -175,7 +119,7 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                 courtSurfaceTypes?.find(
                   (type) =>
                     type.court_surface_type_id ===
-                    selectedCourt?.court_surface_type_id
+                    selectedCourt?.[0]?.court_surface_type_id
                 )?.court_surface_type_name
               }
             </p>
@@ -187,7 +131,7 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
                 courtStructureTypes?.find(
                   (type) =>
                     type.court_structure_type_id ===
-                    selectedCourt?.court_structure_type_id
+                    selectedCourt?.[0]?.court_structure_type_id
                 )?.court_structure_type_name
               }
             </p>
@@ -199,50 +143,74 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
             <thead>
               <tr>
                 <th>Saat</th>
-                {daysOfWeek.map((day) => (
+                {daysOfWeek()?.map((day) => (
                   <th key={day}>{day}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {openHours.map((hour) => (
+              {openHours(selectedCourt)?.map((hour) => (
                 <tr key={hour}>
                   <td>{`${String(hour).slice(0, 2)}:${String(hour).slice(
                     2
                   )}`}</td>
-                  {daysOfWeek.map((day) => (
+                  {daysOfWeek()?.map((day) => (
                     <td
                       key={day}
                       className={
-                        slotAvailabilityChecker(day, hour) === "reserved"
+                        slotAvailabilityChecker(
+                          day,
+                          hour,
+                          selectedCourt,
+                          bookings
+                        ) === "reserved"
                           ? styles.reserved
                           : styles.available
                       }
                     >
-                      {slotAvailabilityChecker(day, hour) === "available" &&
+                      {slotAvailabilityChecker(
+                        day,
+                        hour,
+                        selectedCourt,
+                        bookings
+                      ) === "available" &&
                       (isUserPlayer || isUserTrainer) &&
-                      selectedCourt?.is_active === true ? (
+                      selectedCourt?.[0]?.is_active === true ? (
                         <Link
                           to={paths.COURT_BOOKING_INVITE}
                           state={{
                             event_date: day,
                             event_time: hour,
-                            club_id: selectedCourt?.club_id,
-                            court_id: selectedCourt?.court_id,
-                            court_price: selectedCourt?.price_hour,
+                            club_id: selectedCourt?.[0]?.club_id,
+                            court_id: selectedCourt?.[0]?.court_id,
+                            court_price: selectedCourt?.[0]?.price_hour,
                           }}
                           className={
-                            slotAvailabilityChecker(day, hour) ===
-                              "available" && styles.available
+                            slotAvailabilityChecker(
+                              day,
+                              hour,
+                              selectedCourt,
+                              bookings
+                            ) === "available" && styles.available
                           }
                         >
-                          {slotAvailabilityChecker(day, hour) === "available"
+                          {slotAvailabilityChecker(
+                            day,
+                            hour,
+                            selectedCourt,
+                            bookings
+                          ) === "available"
                             ? "Uygun"
                             : "Hayır"}
                         </Link>
                       ) : isUserClub &&
-                        slotAvailabilityChecker(day, hour) === "available" &&
-                        selectedCourt?.is_active === true ? (
+                        slotAvailabilityChecker(
+                          day,
+                          hour,
+                          selectedCourt,
+                          bookings
+                        ) === "available" &&
+                        selectedCourt?.[0]?.is_active === true ? (
                         "Uygun"
                       ) : (
                         "Rezerve"

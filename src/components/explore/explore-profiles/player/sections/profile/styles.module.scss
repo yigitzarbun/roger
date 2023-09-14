@@ -1,0 +1,44 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.profile-section {
+  background-color: $roger-box-bg-color;
+  width: 50%;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 30px;
+
+  .profile-data-container {
+    display: flex;
+    column-gap: 50px;
+
+    .secondary-profile-data-container {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+
+      .profile-info {
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
+        align-items: start;
+        .icon {
+          font-size: 20px;
+        }
+        .info-text {
+          width: 90%;
+        }
+      }
+    }
+  }
+
+  .profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}

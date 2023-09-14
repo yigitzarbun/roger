@@ -147,3 +147,75 @@ export const generateAvailableTimeSlots = (
   }
   return availableTimeSlots;
 };
+
+export const slotAvailabilityChecker = (
+  date,
+  time,
+  selectedCourt,
+  bookings
+) => {
+  const [year, month, day] = date
+    .split("-")
+    .map((part) => part.padStart(2, "0"));
+  const selectedDate = new Date(`${year}-${month}-${day}`);
+  const selectedTime = `${String(time).slice(0, 2)}:${String(time).slice(2)}`;
+
+  const currentTime = new Date();
+  const currentTimeString = `${String(currentTime.getHours()).padStart(
+    2,
+    "0"
+  )}:${String(currentTime.getMinutes()).padStart(2, "0")}`;
+
+  if (
+    selectedDate.toDateString() === currentTime.toDateString() &&
+    selectedTime < currentTimeString
+  ) {
+    return "reserved";
+  }
+
+  const bookingExists = bookings.find((booking) => {
+    const bookingDate = new Date(booking.event_date.slice(0, 10));
+    const bookingTime = booking.event_time.slice(0, 5);
+
+    return (
+      booking.court_id === selectedCourt?.[0]?.court_id &&
+      bookingDate.getTime() === selectedDate.getTime() &&
+      bookingTime === selectedTime &&
+      (booking.booking_status_type_id === 1 ||
+        booking.booking_status_type_id === 2)
+    );
+  });
+
+  return bookingExists ? "reserved" : "available";
+};
+
+export const daysOfWeek = () => {
+  const date = new Date();
+  let daysOfWeek = [];
+  for (let i = 0; i < 7; i++) {
+    const nextDate = new Date(date);
+    nextDate.setDate(date.getDate() + i);
+    const day = nextDate.getDate();
+    const month = nextDate.getMonth() + 1;
+    const year = nextDate.getFullYear();
+    daysOfWeek.push(`${year}-${month}-${day}`);
+  }
+  return daysOfWeek;
+};
+
+export const openHours = (selectedCourt) => {
+  let openHours = [];
+
+  const openingTime = Number(
+    selectedCourt?.[0]?.opening_time.slice(0, 5).split(":").join("")
+  );
+
+  const closingTime = Number(
+    selectedCourt?.[0]?.closing_time.slice(0, 5).split(":").join("")
+  );
+
+  for (let i = openingTime; i < closingTime; i += 100) {
+    openHours.push(String(i).padStart(4, "0"));
+  }
+  return openHours;
+};

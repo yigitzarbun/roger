@@ -17,27 +17,24 @@ import { Club } from "../../../../../../api/endpoints/ClubsApi";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../../../store/hooks";
-import {
-  Player,
-  useGetPlayersQuery,
-} from "../../../../../../api/endpoints/PlayersApi";
+import { useGetPlayersQuery } from "../../../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../../../api/endpoints/PlayerLevelsApi";
 import { useGetLocationsQuery } from "../../../../../../api/endpoints/LocationsApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
-  useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
 import { useGetClubExternalMembersByFilterQuery } from "../../../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetUsersQuery } from "../../../../../../store/auth/apiSlice";
 import { currentYear } from "../../../../../../common/util/TimeFunctions";
+import { ClubSubscription } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface ExploreClubSubscribersModalProps {
   isSubscribersModalOpen: boolean;
   closeSubscribersModal: () => void;
   selectedClub: Club;
-  selectedClubSubscribers: Player[];
+  selectedClubSubscribers: ClubSubscription[];
 }
 
 const ExploreClubSubscribersModal = (
@@ -333,7 +330,7 @@ const ExploreClubSubscribersModal = (
                                 player.user_id === subscriber.player_id
                             )?.image,
                             court_price: "",
-                            user_id: subscriber?.user_id,
+                            user_id: selectedPlayer(subscriber?.player_id),
                           }}
                           className={styles["training-button"]}
                         >
@@ -361,7 +358,7 @@ const ExploreClubSubscribersModal = (
                                 player.user_id === subscriber.player_id
                             )?.image,
                             court_price: "",
-                            user_id: subscriber?.user_id,
+                            user_id: selectedPlayer(subscriber?.player_id),
                           }}
                           className={styles["match-button"]}
                         >
@@ -389,7 +386,7 @@ const ExploreClubSubscribersModal = (
                                 player.user_id === subscriber.player_id
                             )?.image,
                             court_price: "",
-                            user_id: subscriber?.user_id,
+                            user_id: selectedPlayer(subscriber?.player_id),
                           }}
                           className={styles["match-button"]}
                         >

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -9,19 +9,20 @@ import paths from "../../../../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../../../components/loading/PageLoading";
+import ExploreClubCourtsModal from "../../modals/courts/ExploreClubCourtsModal";
 
 import { useGetCourtsByFilterQuery } from "../../../../../../api/endpoints/CourtsApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../../../api/endpoints/CourtStructureTypesApi";
+
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
 
 interface ExploreClubsCourtsSectionProps {
   selectedClub: Club;
-  openCourtsModal: () => void;
 }
 
 const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
-  const { selectedClub, openCourtsModal } = props;
+  const { selectedClub } = props;
 
   const { data: courts, isLoading: isCourtsLoading } =
     useGetCourtsByFilterQuery({
@@ -33,6 +34,14 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
 
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
+
+  const [isCourtsModalOpen, setIsCourtsModalOpen] = useState(false);
+  const openCourtsModal = () => {
+    setIsCourtsModalOpen(true);
+  };
+  const closeCourtsModal = () => {
+    setIsCourtsModalOpen(false);
+  };
 
   if (
     isCourtsLoading ||
@@ -126,6 +135,13 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
         <p>Henüz kulübe ait kort bulunmamaktadır</p>
       )}
       <button onClick={openCourtsModal}>Tümünü Görüntüle</button>
+      {isCourtsModalOpen && (
+        <ExploreClubCourtsModal
+          isCourtsModalOpen={isCourtsModalOpen}
+          closeCourtsModal={closeCourtsModal}
+          selectedClub={selectedClub}
+        />
+      )}
     </div>
   );
 };
