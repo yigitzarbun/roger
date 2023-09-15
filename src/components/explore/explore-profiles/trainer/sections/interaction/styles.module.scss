@@ -1,0 +1,66 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.interaction-section {
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 30px;
+
+  .buttons-container {
+    display: flex;
+    column-gap: 2vw;
+    margin-top: 50px;
+    align-items: center;
+    .interaction-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      background-color: $roger-black-dark;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+    .interaction-button:hover {
+      background-color: $roger-blue;
+      cursor: pointer;
+    }
+    .cancel-student-button {
+      padding: 10px;
+      border-radius: $roger-border-radius;
+      border: none;
+      width: 150px;
+      background-color: $roger-red;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      text-align: center;
+    }
+    .cancel-student-button:hover {
+      background-color: $roger-blue;
+      cursor: pointer;
+    }
+  }
+  .pending-confirmation-text {
+    font-size: 0.8rem;
+    color: $roger-yellow;
+    margin-top: auto;
+  }
+
+  .accept-button {
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    color: $roger-blue;
+    cursor: pointer;
+  }
+}

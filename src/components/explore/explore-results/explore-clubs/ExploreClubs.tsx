@@ -9,19 +9,23 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 
 import { User } from "../../../../store/slices/authSlice";
-import { Club } from "../../../../api/endpoints/ClubsApi";
+import { Club, PaginatedClubs } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
 import { Court } from "../../../../api/endpoints/CourtsApi";
 import {
   useAddFavouriteMutation,
+  useGetFavouritesByFilterQuery,
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import {
+  useGetClubSubscriptionsByFilterQuery,
+  useGetClubSubscriptionsQuery,
+} from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
@@ -29,7 +33,7 @@ import ClubEmploymentModal from "./employment-modal/ClubEmploymentModal";
 
 interface ExploreClubsProps {
   user: User;
-  clubs: Club[];
+  clubs: PaginatedClubs;
   locations: Location[];
   clubTypes: ClubType[];
   courts: Court[];
@@ -39,6 +43,8 @@ interface ExploreClubsProps {
   isClubTypesLoading: boolean;
   isCourtsLoading: boolean;
   isClubStaffLoading: boolean;
+  page: number;
+  setClubsPage: (page: number) => void;
 }
 const ExploreClubs = (props: ExploreClubsProps) => {
   const {
@@ -53,6 +59,8 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isClubTypesLoading,
     isCourtsLoading,
     isClubStaffLoading,
+    page,
+    setClubsPage,
   } = props;
 
   let isUserPlayer = false;
@@ -62,67 +70,59 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isUserPlayer = user.user.user_type_id === 1;
     isUserTrainer = user.user.user_type_id === 2;
   }
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackageLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const pageNumbers = [];
+  for (let i = 1; i <= clubs?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
+  const handleClubPage = (e) => {
+    setClubsPage(e.target.value);
+  };
+
+  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
+
+  // player payment details
   let playerPaymentDetailsExist = false;
 
   if (isUserPlayer) {
-    const currentPlayer = players?.find(
-      (player) => player.user_id === user?.user?.user_id
-    );
     if (
-      currentPlayer?.name_on_card &&
-      currentPlayer?.card_number &&
-      currentPlayer?.cvc &&
-      currentPlayer?.card_expiry
+      currentPlayer?.[0]?.name_on_card &&
+      currentPlayer?.[0]?.card_number &&
+      currentPlayer?.[0]?.cvc &&
+      currentPlayer?.[0]?.card_expiry
     ) {
       playerPaymentDetailsExist = true;
     }
   }
+
   // add club staff
   const [trainerEmploymentClubId, setTrainerEmploymentClubId] = useState(null);
   const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
+
   const openEmploymentModal = (club_id: number) => {
     setTrainerEmploymentClubId(club_id);
     setEmploymentModalOpen(true);
   };
+
   const closeEmploymentModal = () => {
     setEmploymentModalOpen(false);
   };
 
   // favourites
-  const {
-    data: favourites,
-    isLoading: isFavouritesLoading,
-    refetch: favouritesRefetch,
-  } = useGetFavouritesQuery({});
+  const { refetch: refetchFavourites } = useGetFavouritesQuery({});
 
-  const myFavouriteClubs = favourites?.filter(
-    (favourite) => favourite.favouriter_id === user?.user?.user_id
-  );
+  const {
+    data: myFavouriteClubs,
+    isLoading: isMyFavouriteClubsLoading,
+    refetch: refetchMyFavourites,
+  } = useGetFavouritesByFilterQuery({ favouriter_id: user?.user?.user_id });
 
   const isClubInMyFavourites = (user_id: number) => {
-    if (
-      myFavouriteClubs.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === false
-      )
-    ) {
-      return "deactivated";
-    } else if (
-      myFavouriteClubs.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === true
-      )
-    ) {
-      return true;
-    }
-    return false;
+    return myFavouriteClubs?.find(
+      (favourite) => favourite.favouritee_id === user_id
+    );
   };
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
@@ -175,11 +175,25 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     setSelectedClubId(null);
   };
 
+  const {
+    data: clubSubscriptionPackages,
+    isLoading: isClubSubscriptionPackageLoading,
+  } = useGetClubSubscriptionPackagesQuery({});
+
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsQuery({});
 
+  const {
+    data: mySubscriptions,
+    isLoading: isMySubscriptionsLoading,
+    refetch: refetchMySubscriptions,
+  } = useGetClubSubscriptionsByFilterQuery({
+    is_active: true,
+    player_id: user?.user?.user_id,
+  });
+
   const isUserSubscribedToClub = (club_id: number) => {
-    const activeSubscription = clubSubscriptions?.find(
+    const activeSubscription = mySubscriptions?.find(
       (subscription) =>
         subscription.club_id === club_id &&
         subscription.player_id === user?.user?.user_id &&
@@ -190,20 +204,27 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      favouritesRefetch();
+      refetchMyFavourites();
+      refetchFavourites();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
+  useEffect(() => {
+    refetchMyFavourites();
+    refetchMySubscriptions();
+  }, []);
 
   if (
     isClubsLoading ||
     isLocationsLoading ||
     isClubTypesLoading ||
     isCourtsLoading ||
-    isFavouritesLoading ||
     isClubSubscriptionsLoading ||
     isClubSubscriptionPackageLoading ||
     isClubStaffLoading ||
-    isPlayersLoading
+    isMyFavouriteClubsLoading ||
+    isCurrentPlayerLoading ||
+    isMySubscriptionsLoading
   ) {
     return <PageLoading />;
   }
@@ -212,13 +233,13 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
       </div>
-      {clubs && clubs.length === 0 && (
+      {clubs?.clubs && clubs?.clubs.length === 0 && (
         <p>
           Aradığınız kritere göre kulüp bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}
-      {clubs && clubs.length > 0 && (
+      {clubs?.clubs && clubs?.clubs.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -233,10 +254,10 @@ const ExploreClubs = (props: ExploreClubsProps) => {
             </tr>
           </thead>
           <tbody>
-            {clubs.map((club) => (
+            {clubs?.clubs.map((club) => (
               <tr key={club.club_id} className={styles["club-row"]}>
                 <td onClick={() => handleToggleFavourite(club.user_id)}>
-                  {isClubInMyFavourites(club.user_id) === true ? (
+                  {isClubInMyFavourites(club.user_id)?.is_active === true ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
                   ) : (
                     <AiOutlineStar className={styles["add-fav-icon"]} />
@@ -366,16 +387,27 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           </tbody>
         </table>
       )}
-      <SubscribeToClubModal
-        openSubscribeModal={openSubscribeModal}
-        handleCloseSubscribeModal={handleCloseSubscribeModal}
-        selectedClubId={selectedClubId}
-      />
-      <ClubEmploymentModal
-        employmentModalOpen={employmentModalOpen}
-        closeEmploymentModal={closeEmploymentModal}
-        trainerEmploymentClubId={trainerEmploymentClubId}
-      />
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button key={pageNumber} value={pageNumber} onClick={handleClubPage}>
+            {pageNumber}
+          </button>
+        ))}
+      </div>
+      {openSubscribeModal && (
+        <SubscribeToClubModal
+          openSubscribeModal={openSubscribeModal}
+          handleCloseSubscribeModal={handleCloseSubscribeModal}
+          selectedClubId={selectedClubId}
+        />
+      )}
+      {employmentModalOpen && (
+        <ClubEmploymentModal
+          employmentModalOpen={employmentModalOpen}
+          closeEmploymentModal={closeEmploymentModal}
+          trainerEmploymentClubId={trainerEmploymentClubId}
+        />
+      )}
     </div>
   );
 };

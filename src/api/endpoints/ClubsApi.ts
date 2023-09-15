@@ -21,12 +21,19 @@ export interface Club {
   image?: string;
 }
 
+export interface PaginatedClubs {
+  clubs: Club[];
+  totalPages: number;
+}
 export const clubsSlice = createApi({
   reducerPath: "clubs",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
   endpoints: (builder) => ({
     getClubs: builder.query({
       query: () => "/clubs",
+    }),
+    getPaginatedClubs: builder.query({
+      query: (page) => `clubs/paginated/${page}`,
     }),
     getClubByClubId: builder.query({
       query: (club_id) => `/clubs/club/${club_id}`,
@@ -131,6 +138,7 @@ export const clubsSlice = createApi({
 
 export const {
   useGetClubsQuery,
+  useGetPaginatedClubsQuery,
   useGetClubByClubIdQuery,
   useGetClubByUserIdQuery,
   useAddClubMutation,

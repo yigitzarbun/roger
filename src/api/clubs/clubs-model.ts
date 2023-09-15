@@ -3,8 +3,24 @@ const db = require("../../data/dbconfig");
 const clubsModel = {
   async getAll() {
     const clubs = await db("clubs");
-
     return clubs;
+  },
+  async getPaginated(page) {
+    const clubsPerPage = 4;
+    const offset = (page - 1) * clubsPerPage;
+
+    const clubs = await db("clubs");
+
+    const paginatedClubs = await db("clubs")
+      .orderBy("club_id", "asc")
+      .limit(clubsPerPage)
+      .offset(offset);
+
+    const data = {
+      clubs: paginatedClubs,
+      totalPages: Math.ceil(clubs.length / clubsPerPage),
+    };
+    return data;
   },
 
   async getByFilter(filter) {

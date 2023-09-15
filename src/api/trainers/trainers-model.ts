@@ -37,11 +37,14 @@ const trainersModel = {
     return trainers;
   },
 
-  async getById(trainer_id) {
+  async getByTrainerId(trainer_id) {
     const trainer = await db("trainers").where("trainer_id", trainer_id);
     return trainer;
   },
-
+  async getByUserId(user_id) {
+    const trainer = await db("trainers").where("user_id", user_id);
+    return trainer;
+  },
   async add(trainer) {
     const [newTrainer] = await db("trainers").insert(trainer).returning("*");
     return newTrainer;

@@ -12,7 +12,10 @@ import AddPlayerCardDetails from "./add-card-details/AddPlayerCardDetails";
 import EditPlayerCardDetails from "./edit-card-details/EditPlayerCardDetails";
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayersQuery,
+} from "../../../../api/endpoints/PlayersApi";
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
@@ -21,7 +24,8 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 const PlayerCardPayments = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
 
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
@@ -36,15 +40,11 @@ const PlayerCardPayments = () => {
   const { data: paymentTypes, isLoading: isPaymentTypesLoading } =
     useGetPaymentTypesQuery({});
 
-  const selectedPlayer = players?.find(
-    (player) => player.user_id === user?.user?.user_id
-  );
-
   const cardDetailsExist =
-    selectedPlayer?.name_on_card &&
-    selectedPlayer?.card_number &&
-    selectedPlayer?.cvc &&
-    selectedPlayer?.card_expiry;
+    selectedPlayer?.[0]?.name_on_card &&
+    selectedPlayer?.[0]?.card_number &&
+    selectedPlayer?.[0]?.cvc &&
+    selectedPlayer?.[0]?.card_expiry;
 
   const [isAddCardModalOpen, setIsAddCardModalOpen] = useState(false);
 
@@ -82,7 +82,7 @@ const PlayerCardPayments = () => {
     .slice(0, 5);
 
   if (
-    isPlayersLoading ||
+    isSelectedPlayerLoading ||
     isPaymentsLoading ||
     isPaymentTypesLoading ||
     isTrainersLoading ||
@@ -121,8 +121,8 @@ const PlayerCardPayments = () => {
           {cardDetailsExist ? (
             <div className={styles.section}>
               <p className={styles["card-exists-text"]}>
-                {`${(selectedPlayer?.card_number).slice(
-                  (selectedPlayer?.card_number).length - 4
+                {`${(selectedPlayer?.[0]?.card_number).slice(
+                  (selectedPlayer?.[0]?.card_number).length - 4
                 )}
             ile biten kartınız aktiftir`}
               </p>

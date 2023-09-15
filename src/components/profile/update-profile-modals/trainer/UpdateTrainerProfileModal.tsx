@@ -115,6 +115,9 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
 
   useEffect(() => {
     if (isSuccess) {
+      updatedProfile.image = selectedImage
+        ? selectedImage?.name
+        : existingImage;
       dispatch(updateTrainerDetails(updatedProfile));
       refetch();
       toast.success("Başarıyla güncellendi");
@@ -269,7 +272,7 @@ const UpdateTrainerProfileModal = (props: UpdateTrainerProfileModalProps) => {
           <div className={styles["input-container"]}>
             <label>Kulüp</label>
             <select
-              {...register("club_id", { required: true })}
+              {...register("club_id")}
               disabled={
                 selectedEmploymentType !== 2 && selectedEmploymentType !== 3
               }

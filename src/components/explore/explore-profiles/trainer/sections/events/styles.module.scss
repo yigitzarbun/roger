@@ -1,0 +1,44 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.events-section {
+  background-color: $roger-box-bg-color;
+  width: 100%;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 30px;
+  display: flex;
+  flex-direction: column;
+
+  table {
+    width: 100%;
+    text-align: left;
+    .player-image {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .player-name {
+      color: white;
+      text-decoration: none;
+    }
+  }
+  button {
+    padding: 10px;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 150px;
+    background-color: $roger-black-dark;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+  }
+
+  button:hover {
+    background-color: $roger-blue;
+    cursor: pointer;
+  }
+}

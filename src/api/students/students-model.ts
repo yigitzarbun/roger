@@ -8,8 +8,26 @@ const studentsModel = {
   },
 
   async getByFilter(filter) {
-    const student = await db("students").where(filter).first();
-    return student;
+    const students = await db("students").where((builder) => {
+      if (filter.student_status) {
+        builder.where("student_status", filter.student_status);
+      }
+
+      if (filter.student_id) {
+        builder.where("student_id", filter.student_id);
+      }
+
+      if (filter.trainer_id) {
+        builder.where("trainer_id", filter.trainer_id);
+      }
+
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+
+    return students;
   },
 
   async getById(student_id) {

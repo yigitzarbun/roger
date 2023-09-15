@@ -29,17 +29,27 @@ trainersRouter.get(
 );
 
 trainersRouter.get(
-  "/:trainer_id",
+  "/trainer/:trainer_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const trainer = await trainersModel.getById(req.params.trainer_id);
+      const trainer = await trainersModel.getByTrainerId(req.params.trainer_id);
       res.status(200).json(trainer);
     } catch (error) {
       next(error);
     }
   }
 );
-
+trainersRouter.get(
+  "/user/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trainer = await trainersModel.getByUserId(req.params.user_id);
+      res.status(200).json(trainer);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 trainersRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -65,7 +75,9 @@ trainersRouter.put(
         updatedTrainerData.image = req.file.path;
       }
       await trainersModel.update(updatedTrainerData);
-      const updatedTrainer = await trainersModel.getById(req.body.trainer_id);
+      const updatedTrainer = await trainersModel.getByTrainerId(
+        req.body.trainer_id
+      );
       res.status(200).json(updatedTrainer);
     } catch (error) {
       next(error);

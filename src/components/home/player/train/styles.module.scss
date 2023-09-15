@@ -12,6 +12,7 @@
   row-gap: 25px;
   color: white;
   text-decoration: none;
+  transition: background-color 0.5s ease;
 
   h2 {
     font-weight: bold;
@@ -34,4 +35,14 @@
   button:hover {
     background-color: $roger-black-light;
   }
+}
+
+.player-train-container:hover {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(33, 62, 166, 1) 0%,
+    rgba(1, 135, 200, 1) 100%
+  );
 }

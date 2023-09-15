@@ -15,6 +15,18 @@ clubsRouter.get(
     }
   }
 );
+clubsRouter.get(
+  "/paginated/:page",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { page } = req.params;
+      const clubs = await clubsModel.getPaginated(Number(page));
+      res.status(200).json(clubs);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 clubsRouter.get(
   "/club/:club_id",

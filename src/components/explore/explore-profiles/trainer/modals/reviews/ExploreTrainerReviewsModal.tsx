@@ -36,6 +36,10 @@ const ExploreTrainerReviewsModal = (props: ExploreTrainerReviewsModalProps) => {
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
+  const player = (user_id: number) => {
+    return players?.find((player) => player.user_id === user_id);
+  };
+
   if (isUsersLoading) {
     return <PageLoading />;
   }
@@ -89,15 +93,8 @@ const ExploreTrainerReviewsModal = (props: ExploreTrainerReviewsModalProps) => {
                         users?.find(
                           (user) => user.user_id === review.reviewer_id
                         )?.user_type_id === 1 &&
-                        players?.find(
-                          (player) => player.user_id === review.reviewer_id
-                        )?.image
-                          ? `${localUrl}/${
-                              players.find(
-                                (player) =>
-                                  player.user_id === review.reviewer_id
-                              )?.image
-                            }`
+                        player(review.reviewer_id)?.image
+                          ? `${localUrl}/${player(review.reviewer_id)?.image}`
                           : "/images/icons/avatar.png"
                       }
                       className={styles["reviewer-image"]}
@@ -119,14 +116,8 @@ const ExploreTrainerReviewsModal = (props: ExploreTrainerReviewsModalProps) => {
                   >
                     {users?.find((user) => user.user_id === review.reviewer_id)
                       ?.user_type_id === 1
-                      ? `${
-                          players?.find(
-                            (player) => player.user_id === review.reviewer_id
-                          )?.fname
-                        } ${
-                          players.find(
-                            (player) => player.user_id === review.reviewer_id
-                          )?.lname
+                      ? `${player(review.reviewer_id)?.fname} ${
+                          player(review.reviewer_id)?.lname
                         }`
                       : ""}
                   </Link>

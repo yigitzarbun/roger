@@ -16,7 +16,10 @@ import { useGetLocationsQuery } from "../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../api/endpoints/PlayerLevelsApi";
 import { useGetTrainersQuery } from "../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../api/endpoints/TrainerExperienceTypesApi";
-import { useGetClubsQuery } from "../../api/endpoints/ClubsApi";
+import {
+  useGetClubsQuery,
+  useGetPaginatedClubsQuery,
+} from "../../api/endpoints/ClubsApi";
 import { useGetClubTypesQuery } from "../../api/endpoints/ClubTypesApi";
 import { useGetCourtsQuery } from "../../api/endpoints/CourtsApi";
 import { useGetCourtStructureTypesQuery } from "../../api/endpoints/CourtStructureTypesApi";
@@ -30,6 +33,8 @@ const Explore = () => {
   const handleDisplay = (value: string) => {
     setDisplay(value);
   };
+
+  const [clubsPage, setClubsPage] = useState(1);
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
@@ -51,7 +56,8 @@ const Explore = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: clubs, isLoading: isClubsLoading } =
+    useGetPaginatedClubsQuery(clubsPage);
 
   const { data: clubTypes, isLoading: isClubTypesLoading } =
     useGetClubTypesQuery({});
@@ -109,6 +115,8 @@ const Explore = () => {
           isClubTypesLoading={isClubTypesLoading}
           isCourtsLoading={isCourtsLoading}
           isClubStaffLoading={isClubStaffLoading}
+          page={clubsPage}
+          setClubsPage={setClubsPage}
         />
       )}
       {display === "courts" && (

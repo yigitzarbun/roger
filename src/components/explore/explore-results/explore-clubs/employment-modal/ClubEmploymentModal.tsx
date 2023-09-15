@@ -11,13 +11,14 @@ import PageLoading from "../../../../../components/loading/PageLoading";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../../store/hooks";
-import { useGetTrainersQuery } from "../../../../../api/endpoints/TrainersApi";
+import { useGetTrainerByUserIdQuery } from "../../../../../api/endpoints/TrainersApi";
 import {
   useGetClubStaffQuery,
   useAddClubStaffMutation,
   useUpdateClubStaffMutation,
+  useGetClubStaffByFilterQuery,
 } from "../../../../../api/endpoints/ClubStaffApi";
-import { useGetClubsQuery } from "../../../../../api/endpoints/ClubsApi";
+import { useGetClubByClubIdQuery } from "../../../../../api/endpoints/ClubsApi";
 
 interface ClubEmploymentModalProps {
   employmentModalOpen: boolean;
@@ -26,26 +27,26 @@ interface ClubEmploymentModalProps {
 }
 const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+
   const { employmentModalOpen, closeEmploymentModal, trainerEmploymentClubId } =
     props;
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
-  const currentTrainer = trainers?.find(
-    (trainer) => trainer.user_id === user?.user?.user_id
-  );
+  const { data: currentTrainer, isLoading: isCurrentTrainerLoading } =
+    useGetTrainerByUserIdQuery(user?.user?.user_id);
 
-  const selectedClub = clubs?.find(
-    (club) => club.club_id === trainerEmploymentClubId
-  );
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(trainerEmploymentClubId);
+
+  const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
   const {
     data: clubStaff,
     isLoading: isStaffLoading,
     refetch: clubStaffRefetch,
-  } = useGetClubStaffQuery({});
+  } = useGetClubStaffByFilterQuery({
+    club_id: trainerEmploymentClubId,
+    user_id: user?.user?.user_id,
+  });
 
   const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
     useAddClubStaffMutation({});
@@ -57,19 +58,16 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
 
   const isPastApplicationExist = clubStaff?.find(
     (staff) =>
-      staff.club_id === trainerEmploymentClubId &&
-      staff.user_id === user?.user?.user_id &&
-      (staff.employment_status === "declined" ||
-        staff.employment_status === "terminated_by_club")
+      staff.employment_status === "declined" ||
+      staff.employment_status === "terminated_by_club"
   );
-
   const handleAddClubStaff = () => {
     if (isUserTrainer) {
       const newClubStaffData = {
-        fname: currentTrainer?.fname,
-        lname: currentTrainer?.lname,
-        birth_year: currentTrainer?.birth_year,
-        gender: currentTrainer?.gender,
+        fname: currentTrainer?.[0]?.fname,
+        lname: currentTrainer?.[0]?.lname,
+        birth_year: currentTrainer?.[0]?.birth_year,
+        gender: currentTrainer?.[0]?.gender,
         employment_status: "pending",
         gross_salary_month: null,
         iban: null,
@@ -97,11 +95,12 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
   useEffect(() => {
     if (isAddClubStaffSuccess || isUpdateStaffSuccess) {
       clubStaffRefetch();
+      refetchAllClubStaff();
       closeEmploymentModal();
     }
   }, [isAddClubStaffSuccess, isUpdateStaffSuccess]);
 
-  if (isTrainersLoading || isClubsLoading || isStaffLoading) {
+  if (isStaffLoading || isCurrentTrainerLoading || isSelectedClubLoading) {
     return <PageLoading />;
   }
 
@@ -121,13 +120,13 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
       <div className={styles["bottom-container"]}>
         <img
           src={
-            selectedClub?.image
-              ? `${localUrl}/${selectedClub?.image}`
+            selectedClub?.[0]?.image
+              ? `${localUrl}/${selectedClub?.[0]?.image}`
               : "images/icons/avatar.png"
           }
           className={styles["trainer-image"]}
         />
-        <h4>{`${selectedClub?.club_name} kulubüne başvurunuzu göndermeyi onaylıyor musunuz?`}</h4>
+        <h4>{`${selectedClub?.[0]?.club_name} kulubüne başvurunuzu göndermeyi onaylıyor musunuz?`}</h4>
       </div>
       <button onClick={handleAddClubStaff} className={styles["button"]}>
         Onayla

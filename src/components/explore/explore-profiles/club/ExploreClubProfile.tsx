@@ -52,10 +52,7 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
         <ExploreClubsCourtsSection selectedClub={selectedClub} />
       </div>
       <div className={styles["mid-top-sections-container"]}>
-        <ExploreClubsFavouritesSection
-          user_id={Number(user_id)}
-          selectedClub={selectedClub}
-        />
+        <ExploreClubsFavouritesSection selectedClub={selectedClub} />
         <ExploreClubsTrainersSection
           isUserTrainer={isUserTrainer}
           isUserPlayer={isUserPlayer}

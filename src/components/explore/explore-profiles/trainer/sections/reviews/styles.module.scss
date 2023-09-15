@@ -1,0 +1,45 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.reviews-section {
+  background-color: $roger-box-bg-color;
+  width: 100%;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 30px;
+  display: flex;
+  flex-direction: column;
+
+  .reviews-container {
+    display: flex;
+    column-gap: 10px;
+    width: 100%;
+    .review-container-wrapper {
+      background-color: $roger-black-dark;
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      row-gap: 20px;
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      justify-content: space-between;
+    }
+  }
+  button {
+    padding: 10px;
+    border-radius: $roger-border-radius;
+    border: none;
+    width: 150px;
+    background-color: $roger-black-dark;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    text-align: center;
+  }
+
+  button:hover {
+    background-color: $roger-blue;
+    cursor: pointer;
+  }
+}

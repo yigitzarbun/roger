@@ -12,6 +12,7 @@ import { useAppSelector } from "../../../../../store/hooks";
 
 import {
   Player,
+  useGetPlayerByUserIdQuery,
   useGetPlayersQuery,
   useUpdatePlayerMutation,
 } from "../../../../../api/endpoints/PlayersApi";
@@ -29,14 +30,12 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const {
-    data: players,
-    isLoading: isPlayersLoading,
+    data: selectedPlayer,
+    isLoading: isSelectedPlayerLoading,
     refetch,
-  } = useGetPlayersQuery({});
+  } = useGetPlayerByUserIdQuery(user?.user_id);
 
-  const selectedPlayer = players?.find(
-    (player) => player.user_id === user?.user_id
-  );
+  const { refetch: refetchPlayers } = useGetPlayersQuery({});
 
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
 
@@ -62,7 +61,7 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
 
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const playerCardDetails = {
-      ...selectedPlayer,
+      ...selectedPlayer?.[0],
       name_on_card: formData?.name_on_card,
       card_number: formData?.card_number,
       cvc: Number(formData?.cvc),
@@ -73,12 +72,13 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetch();
+      refetchPlayers();
       toast.success("Başarıyla güncellendi");
       handleCloseModal();
     }
   }, [isSuccess]);
 
-  if (isPlayersLoading) {
+  if (isSelectedPlayerLoading) {
     return <PageLoading />;
   }
   return (

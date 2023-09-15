@@ -14,13 +14,12 @@ import { useAppSelector } from "../../../../../../store/hooks";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
 interface ExploreClubsFavouritesSectionProps {
-  user_id: number;
   selectedClub: Club[];
 }
 const ExploreClubsFavouritesSection = (
   props: ExploreClubsFavouritesSectionProps
 ) => {
-  const { user_id, selectedClub } = props;
+  const { selectedClub } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -44,11 +43,6 @@ const ExploreClubsFavouritesSection = (
     favouritee_id: Number(selectedClub?.[0]?.user_id),
   });
 
-  const isClubInMyFavourites = myFavouriteClubs?.find(
-    (club) =>
-      club.favouritee_id === Number(selectedClub?.[0]?.user_id) &&
-      club.favouriter_id === user?.user?.user_id
-  );
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
 
@@ -79,7 +73,7 @@ const ExploreClubsFavouritesSection = (
   };
 
   const handleToggleFavourite = (userId: number) => {
-    if (isClubInMyFavourites) {
+    if (myFavouriteClubs?.length > 0) {
       handleUpdateFavourite(userId);
     } else {
       handleAddFavourite(userId);
@@ -94,6 +88,12 @@ const ExploreClubsFavouritesSection = (
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
+  useEffect(() => {
+    refetchAllFavourites();
+    favouritesRefetch();
+    refetchMyFavouriteClubs();
+  }, []);
+
   if (isClubFavouritersLoading || isMyFavouriteClubsLoading) {
     return <PageLoading />;
   }
@@ -102,7 +102,7 @@ const ExploreClubsFavouritesSection = (
       <h2>Favoriler</h2>
       <p>{`${clubFavouriters?.length} kişi favorilere ekledi`}</p>
       <button onClick={() => handleToggleFavourite(selectedClub?.[0]?.user_id)}>
-        {isClubInMyFavourites?.is_active === true
+        {myFavouriteClubs?.[0]?.is_active === true
           ? "Favorilerden çıkar"
           : "Favorilere ekle"}
       </button>

@@ -12,6 +12,7 @@ import { useAppSelector } from "../../../store/hooks";
 
 import {
   useAddClubSubscriptionMutation,
+  useGetClubSubscriptionsByFilterQuery,
   useGetClubSubscriptionsQuery,
 } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
@@ -58,6 +59,11 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
     refetch: refetchSubscriptions,
   } = useGetClubSubscriptionsQuery({});
 
+  const { refetch: refetchMySubscriptions } =
+    useGetClubSubscriptionsByFilterQuery({
+      is_active: true,
+      player_id: user?.user?.user_id,
+    });
   const {
     data: clubSubscriptionPackages,
     isLoading: isClubSubscriptionPackagesLoading,
@@ -163,6 +169,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   useEffect(() => {
     if (isSubscriptionSuccess) {
       refetchSubscriptions();
+      refetchMySubscriptions();
       refetchPayments();
       reset();
       handleCloseSubscribeModal();

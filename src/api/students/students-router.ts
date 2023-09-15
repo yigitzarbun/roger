@@ -17,6 +17,18 @@ studentsRouter.get(
 );
 
 studentsRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredStudents = await studentsModel.getByFilter(filter);
+      res.status(200).json(filteredStudents);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+studentsRouter.get(
   "/:student_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -27,7 +39,6 @@ studentsRouter.get(
     }
   }
 );
-
 studentsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
