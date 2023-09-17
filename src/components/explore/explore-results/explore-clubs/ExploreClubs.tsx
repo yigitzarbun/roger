@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
@@ -9,7 +11,7 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 
 import { User } from "../../../../store/slices/authSlice";
-import { Club, PaginatedClubs } from "../../../../api/endpoints/ClubsApi";
+import { PaginatedClubs } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
 import { Court } from "../../../../api/endpoints/CourtsApi";
@@ -26,6 +28,7 @@ import {
 import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetPaginatedClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
@@ -43,24 +46,18 @@ interface ExploreClubsProps {
   isClubTypesLoading: boolean;
   isCourtsLoading: boolean;
   isClubStaffLoading: boolean;
-  page: number;
-  setClubsPage: (page: number) => void;
 }
 const ExploreClubs = (props: ExploreClubsProps) => {
   const {
     user,
-    clubs,
     locations,
     clubTypes,
     courts,
     clubStaff,
-    isClubsLoading,
     isLocationsLoading,
     isClubTypesLoading,
     isCourtsLoading,
     isClubStaffLoading,
-    page,
-    setClubsPage,
   } = props;
 
   let isUserPlayer = false;
@@ -70,6 +67,10 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isUserPlayer = user.user.user_type_id === 1;
     isUserTrainer = user.user.user_type_id === 2;
   }
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: clubs, isLoading: isClubsLoading } =
+    useGetPaginatedClubsQuery(currentPage);
 
   const pageNumbers = [];
   for (let i = 1; i <= clubs?.totalPages; i++) {
@@ -77,7 +78,18 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   }
 
   const handleClubPage = (e) => {
-    setClubsPage(e.target.value);
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % clubs?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + clubs?.totalPages) % clubs?.totalPages) + 1;
+    setCurrentPage(prevPage);
   };
 
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
@@ -202,6 +214,24 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     return activeSubscription ? true : false;
   };
 
+  const isUserStaff = (club_id: number) => {
+    const staffMember = clubStaff?.find(
+      (staff) =>
+        staff.club_id === club_id &&
+        staff.user_id === user?.user?.user_id &&
+        (staff.employment_status === "accepted" ||
+          staff.employment_status === "pending")
+    );
+
+    return staffMember ? staffMember.employment_status : null;
+  };
+
+  const clubSubscribers = (club_id: number) => {
+    return clubSubscriptions?.filter(
+      (club) => club.club_id === club_id && club.is_active === true
+    );
+  };
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavourites();
@@ -232,6 +262,17 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
       {clubs?.clubs && clubs?.clubs.length === 0 && (
         <p>
@@ -292,7 +333,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                   {
                     locations?.find(
                       (location) => location.location_id === club.location_id
-                    ).location_name
+                    )?.location_name
                   }
                 </td>
                 <td>
@@ -307,20 +348,12 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                       (staff) =>
                         staff.employment_status === "accepted" &&
                         staff.club_id === club.club_id
-                    ).length
-                  }
-                </td>
-                <td>
-                  {
-                    clubSubscriptions.filter(
-                      (subscription) =>
-                        subscription.is_active === true &&
-                        subscription.club_id === club.club_id
                     )?.length
                   }
                 </td>
+                <td>{clubSubscribers(club.user_id)?.length}</td>
                 {isUserPlayer && (
-                  <td>
+                  <td className={styles.status}>
                     {clubSubscriptionPackages?.find(
                       (subscriptionPackage) =>
                         subscriptionPackage.club_id === club.user_id
@@ -345,43 +378,31 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                       )
                     ) : (
                       <p className={styles["no-subscription-text"]}>
-                        Kulübün üyelik paketi bulunmamaktadır
+                        Kulübün üyelik paketi yok
                       </p>
                     )}
                   </td>
                 )}
-                <td>
-                  {isUserTrainer &&
-                  clubStaff?.find(
-                    (staff) =>
-                      staff.club_id === club.club_id &&
-                      staff.user_id === user?.user?.user_id &&
-                      staff.employment_status === "accepted"
-                  ) ? (
-                    <p className={styles["employed-text"]}>
-                      Bu kulüpte çalışıyorsun
-                    </p>
-                  ) : isUserTrainer &&
-                    clubStaff?.find(
-                      (staff) =>
-                        staff.club_id === club.club_id &&
-                        staff.user_id === user?.user?.user_id &&
-                        staff.employment_status === "pending"
-                    ) ? (
-                    <p className={styles["employment-pending-text"]}>
-                      Başvurun henüz yanıtlanmadı
-                    </p>
-                  ) : (
-                    isUserTrainer && (
+                {isUserTrainer && (
+                  <td className={styles.status}>
+                    {isUserStaff(club.club_id) === "accepted" ? (
+                      <p className={styles["employed-text"]}>
+                        Bu kulüpte çalışıyorsun
+                      </p>
+                    ) : isUserStaff(club.club_id) === "pending" ? (
+                      <p className={styles["employment-pending-text"]}>
+                        Başvurun henüz yanıtlanmadı
+                      </p>
+                    ) : (
                       <button
                         onClick={() => openEmploymentModal(club.club_id)}
                         className={styles["subscribe-button"]}
                       >
                         Bu kulüpte çalıştığına dair kulübe başvur
                       </button>
-                    )
-                  )}
-                </td>
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -389,7 +410,16 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (
-          <button key={pageNumber} value={pageNumber} onClick={handleClubPage}>
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleClubPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
             {pageNumber}
           </button>
         ))}

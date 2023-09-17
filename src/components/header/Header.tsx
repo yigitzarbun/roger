@@ -9,7 +9,6 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 //import i18n from "../../common/i18n/i18n";
 
-import SearchBar from "./search/SearchBar";
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
 import ClubHeader from "./club/ClubHeader";
@@ -46,7 +45,6 @@ const Header = () => {
       >
         Raket
       </NavLink>
-      {isLoggedIn && <SearchBar />}
       {isUserPlayer && <PlayerHeader />}
       {isUserTrainer && <TrainerHeader />}
       {isUserClub && <ClubHeader />}

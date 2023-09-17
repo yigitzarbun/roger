@@ -95,7 +95,6 @@ const ClubRegisterForm = () => {
         };
         // register user
         await addClub(clubRegisterData);
-        console.log(clubRegisterData);
         navigate(paths.LOGIN);
         reset();
       } else {

@@ -134,7 +134,7 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
                 src={
                   opposition?.image
                     ? opposition?.image
-                    : "/images/players/player1.png"
+                    : "/images/icons/avatar.png"
                 }
                 className={styles["player-image"]}
               />

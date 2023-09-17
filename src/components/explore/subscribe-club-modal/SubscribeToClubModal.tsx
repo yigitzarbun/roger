@@ -10,14 +10,16 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 
+import { today } from "../../../common/util/TimeFunctions";
+
 import {
   useAddClubSubscriptionMutation,
   useGetClubSubscriptionsByFilterQuery,
   useGetClubSubscriptionsQuery,
 } from "../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubSubscriptionPackagesQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import { useGetPlayerByUserIdQuery } from "../../../api/endpoints/PlayersApi";
 import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
@@ -64,39 +66,41 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
       is_active: true,
       player_id: user?.user?.user_id,
     });
+
   const {
-    data: clubSubscriptionPackages,
+    data: selectedClubPackages,
     isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
+  } = useGetClubSubscriptionPackagesByFilterQuery({
+    club_id: selectedClubId,
+    is_active: true,
+  });
 
   const {
     data: clubSubscriptionTypes,
     isLoading: isClubSubscriptionTypesLoading,
   } = useGetClubSubscriptionTypesQuery({});
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
   const [selectedClubPackage, setSelectedClubPackage] = useState(null);
 
   let playerPaymentDetailsExist = false;
 
-  const currentPlayer = players?.find(
-    (player) => player.user_id === user?.user?.user_id
-  );
+  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
 
   if (
-    currentPlayer?.name_on_card &&
-    currentPlayer?.card_number &&
-    currentPlayer?.cvc &&
-    currentPlayer?.card_expiry
+    currentPlayer?.[0]?.name_on_card &&
+    currentPlayer?.[0]?.card_number &&
+    currentPlayer?.[0]?.cvc &&
+    currentPlayer?.[0]?.card_expiry
   ) {
     playerPaymentDetailsExist = true;
   }
 
-  const selectedClubPackages = clubSubscriptionPackages?.filter(
-    (clubPackage) =>
-      clubPackage.club_id === selectedClubId && clubPackage.is_active === true
-  );
+  const subscriptionType = (club_subscription_type_id: number) => {
+    return clubSubscriptionTypes?.find(
+      (type) => type.club_subscription_type_id === club_subscription_type_id
+    );
+  };
 
   const {
     register,
@@ -117,12 +121,12 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
       if (selectedPackage && playerPaymentDetailsExist) {
         const paymentData = {
-          payment_amount: clubSubscriptionPackages?.find(
+          payment_amount: selectedClubPackages?.find(
             (subscriptionPackage) =>
               subscriptionPackage.club_subscription_package_id ===
               selectedPackage?.club_subscription_package_id
           )?.price,
-          subscription_price: clubSubscriptionPackages?.find(
+          subscription_price: selectedClubPackages?.find(
             (subscriptionPackage) =>
               subscriptionPackage.club_subscription_package_id ===
               selectedPackage?.club_subscription_package_id
@@ -140,8 +144,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   };
   useEffect(() => {
     if (isPaymentSuccess) {
-      const currentDate = new Date();
-      const startDate = currentDate.toISOString();
+      const startDate = today.toISOString();
       const packageDurationMonths = clubSubscriptionTypes?.find(
         (type) =>
           type.club_subscription_type_id ===
@@ -180,7 +183,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
     isClubSubscriptionPackagesLoading ||
     isClubSubscriptionTypesLoading ||
     isClubSubscriptionsLoading ||
-    isPlayersLoading ||
+    isCurrentPlayerLoading ||
     isPaymentsLoading
   ) {
     return <PageLoading />;
@@ -216,17 +219,11 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
                 >
                   {`
                     ${
-                      clubSubscriptionTypes?.find(
-                        (type) =>
-                          type.club_subscription_type_id ===
-                          clubPackage.club_subscription_type_id
-                      )?.club_subscription_type_name
+                      subscriptionType(clubPackage.club_subscription_type_id)
+                        ?.club_subscription_type_name
                     } - ${
-                    clubSubscriptionTypes?.find(
-                      (type) =>
-                        type.club_subscription_type_id ===
-                        clubPackage.club_subscription_type_id
-                    )?.club_subscription_duration_months
+                    subscriptionType(clubPackage.club_subscription_type_id)
+                      ?.club_subscription_duration_months
                   } ay - ${clubPackage.price} TL
                  `}
                 </option>

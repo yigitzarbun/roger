@@ -15,6 +15,10 @@ export interface Court {
   price_hour_non_subscriber?: number;
   image?: string;
 }
+export interface PaginatedCourts {
+  courts: Court[];
+  totalPages: number;
+}
 
 export const courtsSlice = createApi({
   reducerPath: "courts",
@@ -22,6 +26,9 @@ export const courtsSlice = createApi({
   endpoints: (builder) => ({
     getCourts: builder.query({
       query: () => "/courts",
+    }),
+    getPaginatedCourts: builder.query({
+      query: (page) => `courts/paginated/${page}`,
     }),
     getCourtById: builder.query({
       query: (court_id) => `/courts/${court_id}`,
@@ -107,6 +114,7 @@ export const courtsSlice = createApi({
 
 export const {
   useGetCourtsQuery,
+  useGetPaginatedCourtsQuery,
   useGetCourtByIdQuery,
   useGetCourtsByFilterQuery,
   useAddCourtMutation,

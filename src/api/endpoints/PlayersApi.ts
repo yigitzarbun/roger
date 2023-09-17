@@ -16,13 +16,19 @@ export interface Player {
   card_expiry?: string;
   image?: string;
 }
-
+export interface PaginatedPlayers {
+  players: Player[];
+  totalPages: number;
+}
 export const playersSlice = createApi({
   reducerPath: "players",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
   endpoints: (builder) => ({
     getPlayers: builder.query({
       query: () => "/players",
+    }),
+    getPaginatedPlayers: builder.query({
+      query: (page) => `players/paginated/${page}`,
     }),
     getPlayerByPlayerId: builder.query({
       query: (player_id) => `/players/player/${player_id}`,
@@ -113,6 +119,7 @@ export const playersSlice = createApi({
 
 export const {
   useGetPlayersQuery,
+  useGetPaginatedPlayersQuery,
   useGetPlayerByPlayerIdQuery,
   useGetPlayerByUserIdQuery,
   useGetPlayersByFilterQuery,

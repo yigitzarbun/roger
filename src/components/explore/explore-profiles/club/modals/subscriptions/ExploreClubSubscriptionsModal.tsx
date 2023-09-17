@@ -2,6 +2,8 @@ import React from "react";
 
 import ReactModal from "react-modal";
 
+import { ImBlocked } from "react-icons/im";
+
 import styles from "./styles.module.scss";
 
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
@@ -12,10 +14,7 @@ import { useAppSelector } from "../../../../../../store/hooks";
 
 import { ClubSubscriptionPackage } from "../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../../../api/endpoints/ClubSubscriptionTypesApi";
-import {
-  useGetClubSubscriptionsByFilterQuery,
-  useGetClubSubscriptionsQuery,
-} from "../../../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface ExploreClubSubscriptionsModalProps {
   isSubscriptionsModalOpen: boolean;
@@ -53,7 +52,9 @@ const ExploreClubSubscriptionsModal = (
       club_id: selectedClub?.[0]?.user_id,
     });
 
-  const isUserSubscribedToClub = (club_subscription_package_id: number) => {
+  const isUserSubscribedToClubPackage = (
+    club_subscription_package_id: number
+  ) => {
     const activeSubscription = clubSubscriptions?.find(
       (subscription) =>
         subscription.player_id === user?.user?.user_id &&
@@ -64,6 +65,15 @@ const ExploreClubSubscriptionsModal = (
     return activeSubscription ? true : false;
   };
 
+  const {
+    data: isUserSubscribedToClub,
+    isLoading: isUserSubscribedtoClubLoading,
+  } = useGetClubSubscriptionsByFilterQuery({
+    is_active: true,
+    club_id: selectedClub?.[0]?.user_id,
+    player_id: user?.user?.user_id,
+  });
+
   const numberOfSubscribers = (club_subscription_package_id: number) => {
     return clubSubscriptions?.filter(
       (subscription) =>
@@ -71,7 +81,11 @@ const ExploreClubSubscriptionsModal = (
         club_subscription_package_id
     )?.length;
   };
-  if (isClubSubscriptionsLoading || isClubSubscriptionTypesLoading) {
+  if (
+    isClubSubscriptionsLoading ||
+    isClubSubscriptionTypesLoading ||
+    isUserSubscribedtoClubLoading
+  ) {
     return <PageLoading />;
   }
   return (
@@ -129,10 +143,15 @@ const ExploreClubSubscriptionsModal = (
                   <td>{clubPackage.price}</td>
                   {isUserPlayer && (
                     <td>
-                      {isUserSubscribedToClub(
+                      {isUserSubscribedToClubPackage(
                         clubPackage.club_subscription_package_id
                       ) === true ? (
                         <p className={styles["subscribed-text"]}>Üyelik var</p>
+                      ) : isUserSubscribedToClub?.length > 0 &&
+                        isUserSubscribedToClubPackage(
+                          clubPackage.club_subscription_package_id
+                        ) === false ? (
+                        <ImBlocked />
                       ) : (
                         <button
                           disabled={!playerPaymentDetailsExist}

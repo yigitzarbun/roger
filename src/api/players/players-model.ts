@@ -6,6 +6,24 @@ const playersModel = {
     return players;
   },
 
+  async getPaginated(page) {
+    const playersPerPage = 4;
+    const offset = (page - 1) * playersPerPage;
+
+    const players = await db("players");
+
+    const paginatedPlayers = await db("players")
+      .orderBy("player_id", "asc")
+      .limit(playersPerPage)
+      .offset(offset);
+
+    const data = {
+      players: paginatedPlayers,
+      totalPages: Math.ceil(players.length / playersPerPage),
+    };
+    return data;
+  },
+
   async getByFilter(filter) {
     const players = await db("players").where((builder) => {
       if (filter.player_id) {

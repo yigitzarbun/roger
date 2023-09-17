@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { FaCircle } from "react-icons/fa";
 
@@ -11,42 +11,61 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../store/hooks";
-import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
-import { useGetEventReviewsQuery } from "../../../api/endpoints/EventReviewsApi";
+import { useGetBookingsByFilterQuery } from "../../../api/endpoints/BookingsApi";
+import { useGetEventReviewsByFilterQuery } from "../../../api/endpoints/EventReviewsApi";
 import { useGetMatchScoresQuery } from "../../../api/endpoints/MatchScoresApi";
+import {
+  currentDayLocale,
+  currentTime,
+  currentTimeLocale,
+} from "../../../common/util/TimeFunctions";
 
 const PlayerHeader = () => {
   const user = useAppSelector((store) => store?.user?.user);
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-  const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetEventReviewsQuery({});
+
+  const {
+    data: bookings,
+    isLoading: isBookingsLoading,
+    refetch: refetchIncomingBookings,
+  } = useGetBookingsByFilterQuery({
+    booking_status_type_id: 1,
+    booking_player_id: user?.user?.user_id,
+  });
+
+  const {
+    data: myCompletedBookings,
+    isLoading: isMyCompletedBookingsLoading,
+    refetch: refetchMyCompletedBookings,
+  } = useGetBookingsByFilterQuery({
+    booking_status_type_id: 5,
+    booking_player_id: user?.user?.user_id,
+  });
+
+  const {
+    data: myReviews,
+    isLoading: isEventReviewsLoading,
+    refetch: refetchMyReviews,
+  } = useGetEventReviewsByFilterQuery({
+    is_active: true,
+    reviewer_id: user?.user?.user_id,
+  });
+
   const { data: scores, isLoading: isScoresLoading } = useGetMatchScoresQuery(
     {}
   );
 
-  const date = new Date();
-  const today = date.toLocaleDateString();
-  const now = date.toLocaleTimeString();
-
   const incomingBookings = bookings?.filter(
     (booking) =>
-      booking.invitee_id === user?.user?.user_id &&
-      booking.booking_status_type_id === 1 &&
-      (new Date(booking.event_date).toLocaleDateString() > today ||
-        (new Date(booking.event_date).toLocaleDateString() === today &&
-          booking.event_time >= now))
+      new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
+      (new Date(booking.event_date).toLocaleDateString() === currentDayLocale &&
+        booking.event_time >= currentTimeLocale)
   );
 
-  const myEvents = bookings?.filter(
+  const myEvents = myCompletedBookings?.filter(
     (booking) =>
-      (booking.inviter_id === user?.user?.user_id ||
-        booking.invitee_id === user?.user?.user_id) &&
-      booking.booking_status_type_id === 5 &&
-      (booking.event_type_id === 1 ||
-        booking.event_type_id === 2 ||
-        booking.event_type_id === 3)
+      booking.event_type_id === 1 ||
+      booking.event_type_id === 2 ||
+      booking.event_type_id === 3
   );
 
   const missingScores = scores?.filter(
@@ -64,14 +83,21 @@ const PlayerHeader = () => {
         ))
   );
 
-  const myReviews = eventReviews?.filter(
-    (review) =>
-      review.is_active === true && review.reviewer_id === user?.user?.user_id
-  );
+  useEffect(() => {
+    refetchIncomingBookings();
+    refetchMyCompletedBookings();
+    refetchMyReviews();
+  }, []);
 
-  if (isBookingsLoading || isEventReviewsLoading) {
+  if (
+    isBookingsLoading ||
+    isEventReviewsLoading ||
+    isScoresLoading ||
+    isMyCompletedBookingsLoading
+  ) {
     return <PageLoading />;
   }
+
   return (
     <nav className={styles["header-player-container"]}>
       <div className={styles["header-nav-sub-container"]}>

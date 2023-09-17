@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { ImBlocked } from "react-icons/im";
+
 import styles from "./styles.module.scss";
 
 import ExploreClubSubscriptionsModal from "../../modals/subscriptions/ExploreClubSubscriptionsModal";
@@ -11,7 +13,10 @@ import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../../../a
 import { useGetPlayerByUserIdQuery } from "../../../../../../api/endpoints/PlayersApi";
 
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
-import { ClubSubscription } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
+import {
+  ClubSubscription,
+  useGetClubSubscriptionsByFilterQuery,
+} from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 import { useAppSelector } from "../../../../../../store/hooks";
 
 interface ExploreClubsSubscriptionsSectionProps {
@@ -39,7 +44,9 @@ const ExploreClubsSubscriptionsSection = (
     is_active: true,
   });
 
-  const isUserSubscribedToClub = (club_subscription_package_id: number) => {
+  const isUserSubscribedToClubPackage = (
+    club_subscription_package_id: number
+  ) => {
     return selectedClubSubscribers?.find(
       (subscription) =>
         subscription.player_id === user?.user?.user_id &&
@@ -49,6 +56,15 @@ const ExploreClubsSubscriptionsSection = (
       ? true
       : false;
   };
+
+  const {
+    data: isUserSubscribedToClub,
+    isLoading: isUserSubscribedtoClubLoading,
+  } = useGetClubSubscriptionsByFilterQuery({
+    is_active: true,
+    club_id: selectedClub?.[0]?.user_id,
+    player_id: user?.user?.user_id,
+  });
 
   const { data: currentPlayer, isLoading: isPlayersLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
@@ -91,7 +107,8 @@ const ExploreClubsSubscriptionsSection = (
   if (
     isClubSubscriptionTypesLoading ||
     isClubSubscriptionPackagesLoading ||
-    isPlayersLoading
+    isPlayersLoading ||
+    isUserSubscribedtoClubLoading
   ) {
     return <PageLoading />;
   }
@@ -135,10 +152,15 @@ const ExploreClubsSubscriptionsSection = (
                   <td>{clubPackage.price}</td>
                   {isUserPlayer && (
                     <td>
-                      {isUserSubscribedToClub(
+                      {isUserSubscribedToClubPackage(
                         clubPackage.club_subscription_package_id
                       ) === true ? (
                         <p className={styles["subscribed-text"]}>Üyelik var</p>
+                      ) : isUserSubscribedToClub?.length > 0 &&
+                        isUserSubscribedToClubPackage(
+                          clubPackage.club_subscription_package_id
+                        ) === false ? (
+                        <ImBlocked />
                       ) : (
                         <button
                           onClick={() =>

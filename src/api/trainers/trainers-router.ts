@@ -16,6 +16,18 @@ trainersRouter.get(
   }
 );
 trainersRouter.get(
+  "/paginated/:page",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { page } = req.params;
+      const trainers = await trainersModel.getPaginated(Number(page));
+      res.status(200).json(trainers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+trainersRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

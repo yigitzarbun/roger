@@ -43,7 +43,6 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
     });
 
   const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
-
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
   const handleDeclineClubStaff = () => {

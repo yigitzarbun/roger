@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -81,6 +81,10 @@ const ClubStaffRequests = () => {
     setSelectedClubStaffUserId(null);
     refetch();
   };
+
+  useEffect(() => {
+    refetch();
+  }, [isAcceptClubStaffModalOpen, isDeclineClubStaffModalOpen]);
 
   if (
     isMyStaffRequestsLoading ||

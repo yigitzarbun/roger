@@ -16,6 +16,7 @@ import {
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
+import { useAppSelector } from "../../../../store/hooks";
 
 interface DeleteClubStaffModalProps {
   isDeleteStaffModalOpen: boolean;
@@ -24,13 +25,13 @@ interface DeleteClubStaffModalProps {
 }
 
 const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
+  const user = useAppSelector((store) => store?.user?.user);
+
   const {
     isDeleteStaffModalOpen,
     closeDeleteStaffModal,
     selectedClubStaffUserId,
   } = props;
-
-  const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
   const {
     data: selectedClubStaff,
@@ -44,7 +45,6 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
     useGetTrainersByFilterQuery({
       user_id: selectedClubStaffUserId,
     });
-
   const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
@@ -60,8 +60,7 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
   useEffect(() => {
     if (isSuccess) {
       refetchClubStaff();
-      refetchAllClubStaff();
-      toast.success("Personel eklendi");
+      toast.success("Personel silindi");
       closeDeleteStaffModal();
     }
   }, [isSuccess]);

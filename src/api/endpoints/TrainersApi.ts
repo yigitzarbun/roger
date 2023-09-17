@@ -20,13 +20,19 @@ export interface Trainer {
   name_on_bank_account?: string;
   bank_id?: number;
 }
-
+export interface PaginatedTrainers {
+  trainers: Trainer[];
+  totalPages: number;
+}
 export const trainersSlice = createApi({
   reducerPath: "trainers",
   baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
   endpoints: (builder) => ({
     getTrainers: builder.query({
       query: () => "/trainers",
+    }),
+    getPaginatedTrainers: builder.query({
+      query: (page) => `trainers/paginated/${page}`,
     }),
     getTrainerByTrainerId: builder.query({
       query: (trainer_id) => `/trainers/trainer/${trainer_id}`,
@@ -138,6 +144,7 @@ export const trainersSlice = createApi({
 
 export const {
   useGetTrainersQuery,
+  useGetPaginatedTrainersQuery,
   useGetTrainerByTrainerIdQuery,
   useGetTrainerByUserIdQuery,
   useGetTrainersByFilterQuery,

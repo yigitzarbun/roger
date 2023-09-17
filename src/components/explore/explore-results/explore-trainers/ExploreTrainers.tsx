@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
@@ -8,28 +10,28 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
+import { currentYear } from "../../../../common/util/TimeFunctions";
+
 import { User } from "../../../../store/slices/authSlice";
 import { Location } from "../../../../api/endpoints/LocationsApi";
-import { Trainer } from "../../../../api/endpoints/TrainersApi";
+import { useGetPaginatedTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { TrainerExperienceType } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import {
   useAddFavouriteMutation,
-  useGetFavouritesQuery,
+  useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 
-import PageLoading from "../../../../components/loading/PageLoading";
-
 interface ExploreTrainersProps {
   user: User;
-  trainers: Trainer[];
   locations: Location[];
   trainerExperienceTypes: TrainerExperienceType[];
   clubStaff: ClubStaff[];
   clubs: Club[];
-  isTrainersLoading: boolean;
   isLocationsLoading: boolean;
   isTrainerExperienceTypesLoading: boolean;
   isClubStaffLoading: boolean;
@@ -38,12 +40,10 @@ interface ExploreTrainersProps {
 const ExploreTrainers = (props: ExploreTrainersProps) => {
   const {
     user,
-    trainers,
     locations,
     trainerExperienceTypes,
     clubStaff,
     clubs,
-    isTrainersLoading,
     isLocationsLoading,
     isTrainerExperienceTypesLoading,
     isClubStaffLoading,
@@ -51,45 +51,48 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   } = props;
 
   let isUserPlayer = false;
-  let isUserTrainer = false;
-  let isUserClub = false;
 
   if (user) {
-    isUserPlayer = user.user.user_type_id === 1;
-    isUserTrainer = user.user.user_type_id === 2;
-    isUserClub = user.user.user_type_id === 3;
+    isUserPlayer = user?.user?.user_type_id === 1;
   }
 
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: paginatedTrainers, isLoading: isPaginatedTrainersLoading } =
+    useGetPaginatedTrainersQuery(currentPage);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= paginatedTrainers?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handleTrainerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % paginatedTrainers?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + paginatedTrainers?.totalPages) %
+        paginatedTrainers?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
 
   const {
-    data: favourites,
-    isLoading: isFavouritesLoading,
+    data: myFavouriteTrainers,
+    isLoading: isMyFavouritesLoading,
     refetch,
-  } = useGetFavouritesQuery({});
-
-  const myFavouriteTrainers = favourites?.filter(
-    (favourite) => favourite.favouriter_id === user?.user?.user_id
-  );
+  } = useGetFavouritesByFilterQuery({ favouriter_id: user?.user?.user_id });
 
   const isTrainerInMyFavourites = (user_id: number) => {
-    if (
-      myFavouriteTrainers.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === false
-      )
-    ) {
-      return "deactivated";
-    } else if (
-      myFavouriteTrainers.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === true
-      )
-    ) {
-      return true;
-    }
-    return false;
+    return myFavouriteTrainers?.find(
+      (trainer) => trainer.favouritee_id === user_id
+    );
   };
 
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
@@ -136,27 +139,39 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
   if (
-    isTrainersLoading ||
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
-    isFavouritesLoading ||
+    isMyFavouritesLoading ||
     isClubStaffLoading ||
-    isClubsLoading
+    isClubsLoading ||
+    isPaginatedTrainersLoading
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
-      {trainers && trainers.length === 0 && (
+      {paginatedTrainers?.trainers?.length === 0 && (
         <p>
           Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}
-      {trainers && trainers.length > 0 && (
+      {paginatedTrainers?.trainers?.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -173,10 +188,11 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
             </tr>
           </thead>
           <tbody>
-            {trainers.map((trainer) => (
+            {paginatedTrainers?.trainers?.map((trainer) => (
               <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
                 <td onClick={() => handleToggleFavourite(trainer.user_id)}>
-                  {isTrainerInMyFavourites(trainer.user_id) === true ? (
+                  {isTrainerInMyFavourites(trainer.user_id)?.is_active ===
+                  true ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
                   ) : (
                     <AiOutlineStar className={styles["add-fav-icon"]} />
@@ -225,7 +241,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 </td>
                 <td>{trainer?.price_hour}</td>
                 <td>{trainer.gender}</td>
-                <td>{year - Number(trainer.birth_year)}</td>
+                <td>{currentYear - Number(trainer.birth_year)}</td>
                 <td>
                   {
                     locations?.find(
@@ -255,6 +271,22 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           </tbody>
         </table>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleTrainerPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -13,7 +13,7 @@ import { useAppSelector } from "../../../store/hooks";
 
 import { currentYear } from "../../../common/util/TimeFunctions";
 
-import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
+import { useGetClubStaffByFilterQuery } from "../../../api/endpoints/ClubStaffApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
@@ -42,7 +42,11 @@ const ClubStaffResults = () => {
     setIsDeleteStaffModalOpen(false);
   };
 
-  const { data: myStaff, isLoading: isMyStaffLoading } = useGetClubStaffQuery({
+  const {
+    data: myStaff,
+    isLoading: isMyStaffLoading,
+    refetch: refetchMyStaff,
+  } = useGetClubStaffByFilterQuery({
     club_id: user?.clubDetails?.club_id,
     employment_status: "accepted",
   });
@@ -50,6 +54,11 @@ const ClubStaffResults = () => {
   const selectedTrainer = (user_id: number) => {
     return trainers?.find((trainer) => trainer.user_id === user_id);
   };
+
+  useEffect(() => {
+    refetchMyStaff();
+  }, [isDeleteStaffModalOpen]);
+
   if (
     isMyStaffLoading ||
     isClubStaffRoleTypesLoading ||
@@ -146,11 +155,13 @@ const ClubStaffResults = () => {
           </tbody>
         </table>
       )}
-      <DeleteClubStaffModal
-        isDeleteStaffModalOpen={isDeleteStaffModalOpen}
-        closeDeleteStaffModal={closeDeleteStaffModal}
-        selectedClubStaffUserId={selectedStaffUserId}
-      />
+      {isDeleteStaffModalOpen && (
+        <DeleteClubStaffModal
+          isDeleteStaffModalOpen={isDeleteStaffModalOpen}
+          closeDeleteStaffModal={closeDeleteStaffModal}
+          selectedClubStaffUserId={selectedStaffUserId}
+        />
+      )}
     </div>
   );
 };

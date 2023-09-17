@@ -8,11 +8,13 @@ import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
-import { Player } from "../../../../../../api/endpoints/PlayersApi";
+import {
+  Player,
+  useGetPlayerByUserIdQuery,
+} from "../../../../../../api/endpoints/PlayersApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
-  useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
 import { useAppSelector } from "../../../../../../store/hooks";
@@ -32,7 +34,10 @@ const ExplorePlayersInteractionsSections = (
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
 
-  const userGender = selectedPlayer?.[0]?.gender;
+  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
+
+  const userGender = currentPlayer?.[0]?.gender;
 
   const {
     data: playerFavouriters,

@@ -1,4 +1,4 @@
-const today = new Date();
+export const today = new Date();
 
 const currentHour = String(today.getHours()).padStart(2, "0");
 const currentMinute = String(today.getMinutes()).padStart(2, "0");
@@ -19,7 +19,7 @@ export const currentDayObject = new Date(
 );
 export const currentYear = today.getFullYear();
 export const currentDayLocale = new Date(currentDay).toLocaleDateString();
-export const currentTimeLocale = currentDayObject.toLocaleTimeString();
+export const currentTimeLocale = new Date().toLocaleTimeString();
 
 // Utility function to add minutes to a given time
 export function addMinutes(time, minutes) {

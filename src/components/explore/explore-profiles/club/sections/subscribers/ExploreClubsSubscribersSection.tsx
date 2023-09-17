@@ -26,7 +26,7 @@ const ExploreClubsSubscribersSection = (
   return (
     <div className={styles["subscribers-section"]}>
       <h2>Üyeler</h2>
-      <p>{`${selectedClubSubscribers?.length} kişi abone oldu`}</p>
+      <p>{`${selectedClubSubscribers?.length} oyuncu üye oldu`}</p>
       <button onClick={openSubscribersModal}>Tümünü Gör</button>
       {isSubscribersModalOpen && (
         <ExploreClubSubscribersModal

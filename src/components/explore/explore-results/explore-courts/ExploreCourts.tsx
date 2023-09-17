@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 
@@ -6,13 +8,17 @@ import styles from "./styles.module.scss";
 
 import paths from "../../../../routing/Paths";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { User } from "../../../../store/slices/authSlice";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
-import { Court } from "../../../../api/endpoints/CourtsApi";
+import {
+  Court,
+  useGetPaginatedCourtsQuery,
+} from "../../../../api/endpoints/CourtsApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
-import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ExploreCourtsProps {
   user: User;
@@ -20,10 +26,8 @@ interface ExploreCourtsProps {
   locations: Location[];
   courtSurfaceTypes: CourtSurfaceType[];
   courtStructureTypes: CourtStructureType[];
-  courts: Court[];
   isClubsLoading: boolean;
   isLocationsLoading: boolean;
-  isCourtsLoading: boolean;
   isCourtStructureTypesLoading: boolean;
   isCourtSurfaceTypesLoading: boolean;
 }
@@ -32,14 +36,12 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     user,
     clubs,
     locations,
-    courts,
     courtStructureTypes,
     courtSurfaceTypes,
     isClubsLoading,
     isLocationsLoading,
     isCourtStructureTypesLoading,
     isCourtSurfaceTypesLoading,
-    isCourtsLoading,
   } = props;
 
   let isUserPlayer = false;
@@ -47,10 +49,35 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
   let isUserClub = false;
 
   if (user) {
-    isUserPlayer = user.user.user_type_id === 1;
-    isUserTrainer = user.user.user_type_id === 2;
-    isUserClub = user.user.user_type_id === 3;
+    isUserPlayer = user?.user?.user_type_id === 1;
+    isUserTrainer = user?.user?.user_type_id === 2;
+    isUserClub = user?.user?.user_type_id === 3;
   }
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: courts, isLoading: isCourtsLoading } =
+    useGetPaginatedCourtsQuery(currentPage);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= courts?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handleCourtPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % courts?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + courts?.totalPages) % courts?.totalPages) + 1;
+    setCurrentPage(prevPage);
+  };
 
   if (
     isClubsLoading ||
@@ -66,14 +93,25 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
-      {courts && courts.length === 0 && (
+      {courts && courts?.courts?.length === 0 && (
         <p>
           Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}
-      {courts && courts.length > 0 && (
+      {courts && courts?.courts?.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -91,7 +129,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
             </tr>
           </thead>
           <tbody>
-            {courts.map((court) => (
+            {courts?.courts?.map((court) => (
               <tr key={court.court_id} className={styles["court-row"]}>
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}>
@@ -172,6 +210,22 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           </tbody>
         </table>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleCourtPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

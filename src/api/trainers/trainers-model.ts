@@ -3,8 +3,25 @@ const db = require("../../data/dbconfig");
 const trainersModel = {
   async getAll() {
     const trainers = await db("trainers");
-
     return trainers;
+  },
+
+  async getPaginated(page) {
+    const trainersPerPage = 4;
+    const offset = (page - 1) * trainersPerPage;
+
+    const trainers = await db("trainers");
+
+    const paginatedTrainers = await db("trainers")
+      .orderBy("trainer_id", "asc")
+      .limit(trainersPerPage)
+      .offset(offset);
+
+    const data = {
+      trainers: paginatedTrainers,
+      totalPages: Math.ceil(trainers.length / trainersPerPage),
+    };
+    return data;
   },
 
   async getByFilter(filter) {

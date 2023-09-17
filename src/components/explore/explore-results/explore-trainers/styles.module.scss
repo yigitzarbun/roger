@@ -9,8 +9,24 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
 
-  .result-title {
-    font-size: 2rem;
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    .result-title {
+      font-size: 2rem;
+    }
+    .navigation-container {
+      display: flex;
+      column-gap: 10px;
+
+      .nav-arrow {
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      .nav-arrow:hover {
+        color: $roger-blue;
+      }
+    }
   }
 
   table {
@@ -61,6 +77,29 @@
     }
     .lesson-button:hover {
       background-color: $roger-blue;
+    }
+  }
+
+  .pages-container {
+    display: flex;
+    column-gap: 20px;
+    margin-top: 2vh;
+    .active-page {
+      background-color: $roger-blue;
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+    }
+    .passive-page {
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
     }
   }
 }

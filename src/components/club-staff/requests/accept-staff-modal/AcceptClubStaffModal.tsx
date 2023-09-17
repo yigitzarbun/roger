@@ -39,7 +39,6 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
   } = useGetClubStaffByFilterQuery({
     user_id: selectedClubStaffUserId,
   });
-
   const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
     useGetTrainersByFilterQuery({
       user_id: selectedClubStaffUserId,

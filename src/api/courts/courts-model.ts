@@ -6,6 +6,24 @@ const courtsModel = {
     return courts;
   },
 
+  async getPaginated(page) {
+    const courtsPerPage = 4;
+    const offset = (page - 1) * courtsPerPage;
+
+    const courts = await db("courts");
+
+    const paginatedCourts = await db("courts")
+      .orderBy("court_id", "asc")
+      .limit(courtsPerPage)
+      .offset(offset);
+
+    const data = {
+      courts: paginatedCourts,
+      totalPages: Math.ceil(courts.length / courtsPerPage),
+    };
+    return data;
+  },
+
   async getByFilter(filter) {
     const courts = await db("courts").where((builder) => {
       if (filter.club_id) {

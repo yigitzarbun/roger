@@ -15,7 +15,18 @@ playersRouter.get(
     }
   }
 );
-
+playersRouter.get(
+  "/paginated/:page",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { page } = req.params;
+      const players = await playersModel.getPaginated(Number(page));
+      res.status(200).json(players);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 playersRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {

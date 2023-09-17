@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
@@ -9,33 +11,36 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 
 import { User } from "../../../../store/slices/authSlice";
+import PageLoading from "../../../../components/loading/PageLoading";
+import { currentYear } from "../../../../common/util/TimeFunctions";
 
-import { Player } from "../../../../api/endpoints/PlayersApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
 import {
   useAddFavouriteMutation,
-  useGetFavouritesQuery,
+  useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import {
+  Player,
+  useGetPaginatedPlayersQuery,
+  useGetPlayerByUserIdQuery,
+} from "../../../../api/endpoints/PlayersApi";
 
 interface ExplorePlayersProps {
   user: User;
   players: Player[];
   locations: Location[];
   playerLevels: PlayerLevel[];
-  isPlayersLoading: boolean;
   isLocationsLoading: boolean;
+  isPlayersLoading: boolean;
   isPlayerLevelsLoading: boolean;
 }
 const ExplorePlayers = (props: ExplorePlayersProps) => {
   const {
     user,
-    players,
     locations,
     playerLevels,
-    isPlayersLoading,
     isLocationsLoading,
     isPlayerLevelsLoading,
   } = props;
@@ -50,39 +55,49 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     isUserClub = user?.user?.user_type_id === 3;
   }
 
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredPlayers = players?.filter(
+  const { data: paginatedPlayers, isLoading: isPaginatedPlayersLoading } =
+    useGetPaginatedPlayersQuery(currentPage);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= paginatedPlayers?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % paginatedPlayers?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + paginatedPlayers?.totalPages) %
+        paginatedPlayers?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
+  const filteredPlayers = paginatedPlayers?.players?.filter(
     (player) => player.user_id !== user?.user?.user_id
   );
+
   const {
-    data: favourites,
+    data: myFavouritePlayers,
     isLoading: isFavouritesLoading,
     refetch,
-  } = useGetFavouritesQuery({});
+  } = useGetFavouritesByFilterQuery({ favouriter_id: user?.user?.user_id });
 
-  const myFavouritePlayers = favourites?.filter(
-    (favourite) => favourite.favouriter_id === user?.user?.user_id
-  );
   const isPlayerInMyFavourites = (user_id: number) => {
-    if (
-      myFavouritePlayers?.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === false
-      )
-    ) {
-      return "deactivated";
-    } else if (
-      myFavouritePlayers?.find(
-        (favourite) =>
-          favourite.favouritee_id === user_id && favourite.is_active === true
-      )
-    ) {
-      return true;
-    }
-    return false;
+    return myFavouritePlayers?.find(
+      (player) => player.favouritee_id === user_id
+    );
   };
+
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
 
@@ -103,11 +118,11 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       (favourite) => favourite.favouritee_id === userId
     );
     const favouriteData = {
-      favourite_id: selectedFavourite.favourite_id,
-      registered_at: selectedFavourite.registered_at,
-      is_active: selectedFavourite.is_active === true ? false : true,
-      favouriter_id: selectedFavourite.favouriter_id,
-      favouritee_id: selectedFavourite.favouritee_id,
+      favourite_id: selectedFavourite?.favourite_id,
+      registered_at: selectedFavourite?.registered_at,
+      is_active: selectedFavourite?.is_active === true ? false : true,
+      favouriter_id: selectedFavourite?.favouriter_id,
+      favouritee_id: selectedFavourite?.favouritee_id,
     };
     updateFavourite(favouriteData);
   };
@@ -120,9 +135,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     }
   };
 
-  const userGender = players?.find(
-    (player) => player.user_id === user?.user?.user_id
-  )?.gender;
+  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
+
+  const userGender = currentPlayer?.[0]?.gender;
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
@@ -131,20 +147,32 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
   if (
-    !user ||
-    isPlayersLoading ||
+    isPaginatedPlayersLoading ||
     isLocationsLoading ||
     isPlayerLevelsLoading ||
-    isFavouritesLoading
+    isFavouritesLoading ||
+    isCurrentPlayerLoading
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
-      {players && filteredPlayers.length > 0 ? (
+      {filteredPlayers?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -158,10 +186,11 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
             </tr>
           </thead>
           <tbody>
-            {filteredPlayers.map((player) => (
+            {filteredPlayers?.map((player) => (
               <tr key={player.player_id} className={styles["player-row"]}>
                 <td>
-                  {isPlayerInMyFavourites(player.user_id) === true ? (
+                  {isPlayerInMyFavourites(player.user_id)?.is_active ===
+                  true ? (
                     <AiFillStar
                       className={styles["remove-fav-icon"]}
                       onClick={() => handleToggleFavourite(player.user_id)}
@@ -200,7 +229,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                   }
                 </td>
                 <td>{player.gender}</td>
-                <td>{year - Number(player.birth_year)}</td>
+                <td>{currentYear - Number(player.birth_year)}</td>
                 <td>
                   {
                     locations?.find(
@@ -267,6 +296,22 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           tekrar deneyin.
         </p>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handlePlayerPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

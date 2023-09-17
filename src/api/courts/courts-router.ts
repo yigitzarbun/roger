@@ -15,7 +15,18 @@ courtsRouter.get(
     }
   }
 );
-
+courtsRouter.get(
+  "/paginated/:page",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { page } = req.params;
+      const courts = await courtsModel.getPaginated(Number(page));
+      res.status(200).json(courts);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 courtsRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {

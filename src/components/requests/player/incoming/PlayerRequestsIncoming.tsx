@@ -306,7 +306,7 @@ const PlayerRequestsIncoming = () => {
                             booking.event_type_id === 2) &&
                           players?.find(
                             (player) => player.user_id === booking.inviter_id
-                          )
+                          )?.image
                             ? players?.find(
                                 (player) =>
                                   player.user_id === booking.inviter_id

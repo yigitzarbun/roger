@@ -14,12 +14,8 @@ import ExploreCourts from "../../components/explore/explore-results/explore-cour
 import { useGetPlayersQuery } from "../../api/endpoints/PlayersApi";
 import { useGetLocationsQuery } from "../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../api/endpoints/PlayerLevelsApi";
-import { useGetTrainersQuery } from "../../api/endpoints/TrainersApi";
 import { useGetTrainerExperienceTypesQuery } from "../../api/endpoints/TrainerExperienceTypesApi";
-import {
-  useGetClubsQuery,
-  useGetPaginatedClubsQuery,
-} from "../../api/endpoints/ClubsApi";
+import { useGetClubsQuery } from "../../api/endpoints/ClubsApi";
 import { useGetClubTypesQuery } from "../../api/endpoints/ClubTypesApi";
 import { useGetCourtsQuery } from "../../api/endpoints/CourtsApi";
 import { useGetCourtStructureTypesQuery } from "../../api/endpoints/CourtStructureTypesApi";
@@ -34,8 +30,6 @@ const Explore = () => {
     setDisplay(value);
   };
 
-  const [clubsPage, setClubsPage] = useState(1);
-
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
@@ -43,10 +37,6 @@ const Explore = () => {
 
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
-
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
 
   const { data: clubStaff, isLoading: isClubStaffLoading } =
     useGetClubStaffQuery({});
@@ -56,8 +46,7 @@ const Explore = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  const { data: clubs, isLoading: isClubsLoading } =
-    useGetPaginatedClubsQuery(clubsPage);
+  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const { data: clubTypes, isLoading: isClubTypesLoading } =
     useGetClubTypesQuery({});
@@ -79,23 +68,21 @@ const Explore = () => {
       {display === "players" && (
         <ExplorePlayers
           user={user}
-          players={players}
           locations={locations}
           playerLevels={playerLevels}
-          isPlayersLoading={isPlayersLoading}
+          players={players}
           isLocationsLoading={isLocationsLoading}
+          isPlayersLoading={isPlayersLoading}
           isPlayerLevelsLoading={isPlayerLevelsLoading}
         />
       )}
       {display === "trainers" && (
         <ExploreTrainers
           user={user}
-          trainers={trainers}
           locations={locations}
           trainerExperienceTypes={trainerExperienceTypes}
           clubStaff={clubStaff}
           clubs={clubs}
-          isTrainersLoading={isTrainersLoading}
           isLocationsLoading={isLocationsLoading}
           isTrainerExperienceTypesLoading={isTrainerExperienceTypesLoading}
           isClubStaffLoading={isClubStaffLoading}
@@ -115,8 +102,6 @@ const Explore = () => {
           isClubTypesLoading={isClubTypesLoading}
           isCourtsLoading={isCourtsLoading}
           isClubStaffLoading={isClubStaffLoading}
-          page={clubsPage}
-          setClubsPage={setClubsPage}
         />
       )}
       {display === "courts" && (
@@ -124,12 +109,10 @@ const Explore = () => {
           user={user}
           locations={locations}
           clubs={clubs}
-          courts={courts}
           courtStructureTypes={courtStructureTypes}
           courtSurfaceTypes={courtSurfaceTypes}
           isLocationsLoading={isLocationsLoading}
           isClubsLoading={isClubsLoading}
-          isCourtsLoading={isCourtsLoading}
           isCourtStructureTypesLoading={isCourtStructureTypesLoading}
           isCourtSurfaceTypesLoading={isCourtSurfaceTypesLoading}
         />
