@@ -83,12 +83,6 @@ const CourtBookingForm = () => {
   const [addPayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useAddPaymentMutation({});
 
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
-
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
-
   const {
     register,
     handleSubmit,
@@ -139,29 +133,39 @@ const CourtBookingForm = () => {
   let inviterPlayerSubscribed = false;
   let inviteePlayerSubscribed = false;
 
+  const [trainingMatchSkip, setTrainingMatchSkip] = useState(true);
+  const [lessonSkipPlayer, setLessonSkipPlayer] = useState(true);
+  const [lessonSkipTrainer, setLessonSkipTrainer] = useState(true);
+
   const {
     data: isInviterPlayerSubscribed,
     isLoading: isInviterPlayerSubscribedLoading,
-  } = useGetClubSubscriptionsByFilterQuery({
-    player_id: user?.user_id,
-    club_id: selectedClub?.[0]?.user_id,
-    is_active: true,
-  });
+  } = useGetClubSubscriptionsByFilterQuery(
+    {
+      player_id: user?.user_id,
+      club_id: selectedClub?.[0]?.user_id,
+      is_active: true,
+    },
+    { skip: trainingMatchSkip }
+  );
 
   const {
     data: isInviteePlayerSubscribed,
     isLoading: isInviteePlayerSubscribedLoading,
-  } = useGetClubSubscriptionsByFilterQuery({
-    player_id: selectedPlayer,
-    club_id: selectedClub?.[0]?.user_id,
-    is_active: true,
-  });
+  } = useGetClubSubscriptionsByFilterQuery(
+    {
+      player_id: selectedPlayer,
+      club_id: selectedClub?.[0]?.user_id,
+      is_active: true,
+    },
+    { skip: trainingMatchSkip }
+  );
 
   const { data: inviterPlayer, isLoading: isInviterPlayerLoading } =
-    useGetPlayerByUserIdQuery(user?.user_id);
+    useGetPlayerByUserIdQuery(user?.user_id, { skip: trainingMatchSkip });
 
   const { data: inviteePlayer, isLoading: isInviteePlayerLoading } =
-    useGetPlayerByUserIdQuery(selectedPlayer);
+    useGetPlayerByUserIdQuery(selectedPlayer, { skip: trainingMatchSkip });
 
   if (selectedEventType === 1 || selectedEventType === 2) {
     // subscription
@@ -212,48 +216,64 @@ const CourtBookingForm = () => {
     }
   }
 
+  const { data: lessonPlayerDetails, isLoading: isLessonPlayerDetailsLoading } =
+    useGetPlayerByUserIdQuery(user?.user_id, { skip: lessonSkipPlayer });
+
   const { data: playerSubscribed, isLoading: isPlayerSubscribedLoading } =
-    useGetClubSubscriptionsByFilterQuery({
-      player_id: user?.user_id,
-      club_id: selectedClub?.[0]?.user_id,
-      is_active: true,
-    });
+    useGetClubSubscriptionsByFilterQuery(
+      {
+        player_id: user?.user_id,
+        club_id: selectedClub?.[0]?.user_id,
+        is_active: true,
+      },
+      { skip: lessonSkipPlayer }
+    );
 
   const { data: trainerStaff, isLoading: isTrainerStaffLoading } =
-    useGetClubStaffByFilterQuery({
-      user_id: selectedTrainer,
-      club_id: selectedClub?.[0]?.club_id,
-      employment_status: "accepted",
-    });
+    useGetClubStaffByFilterQuery(
+      {
+        user_id: selectedTrainer,
+        club_id: selectedClub?.[0]?.club_id,
+        employment_status: "accepted",
+      },
+      { skip: lessonSkipPlayer }
+    );
 
   const { data: selectedTrainerDetails, isLoading: isSelectedTrainerLoading } =
-    useGetTrainerByUserIdQuery(selectedTrainer);
+    useGetTrainerByUserIdQuery(selectedTrainer, { skip: lessonSkipPlayer });
 
   const {
     data: lessonPlayerSubscription,
     isLoading: isLessonPlayerSubscription,
-  } = useGetClubSubscriptionsByFilterQuery({
-    player_id: selectedPlayer,
-    club_id: selectedClub?.[0]?.user_id,
-    is_active: true,
-  });
+  } = useGetClubSubscriptionsByFilterQuery(
+    {
+      player_id: selectedPlayer,
+      club_id: selectedClub?.[0]?.user_id,
+      is_active: true,
+    },
+    { skip: lessonSkipTrainer }
+  );
 
   const { data: lessonTrainerStaff, isLoading: isLessonTrainerStaff } =
-    useGetClubStaffByFilterQuery({
-      user_id: user?.user_id,
-      club_id: selectedClub?.[0]?.club_id,
-      employment_status: "accepted",
-    });
+    useGetClubStaffByFilterQuery(
+      {
+        user_id: user?.user_id,
+        club_id: selectedClub?.[0]?.club_id,
+        employment_status: "accepted",
+      },
+      { skip: lessonSkipTrainer }
+    );
 
   const {
     data: lessonSelectedTrainer,
     isLoading: isLessonSelectedTrainerLoading,
-  } = useGetTrainerByUserIdQuery(user?.user_id);
+  } = useGetTrainerByUserIdQuery(user?.user_id, { skip: lessonSkipTrainer });
 
   const {
     data: lessonSelectedPlayer,
     isLoading: isLessonSelectedPlayerLoading,
-  } = useGetPlayerByUserIdQuery(selectedPlayer);
+  } = useGetPlayerByUserIdQuery(selectedPlayer, { skip: lessonSkipTrainer });
+
   if (selectedEventType === 3) {
     if (isUserPlayer) {
       // subscription & staff
@@ -264,10 +284,10 @@ const CourtBookingForm = () => {
       // payment details
 
       if (
-        inviterPlayer?.[0]?.name_on_card &&
-        inviterPlayer?.[0]?.card_number &&
-        inviterPlayer?.[0]?.cvc &&
-        inviterPlayer?.[0]?.card_expiry
+        lessonPlayerDetails?.[0]?.name_on_card &&
+        lessonPlayerDetails?.[0]?.card_number &&
+        lessonPlayerDetails?.[0]?.cvc &&
+        lessonPlayerDetails?.[0]?.card_expiry
       ) {
         playerPaymentDetailsExist = true;
       }
@@ -294,15 +314,14 @@ const CourtBookingForm = () => {
       ) {
         trainerPaymentDetailsExist = true;
       }
-    }
-
-    if (
-      lessonSelectedPlayer?.[0]?.name_on_card &&
-      lessonSelectedPlayer?.[0]?.card_number &&
-      lessonSelectedPlayer?.[0]?.cvc &&
-      lessonSelectedPlayer?.[0]?.card_expiry
-    ) {
-      playerPaymentDetailsExist = true;
+      if (
+        lessonSelectedPlayer?.[0]?.name_on_card &&
+        lessonSelectedPlayer?.[0]?.card_number &&
+        lessonSelectedPlayer?.[0]?.cvc &&
+        lessonSelectedPlayer?.[0]?.card_expiry
+      ) {
+        playerPaymentDetailsExist = true;
+      }
     }
 
     if (
@@ -502,15 +521,28 @@ const CourtBookingForm = () => {
     }
   }, [isBookingSuccess, refetchBookings, navigate]);
 
+  useEffect(() => {
+    if (
+      (selectedEventType === 1 || selectedEventType === 2) &&
+      selectedPlayer
+    ) {
+      setTrainingMatchSkip(false);
+    }
+    if (selectedEventType === 3 && isUserPlayer && selectedTrainer) {
+      setLessonSkipPlayer(false);
+    }
+    if (selectedEventType === 3 && isUserTrainer && selectedPlayer) {
+      setLessonSkipTrainer(false);
+    }
+  }, [selectedEventType, selectedPlayer, selectedTrainer]);
+
   if (
     isBookingsLoading ||
     isClubsLoading ||
     isCourtsLoading ||
     isPlayersLoading ||
     isTrainersLoading ||
-    isEventTypesLoading ||
-    isClubSubscriptionsLoading ||
-    isClubStaffLoading
+    isEventTypesLoading
   ) {
     return <PageLoading />;
   }
