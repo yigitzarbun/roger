@@ -18,11 +18,26 @@ import {
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import {
+  useGetClubByClubIdQuery,
+  useGetClubsQuery,
+} from "../../../../api/endpoints/ClubsApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayersQuery,
+} from "../../../../api/endpoints/PlayersApi";
+import {
+  useGetTrainerByUserIdQuery,
+  useGetTrainersQuery,
+} from "../../../../api/endpoints/TrainersApi";
+import {
+  useGetClubSubscriptionsByFilterQuery,
+  useGetClubSubscriptionsQuery,
+} from "../../../../api/endpoints/ClubSubscriptionsApi";
+import {
+  useGetClubStaffByFilterQuery,
+  useGetClubStaffQuery,
+} from "../../../../api/endpoints/ClubStaffApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 import {
@@ -100,17 +115,17 @@ const CourtBookingForm = () => {
     (player) => player?.user_id === user?.user_id
   )?.gender;
 
-  const selectedClub = clubs?.find(
-    (club) => club.club_id === courtBookingDetails?.club_id
-  );
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(courtBookingDetails?.club_id);
 
   let playerSubscriptionRequired =
-    selectedClub?.is_player_subscription_required;
+    selectedClub?.[0]?.is_player_subscription_required;
 
   let playerLessonSubscriptionRequired =
-    selectedClub?.is_player_lesson_subscription_required;
+    selectedClub?.[0]?.is_player_lesson_subscription_required;
 
-  let trainerStaffRequired = selectedClub?.is_trainer_subscription_required;
+  let trainerStaffRequired =
+    selectedClub?.[0]?.is_trainer_subscription_required;
 
   let isTrainerStaff = false;
   let isPlayerSubscribed = false;
@@ -124,23 +139,37 @@ const CourtBookingForm = () => {
   let inviterPlayerSubscribed = false;
   let inviteePlayerSubscribed = false;
 
+  const {
+    data: isInviterPlayerSubscribed,
+    isLoading: isInviterPlayerSubscribedLoading,
+  } = useGetClubSubscriptionsByFilterQuery({
+    player_id: user?.user_id,
+    club_id: selectedClub?.[0]?.user_id,
+    is_active: true,
+  });
+
+  const {
+    data: isInviteePlayerSubscribed,
+    isLoading: isInviteePlayerSubscribedLoading,
+  } = useGetClubSubscriptionsByFilterQuery({
+    player_id: selectedPlayer,
+    club_id: selectedClub?.[0]?.user_id,
+    is_active: true,
+  });
+
+  const { data: inviterPlayer, isLoading: isInviterPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user_id);
+
+  const { data: inviteePlayer, isLoading: isInviteePlayerLoading } =
+    useGetPlayerByUserIdQuery(selectedPlayer);
+
   if (selectedEventType === 1 || selectedEventType === 2) {
-    inviterPlayerSubscribed = clubSubscriptions?.find(
-      (subscription) =>
-        subscription.player_id === user?.user_id &&
-        subscription.club_id === selectedClub?.user_id &&
-        subscription.is_active === true
-    )
-      ? true
-      : false;
-    inviteePlayerSubscribed = clubSubscriptions?.find(
-      (subscription) =>
-        subscription.player_id === selectedPlayer &&
-        subscription.club_id === selectedClub?.user_id &&
-        subscription.is_active === true
-    )
-      ? true
-      : false;
+    // subscription
+    inviterPlayerSubscribed =
+      isInviterPlayerSubscribed?.length > 0 ? true : false;
+    inviteePlayerSubscribed =
+      isInviteePlayerSubscribed?.length > 0 ? true : false;
+
     if (
       (inviterPlayerSubscribed === false ||
         inviteePlayerSubscribed === false) &&
@@ -151,29 +180,24 @@ const CourtBookingForm = () => {
         "Kort kiralayabilmek için oyuncuların kulübe üye olması gerekmetkedir";
     }
 
-    const inviterPlayer = players?.find(
-      (player) => player.user_id === user?.user_id
-    );
-    const inviteePlayer = players?.find(
-      (player) => player.user_id === selectedPlayer
-    );
+    // payment details
 
     let inviterPlayerPaymentDetailsExist = false;
     if (
-      inviterPlayer?.name_on_card &&
-      inviterPlayer?.card_number &&
-      inviterPlayer?.cvc &&
-      inviterPlayer?.card_expiry
+      inviterPlayer?.[0]?.name_on_card &&
+      inviterPlayer?.[0]?.card_number &&
+      inviterPlayer?.[0]?.cvc &&
+      inviterPlayer?.[0]?.card_expiry
     ) {
       inviterPlayerPaymentDetailsExist = true;
     }
 
     let inviteePlayerPaymentDetailsExist = false;
     if (
-      inviteePlayer?.name_on_card &&
-      inviteePlayer?.card_number &&
-      inviteePlayer?.cvc &&
-      inviteePlayer?.card_expiry
+      inviteePlayer?.[0]?.name_on_card &&
+      inviteePlayer?.[0]?.card_number &&
+      inviteePlayer?.[0]?.cvc &&
+      inviteePlayer?.[0]?.card_expiry
     ) {
       inviteePlayerPaymentDetailsExist = true;
     }
@@ -188,90 +212,99 @@ const CourtBookingForm = () => {
     }
   }
 
+  const { data: playerSubscribed, isLoading: isPlayerSubscribedLoading } =
+    useGetClubSubscriptionsByFilterQuery({
+      player_id: user?.user_id,
+      club_id: selectedClub?.[0]?.user_id,
+      is_active: true,
+    });
+
+  const { data: trainerStaff, isLoading: isTrainerStaffLoading } =
+    useGetClubStaffByFilterQuery({
+      user_id: selectedTrainer,
+      club_id: selectedClub?.[0]?.club_id,
+      employment_status: "accepted",
+    });
+
+  const { data: selectedTrainerDetails, isLoading: isSelectedTrainerLoading } =
+    useGetTrainerByUserIdQuery(selectedTrainer);
+
+  const {
+    data: lessonPlayerSubscription,
+    isLoading: isLessonPlayerSubscription,
+  } = useGetClubSubscriptionsByFilterQuery({
+    player_id: selectedPlayer,
+    club_id: selectedClub?.[0]?.user_id,
+    is_active: true,
+  });
+
+  const { data: lessonTrainerStaff, isLoading: isLessonTrainerStaff } =
+    useGetClubStaffByFilterQuery({
+      user_id: user?.user_id,
+      club_id: selectedClub?.[0]?.club_id,
+      employment_status: "accepted",
+    });
+
+  const {
+    data: lessonSelectedTrainer,
+    isLoading: isLessonSelectedTrainerLoading,
+  } = useGetTrainerByUserIdQuery(user?.user_id);
+
+  const {
+    data: lessonSelectedPlayer,
+    isLoading: isLessonSelectedPlayerLoading,
+  } = useGetPlayerByUserIdQuery(selectedPlayer);
   if (selectedEventType === 3) {
     if (isUserPlayer) {
-      isPlayerSubscribed = clubSubscriptions?.find(
-        (subscription) =>
-          subscription.player_id === user?.user_id &&
-          subscription.club_id === selectedClub?.user_id &&
-          subscription.is_active === true
-      )
-        ? true
-        : false;
+      // subscription & staff
+      isPlayerSubscribed = playerSubscribed?.length > 0 ? true : false;
 
-      isTrainerStaff = clubStaff?.find(
-        (staff) =>
-          staff.user_id === selectedTrainer &&
-          staff.club_id === selectedClub?.club_id &&
-          staff.employment_status === "accepted"
-      )
-        ? true
-        : false;
+      isTrainerStaff = trainerStaff?.length > 0 ? true : false;
 
-      const selectedPlayer = players?.find(
-        (player) => player.user_id === user?.user_id
-      );
+      // payment details
+
       if (
-        selectedPlayer?.name_on_card &&
-        selectedPlayer?.card_number &&
-        selectedPlayer?.cvc &&
-        selectedPlayer?.card_expiry
+        inviterPlayer?.[0]?.name_on_card &&
+        inviterPlayer?.[0]?.card_number &&
+        inviterPlayer?.[0]?.cvc &&
+        inviterPlayer?.[0]?.card_expiry
       ) {
         playerPaymentDetailsExist = true;
       }
 
-      const selectedTrainerDetails = trainers?.find(
-        (trainer) => trainer.user_id === selectedTrainer
-      );
       if (
-        selectedTrainerDetails?.iban &&
-        selectedTrainerDetails?.name_on_bank_account &&
-        selectedTrainerDetails?.bank_id
+        selectedTrainerDetails?.[0]?.iban &&
+        selectedTrainerDetails?.[0]?.name_on_bank_account &&
+        selectedTrainerDetails?.[0]?.bank_id
       ) {
         trainerPaymentDetailsExist = true;
       }
     } else if (isUserTrainer) {
-      isPlayerSubscribed = clubSubscriptions?.find(
-        (subscription) =>
-          subscription.player_id === selectedPlayer &&
-          subscription.club_id === selectedClub?.user_id &&
-          subscription.is_active === true
-      )
-        ? true
-        : false;
+      // subscription & staff
+      isPlayerSubscribed = lessonPlayerSubscription?.length > 0 ? true : false;
 
-      isTrainerStaff = clubStaff?.find(
-        (staff) =>
-          staff.user_id === user?.user_id &&
-          staff.club_id === selectedClub?.club_id &&
-          staff.employment_status === "accepted"
-      )
-        ? true
-        : false;
+      isTrainerStaff = lessonTrainerStaff?.length > 0 ? true : false;
 
-      const selectedTrainer = trainers?.find(
-        (trainer) => trainer.user_id === user?.user_id
-      );
+      // payment details
+
       if (
-        selectedTrainer?.iban &&
-        selectedTrainer?.name_on_bank_account &&
-        selectedTrainer?.bank_id
+        lessonSelectedTrainer?.[0]?.iban &&
+        lessonSelectedTrainer?.[0]?.name_on_bank_account &&
+        lessonSelectedTrainer?.[0]?.bank_id
       ) {
         trainerPaymentDetailsExist = true;
       }
     }
 
-    const selectedPlayerDetails = players?.find(
-      (player) => player.user_id === selectedPlayer
-    );
     if (
-      selectedPlayerDetails?.name_on_card &&
-      selectedPlayerDetails?.card_number &&
-      selectedPlayerDetails?.cvc &&
-      selectedPlayerDetails?.card_expiry
+      lessonSelectedPlayer?.[0]?.name_on_card &&
+      lessonSelectedPlayer?.[0]?.card_number &&
+      lessonSelectedPlayer?.[0]?.cvc &&
+      lessonSelectedPlayer?.[0]?.card_expiry
     ) {
       playerPaymentDetailsExist = true;
     }
+
     if (
       (playerPaymentDetailsExist === false ||
         trainerPaymentDetailsExist === false) &&
@@ -347,7 +380,7 @@ const CourtBookingForm = () => {
       court_price:
         (Number(formData?.event_type_id) === 1 ||
           Number(formData?.event_type_id) === 2) &&
-        selectedClub?.higher_price_for_non_subscribers &&
+        selectedClub?.[0]?.higher_price_for_non_subscribers &&
         courts.find(
           (court) => court.court_id === Number(courtBookingDetails?.court_id)
         )?.price_hour_non_subscriber &&
@@ -357,7 +390,7 @@ const CourtBookingForm = () => {
                 court.court_id === Number(courtBookingDetails?.court_id)
             )?.price_hour_non_subscriber
           : Number(formData?.event_type_id) === 3 &&
-            selectedClub?.higher_price_for_non_subscribers &&
+            selectedClub?.[0]?.higher_price_for_non_subscribers &&
             courts.find(
               (court) =>
                 court.court_id === Number(courtBookingDetails?.court_id)

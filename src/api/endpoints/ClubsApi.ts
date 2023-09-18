@@ -73,6 +73,7 @@ export const clubsSlice = createApi({
     updateClub: builder.mutation({
       query: (club) => {
         const formData = new FormData();
+
         formData.append("club_id", club.club_id);
         formData.append("club_name", club.club_name);
         formData.append("location_id", club.location_id);
@@ -91,19 +92,28 @@ export const clubsSlice = createApi({
         if (club.phone_number) {
           formData.append("phone_number", club.phone_number.toString());
         }
-        if (club.is_trainer_subscription_required) {
+        if (
+          club.is_trainer_subscription_required === true ||
+          club.is_trainer_subscription_required === false
+        ) {
           formData.append(
             "is_trainer_subscription_required",
             club.is_trainer_subscription_required
           );
         }
-        if (club.is_player_lesson_subscription_required) {
+        if (
+          club.is_player_lesson_subscription_required === true ||
+          club.is_player_lesson_subscription_required === false
+        ) {
           formData.append(
             "is_player_lesson_subscription_required",
             club.is_player_lesson_subscription_required
           );
         }
-        if (club.is_player_subscription_required) {
+        if (
+          club.is_player_subscription_required === true ||
+          club.is_player_subscription_required === false
+        ) {
           formData.append(
             "is_player_subscription_required",
             club.is_player_subscription_required
@@ -118,7 +128,10 @@ export const clubsSlice = createApi({
         if (club.name_on_bank_account) {
           formData.append("name_on_bank_account", club.name_on_bank_account);
         }
-        if (club.higher_price_for_non_subscribers) {
+        if (
+          club.higher_price_for_non_subscribers === true ||
+          club.higher_price_for_non_subscribers === false
+        ) {
           formData.append(
             "higher_price_for_non_subscribers",
             club.higher_price_for_non_subscribers

@@ -1,186 +1,162 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { AiOutlineEdit } from "react-icons/ai";
 
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetClubByUserIdQuery } from "../../../../api/endpoints/ClubsApi";
 
-import UpdateClubRulesModal from "./update-club-rules/UpdateClubRulesModal";
+import UpdateCourtRuleModal from "./court-rule-modal/UpdateCourtRuleModal";
+import UpdateLessonRuleModal from "./lesson-rule-modal/UpdateLessonRuleModal";
+import UpdatePlayerRuleModal from "./player-rule-modal/UpdatePlayerRuleModal";
+
 import PageLoading from "../../../../components/loading/PageLoading";
 
 const ClubRules = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const {
+    data: clubDetails,
+    isLoading: isClubDetailsLoading,
+    refetch: refetchClubDetails,
+  } = useGetClubByUserIdQuery(user?.user?.user_id);
 
-  const clubDetails = clubs?.find(
-    (club) => club.user_id === user?.user?.user_id
-  );
+  const [isCourtRuleModalOpen, setIsCourtRuleModalOpen] = useState(false);
+  const openCourtRuleModal = () => {
+    setIsCourtRuleModalOpen(true);
+  };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLessonRuleModalOpen, setIsLessonRuleModalOpen] = useState(false);
+  const openLessonRuleModal = () => {
+    setIsLessonRuleModalOpen(true);
+  };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  const [isPlayerRuleModalOpen, setIsPlayerModalOpen] = useState(false);
+  const handlePlayerRuleModal = () => {
+    setIsPlayerModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    setIsCourtRuleModalOpen(false);
+    setIsLessonRuleModalOpen(false);
+    setIsPlayerModalOpen(false);
   };
 
-  if (isClubsLoading) {
+  useEffect(() => {
+    refetchClubDetails();
+  }, [isCourtRuleModalOpen, isLessonRuleModalOpen, isPlayerRuleModalOpen]);
+  if (isClubDetailsLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["club-rules-container"]}>
       <h2>Kulüp Kuralları</h2>
       <div className={styles["tables-container"]}>
         <table
           className={styles["player-rules-table"]}
-          onClick={handleOpenModal}
+          onClick={handlePlayerRuleModal}
         >
           <thead>
             <tr>
               <th>Antreman ve Maç Kuralları</th>
-              <th>Durum</th>
+              <th>
+                <AiOutlineEdit className={styles.edit} />
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr className={styles["rule-row"]}>
-              <td>Oyuncuların kort kiralamak için üye olmasına gerek yok</td>
-              <td
-                className={
-                  clubDetails?.is_player_subscription_required === false
-                    ? styles["green-text"]
-                    : styles["red-text"]
-                }
-              >
-                {clubDetails?.is_player_subscription_required === false
-                  ? "Evet"
-                  : "Hayır"}
-              </td>
+              <td>{`Oyuncuların kort kiralamak için üye olmasına gerek ${
+                clubDetails?.[0]?.is_player_subscription_required === true
+                  ? "var"
+                  : "yok"
+              }`}</td>
             </tr>
           </tbody>
         </table>
         <table
           className={styles["lesson-rules-table"]}
-          onClick={handleOpenModal}
+          onClick={openLessonRuleModal}
         >
           <thead>
             <tr>
               <th>Ders Kuralları</th>
-              <th>Durum</th>
+              <th>
+                <AiOutlineEdit className={styles.edit} />
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr className={styles["rule-row"]}>
               <td>
-                Eğtimenin kulüp çalışanı veya oyuncunun üye olmasına gerek yok
-              </td>
-              <td
-                className={
-                  clubDetails?.is_trainer_subscription_required === false &&
-                  clubDetails?.is_player_lesson_subscription_required === false
-                    ? styles["green-text"]
-                    : styles["red-text"]
-                }
-              >
-                {clubDetails?.is_trainer_subscription_required === false &&
-                clubDetails?.is_player_lesson_subscription_required === false
-                  ? "Evet"
-                  : "Hayır"}
-              </td>
-            </tr>
-            <tr className={styles["rule-row"]}>
-              <td>
-                Eğitmenin kulüp çalışanı değil, oyuncu üye ise kort
-                kiralanabilir
-              </td>
-              <td
-                className={
-                  clubDetails?.is_trainer_subscription_required === false &&
-                  clubDetails?.is_player_lesson_subscription_required === true
-                    ? styles["green-text"]
-                    : styles["red-text"]
-                }
-              >
-                {clubDetails?.is_trainer_subscription_required === false &&
-                clubDetails?.is_player_lesson_subscription_required === true
-                  ? "Evet"
-                  : "Hayır"}
-              </td>
-            </tr>
-            <tr className={styles["rule-row"]}>
-              <td>
-                Eğitmenin kulüp çalışanı, oyuncu üye değil ise kort
-                kiralanabilir
-              </td>
-              <td
-                className={
-                  clubDetails?.is_trainer_subscription_required === true &&
-                  clubDetails?.is_player_lesson_subscription_required === false
-                    ? styles["green-text"]
-                    : styles["red-text"]
-                }
-              >
-                {clubDetails?.is_trainer_subscription_required === true &&
-                clubDetails?.is_player_lesson_subscription_required === false
-                  ? "Evet"
-                  : "Hayır"}
-              </td>
-            </tr>
-            <tr className={styles["rule-row"]}>
-              <td>Eğitmenin kulüp çalışanı, oyuncunun üye olması zorunludur</td>
-              <td
-                className={
-                  clubDetails?.is_trainer_subscription_required === true &&
-                  clubDetails?.is_player_lesson_subscription_required === true
-                    ? styles["green-text"]
-                    : styles["red-text"]
-                }
-              >
-                {clubDetails?.is_trainer_subscription_required === true &&
-                clubDetails?.is_player_lesson_subscription_required === true
-                  ? "Evet"
-                  : "Hayır"}
+                {clubDetails?.[0]?.is_trainer_subscription_required === false &&
+                clubDetails?.[0]?.is_player_lesson_subscription_required ===
+                  false
+                  ? "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok"
+                  : clubDetails?.[0]?.is_trainer_subscription_required ===
+                      false &&
+                    clubDetails?.[0]?.is_player_lesson_subscription_required ===
+                      true
+                  ? "Eğitmen kulüp çalışanı değil ama oyuncu üye ise kort kiralanabilir"
+                  : clubDetails?.[0]?.is_trainer_subscription_required ===
+                      true &&
+                    clubDetails?.[0]?.is_player_lesson_subscription_required ===
+                      false
+                  ? "Eğitmen kulüp çalışanı ise ama oyuncu üye değil ise kort kiralanabilir"
+                  : clubDetails?.[0]?.is_trainer_subscription_required ===
+                      true &&
+                    clubDetails?.[0]?.is_player_lesson_subscription_required ===
+                      true
+                  ? "Eğitmenin kulüp çalışanı olması, oyuncunun üye olması zorunludur"
+                  : ""}
               </td>
             </tr>
           </tbody>
         </table>
         <table
           className={styles["court-rules-table"]}
-          onClick={handleOpenModal}
+          onClick={openCourtRuleModal}
         >
           <thead>
             <tr>
               <th>Kort Fiyat Kuralları</th>
-              <th>Durum</th>
+              <th>
+                <AiOutlineEdit className={styles.edit} />
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr className={styles["rule-row"]}>
-              <td>Üye olmayanlara farklı fiyat politikası uygulanır</td>
-              <td
-                className={
-                  clubDetails?.higher_price_for_non_subscribers === true
-                    ? styles["green-text"]
-                    : styles["red-text"]
-                }
-              >
-                {clubDetails?.higher_price_for_non_subscribers === true
-                  ? "Evet"
-                  : "Hayır"}
-              </td>
+              <td>{`Üye olmayanlara farklı fiyat politikası ${
+                clubDetails?.[0]?.higher_price_for_non_subscribers === true
+                  ? "uygulanır"
+                  : "uygulanmaz"
+              }`}</td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      <button onClick={handleOpenModal}>Düzenle</button>
-      <UpdateClubRulesModal
-        isModalOpen={isModalOpen}
-        handleCloseModal={handleCloseModal}
-      />
+      {isCourtRuleModalOpen && (
+        <UpdateCourtRuleModal
+          isCourtRuleModalOpen={isCourtRuleModalOpen}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
+      {isLessonRuleModalOpen && (
+        <UpdateLessonRuleModal
+          isLessonRuleModalOpen={isLessonRuleModalOpen}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
+      {isPlayerRuleModalOpen && (
+        <UpdatePlayerRuleModal
+          isPlayerRuleModalOpen={isPlayerRuleModalOpen}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

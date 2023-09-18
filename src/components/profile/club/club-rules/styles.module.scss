@@ -30,6 +30,10 @@
       text-align: left;
       border: 1px solid white;
       border-radius: $roger-border-radius;
+      .edit:hover {
+        color: $roger-blue;
+        cursor: pointer;
+      }
       .green-text {
         color: $roger-green;
       }

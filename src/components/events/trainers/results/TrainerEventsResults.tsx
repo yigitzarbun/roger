@@ -220,7 +220,7 @@ const TrainerEventsResults = () => {
                           selectedPlayer(event.invitee_id)?.lname
                         }`
                       : isEventLesson(event.event_type_id) &&
-                        isTrainerInvitee(event.inviter_id)
+                        isTrainerInvitee(event.invitee_id)
                       ? `${selectedPlayer(event.inviter_id)?.fname} ${
                           selectedPlayer(event.inviter_id)?.lname
                         }`
@@ -240,7 +240,7 @@ const TrainerEventsResults = () => {
                         selectedPlayer(event.invitee_id)?.player_level_id
                       )?.player_level_name
                     : isEventLesson(event.event_type_id) &&
-                      isTrainerInvitee(event.inviter_id)
+                      isTrainerInvitee(event.invitee_id)
                     ? selectedPlayerLevel(
                         selectedPlayer(event.inviter_id)?.player_level_id
                       )?.player_level_name

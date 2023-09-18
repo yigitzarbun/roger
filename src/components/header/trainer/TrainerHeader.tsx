@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { FaCircle } from "react-icons/fa";
 
@@ -10,58 +10,75 @@ import styles from "./styles.module.scss";
 
 import PageLoading from "../../../components/loading/PageLoading";
 
-import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
+import { useGetBookingsByFilterQuery } from "../../../api/endpoints/BookingsApi";
 import { useAppSelector } from "../../../store/hooks";
-import { useGetStudentsQuery } from "../../../api/endpoints/StudentsApi";
-import { useGetEventReviewsQuery } from "../../../api/endpoints/EventReviewsApi";
+import { useGetStudentsByFilterQuery } from "../../../api/endpoints/StudentsApi";
+import { useGetEventReviewsByFilterQuery } from "../../../api/endpoints/EventReviewsApi";
+import {
+  currentDayLocale,
+  currentTimeLocale,
+} from "../../../common/util/TimeFunctions";
 
 const TrainerHeader = () => {
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-
-  const { data: students, isLoading: isStudentsLoading } = useGetStudentsQuery(
-    {}
-  );
-
-  const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetEventReviewsQuery({});
-
   const user = useAppSelector((store) => store?.user?.user?.user);
 
-  const date = new Date();
-  const today = date.toLocaleDateString();
-  const now = date.toLocaleTimeString();
+  const {
+    data: bookings,
+    isLoading: isBookingsLoading,
+    refetch: refetchBookings,
+  } = useGetBookingsByFilterQuery({
+    invitee_id: user?.user_id,
+    booking_status_type_id: 1,
+  });
+
+  const {
+    data: myReviews,
+    isLoading: isEventReviewsLoading,
+    refetch: refetchMyReviews,
+  } = useGetEventReviewsByFilterQuery({
+    is_active: true,
+    reviewer_id: user?.user_id,
+  });
 
   const incomingBookings = bookings?.filter(
     (booking) =>
-      booking.invitee_id === user?.user_id &&
-      booking.booking_status_type_id === 1 &&
-      (new Date(booking.event_date).toLocaleDateString() > today ||
-        (new Date(booking.event_date).toLocaleDateString() === today &&
-          booking.event_time >= now))
+      new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
+      (new Date(booking.event_date).toLocaleDateString() === currentDayLocale &&
+        booking.event_time >= currentTimeLocale)
   );
 
-  const newStudentRequests = students?.filter(
-    (student) =>
-      student.trainer_id === user?.user_id &&
-      student.student_status === "pending"
-  );
+  const {
+    data: newStudentRequests,
+    isLoading: isNewStudentRequestsLoading,
+    refetch: refetchStudentRequests,
+  } = useGetStudentsByFilterQuery({
+    trainer_id: user?.user_id,
+    student_status: "pending",
+  });
 
-  const myEvents = bookings?.filter(
-    (booking) =>
-      (booking.inviter_id === user?.user_id ||
-        booking.invitee_id === user?.user_id) &&
-      booking.booking_status_type_id === 5 &&
-      booking.event_type_id === 3
-  );
+  const {
+    data: myEvents,
+    isLoading: isMyEventsLoading,
+    refetch: refetchMyEvents,
+  } = useGetBookingsByFilterQuery({
+    booking_player_id: user?.user_id,
+    booking_status_type_id: 5,
+    event_type_id: 3,
+  });
 
-  const myReviews = eventReviews?.filter(
-    (review) =>
-      review.is_active === true && review.reviewer_id === user?.user_id
-  );
+  useEffect(() => {
+    refetchBookings();
+    refetchMyReviews();
+    refetchStudentRequests();
+    refetchMyEvents();
+  }, []);
 
-  if (isBookingsLoading || isStudentsLoading || isEventReviewsLoading) {
+  if (
+    isBookingsLoading ||
+    isNewStudentRequestsLoading ||
+    isEventReviewsLoading ||
+    isMyEventsLoading
+  ) {
     return <PageLoading />;
   }
 

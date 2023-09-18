@@ -16,7 +16,6 @@ import { useGetEventReviewsByFilterQuery } from "../../../api/endpoints/EventRev
 import { useGetMatchScoresQuery } from "../../../api/endpoints/MatchScoresApi";
 import {
   currentDayLocale,
-  currentTime,
   currentTimeLocale,
 } from "../../../common/util/TimeFunctions";
 

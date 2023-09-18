@@ -7,8 +7,6 @@ import paths from "../../routing/Paths";
 import { logOut } from "../../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
-//import i18n from "../../common/i18n/i18n";
-
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
 import ClubHeader from "./club/ClubHeader";
