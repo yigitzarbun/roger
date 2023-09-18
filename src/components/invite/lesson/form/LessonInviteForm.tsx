@@ -26,18 +26,22 @@ import {
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import {
+  useGetTrainerByUserIdQuery,
+  useGetTrainersQuery,
+} from "../../../../api/endpoints/TrainersApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayersQuery,
+} from "../../../../api/endpoints/PlayersApi";
 import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../../api/endpoints/PaymentsApi";
 
 import {
-  addMinutes,
   formatTime,
   generateAvailableTimeSlots,
-  roundToNearestHour,
 } from "../../../../common/util/TimeFunctions";
 import PageLoading from "../../../../components/loading/PageLoading";
 
@@ -77,22 +81,24 @@ const LeesonInviteForm = () => {
     playerUserId = user?.user?.user_id;
   }
 
-  const selectedTrainer = trainers?.find((t) => t.user_id === trainerUserId);
-  const selectedPlayer = players?.find((p) => p.user_id === playerUserId);
+  const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
+    useGetTrainerByUserIdQuery(trainerUserId);
+  const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
+    useGetPlayerByUserIdQuery(playerUserId);
 
   if (
-    selectedTrainer?.iban &&
-    selectedTrainer?.bank_id &&
-    selectedTrainer?.name_on_bank_account
+    selectedTrainer?.[0]?.iban &&
+    selectedTrainer?.[0]?.bank_id &&
+    selectedTrainer?.[0]?.name_on_bank_account
   ) {
     trainerBankDetailsExist = true;
   }
 
   if (
-    selectedPlayer?.name_on_card &&
-    selectedPlayer?.card_number &&
-    selectedPlayer?.cvc &&
-    selectedPlayer?.card_expiry
+    selectedPlayer?.[0]?.name_on_card &&
+    selectedPlayer?.[0]?.card_number &&
+    selectedPlayer?.[0]?.cvc &&
+    selectedPlayer?.[0]?.card_expiry
   ) {
     playerPaymentDetailsExist = true;
   }
@@ -167,7 +173,10 @@ const LeesonInviteForm = () => {
   let trainerStaffRequired = false;
 
   const selectedClubSubscriptions = clubSubscriptions?.filter(
-    (subscription) => subscription.club_id === selectedClub
+    (subscription) =>
+      subscription.club_id ===
+        clubs?.find((club) => club.club_id === selectedClub)?.user_id &&
+      subscription.is_active === true
   );
 
   // booking hours check
@@ -205,6 +214,7 @@ const LeesonInviteForm = () => {
   const [bookingFormData, setBookingFormData] = useState<FormValues | null>(
     null
   );
+
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
     const bookingData = {
       event_date: new Date(formData.event_date).toISOString(),
@@ -249,60 +259,6 @@ const LeesonInviteForm = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [buttonText, setButtonText] = useState("");
 
-  if (
-    selectedClub &&
-    clubs &&
-    clubs?.find(
-      (club) =>
-        club.club_id ===
-        clubs?.find((club) => club.user_id === selectedClub)?.club_id
-    )?.is_player_lesson_subscription_required
-  ) {
-    playerSubscriptionRequired = true;
-  }
-
-  if (
-    selectedClub &&
-    clubs &&
-    clubs?.find(
-      (club) =>
-        club.club_id ===
-        clubs?.find((club) => club.user_id === selectedClub)?.club_id
-    )?.is_trainer_subscription_required
-  ) {
-    trainerStaffRequired = true;
-  }
-  if (selectedClubSubscriptions?.length > 0 && user && clubSubscriptions) {
-    if (
-      selectedClubSubscriptions.find(
-        (subscription) =>
-          subscription.player_id === playerUserId &&
-          subscription.is_active === true
-      )
-    ) {
-      isPlayerSubscribed = true;
-    }
-  }
-  if (
-    selectedClubSubscriptions?.length > 0 &&
-    trainer &&
-    clubStaff &&
-    clubSubscriptions &&
-    selectedClub
-  ) {
-    if (
-      clubStaff?.find(
-        (staff) =>
-          staff.user_id === trainerUserId &&
-          staff.club_id ===
-            clubs?.find((club) => club.user_id === selectedClub)?.club_id &&
-          staff.employment_status === "accepted"
-      )
-    ) {
-      isTrainerStaff = true;
-    }
-  }
-
   const handleModalSubmit = () => {
     setModal(false);
 
@@ -332,8 +288,35 @@ const LeesonInviteForm = () => {
   const handleCloseModal = () => {
     setModal(false);
   };
+  let selectedClubDetails = clubs?.find(
+    (club) => club.club_id === selectedClub
+  );
 
   useEffect(() => {
+    selectedClubDetails = clubs?.find((club) => club.club_id === selectedClub);
+
+    playerSubscriptionRequired =
+      selectedClubDetails?.is_player_lesson_subscription_required;
+
+    trainerStaffRequired =
+      selectedClubDetails?.is_trainer_subscription_required;
+
+    isPlayerSubscribed = selectedClubSubscriptions.find(
+      (subscription) =>
+        subscription.player_id === playerUserId &&
+        subscription.is_active === true
+    )
+      ? true
+      : false;
+
+    isTrainerStaff = clubStaff?.find(
+      (staff) =>
+        staff.user_id === trainerUserId &&
+        staff.club_id === selectedClub &&
+        staff.employment_status === "accepted"
+    )
+      ? true
+      : false;
     if (
       playerSubscriptionRequired === true &&
       trainerStaffRequired === true &&
@@ -361,14 +344,22 @@ const LeesonInviteForm = () => {
       setButtonText(
         "Kort kiralamak için oyuncunun kulüp üyesi olması gerekmektedir"
       );
-    } else if (!trainerBankDetailsExist || !playerPaymentDetailsExist) {
-      setIsButtonDisabled(true);
-      setButtonText(
-        "Kort kiralamak için oyuncu ve eğitmenin banka bilgilerinin mevcut olması gerekmektedir"
-      );
+    } else {
+      setIsButtonDisabled(false);
+      setButtonText("");
     }
   }, [selectedClub]);
 
+  useEffect(() => {
+    if (selectedPlayer && selectedTrainer) {
+      if (!trainerBankDetailsExist || !playerPaymentDetailsExist) {
+        setIsButtonDisabled(true);
+        setButtonText(
+          "Kort kiralamak için oyuncu ve eğitmenin banka bilgilerinin mevcut olması gerekmektedir"
+        );
+      }
+    }
+  }, [selectedPlayer, selectedTrainer]);
   useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();
@@ -393,7 +384,9 @@ const LeesonInviteForm = () => {
     isClubsLoading ||
     isCourtsLoading ||
     isTrainersLoading ||
-    isPlayersLoading
+    isPlayersLoading ||
+    isSelectedTrainerLoading ||
+    isSelectedPlayerLoading
   ) {
     return <PageLoading />;
   }

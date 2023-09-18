@@ -19,7 +19,7 @@ export const currentDayObject = new Date(
 );
 export const currentYear = today.getFullYear();
 export const currentDayLocale = new Date(currentDay).toLocaleDateString();
-export const currentTimeLocale = new Date().toLocaleTimeString();
+export const currentTimeLocale = currentDayObject.toLocaleTimeString();
 
 // Utility function to add minutes to a given time
 export function addMinutes(time, minutes) {
