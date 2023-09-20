@@ -74,8 +74,6 @@ const PlayerRequestsIncoming = () => {
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
 
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-
   const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
 
   const {
@@ -487,6 +485,7 @@ const PlayerRequestsIncoming = () => {
         handleCloseAcceptModal={handleCloseAcceptModal}
         acceptBookingData={acceptBookingData}
         handleAcceptBooking={handleAcceptBooking}
+        players={players}
       />
       <DeclineInviteModal
         isDeclineModalOpen={isDeclineModalOpen}

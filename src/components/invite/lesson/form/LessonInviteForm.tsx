@@ -14,7 +14,10 @@ import InviteModal, { FormValues } from "../../modals/invite-modal/InviteModal";
 
 import { useState } from "react";
 
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import {
+  useGetClubByClubIdQuery,
+  useGetClubsQuery,
+} from "../../../../api/endpoints/ClubsApi";
 
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 
@@ -24,22 +27,20 @@ import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
 import {
   useGetTrainerByUserIdQuery,
   useGetTrainersQuery,
 } from "../../../../api/endpoints/TrainersApi";
-import {
-  useGetPlayerByUserIdQuery,
-  useGetPlayersQuery,
-} from "../../../../api/endpoints/PlayersApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../../api/endpoints/PaymentsApi";
 
 import {
+  currentDay,
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
@@ -52,7 +53,6 @@ const LeesonInviteForm = () => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -126,26 +126,6 @@ const LeesonInviteForm = () => {
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
-
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
-
-  const today = new Date();
-  let day = String(today.getDate());
-  let month = String(today.getMonth() + 1);
-  const year = today.getFullYear();
-
-  day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
-  month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
-
-  const currentDay = `${year}-${month}-${day}`;
-
-  const currentHour = String(today.getHours()).padStart(2, "0");
-  const currentMinute = String(today.getMinutes()).padStart(2, "0");
-  const currentTime = `${currentHour}:${currentMinute}`;
-
   const [selectedDate, setSelectedDate] = useState("");
   const handleSelectedDate = (event) => {
     setSelectedDate(event.target.value);
@@ -172,17 +152,38 @@ const LeesonInviteForm = () => {
   let playerSubscriptionRequired = false;
   let trainerStaffRequired = false;
 
-  const selectedClubSubscriptions = clubSubscriptions?.filter(
-    (subscription) =>
-      subscription.club_id ===
-        clubs?.find((club) => club.club_id === selectedClub)?.user_id &&
-      subscription.is_active === true
+  const [skip, setSkip] = useState(true);
+
+  const { data: selectedClubDetails, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(selectedClub, { skip: skip });
+
+  const { data: clubStaff, isLoading: isClubStaffLoading } =
+    useGetClubStaffByFilterQuery(
+      {
+        user_id: trainerUserId,
+        club_id: selectedClub,
+        employment_status: "accepted",
+      },
+      { skip: skip }
+    );
+
+  const {
+    data: selectedClubSubscriptions,
+    isLoading: isClubSubscriptionsLoading,
+  } = useGetClubSubscriptionsByFilterQuery(
+    {
+      club_id: clubs?.find((club) => club.club_id === selectedClub)?.user_id,
+      player_id: playerUserId,
+      is_active: true,
+    },
+    { skip: skip }
   );
 
   // booking hours check
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
+
   useEffect(() => {
     if (selectedCourt && selectedDate && bookings) {
       const filteredBookings = bookings.filter(
@@ -280,7 +281,6 @@ const LeesonInviteForm = () => {
           (club) => club.club_id === Number(bookingFormData?.club_id)
         )?.user_id,
       };
-      console.log(bookingFormData?.club_id);
       addPayment(paymentDetails);
     }
   };
@@ -288,35 +288,31 @@ const LeesonInviteForm = () => {
   const handleCloseModal = () => {
     setModal(false);
   };
-  let selectedClubDetails = clubs?.find(
-    (club) => club.club_id === selectedClub
-  );
 
   useEffect(() => {
-    selectedClubDetails = clubs?.find((club) => club.club_id === selectedClub);
+    reset({
+      club_id: selectedClub || "",
+      event_date: selectedDate || "",
+    });
+  }, [selectedClub, reset]);
 
+  useEffect(() => {
+    if (selectedClub) {
+      setSkip(false);
+    }
+  }, [selectedClub]);
+
+  useEffect(() => {
     playerSubscriptionRequired =
-      selectedClubDetails?.is_player_lesson_subscription_required;
+      selectedClubDetails?.[0]?.is_player_lesson_subscription_required;
 
     trainerStaffRequired =
-      selectedClubDetails?.is_trainer_subscription_required;
+      selectedClubDetails?.[0]?.is_trainer_subscription_required;
 
-    isPlayerSubscribed = selectedClubSubscriptions.find(
-      (subscription) =>
-        subscription.player_id === playerUserId &&
-        subscription.is_active === true
-    )
-      ? true
-      : false;
+    isPlayerSubscribed = selectedClubSubscriptions?.length > 0;
 
-    isTrainerStaff = clubStaff?.find(
-      (staff) =>
-        staff.user_id === trainerUserId &&
-        staff.club_id === selectedClub &&
-        staff.employment_status === "accepted"
-    )
-      ? true
-      : false;
+    isTrainerStaff = clubStaff?.length > 0 ? true : false;
+
     if (
       playerSubscriptionRequired === true &&
       trainerStaffRequired === true &&
@@ -348,7 +344,7 @@ const LeesonInviteForm = () => {
       setIsButtonDisabled(false);
       setButtonText("");
     }
-  }, [selectedClub]);
+  }, [selectedClubDetails, selectedClubSubscriptions, clubStaff]);
 
   useEffect(() => {
     if (selectedPlayer && selectedTrainer) {
@@ -360,6 +356,7 @@ const LeesonInviteForm = () => {
       }
     }
   }, [selectedPlayer, selectedTrainer]);
+
   useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();
@@ -384,12 +381,13 @@ const LeesonInviteForm = () => {
     isClubsLoading ||
     isCourtsLoading ||
     isTrainersLoading ||
-    isPlayersLoading ||
     isSelectedTrainerLoading ||
-    isSelectedPlayerLoading
+    isSelectedPlayerLoading ||
+    isSelectedClubLoading
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["invite-page-container"]}>
       <div className={styles["top-container"]}>
@@ -410,6 +408,7 @@ const LeesonInviteForm = () => {
           <p
             className={styles["player-name"]}
           >{`${trainer.fname} ${trainer.lname}`}</p>
+          <p>{selectedClub}</p>
         </div>
       )}
       {isUserTrainer && (
@@ -448,7 +447,7 @@ const LeesonInviteForm = () => {
               {...register("club_id", { required: true })}
               onChange={handleSelectedClub}
             >
-              <option value="">-- Seçim yapın --</option>
+              <option value="">--Seçim yapın--</option>
               {clubs?.map((club) => (
                 <option key={club.user_id} value={club.club_id}>
                   {club.club_name}

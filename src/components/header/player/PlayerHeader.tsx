@@ -57,7 +57,8 @@ const PlayerHeader = () => {
     (booking) =>
       new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
       (new Date(booking.event_date).toLocaleDateString() === currentDayLocale &&
-        booking.event_time >= currentTimeLocale)
+        booking.event_time >= currentTimeLocale &&
+        booking.invitee_id === user?.user?.user_id)
   );
 
   const myEvents = myCompletedBookings?.filter(

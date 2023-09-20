@@ -4,18 +4,18 @@ import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { useAppSelector } from "../../../../store/hooks";
 
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetPaymentByIdQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
-import PageLoading from "../../../../components/loading/PageLoading";
 
 export type BookingData = {
   booking_id: number;
@@ -49,12 +49,16 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(bookingData?.club_id);
+
+  const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
+    useGetCourtByIdQuery(bookingData?.court_id);
+
+  const { data: selectedPayment, isLoading: isSelectedPaymentLoading } =
+    useGetPaymentByIdQuery(bookingData?.payment_id);
+
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
 
@@ -97,10 +101,7 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     isUsersLoading ||
     isPlayersLoading ||
     isTrainersLoading ||
-    isClubsLoading ||
-    isCourtsLoading ||
     isExternalMembersLoading ||
-    isPaymentsLoading ||
     isStudentGroupsLoading
   ) {
     return <PageLoading />;
@@ -148,12 +149,8 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             <td>
               <img
                 src={
-                  bookingData?.event_type_id === 5 &&
-                  clubs?.find((club) => club.club_id === bookingData?.club_id)
-                    ?.image
-                    ? clubs?.find(
-                        (club) => club.club_id === bookingData?.club_id
-                      )?.image
+                  bookingData?.event_type_id === 5 && selectedClub?.[0]?.image
+                    ? selectedClub?.[0]?.image
                     : opposition?.image
                     ? opposition?.image
                     : "images/icons/avatar.png"
@@ -168,61 +165,26 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             </td>
             <td>{new Date(bookingData?.event_date).toLocaleDateString()}</td>
             <td>{bookingData?.event_time.slice(0, 5)}</td>
-            <td>
-              {
-                clubs?.find(
-                  (club) => club.club_id === Number(bookingData?.club_id)
-                )?.club_name
-              }
-            </td>
-            <td>
-              {
-                courts?.find(
-                  (court) => court.court_id === Number(bookingData?.court_id)
-                )?.court_name
-              }
-            </td>
+            <td>{selectedClub?.[0]?.club_name}</td>
+            <td>{selectedCourt?.[0]?.court_name}</td>
             {/* kort ücreti */}
-            {isUserPlayer && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) => payment.payment_id === bookingData?.payment_id
-                  )?.court_price
-                }
-              </td>
-            )}
+            {isUserPlayer && <td>{selectedPayment?.[0]?.court_price}</td>}
 
             {/* ders ücreti */}
             {isEventLesson && (
               <td>
-                {payments?.find(
-                  (payment) => payment.payment_id === bookingData?.payment_id
-                )?.lesson_price
-                  ? payments?.find(
-                      (payment) =>
-                        payment.payment_id === bookingData?.payment_id
-                    )?.lesson_price
+                {selectedPayment?.[0]?.lesson_price
+                  ? selectedPayment?.[0]?.lesson_price
                   : "-"}
               </td>
             )}
             {/* toplam ücret */}
             {isUserPlayer && isEventLesson && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) => payment.payment_id === bookingData?.payment_id
-                  )?.payment_amount
-                }
-              </td>
+              <td>{selectedPayment?.[0]?.payment_amount}</td>
             )}
             {((isUserPlayer && isEventTraining) ||
               (isUserPlayer && isEventMatch)) && (
-              <td>
-                {payments?.find(
-                  (payment) => payment.payment_id === bookingData?.payment_id
-                )?.payment_amount / 2}
-              </td>
+              <td>{selectedPayment?.[0]?.payment_amount / 2}</td>
             )}
           </tr>
         </tbody>

@@ -4,16 +4,16 @@ import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
+import PageLoading from "../../../../components/loading/PageLoading";
+
 import { useAppSelector } from "../../../../store/hooks";
 
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetUserTypesQuery } from "../../../../api/endpoints/UserTypesApi";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetPaymentByIdQuery } from "../../../../api/endpoints/PaymentsApi";
 
 export type DeclineBookingData = {
   booking_id: number;
@@ -52,11 +52,15 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
+
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(declineBookingData?.club_id);
+
+  const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
+    useGetCourtByIdQuery(declineBookingData?.court_id);
+
+  const { data: selectedPayment, isLoading: isSelectedPaymentLoading } =
+    useGetPaymentByIdQuery(declineBookingData?.payment_id);
 
   const isUserPlayer = user.user_type_id === 1;
   const isUserTrainer = user.user_type_id === 2;
@@ -83,9 +87,9 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
     isUsersLoading ||
     isPlayersLoading ||
     isTrainersLoading ||
-    isClubsLoading ||
-    isCourtsLoading ||
-    isPaymentsLoading
+    isSelectedClubLoading ||
+    isSelectedCourtLoading ||
+    isSelectedPaymentLoading
   ) {
     return <PageLoading />;
   }
@@ -144,63 +148,20 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
               {new Date(declineBookingData?.event_date).toLocaleDateString()}
             </td>
             <td>{declineBookingData?.event_time.slice(0, 5)}</td>
-            <td>
-              {
-                clubs?.find(
-                  (club) => club.club_id === Number(declineBookingData?.club_id)
-                )?.club_name
-              }
-            </td>
-            <td>
-              {
-                courts?.find(
-                  (court) =>
-                    court.court_id === Number(declineBookingData?.court_id)
-                )?.court_name
-              }
-            </td>
+            <td>{selectedClub?.[0]?.club_name}</td>
+            <td>{selectedCourt?.[0]?.court_name}</td>
             {/* kort ücreti */}
-            {isUserPlayer && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === declineBookingData?.payment_id
-                  )?.court_price
-                }
-              </td>
-            )}
+            {isUserPlayer && <td>{selectedPayment?.[0]?.court_price}</td>}
 
             {/* ders ücreti */}
-            {isEventLesson && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === declineBookingData?.payment_id
-                  )?.lesson_price
-                }
-              </td>
-            )}
+            {isEventLesson && <td>{selectedPayment?.[0]?.lesson_price}</td>}
             {/* toplam ücret */}
             {isUserPlayer && isEventLesson && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === declineBookingData?.payment_id
-                  )?.payment_amount
-                }
-              </td>
+              <td>{selectedPayment?.[0]?.payment_amount}</td>
             )}
             {((isUserPlayer && isEventTraining) ||
               (isUserPlayer && isEventMatch)) && (
-              <td>
-                {payments?.find(
-                  (payment) =>
-                    payment.payment_id === declineBookingData?.payment_id
-                )?.payment_amount / 2}
-              </td>
+              <td>{selectedPayment?.[0]?.payment_amount / 2}</td>
             )}
           </tr>
         </tbody>

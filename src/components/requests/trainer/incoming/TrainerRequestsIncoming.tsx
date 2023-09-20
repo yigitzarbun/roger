@@ -364,6 +364,7 @@ const TrainerRequestsIncoming = () => {
         handleCloseAcceptModal={handleCloseAcceptModal}
         acceptBookingData={acceptBookingData}
         handleAcceptBooking={handleAcceptBooking}
+        players={players}
       />
       <DeclineInviteModal
         isDeclineModalOpen={isDeclineModalOpen}

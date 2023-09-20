@@ -21,6 +21,12 @@ export const paymentsSlice = createApi({
     getPayments: builder.query({
       query: () => "/payments",
     }),
+    getPaymentById: builder.query({
+      query: (club_id) => `/payments/${club_id}`,
+    }),
+    getPaymentsByFilter: builder.query({
+      query: (filter) => `/payments/filter?${new URLSearchParams(filter)}`,
+    }),
     addPayment: builder.mutation({
       query: (payment) => ({
         url: "/payments",
@@ -40,6 +46,8 @@ export const paymentsSlice = createApi({
 
 export const {
   useGetPaymentsQuery,
+  useGetPaymentByIdQuery,
+  useGetPaymentsByFilterQuery,
   useAddPaymentMutation,
   useUpdatePaymentMutation,
 } = paymentsSlice;

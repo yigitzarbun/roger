@@ -7,8 +7,17 @@ const paymentsModel = {
   },
 
   async getByFilter(filter) {
-    const payment = await db("payments").where(filter).first();
-    return payment;
+    const payments = await db("payments").where((builder) => {
+      if (filter.payment_id) {
+        builder.where("payment_id", filter.payment_id);
+      }
+
+      if (filter.sortBy) {
+        // handle sorting here if required
+        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+      }
+    });
+    return payments;
   },
 
   async getById(payment_id) {

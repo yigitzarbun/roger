@@ -4,13 +4,13 @@ import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { Player } from "../../../../api/endpoints/PlayersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
 import { useAppSelector } from "../../../../store/hooks";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import { useGetPaymentByIdQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
@@ -36,6 +36,7 @@ interface AcceptInviteModalProps {
   handleCloseAcceptModal: () => void;
   handleAcceptBooking: () => void;
   acceptBookingData: AcceptBookingData;
+  players: Player[];
 }
 
 const AcceptInviteModal = (props: AcceptInviteModalProps) => {
@@ -44,21 +45,26 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     handleCloseAcceptModal,
     acceptBookingData,
     handleAcceptBooking,
+    players,
   } = props;
 
   const user = useAppSelector((store) => store.user.user.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(acceptBookingData?.club_id);
+
+  const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
+    useGetCourtByIdQuery(acceptBookingData?.court_id);
+
+  const { data: selectedPayment, isLoading: isSelectedPaymentLoading } =
+    useGetPaymentByIdQuery(acceptBookingData?.payment_id);
+
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
 
@@ -96,13 +102,12 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
 
   if (
     isUsersLoading ||
-    isPlayersLoading ||
     isTrainersLoading ||
-    isClubsLoading ||
-    isCourtsLoading ||
-    isPaymentsLoading ||
+    isSelectedPaymentLoading ||
     isExternalMembersLoading ||
-    isStudentGroupsLoading
+    isStudentGroupsLoading ||
+    isSelectedClubLoading ||
+    isSelectedCourtLoading
   ) {
     return <PageLoading />;
   }
@@ -163,64 +168,17 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
               {new Date(acceptBookingData?.event_date).toLocaleDateString()}
             </td>
             <td>{acceptBookingData?.event_time.slice(0, 5)}</td>
-            <td>
-              {
-                clubs?.find(
-                  (club) => club.club_id === Number(acceptBookingData?.club_id)
-                )?.club_name
-              }
-            </td>
-            <td>
-              {
-                courts?.find(
-                  (court) =>
-                    court.court_id === Number(acceptBookingData?.court_id)
-                )?.court_name
-              }
-            </td>
-            {/* kort ücreti */}
-            {isUserPlayer && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === acceptBookingData?.payment_id
-                  )?.court_price
-                }
-              </td>
-            )}
-
-            {/* ders ücreti */}
-            {isEventLesson && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === acceptBookingData?.payment_id
-                  )?.lesson_price
-                }
-              </td>
-            )}
-            {/* toplam ücret */}
+            <td>{selectedClub?.[0]?.club_name}</td>
+            <td>{selectedCourt?.[0]?.court_name}</td>
+            {isUserPlayer && <td>{selectedPayment?.[0]?.court_price}</td>}
+            {isEventLesson && <td>{selectedPayment?.[0]?.lesson_price}</td>}
             {isUserPlayer && isEventLesson && (
-              <td>
-                {
-                  payments?.find(
-                    (payment) =>
-                      payment.payment_id === acceptBookingData?.payment_id
-                  )?.payment_amount
-                }
-              </td>
+              <td>{selectedPayment?.[0]?.payment_amount}</td>
             )}
 
             {((isUserPlayer && isEventTraining) ||
               (isUserPlayer && isEventMatch)) && (
-              <td>
-                {payments?.find(
-                  (payment) =>
-                    payment.payment_id === acceptBookingData?.payment_id
-                )?.payment_amount / 2}
-              </td>
+              <td>{selectedPayment?.[0]?.payment_amount / 2}</td>
             )}
           </tr>
         </tbody>

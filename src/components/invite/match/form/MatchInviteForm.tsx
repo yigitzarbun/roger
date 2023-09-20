@@ -14,9 +14,12 @@ import InviteModal from "../../modals/invite-modal/InviteModal";
 
 import { useState } from "react";
 
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import {
+  useGetClubByClubIdQuery,
+  useGetClubsQuery,
+} from "../../../../api/endpoints/ClubsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -26,13 +29,14 @@ import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../../api/endpoints/PaymentsApi";
 
 import {
+  currentDay,
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
@@ -45,7 +49,7 @@ const MatchInviteForm = () => {
 
   const selectedPlayer = location.state;
 
-  const { user } = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
     {}
@@ -65,25 +69,6 @@ const MatchInviteForm = () => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
-
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const today = new Date();
-  let day = String(today.getDate());
-  let month = String(today.getMonth() + 1);
-  const year = today.getFullYear();
-
-  day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
-  month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
-
-  const currentDay = `${year}-${month}-${day}`;
-
-  const currentHour = String(today.getHours()).padStart(2, "0");
-  const currentMinute = String(today.getMinutes()).padStart(2, "0");
-  const currentTime = `${currentHour}:${currentMinute}`;
 
   const [selectedDate, setSelectedDate] = useState("");
   const handleSelectedDate = (event) => {
@@ -105,64 +90,82 @@ const MatchInviteForm = () => {
   };
 
   // payment method check
-  const inviterPlayer = players?.find(
-    (player) => player.user_id === user?.user?.user_id
-  );
+  let isButtonDisabled = false;
+  let buttonText = "";
+
+  const { data: inviterPlayer, isLoading: isInviterPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
+
   let inviterPlayerPaymentMethodExists = false;
 
-  if (
-    inviterPlayer?.name_on_card &&
-    inviterPlayer?.card_number &&
-    inviterPlayer?.cvc &&
-    inviterPlayer?.card_expiry
-  ) {
-    inviterPlayerPaymentMethodExists = true;
-  }
+  const { data: inviteePlayer, isLoading: isInviteePlayerLoading } =
+    useGetPlayerByUserIdQuery(selectedPlayer?.user_id);
 
-  const inviteePlayer = players?.find(
-    (player) => player.user_id === selectedPlayer?.user_id
-  );
   let inviteePlayerPaymentMethodExists = false;
 
   if (
-    inviteePlayer?.name_on_card &&
-    inviteePlayer?.card_number &&
-    inviteePlayer?.cvc &&
-    inviteePlayer?.card_expiry
+    inviterPlayer?.[0]?.name_on_card &&
+    inviterPlayer?.[0]?.card_number &&
+    inviterPlayer?.[0]?.cvc &&
+    inviterPlayer?.[0]?.card_expiry
+  ) {
+    inviterPlayerPaymentMethodExists = true;
+  }
+  if (
+    inviteePlayer?.[0]?.name_on_card &&
+    inviteePlayer?.[0]?.card_number &&
+    inviteePlayer?.[0]?.cvc &&
+    inviteePlayer?.[0]?.card_expiry
   ) {
     inviteePlayerPaymentMethodExists = true;
+  }
+
+  if (!inviterPlayerPaymentMethodExists || !inviteePlayerPaymentMethodExists) {
+    isButtonDisabled = true;
+    buttonText =
+      "Her iki oyuncunun da ödeme bilgilerini eklemesi gerekmektedir";
   }
 
   // subscription check
   let isPlayersSubscribed = false;
   let clubSubscriptionRequired = false;
 
-  const selectedClubSubscriptions = clubSubscriptions?.filter(
-    (subscription) =>
-      subscription.club_id ===
-      clubs?.find((club) => club.club_id === selectedClub)?.user_id
-  );
-  if (
-    clubs?.find((club) => club.club_id === selectedClub)
-      ?.is_player_subscription_required
-  ) {
+  const [skip, setSkip] = useState(true);
+  const { data: selectedClubDetails, isLoading: isSelectedClubDetailsLoading } =
+    useGetClubByClubIdQuery(selectedClub, { skip: skip });
+
+  const { data: inviterSubscribed, isLoading: isInviterSubscribedLoading } =
+    useGetClubSubscriptionsByFilterQuery(
+      {
+        club_id: clubs?.find((club) => club.club_id === selectedClub)?.user_id,
+        is_active: true,
+        player_id: user?.user?.user_id,
+      },
+      { skip: skip }
+    );
+
+  const { data: inviteeSubscribed, isLoading: isInviteeSubscribedLoading } =
+    useGetClubSubscriptionsByFilterQuery(
+      {
+        club_id: clubs?.find((club) => club.club_id === selectedClub)?.user_id,
+        is_active: true,
+        player_id: selectedPlayer?.user_id,
+      },
+      { skip: skip }
+    );
+
+  if (selectedClubDetails?.[0]?.is_player_subscription_required) {
     clubSubscriptionRequired = true;
   }
 
-  if (selectedPlayer && user && selectedClubSubscriptions) {
-    if (
-      selectedClubSubscriptions?.find(
-        (subscription) =>
-          subscription.player_id === selectedPlayer?.user_id &&
-          subscription.is_active === true
-      ) &&
-      selectedClubSubscriptions?.find(
-        (subscription) =>
-          subscription.player_id === user?.user?.user_id &&
-          subscription.is_active === true
-      )
-    )
-      isPlayersSubscribed = true;
+  if (inviterSubscribed?.length > 0 && inviteeSubscribed?.length > 0) {
+    isPlayersSubscribed = true;
+  }
+
+  if (clubSubscriptionRequired && !isPlayersSubscribed) {
+    isButtonDisabled = true;
+    buttonText =
+      "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir";
   }
 
   // booking hours check
@@ -258,6 +261,50 @@ const MatchInviteForm = () => {
   };
 
   useEffect(() => {
+    reset({
+      club_id: selectedClub || "",
+      event_date: selectedDate || "",
+    });
+  }, [selectedClub, reset]);
+
+  useEffect(() => {
+    if (selectedClub) {
+      setSkip(false);
+    }
+  }, [selectedClub]);
+
+  useEffect(() => {
+    if (selectedClubDetails) {
+      if (selectedClubDetails?.[0]?.is_player_subscription_required) {
+        clubSubscriptionRequired = true;
+      }
+
+      if (inviterSubscribed?.length > 0 && inviteeSubscribed?.length > 0) {
+        isPlayersSubscribed = true;
+      }
+
+      if (clubSubscriptionRequired && !isPlayersSubscribed) {
+        isButtonDisabled = true;
+        buttonText =
+          "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir";
+      }
+    }
+  }, [selectedClubDetails]);
+
+  useEffect(() => {
+    if (inviteePlayer && inviterPlayer) {
+      if (
+        !inviterPlayerPaymentMethodExists ||
+        !inviteePlayerPaymentMethodExists
+      ) {
+        isButtonDisabled = true;
+        buttonText =
+          "Her iki oyuncunun da ödeme bilgilerini eklemesi gerekmektedir";
+      }
+    }
+  }, [inviterPlayer, inviteePlayer]);
+
+  useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();
       bookingFormData.payment_id = paymentData?.payment_id;
@@ -278,8 +325,11 @@ const MatchInviteForm = () => {
     isBookingsLoading ||
     isClubsLoading ||
     isCourtsLoading ||
-    isClubSubscriptionsLoading ||
-    isPlayersLoading
+    isInviteePlayerLoading ||
+    isInviterPlayerLoading ||
+    isSelectedClubDetailsLoading ||
+    isInviterSubscribedLoading ||
+    isInviteeSubscribedLoading
   ) {
     return <PageLoading />;
   }
@@ -329,7 +379,7 @@ const MatchInviteForm = () => {
               {...register("club_id", { required: true })}
               onChange={handleSelectedClub}
             >
-              <option value="">-- Seçim yapın --</option>
+              <option value="">--Seçim yapın--</option>
               {clubs?.map((club) => (
                 <option key={club.club_id} value={club.club_id}>
                   {club.club_name}
@@ -402,18 +452,9 @@ const MatchInviteForm = () => {
         <button
           type="submit"
           className={styles["form-button"]}
-          disabled={
-            (clubSubscriptionRequired && !isPlayersSubscribed) ||
-            !inviterPlayerPaymentMethodExists ||
-            !inviteePlayerPaymentMethodExists
-          }
+          disabled={isButtonDisabled}
         >
-          {(!inviterPlayerPaymentMethodExists ||
-            !inviteePlayerPaymentMethodExists) &&
-            "Oyuncuların kort kiralamak için ödeme bilgilerini eklemesi gerekmektedir"}
-          {clubSubscriptionRequired && !isPlayersSubscribed
-            ? "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"
-            : "Davet Gönder"}
+          {isButtonDisabled ? buttonText : "Davet et"}
         </button>
       </form>
 
