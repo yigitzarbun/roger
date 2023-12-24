@@ -19,8 +19,16 @@ export const currentDayObject = new Date(
 );
 export const currentYear = today.getFullYear();
 export const currentDayLocale = new Date(currentDay).toLocaleDateString();
-export const currentTimeLocale = currentDayObject.toLocaleTimeString();
-
+export const getCurrentTime = () => {
+  const today = new Date();
+  const currentHour = String(today.getHours()).padStart(2, "0");
+  const currentMinute = String(today.getMinutes()).padStart(2, "0");
+  return `${currentHour}:${currentMinute}:00`;
+};
+export const getAge = (birthYear: number) => {
+  return currentYear - birthYear;
+};
+export const currentTimeLocale = getCurrentTime();
 // Utility function to add minutes to a given time
 export function addMinutes(time, minutes) {
   const [hours, mins] = time.split(":").map(Number);

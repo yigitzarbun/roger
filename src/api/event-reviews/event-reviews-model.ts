@@ -12,7 +12,7 @@ const eventReviewsModel = {
         builder.where("reviewer_id", filter.reviewer_id);
       }
       if (filter.booking_id) {
-        builder.where("booking_id", filter.booking_id);
+        builder.where("booking_id", Number(filter.booking_id));
       }
       if (filter.is_active) {
         builder.where("is_active", filter.is_active);

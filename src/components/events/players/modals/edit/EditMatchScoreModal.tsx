@@ -53,11 +53,14 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
     useGetMatchScoreByIdQuery(selectedMatchScoreId);
 
   const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
+  const [bookingSkip, setBookingSkip] = useState(false);
 
   const {
     data: selectedMatchBookingDetails,
     isLoading: isSelectedMatchBookingDetailsLoading,
-  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id);
+  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id, {
+    skip: bookingSkip,
+  });
 
   const { data: inviter, isLoading: isInviterLoading } =
     useGetPlayersByFilterQuery({
@@ -132,7 +135,11 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
       console.log(error);
     }
   };
-
+  useEffect(() => {
+    if (selectedMatch) {
+      setBookingSkip(false);
+    }
+  }, [selectedMatch]);
   useEffect(() => {
     if (
       firstSetInviter &&

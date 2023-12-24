@@ -19,13 +19,13 @@
     flex-direction: column;
     width: 45%;
     row-gap: 8vh;
-    justify-content: center;
   }
 
   .user-type-options-container {
     display: flex;
     justify-content: space-between;
   }
+
   .user-type-container {
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;

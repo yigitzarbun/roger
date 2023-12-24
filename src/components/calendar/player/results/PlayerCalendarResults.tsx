@@ -14,7 +14,7 @@ import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteMod
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -26,11 +26,7 @@ import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi"
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
-import {
-  currentDayLocale,
-  currentTimeLocale,
-  currentYear,
-} from "../../../../common/util/TimeFunctions";
+import { currentYear } from "../../../../common/util/TimeFunctions";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -41,12 +37,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const { date, eventTypeId, clubId } = props;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
-
-  const {
-    data: bookings,
-    isLoading: isBookingsLoading,
-    refetch,
-  } = useGetBookingsQuery({});
 
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
@@ -81,24 +71,13 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
       student_id: user?.user_id,
     });
 
-  // bookings
-  const myBookings = bookings?.filter(
-    (booking) =>
-      (booking.inviter_id === user.user_id ||
-        booking.invitee_id === user.user_id ||
-        myGroups?.find(
-          (group) =>
-            group.user_id === booking.inviter_id ||
-            group.user_id === booking.invitee_id
-        )) &&
-      booking.booking_status_type_id === 2 &&
-      (new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
-        (new Date(booking.event_date).toLocaleDateString() ===
-          currentDayLocale &&
-          booking.event_time > currentTimeLocale))
-  );
+  const { data: playerBookings, isLoading: isBookingsLoading } =
+    useGetBookingsByFilterQuery({
+      user_id: user?.user_id,
+      booking_status_type_id: 2,
+    });
 
-  const filteredBookings = myBookings?.filter((booking) => {
+  const filteredBookings = playerBookings?.filter((booking) => {
     const eventDate = new Date(booking.event_date);
     if (date === "" && eventTypeId === null && clubId === null) {
       return true;
@@ -137,7 +116,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetch();
+      //refetch();
 
       handleCloseModal();
     }
@@ -187,7 +166,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
           </thead>
           <tbody>
             {filteredBookings?.map((booking) => (
-              <tr key={booking.booking_id}>
+              <tr key={booking?.booking_id}>
                 <td>
                   {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
                 </td>
@@ -509,12 +488,14 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
           </tbody>
         </table>
       )}
-      <CancelInviteModal
-        isModalOpen={isModalOpen}
-        handleCloseModal={handleCloseModal}
-        bookingData={bookingData}
-        handleCancelBooking={handleCancelBooking}
-      />
+      {isModalOpen && (
+        <CancelInviteModal
+          isModalOpen={isModalOpen}
+          handleCloseModal={handleCloseModal}
+          bookingData={bookingData}
+          handleCancelBooking={handleCancelBooking}
+        />
+      )}
     </div>
   );
 };

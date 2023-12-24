@@ -63,7 +63,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     useGetCourtByIdQuery(acceptBookingData?.court_id);
 
   const { data: selectedPayment, isLoading: isSelectedPaymentLoading } =
-    useGetPaymentByIdQuery(acceptBookingData?.payment_id);
+    useGetPaymentByIdQuery(Number(acceptBookingData?.payment_id));
 
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});

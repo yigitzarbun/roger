@@ -6,13 +6,33 @@ const trainersModel = {
     return trainers;
   },
 
-  async getPaginated(page) {
+  async getPaginated(filter) {
     const trainersPerPage = 4;
-    const offset = (page - 1) * trainersPerPage;
+    const offset = (filter.currentPage - 1) * trainersPerPage;
 
     const trainers = await db("trainers");
 
     const paginatedTrainers = await db("trainers")
+      .where((builder) => {
+        if (filter.trainerExperienceTypeId > 0) {
+          builder.where(
+            "trainer_experience_type_id",
+            filter.trainerExperienceTypeId
+          );
+        }
+        if (filter.selectedGender !== "") {
+          builder.where("gender", filter.selectedGender);
+        }
+        if (filter.locationId > 0) {
+          builder.where("location_id", filter.locationId);
+        }
+        if (filter.club_id > 0) {
+          builder.where("club_id", filter.clubId);
+        }
+        if (filter.currentUserId) {
+          builder.where("user_id", "!=", filter.currentUserId);
+        }
+      })
       .orderBy("trainer_id", "asc")
       .limit(trainersPerPage)
       .offset(offset);

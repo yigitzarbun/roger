@@ -16,12 +16,12 @@ playersRouter.get(
   }
 );
 playersRouter.get(
-  "/paginated/:page",
+  "/paginated",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { page } = req.params;
-      const players = await playersModel.getPaginated(Number(page));
-      res.status(200).json(players);
+      const filter = req.query;
+      const paginatedPlayers = await playersModel.getPaginated(filter);
+      res.status(200).json(paginatedPlayers);
     } catch (error) {
       next(error);
     }

@@ -22,7 +22,7 @@ export const paymentsSlice = createApi({
       query: () => "/payments",
     }),
     getPaymentById: builder.query({
-      query: (club_id) => `/payments/${club_id}`,
+      query: (payment_id) => `/payments/${payment_id}`,
     }),
     getPaymentsByFilter: builder.query({
       query: (filter) => `/payments/filter?${new URLSearchParams(filter)}`,

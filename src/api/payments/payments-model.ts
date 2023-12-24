@@ -11,9 +11,7 @@ const paymentsModel = {
       if (filter.payment_id) {
         builder.where("payment_id", filter.payment_id);
       }
-
       if (filter.sortBy) {
-        // handle sorting here if required
         builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
       }
     });

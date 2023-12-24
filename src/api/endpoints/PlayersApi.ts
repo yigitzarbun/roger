@@ -28,7 +28,8 @@ export const playersSlice = createApi({
       query: () => "/players",
     }),
     getPaginatedPlayers: builder.query({
-      query: (page) => `players/paginated/${page}`,
+      query: (filter) =>
+        `players/paginated?currentPage=${filter.currentPage}&playerLevelId=${filter.playerLevelId}&selectedGender=${filter.selectedGender}&locationId=${filter.locationId}&currentUserId=${filter.currentUserId}`,
     }),
     getPlayerByPlayerId: builder.query({
       query: (player_id) => `/players/player/${player_id}`,

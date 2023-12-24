@@ -74,7 +74,9 @@ export const clubsSlice = createApi({
       query: (club) => {
         const formData = new FormData();
 
-        formData.append("club_id", club.club_id);
+        if (club.club_id) {
+          formData.append("club_id", club.club_id);
+        }
         formData.append("club_name", club.club_name);
         formData.append("location_id", club.location_id);
         formData.append("club_type_id", club.club_type_id);

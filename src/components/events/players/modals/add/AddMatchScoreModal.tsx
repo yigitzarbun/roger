@@ -57,20 +57,31 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
 
   const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
 
+  const [bookingSkip, setBookingSkip] = useState(true);
+  const [playerSkip, setPlayerSkip] = useState(true);
+
   const {
     data: selectedMatchBookingDetails,
     isLoading: isSelectedMatchBookingDetailsLoading,
-  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id);
+  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id, {
+    skip: bookingSkip,
+  });
 
   const { data: inviter, isLoading: isInviterLoading } =
-    useGetPlayersByFilterQuery({
-      user_id: selectedMatchBookingDetails?.[0]?.inviter_id,
-    });
+    useGetPlayersByFilterQuery(
+      {
+        user_id: selectedMatchBookingDetails?.[0]?.inviter_id,
+      },
+      { skip: playerSkip }
+    );
 
   const { data: invitee, isLoading: isInviteeLoading } =
-    useGetPlayersByFilterQuery({
-      user_id: selectedMatchBookingDetails?.[0]?.invitee_id,
-    });
+    useGetPlayersByFilterQuery(
+      {
+        user_id: selectedMatchBookingDetails?.[0]?.invitee_id,
+      },
+      { skip: playerSkip }
+    );
 
   const [firstSetInviter, setFirstSetInviter] = useState(null);
   const [firstSetInvitee, setFirstSetInvitee] = useState(null);
@@ -119,6 +130,18 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (selectedMatch) {
+      setBookingSkip(false);
+    }
+  }, [selectedMatch]);
+
+  useEffect(() => {
+    if (selectedMatchBookingDetails) {
+      setPlayerSkip(false);
+    }
+  }, [selectedMatchBookingDetails]);
 
   useEffect(() => {
     if (

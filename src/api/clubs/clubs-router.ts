@@ -32,7 +32,7 @@ clubsRouter.get(
   "/club/:club_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const club = await clubsModel.getByClubId(req.params.club_id);
+      const club = await clubsModel.getByClubId(Number(req.params.club_id));
       res.status(200).json(club);
     } catch (error) {
       next(error);

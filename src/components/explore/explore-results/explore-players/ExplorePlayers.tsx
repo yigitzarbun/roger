@@ -12,7 +12,7 @@ import paths from "../../../../routing/Paths";
 
 import { User } from "../../../../store/slices/authSlice";
 import PageLoading from "../../../../components/loading/PageLoading";
-import { currentYear } from "../../../../common/util/TimeFunctions";
+import { getAge } from "../../../../common/util/TimeFunctions";
 
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
@@ -26,6 +26,7 @@ import {
   useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
 } from "../../../../api/endpoints/PlayersApi";
+import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 
 interface ExplorePlayersProps {
   user: User;
@@ -47,18 +48,25 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   let isUserPlayer = false;
   let isUserTrainer = false;
-  let isUserClub = false;
 
   if (user) {
     isUserPlayer = user?.user?.user_type_id === 1;
     isUserTrainer = user?.user?.user_type_id === 2;
-    isUserClub = user?.user?.user_type_id === 3;
   }
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: paginatedPlayers, isLoading: isPaginatedPlayersLoading } =
-    useGetPaginatedPlayersQuery(currentPage);
+  const {
+    data: paginatedPlayers,
+    isLoading: isPaginatedPlayersLoading,
+    refetch: refetchPaginatedPlayers,
+  } = useGetPaginatedPlayersQuery({
+    currentPage: currentPage,
+    playerLevelId: null,
+    selectedGender: "",
+    locationId: null,
+    currentUserId: user?.user?.user_id,
+  });
 
   const pageNumbers = [];
   for (let i = 1; i <= paginatedPlayers?.totalPages; i++) {
@@ -82,57 +90,22 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     setCurrentPage(prevPage);
   };
 
-  const filteredPlayers = paginatedPlayers?.players?.filter(
-    (player) => player.user_id !== user?.user?.user_id
-  );
-
   const {
     data: myFavouritePlayers,
     isLoading: isFavouritesLoading,
     refetch,
   } = useGetFavouritesByFilterQuery({ favouriter_id: user?.user?.user_id });
 
-  const isPlayerInMyFavourites = (user_id: number) => {
-    return myFavouritePlayers?.find(
-      (player) => player.favouritee_id === user_id
-    );
-  };
-
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
-
-  const handleAddFavourite = (favouritee_id: number) => {
-    const favouriteData = {
-      is_active: true,
-      favouriter_id: user?.user?.user_id,
-      favouritee_id: favouritee_id,
-    };
-    addFavourite(favouriteData);
-  };
 
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
 
-  const handleUpdateFavourite = (userId: number) => {
-    const selectedFavourite = myFavouritePlayers?.find(
-      (favourite) => favourite.favouritee_id === userId
+  const isPlayerInMyFavourites = (user_id: number) => {
+    return myFavouritePlayers?.find(
+      (player) => player.favouritee_id === user_id
     );
-    const favouriteData = {
-      favourite_id: selectedFavourite?.favourite_id,
-      registered_at: selectedFavourite?.registered_at,
-      is_active: selectedFavourite?.is_active === true ? false : true,
-      favouriter_id: selectedFavourite?.favouriter_id,
-      favouritee_id: selectedFavourite?.favouritee_id,
-    };
-    updateFavourite(favouriteData);
-  };
-
-  const handleToggleFavourite = (userId: number) => {
-    if (isPlayerInMyFavourites(userId)) {
-      handleUpdateFavourite(userId);
-    } else {
-      handleAddFavourite(userId);
-    }
   };
 
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
@@ -145,6 +118,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       refetch();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
+  useEffect(() => {
+    refetchPaginatedPlayers();
+  }, [currentPage]);
 
   if (
     isPaginatedPlayersLoading ||
@@ -172,7 +149,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           />
         </div>
       </div>
-      {filteredPlayers?.length > 0 ? (
+      {paginatedPlayers?.players?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -186,19 +163,37 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
             </tr>
           </thead>
           <tbody>
-            {filteredPlayers?.map((player) => (
+            {paginatedPlayers?.players?.map((player) => (
               <tr key={player.player_id} className={styles["player-row"]}>
                 <td>
                   {isPlayerInMyFavourites(player.user_id)?.is_active ===
                   true ? (
                     <AiFillStar
                       className={styles["remove-fav-icon"]}
-                      onClick={() => handleToggleFavourite(player.user_id)}
+                      onClick={() =>
+                        handleToggleFavourite(
+                          player.user_id,
+                          isPlayerInMyFavourites,
+                          updateFavourite,
+                          myFavouritePlayers,
+                          user,
+                          addFavourite
+                        )
+                      }
                     />
                   ) : (
                     <AiOutlineStar
                       className={styles["add-fav-icon"]}
-                      onClick={() => handleToggleFavourite(player.user_id)}
+                      onClick={() =>
+                        handleToggleFavourite(
+                          player.user_id,
+                          isPlayerInMyFavourites,
+                          updateFavourite,
+                          myFavouritePlayers,
+                          user,
+                          addFavourite
+                        )
+                      }
                     />
                   )}
                 </td>
@@ -229,7 +224,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                   }
                 </td>
                 <td>{player.gender}</td>
-                <td>{currentYear - Number(player.birth_year)}</td>
+                <td>{getAge(player.birth_year)}</td>
                 <td>
                   {
                     locations?.find(

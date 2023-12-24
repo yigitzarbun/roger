@@ -75,7 +75,9 @@ export const courtsSlice = createApi({
     updateCourt: builder.mutation({
       query: (court) => {
         const formData = new FormData();
-        formData.append("court_id", court.court_id);
+        if (court.court_id) {
+          formData.append("court_id", court.court_id);
+        }
         formData.append("court_name", court.court_name);
         formData.append("opening_time", court.opening_time.toString());
         formData.append("closing_time", court.closing_time.toString());

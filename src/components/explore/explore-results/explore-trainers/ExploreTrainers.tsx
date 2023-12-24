@@ -12,7 +12,7 @@ import paths from "../../../../routing/Paths";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { currentYear } from "../../../../common/util/TimeFunctions";
+import { getAge } from "../../../../common/util/TimeFunctions";
 
 import { User } from "../../../../store/slices/authSlice";
 import { Location } from "../../../../api/endpoints/LocationsApi";
@@ -25,6 +25,7 @@ import {
 } from "../../../../api/endpoints/FavouritesApi";
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
+import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 
 interface ExploreTrainersProps {
   user: User;
@@ -58,8 +59,18 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: paginatedTrainers, isLoading: isPaginatedTrainersLoading } =
-    useGetPaginatedTrainersQuery(currentPage);
+  const {
+    data: paginatedTrainers,
+    isLoading: isPaginatedTrainersLoading,
+    refetch: refetchPaginatedTrainers,
+  } = useGetPaginatedTrainersQuery({
+    currentPage: currentPage,
+    trainerExperienceTypeId: null,
+    selectedGender: "",
+    locationId: null,
+    clubId: null,
+    currentUserId: user?.user?.user_id,
+  });
 
   const pageNumbers = [];
   for (let i = 1; i <= paginatedTrainers?.totalPages; i++) {
@@ -98,45 +109,18 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
 
-  const handleAddFavourite = (favouritee_id: number) => {
-    const favouriteData = {
-      is_active: true,
-      favouriter_id: user?.user?.user_id,
-      favouritee_id: favouritee_id,
-    };
-    addFavourite(favouriteData);
-  };
-
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
-
-  const handleUpdateFavourite = (userId: number) => {
-    const selectedFavourite = myFavouriteTrainers?.find(
-      (favourite) => favourite.favouritee_id === userId
-    );
-    const favouriteData = {
-      favourite_id: selectedFavourite.favourite_id,
-      registered_at: selectedFavourite.registered_at,
-      is_active: selectedFavourite.is_active === true ? false : true,
-      favouriter_id: selectedFavourite.favouriter_id,
-      favouritee_id: selectedFavourite.favouritee_id,
-    };
-    updateFavourite(favouriteData);
-  };
-
-  const handleToggleFavourite = (userId: number) => {
-    if (isTrainerInMyFavourites(userId)) {
-      handleUpdateFavourite(userId);
-    } else {
-      handleAddFavourite(userId);
-    }
-  };
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetch();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
+  useEffect(() => {
+    refetchPaginatedTrainers();
+  }, [currentPage]);
 
   if (
     isLocationsLoading ||
@@ -190,7 +174,18 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           <tbody>
             {paginatedTrainers?.trainers?.map((trainer) => (
               <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
-                <td onClick={() => handleToggleFavourite(trainer.user_id)}>
+                <td
+                  onClick={() =>
+                    handleToggleFavourite(
+                      trainer.user_id,
+                      isTrainerInMyFavourites,
+                      updateFavourite,
+                      myFavouriteTrainers,
+                      user,
+                      addFavourite
+                    )
+                  }
+                >
                   {isTrainerInMyFavourites(trainer.user_id)?.is_active ===
                   true ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
@@ -241,7 +236,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 </td>
                 <td>{trainer?.price_hour}</td>
                 <td>{trainer.gender}</td>
-                <td>{currentYear - Number(trainer.birth_year)}</td>
+                <td>{getAge(trainer.birth_year)}</td>
                 <td>
                   {
                     locations?.find(

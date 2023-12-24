@@ -33,6 +33,7 @@ import { useGetPaginatedClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ClubEmploymentModal from "./employment-modal/ClubEmploymentModal";
+import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 
 interface ExploreClubsProps {
   user: User;
@@ -139,39 +140,8 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
 
-  const handleAddFavourite = (favouritee_id: number) => {
-    const favouriteData = {
-      is_active: true,
-      favouriter_id: user?.user?.user_id,
-      favouritee_id: favouritee_id,
-    };
-    addFavourite(favouriteData);
-  };
-
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
-
-  const handleUpdateFavourite = (userId: number) => {
-    const selectedFavourite = myFavouriteClubs?.find(
-      (favourite) => favourite.favouritee_id === userId
-    );
-    const favouriteData = {
-      favourite_id: selectedFavourite.favourite_id,
-      registered_at: selectedFavourite.registered_at,
-      is_active: selectedFavourite.is_active === true ? false : true,
-      favouriter_id: selectedFavourite.favouriter_id,
-      favouritee_id: selectedFavourite.favouritee_id,
-    };
-    updateFavourite(favouriteData);
-  };
-
-  const handleToggleFavourite = (userId: number) => {
-    if (isClubInMyFavourites(userId)) {
-      handleUpdateFavourite(userId);
-    } else {
-      handleAddFavourite(userId);
-    }
-  };
 
   // subscription
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
@@ -291,13 +261,25 @@ const ExploreClubs = (props: ExploreClubsProps) => {
               <th>Konum</th>
               <th>Kort</th>
               <th>Eğitmen</th>
-              <th>Üye</th>
+              <th>Üye Sayısı</th>
+              <th>Üyelik Paketi</th>
             </tr>
           </thead>
           <tbody>
             {clubs?.clubs.map((club) => (
               <tr key={club.club_id} className={styles["club-row"]}>
-                <td onClick={() => handleToggleFavourite(club.user_id)}>
+                <td
+                  onClick={() =>
+                    handleToggleFavourite(
+                      club.user_id,
+                      isClubInMyFavourites,
+                      updateFavourite,
+                      myFavouriteClubs,
+                      user,
+                      addFavourite
+                    )
+                  }
+                >
                   {isClubInMyFavourites(club.user_id)?.is_active === true ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
                   ) : (

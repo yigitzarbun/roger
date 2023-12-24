@@ -480,19 +480,23 @@ const PlayerRequestsIncoming = () => {
           </p>
         </>
       )}
-      <AcceptInviteModal
-        isAcceptModalOpen={isAcceptModalOpen}
-        handleCloseAcceptModal={handleCloseAcceptModal}
-        acceptBookingData={acceptBookingData}
-        handleAcceptBooking={handleAcceptBooking}
-        players={players}
-      />
-      <DeclineInviteModal
-        isDeclineModalOpen={isDeclineModalOpen}
-        handleCloseDeclineModal={handleCloseDeclineModal}
-        declineBookingData={declineBookingData}
-        handleDeclineBooking={handleDeclineBooking}
-      />
+      {isAcceptModalOpen && (
+        <AcceptInviteModal
+          isAcceptModalOpen={isAcceptModalOpen}
+          handleCloseAcceptModal={handleCloseAcceptModal}
+          acceptBookingData={acceptBookingData}
+          handleAcceptBooking={handleAcceptBooking}
+          players={players}
+        />
+      )}
+      {isDeclineModalOpen && (
+        <DeclineInviteModal
+          isDeclineModalOpen={isDeclineModalOpen}
+          handleCloseDeclineModal={handleCloseDeclineModal}
+          declineBookingData={declineBookingData}
+          handleDeclineBooking={handleDeclineBooking}
+        />
+      )}
     </div>
   );
 };

@@ -457,13 +457,14 @@ const MatchInviteForm = () => {
           {isButtonDisabled ? buttonText : "Davet et"}
         </button>
       </form>
-
-      <InviteModal
-        modal={modal}
-        handleModalSubmit={handleModalSubmit}
-        formData={bookingFormData}
-        handleCloseModal={handleCloseModal}
-      />
+      {modal && (
+        <InviteModal
+          modal={modal}
+          handleModalSubmit={handleModalSubmit}
+          formData={bookingFormData}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

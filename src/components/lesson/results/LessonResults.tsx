@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import paths from "../../../routing/Paths";
 
@@ -11,8 +12,8 @@ import { useAppSelector } from "../../../store/hooks";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
-import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
-import { useGetFavouritesQuery } from "../../../api/endpoints/FavouritesApi";
+import { useGetPaginatedTrainersQuery } from "../../../api/endpoints/TrainersApi";
+import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
 import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
 import {
   useAddStudentMutation,
@@ -41,12 +42,6 @@ const LessonResults = (props: TrainSearchProps) => {
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
-  const {
-    data: trainers,
-    isLoading: isTrainersLoading,
-    isError,
-  } = useGetTrainersQuery({});
-
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -56,9 +51,6 @@ const LessonResults = (props: TrainSearchProps) => {
   } = useGetTrainerExperienceTypesQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const { data: favourites, isLoading: isFavouritesLoading } =
-    useGetFavouritesQuery({});
 
   const { data: clubStaff, isLoading: isClubStaffLoading } =
     useGetClubStaffQuery({});
@@ -108,63 +100,95 @@ const LessonResults = (props: TrainSearchProps) => {
       updateStudent(updatedStudentData);
     }
   };
-  const myFavourites = favourites?.filter(
-    (favourite) =>
-      favourite.favouriter_id === user?.user?.user_id &&
-      favourite.is_active === true
-  );
+  const {
+    data: myFavourites,
+    isLoading: isFavouritesLoading,
+    refetch: refetchFavourites,
+  } = useGetFavouritesByFilterQuery({
+    favouriter_id: user?.user?.user_id,
+    is_active: true,
+  });
 
+  const [currentPage, setCurrentPage] = useState(1);
   const trainerLevelValue = Number(trainerLevelId) ?? null;
   const selectedGenderValue = gender ?? "";
   const locationIdValue = Number(locationId) ?? null;
   const clubIdValue = Number(clubId) ?? null;
   const trainerPriceValue = Number(trainerPrice) ?? null;
 
+  const {
+    data: trainers,
+    isLoading: isTrainersLoading,
+    refetch: refetchPaginatedTrainers,
+  } = useGetPaginatedTrainersQuery({
+    currentPage: currentPage,
+    trainerExperienceTypeId: trainerLevelValue,
+    selectedGender: selectedGenderValue,
+    locationId: locationIdValue,
+    clubId: clubIdValue,
+    currentUserId: user?.user?.user_id,
+  });
+
+  const pageNumbers = [];
+  for (let i = 1; i <= trainers?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % trainers?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + trainers?.totalPages) % trainers?.totalPages) + 1;
+    setCurrentPage(prevPage);
+  };
+
   const today = new Date();
   const year = today.getFullYear();
 
-  const filteredTrainers =
-    trainers &&
-    trainers
-      .filter((trainer) => trainer.user_id !== user.user.user_id)
-      .filter((trainer) => {
-        if (
-          trainerLevelValue === 0 &&
-          selectedGenderValue === "" &&
-          locationIdValue === 0 &&
-          clubIdValue === 0 &&
-          trainerPriceValue === 0 &&
-          favourite !== true
-        ) {
-          return trainer;
-        } else if (
-          (trainerLevelValue === trainer.trainer_experience_type_id ||
-            trainerLevelValue === 0) &&
-          (selectedGenderValue === trainer.gender ||
-            selectedGenderValue === "") &&
-          (locationIdValue === trainer.location_id || locationIdValue === 0) &&
-          ((clubIdValue === trainer.club_id &&
-            clubStaff?.find((staff) => staff.user_id === trainer.user_id) &&
-            clubStaff?.find((staff) => staff.user_id === trainer.user_id)
-              ?.employment_status === "accepted") ||
-            clubIdValue === 0) &&
-          (trainerPriceValue >= trainer.price_hour ||
-            trainerPriceValue === 100) &&
-          ((favourite === true &&
-            myFavourites.find(
-              (favourite) => favourite.favouritee_id === trainer.user_id
-            )) ||
-            favourite !== true)
-        ) {
-          return trainer;
-        }
-      });
+  const filteredTrainers = trainers?.trainers
+    ?.filter((trainer) => trainer.user_id !== user.user.user_id)
+    .filter((trainer) => {
+      if (trainerPriceValue === 0 && favourite !== true) {
+        return trainer;
+      } else if (
+        (trainerPriceValue >= trainer.price_hour ||
+          trainerPriceValue === 100) &&
+        ((favourite === true &&
+          myFavourites.find(
+            (favourite) => favourite.favouritee_id === trainer.user_id
+          )) ||
+          favourite !== true)
+      ) {
+        return trainer;
+      }
+    });
 
   useEffect(() => {
     if (isAddStudentSuccess || isUpdateStudentSuccess) {
       refetchStudents();
     }
   }, [isAddStudentSuccess, isUpdateStudentSuccess]);
+
+  useEffect(() => {
+    refetchFavourites();
+  }, []);
+
+  useEffect(() => {
+    refetchPaginatedTrainers();
+  }, [
+    trainerLevelValue,
+    selectedGenderValue,
+    locationIdValue,
+    clubIdValue,
+    currentPage,
+  ]);
 
   if (
     isLocationsLoading ||
@@ -181,9 +205,19 @@ const LessonResults = (props: TrainSearchProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Ders</h2>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
       {isTrainersLoading && <p>Yükleniyor...</p>}
-      {isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>}
       {trainers && filteredTrainers.length === 0 && (
         <p>
           Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
@@ -307,6 +341,22 @@ const LessonResults = (props: TrainSearchProps) => {
           </tbody>
         </table>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handlePlayerPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

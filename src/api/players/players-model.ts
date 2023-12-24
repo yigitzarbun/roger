@@ -6,13 +6,27 @@ const playersModel = {
     return players;
   },
 
-  async getPaginated(page) {
+  async getPaginated(filter) {
     const playersPerPage = 4;
-    const offset = (page - 1) * playersPerPage;
+    const offset = (filter.currentPage - 1) * playersPerPage;
 
     const players = await db("players");
 
     const paginatedPlayers = await db("players")
+      .where((builder) => {
+        if (filter.playerLevelId > 0) {
+          builder.where("player_level_id", filter.playerLevelId);
+        }
+        if (filter.selectedGender !== "") {
+          builder.where("gender", filter.selectedGender);
+        }
+        if (filter.locationId > 0) {
+          builder.where("location_id", filter.locationId);
+        }
+        if (filter.currentUserId) {
+          builder.where("user_id", "!=", filter.currentUserId);
+        }
+      })
       .orderBy("player_id", "asc")
       .limit(playersPerPage)
       .offset(offset);

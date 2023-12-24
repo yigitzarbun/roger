@@ -33,7 +33,9 @@ bookingsRouter.get(
   "/:booking_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const booking = await bookingsModel.getById(req.params.booking_id);
+      const booking = await bookingsModel.getById(
+        Number(req.params.booking_id)
+      );
       res.status(200).json(booking);
     } catch (error) {
       next(error);

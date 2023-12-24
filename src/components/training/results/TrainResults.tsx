@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import paths from "../../../routing/Paths";
 
@@ -7,10 +8,11 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
+import { useGetPaginatedPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
-import { useGetFavouritesQuery } from "../../../api/endpoints/FavouritesApi";
+import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
+import { getAge } from "../../../common/util/TimeFunctions";
 
 interface TrainResultsProps {
   playerLevelId: number;
@@ -23,11 +25,6 @@ const TrainResults = (props: TrainResultsProps) => {
   const { playerLevelId, gender, locationId, favourite } = props;
 
   const { user } = useAppSelector((store) => store.user);
-  const {
-    data: players,
-    isLoading: isPlayersLoading,
-    isError,
-  } = useGetPlayersQuery({});
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -35,47 +32,73 @@ const TrainResults = (props: TrainResultsProps) => {
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
 
-  const { data: favourites, isLoading: isFavouritesLoading } =
-    useGetFavouritesQuery({});
+  const {
+    data: myFavourites,
+    isLoading: isFavouritesLoading,
+    refetch: refetchFavourites,
+  } = useGetFavouritesByFilterQuery({
+    favouriter_id: user?.user?.user_id,
+    is_active: true,
+  });
 
-  const myFavourites = favourites?.filter(
-    (favourite) =>
-      favourite.favouriter_id === user?.user?.user_id &&
-      favourite.is_active === true
-  );
-
+  const [currentPage, setCurrentPage] = useState(1);
   const levelId = Number(playerLevelId) ?? null;
   const selectedGender = gender ?? "";
   const locationIdValue = Number(locationId) ?? null;
 
-  const today = new Date();
-  const year = today.getFullYear();
+  const {
+    data: players,
+    isLoading: isPlayersLoading,
+    refetch: refetchPaginatedPlayers,
+  } = useGetPaginatedPlayersQuery({
+    currentPage: currentPage,
+    playerLevelId: levelId,
+    selectedGender: selectedGender,
+    locationId: locationIdValue,
+    currentUserId: user?.user?.user_id,
+  });
 
-  const filteredPlayers =
-    players &&
-    players
-      .filter((player) => player.user_id !== user.user.user_id)
-      .filter((player) => {
-        if (
-          levelId === 0 &&
-          gender === "" &&
-          locationIdValue === 0 &&
-          favourite !== true
-        ) {
-          return player;
-        } else if (
-          (levelId === player.player_level_id || levelId === 0) &&
-          (selectedGender === player.gender || selectedGender === "") &&
-          (locationIdValue === player.location_id || locationIdValue === 0) &&
-          ((favourite === true &&
-            myFavourites.find(
-              (favourite) => favourite.favouritee_id === player.user_id
-            )) ||
-            favourite !== true)
-        ) {
-          return player;
-        }
-      });
+  const pageNumbers = [];
+  for (let i = 1; i <= players?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % players?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + players?.totalPages) % players?.totalPages) + 1;
+    setCurrentPage(prevPage);
+  };
+
+  const filteredPlayers = players?.players?.filter((player) => {
+    if (favourite !== true) {
+      return player;
+    } else if (
+      (favourite === true &&
+        myFavourites.find(
+          (favourite) => favourite.favouritee_id === player.user_id
+        )) ||
+      favourite !== true
+    ) {
+      return player;
+    }
+  });
+
+  useEffect(() => {
+    refetchPaginatedPlayers();
+  }, [levelId, selectedGender, locationIdValue]);
+
+  useEffect(() => {
+    refetchFavourites();
+  }, []);
 
   if (
     isPlayersLoading ||
@@ -90,9 +113,19 @@ const TrainResults = (props: TrainResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>Antreman</h2>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
       {isPlayersLoading && <p>Yükleniyor...</p>}
-      {isError && <p>Bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>}
       {players && filteredPlayers.length === 0 && (
         <p>
           Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
@@ -140,7 +173,7 @@ const TrainResults = (props: TrainResultsProps) => {
                   }
                 </td>
                 <td>{player.gender}</td>
-                <td>{year - Number(player.birth_year)}</td>
+                <td>{getAge(Number(player.birth_year))}</td>
                 <td>
                   {
                     locations?.find(
@@ -168,6 +201,22 @@ const TrainResults = (props: TrainResultsProps) => {
           </tbody>
         </table>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handlePlayerPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

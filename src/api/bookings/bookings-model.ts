@@ -35,12 +35,26 @@ const bookingsModel = {
       if (filter.invitee_id) {
         builder.where("invitee_id", filter.invitee_id);
       }
-      if (filter.booking_player_id) {
-        builder.where(function () {
-          this.where("inviter_id", filter.booking_player_id).orWhere(
-            "invitee_id",
-            filter.booking_player_id
-          );
+      if (filter.user_id) {
+        builder.andWhere(function () {
+          this.where("bookings.inviter_id", filter.user_id)
+            .orWhere("bookings.invitee_id", filter.user_id)
+            .orWhereExists(function () {
+              this.select(db.raw(1))
+                .from("student_groups")
+                .whereRaw("student_groups.first_student_id = ?", [
+                  filter.user_id,
+                ])
+                .orWhereRaw("student_groups.second_student_id = ?", [
+                  filter.user_id,
+                ])
+                .orWhereRaw("student_groups.third_student_id = ?", [
+                  filter.user_id,
+                ])
+                .orWhereRaw("student_groups.fourth_student_id = ?", [
+                  filter.user_id,
+                ]);
+            });
         });
       }
 
@@ -52,10 +66,13 @@ const bookingsModel = {
 
     return bookings;
   },
-
-  async getById(booking_id) {
-    const booking = await db("bookings").where("booking_id", booking_id);
-    return booking;
+  async getById(booking_id: number) {
+    try {
+      const booking = await db("bookings").where("booking_id", booking_id);
+      return booking;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   async add(booking) {

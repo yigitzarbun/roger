@@ -78,6 +78,7 @@ const PlayerRegisterForm = () => {
     try {
       // register user
       const response = await addUser(userRegisterData);
+
       if ("data" in response) {
         // get newly added user from db
         const newUser = response.data;
@@ -98,6 +99,7 @@ const PlayerRegisterForm = () => {
 
         // register player
         await addPlayer(playerRegisterData);
+
         navigate(paths.LOGIN);
         reset();
       } else {

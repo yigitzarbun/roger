@@ -51,13 +51,17 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   );
 
   const { data: selectedClub, isLoading: isSelectedClubLoading } =
-    useGetClubByClubIdQuery(bookingData?.club_id);
+    useGetClubByClubIdQuery(Number(bookingData?.club_id), {
+      skip: !isModalOpen,
+    });
 
   const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
-    useGetCourtByIdQuery(bookingData?.court_id);
+    useGetCourtByIdQuery(Number(bookingData?.court_id), { skip: !isModalOpen });
 
   const { data: selectedPayment, isLoading: isSelectedPaymentLoading } =
-    useGetPaymentByIdQuery(bookingData?.payment_id);
+    useGetPaymentByIdQuery(Number(bookingData?.payment_id), {
+      skip: !isModalOpen,
+    });
 
   const { data: externalMembers, isLoading: isExternalMembersLoading } =
     useGetClubExternalMembersQuery({});
@@ -102,7 +106,10 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     isPlayersLoading ||
     isTrainersLoading ||
     isExternalMembersLoading ||
-    isStudentGroupsLoading
+    isStudentGroupsLoading ||
+    isSelectedPaymentLoading ||
+    isSelectedCourtLoading ||
+    isSelectedClubLoading
   ) {
     return <PageLoading />;
   }
