@@ -237,7 +237,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
           />
-
           <FaAngleRight
             onClick={handleNextPage}
             className={styles["nav-arrow"]}

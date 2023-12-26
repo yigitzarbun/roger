@@ -116,13 +116,10 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      //refetch();
-
       handleCloseModal();
     }
   }, [isSuccess]);
 
-  // data loading check
   if (
     isBookingsLoading ||
     isPlayersLoading ||
