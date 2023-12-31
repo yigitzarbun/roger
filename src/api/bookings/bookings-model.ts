@@ -66,6 +66,213 @@ const bookingsModel = {
 
     return bookings;
   },
+
+  async getPlayerBookingsByUserId(userId: number) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "trainers.*",
+          "clubs.*",
+          "clubs.image as clubImage",
+          "courts.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .where("bookings.booking_status_type_id", 2)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", userId)
+            .orWhere("bookings.inviter_id", userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", userId).orWhereNot(
+            "trainers.user_id",
+            userId
+          );
+        });
+
+      return bookings;
+    } catch (error) {
+      // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
+
+  async getOutgoingPlayerRequests(userId: number) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "trainers.*",
+          "clubs.*",
+          "clubs.image as clubImage",
+          "courts.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .where("bookings.booking_status_type_id", 1)
+        .andWhere((builder) => {
+          builder.where("bookings.inviter_id", userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", userId).orWhereNot(
+            "trainers.user_id",
+            userId
+          );
+        });
+
+      return bookings;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
+
+  async getIncomingPlayerRequests(userId: number) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "trainers.*",
+          "clubs.*",
+          "clubs.image as clubImage",
+          "courts.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .where("bookings.booking_status_type_id", 1)
+        .andWhere((builder) => {
+          builder.where("bookings.invitee_id", userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", userId).orWhereNot(
+            "trainers.user_id",
+            userId
+          );
+        });
+
+      return bookings;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
+
+  async getPlayerPastEvents(userId: number) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "trainers.*",
+          "clubs.*",
+          "clubs.image as clubImage",
+          "courts.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .where("bookings.booking_status_type_id", 5)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", userId)
+            .orWhere("bookings.inviter_id", userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", userId).orWhereNot(
+            "trainers.user_id",
+            userId
+          );
+        });
+
+      return bookings;
+    } catch (error) {
+      // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
+
   async getById(booking_id: number) {
     try {
       const booking = await db("bookings").where("booking_id", booking_id);

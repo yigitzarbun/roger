@@ -13,34 +13,25 @@ import CancelInviteModal, {
 } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetPlayerOutgoingRequestsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerRequestsOutgoing = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const {
-    data: bookings,
+    data: outgoingBookings,
     isLoading: isBookingsLoading,
     refetch,
-  } = useGetBookingsQuery({});
+  } = useGetPlayerOutgoingRequestsQuery(user?.user_id);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
   const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
     {}
   );
@@ -55,20 +46,6 @@ const PlayerRequestsOutgoing = () => {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
-
-  const date = new Date();
-  const today = date.toLocaleDateString();
-  const now = date.toLocaleTimeString();
-
-  const outgoingBookings = bookings?.filter(
-    (booking) =>
-      booking.inviter_id === user?.user_id &&
-      booking.booking_status_type_id === 1 &&
-      (new Date(booking.event_date).toLocaleDateString() > today ||
-        (new Date(booking.event_date).toLocaleDateString() === today &&
-          booking.event_time >= now))
-  );
-  const currentYear = new Date().getFullYear();
 
   const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
@@ -103,11 +80,7 @@ const PlayerRequestsOutgoing = () => {
 
   if (
     isBookingsLoading ||
-    isCourtsLoading ||
-    isClubsLoading ||
-    isTrainersLoading ||
     isEventTypesLoading ||
-    isPlayersLoading ||
     isPlayerLevelTypesLoading ||
     isTrainerExperienceTypesLoading ||
     isPaymentsLoading ||
@@ -166,21 +139,8 @@ const PlayerRequestsOutgoing = () => {
                     >
                       <img
                         src={
-                          players?.find(
-                            (player) => player.user_id === booking.invitee_id
-                          )?.image
-                            ? players?.find(
-                                (player) =>
-                                  player.user_id === booking.invitee_id
-                              )?.image
-                            : trainers?.find(
-                                (trainer) =>
-                                  trainer.user_id === booking.invitee_id
-                              )?.image
-                            ? trainers?.find(
-                                (trainer) =>
-                                  trainer.user_id === booking.invitee_id
-                              )?.image
+                          booking?.image
+                            ? booking?.image
                             : "/images/icons/avatar.png"
                         }
                         className={styles["player-image"]}
@@ -194,16 +154,8 @@ const PlayerRequestsOutgoing = () => {
                         to={`${Paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}
                         className={styles.name}
                       >
-                        {`${
-                          players?.find(
-                            (player) => player.user_id === booking.invitee_id
-                          )?.fname
-                        }
-                        ${
-                          players?.find(
-                            (player) => player.user_id === booking.invitee_id
-                          )?.lname
-                        }
+                        {`${booking?.fname}
+                        ${booking?.lname}
                         `}
                       </Link>
                     ) : booking.event_type_id === 3 ? (
@@ -211,16 +163,8 @@ const PlayerRequestsOutgoing = () => {
                         to={`${Paths.EXPLORE_PROFILE}2/${booking.invitee_id}`}
                         className={styles.name}
                       >
-                        {`${
-                          trainers?.find(
-                            (trainer) => trainer.user_id === booking.invitee_id
-                          )?.fname
-                        }
-                        ${
-                          trainers?.find(
-                            (trainer) => trainer.user_id === booking.invitee_id
-                          )?.lname
-                        }
+                        {`${booking?.fname}
+                        ${booking?.lname}
                         `}
                       </Link>
                     ) : (
@@ -231,46 +175,18 @@ const PlayerRequestsOutgoing = () => {
                     {booking.event_type_id === 1 || booking.event_type_id === 2
                       ? playerLevelTypes?.find(
                           (level) =>
-                            level.player_level_id ===
-                            players?.find(
-                              (player) => player.user_id === booking.invitee_id
-                            )?.player_level_id
+                            level.player_level_id === booking?.player_level_id
                         )?.player_level_name
                       : booking.event_type_id === 3
                       ? trainerExperienceTypes?.find(
                           (type) =>
                             type.trainer_experience_type_id ===
-                            trainers?.find(
-                              (trainer) =>
-                                trainer.user_id === booking.invitee_id
-                            )?.trainer_experience_type_id
+                            booking?.trainer_experience_type_id
                         )?.trainer_experience_type_name
                       : ""}
                   </td>
-                  <td>
-                    {booking.event_type_id === 1 || booking.event_type_id === 2
-                      ? players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.gender
-                      : booking.event_type_id === 3
-                      ? trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.gender
-                      : ""}
-                  </td>
-                  <td>
-                    {booking.event_type_id === 1 || booking.event_type_id === 2
-                      ? currentYear -
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.birth_year
-                      : booking.event_type_id === 3
-                      ? currentYear -
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.birth_year
-                      : ""}
-                  </td>
+                  <td>{booking?.gender}</td>
+                  <td>{getAge(booking?.birth_year)}</td>
                   <td>
                     {
                       eventTypes?.find(
@@ -280,19 +196,8 @@ const PlayerRequestsOutgoing = () => {
                   </td>
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
-                  <td>
-                    {
-                      courts?.find(
-                        (court) => court.court_id === booking.court_id
-                      )?.court_name
-                    }
-                  </td>
-                  <td>
-                    {
-                      clubs?.find((club) => club.club_id === booking.club_id)
-                        ?.club_name
-                    }
-                  </td>
+                  <td>{booking?.court_name}</td>
+                  <td>{booking?.club_name}</td>
                   <td>
                     {booking.event_type_id === 1 || booking.event_type_id === 2
                       ? payments?.find(

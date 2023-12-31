@@ -113,23 +113,25 @@ async function updateCompletedBookings() {
 
     for (const booking of completedBookings) {
       const bookingDate = new Date(booking.event_date);
-      bookingDate.setHours(bookingDate.getHours() + timezoneOffsetHours);
+      //bookingDate.setHours(bookingDate.getHours() + timezoneOffsetHours);
 
       // Parse booking.event_time
       const eventTimeParts = booking.event_time.split(":");
       const bookingTime = new Date();
-      bookingTime.setHours(Number(eventTimeParts[0]) + timezoneOffsetHours);
+      bookingTime.setHours(Number(eventTimeParts[0]));
       bookingTime.setMinutes(Number(eventTimeParts[1]));
       bookingTime.setSeconds(Number(eventTimeParts[2]));
 
       // Compare the adjusted dates and times
-      if (
-        booking.event_date <= currentDate &&
-        booking.event_time <= currentTime.toLocaleTimeString()
-      ) {
+      if (bookingDate <= currentDate && bookingTime <= currentTime) {
         await db("bookings")
           .where("booking_id", "=", booking.booking_id)
           .update({ booking_status_type_id: 5 });
+
+        console.log("current date: ", currentDate);
+        console.log("current time: ", currentTime);
+        console.log("booking date: ", bookingDate);
+        console.log("booking time", bookingTime);
       }
     }
   } catch (error) {

@@ -21,6 +21,7 @@ import {
   useUpdateStudentMutation,
 } from "../../../api/endpoints/StudentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
+import { getAge } from "../../../common/util/TimeFunctions";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -148,9 +149,6 @@ const LessonResults = (props: TrainSearchProps) => {
       ((currentPage - 2 + trainers?.totalPages) % trainers?.totalPages) + 1;
     setCurrentPage(prevPage);
   };
-
-  const today = new Date();
-  const year = today.getFullYear();
 
   const filteredTrainers = trainers?.trainers
     ?.filter((trainer) => trainer.user_id !== user.user.user_id)
@@ -280,7 +278,7 @@ const LessonResults = (props: TrainSearchProps) => {
                   }
                 </td>
                 <td>{trainer.gender}</td>
-                <td>{year - Number(trainer.birth_year)}</td>
+                <td>{getAge(trainer.birth_year)}</td>
                 <td>
                   {
                     locations?.find(

@@ -27,6 +27,18 @@ export const bookingsSlice = createApi({
     getBookingById: builder.query({
       query: (booking_id) => `/bookings/${booking_id}`,
     }),
+    getPlayerBookingsByUserId: builder.query({
+      query: (userId) => `/bookings/player-bookings/${userId}`,
+    }),
+    getPlayerOutgoingRequests: builder.query({
+      query: (userId) => `/bookings/outgoing-requests/${userId}`,
+    }),
+    getPlayerIncomingRequests: builder.query({
+      query: (userId) => `/bookings/incoming-requests/${userId}`,
+    }),
+    getPlayerPastEvents: builder.query({
+      query: (userId) => `/bookings/past-events/${userId}`,
+    }),
     getBookingsByFilter: builder.query({
       query: (filter) => `/bookings/filter?${new URLSearchParams(filter)}`,
     }),
@@ -50,6 +62,10 @@ export const bookingsSlice = createApi({
 export const {
   useGetBookingsQuery,
   useGetBookingByIdQuery,
+  useGetPlayerBookingsByUserIdQuery,
+  useGetPlayerOutgoingRequestsQuery,
+  useGetPlayerIncomingRequestsQuery,
+  useGetPlayerPastEventsQuery,
   useGetBookingsByFilterQuery,
   useAddBookingMutation,
   useUpdateBookingMutation,

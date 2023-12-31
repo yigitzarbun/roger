@@ -30,6 +30,62 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
+  "/player-bookings/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getPlayerBookingsByUserId(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
+  "/outgoing-requests/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getOutgoingPlayerRequests(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
+  "/incoming-requests/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getIncomingPlayerRequests(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
+  "/past-events/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getPlayerPastEvents(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
   "/:booking_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
