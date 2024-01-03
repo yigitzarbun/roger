@@ -29,6 +29,20 @@ clubSubscriptionsRouter.get(
   }
 );
 clubSubscriptionsRouter.get(
+  "/player-active-club-subscriptions/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const subscriptions =
+        await clubSubscriptionsModel.getPlayerActiveClubSubscriptionsByUserId(
+          Number(req.params.userId)
+        );
+      res.status(200).json(subscriptions);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubSubscriptionsRouter.get(
   "/:club_subscription_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

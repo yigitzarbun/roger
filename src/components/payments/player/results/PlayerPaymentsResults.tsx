@@ -7,36 +7,18 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetPlayerPaymentssByUserIdQuery } from "../../../../api/endpoints/PaymentsApi";
 
 const PlayerPaymentsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
+
+  const { data: myPayments, isLoading: isPaymentsLoading } =
+    useGetPlayerPaymentssByUserIdQuery(user?.user?.user_id);
+
   const { data: paymentTypes, isLoading: isPaymentTypesLoading } =
     useGetPaymentTypesQuery({});
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const myPayments = payments?.filter(
-    (payment) =>
-      payment.sender_subscriber_id === user?.user?.user_id ||
-      payment.sender_inviter_id === user?.user?.user_id ||
-      payment.sender_invitee_id === user?.user?.user_id
-  );
-
-  if (
-    isPaymentsLoading ||
-    isPaymentTypesLoading ||
-    isTrainersLoading ||
-    isClubsLoading
-  ) {
+  if (isPaymentsLoading || isPaymentTypesLoading) {
     return <PageLoading />;
   }
   return (
@@ -78,27 +60,9 @@ const PlayerPaymentsResults = () => {
                     {`${payment.lesson_price + payment.subscription_price} TL`}
                   </td>
                 )}
-                <td>
-                  {
-                    clubs?.find(
-                      (club) => club.user_id === payment.recipient_club_id
-                    )?.club_name
-                  }
-                </td>
+                <td>{payment?.club_name}</td>
                 {payment.payment_type_id === 3 && (
-                  <td>
-                    {`${
-                      trainers?.find(
-                        (trainer) =>
-                          trainer.user_id === payment.recipient_trainer_id
-                      )?.fname
-                    } ${
-                      trainers?.find(
-                        (trainer) =>
-                          trainer.user_id === payment.recipient_trainer_id
-                      )?.lname
-                    }`}
-                  </td>
+                  <td>{`${payment?.fname} ${payment?.lname}`}</td>
                 )}
                 {(payment.payment_type_id === 1 ||
                   payment.payment_type_id === 2 ||

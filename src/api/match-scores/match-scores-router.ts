@@ -30,6 +30,21 @@ matchScoresRouter.get(
   }
 );
 
+matchScoresRouter.get(
+  "/match-scores-booking-details/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings =
+        await matchScoresModel.getPlayerMatchScoresWithBookingDetails(
+          Number(req.params.userId)
+        );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 matchScoresRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

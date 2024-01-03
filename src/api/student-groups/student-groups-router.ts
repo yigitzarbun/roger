@@ -30,6 +30,20 @@ studentGroupsRouter.get(
 );
 
 studentGroupsRouter.get(
+  "/player-active-student-groups/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groups = await studentGroupsModel.getPlayerStudentGroupsByUserId(
+        Number(req.params.userId)
+      );
+      res.status(200).json(groups);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+studentGroupsRouter.get(
   "/:student_group_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

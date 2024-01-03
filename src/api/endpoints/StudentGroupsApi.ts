@@ -26,6 +26,10 @@ export const studentGroupsSlice = createApi({
       query: (filter) =>
         `/student-groups/filter?${new URLSearchParams(filter)}`,
     }),
+    getPlayerActiveStudentGroupsByUserId: builder.query({
+      query: (userId) =>
+        `/student-groups/player-active-student-groups/${userId}`,
+    }),
     addStudentGroup: builder.mutation({
       query: (studentGroup) => ({
         url: "/student-groups",
@@ -46,6 +50,7 @@ export const studentGroupsSlice = createApi({
 export const {
   useGetStudentGroupsQuery,
   useGetStudentGroupsByFilterQuery,
+  useGetPlayerActiveStudentGroupsByUserIdQuery,
   useAddStudentGroupMutation,
   useUpdateStudentGroupMutation,
 } = studentGroupsSlice;

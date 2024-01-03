@@ -28,6 +28,19 @@ favouritesRouter.get(
   }
 );
 favouritesRouter.get(
+  "/player-active-favourites/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const favourites = await favouritesModel.getPlayerFavouritesByUserId(
+        Number(req.params.userId)
+      );
+      res.status(200).json(favourites);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+favouritesRouter.get(
   "/:favourite_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

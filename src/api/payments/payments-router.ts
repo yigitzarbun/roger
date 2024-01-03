@@ -27,6 +27,21 @@ paymentsRouter.get(
     }
   }
 );
+
+paymentsRouter.get(
+  "/player-payments/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const payments = await paymentsModel.getPlayerPaymentsByUserId(
+        Number(req.params.userId)
+      );
+      res.status(200).json(payments);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 paymentsRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {

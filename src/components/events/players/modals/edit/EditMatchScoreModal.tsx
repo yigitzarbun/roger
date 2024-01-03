@@ -49,10 +49,12 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
   const [updateMatchScore, { isSuccess: isUpdateMatchScoreSuccess }] =
     useUpdateMatchScoreMutation({});
 
-  const { data: selectedMatch, isLoading: isSelectedMatchLoading } =
-    useGetMatchScoreByIdQuery(selectedMatchScoreId);
+  const {
+    data: selectedMatch,
+    isLoading: isSelectedMatchLoading,
+    refetch: refetchMatchScores,
+  } = useGetMatchScoreByIdQuery(selectedMatchScoreId);
 
-  const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
   const [bookingSkip, setBookingSkip] = useState(false);
 
   const {
@@ -61,7 +63,6 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
   } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id, {
     skip: bookingSkip,
   });
-
   const { data: inviter, isLoading: isInviterLoading } =
     useGetPlayersByFilterQuery({
       user_id: selectedMatchBookingDetails?.[0]?.inviter_id,
@@ -135,16 +136,18 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     if (selectedMatch) {
       setBookingSkip(false);
     }
   }, [selectedMatch]);
+
   useEffect(() => {
     if (
       firstSetInviter &&
-      firstSetInvitee &&
       secondSetInviter &&
+      firstSetInvitee &&
       secondSetInvitee
     ) {
       const firstSetWinner =
@@ -159,7 +162,7 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
         setThirdSetVisible(false);
       }
     }
-  }, [firstSetInvitee, firstSetInviter, secondSetInvitee, secondSetInviter]);
+  }, [firstSetInviter, secondSetInviter, firstSetInvitee, secondSetInvitee]);
 
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
@@ -211,7 +214,8 @@ const EditMatchScoreModal = (props: EditMatchScoreModalProps) => {
                 <td>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</td>
                 <td>{`${selectedMatch?.[0]?.inviter_first_set_games_won}-${selectedMatch?.[0]?.invitee_first_set_games_won}`}</td>
                 <td>{`${selectedMatch?.[0]?.inviter_second_set_games_won}-${selectedMatch?.[0]?.invitee_second_set_games_won}`}</td>
-                {thirdSetVisible ? (
+                {selectedMatch?.[0]?.inviter_third_set_games_won &&
+                selectedMatch?.[0]?.invitee_third_set_games_won ? (
                   <td>{`${selectedMatch?.[0]?.inviter_third_set_games_won}-${selectedMatch?.[0]?.invitee_third_set_games_won}`}</td>
                 ) : (
                   "-"

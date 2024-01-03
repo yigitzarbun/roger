@@ -36,31 +36,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   const user = useAppSelector((store) => store?.user?.user?.user);
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
-
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
-
-  const { data: myGroups, isLoading: isMyGroupsLoading } =
-    useGetStudentGroupsByFilterQuery({
-      is_active: true,
-      student_id: user?.user_id,
-    });
-
   const { data: playerBookings, isLoading: isBookingsLoading } =
     useGetPlayerBookingsByUserIdQuery(user?.user_id);
 
@@ -107,16 +82,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     }
   }, [isSuccess]);
 
-  if (
-    isBookingsLoading ||
-    isClubsLoading ||
-    isEventTypesLoading ||
-    isPlayerLevelsLoading ||
-    isTrainerExperienceTypesLoading ||
-    isMyGroupsLoading ||
-    isPaymentsLoading ||
-    isUsersLoading
-  ) {
+  if (isBookingsLoading) {
     return <PageLoading />;
   }
 
@@ -154,64 +120,28 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td className={styles["vertical-center"]}>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 6
+                      booking.event_type_id === 1 || booking.event_type_id === 2
+                        ? 1
+                        : booking.event_type_id === 3
+                        ? 2
+                        : booking.event_type_id === 6
                         ? 3
-                        : booking.inviter_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id
-                        : booking.invitee_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.inviter_id
-                          )?.user_type_id
                         : ""
                     }/${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 6
-                        ? myGroups?.find(
-                            (group) => group.user_id === booking.invitee_id
-                          )?.club_id
-                        : booking.inviter_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_id
-                        : booking.invitee_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.inviter_id
-                          )?.user_id
-                        : ""
+                      booking.event_type_id === 6
+                        ? booking.clubUserId
+                        : booking.user_id
                     }`}
                   >
                     <img
                       src={
                         (booking.event_type_id === 1 ||
-                          booking.event_type_id === 2) &&
-                        booking.inviter_id === user.user_id &&
+                          booking.event_type_id === 2 ||
+                          booking.event_type_id === 3) &&
                         booking.image
                           ? booking?.image
-                          : (booking.event_type_id === 1 ||
-                              booking.event_type_id === 2) &&
-                            booking.invitee_id === user.user_id &&
-                            booking?.image
-                          ? booking?.image
-                          : booking?.event_type_id === 3 &&
-                            booking?.inviter_id === user.user_id &&
-                            booking?.image
-                          ? booking?.image
-                          : booking.event_type_id === 3 &&
-                            booking.invitee_id === user.user_id &&
-                            booking?.image
-                          ? booking?.image
-                          : booking.event_type_id === 6
-                          ? clubs?.find(
-                              (club) =>
-                                club.user_id ===
-                                myGroups?.find(
-                                  (group) =>
-                                    group.user_id === booking.invitee_id
-                                )?.club_id
-                            )?.image
+                          : booking.event_type_id === 6 && booking?.clubImage
+                          ? booking?.clubImage
                           : "/images/icons/avatar.png"
                       }
                       className={styles["profile-image"]}
@@ -221,143 +151,61 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 6
+                      booking.event_type_id === 1 || booking.event_type_id === 2
+                        ? 1
+                        : booking.event_type_id === 3
+                        ? 2
+                        : booking.event_type_id === 6
                         ? 3
-                        : booking.inviter_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id
-                        : booking.invitee_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.inviter_id
-                          )?.user_type_id
                         : ""
                     }/${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 6
-                        ? myGroups?.find(
-                            (group) => group.user_id === booking.invitee_id
-                          )?.club_id
-                        : booking.inviter_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_id
-                        : booking.invitee_id === user?.user_id
-                        ? users?.find(
-                            (user) => user.user_id === booking.inviter_id
-                          )?.user_id
-                        : ""
+                      booking.event_type_id === 6
+                        ? booking.clubUserId
+                        : booking.user_id
                     }`}
                     className={styles["opponent-name"]}
                   >
-                    {(booking.event_type_id === 1 ||
-                      booking.event_type_id === 2) &&
-                    booking.inviter_id === user.user_id
+                    {booking.event_type_id === 1 ||
+                    booking.event_type_id === 2 ||
+                    booking.event_type_id === 3
                       ? `${booking.fname} ${booking.lname}`
-                      : (booking.event_type_id === 1 ||
-                          booking.event_type_id === 2) &&
-                        booking.invitee_id === user.user_id
-                      ? `${booking.fname} ${booking.lname}`
-                      : booking.event_type_id === 3 &&
-                        booking.inviter_id === user.user_id
-                      ? `${booking.fname} ${booking.lname}`
-                      : booking.event_type_id === 3 &&
-                        booking.invitee_id === user.user_id
-                      ? `${booking?.fname} ${booking?.lname}`
                       : booking.event_type_id === 6
-                      ? myGroups?.find(
-                          (group) => group.user_id === booking.invitee_id
-                        )?.student_group_name
+                      ? booking?.student_group_name
                       : "-"}
                   </Link>
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id === booking?.player_level_id
-                      )?.player_level_name
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? playerLevels?.find(
-                        (level) =>
-                          level.player_level_id === booking?.player_level_id
-                      )?.player_level_name
-                    : booking.event_type_id === 3 &&
-                      booking.inviter_id === user.user_id
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
-                          booking?.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user.user_id
-                    ? trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
-                          booking.trainer_experience_type_id
-                      )?.trainer_experience_type_name
+                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                    ? booking?.player_level_name
+                    : booking.event_type_id === 3
+                    ? booking?.trainer_experience_type_name
                     : "-"}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
-                    ? booking?.gender
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? booking?.gender
-                    : booking.event_type_id === 3 &&
-                      booking.inviter_id === user.user_id
-                    ? booking?.gender
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user.user_id
+                  {booking.event_type_id === 1 ||
+                  booking.event_type_id === 2 ||
+                  booking.event_type_id === 3
                     ? booking?.gender
                     : "-"}
                 </td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                  booking.inviter_id === user.user_id
-                    ? getAge(booking?.birth_year)
-                    : (booking.event_type_id === 1 ||
-                        booking.event_type_id === 2) &&
-                      booking.invitee_id === user.user_id
-                    ? getAge(booking?.birth_year)
-                    : booking.event_type_id === 3 &&
-                      booking.inviter_id === user.user_id
-                    ? getAge(booking?.birth_year)
-                    : booking.event_type_id === 3 &&
-                      booking.invitee_id === user.user_id
+                  {booking.event_type_id === 1 ||
+                  booking.event_type_id === 2 ||
+                  booking.event_type_id === 3
                     ? getAge(booking?.birth_year)
                     : "-"}
                 </td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === booking.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
+                <td>{booking?.event_type_name}</td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
                 <td>{booking?.club_name}</td>
                 <td>
-                  {(booking.event_type_id === 1 ||
-                    booking.event_type_id === 2) &&
-                    payments?.find(
-                      (payment) => payment.payment_id === booking.payment_id
-                    )?.payment_amount / 2}
-                  {booking.event_type_id === 3 &&
-                    payments?.find(
-                      (payment) => payment.payment_id === booking.payment_id
-                    )?.payment_amount}
+                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                    ? booking?.payment_amount / 2
+                    : booking.event_type_id === 3
+                    ? booking?.payment_amount
+                    : "-"}
                 </td>
                 <td>
                   {(booking.event_type_id === 1 ||

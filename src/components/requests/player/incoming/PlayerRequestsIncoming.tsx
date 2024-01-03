@@ -149,8 +149,19 @@ const PlayerRequestsIncoming = () => {
     if (isPaymentSuccess && paymentData) {
       if (paymentData[0]?.payment_status === "success") {
         const acceptedBookingData = {
-          ...acceptBookingData,
+          booking_id: acceptBookingData?.booking_id,
+          event_date: acceptBookingData?.event_date,
+          event_time: acceptBookingData?.event_time,
+          court_price: acceptBookingData?.court_price,
+          lesson_price: acceptBookingData?.lesson_price,
+          invitation_note: acceptBookingData?.invitation_note,
+          payment_id: acceptBookingData?.payment_id,
           booking_status_type_id: 2,
+          event_type_id: acceptBookingData?.event_type_id,
+          club_id: acceptBookingData?.club_id,
+          court_id: acceptBookingData?.court_id,
+          inviter_id: acceptBookingData?.inviter_id,
+          invitee_id: acceptBookingData?.invitee_id,
         };
         updateBooking(acceptedBookingData);
       } else if (paymentData[0]?.payment_status === "declined") {

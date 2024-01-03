@@ -29,6 +29,49 @@ const favouritesModel = {
     return favourites;
   },
 
+  async getPlayerFavouritesByUserId(userId: number) {
+    try {
+      const favourites = await db
+        .select(
+          "favourites.*",
+          "players.*",
+          "trainers.*",
+          "clubs.*",
+          "users.*",
+          "user_types.*",
+          "locations.*"
+        )
+        .from("favourites")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "favourites.favouritee_id");
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "favourites.favouritee_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.user_id", "=", "favourites.favouritee_id");
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "favourites.favouritee_id");
+        })
+        .leftJoin("user_types", function () {
+          this.on("user_types.user_type_id", "=", "users.user_type_id");
+        })
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "players.location_id")
+            .orOn("locations.location_id", "=", "trainers.location_id")
+            .orOn("locations.location_id", "=", "clubs.location_id");
+        })
+        .where("favourites.is_active", true)
+        .andWhere("favourites.favouriter_id", userId);
+      return favourites;
+    } catch (error) {
+      // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player favourites.");
+    }
+  },
+
   async getById(favourite_id) {
     const favourite = await db("favourites").where(
       "favourite_id",

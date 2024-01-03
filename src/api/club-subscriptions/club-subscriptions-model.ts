@@ -31,6 +31,46 @@ const clubSubscriptionsModel = {
     return clubSubscriptions;
   },
 
+  async getPlayerActiveClubSubscriptionsByUserId(userId: number) {
+    try {
+      const subscriptions = await db
+        .select(
+          "club_subscriptions.*",
+          "clubs.*",
+          "club_subscription_packages.*",
+          "club_subscription_types.*"
+        )
+        .from("club_subscriptions")
+        .leftJoin("clubs", function () {
+          this.on("clubs.user_id", "=", "club_subscriptions.club_id");
+        })
+        .leftJoin("club_subscription_packages", function () {
+          this.on(
+            "club_subscription_packages.club_subscription_package_id",
+            "=",
+            "club_subscriptions.club_subscription_package_id"
+          );
+        })
+        .leftJoin("club_subscription_types", function () {
+          this.on(
+            "club_subscription_packages.club_subscription_type_id",
+            "=",
+            "club_subscription_types.club_subscription_type_id"
+          );
+        })
+        .where("club_subscriptions.is_active", true)
+        .andWhere((builder) => {
+          builder.where("club_subscriptions.player_id", userId);
+        });
+
+      return subscriptions;
+    } catch (error) {
+      // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player active club subscriptions.");
+    }
+  },
+
   async getById(club_subscription_id) {
     const clubSubscription = await db("club_subscriptions").where(
       "club_subscription_id",

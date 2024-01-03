@@ -9,120 +9,15 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
-import { useGetStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetPlayerActiveStudentGroupsByUserIdQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 const PlayerGroupResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: groups, isLoading: isGroupsLoading } = useGetStudentGroupsQuery(
-    {}
-  );
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+  const { data: myGroups, isLoading: isGroupsLoading } =
+    useGetPlayerActiveStudentGroupsByUserIdQuery(user?.user?.user_id);
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-
-  const nextGroupTrainingDate = (group_id: number) => {
-    const filteredBookings = bookings?.filter(
-      (booking) =>
-        booking.invitee_id === group_id && booking.booking_status_type_id === 2
-    );
-
-    if (filteredBookings.length > 0) {
-      const currentDate = new Date(); // Current date and time
-      const sortedBookings = filteredBookings
-        .filter((booking) => {
-          const eventDate = new Date(booking.event_date);
-          const eventTime = booking.event_time.split(":");
-          const eventDateTime = new Date(
-            eventDate.getFullYear(),
-            eventDate.getMonth(),
-            eventDate.getDate(),
-            parseInt(eventTime[0]),
-            parseInt(eventTime[1])
-          );
-          return eventDateTime >= currentDate; // Filter out past events
-        })
-        .sort((a, b) => {
-          const dateA = new Date(a.event_date).getTime();
-          const dateB = new Date(b.event_date).getTime();
-          return dateA - dateB; // Sort by ascending order
-        });
-
-      if (sortedBookings.length > 0) {
-        const eventDate = new Date(sortedBookings[0].event_date);
-        return eventDate.toLocaleDateString(); // Use eventDate as a Date object
-      }
-    }
-    return "-";
-  };
-
-  const nextGroupTrainingTime = (group_id: number) => {
-    const filteredBookings = bookings?.filter(
-      (booking) =>
-        booking.invitee_id === group_id && booking.booking_status_type_id === 2
-    );
-
-    if (filteredBookings.length > 0) {
-      const currentDate = new Date(); // Current date and time
-      const sortedBookings = filteredBookings
-        .filter((booking) => {
-          const eventDate = new Date(booking.event_date);
-          const eventTime = booking.event_time.split(":");
-          const eventDateTime = new Date(
-            eventDate.getFullYear(),
-            eventDate.getMonth(),
-            eventDate.getDate(),
-            parseInt(eventTime[0]),
-            parseInt(eventTime[1])
-          );
-          return eventDateTime >= currentDate; // Filter out past events
-        })
-        .sort((a, b) => {
-          const dateA = new Date(a.event_date);
-          const dateB = new Date(b.event_date);
-
-          if (dateA.getTime() === dateB.getTime()) {
-            // If the dates are the same, compare by event_time
-            const timeA = a.event_time;
-            const timeB = b.event_time;
-            return timeA.localeCompare(timeB);
-          } else {
-            // If the dates are different, compare by event_date
-            return dateA.getTime() - dateB.getTime();
-          }
-        });
-
-      if (sortedBookings.length > 0) {
-        return sortedBookings[0].event_time.slice(0, 5);
-      }
-    }
-    return "-";
-  };
-
-  const myGroups = groups?.filter(
-    (group) =>
-      group.is_active === true &&
-      (group.first_student_id === user?.user?.user_id ||
-        group.second_student_id === user?.user?.user_id ||
-        group.third_student_id === user?.user?.user_id ||
-        group.fourth_student_id === user?.user?.user_id)
-  );
-
-  if (
-    isGroupsLoading ||
-    isClubsLoading ||
-    isTrainersLoading ||
-    isBookingsLoading
-  ) {
+  if (isGroupsLoading) {
     return <PageLoading />;
   }
 
@@ -151,11 +46,8 @@ const PlayerGroupResults = () => {
                   >
                     <img
                       src={
-                        clubs?.find((club) => club.user_id === group.club_id)
-                          ?.image
-                          ? clubs?.find(
-                              (club) => club.user_id === group.club_id
-                            )?.image
+                        group?.club_image
+                          ? group?.club_image
                           : "/images/icons/avatar.png"
                       }
                       className={styles.image}
@@ -167,10 +59,7 @@ const PlayerGroupResults = () => {
                     to={`${paths.EXPLORE_PROFILE}3/${group.club_id}`}
                     className={styles["club-name"]}
                   >
-                    {
-                      clubs?.find((club) => club.user_id === group.club_id)
-                        ?.club_name
-                    }
+                    {group?.club_name}
                   </Link>
                 </td>
                 <td>{group.student_group_name}</td>
@@ -183,17 +72,9 @@ const PlayerGroupResults = () => {
                     ? 2
                     : 1}
                 </td>
-                <td>{`${
-                  trainers?.find(
-                    (trainer) => trainer.user_id === group.trainer_id
-                  )?.fname
-                } ${
-                  trainers?.find(
-                    (trainer) => trainer.user_id === group.trainer_id
-                  )?.lname
-                }`}</td>
-                <td>{nextGroupTrainingDate(group.user_id)}</td>
-                <td>{nextGroupTrainingTime(group.user_id)}</td>
+                <td>{`${group?.fname} ${group?.lname}`}</td>
+                <td>{group.latest_event_date?.slice(0, 10)}</td>
+                <td>{group.latest_event_time?.slice(0, 5)}</td>
               </tr>
             ))}
           </tbody>

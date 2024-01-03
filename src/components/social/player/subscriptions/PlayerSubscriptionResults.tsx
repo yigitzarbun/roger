@@ -9,44 +9,20 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
-import { useGetClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
-import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import { useGetPlayerActiveClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
 const PlayerSubscriptionResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
+    useGetPlayerActiveClubSubscriptionsQuery(user?.user?.user_id);
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const {
-    data: subscriptionPackages,
-    isLoading: isSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const { data: subscriptionTypes, isLoading: isSubscriptionTypesLoading } =
-    useGetClubSubscriptionTypesQuery({});
-
-  const mySubscriptions = clubSubscriptions?.filter(
-    (subscription) =>
-      subscription.player_id === user?.user?.user_id &&
-      subscription.is_active === true
-  );
-
-  if (
-    isClubSubscriptionsLoading ||
-    isClubsLoading ||
-    isSubscriptionPackagesLoading ||
-    isSubscriptionTypesLoading
-  ) {
+  if (isClubSubscriptionsLoading) {
     return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
-      {mySubscriptions?.length > 0 ? (
+      {clubSubscriptions?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -59,7 +35,7 @@ const PlayerSubscriptionResults = () => {
             </tr>
           </thead>
           <tbody>
-            {mySubscriptions?.map((subscription) => (
+            {clubSubscriptions?.map((subscription) => (
               <tr key={subscription.club_subscription_id}>
                 <td>
                   <Link
@@ -67,12 +43,8 @@ const PlayerSubscriptionResults = () => {
                   >
                     <img
                       src={
-                        clubs?.find(
-                          (club) => club.user_id === subscription.club_id
-                        )?.image
-                          ? clubs?.find(
-                              (club) => club.user_id === subscription.club_id
-                            )?.image
+                        subscription?.image
+                          ? subscription?.image
                           : "images/icons/avatar.png"
                       }
                       className={styles["club-image"]}
@@ -84,26 +56,10 @@ const PlayerSubscriptionResults = () => {
                     to={`${paths.EXPLORE_PROFILE}3/${subscription.club_id}`}
                     className={styles["club-name"]}
                   >
-                    {
-                      clubs?.find(
-                        (club) => club.user_id === subscription.club_id
-                      )?.club_name
-                    }
+                    {subscription?.club_name}
                   </Link>
                 </td>
-                <td>
-                  {
-                    subscriptionTypes?.find(
-                      (subscriptionType) =>
-                        subscriptionType.club_subscription_type_id ===
-                        subscriptionPackages?.find(
-                          (subscriptionPackage) =>
-                            subscriptionPackage.club_subscription_package_id ===
-                            subscription.club_subscription_package_id
-                        )?.club_subscription_type_id
-                    )?.club_subscription_type_name
-                  }
-                </td>
+                <td>{subscription?.club_subscription_type_name}</td>
                 <td>{subscription.start_date.slice(0, 10)}</td>
                 <td>{subscription.end_date.slice(0, 10)}</td>
                 <td>

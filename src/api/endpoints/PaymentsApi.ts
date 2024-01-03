@@ -24,6 +24,9 @@ export const paymentsSlice = createApi({
     getPaymentById: builder.query({
       query: (payment_id) => `/payments/${payment_id}`,
     }),
+    getPlayerPaymentssByUserId: builder.query({
+      query: (userId) => `/payments/player-payments/${userId}`,
+    }),
     getPaymentsByFilter: builder.query({
       query: (filter) => `/payments/filter?${new URLSearchParams(filter)}`,
     }),
@@ -47,6 +50,7 @@ export const paymentsSlice = createApi({
 export const {
   useGetPaymentsQuery,
   useGetPaymentByIdQuery,
+  useGetPlayerPaymentssByUserIdQuery,
   useGetPaymentsByFilterQuery,
   useAddPaymentMutation,
   useUpdatePaymentMutation,
