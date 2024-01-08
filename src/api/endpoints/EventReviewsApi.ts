@@ -21,6 +21,9 @@ export const eventReviewsSlice = createApi({
     getEventReviewsByFilter: builder.query({
       query: (filter) => `/event-reviews/filter?${new URLSearchParams(filter)}`,
     }),
+    getPlayerMissingEventReviewsNumber: builder.query({
+      query: (userId) => `/event-reviews/player-missing-reviews/${userId}`,
+    }),
     addEventReview: builder.mutation({
       query: (review) => ({
         url: "/event-reviews",
@@ -41,6 +44,7 @@ export const eventReviewsSlice = createApi({
 export const {
   useGetEventReviewsQuery,
   useGetEventReviewsByFilterQuery,
+  useGetPlayerMissingEventReviewsNumberQuery,
   useAddEventReviewMutation,
   useUpdateEventReviewMutation,
 } = eventReviewsSlice;

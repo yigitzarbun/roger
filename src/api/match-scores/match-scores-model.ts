@@ -18,7 +18,6 @@ const matchScoresModel = {
     );
     return matchScore;
   },
-
   async getPlayerMatchScoresWithBookingDetails(userId: number) {
     try {
       const bookings = await db
@@ -65,13 +64,44 @@ const matchScoresModel = {
       throw new Error("Unable to fetch player match scores and bookings.");
     }
   },
+  async getPlayerMissingMatchScoreNumbers(userId: number) {
+    try {
+      const missingScores = await db
+        .select("match_scores.*", "bookings.*")
+        .from("match_scores")
+        .leftJoin("bookings", function () {
+          this.on("bookings.booking_id", "=", "match_scores.booking_id");
+        })
+        .where("bookings.booking_status_type_id", 5)
+        .andWhere("bookings.event_type_id", 2)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", userId)
+            .orWhere("bookings.inviter_id", userId);
+        })
+        .andWhere((builder) => {
+          builder
+            .where("match_scores.match_score_status_type_id", 1)
+            .orWhere((subBuilder) => {
+              subBuilder
+                .where("match_scores.match_score_status_type_id", 2)
+                .andWhere("match_scores.reporter_id", "!=", userId);
+            });
+        });
+
+      return missingScores;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unable to fetch player match scores and bookings.");
+    }
+  },
+
   async add(matchScore) {
     const [newMatchScore] = await db("match_scores")
       .insert(matchScore)
       .returning("*");
     return newMatchScore;
   },
-
   async update(updates) {
     return await db("match_scores")
       .where("match_score_id", updates.match_score_id)

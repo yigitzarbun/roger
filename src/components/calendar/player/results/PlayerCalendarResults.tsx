@@ -15,15 +15,7 @@ import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteMod
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPlayerBookingsByUserIdQuery } from "../../../../api/endpoints/BookingsApi";
-
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
-import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { getAge } from "../../../../common/util/TimeFunctions";
 
 interface PlayerCalendarResultsProps {

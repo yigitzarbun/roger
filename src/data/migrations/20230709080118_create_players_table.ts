@@ -648,6 +648,13 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       table
+        .integer("reviewee_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
         .integer("booking_id")
         .unsigned()
         .references("booking_id")

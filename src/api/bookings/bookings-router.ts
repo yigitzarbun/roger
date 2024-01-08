@@ -28,7 +28,19 @@ bookingsRouter.get(
     }
   }
 );
-
+bookingsRouter.get(
+  "/mens-leaderboard/:gender",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const mensLeaderboard = await bookingsModel.getMensLeaderboard(
+        req.params.gender
+      );
+      res.status(200).json(mensLeaderboard);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 bookingsRouter.get(
   "/player-bookings/:userId",
   async (req: Request, res: Response, next: NextFunction) => {

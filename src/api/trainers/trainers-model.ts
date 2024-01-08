@@ -8,11 +8,31 @@ const trainersModel = {
 
   async getPaginated(filter) {
     const trainersPerPage = 4;
-    const offset = (filter.currentPage - 1) * trainersPerPage;
+    const currentPage = filter.currentPage || 1;
+    const offset = (currentPage - 1) * trainersPerPage;
 
-    const trainers = await db("trainers");
-
-    const paginatedTrainers = await db("trainers")
+    const trainersQuery = db("trainers")
+      .select(
+        "trainers.*",
+        "locations.*",
+        "trainer_experience_types.*",
+        "clubs.club_name",
+        "club_staff.*"
+      )
+      .leftJoin(
+        "locations",
+        "trainers.location_id",
+        "=",
+        "locations.location_id"
+      )
+      .leftJoin(
+        "trainer_experience_types",
+        "trainer_experience_types.trainer_experience_type_id",
+        "=",
+        "trainers.trainer_experience_type_id"
+      )
+      .leftJoin("clubs", "clubs.club_id", "=", "trainers.club_id")
+      .leftJoin("club_staff", "club_staff.user_id", "=", "trainers.user_id")
       .where((builder) => {
         if (filter.trainerExperienceTypeId > 0) {
           builder.where(
@@ -24,26 +44,51 @@ const trainersModel = {
           builder.where("gender", filter.selectedGender);
         }
         if (filter.locationId > 0) {
-          builder.where("location_id", filter.locationId);
+          builder.where("trainers.location_id", filter.locationId);
         }
         if (filter.club_id > 0) {
           builder.where("club_id", filter.clubId);
         }
         if (filter.currentUserId) {
-          builder.where("user_id", "!=", filter.currentUserId);
+          builder.where("trainers.user_id", "!=", filter.currentUserId);
         }
-      })
-      .orderBy("trainer_id", "asc")
+      });
+
+    const paginatedTrainers = await trainersQuery
+      .orderBy("trainers.trainer_id", "asc")
       .limit(trainersPerPage)
       .offset(offset);
 
+    const totalTrainersCount = await db("trainers")
+      .where((builder) => {
+        if (filter.trainerExperienceTypeId > 0) {
+          builder.where(
+            "trainer_experience_type_id",
+            filter.trainerExperienceTypeId
+          );
+        }
+        if (filter.selectedGender !== "") {
+          builder.where("gender", filter.selectedGender);
+        }
+        if (filter.locationId > 0) {
+          builder.where("trainers.location_id", filter.locationId);
+        }
+        if (filter.club_id > 0) {
+          builder.where("club_id", filter.clubId);
+        }
+        if (filter.currentUserId) {
+          builder.where("trainers.user_id", "!=", filter.currentUserId);
+        }
+      })
+      .count("trainers.trainer_id as total")
+      .first();
+
     const data = {
       trainers: paginatedTrainers,
-      totalPages: Math.ceil(trainers.length / trainersPerPage),
+      totalPages: Math.ceil(totalTrainersCount.total / trainersPerPage),
     };
     return data;
   },
-
   async getByFilter(filter) {
     const trainers = await db("trainers").where((builder) => {
       if (filter.fname) {
@@ -86,7 +131,6 @@ const trainersModel = {
     const [newTrainer] = await db("trainers").insert(trainer).returning("*");
     return newTrainer;
   },
-
   async update(updates) {
     return await db("trainers")
       .where("trainer_id", updates.trainer_id)

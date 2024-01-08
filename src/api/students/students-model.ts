@@ -20,7 +20,9 @@ const studentsModel = {
       if (filter.trainer_id) {
         builder.where("trainer_id", filter.trainer_id);
       }
-
+      if (filter.player_id) {
+        builder.where("player_id", filter.player_id);
+      }
       if (filter.sortBy) {
         // handle sorting here if required
         builder.orderBy(filter.sortBy, filter.sortDirection || "asc");

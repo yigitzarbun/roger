@@ -8,21 +8,11 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
 
-import {
-  useGetBookingsByFilterQuery,
-  useGetPlayerPastEventsQuery,
-} from "../../../../api/endpoints/BookingsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
-import {
-  useGetMatchScoresQuery,
-  useGetPlayerMatchScoresWithBookingDetailsQuery,
-} from "../../../../api/endpoints/MatchScoresApi";
+import { useGetPlayerMatchScoresWithBookingDetailsQuery } from "../../../../api/endpoints/MatchScoresApi";
 
 import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
 import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";

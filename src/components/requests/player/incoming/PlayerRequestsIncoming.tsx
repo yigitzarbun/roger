@@ -165,11 +165,22 @@ const PlayerRequestsIncoming = () => {
         };
         updateBooking(acceptedBookingData);
       } else if (paymentData[0]?.payment_status === "declined") {
-        const declineddBookingData = {
-          ...declineBookingData,
+        const declinedBookingData = {
+          booking_id: declineBookingData?.booking_id,
+          event_date: declineBookingData?.event_date,
+          event_time: declineBookingData?.event_time,
+          court_price: declineBookingData?.court_price,
+          lesson_price: declineBookingData?.lesson_price,
+          invitation_note: declineBookingData?.invitation_note,
+          payment_id: declineBookingData?.payment_id,
           booking_status_type_id: 3,
+          event_type_id: declineBookingData?.event_type_id,
+          club_id: declineBookingData?.club_id,
+          court_id: declineBookingData?.court_id,
+          inviter_id: declineBookingData?.inviter_id,
+          invitee_id: declineBookingData?.invitee_id,
         };
-        updateBooking(declineddBookingData);
+        updateBooking(declinedBookingData);
       }
 
       refetchPayments();

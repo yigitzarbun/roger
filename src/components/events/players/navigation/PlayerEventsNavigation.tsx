@@ -6,8 +6,11 @@ import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetEventReviewsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
-import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
+import {
+  useGetEventReviewsByFilterQuery,
+  useGetPlayerMissingEventReviewsNumberQuery,
+} from "../../../../api/endpoints/EventReviewsApi";
+import { useGetMissingMatchScoresNumberQuery } from "../../../../api/endpoints/MatchScoresApi";
 
 interface PlayerEventsNavigationProps {
   display: string;
@@ -20,15 +23,19 @@ const PlayerEventsNavigation = ({
 }: PlayerEventsNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
+  const { data: missingScores, isLoading: isScoresLoading } =
+    useGetMissingMatchScoresNumberQuery(user?.user?.user_id);
+
+  const { data: missingReviews, isLoading: isReviewsLoading } =
+    useGetPlayerMissingEventReviewsNumberQuery(user?.user?.user_id);
+
+  /*
   const { data: bookings, isLoading: isBookingsLoading } =
     useGetBookingsByFilterQuery({
       booking_player_id: user?.user?.user_id,
       booking_status_type_id: 5,
     });
 
-  const { data: scores, isLoading: isScoresLoading } = useGetMatchScoresQuery(
-    {}
-  );
 
   const myEvents = bookings?.filter(
     (booking) =>
@@ -37,32 +44,22 @@ const PlayerEventsNavigation = ({
       booking.event_type_id === 3
   );
 
-  const missingScores = scores?.filter(
-    (score) =>
-      (score.match_score_status_type_id === 1 &&
-        myEvents?.find(
-          (event) =>
-            event.booking_id === score.booking_id && event.event_type_id === 2
-        )) ||
-      (score.match_score_status_type_id === 2 &&
-        score.reporter_id !== user?.user?.user_id &&
-        myEvents?.find(
-          (event) =>
-            event.booking_id === score.booking_id && event.event_type_id === 2
-        ))
-  );
-
+  
   const { data: myReviews, isLoading: isMyReviewsLoading } =
     useGetEventReviewsByFilterQuery({
       is_active: true,
       reviewer_id: user?.user?.user_id,
     });
+   
+  
 
   const myEventsLength = myEvents?.length;
   const myReviewsLength = myReviews?.length;
+  const missingEventReviews = myEventsLength - myReviewsLength
+   */
   const missingScoresLength = missingScores?.length;
 
-  if (isBookingsLoading || isScoresLoading || isMyReviewsLoading) {
+  if (isScoresLoading || isReviewsLoading) {
     return <PageLoading />;
   }
 
@@ -78,7 +75,7 @@ const PlayerEventsNavigation = ({
       >
         Geçmiş Etkinlikler
         <span className={styles.notification}>
-          {myEventsLength > myReviewsLength && myEventsLength - myReviewsLength}
+          {missingReviews > 0 && missingReviews}
         </span>
       </button>
       <button

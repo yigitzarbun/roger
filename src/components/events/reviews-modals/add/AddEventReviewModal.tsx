@@ -16,6 +16,8 @@ import {
   useAddEventReviewMutation,
   useGetEventReviewsQuery,
 } from "../../../../api/endpoints/EventReviewsApi";
+import { useGetBookingByIdQuery } from "../../../../api/endpoints/BookingsApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddEventReviewModalProps {
   isAddReviewModalOpen: boolean;
@@ -27,7 +29,6 @@ type FormValues = {
   event_review_title: string;
   event_review_description: string;
   review_score: number;
-  booking_id: number;
 };
 
 const AddEventReviewModal = (props: AddEventReviewModalProps) => {
@@ -39,6 +40,8 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
 
   const { refetch: refetchReviews } = useGetEventReviewsQuery({});
 
+  const { data: bookingData, isLoading: isBookingDataLoading } =
+    useGetBookingByIdQuery(selectedBookingId);
   const {
     register,
     handleSubmit,
@@ -54,6 +57,10 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
         review_score: Number(formData?.review_score),
         booking_id: Number(selectedBookingId),
         reviewer_id: user?.user?.user_id,
+        reviewee_id:
+          bookingData?.[0]?.inviter_id === user?.user?.user_id
+            ? bookingData?.[0]?.invitee_id
+            : bookingData?.[0]?.inviter_id,
       };
       addReview(reviewData);
     } catch (error) {
@@ -69,6 +76,10 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
       closeReviewModal();
     }
   }, [isAddReviewSuccess]);
+
+  if (isBookingDataLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <Modal

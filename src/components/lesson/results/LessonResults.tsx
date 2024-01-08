@@ -9,15 +9,11 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetPaginatedTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
-import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
 import {
   useAddStudentMutation,
-  useGetStudentsQuery,
+  useGetStudentsByFilterQuery,
   useUpdateStudentMutation,
 } from "../../../api/endpoints/StudentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
@@ -43,24 +39,13 @@ const LessonResults = (props: TrainSearchProps) => {
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
   const {
-    data: trainerExperienceTypes,
-    isLoading: istrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
-
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
-    useGetClubStaffQuery({});
-
-  const {
-    data: students,
-    isLoading: isStudentsLoading,
+    data: playerStudentships,
+    isLoading: isPlayerStudentshipsLoading,
     refetch: refetchStudents,
-  } = useGetStudentsQuery({});
+  } = useGetStudentsByFilterQuery({
+    player_id: user?.user?.user_id,
+  });
 
   const [addStudent, { isSuccess: isAddStudentSuccess }] =
     useAddStudentMutation({});
@@ -69,13 +54,12 @@ const LessonResults = (props: TrainSearchProps) => {
     useUpdateStudentMutation({});
 
   const handleAddStudent = (selectedTrainerId: number) => {
-    const selectedStudent = students?.find(
+    const selectedStudent = playerStudentships?.find(
       (student) =>
         student.trainer_id === selectedTrainerId &&
-        student.player_id === user?.user?.user_id &&
-        (student.student_status === "pending" ||
-          student.student_status === "accepted")
+        student.player_id === user?.user?.user_id
     );
+
     if (!selectedStudent) {
       const newStudentData = {
         student_status: "pending",
@@ -83,11 +67,16 @@ const LessonResults = (props: TrainSearchProps) => {
         player_id: user?.user?.user_id,
       };
       addStudent(newStudentData);
+    } else if (selectedStudent?.student_status === "declined") {
+      const updatedStudentData = {
+        ...selectedStudent,
+        student_status: "pending",
+      };
+      updateStudent(updatedStudentData);
     }
   };
-
   const handleDeclineStudent = (selectedTrainerId: number) => {
-    const selectedStudent = students?.find(
+    const selectedStudent = playerStudentships?.find(
       (student) =>
         student.trainer_id === selectedTrainerId &&
         student.player_id === user?.user?.user_id &&
@@ -188,14 +177,7 @@ const LessonResults = (props: TrainSearchProps) => {
     currentPage,
   ]);
 
-  if (
-    isLocationsLoading ||
-    istrainerExperienceTypesLoading ||
-    isClubsLoading ||
-    isFavouritesLoading ||
-    isClubStaffLoading ||
-    isStudentsLoading
-  ) {
+  if (isFavouritesLoading || isPlayerStudentshipsLoading) {
     return <PageLoading />;
   }
 
@@ -254,38 +236,19 @@ const LessonResults = (props: TrainSearchProps) => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id}`}
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer?.user_id}`}
                     className={styles["trainer-name"]}
                   >{`${trainer.fname} ${trainer.lname}`}</Link>
                 </td>
                 <td>
-                  {clubStaff?.find(
-                    (staff) =>
-                      staff.user_id === trainer.user_id &&
-                      staff.employment_status === "accepted"
-                  )
-                    ? clubs?.find((club) => club.club_id === trainer.club_id)
-                        ?.club_name
+                  {trainer?.employment_status === "accepted"
+                    ? trainer?.club_name
                     : "Bağımsız"}
                 </td>
-                <td>
-                  {
-                    trainerExperienceTypes?.find(
-                      (trainer_experience_type) =>
-                        trainer_experience_type.trainer_experience_type_id ===
-                        trainer.trainer_experience_type_id
-                    ).trainer_experience_type_name
-                  }
-                </td>
+                <td>{trainer?.trainer_experience_type_name}</td>
                 <td>{trainer.gender}</td>
                 <td>{getAge(trainer.birth_year)}</td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) => location.location_id === trainer.location_id
-                    ).location_name
-                  }
-                </td>
+                <td>{trainer?.location_name}</td>
                 <td>{parseFloat(trainer.price_hour).toFixed(2)}</td>
                 <td>
                   <Link
@@ -304,18 +267,16 @@ const LessonResults = (props: TrainSearchProps) => {
                   </Link>
                 </td>
                 <td>
-                  {students?.find(
+                  {playerStudentships?.find(
                     (student) =>
-                      student.player_id === user?.user?.user_id &&
                       student.trainer_id === trainer.user_id &&
                       student.student_status === "pending"
                   ) ? (
                     <p className={styles["pending-confirmation-text"]}>
                       Öğrencilik için eğitmen onayı bekleniyor
                     </p>
-                  ) : students?.find(
+                  ) : playerStudentships?.find(
                       (student) =>
-                        student.player_id === user?.user?.user_id &&
                         student.trainer_id === trainer.user_id &&
                         student.student_status === "accepted"
                     ) ? (
