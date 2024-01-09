@@ -5,7 +5,6 @@ const bookingsModel = {
     const bookings = await db("bookings");
     return bookings;
   },
-
   async getByFilter(filter) {
     const bookings = await db("bookings").where((builder) => {
       if (filter.booking_id) {
@@ -66,7 +65,6 @@ const bookingsModel = {
 
     return bookings;
   },
-
   async getPlayerBookingsByUserId(userId: number) {
     try {
       const bookings = await db
@@ -161,7 +159,6 @@ const bookingsModel = {
       throw new Error("Unable to fetch player bookings.");
     }
   },
-
   async getOutgoingPlayerRequests(userId: number) {
     try {
       const bookings = await db
@@ -211,7 +208,6 @@ const bookingsModel = {
       throw new Error("Unable to fetch player bookings.");
     }
   },
-
   async getIncomingPlayerRequests(userId: number) {
     try {
       const bookings = await db
@@ -261,7 +257,6 @@ const bookingsModel = {
       throw new Error("Unable to fetch player bookings.");
     }
   },
-
   async getPlayerPastEvents(userId: number) {
     try {
       const bookings = await db
@@ -351,9 +346,12 @@ const bookingsModel = {
       throw new Error("Unable to fetch player bookings.");
     }
   },
-  async getMensLeaderboard(gender: string) {
+  async getPlayersLeaderboard(filter) {
     try {
-      const mensLeaderboard = await db
+      const playersPerPage = filter.perPage;
+      const currentPage = filter.currentPageNumber || 1;
+      const offset = (currentPage - 1) * playersPerPage;
+      const playersLeaderboard = await db
         .select(
           "players.user_id",
           "players.image",
@@ -402,7 +400,7 @@ const bookingsModel = {
         )
         .where("bookings.event_type_id", 2)
         .andWhere("match_scores.match_score_status_type_id", 3)
-        .andWhere("players.gender", gender)
+        .andWhere("players.gender", filter.gender)
         .groupBy(
           "players.user_id",
           "players.image",
@@ -416,11 +414,29 @@ const bookingsModel = {
         )
         .orderByRaw(
           "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) DESC"
-        );
+        )
+        .limit(playersPerPage)
+        .offset(offset);
 
-      return mensLeaderboard;
+      const totalPlayersCount = await db("players")
+        .where((builder) => {
+          if (filter.playerLevelId > 0) {
+            builder.where("players.player_level_id", filter.playerLevelId);
+          }
+          if (filter.locationId > 0) {
+            builder.where("players.location_id", filter.locationId);
+          }
+        })
+        .count("players.user_id as total")
+        .first();
+
+      const data = {
+        leaderboard: playersLeaderboard,
+        totalPages: Math.ceil(totalPlayersCount.total / playersPerPage),
+      };
+      return data;
     } catch (error) {
-      console.log("Error fetching men's leaderboard", error);
+      console.log("Error fetching player's leaderboard", error);
       throw error;
     }
   },
@@ -432,12 +448,10 @@ const bookingsModel = {
       console.log(error);
     }
   },
-
   async add(booking) {
     const [newBooking] = await db("bookings").insert(booking).returning("*");
     return newBooking;
   },
-
   async update(updates) {
     return await db("bookings")
       .where("booking_id", updates.booking_id)

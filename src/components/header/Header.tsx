@@ -6,6 +6,7 @@ import paths from "../../routing/Paths";
 
 import { logOut } from "../../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { IoIosNotificationsOutline } from "react-icons/io";
 
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
@@ -33,65 +34,65 @@ const Header = () => {
   const isLoggedIn = user?.token;
   return (
     <div className={styles["header-container"]}>
-      <NavLink
-        to={paths.HOME}
-        className={({ isActive }) =>
-          isActive
-            ? `${styles["active-logo-title"]}`
-            : `${styles["logo-title"]}`
-        }
-      >
-        Raket
-      </NavLink>
+      <div className={styles["top-container"]}>
+        <NavLink
+          to={paths.HOME}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-logo-title"]}`
+              : `${styles["logo-title"]}`
+          }
+        >
+          Raket
+        </NavLink>
+        {isLoggedIn ? (
+          <div className={styles["user-nav"]}>
+            <IoIosNotificationsOutline className={styles.notification} />
+
+            <NavLink to={paths.PROFILE}>
+              <img
+                src={
+                  isLoggedIn && isUserPlayer
+                    ? user.user.playerDetails?.image
+                    : isLoggedIn && isUserTrainer
+                    ? user.user.trainerDetails?.image
+                    : isLoggedIn && isUserClub
+                    ? user.user.clubDetails?.image
+                    : "/images/icons/avatar.jpg"
+                }
+                alt="avatar"
+                className={styles["profile-image"]}
+              />
+            </NavLink>
+          </div>
+        ) : (
+          <div className={styles["user-nav"]}>
+            <NavLink
+              to={paths.LOGIN}
+              className={({ isActive }) =>
+                isActive
+                  ? `${styles["active-nav-link"]}`
+                  : `${styles["nav-link"]}`
+              }
+            >
+              Giriş
+            </NavLink>
+            <NavLink
+              to={paths.REGISTER}
+              className={({ isActive }) =>
+                isActive
+                  ? `${styles["active-nav-link"]}`
+                  : `${styles["nav-link"]}`
+              }
+            >
+              Kayıt
+            </NavLink>
+          </div>
+        )}
+      </div>
       {isUserPlayer && <PlayerHeader />}
       {isUserTrainer && <TrainerHeader />}
       {isUserClub && <ClubHeader />}
-      {isLoggedIn ? (
-        <div className={styles["credentials-nav"]}>
-          <NavLink
-            to={paths.PROFILE}
-            className={({ isActive }) =>
-              isActive
-                ? `${styles["active-nav-link"]}`
-                : `${styles["nav-link"]}`
-            }
-          >
-            {isLoggedIn && isUserPlayer
-              ? user.user.playerDetails?.fname
-              : isLoggedIn && isUserTrainer
-              ? user.user.trainerDetails?.fname
-              : isLoggedIn && isUserClub
-              ? user.user.clubDetails?.club_name
-              : "Profil"}
-          </NavLink>
-          <button className={styles["logout-link"]} onClick={handleLogout}>
-            Çıkış
-          </button>
-        </div>
-      ) : (
-        <div className={styles["credentials-nav"]}>
-          <NavLink
-            to={paths.LOGIN}
-            className={({ isActive }) =>
-              isActive
-                ? `${styles["active-nav-link"]}`
-                : `${styles["nav-link"]}`
-            }
-          >
-            Giriş
-          </NavLink>
-          <NavLink
-            to={paths.REGISTER}
-            className={({ isActive }) =>
-              isActive
-                ? `${styles["active-nav-link"]}`
-                : `${styles["nav-link"]}`
-            }
-          >
-            Kayıt
-          </NavLink>
-        </div>
-      )}
     </div>
   );
 };

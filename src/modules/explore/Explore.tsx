@@ -4,7 +4,6 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../store/hooks";
 
-import ExploreHero from "../../components/explore/hero/ExploreHero";
 import ExploreNavigation from "../../components/explore/navigation/ExploreNavigation";
 import ExplorePlayers from "../../components/explore/explore-results/explore-players/ExplorePlayers";
 import ExploreTrainers from "../../components/explore/explore-results/explore-trainers/ExploreTrainers";
@@ -63,7 +62,6 @@ const Explore = () => {
 
   return (
     <div className={styles["explore-container"]}>
-      <ExploreHero />
       <ExploreNavigation display={display} handleDisplay={handleDisplay} />
       {display === "players" && (
         <ExplorePlayers

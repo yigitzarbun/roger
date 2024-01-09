@@ -3,7 +3,8 @@
 
 .player-equip-container {
   background-color: $roger-box-bg-color;
-  width: 48%;
+  border: 1px $roger-border-color solid;
+  width: 25%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
@@ -36,11 +37,5 @@
   }
 }
 .player-equip-container:hover {
-  background: rgb(2, 0, 36);
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 36, 1) 0%,
-    rgba(33, 62, 166, 1) 0%,
-    rgba(1, 135, 200, 1) 100%
-  );
+  border-color: white;
 }

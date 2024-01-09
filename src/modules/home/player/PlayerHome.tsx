@@ -16,11 +16,10 @@ const PlayerHome = () => {
       <div className={styles["top-container"]}>
         <PlayerTrain />
         <PlayerMatch />
-      </div>
-      <div className={styles["mid-container"]}>
         <PlayerLesson />
         <PlayerEquip />
       </div>
+      <div className={styles["mid-container"]}></div>
       <PlayerHomeLeaderboard />
     </div>
   );

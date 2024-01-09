@@ -141,8 +141,6 @@ const PlayerHeader = () => {
         >
           Ders
         </NavLink>
-      </div>
-      <div className={styles["header-nav-sub-container"]}>
         <NavLink
           to={paths.CALENDAR}
           className={({ isActive }) =>

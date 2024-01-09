@@ -39,8 +39,9 @@ export const bookingsSlice = createApi({
     getPlayerPastEvents: builder.query({
       query: (userId) => `/bookings/past-events/${userId}`,
     }),
-    getMensLeaderboard: builder.query({
-      query: (gender) => `/bookings/mens-leaderboard/${gender}`,
+    getPlayersLeaderboard: builder.query({
+      query: (filter) =>
+        `/bookings/players-leaderboard/filter?${new URLSearchParams(filter)}`,
     }),
     getBookingsByFilter: builder.query({
       query: (filter) => `/bookings/filter?${new URLSearchParams(filter)}`,
@@ -69,7 +70,7 @@ export const {
   useGetPlayerOutgoingRequestsQuery,
   useGetPlayerIncomingRequestsQuery,
   useGetPlayerPastEventsQuery,
-  useGetMensLeaderboardQuery,
+  useGetPlayersLeaderboardQuery,
   useGetBookingsByFilterQuery,
   useAddBookingMutation,
   useUpdateBookingMutation,

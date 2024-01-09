@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import PlayerRequestsHero from "../../../components/requests/player/hero/PlayerRequestsHero";
 import PlayerRequestsNavigation from "../../../components/requests/player/navigation/PlayerRequestsNavigation";
 import PlayerRequestsIncoming from "../../../components/requests/player/incoming/PlayerRequestsIncoming";
 import PlayerRequestsOutgoing from "../../../components/requests/player/outgoing/PlayerRequestsOutgoing";
@@ -14,7 +13,6 @@ const PlayerRequets = () => {
   };
   return (
     <div className={styles["requests-container"]}>
-      <PlayerRequestsHero />
       <PlayerRequestsNavigation
         display={display}
         handleDisplay={handleDisplay}

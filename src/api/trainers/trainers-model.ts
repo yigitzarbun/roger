@@ -5,7 +5,6 @@ const trainersModel = {
     const trainers = await db("trainers");
     return trainers;
   },
-
   async getPaginated(filter) {
     const trainersPerPage = 4;
     const currentPage = filter.currentPage || 1;
@@ -118,7 +117,6 @@ const trainersModel = {
 
     return trainers;
   },
-
   async getByTrainerId(trainer_id) {
     const trainer = await db("trainers").where("trainer_id", trainer_id);
     return trainer;

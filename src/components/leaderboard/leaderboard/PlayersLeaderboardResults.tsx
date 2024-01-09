@@ -10,7 +10,7 @@ import { useAppSelector } from "../../../store/hooks";
 
 import { useGetPlayerByUserIdQuery } from "../../../api/endpoints/PlayersApi";
 
-import { useGetMensLeaderboardQuery } from "../../../api/endpoints/BookingsApi";
+import { useGetPlayersLeaderboardQuery } from "../../../api/endpoints/BookingsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
 
@@ -24,7 +24,11 @@ const PlayersLeaderboardResults = () => {
     data: leaderboard,
     isLoading: isLeaderboardLoading,
     refetch: refetchLeaderBoard,
-  } = useGetMensLeaderboardQuery(playerDetails?.[0]?.gender);
+  } = useGetPlayersLeaderboardQuery({
+    perPage: 5,
+    currentPageNumber: 1,
+    gender: playerDetails?.[0]?.gender,
+  });
 
   useEffect(() => {
     if (playerDetails) {
@@ -55,9 +59,9 @@ const PlayersLeaderboardResults = () => {
             <th>L</th>
           </tr>
         </thead>
-        {leaderboard?.length > 0 && (
+        {leaderboard?.leaderboard?.length > 0 && (
           <tbody>
-            {leaderboard.map((player, index) => (
+            {leaderboard?.leaderboard?.map((player, index) => (
               <tr key={player.user_id} className={styles["player-row"]}>
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>

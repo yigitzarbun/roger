@@ -29,13 +29,14 @@ bookingsRouter.get(
   }
 );
 bookingsRouter.get(
-  "/mens-leaderboard/:gender",
+  "/players-leaderboard/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const mensLeaderboard = await bookingsModel.getMensLeaderboard(
-        req.params.gender
+      const filter = req.query;
+      const getPlayersLeaderboard = await bookingsModel.getPlayersLeaderboard(
+        filter
       );
-      res.status(200).json(mensLeaderboard);
+      res.status(200).json(getPlayersLeaderboard);
     } catch (error) {
       next(error);
     }

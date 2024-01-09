@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 
@@ -8,140 +9,73 @@ import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetMatchScoresQuery } from "../../../../api/endpoints/MatchScoresApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
+
+import { useGetPlayersLeaderboardQuery } from "../../../../api/endpoints/BookingsApi";
 
 import PageLoading from "../../../../components/loading/PageLoading";
+import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerHomeLeaderboard = () => {
-  const user = useAppSelector((store) => store?.user?.user);
+  const user = useAppSelector((store) => store.user?.user?.user);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-  const { data: matchScores, isLoading: isMatchScoresLoading } =
-    useGetMatchScoresQuery({});
+  const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
+    useGetPlayerByUserIdQuery(user?.user_id);
 
-  const date = new Date();
-  const currentYear = date.getFullYear();
+  const {
+    data: leaderboard,
+    isLoading: isLeaderboardLoading,
+    refetch: refetchLeaderBoard,
+  } = useGetPlayersLeaderboardQuery({
+    perPage: 5,
+    currentPageNumber: currentPage,
+    gender: playerDetails?.[0]?.gender,
+  });
 
-  const userGender = players?.find(
-    (player) => player?.user_id === user?.user?.user_id
-  )?.gender;
-
-  const calculateRank = (player) => {
-    if (player.totalMatches === 0) {
-      return -1;
-    }
-    return player.wonMatches - player.lostMatches + player.drawMatches * 0.5;
+  const handleNextPage = () => {
+    const nextPage = (currentPage % leaderboard?.totalPages) + 1;
+    setCurrentPage(nextPage);
   };
 
-  let rankedPlayersList = [];
-
-  players
-    ?.filter((player) => player.gender === (userGender && userGender))
-    ?.forEach((player) => {
-      const playerStats = {
-        id: player.user_id,
-        rank: null,
-        image: player.image,
-        name: `${player.fname} ${player.lname}`,
-        level: playerLevels?.find(
-          (level) => level.player_level_id === player.player_level_id
-        )?.player_level_name,
-        location: locations?.find(
-          (location) => location.location_id === player.location_id
-        )?.location_name,
-        gender: player.gender,
-        age: Number(currentYear) - player.birth_year,
-        totalMatches: bookings?.filter(
-          (booking) =>
-            (booking.inviter_id === player.user_id ||
-              booking.invitee_id === player.user_id) &&
-            booking.event_type_id === 2 &&
-            matchScores?.find(
-              (match) => match.booking_id === booking.booking_id
-            )?.match_score_status_type_id === 3
-        ).length,
-        wonMatches: bookings?.filter(
-          (booking) =>
-            (booking.inviter_id === player.user_id ||
-              booking.invitee_id === player.user_id) &&
-            booking.event_type_id === 2 &&
-            matchScores?.find(
-              (match) =>
-                match.booking_id === booking.booking_id &&
-                match.winner_id === player.user_id
-            )?.match_score_status_type_id === 3
-        ).length,
-        lostMatches: bookings?.filter(
-          (booking) =>
-            (booking.inviter_id === player.user_id ||
-              booking.invitee_id === player.user_id) &&
-            booking.event_type_id === 2 &&
-            matchScores?.find(
-              (match) =>
-                match.booking_id === booking.booking_id &&
-                match.winner_id !== player.user_id
-            )?.match_score_status_type_id === 3
-        ).length,
-        drawMatches: bookings?.filter(
-          (booking) =>
-            (booking.inviter_id === player.user_id ||
-              booking.invitee_id === player.user_id) &&
-            booking.event_type_id === 2 &&
-            matchScores?.find(
-              (match) =>
-                match.booking_id === booking.booking_id &&
-                match.winner_id === null
-            )?.match_score_status_type_id === 3
-        ).length,
-      };
-      rankedPlayersList.push(playerStats);
-    });
-
-  rankedPlayersList.sort((a, b) => {
-    const performanceMetricA = calculateRank(a);
-    const performanceMetricB = calculateRank(b);
-
-    if (performanceMetricA !== performanceMetricB) {
-      return performanceMetricB - performanceMetricA; // Higher value gets higher rank
-    } else {
-      // If performance metrics are equal, prioritize the player with more matches
-      return b.totalMatches - a.totalMatches;
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + leaderboard?.totalPages) % leaderboard?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+  console.log(leaderboard);
+  useEffect(() => {
+    if (playerDetails) {
+      refetchLeaderBoard();
     }
-  });
+  }, [playerDetails]);
 
-  rankedPlayersList.forEach((player, index) => {
-    player.rank = index + 1;
-  });
-
-  if (
-    isPlayersLoading ||
-    isPlayerLevelsLoading ||
-    isLocationsLoading ||
-    isBookingsLoading ||
-    isMatchScoresLoading
-  ) {
+  if (isLeaderboardLoading || isPlayerDetailsLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["result-container"]}>
-      <h2 className={styles["result-title"]}>Lidrelik Tablosu</h2>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Lidrelik Tablosu</h2>
+        <div className={styles["nav-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
             <th>Oyuncu</th>
             <th>Sıralama</th>
+            <th>Puan</th>
             <th>İsim</th>
             <th>Seviye</th>
             <th>Konum</th>
@@ -150,48 +84,50 @@ const PlayerHomeLeaderboard = () => {
             <th>Toplam Maç</th>
             <th>W</th>
             <th>L</th>
-            <th>D</th>
           </tr>
         </thead>
-        {rankedPlayersList?.length > 0 && (
+        {leaderboard?.leaderboard?.length > 0 && (
           <tbody>
-            {rankedPlayersList.slice(0, 5).map((player) => (
-              <tr key={player.id} className={styles["player-row"]}>
-                <td className={styles["vertical-center"]}>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.id}`}>
+            {leaderboard?.leaderboard?.map((player, index) => (
+              <tr key={player.user_id} className={styles["player-row"]}>
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={
                         player.image ? player.image : "/images/icons/avatar.png"
                       }
-                      alt={player.name}
+                      alt={player.fname}
                       className={styles["player-image"]}
                     />
                   </Link>
                 </td>
-                <td>{player.rank}</td>
+                <td>{index + 1}</td>
+                <td className={styles["draw-count"]}>{player.playerpoints}</td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${player.id}`}
+                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}
                     className={styles["player-name"]}
                   >
-                    {player.name}
+                    {`${player.fname} ${player.lname}`}
                   </Link>
                 </td>
-                <td>{player.level}</td>
-                <td>{player.location}</td>
+                <td>{player.player_level_name}</td>
+                <td>{player.location_name}</td>
                 <td>{player.gender}</td>
-                <td>{player.age}</td>
-                <td>{player.totalMatches}</td>
-                <td className={styles["win-count"]}>{player.wonMatches}</td>
-                <td className={styles["lost-count"]}>{player.lostMatches}</td>
-                <td className={styles["draw-count"]}>{player.drawMatches}</td>
+                <td>{getAge(player.birth_year)}</td>
+                <td>{player.totalmatches}</td>
+                <td className={styles["win-count"]}>{player.wonmatches}</td>
+                <td className={styles["lost-count"]}>{player.lostmatches}</td>
               </tr>
             ))}
           </tbody>
         )}
       </table>
-      <Link to={paths.PLAYERS_LEADERBOARD}>
-        <button className={styles["view-all-button"]}>Tümünü Görüntüle</button>
+      <Link
+        to={paths.PLAYERS_LEADERBOARD}
+        className={styles["view-all-button"]}
+      >
+        Tümünü Görüntüle
       </Link>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
 
-import TrainingHero from "../../components/training/hero/TrainingHero";
 import TrainSearch from "../../components/training/search/TrainSearch";
 import TrainResults from "../../components/training/results/TrainResults";
 
@@ -39,7 +38,6 @@ const Training = () => {
   };
   return (
     <div className={styles["training-container"]}>
-      <TrainingHero />
       <TrainSearch
         handleLevel={handleLevel}
         handleGender={handleGender}
