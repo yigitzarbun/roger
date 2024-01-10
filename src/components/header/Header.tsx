@@ -1,23 +1,32 @@
-import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 
-import { logOut } from "../../store/slices/authSlice";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 import { IoIosNotificationsOutline } from "react-icons/io";
 
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
 import ClubHeader from "./club/ClubHeader";
+import ProfileModal from "./modals/profile/ProfileModal";
 
 const Header = () => {
-  const dispatch = useAppDispatch();
+  const user = useAppSelector((store) => store.user);
   const navigate = useNavigate();
 
-  const user = useAppSelector((store) => store.user);
-
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const handleOpenProfileModal = () => {
+    setIsProfileModalOpen(true);
+  };
+  const handleCloseProfileModal = () => {
+    setIsProfileModalOpen(false);
+  };
+  const navigateUser = (path: string) => {
+    navigate(paths[path]);
+    handleCloseProfileModal();
+  };
   let isUserPlayer = false;
   let isUserTrainer = false;
   let isUserClub = false;
@@ -27,16 +36,14 @@ const Header = () => {
     isUserTrainer = user?.user.user.user_type_id === 2;
     isUserClub = user?.user.user.user_type_id === 3;
   }
-  const handleLogout = () => {
-    dispatch(logOut());
-    navigate(paths.LOGIN);
-  };
+
   const isLoggedIn = user?.token;
   return (
     <div className={styles["header-container"]}>
       <div className={styles["top-container"]}>
         <NavLink
           to={paths.HOME}
+          onClick={() => navigateUser("HOME")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-logo-title"]}`
@@ -49,26 +56,26 @@ const Header = () => {
           <div className={styles["user-nav"]}>
             <IoIosNotificationsOutline className={styles.notification} />
 
-            <NavLink to={paths.PROFILE}>
-              <img
-                src={
-                  isLoggedIn && isUserPlayer
-                    ? user.user.playerDetails?.image
-                    : isLoggedIn && isUserTrainer
-                    ? user.user.trainerDetails?.image
-                    : isLoggedIn && isUserClub
-                    ? user.user.clubDetails?.image
-                    : "/images/icons/avatar.jpg"
-                }
-                alt="avatar"
-                className={styles["profile-image"]}
-              />
-            </NavLink>
+            <img
+              src={
+                isLoggedIn && isUserPlayer
+                  ? user.user.playerDetails?.image
+                  : isLoggedIn && isUserTrainer
+                  ? user.user.trainerDetails?.image
+                  : isLoggedIn && isUserClub
+                  ? user.user.clubDetails?.image
+                  : "/images/icons/avatar.jpg"
+              }
+              alt="avatar"
+              className={styles["profile-image"]}
+              onClick={handleOpenProfileModal}
+            />
           </div>
         ) : (
           <div className={styles["user-nav"]}>
             <NavLink
               to={paths.LOGIN}
+              onClick={() => navigateUser("LOGIN")}
               className={({ isActive }) =>
                 isActive
                   ? `${styles["active-nav-link"]}`
@@ -79,6 +86,7 @@ const Header = () => {
             </NavLink>
             <NavLink
               to={paths.REGISTER}
+              onClick={() => navigateUser("REGISTER")}
               className={({ isActive }) =>
                 isActive
                   ? `${styles["active-nav-link"]}`
@@ -90,9 +98,20 @@ const Header = () => {
           </div>
         )}
       </div>
-      {isUserPlayer && <PlayerHeader />}
+      {isUserPlayer && (
+        <PlayerHeader
+          navigateUser={navigateUser}
+          handleCloseProfileModal={handleCloseProfileModal}
+        />
+      )}
       {isUserTrainer && <TrainerHeader />}
       {isUserClub && <ClubHeader />}
+      {isProfileModalOpen && (
+        <ProfileModal
+          isProfileModalOpen={isProfileModalOpen}
+          handleCloseProfileModal={handleCloseProfileModal}
+        />
+      )}
     </div>
   );
 };

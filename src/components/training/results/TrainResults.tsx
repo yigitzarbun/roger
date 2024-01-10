@@ -151,7 +151,7 @@ const TrainResults = (props: TrainResultsProps) => {
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={
-                        player.image ? player.image : "/images/icons/avatar.png"
+                        player.image ? player.image : "/images/icons/avatar.jpg"
                       }
                       alt={player.name}
                       className={styles["player-image"]}

@@ -19,7 +19,7 @@ import {
   currentTimeLocale,
 } from "../../../common/util/TimeFunctions";
 
-const PlayerHeader = () => {
+const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const {
@@ -99,10 +99,14 @@ const PlayerHeader = () => {
   }
 
   return (
-    <nav className={styles["header-player-container"]}>
+    <nav
+      className={styles["header-player-container"]}
+      onClick={handleCloseProfileModal}
+    >
       <div className={styles["header-nav-sub-container"]}>
         <NavLink
           to={paths.EXPLORE}
+          onClick={() => navigateUser("EXPLORE")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`
@@ -113,6 +117,7 @@ const PlayerHeader = () => {
         </NavLink>
         <NavLink
           to={paths.TRAIN}
+          onClick={() => navigateUser("TRAIN")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`
@@ -123,6 +128,7 @@ const PlayerHeader = () => {
         </NavLink>
         <NavLink
           to={paths.MATCH}
+          onClick={() => navigateUser("MATCH")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`
@@ -133,6 +139,7 @@ const PlayerHeader = () => {
         </NavLink>
         <NavLink
           to={paths.LESSON}
+          onClick={() => navigateUser("LESSON")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`
@@ -143,6 +150,7 @@ const PlayerHeader = () => {
         </NavLink>
         <NavLink
           to={paths.CALENDAR}
+          onClick={() => navigateUser("CALENDAR")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`
@@ -153,6 +161,7 @@ const PlayerHeader = () => {
         </NavLink>
         <NavLink
           to={paths.REQUESTS}
+          onClick={() => navigateUser("REQUESTS")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`
@@ -166,6 +175,7 @@ const PlayerHeader = () => {
         </NavLink>
         <NavLink
           to={paths.PERFORMANCE}
+          onClick={() => navigateUser("PERFORMANCE")}
           className={({ isActive }) =>
             isActive
               ? `${styles["active-nav-link-player"]}`

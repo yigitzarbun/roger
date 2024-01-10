@@ -5,7 +5,7 @@
   display: flex;
   justify-content: space-between;
   column-gap: 80px;
-
+  $header-z-index: 10;
   .header-nav-sub-container {
     display: flex;
     justify-content: space-between;
