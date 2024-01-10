@@ -3,7 +3,7 @@
 
 .player-payment-details-container {
   background-color: $roger-box-bg-color;
-  width: 48%;
+  width: 100%;
   height: 55vh;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
@@ -31,38 +31,6 @@
   }
   button:hover {
     background-color: $roger-black-light;
-  }
-
-  .nav-container {
-    display: flex;
-    border-radius: $roger-border-radius;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin: 0 auto;
-
-    .active-button {
-      background-color: $roger-blue;
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 49%;
-    }
-    .inactive-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 49%;
-    }
-    .inactive-button:hover {
-      background-color: $roger-black-light;
-    }
   }
 
   .section {

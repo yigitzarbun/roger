@@ -54,6 +54,30 @@ const playersModel = {
     return players;
   },
 
+  async getPlayerProfile(userId: number) {
+    try {
+      const playerDetails = await db
+        .select("players.*", "users.*", "locations.*", "player_levels.*")
+        .from("players")
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "players.user_id");
+        })
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "players.location_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .where("players.user_id", userId);
+      return playerDetails;
+    } catch (error) {
+      console.log("Error fetching player profile info: ", error);
+    }
+  },
   async getByPlayerId(player_id) {
     const player = await db("players").where("player_id", player_id);
     return player;

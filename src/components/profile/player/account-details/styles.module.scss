@@ -3,45 +3,42 @@
 
 .player-account-details-container {
   background-color: $roger-box-bg-color;
-  width: 48%;
+  width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
-  flex-direction: column;
-  //justify-content: space-between;
-  row-gap: 2vh;
+  justify-content: space-between;
+  border: 1px solid $roger-border-color;
+  border-radius: $roger-border-radius;
+  padding: $roger-box-padding;
 
   .title-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    row-gap: 4vh;
 
-    h2 {
-      font-weight: bold;
-      font-size: 2rem;
+    h4 {
+      font-size: 1.2rem;
     }
-    .edit-button {
-      font-size: 2rem;
-      color: $roger-blue;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 2vh;
+    .profile-image {
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      object-position: center;
       cursor: pointer;
     }
-    .edit-button:hover {
-      color: white;
-    }
   }
 
-  p {
-    font-size: 1rem;
-  }
-
-  .profile-image {
-    border-radius: 50%;
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-  }
-  button {
-    background-color: $roger-black-dark;
+  .active-button {
+    background-color: $roger-blue;
     border: none;
     width: 200px;
     padding: $roger-button-padding;
@@ -49,29 +46,17 @@
     font-size: 1rem;
     cursor: pointer;
   }
-  button:hover {
-    background-color: $roger-black-light;
+  .active-button:hover {
+    background-color: $roger-black-dark;
   }
 
-  .profile-data-container {
-    display: flex;
-    column-gap: 50px;
-    .profile-info-container {
-      display: flex;
-      flex-direction: column;
-      row-gap: 10px;
-      .profile-info {
-        display: flex;
-        align-items: center;
-        column-gap: 15px;
-        align-items: start;
-        .icon {
-          font-size: 20px;
-        }
-        .info-text {
-          width: 90%;
-        }
-      }
-    }
+  .disabled-button {
+    background-color: $roger-black-dark;
+    border: none;
+    width: 200px;
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-size: 1rem;
+    cursor: not-allowed;
   }
 }

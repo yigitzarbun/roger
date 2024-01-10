@@ -28,6 +28,19 @@ playersRouter.get(
   }
 );
 playersRouter.get(
+  "/player-profile-details/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const playerDetails = await playersModel.getPlayerProfile(
+        Number(req.params.userId)
+      );
+      res.status(200).json(playerDetails);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+playersRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,121 +1,119 @@
-import React, { useState } from "react";
-
-import { AiOutlineEdit, AiOutlineMail } from "react-icons/ai";
-import { FaGenderless, FaCalendarDays, FaLocationDot } from "react-icons/fa6";
-import { CgTennis } from "react-icons/cg";
+import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 import styles from "./styles.module.scss";
 
-import PageLoading from "../../../../components/loading/PageLoading";
-import UpdateProfileModal from "../../update-profile-modals/player/UpdatePlayerProfileModal";
+import { useUpdatePlayerMutation } from "../../../../api/endpoints/PlayersApi";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { Player } from "../../../../api/endpoints/PlayersApi";
+import { updatePlayerDetails } from "../../../../store/slices/authSlice";
+import { useAppDispatch } from "../../../../store/hooks";
 
-import { useAppSelector } from "../../../../store/hooks";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+const PlayerAccountDetails = (props) => {
+  const { playerDetails, refetch } = props;
+  const dispatch = useAppDispatch();
 
-const PlayerAccountDetails = () => {
-  const user = useAppSelector((store) => store.user.user);
+  const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+  const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
+  const existingImage = playerDetails?.[0]?.image
+    ? playerDetails?.[0]?.image
+    : null;
 
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const currentPlayer = players?.find(
-    (player) => player.user_id === user?.user?.user_id
-  );
-
-  const profileData = {
-    player_id: currentPlayer?.player_id,
-    fname: currentPlayer?.fname,
-    lname: currentPlayer?.lname,
-    birth_year: currentPlayer?.birth_year,
-    gender: currentPlayer?.gender,
-    phone_number: currentPlayer?.phone_number,
-    image: currentPlayer?.image,
-    player_bio_description: currentPlayer?.player_bio_description,
-    location_id: currentPlayer?.location_id,
-    player_level_id: currentPlayer?.player_level_id,
-    user_id: user?.user.user_id,
-  };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = e.target.files[0];
+    setValue("image", imageFile);
+    if (imageFile) {
+      setSelectedImage(imageFile);
+    }
   };
 
-  if (isLocationsLoading || isPlayerLevelsLoading || isPlayersLoading) {
-    return <PageLoading />;
-  }
+  const { handleSubmit, reset, setValue } = useForm({
+    defaultValues: {
+      image: playerDetails?.[0]?.image,
+    },
+  });
+
+  const onSubmit: SubmitHandler<Player> = () => {
+    const updatedProfileData = {
+      player_id: playerDetails?.[0]?.player_id,
+      fname: playerDetails?.[0]?.fname,
+      lname: playerDetails?.[0]?.lname,
+      birth_year: playerDetails?.[0]?.birth_year,
+      gender: playerDetails?.[0]?.gender,
+      phone_number: null,
+      image: selectedImage ? selectedImage : existingImage,
+      player_bio_description: null,
+      location_id: Number(playerDetails?.[0]?.location_id),
+      player_level_id: Number(playerDetails?.[0]?.player_level_id),
+      user_id: playerDetails?.[0]?.user_id,
+    };
+    updatePlayer(updatedProfileData);
+    setUpdatedProfile(updatedProfileData);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      const updatedData = {
+        ...updatedProfile,
+        image: selectedImage
+          ? URL.createObjectURL(selectedImage)
+          : existingImage,
+      };
+      dispatch(updatePlayerDetails(updatedData));
+      toast.success("Profil güncellendi");
+      refetch();
+      reset(updatedProfile);
+      setSelectedImage(null);
+    }
+  }, [isSuccess]);
+
   return (
     <div className={styles["player-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h2>Hesap</h2>
-        <AiOutlineEdit
-          onClick={handleOpenModal}
-          className={styles["edit-button"]}
-        />
+        <h4>Profil Resmi</h4>
+        <p>Diğer kullanıcıların gördüğü profil resmidir.</p>
       </div>
-      <div className={styles["profile-data-container"]}>
-        <img
-          src={
-            currentPlayer?.image
-              ? currentPlayer?.image
-              : "/images/icons/avatar.png"
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={styles["form-container"]}
+        encType="multipart/form-data"
+      >
+        <label htmlFor="fileInput">
+          <img
+            src={
+              selectedImage
+                ? URL.createObjectURL(selectedImage)
+                : playerDetails?.[0]?.image || "/images/icons/avatar.jpg"
+            }
+            alt="player-image"
+            className={styles["profile-image"]}
+            id="preview-image"
+          />
+        </label>
+
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          name="image"
+          onChange={handleImageChange}
+          style={{ display: "none" }}
+        />
+        <button
+          type="submit"
+          className={
+            selectedImage === null
+              ? styles["disabled-button"]
+              : styles["active-button"]
           }
-          alt="player-image"
-          className={styles["profile-image"]}
-        />
-        <div className={styles["profile-info-container"]}>
-          <h2>{`${user?.playerDetails.fname} ${user?.playerDetails.lname}`}</h2>
-          <div className={styles["profile-info"]}>
-            <AiOutlineMail className={styles.icon} />
-            <p>{user?.user.email}</p>
-          </div>
-          <div className={styles["profile-info"]}>
-            <FaCalendarDays className={styles.icon} />
-            <p className={styles["info-text"]}>{currentPlayer?.birth_year}</p>
-          </div>
-          <div className={styles["profile-info"]}>
-            <FaGenderless className={styles.icon} />
-            <p className={styles["info-text"]}>{user?.playerDetails.gender}</p>
-          </div>
-          <div className={styles["profile-info"]}>
-            <FaLocationDot className={styles.icon} />
-            <p className={styles["info-text"]}>
-              {
-                locations?.find(
-                  (location) =>
-                    location.location_id ===
-                    Number(user?.playerDetails.location_id)
-                )?.location_name
-              }
-            </p>
-          </div>
-          <div className={styles["profile-info"]}>
-            <CgTennis className={styles.icon} />
-            <p className={styles["info-text"]}>{`Seviye: ${
-              playerLevels?.find(
-                (level) =>
-                  level.player_level_id ===
-                  Number(user?.playerDetails.player_level_id)
-              )?.player_level_name
-            }`}</p>
-          </div>
-        </div>
-      </div>
-      <UpdateProfileModal
-        isModalOpen={isModalOpen}
-        handleCloseModal={handleCloseModal}
-        profileData={profileData}
-      />
+          disabled={selectedImage === null}
+        >
+          Kaydet
+        </button>
+      </form>
     </div>
   );
 };

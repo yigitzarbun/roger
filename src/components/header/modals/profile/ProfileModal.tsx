@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
@@ -10,11 +10,12 @@ import { useAppDispatch } from "../../../../store/hooks";
 interface ProfileModalProps {
   isProfileModalOpen: boolean;
   handleCloseProfileModal: () => void;
+  email: string;
 }
 const ProfileModal = (props: ProfileModalProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { isProfileModalOpen, handleCloseProfileModal } = props;
+  const { isProfileModalOpen, handleCloseProfileModal, email } = props;
 
   const navigateUser = (path: string) => {
     navigate(paths[path]);
@@ -43,10 +44,12 @@ const ProfileModal = (props: ProfileModalProps) => {
 
       {/* Modal content */}
       <div className={styles["modal-content"]}>
-        <h4 onClick={(e) => navigateUser("PROFILE")}>Ayarlar</h4>
-        <h4 onClick={(e) => navigateUser("SOCIAL")}>Üyelikler</h4>
-        <h4 onClick={(e) => navigateUser("SOCIAL")}>Gruplar</h4>
-        <h4 onClick={(e) => navigateUser("SOCIAL")}>Favoriler</h4>
+        <p>{email}</p>
+        <h4 onClick={() => navigateUser("PROFILE")}>Ayarlar</h4>
+        <h4 onClick={() => navigateUser("PAYMENTS")}>Ödemeler</h4>
+        <h4 onClick={() => navigateUser("SOCIAL")}>Üyelikler</h4>
+        <h4 onClick={() => navigateUser("SOCIAL")}>Gruplar</h4>
+        <h4 onClick={() => navigateUser("SOCIAL")}>Favoriler</h4>
         <button onClick={handleLogout} className={styles.logout}>
           Çıkış
         </button>

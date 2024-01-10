@@ -29,7 +29,6 @@
     flex-direction: column;
     justify-content: space-between;
     width: 250px;
-    height: 40%;
     border-radius: $roger-border-radius;
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
@@ -46,6 +45,10 @@
       background-color: $roger-box-bg-color-hover;
     }
 
+    p {
+      font-size: 0.9rem;
+      padding: $roger-button-padding;
+    }
     .logout {
       background-color: $roger-black-dark;
       border: none;

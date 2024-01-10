@@ -37,6 +37,9 @@ export const playersSlice = createApi({
     getPlayerByUserId: builder.query({
       query: (user_id) => `/players/user/${user_id}`,
     }),
+    getPlayerProfileDetails: builder.query({
+      query: (user_id) => `/players/player-profile-details/${user_id}`,
+    }),
     getPlayersByFilter: builder.query({
       query: (filter) => `/players/filter?${new URLSearchParams(filter)}`,
     }),
@@ -123,6 +126,7 @@ export const {
   useGetPaginatedPlayersQuery,
   useGetPlayerByPlayerIdQuery,
   useGetPlayerByUserIdQuery,
+  useGetPlayerProfileDetailsQuery,
   useGetPlayersByFilterQuery,
   useAddPlayerMutation,
   useUpdatePlayerMutation,

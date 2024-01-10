@@ -13,9 +13,8 @@ import ClubHeader from "./club/ClubHeader";
 import ProfileModal from "./modals/profile/ProfileModal";
 
 const Header = () => {
-  const user = useAppSelector((store) => store.user);
+  const user = useAppSelector((store) => store?.user);
   const navigate = useNavigate();
-
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const handleOpenProfileModal = () => {
     setIsProfileModalOpen(true);
@@ -36,7 +35,6 @@ const Header = () => {
     isUserTrainer = user?.user.user.user_type_id === 2;
     isUserClub = user?.user.user.user_type_id === 3;
   }
-
   const isLoggedIn = user?.token;
   return (
     <div className={styles["header-container"]}>
@@ -110,6 +108,7 @@ const Header = () => {
         <ProfileModal
           isProfileModalOpen={isProfileModalOpen}
           handleCloseProfileModal={handleCloseProfileModal}
+          email={user?.user?.user?.email}
         />
       )}
     </div>
