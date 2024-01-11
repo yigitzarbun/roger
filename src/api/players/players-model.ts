@@ -13,21 +13,25 @@ const playersModel = {
     const players = await db("players");
 
     const paginatedPlayers = await db("players")
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "players.user_id");
+      })
       .where((builder) => {
         if (filter.playerLevelId > 0) {
-          builder.where("player_level_id", filter.playerLevelId);
+          builder.where("players.player_level_id", filter.playerLevelId);
         }
         if (filter.selectedGender !== "") {
-          builder.where("gender", filter.selectedGender);
+          builder.where("players.gender", filter.selectedGender);
         }
         if (filter.locationId > 0) {
-          builder.where("location_id", filter.locationId);
+          builder.where("players.location_id", filter.locationId);
         }
         if (filter.currentUserId) {
-          builder.where("user_id", "!=", filter.currentUserId);
+          builder.where("players.user_id", "!=", filter.currentUserId);
         }
       })
-      .orderBy("player_id", "asc")
+      .andWhere("users.user_status_type_id", 1)
+      .orderBy("players.player_id", "asc")
       .limit(playersPerPage)
       .offset(offset);
 

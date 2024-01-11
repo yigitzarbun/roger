@@ -39,7 +39,7 @@ usersRouter.get("/email/:email", async (req: Request, res: Response) => {
 });
 
 usersRouter.put(
-  "/:user_id",
+  "/update/:user_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await usersModel.update(req.body);

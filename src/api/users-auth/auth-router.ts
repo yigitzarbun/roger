@@ -40,7 +40,11 @@ authRouter.post(
     usersModel
       .getByFilter({ email })
       .then((user) => {
-        if (user && bcrypt.compareSync(password, user.user.password)) {
+        if (
+          user &&
+          bcrypt.compareSync(password, user.user.password) &&
+          user.user.user_status_type_id === 1
+        ) {
           const token = generateToken(user);
           res.status(200).json({ user, token });
         } else {

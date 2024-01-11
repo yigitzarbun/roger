@@ -1,14 +1,12 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.player-payment-details-container {
+.player-account-details-container {
   background-color: $roger-box-bg-color;
   width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
-  flex-direction: column;
-  row-gap: 8vh;
   justify-content: space-between;
   border: 1px solid $roger-border-color;
   border-radius: $roger-border-radius;
@@ -22,43 +20,45 @@
     h4 {
       font-size: 1.2rem;
     }
-    p {
-      width: 500px;
-    }
   }
 
-  .section {
+  .form-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    width: 100%;
-
-    .card-exists-container {
-      display: flex;
-      align-items: center;
-      column-gap: 1vw;
-      .done {
-        color: $roger-green;
-        font-size: 1.2rem;
-      }
-      .card-exists-text {
-        color: $roger-green;
-      }
+    row-gap: 2vh;
+    .profile-image {
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      object-position: center;
+      cursor: pointer;
     }
-    .button {
-      background-color: $roger-white;
-      color: black;
+
+    .active-button {
+      background-color: $roger-blue;
       border: none;
       width: 200px;
+      height: 40px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 1rem;
       cursor: pointer;
-      height: 40px;
     }
-    .button:hover {
-      background-color: $roger-blue;
-      color: $roger-white;
+    .active-button:hover {
+      background-color: $roger-black-dark;
+    }
+
+    .disabled-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 200px;
+      height: 40px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 1rem;
+      cursor: not-allowed;
     }
   }
 }

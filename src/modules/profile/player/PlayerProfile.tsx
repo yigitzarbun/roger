@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 
-import PlayerAccountDetails from "../../../components/profile/player/account-details/PlayerAccountDetails";
 import PlayerCardPayments from "../../../components/profile/player/card-payments/PlayerCardPayments";
 
 import styles from "./styles.module.scss";
@@ -8,6 +7,8 @@ import PlayerProfileNavigation from "../../../components/profile/player/player-p
 import { useAppSelector } from "../../../store/hooks";
 import { useGetPlayerProfileDetailsQuery } from "../../../api/endpoints/PlayersApi";
 import PageLoading from "../../../components/loading/PageLoading";
+import PlayerAccountDetails from "../../../components/profile/player/account-details/PlayerAccountDetails";
+import PlayerOtherDetails from "../../../components/profile/player/other-details/PlayerOtherDetails";
 
 const PlayerProfile = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -16,6 +17,12 @@ const PlayerProfile = () => {
     isLoading: isPlayerDetailsLoading,
     refetch: refetchPlayerDetails,
   } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [page, setPage] = useState("account");
+
+  const handlePage = (page: string) => {
+    setPage(page);
+  };
 
   if (isPlayerDetailsLoading) {
     return <PageLoading />;
@@ -26,13 +33,23 @@ const PlayerProfile = () => {
         <h2>Hesap Ayarları</h2>
       </div>
       <div className={styles.main}>
-        <PlayerProfileNavigation />
+        <PlayerProfileNavigation handlePage={handlePage} page={page} />
         <div className={styles.sections}>
-          <PlayerAccountDetails
-            playerDetails={playerDetails}
-            refetch={refetchPlayerDetails}
-          />
-          <PlayerCardPayments />
+          {page === "account" && (
+            <PlayerAccountDetails
+              playerDetails={playerDetails}
+              refetchPlayerDetails={refetchPlayerDetails}
+            />
+          )}
+          {page === "payment" && (
+            <PlayerCardPayments
+              playerDetails={playerDetails}
+              refetchPlayerDetails={refetchPlayerDetails}
+            />
+          )}
+          {page === "other" && (
+            <PlayerOtherDetails playerDetails={playerDetails} />
+          )}
         </div>
       </div>
     </div>

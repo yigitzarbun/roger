@@ -1,0 +1,42 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.player-account-details-container {
+  background-color: $roger-box-bg-color;
+  width: 100%;
+  border-radius: $roger-border-radius;
+  padding: $roger-box-padding;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8vh;
+  justify-content: space-between;
+  border: 1px solid $roger-border-color;
+  border-radius: $roger-border-radius;
+  padding: $roger-box-padding;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4vh;
+
+    h4 {
+      font-size: 1.2rem;
+    }
+    p {
+      width: 500px;
+    }
+    .email {
+      color: $roger-blue;
+    }
+  }
+
+  .gender {
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    border: 1px solid $roger-border-color;
+    width: 250px;
+    background-color: inherit;
+    font-size: 0.9rem;
+    cursor: not-allowed;
+  }
+}

@@ -1,13 +1,32 @@
 import React from "react";
 import styles from "./styles.module.scss";
-const PlayerProfileNavigation = () => {
+
+interface PlayerProfileNavProps {
+  handlePage: (page: string) => void;
+  page: string;
+}
+const PlayerProfileNavigation = (props) => {
+  const { handlePage, page } = props;
   return (
     <div className={styles.nav}>
-      <h4>Hesap</h4>
-      <h4>Kişisel</h4>
-      <h4>Genel</h4>
-      <h4>Ödeme</h4>
-      <h4>Diğer</h4>
+      <h4
+        onClick={() => handlePage("account")}
+        className={page === "account" && styles["active-page"]}
+      >
+        Hesap
+      </h4>
+      <h4
+        onClick={() => handlePage("payment")}
+        className={page === "payment" && styles["active-page"]}
+      >
+        Ödeme
+      </h4>
+      <h4
+        onClick={() => handlePage("other")}
+        className={page === "other" && styles["active-page"]}
+      >
+        Diğer
+      </h4>
     </div>
   );
 };

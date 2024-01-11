@@ -37,10 +37,9 @@ const LoginForm = () => {
       await loginUser(formData).unwrap();
       reset();
     } catch (error) {
-      console.log(error);
+      toast.error(error.data.message);
     }
   };
-
   useEffect(() => {
     if (isSuccess) {
       dispatch(

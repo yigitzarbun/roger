@@ -10,7 +10,7 @@
   flex-direction: column;
   row-gap: 8vh;
   justify-content: space-between;
-  border: 1px solid $roger-border-color;
+  border: 1px solid $roger-red;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
 
@@ -27,27 +27,11 @@
     }
   }
 
-  .section {
+  .delete-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-
-    .card-exists-container {
-      display: flex;
-      align-items: center;
-      column-gap: 1vw;
-      .done {
-        color: $roger-green;
-        font-size: 1.2rem;
-      }
-      .card-exists-text {
-        color: $roger-green;
-      }
-    }
+    justify-content: flex-end;
     .button {
-      background-color: $roger-white;
-      color: black;
+      background-color: $roger-red;
       border: none;
       width: 200px;
       padding: $roger-button-padding;
@@ -55,10 +39,6 @@
       font-size: 1rem;
       cursor: pointer;
       height: 40px;
-    }
-    .button:hover {
-      background-color: $roger-blue;
-      color: $roger-white;
     }
   }
 }

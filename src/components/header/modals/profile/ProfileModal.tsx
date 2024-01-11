@@ -36,13 +36,8 @@ const ProfileModal = (props: ProfileModalProps) => {
       className={styles["modal-container"]}
       overlayClassName={styles["modal-overlay"]}
     >
-      {/* Handle closing modal when clicking on the overlay */}
-      <div
-        className={styles["overlay"]}
-        onClick={handleCloseProfileModal} // Close modal on click
-      />
+      <div className={styles["overlay"]} onClick={handleCloseProfileModal} />
 
-      {/* Modal content */}
       <div className={styles["modal-content"]}>
         <p>{email}</p>
         <h4 onClick={() => navigateUser("PROFILE")}>Ayarlar</h4>
