@@ -6,11 +6,13 @@ import paths from "../../routing/Paths";
 
 import { useAppSelector } from "../../store/hooks";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
 
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
 import ClubHeader from "./club/ClubHeader";
 import ProfileModal from "./modals/profile/ProfileModal";
+import PageLoading from "../../components/loading/PageLoading";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -19,6 +21,9 @@ const Header = () => {
   const handleOpenProfileModal = () => {
     setIsProfileModalOpen(true);
   };
+  const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
+    useGetPlayerProfileDetailsQuery(user?.user?.user?.user_id);
+
   const handleCloseProfileModal = () => {
     setIsProfileModalOpen(false);
   };
@@ -35,7 +40,11 @@ const Header = () => {
     isUserTrainer = user?.user.user.user_type_id === 2;
     isUserClub = user?.user.user.user_type_id === 3;
   }
-  const isLoggedIn = user?.token;
+  const isLoggedIn = user?.token ? true : false;
+
+  if (isPlayerDetailsLoading) {
+    return <PageLoading />;
+  }
   return (
     <div className={styles["header-container"]}>
       <div className={styles["top-container"]}>
@@ -53,21 +62,22 @@ const Header = () => {
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
             <IoIosNotificationsOutline className={styles.notification} />
-
-            <img
-              src={
-                isLoggedIn && isUserPlayer
-                  ? user.user.playerDetails?.image
-                  : isLoggedIn && isUserTrainer
-                  ? user.user.trainerDetails?.image
-                  : isLoggedIn && isUserClub
-                  ? user.user.clubDetails?.image
-                  : "/images/icons/avatar.jpg"
-              }
-              alt="avatar"
-              className={styles["profile-image"]}
-              onClick={handleOpenProfileModal}
-            />
+            {isLoggedIn && (
+              <img
+                src={
+                  isUserPlayer && playerDetails?.[0]?.image
+                    ? playerDetails?.[0]?.image
+                    : //: isUserTrainer && trainerDetails?.[0]?.image
+                      //? trainerDetails?.[0]?.image
+                      //: isUserClub && clubDetails?.[0]?.image
+                      //? clubDetails?.[0]?.image
+                      "/images/icons/avatar.jpg"
+                }
+                alt="avatar"
+                className={styles["profile-image"]}
+                onClick={handleOpenProfileModal}
+              />
+            )}
           </div>
         ) : (
           <div className={styles["user-nav"]}>

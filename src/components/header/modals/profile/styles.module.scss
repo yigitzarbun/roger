@@ -36,15 +36,20 @@
     right: 2vw;
     border: 1px solid $roger-border-color;
 
-    h4 {
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       cursor: pointer;
       padding: $roger-button-padding;
-      font-size: 0.9rem;
+      h4 {
+        font-size: 0.9rem;
+        font-weight: normal;
+      }
     }
-    h4:hover {
+    .menu-item:hover {
       background-color: $roger-box-bg-color-hover;
     }
-
     p {
       font-size: 0.9rem;
       padding: $roger-button-padding;
@@ -57,6 +62,7 @@
       border-radius: $roger-border-radius;
       font-size: 1rem;
       cursor: pointer;
+      margin-top: 4vh;
     }
     .logout:hover {
       background-color: $roger-red;

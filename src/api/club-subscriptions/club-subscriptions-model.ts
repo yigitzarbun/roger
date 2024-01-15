@@ -79,6 +79,38 @@ const clubSubscriptionsModel = {
     return clubSubscription;
   },
 
+  async getPlayersTrainingSubscriptionStatus(filter) {
+    try {
+      const inviterSubscriptionStatus = await db("club_subscriptions")
+        .select("*")
+        .where("player_id", filter.inviterId)
+        .andWhere("club_id", filter.clubId)
+        .andWhere("is_active", true);
+
+      const inviteeSubscriptionStatus = await db("club_subscriptions")
+        .select("*")
+        .where("player_id", filter.inviteeId)
+        .andWhere("club_id", filter.clubId)
+        .andWhere("is_active", true);
+
+      // Check if both arrays have subscriptions
+      if (
+        inviterSubscriptionStatus.length > 0 &&
+        inviteeSubscriptionStatus.length > 0
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(
+        "Error fetching players training subscription status: ",
+        error
+      );
+      // Handle the error accordingly (throw it or return a specific value)
+      throw error;
+    }
+  },
   async add(clubSubscription) {
     const [newClubSubscription] = await db("club_subscriptions")
       .insert(clubSubscription)

@@ -48,7 +48,10 @@ const PlayerProfile = () => {
             />
           )}
           {page === "other" && (
-            <PlayerOtherDetails playerDetails={playerDetails} />
+            <PlayerOtherDetails
+              playerDetails={playerDetails}
+              refetchPlayerDetails={refetchPlayerDetails}
+            />
           )}
         </div>
       </div>

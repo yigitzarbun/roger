@@ -63,7 +63,8 @@ const favouritesModel = {
             .orOn("locations.location_id", "=", "clubs.location_id");
         })
         .where("favourites.is_active", true)
-        .andWhere("favourites.favouriter_id", userId);
+        .andWhere("favourites.favouriter_id", userId)
+        .andWhere("users.user_status_type_id", 1);
       return favourites;
     } catch (error) {
       // Handle any potential errors

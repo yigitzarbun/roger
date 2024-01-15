@@ -4,14 +4,33 @@
 .training-page-container {
   display: flex;
   column-gap: 4vh;
-  background-color: $roger-black-light;
-  padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   width: 100%;
 
   .input-container {
     display: flex;
-    width: 25%;
+    width: 15%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
+    border-radius: $roger-border-radius;
+    justify-content: center;
+    column-gap: 14px;
+
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+      cursor: pointer;
+    }
+  }
+
+  .search-container {
+    display: flex;
+    width: 40%;
     align-items: center;
     background-color: $roger-black-dark;
     padding: 2px;
@@ -25,17 +44,22 @@
 
     select,
     input {
-      border: none;
-      background-color: $roger-black-dark;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
     }
   }
-
   button {
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
+    background-color: $roger-black-dark;
     border: none;
+    width: 200px;
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
     font-size: 1rem;
-    font-weight: bold;
+    cursor: pointer;
+    height: 40px;
   }
 
   button:hover {

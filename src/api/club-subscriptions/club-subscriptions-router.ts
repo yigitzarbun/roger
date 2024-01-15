@@ -29,6 +29,21 @@ clubSubscriptionsRouter.get(
   }
 );
 clubSubscriptionsRouter.get(
+  "/players-training-subscription-status/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const playersSubscriptionStatus =
+        await clubSubscriptionsModel.getPlayersTrainingSubscriptionStatus(
+          filter
+        );
+      res.status(200).json(playersSubscriptionStatus);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubSubscriptionsRouter.get(
   "/player-active-club-subscriptions/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

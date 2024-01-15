@@ -8,34 +8,19 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../../store/hooks";
-
 import {
   Player,
-  useGetPlayerByUserIdQuery,
-  useGetPlayersQuery,
   useUpdatePlayerMutation,
 } from "../../../../../api/endpoints/PlayersApi";
 
-import PageLoading from "../../../../../components/loading/PageLoading";
-
-interface AddPlayerCardDetailsModallProps {
-  isModalOpen: boolean;
-  handleCloseModal: () => void;
-}
-
-const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
-  const { isModalOpen, handleCloseModal } = props;
-
-  const user = useAppSelector((store) => store?.user?.user?.user);
-
+const AddPlayerCardDetails = (props) => {
   const {
-    data: selectedPlayer,
-    isLoading: isSelectedPlayerLoading,
-    refetch,
-  } = useGetPlayerByUserIdQuery(user?.user_id);
-
-  const { refetch: refetchPlayers } = useGetPlayersQuery({});
+    isModalOpen,
+    handleCloseModal,
+    playerDetails,
+    refetchPlayerDetails,
+    cardDetailsExist,
+  } = props;
 
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
 
@@ -49,7 +34,6 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
     } else if (value.length === 2) {
       value = `${value}/`;
     }
-
     setExpiryValue(value);
   };
 
@@ -57,11 +41,25 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name_on_card: playerDetails?.[0]?.name_on_card,
+      card_number: playerDetails?.[0]?.card_number,
+      cvc: playerDetails?.[0]?.cvc,
+      card_expiry: playerDetails?.[0]?.card_expiry,
+    },
+  });
 
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const playerCardDetails = {
-      ...selectedPlayer?.[0],
+      player_id: playerDetails?.[0]?.player_id,
+      fname: playerDetails?.[0]?.fname,
+      lname: playerDetails?.[0]?.lname,
+      birth_year: playerDetails?.[0]?.birth_year,
+      gender: playerDetails?.[0]?.gender,
+      location_id: playerDetails?.[0]?.location_id,
+      player_level_id: playerDetails?.[0]?.player_level_id,
+      user_id: playerDetails?.[0]?.user_id,
       name_on_card: formData?.name_on_card,
       card_number: formData?.card_number,
       cvc: Number(formData?.cvc),
@@ -71,96 +69,108 @@ const AddPlayerCardDetails = (props: AddPlayerCardDetailsModallProps) => {
   };
   useEffect(() => {
     if (isSuccess) {
-      refetch();
-      refetchPlayers();
+      refetchPlayerDetails();
       toast.success("Başarıyla güncellendi");
       handleCloseModal();
     }
   }, [isSuccess]);
 
-  if (isSelectedPlayerLoading) {
-    return <PageLoading />;
-  }
   return (
     <ReactModal
       isOpen={isModalOpen}
       onRequestClose={handleCloseModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1>Banka Hesabı Ekle</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={handleCloseModal}
-          className={styles["close-button"]}
-        />
+      <div className={styles["overlay"]} onClick={handleCloseModal} />
+      <div className={styles["modal-content"]}>
+        <h3>
+          {cardDetailsExist ? "Kart Bilgilerini Düzenle" : "Yeni Kart Ekle"}
+        </h3>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+        >
+          <div className={styles["outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Kart Üzerindeki İsim Soyisim</label>
+              <input
+                {...register("name_on_card", { required: true })}
+                type="text"
+              />
+              {errors.name_on_card && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Kart Numarası</label>
+              <input
+                {...register("card_number", {
+                  required: "Bu alan zorunludur",
+                  minLength: 16,
+                  maxLength: 16,
+                })}
+              />
+              {errors.card_number && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>{" "}
+          </div>
+          <div className={styles["outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>CVC</label>
+              <input
+                {...register("cvc", {
+                  required: true,
+                  minLength: 3,
+                  maxLength: 3,
+                })}
+                type="number"
+              />
+              {errors.cvc && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Son Kullanma Tarihi</label>
+              <input
+                {...register("card_expiry", {
+                  required: true,
+                  minLength: 5,
+                  maxLength: 5,
+                })}
+                type="text"
+                placeholder="AA/YY"
+                value={expiryValue}
+                onChange={handleExpiryChange}
+              />
+              {errors.card_expiry && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={handleCloseModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["delete-button"]}>
+              Onayla
+            </button>
+          </div>
+        </form>
       </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kart Üzerindeki İsim Soyisim</label>
-            <input
-              {...register("name_on_card", { required: true })}
-              type="text"
-            />
-            {errors.name_on_card && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Kart Numarası</label>
-            <input
-              {...register("card_number", {
-                required: "Bu alan zorunludur",
-                minLength: 16,
-                maxLength: 16,
-              })}
-            />
-            {errors.card_number && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>CVC</label>
-            <input
-              {...register("cvc", {
-                required: true,
-                minLength: 3,
-                maxLength: 3,
-              })}
-              type="number"
-            />
-            {errors.cvc && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Son Kullanma Tarihi</label>
-            <input
-              {...register("card_expiry", {
-                required: true,
-                minLength: 5,
-                maxLength: 5,
-              })}
-              type="text"
-              placeholder="AA/YY"
-              value={expiryValue}
-              onChange={handleExpiryChange}
-            />
-            {errors.card_expiry && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <button type="submit" className={styles["form-button"]}>
-          Onayla
-        </button>
-      </form>
     </ReactModal>
   );
 };

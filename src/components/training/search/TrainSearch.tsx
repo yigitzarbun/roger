@@ -9,23 +9,25 @@ import PageLoading from "../../../components/loading/PageLoading";
 
 interface TrainSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleClear: () => void;
+  handleFavourite: (event: ChangeEvent<HTMLSelectElement>) => void;
   playerLevelId: number;
+  textSearch: string;
   gender: string;
   locationId: number;
-  favourite: boolean;
+  favourite: boolean | null;
 }
 const TrainSearch = (props: TrainSearchProps) => {
   const {
     handleLevel,
+    handleTextSearch,
     handleGender,
     handleLocation,
     handleFavourite,
-    handleClear,
     playerLevelId,
+    textSearch,
     gender,
     locationId,
     favourite,
@@ -42,6 +44,14 @@ const TrainSearch = (props: TrainSearchProps) => {
 
   return (
     <div className={styles["training-page-container"]}>
+      <div className={styles["search-container"]}>
+        <input
+          type="text"
+          onChange={handleTextSearch}
+          value={textSearch}
+          placeholder="Oyuncu adı"
+        />
+      </div>
       <div className={styles["input-container"]}>
         <select
           onChange={handleLevel}
@@ -76,7 +86,7 @@ const TrainSearch = (props: TrainSearchProps) => {
           value={locationId ?? ""}
           className="input-element"
         >
-          <option value="">-- Konum --</option>
+          <option value="">-- Tüm Konumlar --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
               {location.location_name}
@@ -85,17 +95,19 @@ const TrainSearch = (props: TrainSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <label>Favori</label>
-        <input
-          type="checkbox"
-          checked={favourite || false}
+        <select
           onChange={handleFavourite}
+          value={favourite ? "true" : "false"}
           className="input-element"
-        />
+        >
+          <option key={1} value={"false"}>
+            -- Tüm Oyuncular --
+          </option>
+          <option key={2} value={"true"}>
+            Favoriler
+          </option>
+        </select>
       </div>
-      <button onClick={handleClear} className={styles["button"]}>
-        Temizle
-      </button>
     </div>
   );
 };

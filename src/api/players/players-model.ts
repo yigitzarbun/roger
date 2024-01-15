@@ -10,11 +10,19 @@ const playersModel = {
     const playersPerPage = 4;
     const offset = (filter.currentPage - 1) * playersPerPage;
 
-    const players = await db("players");
-
     const paginatedPlayers = await db("players")
       .leftJoin("users", function () {
         this.on("users.user_id", "=", "players.user_id");
+      })
+      .leftJoin("locations", function () {
+        this.on("locations.location_id", "=", "players.location_id");
+      })
+      .leftJoin("player_levels", function () {
+        this.on(
+          "player_levels.player_level_id",
+          "=",
+          "players.player_level_id"
+        );
       })
       .where((builder) => {
         if (filter.playerLevelId > 0) {
@@ -29,6 +37,15 @@ const playersModel = {
         if (filter.currentUserId) {
           builder.where("players.user_id", "!=", filter.currentUserId);
         }
+        if (filter.textSearch && filter.textSearch !== "") {
+          builder.where(function () {
+            this.where(
+              "players.fname",
+              "ilike",
+              `%${filter.textSearch}%`
+            ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+          });
+        }
       })
       .andWhere("users.user_status_type_id", 1)
       .orderBy("players.player_id", "asc")
@@ -37,7 +54,7 @@ const playersModel = {
 
     const data = {
       players: paginatedPlayers,
-      totalPages: Math.ceil(players.length / playersPerPage),
+      totalPages: Math.ceil(paginatedPlayers.length / playersPerPage),
     };
     return data;
   },

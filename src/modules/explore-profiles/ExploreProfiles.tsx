@@ -6,7 +6,6 @@ import { MdArrowBackIosNew } from "react-icons/md";
 
 import styles from "./styles.module.scss";
 
-import ExploreHero from "../../components/explore/hero/ExploreHero";
 import ExplorePlayerProfile from "../../components/explore/explore-profiles/player/ExplorePlayerProfile";
 import ExploreTrainerProfile from "../../components/explore/explore-profiles/trainer/ExploreTrainerProfile";
 import ExploreClubProfile from "../../components/explore/explore-profiles/club/ExploreClubProfile";
@@ -24,7 +23,6 @@ const ExploreProfiles = () => {
   };
   return (
     <div>
-      <ExploreHero />
       <div className={styles["back-container"]} onClick={handleBack}>
         <MdArrowBackIosNew className={styles["back-button"]} />
         <p className={styles["back-text"]}>Geri</p>

@@ -5,11 +5,9 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import styles from "./styles.module.scss";
 
 import AddPlayerCardDetails from "./add-card-details/AddPlayerCardDetails";
-import EditPlayerCardDetails from "./edit-card-details/EditPlayerCardDetails";
-import PageLoading from "../../../../components/loading/PageLoading";
 
 const PlayerCardPayments = (props) => {
-  const { playerDetails } = props;
+  const { playerDetails, refetchPlayerDetails } = props;
 
   const cardDetailsExist =
     playerDetails?.[0]?.name_on_card &&
@@ -25,16 +23,6 @@ const PlayerCardPayments = (props) => {
 
   const handleCloseAddCardModal = () => {
     setIsAddCardModalOpen(false);
-  };
-
-  const [isEditCardModalOpen, setIsEditCardModalOpen] = useState(false);
-
-  const handleOpenEditCardModal = () => {
-    setIsEditCardModalOpen(true);
-  };
-
-  const handleCloseEditCardModal = () => {
-    setIsEditCardModalOpen(false);
   };
 
   return (
@@ -59,7 +47,7 @@ const PlayerCardPayments = (props) => {
             ile biten kartınız aktiftir`}
               </p>
             </div>
-            <button onClick={handleOpenEditCardModal} className={styles.button}>
+            <button onClick={handleOpenAddCardModal} className={styles.button}>
               Kart Bilgilerini Düzenle
             </button>
           </div>
@@ -72,15 +60,15 @@ const PlayerCardPayments = (props) => {
           </div>
         )}
       </div>
-
-      <AddPlayerCardDetails
-        isModalOpen={isAddCardModalOpen}
-        handleCloseModal={handleCloseAddCardModal}
-      />
-      <EditPlayerCardDetails
-        isModalOpen={isEditCardModalOpen}
-        handleCloseModal={handleCloseEditCardModal}
-      />
+      {isAddCardModalOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={isAddCardModalOpen}
+          handleCloseModal={handleCloseAddCardModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={cardDetailsExist}
+        />
+      )}
     </div>
   );
 };

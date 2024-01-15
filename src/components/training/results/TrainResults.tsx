@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { SlOptions } from "react-icons/sl";
 
 import paths from "../../../routing/Paths";
 
@@ -9,29 +10,31 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../store/hooks";
 
 import { useGetPaginatedPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
 import { getAge } from "../../../common/util/TimeFunctions";
+import TrainingInviteFormModal from "../../../components/invite/training/form/TrainingInviteFormModal";
 
 interface TrainResultsProps {
   playerLevelId: number;
+  textSearch: string;
   gender: string;
   locationId: number;
-  favourite: boolean;
+  favourite: boolean | null;
 }
 
 const TrainResults = (props: TrainResultsProps) => {
-  const { playerLevelId, gender, locationId, favourite } = props;
+  const { playerLevelId, textSearch, gender, locationId, favourite } = props;
 
   const { user } = useAppSelector((store) => store.user);
-
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-
+  const [opponentUserId, setOpponentUserId] = useState(null);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const handleOpenInviteModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsInviteModalOpen(true);
+  };
+  const handleCloseInviteModal = () => {
+    setIsInviteModalOpen(false);
+  };
   const {
     data: myFavourites,
     isLoading: isFavouritesLoading,
@@ -56,8 +59,8 @@ const TrainResults = (props: TrainResultsProps) => {
     selectedGender: selectedGender,
     locationId: locationIdValue,
     currentUserId: user?.user?.user_id,
+    textSearch: textSearch,
   });
-
   const pageNumbers = [];
   for (let i = 1; i <= players?.totalPages; i++) {
     pageNumbers.push(i);
@@ -94,26 +97,21 @@ const TrainResults = (props: TrainResultsProps) => {
 
   useEffect(() => {
     refetchPaginatedPlayers();
-  }, [levelId, selectedGender, locationIdValue]);
+  }, [levelId, selectedGender, locationIdValue, textSearch]);
 
   useEffect(() => {
     refetchFavourites();
   }, []);
 
-  if (
-    isPlayersLoading ||
-    isLocationsLoading ||
-    isPlayerLevelsLoading ||
-    isFavouritesLoading
-  ) {
+  if (isPlayersLoading || isFavouritesLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Antreman</h2>
-        <div className={styles["navigation-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles["title"]}>Antreman</h2>
+        <div className={styles["nav-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
@@ -142,12 +140,14 @@ const TrainResults = (props: TrainResultsProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
+              <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {filteredPlayers.map((player) => (
-              <tr key={player.player_id}>
-                <td className={styles["vertical-center"]}>
+              <tr key={player.player_id} className={styles["player-row"]}>
+                <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={
@@ -164,37 +164,20 @@ const TrainResults = (props: TrainResultsProps) => {
                     className={styles["player-name"]}
                   >{`${player.fname} ${player.lname}`}</Link>
                 </td>
-                <td>
-                  {
-                    playerLevels?.find(
-                      (player_level) =>
-                        player_level.player_level_id === player.player_level_id
-                    ).player_level_name
-                  }
-                </td>
+                <td>{player?.player_level_name}</td>
                 <td>{player.gender}</td>
                 <td>{getAge(Number(player.birth_year))}</td>
+                <td>{player?.location_name}</td>
                 <td>
-                  {
-                    locations?.find(
-                      (location) => location.location_id === player.location_id
-                    ).location_name
-                  }
-                </td>
-                <td>
-                  <Link
-                    to={paths.TRAIN_INVITE}
-                    state={{
-                      fname: player.fname,
-                      lname: player.lname,
-                      image: player.image,
-                      court_price: "",
-                      user_id: player.user_id,
-                    }}
+                  <button
+                    onClick={() => handleOpenInviteModal(player?.user_id)}
                     className={styles["training-button"]}
                   >
                     Davet gönder
-                  </Link>
+                  </button>
+                </td>
+                <td>
+                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}
@@ -217,6 +200,13 @@ const TrainResults = (props: TrainResultsProps) => {
           </button>
         ))}
       </div>
+      {isInviteModalOpen && (
+        <TrainingInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isInviteModalOpen}
+          handleCloseInviteModal={handleCloseInviteModal}
+        />
+      )}
     </div>
   );
 };

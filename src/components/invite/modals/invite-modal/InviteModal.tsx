@@ -10,10 +10,7 @@ import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
-import {
-  useGetCourtByIdQuery,
-  useGetCourtsQuery,
-} from "../../../../api/endpoints/CourtsApi";
+import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import {
   useGetClubSubscriptionsByFilterQuery,
