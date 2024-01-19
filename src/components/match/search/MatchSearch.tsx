@@ -8,21 +8,23 @@ import PageLoading from "../../../components/loading/PageLoading";
 
 interface MatchSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleClear: () => void;
+  handleFavourite: (event: ChangeEvent<HTMLSelectElement>) => void;
   playerLevelId: number;
+  textSearch: string;
   locationId: number;
-  favourite: boolean;
+  favourite: boolean | null;
 }
 
 const MatchSearch = (props: MatchSearchProps) => {
   const {
     handleLevel,
+    handleTextSearch,
     handleLocation,
     handleFavourite,
-    handleClear,
     playerLevelId,
+    textSearch,
     locationId,
     favourite,
   } = props;
@@ -39,8 +41,20 @@ const MatchSearch = (props: MatchSearchProps) => {
 
   return (
     <div className={styles["match-page-container"]}>
+      <div className={styles["search-container"]}>
+        <input
+          type="text"
+          onChange={handleTextSearch}
+          value={textSearch}
+          placeholder="Oyuncu adı"
+        />
+      </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleLevel} value={playerLevelId ?? ""}>
+        <select
+          onChange={handleLevel}
+          value={playerLevelId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Seviye --</option>
           {playerLevels?.map((player_level) => (
             <option
@@ -53,8 +67,12 @@ const MatchSearch = (props: MatchSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleLocation} value={locationId ?? ""}>
-          <option value="">-- Konum --</option>
+        <select
+          onChange={handleLocation}
+          value={locationId ?? ""}
+          className="input-element"
+        >
+          <option value="">-- Tüm Konumlar --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
               {location.location_name}
@@ -63,17 +81,19 @@ const MatchSearch = (props: MatchSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <label>Favori</label>
-        <input
-          type="checkbox"
-          checked={favourite || false}
+        <select
           onChange={handleFavourite}
+          value={favourite ? "true" : "false"}
           className="input-element"
-        />
+        >
+          <option key={1} value={"false"}>
+            -- Tüm Oyuncular --
+          </option>
+          <option key={2} value={"true"}>
+            Favoriler
+          </option>
+        </select>
       </div>
-      <button onClick={handleClear} className={styles["button"]}>
-        Temizle
-      </button>
     </div>
   );
 };

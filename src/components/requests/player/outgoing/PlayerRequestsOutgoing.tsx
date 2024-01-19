@@ -14,12 +14,8 @@ import CancelInviteModal, {
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPlayerOutgoingRequestsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
+
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
-import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerRequestsOutgoing = () => {
@@ -30,22 +26,6 @@ const PlayerRequestsOutgoing = () => {
     isLoading: isBookingsLoading,
     refetch,
   } = useGetPlayerOutgoingRequestsQuery(user?.user_id);
-
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
-
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-
-  const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
 
   const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
@@ -64,7 +44,18 @@ const PlayerRequestsOutgoing = () => {
 
   const handleCancelBooking = () => {
     const cancelledBookingData = {
-      ...bookingData,
+      booking_id: bookingData?.booking_id,
+      event_date: bookingData?.event_date,
+      event_time: bookingData?.event_time,
+      court_price: bookingData?.court_price,
+      lesson_price: bookingData?.lesson_price,
+      payment_id: bookingData?.payment_id,
+      event_type_id: bookingData?.event_type_id,
+      club_id: bookingData?.club_id,
+      court_id: bookingData?.court_id,
+      inviter_id: bookingData?.inviter_id,
+      invitee_id: bookingData?.invitee_id,
+      invitation_note: bookingData?.invitation_note,
       booking_status_type_id: 4,
     };
     updateBooking(cancelledBookingData);
@@ -73,26 +64,18 @@ const PlayerRequestsOutgoing = () => {
   useEffect(() => {
     if (isSuccess) {
       refetch();
-
       handleCloseModal();
     }
   }, [isSuccess]);
 
-  if (
-    isBookingsLoading ||
-    isEventTypesLoading ||
-    isPlayerLevelTypesLoading ||
-    isTrainerExperienceTypesLoading ||
-    isPaymentsLoading ||
-    isUsersLoading
-  ) {
+  if (isBookingsLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Gönderilen Davetler</h2>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Gönderilen Davetler</h2>
       </div>
       {outgoingBookings?.length === 0 ? (
         <div>Gönderilen antreman, maç veya ders daveti bulunmamaktadır</div>
@@ -119,29 +102,27 @@ const PlayerRequestsOutgoing = () => {
             </thead>
             <tbody>
               {outgoingBookings?.map((booking) => (
-                <tr key={booking.booking_id}>
+                <tr key={booking.booking_id} className={styles["player-row"]}>
                   <td className={styles["pending-confirmation-text"]}>
                     {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                   </td>
-                  <td className={styles["vertical-center"]}>
+                  <td>
                     <Link
                       to={`${Paths.EXPLORE_PROFILE}${
-                        users?.find(
-                          (user) => user.user_id === booking.invitee_id
-                        )?.user_type_id === 1
+                        booking?.user_type_id === 1
                           ? 1
-                          : users?.find(
-                              (user) => user.user_id === booking.invitee_id
-                            )?.user_type_id === 2
+                          : booking?.user_type_id === 2
                           ? 2
                           : ""
                       }/${booking.invitee_id}`}
                     >
                       <img
                         src={
-                          booking?.image
-                            ? booking?.image
-                            : "/images/icons/avatar.png"
+                          booking?.trainerImage
+                            ? booking?.trainerImage
+                            : booking?.playerImage
+                            ? booking?.playerImage
+                            : "/images/icons/avatar.jpg"
                         }
                         className={styles["player-image"]}
                       />
@@ -152,7 +133,7 @@ const PlayerRequestsOutgoing = () => {
                     booking.event_type_id === 2 ? (
                       <Link
                         to={`${Paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}
-                        className={styles.name}
+                        className={styles["player-name"]}
                       >
                         {`${booking?.fname}
                         ${booking?.lname}
@@ -161,7 +142,7 @@ const PlayerRequestsOutgoing = () => {
                     ) : booking.event_type_id === 3 ? (
                       <Link
                         to={`${Paths.EXPLORE_PROFILE}2/${booking.invitee_id}`}
-                        className={styles.name}
+                        className={styles["player-name"]}
                       >
                         {`${booking?.fname}
                         ${booking?.lname}
@@ -173,40 +154,23 @@ const PlayerRequestsOutgoing = () => {
                   </td>
                   <td>
                     {booking.event_type_id === 1 || booking.event_type_id === 2
-                      ? playerLevelTypes?.find(
-                          (level) =>
-                            level.player_level_id === booking?.player_level_id
-                        )?.player_level_name
+                      ? booking?.player_level_name
                       : booking.event_type_id === 3
-                      ? trainerExperienceTypes?.find(
-                          (type) =>
-                            type.trainer_experience_type_id ===
-                            booking?.trainer_experience_type_id
-                        )?.trainer_experience_type_name
+                      ? booking?.trainer_experience_type_name
                       : ""}
                   </td>
                   <td>{booking?.gender}</td>
                   <td>{getAge(booking?.birth_year)}</td>
-                  <td>
-                    {
-                      eventTypes?.find(
-                        (type) => type.event_type_id === booking.event_type_id
-                      )?.event_type_name
-                    }
-                  </td>
+                  <td>{booking?.event_type_name}</td>
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
                   <td>{booking?.court_name}</td>
                   <td>{booking?.club_name}</td>
                   <td>
                     {booking.event_type_id === 1 || booking.event_type_id === 2
-                      ? payments?.find(
-                          (payment) => booking.payment_id === payment.payment_id
-                        )?.payment_amount / 2
+                      ? booking?.payment_amount / 2
                       : booking.event_type_id === 3
-                      ? payments?.find(
-                          (payment) => booking.payment_id === payment.payment_id
-                        )?.payment_amount
+                      ? booking?.payment_amount
                       : "External Booking"}
                   </td>
                   <td>
@@ -231,6 +195,7 @@ const PlayerRequestsOutgoing = () => {
         handleCloseModal={handleCloseModal}
         bookingData={bookingData}
         handleCancelBooking={handleCancelBooking}
+        user={user}
       />
     </div>
   );

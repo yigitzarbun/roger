@@ -43,6 +43,10 @@ export const bookingsSlice = createApi({
       query: (filter) =>
         `/bookings/players-leaderboard/filter?${new URLSearchParams(filter)}`,
     }),
+    getBookedCourtHours: builder.query({
+      query: (filter) =>
+        `/bookings/get-booked-hours/filter?${new URLSearchParams(filter)}`,
+    }),
     getBookingsByFilter: builder.query({
       query: (filter) => `/bookings/filter?${new URLSearchParams(filter)}`,
     }),
@@ -72,6 +76,7 @@ export const {
   useGetPlayerPastEventsQuery,
   useGetPlayersLeaderboardQuery,
   useGetBookingsByFilterQuery,
+  useGetBookedCourtHoursQuery,
   useAddBookingMutation,
   useUpdateBookingMutation,
 } = bookingsSlice;

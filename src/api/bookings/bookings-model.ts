@@ -165,31 +165,53 @@ const bookingsModel = {
         .select(
           "bookings.*",
           "players.*",
+          "players.image as playerImage",
           "trainers.*",
+          "trainers.image as trainerImage",
           "clubs.*",
           "clubs.image as clubImage",
-          "courts.*"
+          "courts.*",
+          "event_types.*",
+          "player_levels.*",
+          "users.*",
+          "trainer_experience_types.*",
+          "payments.*"
         )
         .from("bookings")
         .leftJoin("players", function () {
-          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
-            "players.user_id",
-            "=",
-            "bookings.inviter_id"
-          );
+          this.on("players.user_id", "=", "bookings.invitee_id");
         })
         .leftJoin("trainers", function () {
-          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
-            "trainers.user_id",
-            "=",
-            "bookings.inviter_id"
-          );
+          this.on("trainers.user_id", "=", "bookings.invitee_id");
         })
         .leftJoin("courts", function () {
           this.on("courts.court_id", "=", "bookings.court_id");
         })
         .leftJoin("clubs", function () {
           this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("trainer_experience_types", function () {
+          this.on(
+            "trainer_experience_types.trainer_experience_type_id",
+            "=",
+            "trainers.trainer_experience_type_id"
+          );
+        })
+        .leftJoin("payments", function () {
+          this.on("payments.payment_id", "=", "bookings.payment_id");
         })
         .where("bookings.booking_status_type_id", 1)
         .andWhere((builder) => {
@@ -214,31 +236,53 @@ const bookingsModel = {
         .select(
           "bookings.*",
           "players.*",
+          "players.image as playerImage",
           "trainers.*",
+          "trainers.image as trainerImage",
           "clubs.*",
           "clubs.image as clubImage",
-          "courts.*"
+          "courts.*",
+          "event_types.*",
+          "player_levels.*",
+          "users.*",
+          "trainer_experience_types.*",
+          "payments.*"
         )
         .from("bookings")
         .leftJoin("players", function () {
-          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
-            "players.user_id",
-            "=",
-            "bookings.inviter_id"
-          );
+          this.on("players.user_id", "=", "bookings.inviter_id");
         })
         .leftJoin("trainers", function () {
-          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
-            "trainers.user_id",
-            "=",
-            "bookings.inviter_id"
-          );
+          this.on("trainers.user_id", "=", "bookings.inviter_id");
         })
         .leftJoin("courts", function () {
           this.on("courts.court_id", "=", "bookings.court_id");
         })
         .leftJoin("clubs", function () {
           this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "bookings.inviter_id");
+        })
+        .leftJoin("trainer_experience_types", function () {
+          this.on(
+            "trainer_experience_types.trainer_experience_type_id",
+            "=",
+            "trainers.trainer_experience_type_id"
+          );
+        })
+        .leftJoin("payments", function () {
+          this.on("payments.payment_id", "=", "bookings.payment_id");
         })
         .where("bookings.booking_status_type_id", 1)
         .andWhere((builder) => {
@@ -438,6 +482,22 @@ const bookingsModel = {
     } catch (error) {
       console.log("Error fetching player's leaderboard", error);
       throw error;
+    }
+  },
+  async getBookedCourtHours(filter) {
+    try {
+      const bookings = await db("bookings")
+        .where("court_id", filter.courtId)
+        .andWhere("event_date", filter.eventDate)
+        .andWhere((builder) =>
+          builder
+            .where("booking_status_type_id", 1)
+            .orWhere("booking_status_type_id", 2)
+        );
+
+      return bookings;
+    } catch (error) {
+      console.log("Error fetching booked court hours: ", error);
     }
   },
   async getById(booking_id: number) {

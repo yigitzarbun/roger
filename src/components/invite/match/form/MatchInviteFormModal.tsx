@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import ReactModal from "react-modal";
 
-import { toast } from "react-toastify";
-
 import { useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
 
 import styles from "./styles.module.scss";
 
@@ -21,12 +21,7 @@ import {
   useGetCourtByIdQuery,
   useGetCourtsQuery,
 } from "../../../../api/endpoints/CourtsApi";
-import {
-  useAddPaymentMutation,
-  useGetPaymentsQuery,
-} from "../../../../api/endpoints/PaymentsApi";
 import { useGetPlayersTraininSubscriptionStatusQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -35,15 +30,21 @@ import {
   useGetBookedCourtHoursQuery,
   useGetPlayerOutgoingRequestsQuery,
 } from "../../../../api/endpoints/BookingsApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
+import {
+  useAddPaymentMutation,
+  useGetPaymentsQuery,
+} from "../../../../api/endpoints/PaymentsApi";
 
 import {
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
-import PageLoading from "../../../loading/PageLoading";
-import TrainingInviteConfirmation from "../confirmation/TrainingInviteConfirmation";
 
-interface TrainingInviteModalProps {
+import PageLoading from "../../../loading/PageLoading";
+import MatchInviteConfirmation from "../confirmation/MatchInviteConfirmation";
+
+interface MatchInviteModalProps {
   opponentUserId: number;
   isInviteModalOpen: boolean;
   handleCloseInviteModal: () => void;
@@ -63,7 +64,8 @@ export type FormValues = {
   payment_id: number;
   invitation_note?: string;
 };
-const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
+
+const MatchInviteFormModal = (props: MatchInviteModalProps) => {
   const { opponentUserId, isInviteModalOpen, handleCloseInviteModal } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
@@ -71,7 +73,6 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
   const navigate = useNavigate();
 
   const [confirmation, setConfirmation] = useState(false);
-
   const handleCloseConfirmation = () => {
     setConfirmation(false);
   };
@@ -213,7 +214,7 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
       event_date: new Date(formData.event_date).toISOString(),
       event_time: formData.event_time,
       booking_status_type_id: 1,
-      event_type_id: 1,
+      event_type_id: 2,
       club_id: formData.club_id,
       court_id: formData.court_id,
       inviter_id: user?.user.user_id,
@@ -239,7 +240,7 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
         payment_amount: bookingFormData?.court_price,
         court_price: bookingFormData?.court_price,
         payment_status: "pending",
-        payment_type_id: 1,
+        payment_type_id: 2,
         sender_inviter_id: user?.user.user_id,
         sender_invitee_id: inviteePlayer?.[0]?.user_id,
         recipient_club_id: selectedClubDetails?.[0]?.user_id,
@@ -326,10 +327,9 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
   if (
     isClubsLoading ||
     isCourtsLoading ||
-    isInviterPlayerLoading ||
     isInviteePlayerLoading ||
-    isSelectedClubDetailsLoading ||
-    isPlayersSubscribedLoading
+    isInviterPlayerLoading ||
+    isSelectedClubDetailsLoading
   ) {
     return <PageLoading />;
   }
@@ -343,7 +343,8 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseInviteModal} />
       <div className={styles["modal-content"]}>
-        <h3>Antreman Davet</h3>
+        <h3>Maç Davet</h3>
+
         <div className={styles["opponent-container"]}>
           <img
             src={
@@ -358,7 +359,7 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
           >{`${inviteePlayer?.[0].fname} ${inviteePlayer?.[0].lname}`}</p>
         </div>
         {confirmation ? (
-          <TrainingInviteConfirmation
+          <MatchInviteConfirmation
             handleCloseConfirmation={handleCloseConfirmation}
             handleModalSubmit={handleModalSubmit}
             selectedClubName={selectedClubDetails?.[0]?.club_name}
@@ -395,7 +396,7 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
                   {...register("club_id", { required: true })}
                   onChange={handleSelectedClub}
                 >
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">--Seçim yapın--</option>
                   {clubs?.map((club) => (
                     <option key={club.club_id} value={club.club_id}>
                       {club.club_name}
@@ -505,4 +506,4 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
   );
 };
 
-export default TrainingInviteFormModal;
+export default MatchInviteFormModal;

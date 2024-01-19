@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./styles.module.scss";
 
-interface TrainingInviteConfirmationProps {
+interface MatchInviteConfirmationProps {
   handleCloseConfirmation: () => void;
   handleModalSubmit: () => void;
   selectedClubName: string;
@@ -10,7 +10,7 @@ interface TrainingInviteConfirmationProps {
   selectedTime: string;
   selectedDate: string;
 }
-const TrainingInviteConfirmation = (props: TrainingInviteConfirmationProps) => {
+const MatchInviteConfirmation = (props: MatchInviteConfirmationProps) => {
   const {
     handleCloseConfirmation,
     handleModalSubmit,
@@ -61,4 +61,4 @@ const TrainingInviteConfirmation = (props: TrainingInviteConfirmationProps) => {
   );
 };
 
-export default TrainingInviteConfirmation;
+export default MatchInviteConfirmation;

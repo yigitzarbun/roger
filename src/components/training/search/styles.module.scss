@@ -51,24 +51,4 @@
       background-color: $roger-box-bg-color;
     }
   }
-  button {
-    background-color: $roger-black-dark;
-    border: none;
-    width: 200px;
-    padding: $roger-button-padding;
-    border-radius: $roger-border-radius;
-    font-size: 1rem;
-    cursor: pointer;
-    height: 40px;
-  }
-
-  button:hover {
-    background-color: $roger-red;
-    cursor: pointer;
-  }
-
-  .error-field {
-    color: $roger-red;
-    font-size: 0.8rem;
-  }
 }

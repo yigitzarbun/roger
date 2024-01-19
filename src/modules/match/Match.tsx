@@ -6,9 +6,14 @@ import MatchResults from "../../components/match/results/MatchResults";
 import MatchSearch from "../../components/match/search/MatchSearch";
 
 const Match = () => {
+  const [textSearch, setTextSearch] = useState<string>("");
   const [playerLevelId, setPlayerLevelId] = useState<number | null>(null);
   const [locationId, setLocationId] = useState<number | null>(null);
-  const [favourite, setFavourite] = useState<boolean | null>(null);
+  const [favourite, setFavourite] = useState<boolean | null>(false);
+
+  const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextSearch(event.target.value);
+  };
 
   const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -20,9 +25,9 @@ const Match = () => {
     setLocationId(isNaN(value) ? null : value);
   };
 
-  const handleFavourite = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.checked;
-    setFavourite(value);
+  const handleFavourite = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setFavourite(value === "true");
   };
 
   const handleClear = () => {
@@ -34,15 +39,17 @@ const Match = () => {
     <div className={styles["match-container"]}>
       <MatchSearch
         handleLevel={handleLevel}
+        handleTextSearch={handleTextSearch}
         handleLocation={handleLocation}
         handleFavourite={handleFavourite}
-        handleClear={handleClear}
         playerLevelId={playerLevelId}
+        textSearch={textSearch}
         locationId={locationId}
         favourite={favourite}
       />
       <MatchResults
         playerLevelId={playerLevelId}
+        textSearch={textSearch}
         locationId={locationId}
         favourite={favourite}
       />

@@ -8,23 +8,24 @@
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
+  border: 1px $roger-border-color solid;
 
-  .top-container {
+  .title-container {
     display: flex;
     justify-content: space-between;
-    .result-title {
+    .title {
       font-size: 2rem;
     }
-    .navigation-container {
+    .nav-container {
       display: flex;
-      column-gap: 10px;
+      column-gap: 1vw;
 
       .nav-arrow {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         cursor: pointer;
       }
       .nav-arrow:hover {
-        color: $roger-blue;
+        color: $roger-text-color-hover;
       }
     }
   }
@@ -32,37 +33,51 @@
   table {
     width: 100%;
     text-align: left;
+    border-collapse: collapse;
 
-    .vertical-center {
-      display: flex;
-      align-items: center;
+    .player-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+
+      .player-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .player-name {
+        color: white;
+        text-decoration: none;
+      }
     }
 
-    .player-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .player-name {
-      color: white;
-      text-decoration: none;
-    }
     .match-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 150px;
       background-color: $roger-black-dark;
-      font-size: 0.8rem;
+      border: none;
+      width: 200px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
       cursor: pointer;
-      text-decoration: none;
       color: white;
+      text-decoration: none;
       text-align: center;
     }
 
     .match-button:hover {
-      background-color: $roger-blue;
+      background-color: $roger-black-light;
+    }
+    .icon {
+      cursor: pointer;
     }
   }
   .pages-container {

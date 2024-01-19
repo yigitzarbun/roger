@@ -110,7 +110,7 @@ const TrainResults = (props: TrainResultsProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles["title"]}>Antreman</h2>
+        <h2 className={styles.title}>Antreman</h2>
         <div className={styles["nav-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}

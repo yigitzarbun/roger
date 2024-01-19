@@ -16,22 +16,27 @@ import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
 import { getAge } from "../../../common/util/TimeFunctions";
+import MatchInviteFormModal from "../../../components/invite/match/form/MatchInviteFormModal";
 
 interface MatchResultsProps {
   playerLevelId: number;
   locationId: number;
-  favourite: boolean;
+  favourite: boolean | null;
+  textSearch: string;
 }
 const MatchResults = (props: MatchResultsProps) => {
-  const { playerLevelId, locationId, favourite } = props;
+  const { playerLevelId, locationId, favourite, textSearch } = props;
 
   const { user } = useAppSelector((store) => store.user);
-
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
+  const [opponentUserId, setOpponentUserId] = useState(null);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const handleOpenInviteModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsInviteModalOpen(true);
+  };
+  const handleCloseInviteModal = () => {
+    setIsInviteModalOpen(false);
+  };
 
   const {
     data: myFavourites,
@@ -46,6 +51,12 @@ const MatchResults = (props: MatchResultsProps) => {
   const levelId = Number(playerLevelId) ?? null;
   const locationIdValue = Number(locationId) ?? null;
 
+  const { data: locations, isLoading: isLocationsLoading } =
+    useGetLocationsQuery({});
+
+  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
+    useGetPlayerLevelsQuery({});
+
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
 
@@ -59,10 +70,10 @@ const MatchResults = (props: MatchResultsProps) => {
     selectedGender: currentPlayer?.[0].gender,
     locationId: locationIdValue,
     currentUserId: user?.user?.user_id,
+    textSearch: textSearch,
   });
 
   const pageNumbers = [];
-
   for (let i = 1; i <= players?.totalPages; i++) {
     pageNumbers.push(i);
   }
@@ -98,7 +109,7 @@ const MatchResults = (props: MatchResultsProps) => {
 
   useEffect(() => {
     refetchPaginatedPlayers();
-  }, [levelId, locationIdValue, currentPage]);
+  }, [levelId, locationIdValue, currentPage, textSearch]);
 
   useEffect(() => {
     refetchFavourites();
@@ -116,9 +127,9 @@ const MatchResults = (props: MatchResultsProps) => {
 
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Maç</h2>
-        <div className={styles["navigation-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Maç</h2>
+        <div className={styles["nav-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
@@ -151,12 +162,12 @@ const MatchResults = (props: MatchResultsProps) => {
           </thead>
           <tbody>
             {filteredPlayers.map((player) => (
-              <tr key={player.player_id}>
+              <tr key={player.player_id} className={styles["player-row"]}>
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={
-                        player.image ? player.image : "/images/icons/avatar.png"
+                        player.image ? player.image : "/images/icons/avatar.jpg"
                       }
                       alt={player.name}
                       className={styles["player-image"]}
@@ -189,19 +200,12 @@ const MatchResults = (props: MatchResultsProps) => {
                   }
                 </td>
                 <td>
-                  <Link
-                    to={paths.MATCH_INVITE}
-                    state={{
-                      fname: player.fname,
-                      lname: player.lname,
-                      image: player.image,
-                      court_price: "",
-                      user_id: player.user_id,
-                    }}
+                  <button
+                    onClick={() => handleOpenInviteModal(player?.user_id)}
                     className={styles["match-button"]}
                   >
                     Davet gönder
-                  </Link>
+                  </button>
                 </td>
               </tr>
             ))}
@@ -224,6 +228,13 @@ const MatchResults = (props: MatchResultsProps) => {
           </button>
         ))}
       </div>
+      {isInviteModalOpen && (
+        <MatchInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isInviteModalOpen}
+          handleCloseInviteModal={handleCloseInviteModal}
+        />
+      )}
     </div>
   );
 };

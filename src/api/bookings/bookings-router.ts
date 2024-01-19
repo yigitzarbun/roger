@@ -28,6 +28,20 @@ bookingsRouter.get(
     }
   }
 );
+
+bookingsRouter.get(
+  "/get-booked-hours/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const bookedHours = await bookingsModel.getBookedCourtHours(filter);
+      res.status(200).json(bookedHours);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 bookingsRouter.get(
   "/players-leaderboard/filter",
   async (req: Request, res: Response, next: NextFunction) => {
