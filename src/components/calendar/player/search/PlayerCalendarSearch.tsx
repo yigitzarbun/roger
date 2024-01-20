@@ -12,7 +12,8 @@ interface PlayerCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleClear: () => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  textSearch: string;
   date: string;
   eventTypeId: number;
   clubId: number;
@@ -22,8 +23,9 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
     handleDate,
     handleEventType,
     handleClub,
-    handleClear,
+    handleTextSearch,
     date,
+    textSearch,
     eventTypeId,
     clubId,
   } = props;
@@ -42,15 +44,27 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
 
   return (
     <div className={styles["calendar-page-container"]}>
+      <div className={styles["search-container"]}>
+        <input
+          type="text"
+          onChange={handleTextSearch}
+          value={textSearch}
+          placeholder="Oyuncu / Eğitmen adı"
+        />
+      </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleDate} value={date}>
+        <select onChange={handleDate} value={date} className="input-element">
           <option value="">-- Tarih --</option>
           <option value={currentDayLocale}>Bugün</option>
           <option value={tomorrow.toLocaleDateString()}>Yarın</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleEventType} value={eventTypeId ?? ""}>
+        <select
+          onChange={handleEventType}
+          value={eventTypeId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Tür --</option>
           {eventTypes
             ?.filter(
@@ -68,7 +82,11 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleClub} value={clubId ?? ""}>
+        <select
+          onChange={handleClub}
+          value={clubId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Konum --</option>
           {clubs?.map((club) => (
             <option key={club.club_id} value={club.club_id}>
@@ -77,9 +95,6 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
           ))}
         </select>
       </div>
-      <button onClick={handleClear} className={styles["button"]}>
-        Temizle
-      </button>
     </div>
   );
 };

@@ -19,6 +19,10 @@ export const studentsSlice = createApi({
     getStudentsByFilter: builder.query({
       query: (filter) => `/students/filter?${new URLSearchParams(filter)}`,
     }),
+    getIsStudent: builder.query({
+      query: (filter) =>
+        `/students/is-student/filter?${new URLSearchParams(filter)}`,
+    }),
     addStudent: builder.mutation({
       query: (student) => ({
         url: "/students",
@@ -39,6 +43,7 @@ export const studentsSlice = createApi({
 export const {
   useGetStudentsQuery,
   useGetStudentsByFilterQuery,
+  useGetIsStudentQuery,
   useAddStudentMutation,
   useUpdateStudentMutation,
 } = studentsSlice;

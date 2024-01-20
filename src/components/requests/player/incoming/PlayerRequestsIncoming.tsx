@@ -22,13 +22,9 @@ import {
   useGetPlayerIncomingRequestsQuery,
   useUpdateBookingMutation,
 } from "../../../../api/endpoints/BookingsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
+
 import {
-  useGetPaymentsQuery,
+  useGetPaymentByIdQuery,
   useUpdatePaymentMutation,
 } from "../../../../api/endpoints/PaymentsApi";
 import {
@@ -37,12 +33,22 @@ import {
 } from "../../../../api/endpoints/MatchScoresApi";
 import {
   useAddStudentMutation,
-  useGetStudentsQuery,
+  useGetIsStudentQuery,
+  useGetStudentsByFilterQuery,
 } from "../../../../api/endpoints/StudentsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
+  const [selectedPaymentId, setSelectedPaymentId] = useState(null);
+  const [skipSelectedPayment, setSkipSelectedPayment] = useState(true);
+  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [skipStudent, setSkipStudent] = useState(true);
+  const [declineBookingData, setDeclineBookingData] =
+    useState<DeclineBookingData | null>(null);
+  const [acceptBookingData, setAcceptBookingData] =
+    useState<AcceptBookingData | null>(null);
 
   const {
     data: incomingBookings,
@@ -50,28 +56,9 @@ const PlayerRequestsIncoming = () => {
     refetch: refetchBookings,
   } = useGetPlayerIncomingRequestsQuery(user?.user_id);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-
   const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
 
-  const {
-    data: payments,
-    isLoading: isPaymentsLoading,
-    refetch: refetchPayments,
-  } = useGetPaymentsQuery({});
-
-  const {
-    data: students,
-    isLoading: isStudentsLoading,
-    refetch: refetchStudents,
-  } = useGetStudentsQuery({});
-
-  const [addStudent, { isSuccess: isAddStudentSuccess }] =
-    useAddStudentMutation({});
+  const [addStudent] = useAddStudentMutation({});
 
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
@@ -82,14 +69,10 @@ const PlayerRequestsIncoming = () => {
   const [addMatchScore, { isSuccess: isMatchScoreSuccess }] =
     useAddMatchScoreMutation({});
 
-  // accept booking
-  const [acceptBookingData, setAcceptBookingData] =
-    useState<AcceptBookingData | null>(null);
-
-  const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
-
   const handleOpenAcceptModal = (data) => {
     setAcceptBookingData(data);
+    setSelectedPaymentId(data.payment_id);
+    setSkipSelectedPayment(false);
     setIsAcceptModalOpen(true);
   };
 
@@ -97,25 +80,36 @@ const PlayerRequestsIncoming = () => {
     setIsAcceptModalOpen(false);
   };
 
+  const { data: isStudent, isLoading: isStudentLoading } = useGetIsStudentQuery(
+    {
+      player_id: user?.user_id,
+      trainer_id: acceptBookingData?.inviter_id,
+    },
+    { skip: skipStudent }
+  );
+
+  const { refetch: refetchStudents } = useGetStudentsByFilterQuery({
+    player_id: user?.user_id,
+  });
+
+  const {
+    data: selectedPayment,
+    isLoading: isSelectedPaymentLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentByIdQuery(selectedPaymentId, { skip: skipSelectedPayment });
+
   const handleAcceptBooking = () => {
-    const selectedPayment = payments?.find(
-      (payment) => payment.payment_id === acceptBookingData?.payment_id
-    );
     const updatedPaymentData = {
-      ...selectedPayment,
+      ...selectedPayment?.[0],
       payment_status: "success",
     };
     updatePayment(updatedPaymentData);
   };
 
-  // decline booking
-  const [declineBookingData, setDeclineBookingData] =
-    useState<DeclineBookingData | null>(null);
-
-  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-
   const handleOpenDeclineModal = (data) => {
     setDeclineBookingData(data);
+    setSelectedPaymentId(data.payment_id);
+    setSkipSelectedPayment(false);
     setIsDeclineModalOpen(true);
   };
 
@@ -124,11 +118,8 @@ const PlayerRequestsIncoming = () => {
   };
 
   const handleDeclineBooking = () => {
-    const selectedPayment = payments?.find(
-      (payment) => payment.payment_id === declineBookingData?.payment_id
-    );
     const updatedPaymentData = {
-      ...selectedPayment,
+      ...selectedPayment?.[0],
       payment_status: "declined",
     };
     updatePayment(updatedPaymentData);
@@ -171,16 +162,19 @@ const PlayerRequestsIncoming = () => {
         };
         updateBooking(declinedBookingData);
       }
-
       refetchPayments();
     }
   }, [isPaymentSuccess]);
 
+  const isEventLesson = acceptBookingData?.event_type_id === 3;
+
   useEffect(() => {
+    // initiate matchScore
     if (
       isUpdateBookingSuccess &&
       paymentData &&
-      paymentData[0]?.payment_status === "success"
+      paymentData[0]?.payment_status === "success" &&
+      acceptBookingData?.event_type_id === 2
     ) {
       const matchScoreData = {
         match_score_status_type_id: 1,
@@ -188,32 +182,25 @@ const PlayerRequestsIncoming = () => {
       };
       addMatchScore(matchScoreData);
     }
+    if (isEventLesson) {
+      setSkipStudent(false);
+    }
+  }, [isUpdateBookingSuccess]);
 
-    const selectedTrainerId = trainers?.find(
-      (trainer) => trainer.user_id === acceptBookingData?.inviter_id
-    )
-      ? acceptBookingData?.inviter_id
-      : acceptBookingData?.invitee_id;
+  // ***
+  // TO DO: check if this works (adding student)
+  // ***
 
-    const isEventLesson = acceptBookingData?.event_type_id === 3;
-
-    const isStudent = students?.find(
-      (student) =>
-        student.player_id === user?.user_id &&
-        student.trainer_id === selectedTrainerId &&
-        (student.student_status === "pending" ||
-          student.student_status === "accepted")
-    );
-
+  useEffect(() => {
     if (isEventLesson && !isStudent) {
       const newStudent = {
         student_status: "pending",
-        trainer_id: selectedTrainerId,
+        trainer_id: acceptBookingData?.inviter_id,
         player_id: user?.user_id,
       };
       addStudent(newStudent);
     }
-  }, [isUpdateBookingSuccess]);
+  }, [isStudent]);
 
   useEffect(() => {
     if (isMatchScoreSuccess) {
@@ -228,13 +215,7 @@ const PlayerRequestsIncoming = () => {
     }
   }, [isMatchScoreSuccess, isUpdateBookingSuccess]);
 
-  if (
-    isBookingsLoading ||
-    isTrainersLoading ||
-    isPlayersLoading ||
-    isPaymentsLoading ||
-    isStudentsLoading
-  ) {
+  if (isBookingsLoading || isSelectedPaymentLoading || isStudentLoading) {
     return <PageLoading />;
   }
 
@@ -370,7 +351,7 @@ const PlayerRequestsIncoming = () => {
           handleCloseAcceptModal={handleCloseAcceptModal}
           acceptBookingData={acceptBookingData}
           handleAcceptBooking={handleAcceptBooking}
-          players={players}
+          user={user}
         />
       )}
       {isDeclineModalOpen && (

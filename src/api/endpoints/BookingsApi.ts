@@ -28,7 +28,8 @@ export const bookingsSlice = createApi({
       query: (booking_id) => `/bookings/${booking_id}`,
     }),
     getPlayerBookingsByUserId: builder.query({
-      query: (userId) => `/bookings/player-bookings/${userId}`,
+      query: (filter) =>
+        `/bookings/player-bookings/filter?${new URLSearchParams(filter)}`,
     }),
     getPlayerOutgoingRequests: builder.query({
       query: (userId) => `/bookings/outgoing-requests/${userId}`,

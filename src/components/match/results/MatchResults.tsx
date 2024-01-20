@@ -158,12 +158,13 @@ const MatchResults = (props: MatchResultsProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {filteredPlayers.map((player) => (
               <tr key={player.player_id} className={styles["player-row"]}>
-                <td className={styles["vertical-center"]}>
+                <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={

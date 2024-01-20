@@ -65,7 +65,7 @@ const bookingsModel = {
 
     return bookings;
   },
-  async getPlayerBookingsByUserId(userId: number) {
+  async getPlayerBookingsByUserId(filter) {
     try {
       const bookings = await db
         .select(
@@ -114,7 +114,7 @@ const bookingsModel = {
             "=",
             db.raw(
               "(CASE WHEN ? = bookings.inviter_id THEN bookings.invitee_id ELSE bookings.inviter_id END)",
-              [userId]
+              [filter.userId]
             )
           );
         })
@@ -141,15 +141,34 @@ const bookingsModel = {
         .where("bookings.booking_status_type_id", 2)
         .andWhere((builder) => {
           builder
-            .where("bookings.invitee_id", userId)
-            .orWhere("bookings.inviter_id", userId)
-            .orWhere("student_groups.first_student_id", userId);
+            .where("bookings.invitee_id", filter.userId)
+            .orWhere("bookings.inviter_id", filter.userId)
+            .orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere(function () {
-          this.whereNot("players.user_id", userId).orWhereNot(
+          this.whereNot("players.user_id", filter.userId).orWhereNot(
             "trainers.user_id",
-            userId
+            filter.userId
           );
+        })
+        .andWhere(function () {
+          if (filter.date != "") {
+            this.where("bookings.event_date", "=", filter.date);
+          }
+          if (filter.eventTypeId > 0) {
+            this.where("bookings.event_type_id", "=", filter.eventTypeId);
+          }
+          if (filter.clubId > 0) {
+            this.where("bookings.club_id", "=", filter.clubId);
+          }
+          if (filter.textSearch && filter.textSearch !== "") {
+            this.where(function () {
+              this.where("players.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
         });
 
       return bookings;

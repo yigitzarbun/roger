@@ -32,6 +32,23 @@ const studentsModel = {
     return students;
   },
 
+  async isStudent(filter) {
+    try {
+      const isStudent = await db("students")
+        .where("player_id", filter.player_id)
+        .andWhere("trainer_id", filter.trainer_id)
+        .andWhere((builder) =>
+          builder
+            .where("student_status", "pending")
+            .orWhere("student_stauts", "accepted")
+        );
+      const studentExists = isStudent.length > 0;
+      return studentExists;
+    } catch (error) {
+      console.log("Error checking if player is student: ", error);
+    }
+  },
+
   async getById(student_id) {
     const student = await db("students").where("student_id", student_id);
     return student;

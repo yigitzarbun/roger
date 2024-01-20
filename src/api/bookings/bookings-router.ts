@@ -57,12 +57,11 @@ bookingsRouter.get(
   }
 );
 bookingsRouter.get(
-  "/player-bookings/:userId",
+  "/player-bookings/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const bookings = await bookingsModel.getPlayerBookingsByUserId(
-        Number(req.params.userId)
-      );
+      const filter = req.query;
+      const bookings = await bookingsModel.getPlayerBookingsByUserId(filter);
       res.status(200).json(bookings);
     } catch (error) {
       next(error);

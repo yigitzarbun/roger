@@ -4,17 +4,6 @@ import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
-import PageLoading from "../../../../components/loading/PageLoading";
-
-import { useAppSelector } from "../../../../store/hooks";
-
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetPaymentByIdQuery } from "../../../../api/endpoints/PaymentsApi";
-
 export type DeclineBookingData = {
   booking_id: number;
   event_type_id: number;
@@ -40,33 +29,12 @@ const DeclineInviteModal = (props) => {
     user,
   } = props;
 
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-
-  const { data: selectedClub, isLoading: isSelectedClubLoading } =
-    useGetClubByClubIdQuery(declineBookingData?.club_id);
-
-  const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
-    useGetCourtByIdQuery(declineBookingData?.court_id);
-
   const isUserPlayer = user.user_type_id === 1;
 
   const isEventTraining = declineBookingData?.event_type_id === 1;
   const isEventMatch = declineBookingData?.event_type_id === 2;
   const isEventLesson = declineBookingData?.event_type_id === 3;
-  console.log(declineBookingData);
-  if (
-    isUsersLoading ||
-    isPlayersLoading ||
-    isTrainersLoading ||
-    isSelectedClubLoading ||
-    isSelectedCourtLoading
-  ) {
-    return <PageLoading />;
-  }
+
   return (
     <ReactModal
       isOpen={isDeclineModalOpen}
@@ -109,7 +77,7 @@ const DeclineInviteModal = (props) => {
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr className={styles["player-row"]}>
               <td>
                 {new Date(declineBookingData?.event_date).toLocaleDateString()}
               </td>
@@ -142,7 +110,7 @@ const DeclineInviteModal = (props) => {
         )}
         <div className={styles["buttons-container"]}>
           <button
-            onClick={handleDeclineBooking}
+            onClick={handleCloseDeclineModal}
             className={styles["discard-button"]}
           >
             İptal

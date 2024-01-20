@@ -22,26 +22,25 @@ interface PlayerCalendarResultsProps {
   date: string;
   eventTypeId: number;
   clubId: number;
+  textSearch: string;
 }
 const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
-  const { date, eventTypeId, clubId } = props;
+  const { date, eventTypeId, clubId, textSearch } = props;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
-
-  const { data: playerBookings, isLoading: isBookingsLoading } =
-    useGetPlayerBookingsByUserIdQuery(user?.user_id);
-
-  const filteredBookings = playerBookings?.filter((booking) => {
-    const eventDate = new Date(booking.event_date);
-    if (date === "" && eventTypeId === null && clubId === null) {
-      return true;
-    } else if (
-      (date === eventDate.toLocaleDateString() || date === "") &&
-      (eventTypeId === booking.event_type_id || eventTypeId === null) &&
-      (clubId === booking.club_id || clubId === null)
-    ) {
-      return booking;
-    }
+  const formattedDate = date
+    ? date.split("/").reverse().join("-") // Convert to "YYYY-MM-DD" format
+    : "";
+  const {
+    data: filteredBookings,
+    isLoading: isBookingsLoading,
+    refetch: refetchBookings,
+  } = useGetPlayerBookingsByUserIdQuery({
+    date: formattedDate,
+    eventTypeId: eventTypeId,
+    clubId: clubId,
+    userId: user?.user_id,
+    textSearch: textSearch,
   });
 
   // update booking
@@ -74,14 +73,18 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     }
   }, [isSuccess]);
 
+  useEffect(() => {
+    refetchBookings();
+  }, [date, eventTypeId, clubId, textSearch]);
+
   if (isBookingsLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Takvim</h2>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Takvim</h2>
       </div>
       {filteredBookings?.length === 0 ? (
         <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
@@ -105,7 +108,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
           </thead>
           <tbody>
             {filteredBookings?.map((booking) => (
-              <tr key={booking?.booking_id}>
+              <tr key={booking?.booking_id} className={styles["player-row"]}>
                 <td>
                   {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
                 </td>
@@ -136,7 +139,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                           ? booking?.clubImage
                           : "/images/icons/avatar.png"
                       }
-                      className={styles["profile-image"]}
+                      className={styles["player-image"]}
                     />
                   </Link>
                 </td>
@@ -155,7 +158,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                         ? booking.clubUserId
                         : booking.user_id
                     }`}
-                    className={styles["opponent-name"]}
+                    className={styles["player-name"]}
                   >
                     {booking.event_type_id === 1 ||
                     booking.event_type_id === 2 ||

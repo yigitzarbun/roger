@@ -4,44 +4,51 @@
 .calendar-page-container {
   display: flex;
   column-gap: 4vh;
-  background-color: $roger-black-light;
-  padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   width: 100%;
 
   .input-container {
     display: flex;
-    flex-direction: column;
-    row-gap: 1vh;
-    width: 30%;
-  }
-
-  label {
-    font-weight: bold;
-  }
-
-  select {
-    padding: $roger-box-padding;
+    width: 20%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
     border-radius: $roger-border-radius;
-    border: none;
-    width: 100%;
+    justify-content: center;
+    column-gap: 14px;
+
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+      cursor: pointer;
+    }
   }
 
-  button {
-    padding: $roger-box-padding;
+  .search-container {
+    display: flex;
+    width: 40%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
     border-radius: $roger-border-radius;
-    border: none;
-    font-size: 1rem;
-    font-weight: bold;
-  }
+    justify-content: center;
+    column-gap: 14px;
 
-  button:hover {
-    background-color: $roger-red;
-    cursor: pointer;
-  }
+    label {
+      font-weight: bold;
+    }
 
-  .error-field {
-    color: $roger-red;
-    font-size: 0.8rem;
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+    }
   }
 }

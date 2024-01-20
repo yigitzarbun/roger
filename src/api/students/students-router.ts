@@ -28,6 +28,20 @@ studentsRouter.get(
     }
   }
 );
+
+studentsRouter.get(
+  "/is-student/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const isStudent = await studentsModel.isStudent(filter);
+      res.status(200).json(isStudent);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 studentsRouter.get(
   "/:student_id",
   async (req: Request, res: Response, next: NextFunction) => {
