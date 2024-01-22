@@ -45,6 +45,7 @@ const PlayerRequestsOutgoing = () => {
   const handleCancelBooking = () => {
     const cancelledBookingData = {
       booking_id: bookingData?.booking_id,
+      registered_at: bookingData?.registered_at,
       event_date: bookingData?.event_date,
       event_time: bookingData?.event_time,
       court_price: bookingData?.court_price,

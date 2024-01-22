@@ -1,47 +1,108 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.results-container {
+.result-container {
+  display: flex;
+  flex-direction: column;
   background-color: $roger-box-bg-color;
-  border-radius: $roger-border-radius;
   padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 20px;
+  border: 1px $roger-border-color solid;
 
-  .title {
-    font-size: 2rem;
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    .title {
+      font-size: 2rem;
+    }
+    .nav-container {
+      display: flex;
+      column-gap: 1vw;
+
+      .nav-arrow {
+        font-size: 1.3rem;
+        cursor: pointer;
+      }
+      .nav-arrow:hover {
+        color: $roger-text-color-hover;
+      }
+    }
   }
+
   table {
     width: 100%;
     text-align: left;
-    .player-name {
-      color: white;
-      text-decoration: none;
+    border-collapse: collapse;
+
+    .player-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+
+      .player-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .player-name {
+        color: white;
+        text-decoration: none;
+      }
+      .confirmed-text {
+        color: $roger-green;
+        font-size: 0.9rem;
+      }
+      .waiting-confirmation-text {
+        color: $roger-yellow;
+        font-size: 0.9rem;
+      }
+      .add-score-button {
+        background-color: $roger-black-dark;
+        border: none;
+        width: 150px;
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .add-score-button:hover {
+        background-color: $roger-black-light;
+      }
+      .edit-score-button {
+        background-color: white;
+        border: none;
+        width: 150px;
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: black;
+        text-decoration: none;
+        text-align: center;
+      }
+
+      .edit-score-button:hover {
+        background-color: $roger-white;
+      }
     }
-    .add-score-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 150px;
-      background-color: $roger-black-dark;
-      font-size: 0.8rem;
+
+    .icon {
       cursor: pointer;
-      text-decoration: none;
-      color: white;
-      text-align: center;
-    }
-    .add-score-button:hover {
-      background-color: $roger-blue;
-    }
-    .score-sent-text {
-      color: $roger-green;
-      font-size: 0.8rem;
-    }
-    .waiting-confirmation-text {
-      color: $roger-yellow;
-      font-size: 0.8rem;
-    }
-    .confirmed-text {
-      color: $roger-green;
-      font-size: 0.8rem;
+      font-size: 1.5rem;
     }
   }
 }

@@ -61,14 +61,27 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   const handleCancelBooking = () => {
     const cancelledBookingData = {
-      ...bookingData,
+      booking_id: bookingData?.booking_id,
+      registered_at: bookingData?.registered_at,
+      event_date: bookingData?.event_date,
+      event_time: bookingData?.event_time,
+      court_price: bookingData?.court_price,
+      lesson_price: bookingData?.lesson_price,
+      invitation_note: bookingData?.invitation_note,
+      payment_id: bookingData?.payment_id,
       booking_status_type_id: 4,
+      event_type_id: bookingData?.event_type_id,
+      club_id: bookingData?.club_id,
+      court_id: bookingData?.court_id,
+      inviter_id: bookingData?.inviter_id,
+      invitee_id: bookingData?.invitee_id,
     };
     updateBooking(cancelledBookingData);
   };
 
   useEffect(() => {
     if (isSuccess) {
+      refetchBookings();
       handleCloseModal();
     }
   }, [isSuccess]);
@@ -130,13 +143,12 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   >
                     <img
                       src={
-                        (booking.event_type_id === 1 ||
-                          booking.event_type_id === 2 ||
-                          booking.event_type_id === 3) &&
-                        booking.image
-                          ? booking?.image
-                          : booking.event_type_id === 6 && booking?.clubImage
+                        booking.event_type_id === 6 && booking?.clubImage
                           ? booking?.clubImage
+                          : booking.playerImage
+                          ? booking.playerImage
+                          : booking.trainerImage
+                          ? booking.trainerImage
                           : "/images/icons/avatar.png"
                       }
                       className={styles["player-image"]}
@@ -226,6 +238,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
           handleCloseModal={handleCloseModal}
           bookingData={bookingData}
           handleCancelBooking={handleCancelBooking}
+          user={user}
         />
       )}
     </div>

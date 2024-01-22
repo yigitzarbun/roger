@@ -25,8 +25,13 @@ const matchScoresModel = {
           "match_scores.*",
           "bookings.*",
           "players.*",
+          "players.image as playerImage",
           "clubs.*",
-          "courts.*"
+          "courts.*",
+          "event_types.*",
+          "court_surface_types.*",
+          "court_structure_types.*",
+          "player_levels.*"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -44,6 +49,30 @@ const matchScoresModel = {
         })
         .leftJoin("clubs", function () {
           this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("court_surface_types", function () {
+          this.on(
+            "court_surface_types.court_surface_type_id",
+            "=",
+            "courts.court_surface_type_id"
+          );
+        })
+        .leftJoin("court_structure_types", function () {
+          this.on(
+            "court_structure_types.court_structure_type_id",
+            "=",
+            "courts.court_structure_type_id"
+          );
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
         })
         .where("bookings.booking_status_type_id", 5)
         .andWhere((builder) => {

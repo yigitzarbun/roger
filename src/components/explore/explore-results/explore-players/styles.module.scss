@@ -12,8 +12,13 @@
   .top-container {
     display: flex;
     justify-content: space-between;
-    .result-title {
-      font-size: 2rem;
+    .title-container {
+      display: flex;
+      align-items: center;
+      column-gap: 2vw;
+      .result-title {
+        font-size: 2rem;
+      }
     }
     .navigation-container {
       display: flex;
@@ -28,7 +33,55 @@
       }
     }
   }
+  .nav-filter-container {
+    display: flex;
+    column-gap: 2vw;
 
+    .input-container {
+      display: flex;
+      width: 15%;
+      align-items: center;
+      background-color: $roger-black-dark;
+      padding: 2px;
+      border-radius: $roger-border-radius;
+      justify-content: center;
+      column-gap: 14px;
+
+      select,
+      input {
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: 1px solid $roger-border-color;
+        width: 100%;
+        background-color: $roger-box-bg-color;
+        cursor: pointer;
+      }
+    }
+
+    .search-container {
+      display: flex;
+      width: 30%;
+      align-items: center;
+      background-color: $roger-black-dark;
+      padding: 2px;
+      border-radius: $roger-border-radius;
+      justify-content: center;
+      column-gap: 14px;
+
+      label {
+        font-weight: bold;
+      }
+
+      select,
+      input {
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: 1px solid $roger-border-color;
+        width: 100%;
+        background-color: $roger-box-bg-color;
+      }
+    }
+  }
   table {
     width: 100%;
     text-align: left;

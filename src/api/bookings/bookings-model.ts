@@ -71,7 +71,9 @@ const bookingsModel = {
         .select(
           "bookings.*",
           "players.*",
+          "players.image as playerImage",
           "trainers.*",
+          "trainers.image as trainerImage",
           "clubs.*",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",

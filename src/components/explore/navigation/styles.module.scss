@@ -6,27 +6,23 @@
   border-radius: $roger-border-radius;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin: 0 auto;
 
   .active-button {
-    background-color: $roger-blue;
-    padding: $roger-box-padding;
+    padding: $roger-button-padding;
     border-radius: $roger-border-radius;
-    border: none;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    width: 24%;
+    border: 1px solid $roger-border-color;
+    width: 25%;
+    background-color: $roger-blue;
   }
   .inactive-button {
-    padding: $roger-box-padding;
+    padding: $roger-button-padding;
     border-radius: $roger-border-radius;
-    border: none;
-    font-weight: bold;
-    font-size: 1rem;
+    border: 1px solid $roger-border-color;
+    width: 25%;
+    background-color: $roger-box-bg-color;
     cursor: pointer;
-    width: 24%;
   }
   .inactive-button:hover {
     background-color: $roger-black-light;

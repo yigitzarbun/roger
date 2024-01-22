@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 
 import styles from "./styles.module.scss";
 
@@ -59,6 +59,28 @@ const Explore = () => {
     useGetCourtSurfaceTypesQuery({});
 
   // TO DO: isUserPlayer burdan gönder
+  const [textSearch, setTextSearch] = useState<string>("");
+  const [playerLevelId, setPlayerLevelId] = useState<number | null>(null);
+  const [gender, setGender] = useState<string>("");
+  const [locationId, setLocationId] = useState<number | null>(null);
+
+  const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextSearch(event.target.value);
+  };
+
+  const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
+    setGender(event.target.value);
+  };
+
+  const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setPlayerLevelId(isNaN(value) ? null : value);
+  };
+
+  const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setLocationId(isNaN(value) ? null : value);
+  };
 
   return (
     <div className={styles["explore-container"]}>
@@ -72,6 +94,14 @@ const Explore = () => {
           isLocationsLoading={isLocationsLoading}
           isPlayersLoading={isPlayersLoading}
           isPlayerLevelsLoading={isPlayerLevelsLoading}
+          handleLevel={handleLevel}
+          handleTextSearch={handleTextSearch}
+          handleGender={handleGender}
+          handleLocation={handleLocation}
+          playerLevelId={playerLevelId}
+          textSearch={textSearch}
+          gender={gender}
+          locationId={locationId}
         />
       )}
       {display === "trainers" && (

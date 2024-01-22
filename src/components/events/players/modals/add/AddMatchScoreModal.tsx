@@ -4,8 +4,6 @@ import { toast } from "react-toastify";
 
 import Modal from "react-modal";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
@@ -14,21 +12,12 @@ import { useAppSelector } from "../../../../../store/hooks";
 
 import {
   useUpdateMatchScoreMutation,
-  useGetMatchScoreByIdQuery,
   useGetMatchScoresQuery,
 } from "../../../../../api/endpoints/MatchScoresApi";
-
-import { useGetBookingByIdQuery } from "../../../../../api/endpoints/BookingsApi";
 
 import { useGetPlayersByFilterQuery } from "../../../../../api/endpoints/PlayersApi";
 
 import PageLoading from "../../../../../components/loading/PageLoading";
-
-interface AddMatchScoreModalProps {
-  isAddScoreModalOpen: boolean;
-  closeAddScoreModal: () => void;
-  selectedMatchScoreId: number;
-}
 
 type FormValues = {
   inviter_first_set_games_won: number;
@@ -40,37 +29,22 @@ type FormValues = {
   winner_id: number;
 };
 
-const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
-  const { isAddScoreModalOpen, closeAddScoreModal, selectedMatchScoreId } =
-    props;
+const AddMatchScoreModal = (props) => {
+  const { isAddScoreModalOpen, closeAddScoreModal, selectedMatchScore } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
   const [updateMatchScore, { isSuccess: isUpdateMatchScoreSuccess }] =
     useUpdateMatchScoreMutation({});
 
-  const {
-    data: selectedMatch,
-    isLoading: isSelectedMatchLoading,
-    refetch: refetchMatchScore,
-  } = useGetMatchScoreByIdQuery(selectedMatchScoreId);
-
   const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
 
-  const [bookingSkip, setBookingSkip] = useState(true);
   const [playerSkip, setPlayerSkip] = useState(true);
-
-  const {
-    data: selectedMatchBookingDetails,
-    isLoading: isSelectedMatchBookingDetailsLoading,
-  } = useGetBookingByIdQuery(selectedMatch?.[0]?.booking_id, {
-    skip: bookingSkip,
-  });
 
   const { data: inviter, isLoading: isInviterLoading } =
     useGetPlayersByFilterQuery(
       {
-        user_id: selectedMatchBookingDetails?.[0]?.inviter_id,
+        user_id: selectedMatchScore?.inviter_id,
       },
       { skip: playerSkip }
     );
@@ -78,7 +52,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   const { data: invitee, isLoading: isInviteeLoading } =
     useGetPlayersByFilterQuery(
       {
-        user_id: selectedMatchBookingDetails?.[0]?.invitee_id,
+        user_id: selectedMatchScore?.invitee_id,
       },
       { skip: playerSkip }
     );
@@ -103,7 +77,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const matchScore = {
-        ...selectedMatch?.[0],
+        match_score_id: selectedMatchScore?.match_score_id,
         inviter_first_set_games_won: Number(firstSetInviter),
         inviter_second_set_games_won: Number(secondSetInviter),
         inviter_third_set_games_won: Number(thirdSetInviter),
@@ -124,6 +98,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
             : null,
         match_score_status_type_id: 2,
         reporter_id: user?.user?.user_id,
+        booking_id: selectedMatchScore?.booking_id,
       };
       updateMatchScore(matchScore);
     } catch (error) {
@@ -132,16 +107,10 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   };
 
   useEffect(() => {
-    if (selectedMatch) {
-      setBookingSkip(false);
-    }
-  }, [selectedMatch]);
-
-  useEffect(() => {
-    if (selectedMatchBookingDetails) {
+    if (selectedMatchScore) {
       setPlayerSkip(false);
     }
-  }, [selectedMatchBookingDetails]);
+  }, [selectedMatchScore]);
 
   useEffect(() => {
     if (
@@ -167,7 +136,6 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
       refetchMatchScores();
-      refetchMatchScore();
       toast.success("Başarıyla gönderildi");
       reset({
         inviter_first_set_games_won: null,
@@ -182,12 +150,7 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
     }
   }, [isUpdateMatchScoreSuccess]);
 
-  if (
-    isSelectedMatchBookingDetailsLoading ||
-    isInviterLoading ||
-    isInviteeLoading ||
-    isSelectedMatchLoading
-  ) {
+  if (isInviterLoading || isInviteeLoading) {
     return <PageLoading />;
   }
 
@@ -195,125 +158,175 @@ const AddMatchScoreModal = (props: AddMatchScoreModalProps) => {
     <Modal
       isOpen={isAddScoreModalOpen}
       onRequestClose={closeAddScoreModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={closeAddScoreModal} />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Maç Skoru Ekle</h1>
-        <FaWindowClose
-          onClick={closeAddScoreModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <h4>1. Set</h4>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 1. Set`}</label>
-            <input
-              {...register("inviter_first_set_games_won", {
-                required: true,
-                min: { value: 0, message: "En az 0 olabilir" },
-                max: { value: 7, message: "En fazla 7 olabilir" },
-              })}
-              type="number"
-              min="0"
-              onChange={(e) => setFirstSetInviter(Number(e.target.value))}
-            />
-            {errors.inviter_first_set_games_won && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 1. Set`}</label>
-            <input
-              {...register("invitee_first_set_games_won", { required: true })}
-              type="number"
-              min="0"
-              onChange={(e) => setFirstSetInvitee(Number(e.target.value))}
-            />
-            {errors.invitee_first_set_games_won && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
+        <div className={styles["opponent-container"]}>
+          {/* invitee mi inviter mi check? */}
+          <img
+            src={
+              inviter?.[0]?.user_id === user?.user?.user_id &&
+              invitee?.[0]?.image
+                ? invitee?.[0]?.image
+                : invitee?.[0]?.user_id === user?.user?.user_id &&
+                  inviter?.[0]?.image
+                ? inviter?.[0]?.image
+                : "/images/icons/avatar.jpg"
+            }
+            className={styles["opponent-image"]}
+          />
+          <p
+            className={styles["player-name"]}
+          >{`${invitee?.[0].fname} ${invitee?.[0].lname}`}</p>
         </div>
-        <h4>2. Set</h4>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 2. Set`}</label>
-            <input
-              {...register("inviter_second_set_games_won", {
-                min: { value: 0, message: "En az 0 olabilir" },
-              })}
-              type="number"
-              min="0"
-              onChange={(e) => setSecondSetInviter(Number(e.target.value))}
-            />
-            {errors.inviter_second_set_games_won && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 2. Set`}</label>
-            <input
-              {...register("invitee_second_set_games_won", {
-                max: { value: 7, message: "En fazla 7 olabilir" },
-              })}
-              type="number"
-              min="0"
-              onChange={(e) => setSecondSetInvitee(Number(e.target.value))}
-            />
-            {errors.invitee_second_set_games_won && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        {thirdSetVisible && (
-          <>
-            <h4>3. Set</h4>
-            <div className={styles["input-outer-container"]}>
-              <div className={styles["input-container"]}>
-                <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 3. Set`}</label>
-                <input
-                  {...register("inviter_third_set_games_won", {
-                    min: { value: 0, message: "En az 0 olabilir" },
-                  })}
-                  type="number"
-                  min="0"
-                  onChange={(e) => setThirdSetInviter(Number(e.target.value))}
-                />
-                {errors.inviter_third_set_games_won && (
-                  <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
-                  </span>
-                )}
-              </div>
-              <div className={styles["input-container"]}>
-                <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 3. Set`}</label>
-                <input
-                  {...register("invitee_third_set_games_won", {
-                    max: { value: 7, message: "En fazla 7 olabilir" },
-                  })}
-                  type="number"
-                  min="0"
-                  onChange={(e) => setThirdSetInvitee(Number(e.target.value))}
-                />
-                {errors.invitee_third_set_games_won && (
-                  <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
-                  </span>
-                )}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+        >
+          <div className={styles["top-row"]}>
+            <div className={styles["set-container"]}>
+              <h4>1. Set</h4>
+              <div className={styles["input-outer-container"]}>
+                <div className={styles["input-container"]}>
+                  <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</label>
+                  <input
+                    {...register("inviter_first_set_games_won", {
+                      required: true,
+                      min: { value: 0, message: "En az 0 olabilir" },
+                      max: { value: 7, message: "En fazla 7 olabilir" },
+                    })}
+                    type="number"
+                    min="0"
+                    onChange={(e) => setFirstSetInviter(Number(e.target.value))}
+                  />
+                  {errors.inviter_first_set_games_won && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+                <div className={styles["input-container"]}>
+                  <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</label>
+                  <input
+                    {...register("invitee_first_set_games_won", {
+                      required: true,
+                    })}
+                    type="number"
+                    min="0"
+                    onChange={(e) => setFirstSetInvitee(Number(e.target.value))}
+                  />
+                  {errors.invitee_first_set_games_won && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-          </>
-        )}
-
-        <button type="submit" className={styles["form-button"]}>
-          Onayla
-        </button>
-      </form>
+            <div className={styles["set-container"]}>
+              <h4>2. Set</h4>
+              <div className={styles["input-outer-container"]}>
+                <div className={styles["input-container"]}>
+                  <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</label>
+                  <input
+                    {...register("inviter_second_set_games_won", {
+                      min: { value: 0, message: "En az 0 olabilir" },
+                    })}
+                    type="number"
+                    min="0"
+                    onChange={(e) =>
+                      setSecondSetInviter(Number(e.target.value))
+                    }
+                  />
+                  {errors.inviter_second_set_games_won && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+                <div className={styles["input-container"]}>
+                  <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</label>
+                  <input
+                    {...register("invitee_second_set_games_won", {
+                      max: { value: 7, message: "En fazla 7 olabilir" },
+                    })}
+                    type="number"
+                    min="0"
+                    onChange={(e) =>
+                      setSecondSetInvitee(Number(e.target.value))
+                    }
+                  />
+                  {errors.invitee_second_set_games_won && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          {thirdSetVisible && (
+            <div className={styles["top-row"]}>
+              <div className={styles["set-container"]}>
+                <h4>3. Set</h4>
+                <div className={styles["input-outer-container"]}>
+                  <div className={styles["input-container"]}>
+                    <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</label>
+                    <input
+                      {...register("inviter_third_set_games_won", {
+                        min: { value: 0, message: "En az 0 olabilir" },
+                      })}
+                      type="number"
+                      min="0"
+                      onChange={(e) =>
+                        setThirdSetInviter(Number(e.target.value))
+                      }
+                    />
+                    {errors.inviter_third_set_games_won && (
+                      <span className={styles["error-field"]}>
+                        Bu alan zorunludur.
+                      </span>
+                    )}
+                  </div>
+                  <div className={styles["input-container"]}>
+                    <label>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</label>
+                    <input
+                      {...register("invitee_third_set_games_won", {
+                        max: { value: 7, message: "En fazla 7 olabilir" },
+                      })}
+                      type="number"
+                      min="0"
+                      onChange={(e) =>
+                        setThirdSetInvitee(Number(e.target.value))
+                      }
+                    />
+                    {errors.invitee_third_set_games_won && (
+                      <span className={styles["error-field"]}>
+                        Bu alan zorunludur.
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className={styles["buttons-container"]}>
+            <button
+              className={styles["discard-button"]}
+              onClick={closeAddScoreModal}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              Onayla
+            </button>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
 };

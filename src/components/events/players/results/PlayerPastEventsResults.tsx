@@ -55,13 +55,15 @@ const PlayerPastEventsResults = () => {
   }
 
   return (
-    <div className={styles["results-container"]}>
-      <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+    <div className={styles["result-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+      </div>
       {myEvents?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
+              <th>Oyuncu / Eğitmen / Grup</th>
               <th>Eğitmen</th>
               <th>Tarih</th>
               <th>Saat</th>
@@ -76,54 +78,40 @@ const PlayerPastEventsResults = () => {
           </thead>
           <tbody>
             {myEvents?.map((event) => (
-              <tr key={event.booking_id}>
+              <tr key={event.booking_id} className={styles["player-row"]}>
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
                       event.event_type_id === 1 || event.event_type_id === 2
                         ? 1
+                        : event.event_type_id === 3
+                        ? 3
                         : event.event_type_id === 6
                         ? 3
                         : ""
                     }/${
                       (event.event_type_id === 1 ||
-                        event.event_type_id === 2) &&
+                        event.event_type_id === 2 ||
+                        event.event_type_id === 3) &&
                       event.inviter_id === user?.user?.user_id
                         ? event.invitee_id
                         : (event.event_type_id === 1 ||
-                            event.event_type_id === 2) &&
+                            event.event_type_id === 2 ||
+                            event.event_type_id === 3) &&
                           event.invitee_id === user?.user?.user_id
                         ? event.inviter_id
                         : event.event_type_id === 6
                         ? event?.clubUserId
                         : ""
                     }`}
-                    className={styles.name}
+                    className={styles["player-name"]}
                   >
-                    {event.event_type_id === 1 || event.event_type_id === 2
+                    {event.event_type_id === 1 ||
+                    event.event_type_id === 2 ||
+                    event.event_type_id === 3
                       ? `${event?.fname} ${event?.lname}`
                       : event.event_type_id === 6
                       ? event?.student_group_name
-                      : ""}
-                  </Link>
-                </td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${
-                      event.event_type_id === 3 &&
-                      event.inviter_id === user?.user?.user_id
-                        ? event.invitee_id
-                        : event.event_type_id === 3 &&
-                          event.invitee_id === user?.user?.user_id
-                        ? event.inviter_id
-                        : event.event_type_id === 6 && event?.trainerUserId
-                    }`}
-                    className={styles.name}
-                  >
-                    {event.event_type_id === 3
-                      ? `${event?.fname} ${event?.lname}`
-                      : event.event_type_id === 6
-                      ? `${event?.fname} ${event?.lname}`
                       : ""}
                   </Link>
                 </td>
@@ -149,7 +137,7 @@ const PlayerPastEventsResults = () => {
                     ) : (
                       <BiCommentAdd
                         onClick={() => openReviewModal(event.booking_id)}
-                        className={styles["view-icon"]}
+                        className={styles.icon}
                       />
                     ))}
                 </td>
@@ -164,7 +152,7 @@ const PlayerPastEventsResults = () => {
                     ) && (
                       <AiOutlineEye
                         onClick={() => openViewReviewModal(event.booking_id)}
-                        className={styles["view-icon"]}
+                        className={styles.icon}
                       />
                     )}
                 </td>

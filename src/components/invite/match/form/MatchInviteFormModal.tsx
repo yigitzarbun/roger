@@ -344,7 +344,6 @@ const MatchInviteFormModal = (props: MatchInviteModalProps) => {
       <div className={styles["overlay"]} onClick={handleCloseInviteModal} />
       <div className={styles["modal-content"]}>
         <h3>Maç Davet</h3>
-
         <div className={styles["opponent-container"]}>
           <img
             src={

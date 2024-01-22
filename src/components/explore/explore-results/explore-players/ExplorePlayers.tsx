@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { FaFilter } from "react-icons/fa6";
+import { ImBlocked } from "react-icons/im";
 
 import { Link } from "react-router-dom";
 
@@ -36,6 +38,14 @@ interface ExplorePlayersProps {
   isLocationsLoading: boolean;
   isPlayersLoading: boolean;
   isPlayerLevelsLoading: boolean;
+  handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  playerLevelId: number;
+  textSearch: string;
+  gender: string;
+  locationId: number;
 }
 const ExplorePlayers = (props: ExplorePlayersProps) => {
   const {
@@ -44,6 +54,14 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     playerLevels,
     isLocationsLoading,
     isPlayerLevelsLoading,
+    handleLevel,
+    handleTextSearch,
+    handleGender,
+    handleLocation,
+    playerLevelId,
+    textSearch,
+    gender,
+    locationId,
   } = props;
 
   let isUserPlayer = false;
@@ -54,6 +72,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     isUserTrainer = user?.user?.user_type_id === 2;
   }
 
+  const [filter, setFilter] = useState(false);
+  const toggleFilter = () => {
+    setFilter((curr) => !curr);
+  };
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -62,10 +84,11 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     refetch: refetchPaginatedPlayers,
   } = useGetPaginatedPlayersQuery({
     currentPage: currentPage,
-    playerLevelId: null,
-    selectedGender: "",
-    locationId: null,
+    playerLevelId: playerLevelId,
+    selectedGender: gender,
+    locationId: locationId,
     currentUserId: user?.user?.user_id,
+    textSearch: textSearch,
   });
 
   const pageNumbers = [];
@@ -121,7 +144,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   useEffect(() => {
     refetchPaginatedPlayers();
-  }, [currentPage]);
+  }, [currentPage, textSearch, playerLevelId, gender, locationId]);
 
   if (
     isPaginatedPlayersLoading ||
@@ -136,7 +159,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
+          <FaFilter onClick={toggleFilter} />
+        </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}
@@ -149,6 +175,62 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           />
         </div>
       </div>
+
+      {filter && (
+        <div className={styles["nav-filter-container"]}>
+          <div className={styles["search-container"]}>
+            <input
+              type="text"
+              onChange={handleTextSearch}
+              value={textSearch}
+              placeholder="Oyuncu adı"
+            />
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleLevel}
+              value={playerLevelId ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Seviye --</option>
+              {playerLevels?.map((player_level) => (
+                <option
+                  key={player_level.player_level_id}
+                  value={player_level.player_level_id}
+                >
+                  {player_level.player_level_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleGender}
+              value={gender}
+              className="input-element"
+            >
+              <option value="">-- Cinsiyet --</option>
+              <option value="female">Kadın</option>
+              <option value="male">Erkek</option>
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleLocation}
+              value={locationId ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Tüm Konumlar --</option>
+              {locations?.map((location) => (
+                <option key={location.location_id} value={location.location_id}>
+                  {location.location_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
       {paginatedPlayers?.players?.length > 0 ? (
         <table>
           <thead>
@@ -232,7 +314,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     ).location_name
                   }
                 </td>
-                <td className={styles["vertical-center"]}>
+                <td>
                   <div className={styles["action-buttons-container"]}>
                     {isUserPlayer && (
                       <Link
@@ -249,7 +331,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                         Antreman yap
                       </Link>
                     )}
-                    {isUserPlayer && player.gender === userGender && (
+                    {isUserPlayer && player.gender === userGender ? (
                       <Link
                         to={paths.MATCH_INVITE}
                         state={{
@@ -263,6 +345,8 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       >
                         Maç yap
                       </Link>
+                    ) : (
+                      <ImBlocked />
                     )}
                     {isUserTrainer && (
                       <Link

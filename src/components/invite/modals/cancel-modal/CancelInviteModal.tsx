@@ -18,6 +18,7 @@ export type BookingData = {
   inviter_id: number;
   payment_id: number;
   invitation_note?: string;
+  registered_at: string;
 };
 
 const CancelInviteModal = (props) => {
