@@ -8,10 +8,7 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import {
-  useGetEventReviewsByFilterQuery,
-  useGetEventReviewsQuery,
-} from "../../../../api/endpoints/EventReviewsApi";
+import { useGetEventReviewsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 import ReviewCard from "../../../../components/common/reviews/ReviewCard";

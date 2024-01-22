@@ -5,6 +5,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
 import { ImBlocked } from "react-icons/im";
+import { SlOptions } from "react-icons/sl";
 
 import { Link } from "react-router-dom";
 
@@ -29,6 +30,8 @@ import {
   useGetPlayerByUserIdQuery,
 } from "../../../../api/endpoints/PlayersApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
+import TrainingInviteFormModal from "../../../../components/invite/training/form/TrainingInviteFormModal";
+import MatchInviteFormModal from "../../../../components/invite/match/form/MatchInviteFormModal";
 
 interface ExplorePlayersProps {
   user: User;
@@ -112,7 +115,25 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       1;
     setCurrentPage(prevPage);
   };
+  const [opponentUserId, setOpponentUserId] = useState(null);
 
+  const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
+  const handleOpenTrainingModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsTrainingModalOpen(true);
+  };
+  const handleCloseTrainingModal = () => {
+    setIsTrainingModalOpen(false);
+  };
+  const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
+
+  const handleOpenMatchModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsMatchModalOpen(true);
+  };
+  const handleCloseMatchModal = () => {
+    setIsMatchModalOpen(false);
+  };
   const {
     data: myFavouritePlayers,
     isLoading: isFavouritesLoading,
@@ -161,7 +182,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
-          <FaFilter onClick={toggleFilter} />
+          <FaFilter onClick={toggleFilter} className={styles.filter} />
         </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
@@ -297,54 +318,26 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     <p>{`${player.fname} ${player.lname}`}</p>
                   </Link>
                 </td>
-                <td>
-                  {
-                    playerLevels?.find(
-                      (player_level) =>
-                        player_level.player_level_id === player.player_level_id
-                    ).player_level_name
-                  }
-                </td>
+                <td>{player?.player_level_name}</td>
                 <td>{player.gender}</td>
                 <td>{getAge(player.birth_year)}</td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) => location.location_id === player.location_id
-                    ).location_name
-                  }
-                </td>
+                <td>{player?.location_name}</td>
                 <td>
                   <div className={styles["action-buttons-container"]}>
-                    {isUserPlayer && (
-                      <Link
-                        to={paths.TRAIN_INVITE}
-                        state={{
-                          fname: player.fname,
-                          lname: player.lname,
-                          image: player.image,
-                          court_price: "",
-                          user_id: player.user_id,
-                        }}
-                        className={styles["training-button"]}
-                      >
-                        Antreman yap
-                      </Link>
-                    )}
+                    <button
+                      onClick={() => handleOpenTrainingModal(player?.user_id)}
+                      className={styles["training-button"]}
+                    >
+                      Anterman yap
+                    </button>
+
                     {isUserPlayer && player.gender === userGender ? (
-                      <Link
-                        to={paths.MATCH_INVITE}
-                        state={{
-                          fname: player.fname,
-                          lname: player.lname,
-                          image: player.image,
-                          court_price: "",
-                          user_id: player.user_id,
-                        }}
+                      <button
+                        onClick={() => handleOpenMatchModal(player?.user_id)}
                         className={styles["match-button"]}
                       >
                         Maç yap
-                      </Link>
+                      </button>
                     ) : (
                       <ImBlocked />
                     )}
@@ -364,6 +357,9 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       </Link>
                     )}
                   </div>
+                </td>
+                <td>
+                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}
@@ -391,6 +387,16 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           </button>
         ))}
       </div>
+      <TrainingInviteFormModal
+        opponentUserId={opponentUserId}
+        isInviteModalOpen={isTrainingModalOpen}
+        handleCloseInviteModal={handleCloseTrainingModal}
+      />
+      <MatchInviteFormModal
+        opponentUserId={opponentUserId}
+        isInviteModalOpen={isMatchModalOpen}
+        handleCloseInviteModal={handleCloseMatchModal}
+      />
     </div>
   );
 };

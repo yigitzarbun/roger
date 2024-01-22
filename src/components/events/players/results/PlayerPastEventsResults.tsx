@@ -64,7 +64,6 @@ const PlayerPastEventsResults = () => {
           <thead>
             <tr>
               <th>Oyuncu / Eğitmen / Grup</th>
-              <th>Eğitmen</th>
               <th>Tarih</th>
               <th>Saat</th>
               <th>Tür</th>
