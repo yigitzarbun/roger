@@ -8,10 +8,14 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { useGetEventReviewsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
+import {
+  useGetEventReviewsByFilterQuery,
+  useGetReviewDetailsByFilterQuery,
+} from "../../../../api/endpoints/EventReviewsApi";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 import ReviewCard from "../../../../components/common/reviews/ReviewCard";
+import ReactModal from "react-modal";
 
 interface ViewEventReviewModalProps {
   isViewReviewModalOpen: boolean;
@@ -26,9 +30,9 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: selectedEventReview, isLoading: isSelectedEventReviewLoading } =
-    useGetEventReviewsByFilterQuery({
-      booking_id: selectedBookingId,
-      reviewer_id_not_equal: user?.user?.user_id,
+    useGetReviewDetailsByFilterQuery({
+      userId: user?.user?.user_id,
+      bookingId: selectedBookingId,
     });
 
   if (isSelectedEventReviewLoading) {
@@ -36,22 +40,19 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
   }
 
   return (
-    <Modal
+    <ReactModal
       isOpen={isViewReviewModalOpen}
       onRequestClose={closeViewReviewModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Değerlendirme Görüntüle</h1>
-        <FaWindowClose
-          onClick={closeViewReviewModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <div>
+      <div className={styles["overlay"]} onClick={closeViewReviewModal} />
+      <div className={styles["modal-content"]}>
+        <h3 className={styles.title}>Değerlendirme</h3>
         <ReviewCard review={selectedEventReview?.[0]} />
       </div>
-    </Modal>
+    </ReactModal>
   );
 };
 

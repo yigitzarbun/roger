@@ -194,7 +194,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                   )}
                 </td>
                 <td></td>
-                <td className={styles["vertical-center"]}>
+                <td>
                   <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
                     <img
                       src={

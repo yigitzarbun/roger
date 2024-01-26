@@ -300,7 +300,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     />
                   )}
                 </td>
-                <td className={styles["vertical-center"]}>
+                <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
                     <img
                       src={

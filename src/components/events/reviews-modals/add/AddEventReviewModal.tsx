@@ -1,10 +1,6 @@
 import React, { useEffect } from "react";
 
-import Modal from "react-modal";
-
 import { toast } from "react-toastify";
-
-import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -18,11 +14,15 @@ import {
 } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetBookingByIdQuery } from "../../../../api/endpoints/BookingsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import ReactModal from "react-modal";
 
 interface AddEventReviewModalProps {
   isAddReviewModalOpen: boolean;
   closeReviewModal: () => void;
   selectedBookingId: number;
+  fname: string;
+  lname: string;
+  image: string | null;
 }
 
 type FormValues = {
@@ -32,7 +32,14 @@ type FormValues = {
 };
 
 const AddEventReviewModal = (props: AddEventReviewModalProps) => {
-  const { isAddReviewModalOpen, closeReviewModal, selectedBookingId } = props;
+  const {
+    isAddReviewModalOpen,
+    closeReviewModal,
+    selectedBookingId,
+    fname,
+    lname,
+    image,
+  } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
   const [addReview, { isSuccess: isAddReviewSuccess }] =
@@ -42,6 +49,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
 
   const { data: bookingData, isLoading: isBookingDataLoading } =
     useGetBookingByIdQuery(selectedBookingId);
+
   const {
     register,
     handleSubmit,
@@ -82,67 +90,81 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
   }
 
   return (
-    <Modal
+    <ReactModal
       isOpen={isAddReviewModalOpen}
       onRequestClose={closeReviewModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Değerlendirme Ekle</h1>
-        <FaWindowClose
-          onClick={closeReviewModal}
-          className={styles["close-icon"]}
-        />
+      <div className={styles["overlay"]} onClick={closeReviewModal} />
+      <div className={styles["modal-content"]}>
+        <h3 className={styles.title}>Değerlendirme Ekle</h3>
+        <div className={styles["opponent-container"]}>
+          <img src={image ? image : "/images/icons/avatar.jpg"} />
+          <p>{`${fname} ${lname}`}</p>
+        </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+        >
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["title-input-container"]}>
+              <label>Başlık</label>
+              <input
+                {...register("event_review_title", {
+                  required: true,
+                })}
+                type="text"
+              />
+              {errors.event_review_title && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Puan</label>
+              <input
+                {...register("review_score", {
+                  required: true,
+                })}
+                type="number"
+                max={10}
+                min={0}
+              />
+              {errors.review_score && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["evaluation-container"]}>
+            <label>Değerlendirme</label>
+            <textarea
+              {...register("event_review_description", {
+                required: true,
+              })}
+            />
+            {errors.event_review_description && (
+              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            )}
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={closeReviewModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              Onayla
+            </button>
+          </div>
+        </form>
       </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Başlık</label>
-            <input
-              {...register("event_review_title", {
-                required: true,
-              })}
-              type="text"
-            />
-            {errors.event_review_title && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Puan (0 = Çok Kötü -- 10 = Çok iyi)</label>
-            <input
-              {...register("review_score", {
-                required: true,
-              })}
-              type="number"
-              max={10}
-              min={0}
-            />
-            {errors.review_score && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["evaluation-container"]}>
-          <label>Değerlendirme</label>
-          <textarea
-            {...register("event_review_description", {
-              required: true,
-            })}
-          />
-          {errors.event_review_description && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-          )}
-        </div>
-
-        <button type="submit" className={styles["form-button"]}>
-          Onayla
-        </button>
-      </form>
-    </Modal>
+    </ReactModal>
   );
 };
 

@@ -44,9 +44,9 @@ import {
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
-import PageLoading from "../../../../components/loading/PageLoading";
+import PageLoading from "../../../loading/PageLoading";
 
-const LeesonInviteForm = () => {
+const LeesonInviteFormModal = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -535,4 +535,4 @@ const LeesonInviteForm = () => {
   );
 };
 
-export default LeesonInviteForm;
+export default LeesonInviteFormModal;

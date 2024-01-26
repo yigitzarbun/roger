@@ -27,6 +27,22 @@ eventReviewsRouter.get(
     }
   }
 );
+
+eventReviewsRouter.get(
+  "/review-details/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const eventReview = await eventReviewsModel.getReviewDetailsByFilter(
+        filter
+      );
+      res.status(200).json(eventReview);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 eventReviewsRouter.get(
   "/:event_review_id",
   async (req: Request, res: Response, next: NextFunction) => {

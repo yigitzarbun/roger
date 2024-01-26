@@ -1,6 +1,6 @@
 import React from "react";
 
-import LessonInviteForm from "../../../components/invite/lesson/form/LessonInviteForm";
+import LessonInviteForm from "../../../components/invite/lesson/form/LessonInviteFormModal";
 import LessonInviteHero from "../../../components/invite/lesson/hero/LessonInviteHero";
 
 import styles from "./styles.module.scss";

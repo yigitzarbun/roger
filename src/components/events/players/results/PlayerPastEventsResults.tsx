@@ -1,14 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
-
-import { AiOutlineEye } from "react-icons/ai";
-
-import { BiCommentAdd } from "react-icons/bi";
 
 import styles from "./styles.module.scss";
 
@@ -25,16 +21,30 @@ const PlayerPastEventsResults = () => {
   const { data: myEvents, isLoading: isBookingsLoading } =
     useGetPlayerPastEventsQuery(user?.user?.user_id);
 
-  const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetEventReviewsByFilterQuery({
-      user_id: user?.user?.user_id,
-    });
+  const {
+    data: eventReviews,
+    isLoading: isEventReviewsLoading,
+    refetch: refetchReviews,
+  } = useGetEventReviewsByFilterQuery({
+    user_id: user?.user?.user_id,
+  });
 
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [image, setImage] = useState(null);
 
-  const openReviewModal = (booking_id: number) => {
+  const openReviewModal = (
+    booking_id: number,
+    fname: string,
+    lname: string,
+    image: string | null
+  ) => {
     setSelectedBookingId(booking_id);
+    setFname(fname);
+    setLname(lname);
+    setImage(image);
     setIsAddReviewModalOpen(true);
   };
   const closeReviewModal = () => {
@@ -49,6 +59,12 @@ const PlayerPastEventsResults = () => {
   const closeViewReviewModal = () => {
     setIsViewReviewModalOpen(false);
   };
+
+  useEffect(() => {
+    if (isAddReviewModalOpen === false) {
+      refetchReviews();
+    }
+  }, [isAddReviewModalOpen]);
 
   if (isBookingsLoading || isEventReviewsLoading) {
     return <PageLoading />;
@@ -134,10 +150,19 @@ const PlayerPastEventsResults = () => {
                         Yorum Gönderildi
                       </p>
                     ) : (
-                      <BiCommentAdd
-                        onClick={() => openReviewModal(event.booking_id)}
-                        className={styles.icon}
-                      />
+                      <button
+                        className={styles["comment-button"]}
+                        onClick={() =>
+                          openReviewModal(
+                            event.booking_id,
+                            event.fname,
+                            event.lname,
+                            event.image
+                          )
+                        }
+                      >
+                        Yorum Yap
+                      </button>
                     ))}
                 </td>
                 <td>
@@ -149,10 +174,12 @@ const PlayerPastEventsResults = () => {
                         review.reviewee_id === user?.user?.user_id &&
                         review.booking_id === event.booking_id
                     ) && (
-                      <AiOutlineEye
+                      <button
+                        className={styles["view-button"]}
                         onClick={() => openViewReviewModal(event.booking_id)}
-                        className={styles.icon}
-                      />
+                      >
+                        Yorum Görüntüle
+                      </button>
                     )}
                 </td>
               </tr>
@@ -167,6 +194,9 @@ const PlayerPastEventsResults = () => {
           isAddReviewModalOpen={isAddReviewModalOpen}
           closeReviewModal={closeReviewModal}
           selectedBookingId={selectedBookingId}
+          fname={fname}
+          lname={lname}
+          image={image}
         />
       )}
       {isViewReviewModalOpen && (

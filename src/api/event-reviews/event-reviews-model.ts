@@ -31,6 +31,59 @@ const eventReviewsModel = {
     });
     return eventReviews;
   },
+  async getReviewDetailsByFilter(filter) {
+    const eventDetails = await db
+      .select(
+        "event_reviews.*",
+        "users.*",
+        "players.*",
+        "trainers.*",
+        "bookings.*",
+        "event_types.*",
+        "student_groups.*"
+      )
+      .from("event_reviews")
+      .leftJoin("users", function () {
+        this.on("event_reviews.reviewer_id", "=", "users.user_id").orOn(
+          "event_reviews.reviewee_id",
+          "=",
+          "users.user_id"
+        );
+      })
+      .leftJoin("players", function () {
+        this.on("players.user_id", "=", "users.user_id");
+      })
+      .leftJoin("trainers", function () {
+        this.on("trainers.user_id", "=", "users.user_id");
+      })
+      .leftJoin("bookings", function () {
+        this.on("bookings.booking_id", "=", "event_reviews.booking_id");
+      })
+      .leftJoin("event_types", function () {
+        this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+      })
+      .leftJoin("student_groups", function () {
+        this.on("student_groups.user_id", "=", "bookings.invitee_id");
+      })
+      .where("bookings.booking_status_type_id", 5)
+      .andWhere("bookings.booking_id", filter.bookingId)
+      .andWhere((builder) => {
+        builder
+          .where("bookings.invitee_id", filter.userId)
+          .orWhere("bookings.inviter_id", filter.userId)
+          .orWhere("student_groups.first_student_id", filter.userId);
+      })
+      .andWhere(function () {
+        this.whereNot("players.user_id", filter.userId).orWhereNot(
+          "trainers.user_id",
+          filter.userId
+        );
+      })
+      .andWhere(function () {
+        this.whereNot("event_reviews.reviewer_id", filter.userId);
+      });
+    return eventDetails;
+  },
   async getById(event_review_id) {
     const eventReview = await db("event_reviews").where(
       "event_review_id",
