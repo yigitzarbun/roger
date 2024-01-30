@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
+import ReactModal from "react-modal";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
@@ -10,8 +11,6 @@ import paths from "../../../../routing/Paths";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import InviteModal, { FormValues } from "../../modals/invite-modal/InviteModal";
-
 import { useState } from "react";
 
 import {
@@ -19,20 +18,21 @@ import {
   useGetClubsQuery,
 } from "../../../../api/endpoints/ClubsApi";
 
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
+import {
+  useGetCourtByIdQuery,
+  useGetCourtsQuery,
+} from "../../../../api/endpoints/CourtsApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 
 import {
   useAddBookingMutation,
-  useGetBookingsQuery,
+  useGetBookedCourtHoursQuery,
+  useGetPlayerOutgoingRequestsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
-import {
-  useGetTrainerByUserIdQuery,
-  useGetTrainersQuery,
-} from "../../../../api/endpoints/TrainersApi";
+import { useGetTrainerByUserIdQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 import {
   useAddPaymentMutation,
@@ -40,91 +40,77 @@ import {
 } from "../../../../api/endpoints/PaymentsApi";
 
 import {
-  currentDay,
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
 import PageLoading from "../../../loading/PageLoading";
+import LessonInviteConfirmation from "../confirmation/LessonInviteConfirmation";
 
-const LeesonInviteFormModal = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+interface LessonInviteModalProps {
+  opponentUserId: number;
+  isInviteModalOpen: boolean;
+  handleCloseInviteModal: () => void;
+}
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
+export type FormValues = {
+  event_type_id: number;
+  event_date: string;
+  event_time: string;
+  booking_status_type_id: number;
+  club_id: number;
+  court_id: number;
+  court_price: number;
+  lesson_price: number | null;
+  invitee_id: number;
+  inviter_id: number;
+  payment_id: number;
+  invitation_note?: string;
+};
+
+const LessonInviteFormModal = (props: LessonInviteModalProps) => {
+  const { opponentUserId, isInviteModalOpen, handleCloseInviteModal } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
-  const isUserTrainer = user?.user?.user_type_id === 2;
-  const isUserPlayer = user?.user?.user_type_id === 1;
+  const navigate = useNavigate();
 
-  let trainer;
-  let player;
-  let trainerUserId;
-  let playerUserId;
-
-  let trainerBankDetailsExist = false;
-  let playerPaymentDetailsExist = false;
-
-  if (user && isUserTrainer) {
-    player = location.state;
-    trainerUserId = user?.user?.user_id;
-    playerUserId = player?.user_id;
-    trainer = user;
-  }
-
-  if (user && isUserPlayer) {
-    trainer = location.state;
-    trainerUserId = trainer?.user_id;
-    player = user;
-    playerUserId = user?.user?.user_id;
-  }
+  const [confirmation, setConfirmation] = useState(false);
+  const handleCloseConfirmation = () => {
+    setConfirmation(false);
+  };
 
   const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
-    useGetTrainerByUserIdQuery(trainerUserId);
+    useGetTrainerByUserIdQuery(opponentUserId);
+
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
-    useGetPlayerByUserIdQuery(playerUserId);
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
 
-  if (
-    selectedTrainer?.[0]?.iban &&
-    selectedTrainer?.[0]?.bank_id &&
-    selectedTrainer?.[0]?.name_on_bank_account
-  ) {
-    trainerBankDetailsExist = true;
-  }
-
-  if (
-    selectedPlayer?.[0]?.name_on_card &&
-    selectedPlayer?.[0]?.card_number &&
-    selectedPlayer?.[0]?.cvc &&
-    selectedPlayer?.[0]?.card_expiry
-  ) {
-    playerPaymentDetailsExist = true;
-  }
-
-  const navigateToPreviousPage = () => {
-    navigate(-1);
-  };
+  const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
+    {}
+  );
 
   const [addPayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useAddPaymentMutation({});
 
   const { refetch: refetchPayments } = useGetPaymentsQuery({});
 
-  const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
-    {}
+  const { refetch: refetchBookings } = useGetPlayerOutgoingRequestsQuery(
+    user?.user?.user_id
   );
-
-  const {
-    data: bookings,
-    isLoading: isBookingsLoading,
-    refetch: refetchBookings,
-  } = useGetBookingsQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
+
+  const today = new Date();
+  let day = String(today.getDate());
+  let month = String(today.getMonth() + 1);
+  const year = today.getFullYear();
+
+  day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
+  month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
+
+  const currentDay = `${year}-${month}-${day}`;
 
   const [selectedDate, setSelectedDate] = useState("");
   const handleSelectedDate = (event) => {
@@ -145,59 +131,77 @@ const LeesonInviteFormModal = () => {
     setSelectedCourt(Number(event.target.value));
   };
 
-  // subscription check
-  let isPlayerSubscribed = false;
-  let isTrainerStaff = false;
+  let trainerBankDetailsExist = false;
+  let playerPaymentDetailsExist = false;
 
-  let playerSubscriptionRequired = false;
-  let trainerStaffRequired = false;
+  if (
+    selectedTrainer?.[0]?.iban &&
+    selectedTrainer?.[0]?.bank_id &&
+    selectedTrainer?.[0]?.name_on_bank_account
+  ) {
+    trainerBankDetailsExist = true;
+  }
 
-  const [skip, setSkip] = useState(true);
+  if (
+    selectedPlayer?.[0]?.name_on_card &&
+    selectedPlayer?.[0]?.card_number &&
+    selectedPlayer?.[0]?.cvc &&
+    selectedPlayer?.[0]?.card_expiry
+  ) {
+    playerPaymentDetailsExist = true;
+  }
 
-  const { data: selectedClubDetails, isLoading: isSelectedClubLoading } =
-    useGetClubByClubIdQuery(selectedClub, { skip: skip });
+  const [skipClubDetails, setSkipClubDetails] = useState(true);
+  const { data: selectedClubDetails, isLoading: isSelectedClubDetailsLoading } =
+    useGetClubByClubIdQuery(selectedClub, { skip: skipClubDetails });
 
-  const { data: clubStaff, isLoading: isClubStaffLoading } =
+  const [skipCourtDetails, setSkipCourtDetails] = useState(true);
+  const {
+    data: selectedCourtDetails,
+    isLoading: isSelectedCourtDetailsLoading,
+  } = useGetCourtByIdQuery(selectedCourt, { skip: skipCourtDetails });
+
+  const [skipPlayerSubscribed, setSkipPlayerSubscribed] = useState(true);
+
+  const { data: isPlayerSubscribed, isLoading: isPlayerSubscribedLoading } =
+    useGetClubSubscriptionsByFilterQuery(
+      {
+        club_id: selectedClubDetails?.[0]?.user_id,
+        player_id: user?.user?.user_id,
+        is_active: true,
+      },
+      { skip: skipPlayerSubscribed }
+    );
+  const [skipTrainerStaff, setSkipTrainerStaff] = useState(true);
+
+  const { data: isTrainerStaff, isLoading: isTrainerStaffLoading } =
     useGetClubStaffByFilterQuery(
       {
-        user_id: trainerUserId,
-        club_id: selectedClub,
+        user_id: opponentUserId,
+        club_id: selectedClubDetails?.[0]?.club_id,
         employment_status: "accepted",
       },
-      { skip: skip }
+      { skip: skipTrainerStaff }
     );
-
-  const {
-    data: selectedClubSubscriptions,
-    isLoading: isClubSubscriptionsLoading,
-  } = useGetClubSubscriptionsByFilterQuery(
-    {
-      club_id: clubs?.find((club) => club.club_id === selectedClub)?.user_id,
-      player_id: playerUserId,
-      is_active: true,
-    },
-    { skip: skip }
-  );
 
   // booking hours check
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
+  const [skipBookedHours, setSkipBookedHours] = useState(true);
+  const {
+    data: bookedHours,
+    isLoading: isBookedHoursLoading,
+    refetch: refetchBookedHours,
+  } = useGetBookedCourtHoursQuery(
+    {
+      courtId: selectedCourt,
+      eventDate: selectedDate,
+    },
+    { skip: skipBookedHours }
+  );
 
-  useEffect(() => {
-    if (selectedCourt && selectedDate && bookings) {
-      const filteredBookings = bookings.filter(
-        (booking) =>
-          booking.court_id === Number(selectedCourt) &&
-          booking.event_date.slice(0, 10) === selectedDate &&
-          (booking.booking_status_type_id === 1 ||
-            booking.booking_status_type_id === 2)
-      );
-      setBookedHours(filteredBookings);
-    }
-  }, [selectedCourt, selectedDate, bookings]);
-
-  const availableTimeSlots = generateAvailableTimeSlots(
+  let availableTimeSlots = generateAvailableTimeSlots(
     selectedCourt,
     selectedDate,
     courts,
@@ -211,151 +215,106 @@ const LeesonInviteFormModal = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const [modal, setModal] = useState(false);
   const [bookingFormData, setBookingFormData] = useState<FormValues | null>(
     null
   );
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
+    setConfirmation(true);
     const bookingData = {
       event_date: new Date(formData.event_date).toISOString(),
       event_time: formData.event_time,
       booking_status_type_id: 1,
       event_type_id: 3,
-      club_id: selectedClub,
+      club_id: formData.club_id,
       court_id: formData.court_id,
-      inviter_id: user?.user?.user_id,
-      invitee_id: isUserTrainer
-        ? playerUserId
-        : isUserPlayer
-        ? trainerUserId
-        : null,
-      lesson_price: trainers?.find(
-        (trainer) => trainer.user_id === trainerUserId
-      )?.price_hour,
+      inviter_id: user?.user.user_id,
+      invitee_id: selectedTrainer?.[0]?.user_id,
+      lesson_price: selectedTrainer?.[0]?.price_hour,
       court_price:
-        clubs?.find(
-          (club) =>
-            club.club_id ===
-            courts?.find((court) => court.court_id === selectedCourt)?.club_id
-        )?.higher_price_for_non_subscribers &&
-        courts.find((court) => court.court_id === selectedCourt)
-          ?.price_hour_non_subscriber &&
-        (!isPlayerSubscribed || !isTrainerStaff)
-          ? courts.find((court) => court.court_id === selectedCourt)
-              ?.price_hour_non_subscriber
-          : courts?.find((court) => court.court_id === selectedCourt)
-              ?.price_hour,
+        selectedClubDetails?.[0]?.higher_price_for_non_subscribers &&
+        selectedCourtDetails?.[0]?.price_hour_non_subscriber &&
+        !isPlayerSubscribed
+          ? selectedCourtDetails?.[0]?.price_hour_non_subscriber
+          : selectedCourtDetails?.[0]?.price_hour,
       payment_id: null,
       invitation_note: formData?.invitation_note
         ? formData?.invitation_note
         : "",
     };
     setBookingFormData(bookingData);
-    setModal(true);
   };
 
-  // disabled button
-
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [buttonText, setButtonText] = useState("");
-
   const handleModalSubmit = () => {
-    setModal(false);
-
     if (playerPaymentDetailsExist && trainerBankDetailsExist) {
       const paymentDetails = {
-        payment_amount:
-          bookingFormData?.court_price +
-          trainers?.find((trainer) => trainer.user_id === trainerUserId)
-            ?.price_hour,
+        payment_amount: bookingFormData?.court_price,
         court_price: bookingFormData?.court_price,
-        lesson_price: trainers?.find(
-          (trainer) => trainer.user_id === trainerUserId
-        )?.price_hour,
         payment_status: "pending",
-        payment_type_id: 3,
-        sender_inviter_id: playerUserId,
-        recipient_trainer_id: trainerUserId,
-        recipient_club_id: clubs?.find(
-          (club) => club.club_id === Number(bookingFormData?.club_id)
-        )?.user_id,
+        payment_type_id: 2,
+        sender_inviter_id: user?.user.user_id,
+        sender_invitee_id: null,
+        recipient_club_id: selectedClubDetails?.[0]?.user_id,
+        recipient_trainer_id: opponentUserId,
       };
       addPayment(paymentDetails);
     }
   };
 
-  const handleCloseModal = () => {
-    setModal(false);
-  };
+  useEffect(() => {
+    availableTimeSlots = generateAvailableTimeSlots(
+      selectedCourt,
+      selectedDate,
+      courts,
+      bookedHoursForSelectedCourtOnSelectedDate
+    );
+  }, [isInviteModalOpen]);
 
   useEffect(() => {
-    reset({
-      club_id: selectedClub || "",
-      event_date: selectedDate || "",
-    });
-  }, [selectedClub, reset]);
+    if (bookedHours) {
+      setBookedHours(bookedHours);
+    } else {
+      setBookedHours([]);
+    }
+  }, [bookedHours]);
+
+  useEffect(() => {
+    if (selectedCourt && selectedDate) {
+      setSkipBookedHours(false);
+    }
+  }, [selectedCourt, selectedDate]);
 
   useEffect(() => {
     if (selectedClub) {
-      setSkip(false);
+      setSkipClubDetails(false);
+    } else {
+      setSkipClubDetails(true);
     }
   }, [selectedClub]);
 
   useEffect(() => {
-    playerSubscriptionRequired =
-      selectedClubDetails?.[0]?.is_player_lesson_subscription_required;
-
-    trainerStaffRequired =
-      selectedClubDetails?.[0]?.is_trainer_subscription_required;
-
-    isPlayerSubscribed = selectedClubSubscriptions?.length > 0;
-
-    isTrainerStaff = clubStaff?.length > 0 ? true : false;
-
-    if (
-      playerSubscriptionRequired === true &&
-      trainerStaffRequired === true &&
-      (isPlayerSubscribed === false || isTrainerStaff === false)
-    ) {
-      setIsButtonDisabled(true);
-      setButtonText(
-        "Kort kiralamak için oyuncunun kulübe üye, eğitmenin kulüp çalışanı olması gerekmektedir"
-      );
-    } else if (
-      playerSubscriptionRequired === false &&
-      trainerStaffRequired === true &&
-      isTrainerStaff === false
-    ) {
-      setIsButtonDisabled(true);
-      setButtonText(
-        "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir"
-      );
-    } else if (
-      playerSubscriptionRequired === true &&
-      trainerStaffRequired === false &&
-      isPlayerSubscribed === false
-    ) {
-      setIsButtonDisabled(true);
-      setButtonText(
-        "Kort kiralamak için oyuncunun kulüp üyesi olması gerekmektedir"
-      );
+    if (selectedCourt) {
+      setSkipCourtDetails(false);
     } else {
-      setIsButtonDisabled(false);
-      setButtonText("");
+      setSkipCourtDetails(true);
     }
-  }, [selectedClubDetails, selectedClubSubscriptions, clubStaff]);
+  }, [selectedCourt]);
 
   useEffect(() => {
-    if (selectedPlayer && selectedTrainer) {
-      if (!trainerBankDetailsExist || !playerPaymentDetailsExist) {
-        setIsButtonDisabled(true);
-        setButtonText(
-          "Kort kiralamak için oyuncu ve eğitmenin banka bilgilerinin mevcut olması gerekmektedir"
-        );
-      }
+    if (selectedClubDetails?.length > 0) {
+      setSkipPlayerSubscribed(false);
+    } else {
+      setSkipPlayerSubscribed(true);
     }
-  }, [selectedPlayer, selectedTrainer]);
+  }, [selectedClubDetails]);
+
+  useEffect(() => {
+    if (selectedTrainer?.length > 0 && selectedClubDetails?.length > 0) {
+      setSkipTrainerStaff(false);
+    } else {
+      setSkipTrainerStaff(true);
+    }
+  }, [selectedClubDetails]);
 
   useEffect(() => {
     if (isPaymentSuccess) {
@@ -369,170 +328,213 @@ const LeesonInviteFormModal = () => {
   useEffect(() => {
     if (isBookingSuccess) {
       refetchBookings();
+      refetchBookedHours();
+      availableTimeSlots = generateAvailableTimeSlots(
+        selectedCourt,
+        selectedDate,
+        courts,
+        bookedHoursForSelectedCourtOnSelectedDate
+      );
       toast.success("Başarıyla gönderildi");
       navigate(paths.REQUESTS);
     }
-  }, [isBookingSuccess]);
-
-  if (
-    isBookingsLoading ||
-    isClubStaffLoading ||
-    isClubSubscriptionsLoading ||
-    isClubsLoading ||
-    isCourtsLoading ||
-    isTrainersLoading ||
-    isSelectedTrainerLoading ||
-    isSelectedPlayerLoading ||
-    isSelectedClubLoading
-  ) {
-    return <PageLoading />;
-  }
+  }, [isBookingSuccess, refetchBookings, navigate]);
 
   return (
-    <div className={styles["invite-page-container"]}>
-      <div className={styles["top-container"]}>
-        <h1 className={styles["invite-title"]}>Ders Davet</h1>
-        <img
-          src="/images/icons/prev.png"
-          className={styles["prev-button"]}
-          onClick={navigateToPreviousPage}
-        />
-      </div>
-
-      {isUserPlayer && (
+    <ReactModal
+      isOpen={isInviteModalOpen}
+      onRequestClose={handleCloseInviteModal}
+      shouldCloseOnOverlayClick={false}
+      className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
+    >
+      <div className={styles["overlay"]} onClick={handleCloseInviteModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h3>Ders Davet</h3>
+        </div>
         <div className={styles["opponent-container"]}>
           <img
-            src={trainer?.image ? trainer?.image : "/images/icons/avatar.png"}
+            src={
+              selectedTrainer?.[0]?.image
+                ? selectedTrainer?.[0]?.image
+                : "/images/icons/avatar.jpg"
+            }
             className={styles["opponent-image"]}
           />
           <p
-            className={styles["player-name"]}
-          >{`${trainer.fname} ${trainer.lname}`}</p>
-          <p>{selectedClub}</p>
+            className={styles["trainer-name"]}
+          >{`${selectedTrainer?.[0].fname} ${selectedTrainer?.[0].lname}`}</p>
         </div>
-      )}
-      {isUserTrainer && (
-        <div className={styles["opponent-container"]}>
-          <img
-            src={player?.image ? player?.image : "/images/icons/avatar.png"}
-            className={styles["opponent-image"]}
+        {confirmation ? (
+          <LessonInviteConfirmation
+            handleCloseConfirmation={handleCloseConfirmation}
+            handleModalSubmit={handleModalSubmit}
+            selectedClubName={selectedClubDetails?.[0]?.club_name}
+            selectedCourtName={selectedCourtDetails?.[0]?.court_name}
+            selectedCourtPrice={selectedCourtDetails?.[0]?.price_hour}
+            selectedTrainerPrice={selectedTrainer?.[0]?.price_hour}
+            selectedTime={selectedTime}
+            selectedDate={selectedDate}
           />
-          <p
-            className={styles["player-name"]}
-          >{`${player.fname} ${player.lname}`}</p>
-        </div>
-      )}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Tarih</label>
-            <input
-              {...register("event_date", {
-                required: "Bu alan zorunludur",
-              })}
-              type="date"
-              onChange={handleSelectedDate}
-              min={currentDay}
-            />
-            {errors.event_date && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Kulüp</label>
-            <select
-              {...register("club_id", { required: true })}
-              onChange={handleSelectedClub}
-            >
-              <option value="">--Seçim yapın--</option>
-              {clubs?.map((club) => (
-                <option key={club.user_id} value={club.club_id}>
-                  {club.club_name}
-                </option>
-              ))}
-            </select>
-            {errors.club_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kort</label>
-            <select
-              {...register("court_id", { required: true })}
-              onChange={handleSelectedCourt}
-              disabled={!selectedClub || !selectedDate}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {selectedClub &&
-                courts
-                  ?.filter(
-                    (court) =>
-                      court.club_id === selectedClub && court.is_active === true
-                  )
-                  .map((court) => (
-                    <option key={court.court_id} value={court.court_id}>
-                      {court.court_name}
+        ) : (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className={styles["form-container"]}
+          >
+            <div className={styles["input-outer-container"]}>
+              <div className={styles["input-container"]}>
+                <label>Tarih</label>
+                <input
+                  {...register("event_date", {
+                    required: "Bu alan zorunludur",
+                  })}
+                  type="date"
+                  onChange={handleSelectedDate}
+                  min={currentDay}
+                />
+                {errors.event_date && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+              <div className={styles["input-container"]}>
+                <label>Kulüp</label>
+                <select
+                  {...register("club_id", { required: true })}
+                  onChange={handleSelectedClub}
+                >
+                  <option value="">--Seçim yapın--</option>
+                  {clubs?.map((club) => (
+                    <option key={club.user_id} value={club.club_id}>
+                      {club.club_name}
                     </option>
                   ))}
-            </select>
-            {errors.court_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+                </select>
+                {errors.club_id && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className={styles["input-outer-container"]}>
+              <div className={styles["input-container"]}>
+                <label>Kort</label>
+                <select
+                  {...register("court_id", { required: true })}
+                  onChange={handleSelectedCourt}
+                  disabled={!selectedClub || !selectedDate}
+                >
+                  <option value="">-- Seçim yapın --</option>
+                  {selectedClub &&
+                    courts
+                      ?.filter(
+                        (court) =>
+                          court.club_id === selectedClub &&
+                          court.is_active === true
+                      )
+                      .map((court) => (
+                        <option key={court.court_id} value={court.court_id}>
+                          {court.court_name}
+                        </option>
+                      ))}
+                </select>
+                {errors.court_id && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+              <div className={styles["input-container"]}>
+                <label>Saat</label>
+                <select
+                  {...register("event_time", {
+                    required: "Bu alan zorunludur",
+                  })}
+                  onChange={handleSelectedTime}
+                  value={selectedTime}
+                  disabled={!selectedClub || !selectedDate}
+                >
+                  <option value="">-- Seçim yapın --</option>
+                  {availableTimeSlots.map((timeSlot) => (
+                    <option key={timeSlot.start} value={timeSlot.start}>
+                      {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
+                    </option>
+                  ))}
+                </select>
+                {errors.event_time && (
+                  <span className={styles["error-field"]}>
+                    {errors.event_time.message}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className={styles["input-outer-container"]}>
+              <div className={styles["message-container"]}>
+                <label>Not</label>
+                <textarea
+                  {...register("invitation_note")}
+                  placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
+                />
+              </div>
+            </div>
+            <div className={styles["buttons-container"]}>
+              <button
+                onClick={handleCloseInviteModal}
+                className={styles["discard-button"]}
+              >
+                İptal
+              </button>
+              <button
+                type="submit"
+                className={styles["submit-button"]}
+                disabled={
+                  (selectedClubDetails?.[0]
+                    ?.is_player_lesson_subscription_required &&
+                    isPlayerSubscribed?.length === 0) ||
+                  (selectedClubDetails?.[0]?.is_trainer_subscription_required &&
+                    isTrainerStaff?.length === 0) ||
+                  !playerPaymentDetailsExist ||
+                  !trainerBankDetailsExist ||
+                  !selectedClub ||
+                  !selectedCourt ||
+                  !selectedTime ||
+                  !selectedDate
+                }
+              >
+                Davet Gönder
+              </button>
+            </div>
+            {selectedClubDetails?.[0]?.is_player_lesson_subscription_required &&
+              isPlayerSubscribed?.length === 0 && (
+                <p className={styles["validation-text"]}>
+                  Bu kortu kiralayabilmek için kulüp üyeliği gerekmektedir
+                </p>
+              )}
+            {selectedClubDetails?.[0]?.is_trainer_subscription_required &&
+              isTrainerStaff?.length === 0 && (
+                <p className={styles["validation-text"]}>
+                  Bu kulüpte yalnızca çalışan eğitmenlerden ders alabilirsiniz
+                </p>
+              )}
+            {!playerPaymentDetailsExist && (
+              <p className={styles["validation-text"]}>
+                Kort kiralamak için ödeme bilgilerinizi ekleyin
+              </p>
             )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Saat</label>
-            <select
-              {...register("event_time", {
-                required: "Bu alan zorunludur",
-              })}
-              onChange={handleSelectedTime}
-              value={selectedTime}
-              disabled={!selectedClub || !selectedDate}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {availableTimeSlots.map((timeSlot) => (
-                <option key={timeSlot.start} value={timeSlot.start}>
-                  {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
-                </option>
-              ))}
-            </select>
-            {errors.event_time && (
-              <span className={styles["error-field"]}>
-                {errors.event_time.message}
-              </span>
+            {!trainerBankDetailsExist && (
+              <p className={styles["validation-text"]}>
+                Seçtiğiniz eğitmenin henüz banka bilgileri mevcut değildir.
+                Lütfen başka bir eğitmen seçin.
+              </p>
             )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Not</label>
-            <textarea
-              {...register("invitation_note")}
-              placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={isButtonDisabled}
-        >
-          {isButtonDisabled ? buttonText : "Davet et"}
-        </button>
-      </form>
-      <InviteModal
-        modal={modal}
-        handleModalSubmit={handleModalSubmit}
-        formData={bookingFormData}
-        handleCloseModal={handleCloseModal}
-      />
-    </div>
+          </form>
+        )}
+      </div>
+    </ReactModal>
   );
 };
 
-export default LeesonInviteFormModal;
+export default LessonInviteFormModal;

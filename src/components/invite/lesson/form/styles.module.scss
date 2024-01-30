@@ -1,101 +1,143 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
-.invite-page-container {
+.modal-overlay {
+  z-index: $profile-modal-z-index-overlay;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  row-gap: 4vh;
-  background-color: $roger-box-bg-color;
-  padding: $roger-box-padding;
-  border-radius: $roger-border-radius;
-  width: 60%;
-  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+}
 
-  .top-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0, 0.8);
+  z-index: $profile-modal-z-index-overlay;
+}
 
-    .invite-title {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-    .prev-button {
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-    }
-  }
-  .opponent-container {
-    display: flex;
-    column-gap: 10px;
-    align-items: center;
-    .opponent-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-  }
-  .coach-name {
-    color: $roger-blue;
-  }
-  .form-container {
+.modal-container {
+  .modal-content {
+    position: relative;
+    z-index: $profile-modal-z-index;
     display: flex;
     flex-direction: column;
-    row-gap: 2vh;
-  }
-  .input-outer-container {
-    display: flex;
     justify-content: space-between;
-  }
-  .input-container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 1vh;
-    width: 100%;
-  }
-
-  input,
-  select {
-    padding: $roger-box-padding;
+    width: 500px;
+    row-gap: 4vh;
     border-radius: $roger-border-radius;
-    border: none;
-    width: 95%;
-  }
-
-  textArea {
-    height: 13vh;
+    background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    border: none;
-  }
-  .form-button {
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    border: none;
-    margin-top: 4vh;
-    font-size: 1rem;
-    font-weight: bold;
-  }
+    border: 1px solid $roger-border-color;
 
-  .form-button:hover {
-    background-color: $roger-blue;
-    cursor: pointer;
-  }
+    h3 {
+      font-size: 1.7rem;
+    }
 
-  .error-field {
-    color: $roger-red;
-    font-size: 0.8rem;
-  }
+    .opponent-container {
+      display: flex;
+      align-items: center;
+      column-gap: 2vw;
 
-  .login-nav {
-    text-decoration: none;
-    color: $roger-text-color;
-  }
+      img {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      row-gap: 3vh;
+      .input-outer-container {
+        display: flex;
+        justify-content: space-between;
 
-  .login-span {
-    color: $roger-blue;
-    font-weight: bold;
+        .input-container {
+          display: flex;
+          flex-direction: column;
+          row-gap: 2vh;
+          width: 48%;
+
+          label {
+            font-size: 0.9rem;
+          }
+          input,
+          select,
+          textArea {
+            padding: $roger-button-padding;
+            border-radius: $roger-border-radius;
+            border: 1px solid $roger-border-color;
+            width: 100%;
+            background-color: inherit;
+            height: 50px;
+          }
+        }
+      }
+      .message-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 2vh;
+        width: 100%;
+
+        textArea {
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          border: 1px solid $roger-border-color;
+          width: 100%;
+          background-color: inherit;
+          height: 50px;
+        }
+      }
+      .buttons-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 4vh 0;
+        .discard-button {
+          background-color: $roger-black-dark;
+          border: none;
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          font-size: 0.9rem;
+          cursor: pointer;
+          height: 40px;
+          width: 150px;
+        }
+        .discard-button:hover {
+          background-color: $roger-black-dark;
+        }
+        .discard-button:hover {
+          background-color: $roger-box-bg-color-hover;
+        }
+        .submit-button {
+          background-color: white;
+          color: black;
+          border: none;
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          font-size: 0.9rem;
+          cursor: pointer;
+          height: 40px;
+          width: 150px;
+        }
+        .submit-button:hover {
+          background-color: $roger-white;
+          color: black;
+        }
+      }
+      .validation-text {
+        color: $roger-red;
+        font-size: 0.9rem;
+      }
+    }
   }
 }

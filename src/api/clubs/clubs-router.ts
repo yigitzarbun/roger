@@ -16,11 +16,11 @@ clubsRouter.get(
   }
 );
 clubsRouter.get(
-  "/paginated/:page",
+  "/paginated",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { page } = req.params;
-      const clubs = await clubsModel.getPaginated(Number(page));
+      const filter = req.query;
+      const clubs = await clubsModel.getPaginated(filter);
       res.status(200).json(clubs);
     } catch (error) {
       next(error);

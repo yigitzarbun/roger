@@ -33,7 +33,7 @@ export const trainersSlice = createApi({
     }),
     getPaginatedTrainers: builder.query({
       query: (filter) =>
-        `trainers/paginated?trainerExperienceTypeId=${filter.trainerExperienceTypeId}&selectedGender=${filter.selectedGender}&locationId=${filter.locationId}&club_id=${filter.club_id}&currentUserId=${filter.currentUserId}`,
+        `trainers/paginated?trainerExperienceTypeId=${filter.trainerExperienceTypeId}&selectedGender=${filter.selectedGender}&locationId=${filter.locationId}&clubId=${filter.clubId}&currentUserId=${filter.currentUserId}&textSearch=${filter.textSearch}`,
     }),
     getTrainerByTrainerId: builder.query({
       query: (trainer_id) => `/trainers/trainer/${trainer_id}`,

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { SlOptions } from "react-icons/sl";
+import { FaFilter } from "react-icons/fa6";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
@@ -21,11 +23,7 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
-import {
-  useGetClubSubscriptionsByFilterQuery,
-  useGetClubSubscriptionsQuery,
-} from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubSubscriptionPackagesQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetPaginatedClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -34,10 +32,15 @@ import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModa
 import PageLoading from "../../../../components/loading/PageLoading";
 import ClubEmploymentModal from "./employment-modal/ClubEmploymentModal";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
+import Paths from "../../../../routing/Paths";
+import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 
 interface ExploreClubsProps {
   user: User;
   clubs: PaginatedClubs;
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
   locations: Location[];
   clubTypes: ClubType[];
   courts: Court[];
@@ -47,20 +50,54 @@ interface ExploreClubsProps {
   isClubTypesLoading: boolean;
   isCourtsLoading: boolean;
   isClubStaffLoading: boolean;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClubType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtSurfaceType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtStructureType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClubTrainers: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleSubscribedClubs: (event: ChangeEvent<HTMLSelectElement>) => void;
+  textSearch: string;
+  locationId: number;
+  clubType: number;
+  courtSurfaceType: number;
+  courtStructureType: number;
+  clubTrainers: boolean;
+  subscribedClubs: boolean;
 }
 const ExploreClubs = (props: ExploreClubsProps) => {
   const {
     user,
     locations,
     clubTypes,
-    courts,
     clubStaff,
+    courtStructureTypes,
+    courtSurfaceTypes,
     isLocationsLoading,
     isClubTypesLoading,
     isCourtsLoading,
     isClubStaffLoading,
+    handleTextSearch,
+    handleLocation,
+    handleClubType,
+    handleCourtSurfaceType,
+    handleCourtStructureType,
+    handleClubTrainers,
+    handleSubscribedClubs,
+    textSearch,
+    locationId,
+    clubType,
+    courtSurfaceType,
+    courtStructureType,
+    clubTrainers,
+    subscribedClubs,
   } = props;
 
+  const navigate = useNavigate();
+
+  const navigatePaymentDetails = () => {
+    navigate(Paths.PROFILE);
+  };
   let isUserPlayer = false;
   let isUserTrainer = false;
 
@@ -68,10 +105,29 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isUserPlayer = user.user.user_type_id === 1;
     isUserTrainer = user.user.user_type_id === 2;
   }
+
+  const [filter, setFilter] = useState(false);
+  const toggleFilter = () => {
+    setFilter((curr) => !curr);
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: clubs, isLoading: isClubsLoading } =
-    useGetPaginatedClubsQuery(currentPage);
+  const {
+    data: clubs,
+    isLoading: isClubsLoading,
+    refetch: refetchClubs,
+  } = useGetPaginatedClubsQuery({
+    page: currentPage,
+    locationId: locationId,
+    textSearch: textSearch,
+    clubType: clubType,
+    courtSurfaceType: courtSurfaceType,
+    courtStructureType: courtStructureType,
+    clubTrainers: clubTrainers,
+    subscribedClubs: subscribedClubs,
+    currentUserId: user?.user?.user_id,
+  });
 
   const pageNumbers = [];
   for (let i = 1; i <= clubs?.totalPages; i++) {
@@ -79,7 +135,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   }
 
   const handleClubPage = (e) => {
-    setCurrentPage(e.target.value);
+    setCurrentPage(Number(e.target.value));
   };
 
   const handleNextPage = () => {
@@ -157,33 +213,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     setSelectedClubId(null);
   };
 
-  const {
-    data: clubSubscriptionPackages,
-    isLoading: isClubSubscriptionPackageLoading,
-  } = useGetClubSubscriptionPackagesQuery({});
-
-  const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
-    useGetClubSubscriptionsQuery({});
-
-  const {
-    data: mySubscriptions,
-    isLoading: isMySubscriptionsLoading,
-    refetch: refetchMySubscriptions,
-  } = useGetClubSubscriptionsByFilterQuery({
-    is_active: true,
-    player_id: user?.user?.user_id,
-  });
-
-  const isUserSubscribedToClub = (club_id: number) => {
-    const activeSubscription = mySubscriptions?.find(
-      (subscription) =>
-        subscription.club_id === club_id &&
-        subscription.player_id === user?.user?.user_id &&
-        subscription.is_active === true
-    );
-    return activeSubscription ? true : false;
-  };
-
   const isUserStaff = (club_id: number) => {
     const staffMember = clubStaff?.find(
       (staff) =>
@@ -196,12 +225,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     return staffMember ? staffMember.employment_status : null;
   };
 
-  const clubSubscribers = (club_id: number) => {
-    return clubSubscriptions?.filter(
-      (club) => club.club_id === club_id && club.is_active === true
-    );
-  };
-
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavourites();
@@ -211,38 +234,152 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   useEffect(() => {
     refetchMyFavourites();
-    refetchMySubscriptions();
   }, []);
 
+  useEffect(() => {
+    refetchClubs();
+  }, [
+    currentPage,
+    locationId,
+    textSearch,
+    clubType,
+    courtSurfaceType,
+    courtStructureType,
+    clubTrainers,
+    subscribedClubs,
+  ]);
   if (
     isClubsLoading ||
     isLocationsLoading ||
     isClubTypesLoading ||
     isCourtsLoading ||
-    isClubSubscriptionsLoading ||
-    isClubSubscriptionPackageLoading ||
     isClubStaffLoading ||
     isMyFavouriteClubsLoading ||
-    isCurrentPlayerLoading ||
-    isMySubscriptionsLoading
+    isCurrentPlayerLoading
   ) {
     return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
+          <FaFilter onClick={toggleFilter} className={styles.filter} />
+        </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
           />
+
           <FaAngleRight
             onClick={handleNextPage}
             className={styles["nav-arrow"]}
           />
         </div>
       </div>
+      {filter && (
+        <div className={styles["nav-filter-container"]}>
+          <div className={styles["search-container"]}>
+            <input
+              type="text"
+              onChange={handleTextSearch}
+              value={textSearch}
+              placeholder="Kulüp adı"
+            />
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleLocation}
+              value={locationId ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Konum --</option>
+              {locations?.map((location) => (
+                <option key={location.location_id} value={location.location_id}>
+                  {location.location_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleClubType}
+              value={clubType ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Kulüp Tipi --</option>
+              {clubTypes?.map((type) => (
+                <option key={type.club_type_id} value={type.club_type_id}>
+                  {type.club_type_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleCourtStructureType}
+              value={courtStructureType ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Mekan --</option>
+              {courtStructureTypes?.map((type) => (
+                <option
+                  key={type.court_structure_type_id}
+                  value={type.court_structure_type_id}
+                >
+                  {type.court_structure_type_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleCourtSurfaceType}
+              value={courtSurfaceType ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Zemin --</option>
+              {courtSurfaceTypes?.map((type) => (
+                <option
+                  key={type.court_surface_type_id}
+                  value={type.court_surface_type_id}
+                >
+                  {type.court_surface_type_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleClubTrainers}
+              value={clubTrainers ? "true" : "false"}
+              className="input-element"
+            >
+              <option key={1} value={"false"}>
+                Tüm Kulüpler
+              </option>
+              <option key={2} value={"true"}>
+                Yalnızca eğitmeni olan kulüpler
+              </option>
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleSubscribedClubs}
+              value={subscribedClubs ? "true" : "false"}
+              className="input-element"
+            >
+              <option key={1} value={"false"}>
+                -- Tüm Kulüpler --
+              </option>
+              <option key={2} value={"true"}>
+                Yalnızca üyeliğim olan kulüpler
+              </option>
+            </select>
+          </div>
+        </div>
+      )}
       {clubs?.clubs && clubs?.clubs.length === 0 && (
         <p>
           Aradığınız kritere göre kulüp bulunamadı. Lütfen filtreyi temizleyip
@@ -285,12 +422,15 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     <AiOutlineStar className={styles["add-fav-icon"]} />
                   )}
                 </td>
-
                 <td className={styles["vertical-center"]}>
                   <Link to={`${paths.EXPLORE_PROFILE}3/${club.user_id} `}>
                     <img
-                      src={club.image ? club.image : "/images/icons/avatar.png"}
-                      alt={"club-iamge"}
+                      src={
+                        club.clubImage
+                          ? club.clubImage
+                          : "/images/icons/avatar.jpg"
+                      }
+                      alt={"club-image"}
                       className={styles["club-image"]}
                     />
                   </Link>
@@ -303,60 +443,33 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     {`${club.club_name}`}
                   </Link>
                 </td>
-                <td>
-                  {
-                    clubTypes?.find(
-                      (type) => type.club_type_id === club.club_type_id
-                    )?.club_type_name
-                  }
-                </td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) => location.location_id === club.location_id
-                    )?.location_name
-                  }
-                </td>
-                <td>
-                  {
-                    courts?.filter((court) => court.club_id === club.club_id)
-                      ?.length
-                  }
-                </td>
-                <td>
-                  {
-                    clubStaff?.filter(
-                      (staff) =>
-                        staff.employment_status === "accepted" &&
-                        staff.club_id === club.club_id
-                    )?.length
-                  }
-                </td>
-                <td>{clubSubscribers(club.user_id)?.length}</td>
+                <td>{club?.club_type_name}</td>
+                <td>{club?.location_name}</td>
+                <td>{club?.courtquantity}</td>
+                <td>{club?.staffquantity}</td>
+                <td>{club?.memberquantity}</td>
                 {isUserPlayer && (
                   <td className={styles.status}>
-                    {clubSubscriptionPackages?.find(
-                      (subscriptionPackage) =>
-                        subscriptionPackage.club_id === club.user_id
-                    ) && isUserSubscribedToClub(club.user_id) === true ? (
+                    {club?.clubHasSubscriptionPackages &&
+                    club?.isPlayerSubscribed ? (
                       <p className={styles["subscribed-text"]}>Üyelik Var</p>
-                    ) : clubSubscriptionPackages?.find(
-                        (subscriptionPackage) =>
-                          subscriptionPackage.club_id === club.user_id
-                      ) ? (
+                    ) : club?.clubHasSubscriptionPackages &&
                       playerPaymentDetailsExist ? (
-                        <button
-                          onClick={() => handleOpenSubscribeModal(club.user_id)}
-                          disabled={!playerPaymentDetailsExist}
-                          className={styles["subscribe-button"]}
-                        >
-                          Üye Ol
-                        </button>
-                      ) : (
-                        <p className={styles["add-payment-details-text"]}>
-                          Üye olmak için ödeme bilgilerini ekle
-                        </p>
-                      )
+                      <button
+                        onClick={() => handleOpenSubscribeModal(club.user_id)}
+                        disabled={!playerPaymentDetailsExist}
+                        className={styles["subscribe-button"]}
+                      >
+                        Üye Ol
+                      </button>
+                    ) : club?.clubHasSubscriptionPackages &&
+                      !playerPaymentDetailsExist ? (
+                      <button
+                        onClick={navigatePaymentDetails}
+                        className={styles["payment-button"]}
+                      >
+                        Ödeme bilgilerini ekle
+                      </button>
                     ) : (
                       <p className={styles["no-subscription-text"]}>
                         Kulübün üyelik paketi yok
@@ -384,6 +497,9 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     )}
                   </td>
                 )}
+                <td>
+                  <SlOptions className={styles.icon} />
+                </td>
               </tr>
             ))}
           </tbody>

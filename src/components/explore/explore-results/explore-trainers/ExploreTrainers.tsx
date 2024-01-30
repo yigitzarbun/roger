@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { FaFilter } from "react-icons/fa6";
+import { SlOptions } from "react-icons/sl";
 
 import { Link } from "react-router-dom";
 
@@ -26,6 +28,7 @@ import {
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
+import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExploreTrainersProps {
   user: User;
@@ -37,6 +40,16 @@ interface ExploreTrainersProps {
   isTrainerExperienceTypesLoading: boolean;
   isClubStaffLoading: boolean;
   isClubsLoading: boolean;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTrainerExperience: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClubId: (event: ChangeEvent<HTMLSelectElement>) => void;
+  locationId: number;
+  textSearch: string;
+  gender: string;
+  trainerExperienceTypeId: number;
+  clubId: number;
 }
 const ExploreTrainers = (props: ExploreTrainersProps) => {
   const {
@@ -49,14 +62,34 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     isTrainerExperienceTypesLoading,
     isClubStaffLoading,
     isClubsLoading,
+    handleTextSearch,
+    handleLocation,
+    handleGender,
+    handleTrainerExperience,
+    handleClubId,
+    locationId,
+    textSearch,
+    gender,
+    trainerExperienceTypeId,
+    clubId,
   } = props;
 
-  let isUserPlayer = false;
+  const [opponentUserId, setOpponentUserId] = useState(null);
 
-  if (user) {
-    isUserPlayer = user?.user?.user_type_id === 1;
-  }
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
+  const handleOpenLessonModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsLessonModalOpen(true);
+  };
+  const handleCloseLessonModal = () => {
+    setIsLessonModalOpen(false);
+  };
+
+  const [filter, setFilter] = useState(false);
+  const toggleFilter = () => {
+    setFilter((curr) => !curr);
+  };
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -65,10 +98,11 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     refetch: refetchPaginatedTrainers,
   } = useGetPaginatedTrainersQuery({
     currentPage: currentPage,
-    trainerExperienceTypeId: null,
-    selectedGender: "",
-    locationId: null,
-    clubId: null,
+    trainerExperienceTypeId: trainerExperienceTypeId,
+    textSearch: textSearch,
+    selectedGender: gender,
+    locationId: locationId,
+    clubId: clubId,
     currentUserId: user?.user?.user_id,
   });
 
@@ -120,7 +154,14 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
 
   useEffect(() => {
     refetchPaginatedTrainers();
-  }, [currentPage]);
+  }, [
+    currentPage,
+    locationId,
+    textSearch,
+    gender,
+    trainerExperienceTypeId,
+    clubId,
+  ]);
 
   if (
     isLocationsLoading ||
@@ -136,7 +177,10 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+          <FaFilter onClick={toggleFilter} className={styles.filter} />
+        </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}
@@ -149,12 +193,81 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           />
         </div>
       </div>
+      {filter && (
+        <div className={styles["nav-filter-container"]}>
+          <div className={styles["search-container"]}>
+            <input
+              type="text"
+              onChange={handleTextSearch}
+              value={textSearch}
+              placeholder="Oyuncu adı"
+            />
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleTrainerExperience}
+              value={trainerExperienceTypeId ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Seviye --</option>
+              {trainerExperienceTypes?.map((player_level) => (
+                <option
+                  key={player_level.trainer_experience_type_id}
+                  value={player_level.trainer_experience_type_id}
+                >
+                  {player_level.trainer_experience_type_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleGender}
+              value={gender}
+              className="input-element"
+            >
+              <option value="">-- Cinsiyet --</option>
+              <option value="female">Kadın</option>
+              <option value="male">Erkek</option>
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleLocation}
+              value={locationId ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Tüm Konumlar --</option>
+              {locations?.map((location) => (
+                <option key={location.location_id} value={location.location_id}>
+                  {location.location_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={styles["input-container"]}>
+            <select
+              onChange={handleClubId}
+              value={clubId ?? ""}
+              className="input-element"
+            >
+              <option value="">-- Tüm Kulüpler --</option>
+              {clubs?.map((club) => (
+                <option key={club.club_id} value={club.club_id}>
+                  {club.club_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
       {paginatedTrainers?.trainers?.length === 0 && (
         <p>
           Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
           tekrar deneyin.
         </p>
       )}
+
       {paginatedTrainers?.trainers?.length > 0 && (
         <table>
           <thead>
@@ -244,23 +357,18 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     ).location_name
                   }
                 </td>
-                {isUserPlayer && (
-                  <td>
-                    <Link
-                      to={paths.LESSON_INVITE}
-                      state={{
-                        fname: trainer.fname,
-                        lname: trainer.lname,
-                        image: trainer.image,
-                        court_price: "",
-                        user_id: trainer.user_id,
-                      }}
-                      className={styles["lesson-button"]}
-                    >
-                      Derse davet et
-                    </Link>
-                  </td>
-                )}
+
+                <td>
+                  <button
+                    onClick={() => handleOpenLessonModal(trainer?.user_id)}
+                    className={styles["lesson-button"]}
+                  >
+                    Ders al
+                  </button>
+                </td>
+                <td>
+                  <SlOptions className={styles.icon} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -282,6 +390,13 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           </button>
         ))}
       </div>
+      {isLessonModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isLessonModalOpen}
+          handleCloseInviteModal={handleCloseLessonModal}
+        />
+      )}
     </div>
   );
 };

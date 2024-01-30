@@ -35,21 +35,35 @@ const trainersModel = {
       .where((builder) => {
         if (filter.trainerExperienceTypeId > 0) {
           builder.where(
-            "trainer_experience_type_id",
+            "trainers.trainer_experience_type_id",
             filter.trainerExperienceTypeId
           );
         }
         if (filter.selectedGender !== "") {
-          builder.where("gender", filter.selectedGender);
+          builder.where("trainers.gender", filter.selectedGender);
         }
         if (filter.locationId > 0) {
           builder.where("trainers.location_id", filter.locationId);
         }
         if (filter.club_id > 0) {
-          builder.where("club_id", filter.clubId);
+          builder.where("trainers.club_id", filter.clubId);
         }
         if (filter.currentUserId) {
           builder.where("trainers.user_id", "!=", filter.currentUserId);
+        }
+        if (filter.textSearch && filter.textSearch !== "") {
+          builder
+            .where("trainers.fname", "ilike", `%${filter.textSearch}%`)
+            .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
+        }
+        if (filter.clubId > 0) {
+          builder.whereExists(function () {
+            this.select("*")
+              .from("club_staff")
+              .whereRaw('"club_staff"."user_id" = "trainers"."user_id"')
+              .andWhere("club_staff.club_id", "=", filter.clubId)
+              .andWhere("club_staff.employment_status", "=", "accepted");
+          });
         }
       });
 
@@ -62,21 +76,35 @@ const trainersModel = {
       .where((builder) => {
         if (filter.trainerExperienceTypeId > 0) {
           builder.where(
-            "trainer_experience_type_id",
+            "trainers.trainer_experience_type_id",
             filter.trainerExperienceTypeId
           );
         }
         if (filter.selectedGender !== "") {
-          builder.where("gender", filter.selectedGender);
+          builder.where("trainers.gender", filter.selectedGender);
         }
         if (filter.locationId > 0) {
           builder.where("trainers.location_id", filter.locationId);
         }
         if (filter.club_id > 0) {
-          builder.where("club_id", filter.clubId);
+          builder.where("trainers.club_id", filter.clubId);
         }
         if (filter.currentUserId) {
           builder.where("trainers.user_id", "!=", filter.currentUserId);
+        }
+        if (filter.textSearch && filter.textSearch !== "") {
+          builder
+            .where("trainers.fname", "ilike", `%${filter.textSearch}%`)
+            .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
+        }
+        if (filter.clubId > 0) {
+          builder.whereExists(function () {
+            this.select("*")
+              .from("club_staff")
+              .whereRaw('"club_staff"."user_id" = "trainers"."user_id"')
+              .andWhere("club_staff.club_id", "=", filter.clubId)
+              .andWhere("club_staff.employment_status", "=", "accepted");
+          });
         }
       })
       .count("trainers.trainer_id as total")

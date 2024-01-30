@@ -33,7 +33,8 @@ export const clubsSlice = createApi({
       query: () => "/clubs",
     }),
     getPaginatedClubs: builder.query({
-      query: (page) => `clubs/paginated/${page}`,
+      query: (filter) =>
+        `clubs/paginated?page=${filter.page}&locationId=${filter.locationId}&textSearch=${filter.textSearch}&clubType=${filter.clubType}&courtSurfaceType=${filter.courtSurfaceType}&courtStructureType=${filter.courtStructureType}&clubTrainers=${filter.clubTrainers}&subscribedClubs=${filter.subscribedClubs}&currentUserId=${filter.currentUserId}`,
     }),
     getClubByClubId: builder.query({
       query: (club_id) => `/clubs/club/${club_id}`,

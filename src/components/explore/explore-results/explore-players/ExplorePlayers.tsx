@@ -35,11 +35,9 @@ import MatchInviteFormModal from "../../../../components/invite/match/form/Match
 
 interface ExplorePlayersProps {
   user: User;
-  players: Player[];
   locations: Location[];
   playerLevels: PlayerLevel[];
   isLocationsLoading: boolean;
-  isPlayersLoading: boolean;
   isPlayerLevelsLoading: boolean;
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -304,7 +302,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id} `}>
                     <img
                       src={
-                        player.image ? player.image : "/images/icons/avatar.png"
+                        player.image ? player.image : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
                     />
@@ -387,16 +385,20 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           </button>
         ))}
       </div>
-      <TrainingInviteFormModal
-        opponentUserId={opponentUserId}
-        isInviteModalOpen={isTrainingModalOpen}
-        handleCloseInviteModal={handleCloseTrainingModal}
-      />
-      <MatchInviteFormModal
-        opponentUserId={opponentUserId}
-        isInviteModalOpen={isMatchModalOpen}
-        handleCloseInviteModal={handleCloseMatchModal}
-      />
+      {isTrainingModalOpen && (
+        <TrainingInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isTrainingModalOpen}
+          handleCloseInviteModal={handleCloseTrainingModal}
+        />
+      )}
+      {isMatchModalOpen && (
+        <MatchInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isMatchModalOpen}
+          handleCloseInviteModal={handleCloseMatchModal}
+        />
+      )}
     </div>
   );
 };

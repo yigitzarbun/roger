@@ -16,11 +16,11 @@ courtsRouter.get(
   }
 );
 courtsRouter.get(
-  "/paginated/:page",
+  "/paginated",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { page } = req.params;
-      const courts = await courtsModel.getPaginated(Number(page));
+      const filter = req.query;
+      const courts = await courtsModel.getPaginated(filter);
       res.status(200).json(courts);
     } catch (error) {
       next(error);
