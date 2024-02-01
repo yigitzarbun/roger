@@ -76,6 +76,21 @@ const Explore = () => {
 
   const [subscribedClubs, setSubscribedClubs] = useState<boolean | null>(false);
 
+  const handleClear = () => {
+    setTextSearch("");
+    setPlayerLevelId(null);
+    setClubId(null);
+    setTrainerExperienceTypeId(null);
+    setGender("");
+    setLocationId(null);
+    setClubType(null);
+    setCourtSurfaceType(null);
+    setCourtStructureType(null);
+    setFavourite(false);
+    setClubTrainers(false);
+
+    setSubscribedClubs(false);
+  };
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
@@ -146,6 +161,7 @@ const Explore = () => {
           handleTextSearch={handleTextSearch}
           handleGender={handleGender}
           handleLocation={handleLocation}
+          handleClear={handleClear}
           playerLevelId={playerLevelId}
           textSearch={textSearch}
           gender={gender}
@@ -173,6 +189,7 @@ const Explore = () => {
           handleTrainerExperience={handleTrainerExperience}
           clubId={clubId}
           handleClubId={handleClubId}
+          handleClear={handleClear}
         />
       )}
       {display === "clubs" && (
@@ -204,6 +221,7 @@ const Explore = () => {
           courtStructureType={courtStructureType}
           clubTrainers={clubTrainers}
           subscribedClubs={subscribedClubs}
+          handleClear={handleClear}
         />
       )}
       {display === "courts" && (
@@ -225,6 +243,7 @@ const Explore = () => {
           courtStructureType={courtStructureType}
           handleCourtSurfaceType={handleCourtSurfaceType}
           handleCourtStructureType={handleCourtStructureType}
+          handleClear={handleClear}
         />
       )}
     </div>

@@ -14,12 +14,10 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import { User } from "../../../../store/slices/authSlice";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
-import {
-  Court,
-  useGetPaginatedCourtsQuery,
-} from "../../../../api/endpoints/CourtsApi";
+import { useGetPaginatedCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
+import ExploreCourtsFilterModal from "./explore-courts-filter/ExploreCourtsFilterModal";
 
 interface ExploreCourtsProps {
   user: User;
@@ -39,6 +37,7 @@ interface ExploreCourtsProps {
   courtStructureType: number;
   handleCourtSurfaceType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtStructureType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
 }
 const ExploreCourts = (props: ExploreCourtsProps) => {
   const {
@@ -59,6 +58,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     courtStructureType,
     handleCourtSurfaceType,
     handleCourtStructureType,
+    handleClear,
   } = props;
 
   let isUserPlayer = false;
@@ -71,9 +71,12 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     isUserClub = user?.user?.user_type_id === 3;
   }
 
-  const [filter, setFilter] = useState(false);
-  const toggleFilter = () => {
-    setFilter((curr) => !curr);
+  const [isCourtFilterModalOpen, setIsCourtFilterModalOpen] = useState(false);
+  const handleOpenCourtFilterModal = () => {
+    setIsCourtFilterModalOpen(true);
+  };
+  const handleCloseCourtFilterModal = () => {
+    setIsCourtFilterModalOpen(false);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -128,7 +131,10 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
-          <FaFilter onClick={toggleFilter} className={styles.filter} />
+          <FaFilter
+            onClick={handleOpenCourtFilterModal}
+            className={styles.filter}
+          />
         </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
@@ -142,72 +148,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           />
         </div>
       </div>
-      {filter && (
-        <div className={styles["nav-filter-container"]}>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleLocation}
-              value={locationId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Konum --</option>
-              {locations?.map((location) => (
-                <option key={location.location_id} value={location.location_id}>
-                  {location.location_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleCourtStructureType}
-              value={courtStructureType ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Mekan --</option>
-              {courtStructureTypes?.map((type) => (
-                <option
-                  key={type.court_structure_type_id}
-                  value={type.court_structure_type_id}
-                >
-                  {type.court_structure_type_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleCourtSurfaceType}
-              value={courtSurfaceType ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Zemin --</option>
-              {courtSurfaceTypes?.map((type) => (
-                <option
-                  key={type.court_surface_type_id}
-                  value={type.court_surface_type_id}
-                >
-                  {type.court_surface_type_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleClubId}
-              value={clubId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Tüm Kulüpler --</option>
-              {clubs?.map((club) => (
-                <option key={club.club_id} value={club.club_id}>
-                  {club.club_name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
+
       {courts && courts?.courts?.length === 0 && (
         <p>
           Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
@@ -300,6 +241,23 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           </button>
         ))}
       </div>
+      <ExploreCourtsFilterModal
+        locations={locations}
+        courtStructureTypes={courtStructureTypes}
+        courtSurfaceTypes={courtSurfaceTypes}
+        handleLocation={handleLocation}
+        handleCourtSurfaceType={handleCourtSurfaceType}
+        handleCourtStructureType={handleCourtStructureType}
+        handleClear={handleClear}
+        locationId={locationId}
+        courtSurfaceType={courtSurfaceType}
+        courtStructureType={courtStructureType}
+        clubId={clubId}
+        handleClubId={handleClubId}
+        clubs={clubs}
+        isCourtFilterModalOpen={isCourtFilterModalOpen}
+        handleCloseCourtFilterModal={handleCloseCourtFilterModal}
+      />
     </div>
   );
 };

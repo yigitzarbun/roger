@@ -35,6 +35,7 @@ import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions
 import Paths from "../../../../routing/Paths";
 import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
+import ExploreClubsFilterModal from "./explore-clubs-filter/ExploreClubsFilterModal";
 
 interface ExploreClubsProps {
   user: User;
@@ -57,6 +58,7 @@ interface ExploreClubsProps {
   handleCourtStructureType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClubTrainers: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleSubscribedClubs: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
   textSearch: string;
   locationId: number;
   clubType: number;
@@ -84,6 +86,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     handleCourtStructureType,
     handleClubTrainers,
     handleSubscribedClubs,
+    handleClear,
     textSearch,
     locationId,
     clubType,
@@ -106,11 +109,13 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isUserTrainer = user.user.user_type_id === 2;
   }
 
-  const [filter, setFilter] = useState(false);
-  const toggleFilter = () => {
-    setFilter((curr) => !curr);
+  const [isClubFilterModalOpen, setIsClubFilterModalOpen] = useState(false);
+  const handleOpenClubFilterModal = () => {
+    setIsClubFilterModalOpen(true);
   };
-
+  const handleCloseclubFilterModal = () => {
+    setIsClubFilterModalOpen(false);
+  };
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -264,7 +269,10 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
-          <FaFilter onClick={toggleFilter} className={styles.filter} />
+          <FaFilter
+            onClick={handleOpenClubFilterModal}
+            className={styles.filter}
+          />
         </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
@@ -278,108 +286,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           />
         </div>
       </div>
-      {filter && (
-        <div className={styles["nav-filter-container"]}>
-          <div className={styles["search-container"]}>
-            <input
-              type="text"
-              onChange={handleTextSearch}
-              value={textSearch}
-              placeholder="Kulüp adı"
-            />
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleLocation}
-              value={locationId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Konum --</option>
-              {locations?.map((location) => (
-                <option key={location.location_id} value={location.location_id}>
-                  {location.location_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleClubType}
-              value={clubType ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Kulüp Tipi --</option>
-              {clubTypes?.map((type) => (
-                <option key={type.club_type_id} value={type.club_type_id}>
-                  {type.club_type_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleCourtStructureType}
-              value={courtStructureType ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Mekan --</option>
-              {courtStructureTypes?.map((type) => (
-                <option
-                  key={type.court_structure_type_id}
-                  value={type.court_structure_type_id}
-                >
-                  {type.court_structure_type_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleCourtSurfaceType}
-              value={courtSurfaceType ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Zemin --</option>
-              {courtSurfaceTypes?.map((type) => (
-                <option
-                  key={type.court_surface_type_id}
-                  value={type.court_surface_type_id}
-                >
-                  {type.court_surface_type_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleClubTrainers}
-              value={clubTrainers ? "true" : "false"}
-              className="input-element"
-            >
-              <option key={1} value={"false"}>
-                Tüm Kulüpler
-              </option>
-              <option key={2} value={"true"}>
-                Yalnızca eğitmeni olan kulüpler
-              </option>
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleSubscribedClubs}
-              value={subscribedClubs ? "true" : "false"}
-              className="input-element"
-            >
-              <option key={1} value={"false"}>
-                -- Tüm Kulüpler --
-              </option>
-              <option key={2} value={"true"}>
-                Yalnızca üyeliğim olan kulüpler
-              </option>
-            </select>
-          </div>
-        </div>
-      )}
       {clubs?.clubs && clubs?.clubs.length === 0 && (
         <p>
           Aradığınız kritere göre kulüp bulunamadı. Lütfen filtreyi temizleyip
@@ -533,6 +439,31 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           employmentModalOpen={employmentModalOpen}
           closeEmploymentModal={closeEmploymentModal}
           trainerEmploymentClubId={trainerEmploymentClubId}
+        />
+      )}
+      {isClubFilterModalOpen && (
+        <ExploreClubsFilterModal
+          isClubFilterModalOpen={isClubFilterModalOpen}
+          handleCloseclubFilterModal={handleCloseclubFilterModal}
+          locations={locations}
+          clubTypes={clubTypes}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          handleTextSearch={handleTextSearch}
+          handleLocation={handleLocation}
+          handleClubType={handleClubType}
+          handleCourtSurfaceType={handleCourtSurfaceType}
+          handleCourtStructureType={handleCourtStructureType}
+          handleClubTrainers={handleClubTrainers}
+          handleSubscribedClubs={handleSubscribedClubs}
+          handleClear={handleClear}
+          textSearch={textSearch}
+          locationId={locationId}
+          clubType={clubType}
+          courtSurfaceType={courtSurfaceType}
+          courtStructureType={courtStructureType}
+          clubTrainers={clubTrainers}
+          subscribedClubs={subscribedClubs}
         />
       )}
     </div>

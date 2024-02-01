@@ -25,13 +25,13 @@ import {
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
 import {
-  Player,
   useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
 } from "../../../../api/endpoints/PlayersApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 import TrainingInviteFormModal from "../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../components/invite/match/form/MatchInviteFormModal";
+import ExplorePlayersFilterModal from "./explore-players-filter/ExplorePlayersFilterModal";
 
 interface ExplorePlayersProps {
   user: User;
@@ -43,6 +43,7 @@ interface ExplorePlayersProps {
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
   playerLevelId: number;
   textSearch: string;
   gender: string;
@@ -59,6 +60,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     handleTextSearch,
     handleGender,
     handleLocation,
+    handleClear,
     playerLevelId,
     textSearch,
     gender,
@@ -73,10 +75,14 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     isUserTrainer = user?.user?.user_type_id === 2;
   }
 
-  const [filter, setFilter] = useState(false);
-  const toggleFilter = () => {
-    setFilter((curr) => !curr);
+  const [isPlayerFilterModalOpen, setIsPlayerFilterModalOpen] = useState(false);
+  const handleOpenPlayerFilterModal = () => {
+    setIsPlayerFilterModalOpen(true);
   };
+  const handleClosePlayerFilterModal = () => {
+    setIsPlayerFilterModalOpen(false);
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -180,7 +186,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
-          <FaFilter onClick={toggleFilter} className={styles.filter} />
+          <FaFilter
+            onClick={handleOpenPlayerFilterModal}
+            className={styles.filter}
+          />
         </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
@@ -194,62 +203,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           />
         </div>
       </div>
-
-      {filter && (
-        <div className={styles["nav-filter-container"]}>
-          <div className={styles["search-container"]}>
-            <input
-              type="text"
-              onChange={handleTextSearch}
-              value={textSearch}
-              placeholder="Oyuncu adı"
-            />
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleLevel}
-              value={playerLevelId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Seviye --</option>
-              {playerLevels?.map((player_level) => (
-                <option
-                  key={player_level.player_level_id}
-                  value={player_level.player_level_id}
-                >
-                  {player_level.player_level_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleGender}
-              value={gender}
-              className="input-element"
-            >
-              <option value="">-- Cinsiyet --</option>
-              <option value="female">Kadın</option>
-              <option value="male">Erkek</option>
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleLocation}
-              value={locationId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Tüm Konumlar --</option>
-              {locations?.map((location) => (
-                <option key={location.location_id} value={location.location_id}>
-                  {location.location_name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
-
       {paginatedPlayers?.players?.length > 0 ? (
         <table>
           <thead>
@@ -397,6 +350,23 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isMatchModalOpen}
           handleCloseInviteModal={handleCloseMatchModal}
+        />
+      )}
+      {isPlayerFilterModalOpen && (
+        <ExplorePlayersFilterModal
+          isPlayerFilterModalOpen={isPlayerFilterModalOpen}
+          handleClosePlayerFilterModal={handleClosePlayerFilterModal}
+          locations={locations}
+          handleLocation={handleLocation}
+          handleClear={handleClear}
+          locationId={locationId}
+          handleTextSearch={handleTextSearch}
+          textSearch={textSearch}
+          handleLevel={handleLevel}
+          playerLevelId={playerLevelId}
+          playerLevels={playerLevels}
+          handleGender={handleGender}
+          gender={gender}
         />
       )}
     </div>

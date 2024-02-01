@@ -29,6 +29,7 @@ import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
+import ExploreTrainersFilterModal from "./explore-trainers-filter/ExploreTrainersFilterModal";
 
 interface ExploreTrainersProps {
   user: User;
@@ -45,6 +46,7 @@ interface ExploreTrainersProps {
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTrainerExperience: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClubId: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
   locationId: number;
   textSearch: string;
   gender: string;
@@ -67,6 +69,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     handleGender,
     handleTrainerExperience,
     handleClubId,
+    handleClear,
     locationId,
     textSearch,
     gender,
@@ -86,10 +89,15 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     setIsLessonModalOpen(false);
   };
 
-  const [filter, setFilter] = useState(false);
-  const toggleFilter = () => {
-    setFilter((curr) => !curr);
+  const [isTrainerFilterModalOpen, setIsTrainerFilterModalOpen] =
+    useState(false);
+  const handleOpenTrainerFilterModal = () => {
+    setIsTrainerFilterModalOpen(true);
   };
+  const handleCloseTrainerFilterModal = () => {
+    setIsTrainerFilterModalOpen(false);
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -179,7 +187,10 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
-          <FaFilter onClick={toggleFilter} className={styles.filter} />
+          <FaFilter
+            onClick={handleOpenTrainerFilterModal}
+            className={styles.filter}
+          />
         </div>
         <div className={styles["navigation-container"]}>
           <FaAngleLeft
@@ -193,74 +204,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           />
         </div>
       </div>
-      {filter && (
-        <div className={styles["nav-filter-container"]}>
-          <div className={styles["search-container"]}>
-            <input
-              type="text"
-              onChange={handleTextSearch}
-              value={textSearch}
-              placeholder="Oyuncu adı"
-            />
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleTrainerExperience}
-              value={trainerExperienceTypeId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Seviye --</option>
-              {trainerExperienceTypes?.map((player_level) => (
-                <option
-                  key={player_level.trainer_experience_type_id}
-                  value={player_level.trainer_experience_type_id}
-                >
-                  {player_level.trainer_experience_type_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleGender}
-              value={gender}
-              className="input-element"
-            >
-              <option value="">-- Cinsiyet --</option>
-              <option value="female">Kadın</option>
-              <option value="male">Erkek</option>
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleLocation}
-              value={locationId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Tüm Konumlar --</option>
-              {locations?.map((location) => (
-                <option key={location.location_id} value={location.location_id}>
-                  {location.location_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles["input-container"]}>
-            <select
-              onChange={handleClubId}
-              value={clubId ?? ""}
-              className="input-element"
-            >
-              <option value="">-- Tüm Kulüpler --</option>
-              {clubs?.map((club) => (
-                <option key={club.club_id} value={club.club_id}>
-                  {club.club_name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
+
       {paginatedTrainers?.trainers?.length === 0 && (
         <p>
           Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
@@ -395,6 +339,26 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isLessonModalOpen}
           handleCloseInviteModal={handleCloseLessonModal}
+        />
+      )}
+      {isTrainerFilterModalOpen && (
+        <ExploreTrainersFilterModal
+          isTrainerFilterModalOpen={isTrainerFilterModalOpen}
+          handleCloseTrainerFilterModal={handleCloseTrainerFilterModal}
+          locations={locations}
+          handleLocation={handleLocation}
+          handleClear={handleClear}
+          locationId={locationId}
+          handleTextSearch={handleTextSearch}
+          textSearch={textSearch}
+          handleTrainerExperience={handleTrainerExperience}
+          trainerExperienceTypeId={trainerExperienceTypeId}
+          trainerExperienceTypes={trainerExperienceTypes}
+          handleGender={handleGender}
+          gender={gender}
+          handleClubId={handleClubId}
+          clubId={clubId}
+          clubs={clubs}
         />
       )}
     </div>
