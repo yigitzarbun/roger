@@ -18,25 +18,20 @@ import {
 } from "../../../api/endpoints/StudentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
+import LessonInviteFormModal from "../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface TrainSearchProps {
   trainerLevelId: number;
-  trainerPrice: number;
   gender: string;
   locationId: number;
   clubId: number;
   favourite: boolean;
+  textSearch: string;
 }
 
 const LessonResults = (props: TrainSearchProps) => {
-  const {
-    trainerLevelId,
-    trainerPrice,
-    gender,
-    locationId,
-    clubId,
-    favourite,
-  } = props;
+  const { trainerLevelId, gender, locationId, clubId, favourite, textSearch } =
+    props;
   const user = useAppSelector((store) => store?.user?.user);
 
   const {
@@ -104,7 +99,6 @@ const LessonResults = (props: TrainSearchProps) => {
   const selectedGenderValue = gender ?? "";
   const locationIdValue = Number(locationId) ?? null;
   const clubIdValue = Number(clubId) ?? null;
-  const trainerPriceValue = Number(trainerPrice) ?? null;
 
   const {
     data: trainers,
@@ -117,7 +111,18 @@ const LessonResults = (props: TrainSearchProps) => {
     locationId: locationIdValue,
     clubId: clubIdValue,
     currentUserId: user?.user?.user_id,
+    textSearch: textSearch,
   });
+
+  const [opponentUserId, setOpponentUserId] = useState(null);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const handleOpenInviteModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsInviteModalOpen(true);
+  };
+  const handleCloseInviteModal = () => {
+    setIsInviteModalOpen(false);
+  };
 
   const pageNumbers = [];
   for (let i = 1; i <= trainers?.totalPages; i++) {
@@ -142,16 +147,14 @@ const LessonResults = (props: TrainSearchProps) => {
   const filteredTrainers = trainers?.trainers
     ?.filter((trainer) => trainer.user_id !== user.user.user_id)
     .filter((trainer) => {
-      if (trainerPriceValue === 0 && favourite !== true) {
+      if (favourite !== true) {
         return trainer;
       } else if (
-        (trainerPriceValue >= trainer.price_hour ||
-          trainerPriceValue === 100) &&
-        ((favourite === true &&
+        (favourite === true &&
           myFavourites.find(
             (favourite) => favourite.favouritee_id === trainer.user_id
           )) ||
-          favourite !== true)
+        favourite !== true
       ) {
         return trainer;
       }
@@ -175,6 +178,7 @@ const LessonResults = (props: TrainSearchProps) => {
     locationIdValue,
     clubIdValue,
     currentPage,
+    textSearch,
   ]);
 
   if (isFavouritesLoading || isPlayerStudentshipsLoading) {
@@ -183,9 +187,9 @@ const LessonResults = (props: TrainSearchProps) => {
 
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Ders</h2>
-        <div className={styles["navigation-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Ders</h2>
+        <div className={styles["nav-container"]}>
           <FaAngleLeft
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
@@ -215,12 +219,14 @@ const LessonResults = (props: TrainSearchProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
-              <th>Fiyat (saat / TL)</th>
+              <th>Fiyat (saat)</th>
+              <th>Ders</th>
+              <th>Öğrencilik</th>
             </tr>
           </thead>
           <tbody>
             {filteredTrainers.map((trainer) => (
-              <tr key={trainer.trainer_id}>
+              <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id}`}>
                     <img
@@ -249,22 +255,14 @@ const LessonResults = (props: TrainSearchProps) => {
                 <td>{trainer.gender}</td>
                 <td>{getAge(trainer.birth_year)}</td>
                 <td>{trainer?.location_name}</td>
-                <td>{parseFloat(trainer.price_hour).toFixed(2)}</td>
+                <td>{parseFloat(trainer.price_hour).toFixed(2)} TL</td>
                 <td>
-                  <Link
-                    to={paths.LESSON_INVITE}
-                    state={{
-                      fname: trainer.fname,
-                      lname: trainer.lname,
-                      image: trainer.image,
-                      court_price: "",
-                      user_id: trainer.user_id,
-                    }}
+                  <button
+                    onClick={() => handleOpenInviteModal(trainer?.user_id)}
+                    className={styles["lesson-button"]}
                   >
-                    <button className={styles["lesson-button"]}>
-                      Davet gönder
-                    </button>
-                  </Link>
+                    Ders al
+                  </button>
                 </td>
                 <td>
                   {playerStudentships?.find(
@@ -273,7 +271,7 @@ const LessonResults = (props: TrainSearchProps) => {
                       student.student_status === "pending"
                   ) ? (
                     <p className={styles["pending-confirmation-text"]}>
-                      Öğrencilik için eğitmen onayı bekleniyor
+                      Onayı bekleniyor
                     </p>
                   ) : playerStudentships?.find(
                       (student) =>
@@ -316,6 +314,11 @@ const LessonResults = (props: TrainSearchProps) => {
           </button>
         ))}
       </div>
+      <LessonInviteFormModal
+        opponentUserId={opponentUserId}
+        isInviteModalOpen={isInviteModalOpen}
+        handleCloseInviteModal={handleCloseInviteModal}
+      />
     </div>
   );
 };

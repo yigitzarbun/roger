@@ -21,6 +21,12 @@ export const clubSubscriptionPackagesSlice = createApi({
       query: (filter) =>
         `/club-subscription-packages/filter?${new URLSearchParams(filter)}`,
     }),
+    getClubSubscriptionPackageDetails: builder.query({
+      query: (filter) =>
+        `/club-subscription-packages/club-subscription-package-details/filter?${new URLSearchParams(
+          filter
+        )}`,
+    }),
     addClubSubscriptionPackage: builder.mutation({
       query: (club) => ({
         url: "/club-subscription-packages",
@@ -43,4 +49,5 @@ export const {
   useGetClubSubscriptionPackagesByFilterQuery,
   useAddClubSubscriptionPackageMutation,
   useUpdateClubSubscriptionPackageMutation,
+  useGetClubSubscriptionPackageDetailsQuery,
 } = clubSubscriptionPackagesSlice;

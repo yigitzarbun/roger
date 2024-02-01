@@ -10,34 +10,32 @@ import PageLoading from "../../../components/loading/PageLoading";
 interface TrainSearchProps {
   handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handlePrice: (event: ChangeEvent<HTMLInputElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleFavourite: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleClear: () => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleFavourite: (event: ChangeEvent<HTMLSelectElement>) => void;
   trainerLevelId: number;
-  trainerPrice: number;
   gender: string;
   locationId: number;
   clubId: number;
-  favourite: boolean;
+  textSearch: string;
+  favourite: boolean | null;
 }
 
 const LessonSearch = (props: TrainSearchProps) => {
   const {
     handleLevel,
     handleGender,
-    handlePrice,
     handleLocation,
     handleClub,
     handleFavourite,
-    handleClear,
+    handleTextSearch,
     trainerLevelId,
-    trainerPrice,
     gender,
     locationId,
     clubId,
     favourite,
+    textSearch,
   } = props;
 
   const { data: locations, isLoading: isLocationsLoading } =
@@ -56,8 +54,20 @@ const LessonSearch = (props: TrainSearchProps) => {
 
   return (
     <div className={styles["lesson-page-container"]}>
+      <div className={styles["search-container"]}>
+        <input
+          type="text"
+          onChange={handleTextSearch}
+          value={textSearch}
+          placeholder="Eğitmen adı"
+        />
+      </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleLevel} value={trainerLevelId ?? ""}>
+        <select
+          onChange={handleLevel}
+          value={trainerLevelId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Seviye --</option>
           {trainerExperienceTypes?.map((trainer_experience_type) => (
             <option
@@ -70,14 +80,22 @@ const LessonSearch = (props: TrainSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleGender} value={gender}>
+        <select
+          onChange={handleGender}
+          value={gender}
+          className="input-element"
+        >
           <option value="">-- Cinsiyet --</option>
           <option value="female">Kadın</option>
           <option value="male">Erkek</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleLocation} value={locationId ?? ""}>
+        <select
+          onChange={handleLocation}
+          value={locationId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Konum --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
@@ -87,7 +105,11 @@ const LessonSearch = (props: TrainSearchProps) => {
         </select>
       </div>
       <div className={styles["input-container"]}>
-        <select onChange={handleClub} value={clubId ?? ""}>
+        <select
+          onChange={handleClub}
+          value={clubId ?? ""}
+          className="input-element"
+        >
           <option value="">-- Kulüp --</option>
           {clubs?.map((club) => (
             <option key={club.club_id} value={club.club_id}>
@@ -96,30 +118,20 @@ const LessonSearch = (props: TrainSearchProps) => {
           ))}
         </select>
       </div>
-      <div className={styles["price-input"]}>
-        <label> {`Fiyat:  ${trainerPrice} TL`}</label>
-        <input
-          type="range"
-          id="trainerPrice"
-          name="trainerPrice"
-          min="0"
-          max="750"
-          defaultValue={100}
-          onChange={handlePrice}
-        />
-      </div>
       <div className={styles["input-container"]}>
-        <label>Favori</label>
-        <input
-          type="checkbox"
-          checked={favourite || false}
+        <select
           onChange={handleFavourite}
+          value={favourite ? "true" : "false"}
           className="input-element"
-        />
+        >
+          <option key={1} value={"false"}>
+            -- Tüm Eğitmenler --
+          </option>
+          <option key={2} value={"true"}>
+            Favoriler
+          </option>
+        </select>
       </div>
-      <button onClick={handleClear} className={styles["button"]}>
-        Temizle
-      </button>
     </div>
   );
 };

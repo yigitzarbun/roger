@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import Modal from "react-modal";
+import { Toast } from "react-toastify/dist/components";
 
-import { FaWindowClose } from "react-icons/fa";
+import ReactModal from "react-modal";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -12,19 +12,15 @@ import { useAppSelector } from "../../../store/hooks";
 
 import { today } from "../../../common/util/TimeFunctions";
 
-import {
-  useAddClubSubscriptionMutation,
-  useGetClubSubscriptionsByFilterQuery,
-  useGetClubSubscriptionsQuery,
-} from "../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
-import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
+import { useAddClubSubscriptionMutation } from "../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubSubscriptionPackageDetailsQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetPlayerByUserIdQuery } from "../../../api/endpoints/PlayersApi";
 import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../api/endpoints/PaymentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
+import { toast } from "react-toastify";
 
 interface SubscribeToClubModalProps {
   openSubscribeModal: boolean;
@@ -47,6 +43,13 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   const user = useAppSelector((store) => store?.user?.user);
 
+  const {
+    data: selectedClubPackageDetails,
+    isLoading: isSelectedClubPackageDetailsLoading,
+  } = useGetClubSubscriptionPackageDetailsQuery({
+    clubId: selectedClubId,
+  });
+
   const [addSubscription, { isSuccess: isSubscriptionSuccess }] =
     useAddClubSubscriptionMutation({});
 
@@ -55,30 +58,6 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   const { isLoading: isPaymentsLoading, refetch: refetchPayments } =
     useGetPaymentsQuery({});
-
-  const {
-    isLoading: isClubSubscriptionsLoading,
-    refetch: refetchSubscriptions,
-  } = useGetClubSubscriptionsQuery({});
-
-  const { refetch: refetchMySubscriptions } =
-    useGetClubSubscriptionsByFilterQuery({
-      is_active: true,
-      player_id: user?.user?.user_id,
-    });
-
-  const {
-    data: selectedClubPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesByFilterQuery({
-    club_id: selectedClubId,
-    is_active: true,
-  });
-
-  const {
-    data: clubSubscriptionTypes,
-    isLoading: isClubSubscriptionTypesLoading,
-  } = useGetClubSubscriptionTypesQuery({});
 
   const [selectedClubPackage, setSelectedClubPackage] = useState(null);
 
@@ -96,12 +75,6 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
     playerPaymentDetailsExist = true;
   }
 
-  const subscriptionType = (club_subscription_type_id: number) => {
-    return clubSubscriptionTypes?.find(
-      (type) => type.club_subscription_type_id === club_subscription_type_id
-    );
-  };
-
   const {
     register,
     handleSubmit,
@@ -111,7 +84,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
-      const selectedPackage = selectedClubPackages?.find(
+      const selectedPackage = selectedClubPackageDetails?.find(
         (selectedPackage) =>
           selectedPackage.club_subscription_package_id ===
           Number(formData?.club_subscription_package_id)
@@ -121,16 +94,8 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
       if (selectedPackage && playerPaymentDetailsExist) {
         const paymentData = {
-          payment_amount: selectedClubPackages?.find(
-            (subscriptionPackage) =>
-              subscriptionPackage.club_subscription_package_id ===
-              selectedPackage?.club_subscription_package_id
-          )?.price,
-          subscription_price: selectedClubPackages?.find(
-            (subscriptionPackage) =>
-              subscriptionPackage.club_subscription_package_id ===
-              selectedPackage?.club_subscription_package_id
-          )?.price,
+          payment_amount: selectedPackage?.price,
+          subscription_price: selectedPackage?.price,
           payment_status: "success",
           payment_type_id: 5,
           sender_subscriber_id: user?.user?.user_id,
@@ -145,11 +110,8 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   useEffect(() => {
     if (isPaymentSuccess) {
       const startDate = today.toISOString();
-      const packageDurationMonths = clubSubscriptionTypes?.find(
-        (type) =>
-          type.club_subscription_type_id ===
-          selectedClubPackage?.club_subscription_type_id
-      )?.club_subscription_duration_months;
+      const packageDurationMonths =
+        selectedClubPackage?.club_subscription_duration_months;
 
       // Convert to local time zone for endDate calculation
       const endDate = new Date();
@@ -171,78 +133,90 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
 
   useEffect(() => {
     if (isSubscriptionSuccess) {
-      refetchSubscriptions();
-      refetchMySubscriptions();
+      toast.success("Üyelik başarılı");
       refetchPayments();
       reset();
       handleCloseSubscribeModal();
     }
   }, [isSubscriptionSuccess]);
 
-  if (
-    isClubSubscriptionPackagesLoading ||
-    isClubSubscriptionTypesLoading ||
-    isClubSubscriptionsLoading ||
-    isCurrentPlayerLoading ||
-    isPaymentsLoading
-  ) {
+  if (isCurrentPlayerLoading || isPaymentsLoading) {
     return <PageLoading />;
   }
   return (
-    <Modal
+    <ReactModal
       isOpen={openSubscribeModal}
       onRequestClose={handleCloseSubscribeModal}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Üye Ol</h1>
-        <FaWindowClose
-          onClick={handleCloseSubscribeModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Üyelik Türü</label>
-            <select
-              {...register("club_subscription_package_id", { required: true })}
-            >
-              <option value="">-- Üyelik Türü --</option>
-              {selectedClubPackages?.map((clubPackage) => (
-                <option
-                  key={clubPackage.club_subscription_package_id}
-                  value={clubPackage.club_subscription_package_id}
-                >
-                  {`
-                    ${
-                      subscriptionType(clubPackage.club_subscription_type_id)
-                        ?.club_subscription_type_name
-                    } - ${
-                    subscriptionType(clubPackage.club_subscription_type_id)
-                      ?.club_subscription_duration_months
-                  } ay - ${clubPackage.price} TL
-                 `}
-                </option>
-              ))}
-            </select>
-            {errors.club_subscription_package_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
+      <div className={styles["overlay"]} onClick={handleCloseSubscribeModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1 className={styles.title}>Üye Ol</h1>
         </div>
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={!playerPaymentDetailsExist}
+        <div className={styles["club-container"]}>
+          <img
+            src={
+              selectedClubPackageDetails?.[0]?.image
+                ? selectedClubPackageDetails?.[0]?.image
+                : "/images/icons/avatar.jpg"
+            }
+            className={styles["club-image"]}
+          />
+          <p className={styles["club-name"]}>
+            {selectedClubPackageDetails?.[0].club_name}
+          </p>
+        </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
         >
-          Tamamla
-        </button>
-      </form>
-    </Modal>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Üyelik Türü</label>
+              <select
+                {...register("club_subscription_package_id", {
+                  required: true,
+                })}
+              >
+                <option value="">-- Üyelik Türü --</option>
+                {selectedClubPackageDetails?.map((clubPackage) => (
+                  <option
+                    key={clubPackage.club_subscription_package_id}
+                    value={clubPackage.club_subscription_package_id}
+                  >
+                    {`
+                    ${clubPackage?.club_subscription_type_name} - ${clubPackage?.club_subscription_duration_months} ay - ${clubPackage.price} TL
+                 `}
+                  </option>
+                ))}
+              </select>
+              {errors.club_subscription_package_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={handleCloseSubscribeModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button
+              type="submit"
+              className={styles["submit-button"]}
+              disabled={!playerPaymentDetailsExist}
+            >
+              Tamamla
+            </button>
+          </div>
+        </form>
+      </div>
+    </ReactModal>
   );
 };
 export default SubscribeToClubModal;

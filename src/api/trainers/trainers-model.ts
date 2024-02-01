@@ -45,7 +45,7 @@ const trainersModel = {
         if (filter.locationId > 0) {
           builder.where("trainers.location_id", filter.locationId);
         }
-        if (filter.club_id > 0) {
+        if (filter.clubId > 0) {
           builder.where("trainers.club_id", filter.clubId);
         }
         if (filter.currentUserId) {
@@ -60,7 +60,7 @@ const trainersModel = {
           builder.whereExists(function () {
             this.select("*")
               .from("club_staff")
-              .whereRaw('"club_staff"."user_id" = "trainers"."user_id"')
+              .join("trainers", "club_staff.user_id", "=", "trainers.user_id")
               .andWhere("club_staff.club_id", "=", filter.clubId)
               .andWhere("club_staff.employment_status", "=", "accepted");
           });
@@ -86,7 +86,7 @@ const trainersModel = {
         if (filter.locationId > 0) {
           builder.where("trainers.location_id", filter.locationId);
         }
-        if (filter.club_id > 0) {
+        if (filter.clubId > 0) {
           builder.where("trainers.club_id", filter.clubId);
         }
         if (filter.currentUserId) {
@@ -101,7 +101,7 @@ const trainersModel = {
           builder.whereExists(function () {
             this.select("*")
               .from("club_staff")
-              .whereRaw('"club_staff"."user_id" = "trainers"."user_id"')
+              .join("trainers", "club_staff.user_id", "=", "trainers.user_id")
               .andWhere("club_staff.club_id", "=", filter.clubId)
               .andWhere("club_staff.employment_status", "=", "accepted");
           });

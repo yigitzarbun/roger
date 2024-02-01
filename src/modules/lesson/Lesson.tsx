@@ -7,11 +7,15 @@ import LessonSearch from "../../components/lesson/search/LessonsSearch";
 
 const Lesson = () => {
   const [trainerLevelId, setTrainerLevelId] = useState<number | null>(null);
-  const [trainerPrice, setTrainerPrice] = useState<number>(100);
   const [gender, setGender] = useState<string>("");
   const [locationId, setLocationId] = useState<number | null>(null);
   const [clubId, setClubId] = useState<number | null>(null);
-  const [favourite, setFavourite] = useState<boolean | null>(null);
+  const [favourite, setFavourite] = useState<boolean | null>(false);
+  const [textSearch, setTextSearch] = useState<string>("");
+
+  const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextSearch(event.target.value);
+  };
 
   const handleLevel = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -20,11 +24,6 @@ const Lesson = () => {
 
   const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
     setGender(event.target.value);
-  };
-
-  const handlePrice = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value, 10);
-    setTrainerPrice(isNaN(value) ? null : value);
   };
 
   const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -37,42 +36,33 @@ const Lesson = () => {
     setClubId(isNaN(value) ? null : value);
   };
 
-  const handleFavourite = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.checked;
-    setFavourite(value);
+  const handleFavourite = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setFavourite(value === "true");
   };
 
-  const handleClear = () => {
-    setTrainerLevelId(null);
-    setGender("");
-    setTrainerPrice(100);
-    setLocationId(null);
-    setClubId(null);
-    setFavourite(null);
-  };
   return (
     <div className={styles["lesson-container"]}>
       <LessonSearch
         handleLevel={handleLevel}
         handleGender={handleGender}
-        handlePrice={handlePrice}
         handleLocation={handleLocation}
         handleClub={handleClub}
+        handleTextSearch={handleTextSearch}
         handleFavourite={handleFavourite}
-        handleClear={handleClear}
         trainerLevelId={trainerLevelId}
-        trainerPrice={trainerPrice}
         gender={gender}
         locationId={locationId}
         clubId={clubId}
+        textSearch={textSearch}
         favourite={favourite}
       />
       <LessonResults
         trainerLevelId={trainerLevelId}
-        trainerPrice={trainerPrice}
         gender={gender}
         locationId={locationId}
         clubId={clubId}
+        textSearch={textSearch}
         favourite={favourite}
       />
     </div>

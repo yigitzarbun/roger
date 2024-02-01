@@ -243,6 +243,9 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   useEffect(() => {
     refetchClubs();
+  }, [openSubscribeModal]);
+  useEffect(() => {
+    refetchClubs();
   }, [
     currentPage,
     locationId,
