@@ -35,9 +35,18 @@
     text-align: left;
     border-collapse: collapse;
 
-    .player-row {
+    .club-row {
       border-bottom: 1px solid $roger-border-color;
 
+      .active {
+        color: $roger-green;
+        font-size: 0.9rem;
+      }
+
+      .inactive {
+        color: $roger-red;
+        font-size: 0.9rem;
+      }
       td {
         border-top: 1px solid $roger-border-color;
         vertical-align: middle;
@@ -45,7 +54,7 @@
         height: 12vh;
       }
 
-      .player-image {
+      .club-image {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -54,13 +63,13 @@
         display: block;
       }
 
-      .player-name {
+      .club-name {
         color: white;
         text-decoration: none;
       }
     }
 
-    .training-button {
+    .match-button {
       background-color: $roger-black-dark;
       border: none;
       width: 150px;
@@ -73,7 +82,7 @@
       text-align: center;
     }
 
-    .training-button:hover {
+    .match-button:hover {
       background-color: $roger-black-light;
     }
     .icon {

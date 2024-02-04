@@ -35,7 +35,7 @@
     text-align: left;
     border-collapse: collapse;
 
-    .player-row {
+    .row {
       border-bottom: 1px solid $roger-border-color;
 
       td {
@@ -43,41 +43,37 @@
         vertical-align: middle;
         padding: 10px;
         height: 12vh;
+
+        .image {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin: 0 auto;
+          display: block;
+        }
+
+        .name {
+          color: white;
+          text-decoration: none;
+        }
+        .favourite-button {
+          background-color: $roger-black-dark;
+          border: none;
+          width: 150px;
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          font-size: 0.9rem;
+          cursor: pointer;
+          color: white;
+          text-decoration: none;
+          text-align: center;
+        }
+
+        .favourite-button:hover {
+          background-color: $roger-black-light;
+        }
       }
-
-      .player-image {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin: 0 auto;
-        display: block;
-      }
-
-      .player-name {
-        color: white;
-        text-decoration: none;
-      }
-    }
-
-    .training-button {
-      background-color: $roger-black-dark;
-      border: none;
-      width: 150px;
-      padding: $roger-button-padding;
-      border-radius: $roger-border-radius;
-      font-size: 0.9rem;
-      cursor: pointer;
-      color: white;
-      text-decoration: none;
-      text-align: center;
-    }
-
-    .training-button:hover {
-      background-color: $roger-black-light;
-    }
-    .icon {
-      cursor: pointer;
     }
   }
   .pages-container {

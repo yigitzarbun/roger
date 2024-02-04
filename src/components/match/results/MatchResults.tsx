@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { SlOptions } from "react-icons/sl";
 
 import paths from "../../../routing/Paths";
 
@@ -207,6 +208,9 @@ const MatchResults = (props: MatchResultsProps) => {
                   >
                     Davet gönder
                   </button>
+                </td>
+                <td>
+                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

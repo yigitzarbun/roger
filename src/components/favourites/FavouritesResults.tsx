@@ -1,27 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { toast } from "react-toastify";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { SlOptions } from "react-icons/sl";
 
 import { AiFillStar } from "react-icons/ai";
 
 import { Link } from "react-router-dom";
 
-import paths from "../../../../routing/Paths";
+import paths from "../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
-import PageLoading from "../../../../components/loading/PageLoading";
+import PageLoading from "../loading/PageLoading";
 
-import { useAppSelector } from "../../../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 
 import {
   Favourite,
   useGetPlayerActiveFavouritesByUserIdQuery,
   useUpdateFavouriteMutation,
-} from "../../../../api/endpoints/FavouritesApi";
+} from "../../api/endpoints/FavouritesApi";
 
-const PlayerFavouriteResults = () => {
+const FavouritesResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const {
     data: myFavourites,
     isLoading: isFavouritesLoading,
@@ -45,6 +49,23 @@ const PlayerFavouriteResults = () => {
     updateFavourite(updatedFavouriteeData);
   };
 
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % myFavourites?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + myFavourites?.totalPages) %
+        myFavourites?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
   useEffect(() => {
     if (isUpdateFavouriteSuccess) {
       refetchFavourites();
@@ -58,12 +79,27 @@ const PlayerFavouriteResults = () => {
 
   return (
     <div className={styles["result-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Favoriler</h2>
+        <div className={styles["nav-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
+      </div>
       {myFavourites?.length > 0 ? (
         <table>
           <thead>
             <tr>
               <th></th>
               <th>İsim</th>
+              <th>Seviye</th>
               <th>Konum</th>
               <th>Tür</th>
               <th>Durum</th>
@@ -71,7 +107,7 @@ const PlayerFavouriteResults = () => {
           </thead>
           <tbody>
             {myFavourites?.map((favourite) => (
-              <tr key={favourite.favourite_id}>
+              <tr key={favourite.favourite_id} className={styles.row}>
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${favourite?.user_type_id}/${favourite.favouritee_id}`}
@@ -80,7 +116,7 @@ const PlayerFavouriteResults = () => {
                       src={
                         favourite?.image
                           ? favourite?.image
-                          : "/images/icons/avatar.png"
+                          : "/images/icons/avatar.jpg"
                       }
                       className={styles.image}
                     />
@@ -89,22 +125,34 @@ const PlayerFavouriteResults = () => {
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${favourite?.user_type_id}/${favourite.favouritee_id}`}
-                    className={styles["favourite-name"]}
+                    className={styles.name}
                   >
                     {favourite?.fname || favourite?.lname
                       ? `${favourite?.fname} ${favourite?.lname}`
                       : favourite.club_name}
                   </Link>
                 </td>
+                <td>
+                  {favourite?.player_level_name
+                    ? favourite?.player_level_name
+                    : favourite?.trainer_experience_type_name
+                    ? favourite?.trainer_experience_type_name
+                    : "-"}
+                </td>
                 <td>{favourite?.location_name}</td>
                 <td>{favourite?.user_type_name}</td>
                 <td>
-                  <AiFillStar
+                  <button
                     onClick={() =>
                       handleUpdateFavourite(favourite?.favouritee_id)
                     }
-                    className={styles["remove-fav-icon"]}
-                  />
+                    className={styles["favourite-button"]}
+                  >
+                    Favoriden çıkar
+                  </button>
+                </td>
+                <td>
+                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}
@@ -119,4 +167,4 @@ const PlayerFavouriteResults = () => {
   );
 };
 
-export default PlayerFavouriteResults;
+export default FavouritesResults;

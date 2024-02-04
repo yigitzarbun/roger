@@ -1,18 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { SlOptions } from "react-icons/sl";
 
-import paths from "../../../../routing/Paths";
+import paths from "../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
-import PageLoading from "../../../../components/loading/PageLoading";
+import PageLoading from "../../components/loading/PageLoading";
 
-import { useAppSelector } from "../../../../store/hooks";
-import { useGetPlayerActiveClubSubscriptionsQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useAppSelector } from "../../store/hooks";
+import { useGetPlayerActiveClubSubscriptionsQuery } from "../../api/endpoints/ClubSubscriptionsApi";
 
 const PlayerSubscriptionResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetPlayerActiveClubSubscriptionsQuery(user?.user?.user_id);
@@ -22,12 +25,21 @@ const PlayerSubscriptionResults = () => {
   }
   return (
     <div className={styles["result-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Kulüp Üyelikleri</h2>
+        <div className={styles["nav-container"]}>
+          <FaAngleLeft className={styles["nav-arrow"]} />
+
+          <FaAngleRight className={styles["nav-arrow"]} />
+        </div>
+      </div>
       {clubSubscriptions?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Kulüp</th>
+              <th>Kulüp Adı</th>
+              <th>Konum</th>
               <th>Üyelik Türü</th>
               <th>Başlangıç</th>
               <th>Bitiş</th>
@@ -36,7 +48,10 @@ const PlayerSubscriptionResults = () => {
           </thead>
           <tbody>
             {clubSubscriptions?.map((subscription) => (
-              <tr key={subscription.club_subscription_id}>
+              <tr
+                key={subscription.club_subscription_id}
+                className={styles["club-row"]}
+              >
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}3/${subscription.club_id}`}
@@ -45,7 +60,7 @@ const PlayerSubscriptionResults = () => {
                       src={
                         subscription?.image
                           ? subscription?.image
-                          : "images/icons/avatar.png"
+                          : "images/icons/avatar.jpg"
                       }
                       className={styles["club-image"]}
                     />
@@ -59,11 +74,20 @@ const PlayerSubscriptionResults = () => {
                     {subscription?.club_name}
                   </Link>
                 </td>
+                <td>{subscription?.location_name}</td>
                 <td>{subscription?.club_subscription_type_name}</td>
                 <td>{subscription.start_date.slice(0, 10)}</td>
                 <td>{subscription.end_date.slice(0, 10)}</td>
+                <td
+                  className={
+                    subscription.is_active ? styles.active : styles.inactive
+                  }
+                >
+                  {subscription.is_active && "Üyelik Var"}
+                  {!subscription.is_active && "Üyelik Geçersiz"}
+                </td>
                 <td>
-                  {subscription.is_active ? "Üyelik Var" : "Üyelik geçersiz"}
+                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

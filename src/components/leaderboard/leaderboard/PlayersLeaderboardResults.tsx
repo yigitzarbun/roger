@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 
@@ -14,11 +15,23 @@ import { useGetPlayersLeaderboardQuery } from "../../../api/endpoints/BookingsAp
 import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
 
-const PlayersLeaderboardResults = () => {
+interface PlayerLeaderBoardResultsProps {
+  playerLevelId: number;
+  textSearch: string;
+  locationId: number;
+  favourite: boolean | null;
+}
+const PlayersLeaderboardResults = (props: PlayerLeaderBoardResultsProps) => {
+  const { playerLevelId, textSearch, locationId, favourite } = props;
+
   const user = useAppSelector((store) => store.user?.user?.user);
 
   const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
     useGetPlayerByUserIdQuery(user?.user_id);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const levelId = Number(playerLevelId) ?? null;
+  const locationIdValue = Number(locationId) ?? null;
 
   const {
     data: leaderboard,
@@ -26,15 +39,39 @@ const PlayersLeaderboardResults = () => {
     refetch: refetchLeaderBoard,
   } = useGetPlayersLeaderboardQuery({
     perPage: 5,
-    currentPageNumber: 1,
+    currentPageNumber: currentPage,
     gender: playerDetails?.[0]?.gender,
+    playerLevelId: playerLevelId,
+    textSearch: textSearch,
+    locationId: locationId,
   });
+
+  const pageNumbers = [];
+  for (let i = 1; i <= leaderboard?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % leaderboard?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + leaderboard?.totalPages) % leaderboard?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
 
   useEffect(() => {
     if (playerDetails) {
       refetchLeaderBoard();
     }
-  }, [playerDetails]);
+  }, [playerDetails, levelId, locationIdValue, textSearch]);
 
   if (isLeaderboardLoading || isPlayerDetailsLoading) {
     return <PageLoading />;
@@ -42,7 +79,20 @@ const PlayersLeaderboardResults = () => {
 
   return (
     <div className={styles["result-container"]}>
-      <h2 className={styles["result-title"]}>Lidrelik Tablosu</h2>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Liderlik Tablosu</h2>
+        <div className={styles["nav-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -63,11 +113,11 @@ const PlayersLeaderboardResults = () => {
           <tbody>
             {leaderboard?.leaderboard?.map((player, index) => (
               <tr key={player.user_id} className={styles["player-row"]}>
-                <td className={styles["vertical-center"]}>
+                <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={
-                        player.image ? player.image : "/images/icons/avatar.png"
+                        player.image ? player.image : "/images/icons/avatar.jpg"
                       }
                       alt={player.fname}
                       className={styles["player-image"]}
@@ -96,6 +146,22 @@ const PlayersLeaderboardResults = () => {
           </tbody>
         )}
       </table>
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handlePlayerPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 
@@ -11,43 +12,74 @@ import { useGetPlayerPaymentssByUserIdQuery } from "../../../../api/endpoints/Pa
 
 const PlayerPaymentsResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: myPayments, isLoading: isPaymentsLoading } =
     useGetPlayerPaymentssByUserIdQuery(user?.user?.user_id);
 
-  const { data: paymentTypes, isLoading: isPaymentTypesLoading } =
-    useGetPaymentTypesQuery({});
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
 
-  if (isPaymentsLoading || isPaymentTypesLoading) {
+  const handleNextPage = () => {
+    const nextPage = (currentPage % myPayments?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + myPayments?.totalPages) % myPayments?.totalPages) + 1;
+    setCurrentPage(prevPage);
+  };
+
+  if (isPaymentsLoading) {
     return <PageLoading />;
   }
   return (
-    <div className={styles["payment-results-container"]}>
-      <h2 className={styles.title}>Ödemeler</h2>
+    <div className={styles["result-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Ödemeler</h2>
+        <div className={styles["nav-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
+      </div>
       {myPayments?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Tarih</th>
+              <th>Ödeme Tarih</th>
               <th>Durum</th>
-              <th>Konu</th>
-              <th>Tutar</th>
+              <th>Tür</th>
+              <th>Eğitmen / Oyuncu</th>
+              <th>Etkinlik Tarih</th>
+              <th>Etkinlik Saat</th>
               <th>Kulüp</th>
-              <th>Eğitmen</th>
+              <th>Kort</th>
+              <th>Tutar</th>
             </tr>
           </thead>
           <tbody>
             {myPayments?.map((payment) => (
               <tr key={payment.payment_id} className={styles["payment-row"]}>
-                <td>{payment.registered_at.slice(0, 10)}</td>
+                <td>{payment.paymentDate.slice(0, 10)}</td>
                 <td>{payment.payment_status}</td>
+                <td>{payment?.payment_type_name}</td>
                 <td>
-                  {
-                    paymentTypes?.find(
-                      (type) => type.payment_type_id === payment.payment_type_id
-                    )?.payment_type_name
-                  }
+                  {payment.fname && payment.lname
+                    ? `${payment.fname} ${payment.lname}`
+                    : "-"}
                 </td>
+                <td>{payment.event_date.slice(0, 10)}</td>
+                <td>{payment.event_time.slice(0, 5)}</td>
+                <td>{payment?.club_name}</td>
+                <td>{payment.court_name ? payment.court_name : "-"}</td>
                 {(payment.payment_type_id === 1 ||
                   payment.payment_type_id === 2) && (
                   <td>{`${payment.court_price / 2} TL`}</td>
@@ -60,13 +92,6 @@ const PlayerPaymentsResults = () => {
                     {`${payment.lesson_price + payment.subscription_price} TL`}
                   </td>
                 )}
-                <td>{payment?.club_name}</td>
-                {payment.payment_type_id === 3 && (
-                  <td>{`${payment?.fname} ${payment?.lname}`}</td>
-                )}
-                {(payment.payment_type_id === 1 ||
-                  payment.payment_type_id === 2 ||
-                  payment.payment_type_id === 5) && <td>-</td>}
               </tr>
             ))}
           </tbody>

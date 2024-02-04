@@ -37,6 +37,7 @@ const clubSubscriptionsModel = {
         .select(
           "club_subscriptions.*",
           "clubs.*",
+          "locations.*",
           "club_subscription_packages.*",
           "club_subscription_types.*"
         )
@@ -57,6 +58,9 @@ const clubSubscriptionsModel = {
             "=",
             "club_subscription_types.club_subscription_type_id"
           );
+        })
+        .leftJoin("locations", function () {
+          this.on("clubs.location_id", "=", "locations.location_id");
         })
         .where("club_subscriptions.is_active", true)
         .andWhere((builder) => {

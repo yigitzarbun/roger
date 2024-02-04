@@ -39,7 +39,9 @@ const favouritesModel = {
           "clubs.*",
           "users.*",
           "user_types.*",
-          "locations.*"
+          "locations.*",
+          "player_levels.*",
+          "trainer_experience_types.*"
         )
         .from("favourites")
         .leftJoin("players", function () {
@@ -61,6 +63,20 @@ const favouritesModel = {
           this.on("locations.location_id", "=", "players.location_id")
             .orOn("locations.location_id", "=", "trainers.location_id")
             .orOn("locations.location_id", "=", "clubs.location_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("trainer_experience_types", function () {
+          this.on(
+            "trainer_experience_types.trainer_experience_type_id",
+            "=",
+            "trainers.trainer_experience_type_id"
+          );
         })
         .where("favourites.is_active", true)
         .andWhere("favourites.favouriter_id", userId)

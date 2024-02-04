@@ -28,10 +28,14 @@ const paymentsModel = {
       const payments = await db
         .select(
           "payments.*",
+          "payments.registered_at as paymentDate",
           "bookings.event_date",
           "clubs.club_name",
-          "trainers.*"
-          // "players.*"
+          "trainers.*",
+          "bookings.*",
+          "players.*",
+          "courts.*",
+          "payment_types.*"
         )
         .from("payments")
         .leftJoin("bookings", function () {
@@ -43,7 +47,6 @@ const paymentsModel = {
         .leftJoin("trainers", function () {
           this.on("trainers.user_id", "=", "payments.recipient_trainer_id");
         })
-        /*
         .leftJoin("players", function () {
           this.on("players.user_id", "=", "payments.sender_invitee_id").orOn(
             "players.user_id",
@@ -51,18 +54,26 @@ const paymentsModel = {
             "payments.sender_inviter_id"
           );
         })
-        */
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("payment_types", function () {
+          this.on(
+            "payment_types.payment_type_id",
+            "=",
+            "payments.payment_type_id"
+          );
+        })
         .where((queryBuilder) => {
           queryBuilder
             .where("payments.sender_inviter_id", userId)
             .orWhere("payments.sender_invitee_id", userId)
             .orWhere("payments.sender_subscriber_id", userId);
-        });
-      /*
+        })
         .whereNot((notBuilder) => {
           notBuilder.where("players.user_id", userId);
         });
-*/
+
       return payments;
     } catch (error) {
       // Handle any potential errors

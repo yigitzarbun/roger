@@ -20,7 +20,7 @@ const PlayerPastEventsResults = () => {
 
   const { data: myEvents, isLoading: isBookingsLoading } =
     useGetPlayerPastEventsQuery(user?.user?.user_id);
-
+  console.log(myEvents);
   const {
     data: eventReviews,
     isLoading: isEventReviewsLoading,
@@ -79,7 +79,8 @@ const PlayerPastEventsResults = () => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu / Eğitmen / Grup</th>
+              <th></th>
+              <th>İsim</th>
               <th>Tarih</th>
               <th>Saat</th>
               <th>Tür</th>
@@ -94,6 +95,49 @@ const PlayerPastEventsResults = () => {
           <tbody>
             {myEvents?.map((event) => (
               <tr key={event.booking_id} className={styles["player-row"]}>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}${
+                      event.event_type_id === 1 || event.event_type_id === 2
+                        ? 1
+                        : event.event_type_id === 3
+                        ? 3
+                        : event.event_type_id === 6
+                        ? 3
+                        : ""
+                    }/${
+                      (event.event_type_id === 1 ||
+                        event.event_type_id === 2 ||
+                        event.event_type_id === 3) &&
+                      event.inviter_id === user?.user?.user_id
+                        ? event.invitee_id
+                        : (event.event_type_id === 1 ||
+                            event.event_type_id === 2 ||
+                            event.event_type_id === 3) &&
+                          event.invitee_id === user?.user?.user_id
+                        ? event.inviter_id
+                        : event.event_type_id === 6
+                        ? event?.clubUserId
+                        : ""
+                    }`}
+                  >
+                    <img
+                      src={
+                        event?.playerImage &&
+                        (event?.event_type_id === 1 ||
+                          event?.event_type_id === 2)
+                          ? event?.playerImage
+                          : event?.trainerImage && event?.event_type_id === 3
+                          ? event?.trainerImage
+                          : event?.clubImage && event?.event_type_id === 6
+                          ? event?.clubImage
+                          : "/images/icons/avatar.jpg"
+                      }
+                      className={styles["player-image"]}
+                      alt="player-image"
+                    />
+                  </Link>
+                </td>
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${

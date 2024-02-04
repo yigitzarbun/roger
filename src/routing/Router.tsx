@@ -45,6 +45,13 @@ const PlayersLeaderboard = lazy(
   () => import("../modules/leaderboard/PlayersLeaderboard")
 );
 const Social = lazy(() => import("../modules/social/Social"));
+const PlayerSubscriptions = lazy(
+  () => import("../modules/player-subscriptions/PlayerSubscriptions")
+);
+const PlayerGroups = lazy(
+  () => import("../modules/player-groups/PlayerGroups")
+);
+const Favourites = lazy(() => import("../modules/favourites/Favourites"));
 
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
@@ -95,6 +102,12 @@ const routes: Route[] = [
     element: getRouteElement(PlayersLeaderboard),
   },
   { path: paths.SOCIAL, element: getRouteElement(Social) },
+  {
+    path: paths.PLAYER_SUBSCRIPTIONS,
+    element: getRouteElement(PlayerSubscriptions),
+  },
+  { path: paths.PLAYER_GROUPS, element: getRouteElement(PlayerGroups) },
+  { path: paths.FAVOURITES, element: getRouteElement(Favourites) },
 ];
 
 export default createBrowserRouter(routes);

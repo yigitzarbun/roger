@@ -7,6 +7,7 @@ import paths from "../../routing/Paths";
 import { useAppSelector } from "../../store/hooks";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
+import { MdOutlineLanguage } from "react-icons/md";
 
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
@@ -62,6 +63,8 @@ const Header = () => {
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
             <IoIosNotificationsOutline className={styles.notification} />
+            <MdOutlineLanguage className={styles.notification} />
+
             {isLoggedIn && (
               <img
                 src={

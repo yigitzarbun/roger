@@ -54,15 +54,17 @@ const ProfileModal = (props: ProfileModalProps) => {
           <FaRegCreditCard className={styles.icon} />
         </div>
         <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("SOCIAL")}>Üyelikler</h4>
+          <h4 onClick={() => navigateUser("PLAYER_SUBSCRIPTIONS")}>
+            Üyelikler
+          </h4>
           <FaBuildingUser className={styles.icon} />
         </div>
         <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("SOCIAL")}>Gruplar</h4>
+          <h4 onClick={() => navigateUser("PLAYER_GROUPS")}>Gruplar</h4>
           <RiGroupLine className={styles.icon} />
         </div>
         <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("SOCIAL")}>Favoriler</h4>
+          <h4 onClick={() => navigateUser("FAVOURITES")}>Favoriler</h4>
           <IoStar className={styles.icon} />
         </div>
         <button onClick={handleLogout} className={styles.logout}>

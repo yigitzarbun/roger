@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { SlOptions } from "react-icons/sl";
 
 import paths from "../../../routing/Paths";
 
@@ -292,6 +293,9 @@ const LessonResults = (props: TrainSearchProps) => {
                       Öğrenci Ol
                     </button>
                   )}
+                </td>
+                <td>
+                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

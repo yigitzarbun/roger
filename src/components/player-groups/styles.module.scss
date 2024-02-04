@@ -35,7 +35,7 @@
     text-align: left;
     border-collapse: collapse;
 
-    .player-row {
+    .row {
       border-bottom: 1px solid $roger-border-color;
 
       td {
@@ -43,24 +43,24 @@
         vertical-align: middle;
         padding: 10px;
         height: 12vh;
-      }
 
-      .player-image {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin: 0 auto;
-        display: block;
-      }
+        .image {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin: 0 auto;
+          display: block;
+        }
 
-      .player-name {
-        color: white;
-        text-decoration: none;
+        .name {
+          color: white;
+          text-decoration: none;
+        }
       }
     }
 
-    .training-button {
+    .match-button {
       background-color: $roger-black-dark;
       border: none;
       width: 150px;
@@ -73,7 +73,7 @@
       text-align: center;
     }
 
-    .training-button:hover {
+    .match-button:hover {
       background-color: $roger-black-light;
     }
     .icon {

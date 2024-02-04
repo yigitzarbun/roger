@@ -38,19 +38,17 @@ const studentGroupsModel = {
       const groups = await db
         .select(
           "student_groups.*",
-          db.raw("MIN(bookings.event_date) as latest_event_date"),
-          db.raw("MIN(bookings.event_time) as latest_event_time"),
+          db.raw(
+            "MIN(CASE WHEN bookings.booking_status_type_id = 2 THEN bookings.event_date END) as latest_event_date"
+          ),
+          db.raw(
+            "MIN(CASE WHEN bookings.booking_status_type_id = 2 THEN bookings.event_time END) as latest_event_time"
+          ),
           "trainers.*",
           "clubs.*",
-          "clubs.image as club_image"
+          "clubs.image as clubImage"
         )
         .from("student_groups")
-        .leftJoin(
-          "bookings",
-          "bookings.invitee_id",
-          "=",
-          "student_groups.user_id"
-        )
         .leftJoin(
           "trainers",
           "trainers.user_id",
@@ -58,6 +56,12 @@ const studentGroupsModel = {
           "student_groups.trainer_id"
         )
         .leftJoin("clubs", "clubs.user_id", "=", "student_groups.club_id")
+        .leftJoin(
+          "bookings",
+          "bookings.invitee_id",
+          "=",
+          "student_groups.user_id"
+        )
         .where("student_groups.is_active", true)
         .andWhere((builder) => {
           builder
@@ -66,7 +70,6 @@ const studentGroupsModel = {
             .orWhere("student_groups.third_student_id", userId)
             .orWhere("student_groups.fourth_student_id", userId);
         })
-        .andWhere("bookings.booking_status_type_id", 2)
         .groupBy(
           "student_groups.student_group_id",
           "trainers.trainer_id",

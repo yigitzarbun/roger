@@ -328,7 +328,9 @@ const bookingsModel = {
         .select(
           "bookings.*",
           "players.*",
+          "players.image as playerImage",
           "trainers.*",
+          "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
           "clubs.*",
           "clubs.user_id as clubUserId",
@@ -463,7 +465,24 @@ const bookingsModel = {
           "=",
           "bookings.booking_id"
         )
-        .where("bookings.event_type_id", 2)
+        .where((builder) => {
+          if (filter.playerLevelId > 0) {
+            builder.where("players.player_level_id", filter.playerLevelId);
+          }
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where(
+                "players.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+          if (filter.locationId > 0) {
+            builder.where("players.location_id", filter.locationId);
+          }
+        })
+        .andWhere("bookings.event_type_id", 2)
         .andWhere("match_scores.match_score_status_type_id", 3)
         .andWhere("players.gender", filter.gender)
         .groupBy(
@@ -488,6 +507,15 @@ const bookingsModel = {
           if (filter.playerLevelId > 0) {
             builder.where("players.player_level_id", filter.playerLevelId);
           }
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where(
+                "players.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
           if (filter.locationId > 0) {
             builder.where("players.location_id", filter.locationId);
           }
@@ -497,7 +525,7 @@ const bookingsModel = {
 
       const data = {
         leaderboard: playersLeaderboard,
-        totalPages: Math.ceil(totalPlayersCount.total / playersPerPage),
+        totalPages: Math.ceil(playersLeaderboard.total / playersPerPage),
       };
       return data;
     } catch (error) {
