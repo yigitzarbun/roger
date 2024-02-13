@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
+import { FaFilter } from "react-icons/fa6";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 
@@ -14,13 +16,53 @@ import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPlayerPastEventsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventReviewsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
+import { Club } from "../../../../api/endpoints/ClubsApi";
+import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
+import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 
-const PlayerPastEventsResults = () => {
+interface PlayerPastEventsResultsProps {
+  clubId: number;
+  textSearch: string;
+  courtSurfaceTypeId: number;
+  courtStructureTypeId: number;
+  eventTypeId: number;
+  clubs: Club[];
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
+  eventTypes: any;
+  handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleClear: () => void;
+}
+const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+  const {
+    clubId,
+    textSearch,
+    courtSurfaceTypeId,
+    courtStructureTypeId,
+    eventTypeId,
+    clubs,
+    courtStructureTypes,
+    courtSurfaceTypes,
+    eventTypes,
+    handleClub,
+    handleCourtStructure,
+    handleCourtSurface,
+    handleTextSearch,
+    handleEventType,
+    handleClear,
+  } = props;
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: myEvents, isLoading: isBookingsLoading } =
     useGetPlayerPastEventsQuery(user?.user?.user_id);
-  console.log(myEvents);
+
   const {
     data: eventReviews,
     isLoading: isEventReviewsLoading,
@@ -28,6 +70,33 @@ const PlayerPastEventsResults = () => {
   } = useGetEventReviewsByFilterQuery({
     user_id: user?.user?.user_id,
   });
+
+  const pageNumbers = [];
+  for (let i = 1; i <= myEvents?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+  const handleEventPage = (e) => {
+    setCurrentPage(Number(e.target.value));
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % myEvents?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + myEvents?.totalPages) % myEvents?.totalPages) + 1;
+    setCurrentPage(prevPage);
+  };
+
+  const [isPastEventsModalOpen, setIsPastEventsModalOpen] = useState(false);
+  const handleOpenPastEventsModal = () => {
+    setIsPastEventsModalOpen(true);
+  };
+  const handleClosePastEventsModal = () => {
+    setIsPastEventsModalOpen(false);
+  };
 
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
@@ -72,8 +141,25 @@ const PlayerPastEventsResults = () => {
 
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+      <div className={styles["top-container"]}>
+        <div className={styles["title-container"]}>
+          <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+          <FaFilter
+            onClick={handleOpenPastEventsModal}
+            className={styles.filter}
+          />
+        </div>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
       {myEvents?.length > 0 ? (
         <table>
@@ -233,6 +319,22 @@ const PlayerPastEventsResults = () => {
       ) : (
         <p>Tamamlanmış etkinlik bulunmamaktadır</p>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleEventPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
       {isAddReviewModalOpen && (
         <AddEventReviewModal
           isAddReviewModalOpen={isAddReviewModalOpen}
@@ -248,6 +350,27 @@ const PlayerPastEventsResults = () => {
           isViewReviewModalOpen={isViewReviewModalOpen}
           closeViewReviewModal={closeViewReviewModal}
           selectedBookingId={selectedBookingId}
+        />
+      )}
+      {isPastEventsModalOpen && (
+        <PlayerPastEventsFilterModal
+          textSearch={textSearch}
+          clubId={clubId}
+          courtSurfaceTypeId={courtSurfaceTypeId}
+          courtStructureTypeId={courtStructureTypeId}
+          eventTypeId={eventTypeId}
+          clubs={clubs}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          eventTypes={eventTypes}
+          handleTextSearch={handleTextSearch}
+          handleClub={handleClub}
+          handleCourtStructure={handleCourtStructure}
+          handleCourtSurface={handleCourtSurface}
+          handleEventType={handleEventType}
+          isPastEventsModalOpen={isPastEventsModalOpen}
+          handleClosePastEventsModal={handleClosePastEventsModal}
+          handleClear={handleClear}
         />
       )}
     </div>

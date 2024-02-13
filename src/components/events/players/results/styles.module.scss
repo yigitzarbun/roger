@@ -10,22 +10,30 @@
   row-gap: 20px;
   border: 1px $roger-border-color solid;
 
-  .title-container {
+  .top-container {
     display: flex;
     justify-content: space-between;
-    .title {
-      font-size: 2rem;
-    }
-    .nav-container {
+    .title-container {
       display: flex;
-      column-gap: 1vw;
+      align-items: center;
+      column-gap: 2vw;
+      .result-title {
+        font-size: 2rem;
+      }
+      .filter {
+        cursor: pointer;
+      }
+    }
+    .navigation-container {
+      display: flex;
+      column-gap: 10px;
 
       .nav-arrow {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         cursor: pointer;
       }
       .nav-arrow:hover {
-        color: $roger-text-color-hover;
+        color: $roger-blue;
       }
     }
   }

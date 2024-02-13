@@ -318,11 +318,13 @@ const LessonResults = (props: TrainSearchProps) => {
           </button>
         ))}
       </div>
-      <LessonInviteFormModal
-        opponentUserId={opponentUserId}
-        isInviteModalOpen={isInviteModalOpen}
-        handleCloseInviteModal={handleCloseInviteModal}
-      />
+      {isInviteModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isInviteModalOpen}
+          handleCloseInviteModal={handleCloseInviteModal}
+        />
+      )}
     </div>
   );
 };

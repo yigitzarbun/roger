@@ -65,9 +65,61 @@ const courtsModel = {
       .limit(courtsPerPage)
       .offset(offset);
 
+    const pageCount = await db
+      .select(
+        "courts.*",
+        "courts.image as courtImage",
+        "clubs.*",
+        "court_structure_types.*",
+        "court_surface_types.*",
+        "locations.*"
+      )
+      .from("courts")
+      .leftJoin("clubs", function () {
+        this.on("clubs.club_id", "=", "courts.club_id");
+      })
+      .leftJoin("court_structure_types", function () {
+        this.on(
+          "court_structure_types.court_structure_type_id",
+          "=",
+          "courts.court_structure_type_id"
+        );
+      })
+      .leftJoin("court_surface_types", function () {
+        this.on(
+          "court_surface_types.court_surface_type_id",
+          "=",
+          "courts.court_surface_type_id"
+        );
+      })
+      .leftJoin("locations", function () {
+        this.on("locations.location_id", "=", "clubs.location_id");
+      })
+      .where((builder) => {
+        if (filter.locationId > 0) {
+          builder.where("clubs.location_id", filter.locationId);
+        }
+        if (filter.clubId > 0) {
+          builder.where("courts.club_id", filter.clubId);
+        }
+        if (filter.courtSurfaceType > 0) {
+          builder.where(
+            "courts.court_surface_type_id",
+            filter.courtSurfaceType
+          );
+        }
+        if (filter.courtStructureType > 0) {
+          builder.where(
+            "courts.court_structure_type_id",
+            filter.courtStructureType
+          );
+        }
+      })
+      .andWhere("courts.is_active", true);
+
     const data = {
       courts: paginatedCourts,
-      totalPages: Math.ceil(paginatedCourts.length / courtsPerPage),
+      totalPages: Math.ceil(pageCount.length / courtsPerPage),
     };
     return data;
   },
