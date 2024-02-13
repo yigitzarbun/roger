@@ -29,13 +29,14 @@ paymentsRouter.get(
 );
 
 paymentsRouter.get(
-  "/player-payments/:userId",
+  "/player-payments/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const payments = await paymentsModel.getPlayerPaymentsByUserId(
-        Number(req.params.userId)
+      const filter = req.query;
+      const filteredPayments = await paymentsModel.getPlayerPaymentsByUserId(
+        filter
       );
-      res.status(200).json(payments);
+      res.status(200).json(filteredPayments);
     } catch (error) {
       next(error);
     }

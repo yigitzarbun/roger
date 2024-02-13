@@ -87,11 +87,35 @@ const clubsModel = {
       .limit(clubsPerPage);
 
     const totalCountQuery = await db
-      .countDistinct("clubs.club_id as total")
+      .select(
+        "clubs.*",
+        "clubs.image as clubImage",
+        "club_types.*",
+        "locations.*",
+        db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),
+        db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffQuantity"),
+        db.raw(
+          "COUNT(DISTINCT club_subscriptions.club_subscription_id) as memberQuantity"
+        ),
+        "users.*"
+      )
       .from("clubs")
+      .leftJoin(
+        "club_types",
+        "club_types.club_type_id",
+        "=",
+        "clubs.club_type_id"
+      )
+      .leftJoin("locations", "locations.location_id", "=", "clubs.location_id")
+      .leftJoin("courts", "courts.club_id", "=", "clubs.club_id")
       .leftJoin("club_staff", "club_staff.club_id", "=", "clubs.club_id")
       .leftJoin("users", "users.user_id", "=", "clubs.user_id")
-      .leftJoin("courts", "courts.club_id", "=", "clubs.club_id")
+      .leftJoin(
+        "club_subscriptions",
+        "club_subscriptions.club_id",
+        "=",
+        "clubs.user_id"
+      )
       .where((builder) => {
         if (filter.locationId > 0) {
           builder.where("clubs.location_id", filter.locationId);
@@ -128,11 +152,15 @@ const clubsModel = {
             .andWhere("club_staff.club_staff_role_type_id", 2);
         }
       })
-      .andWhere("club_staff.employment_status", "accepted")
       .andWhere("users.user_status_type_id", 1)
-      .first();
+      .groupBy(
+        "clubs.club_id",
+        "club_types.club_type_id",
+        "locations.location_id",
+        "users.user_id"
+      );
 
-    const totalClubs = totalCountQuery.total;
+    const totalClubs = totalCountQuery.length;
 
     const enhancedClubs = await Promise.all(
       paginatedClubs.map(async (club) => {

@@ -501,7 +501,7 @@ const bookingsModel = {
         )
         .limit(playersPerPage)
         .offset(offset);
-
+      /*
       const totalPlayersCount = await db("players")
         .where((builder) => {
           if (filter.playerLevelId > 0) {
@@ -522,7 +522,7 @@ const bookingsModel = {
         })
         .count("players.user_id as total")
         .first();
-
+*/
       const data = {
         leaderboard: playersLeaderboard,
         totalPages: Math.ceil(playersLeaderboard.total / playersPerPage),

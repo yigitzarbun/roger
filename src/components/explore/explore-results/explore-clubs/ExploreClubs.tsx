@@ -3,6 +3,7 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { SlOptions } from "react-icons/sl";
 import { FaFilter } from "react-icons/fa6";
+import { ImBlocked } from "react-icons/im";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
@@ -138,7 +139,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   for (let i = 1; i <= clubs?.totalPages; i++) {
     pageNumbers.push(i);
   }
-
   const handleClubPage = (e) => {
     setCurrentPage(Number(e.target.value));
   };
@@ -380,9 +380,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                         Ödeme bilgilerini ekle
                       </button>
                     ) : (
-                      <p className={styles["no-subscription-text"]}>
-                        Kulübün üyelik paketi yok
-                      </p>
+                      <ImBlocked />
                     )}
                   </td>
                 )}

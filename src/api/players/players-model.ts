@@ -52,10 +52,50 @@ const playersModel = {
       .limit(playersPerPage)
       .offset(offset);
 
+    const count = await db("players")
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "players.user_id");
+      })
+      .leftJoin("locations", function () {
+        this.on("locations.location_id", "=", "players.location_id");
+      })
+      .leftJoin("player_levels", function () {
+        this.on(
+          "player_levels.player_level_id",
+          "=",
+          "players.player_level_id"
+        );
+      })
+      .where((builder) => {
+        if (filter.playerLevelId > 0) {
+          builder.where("players.player_level_id", filter.playerLevelId);
+        }
+        if (filter.selectedGender !== "") {
+          builder.where("players.gender", filter.selectedGender);
+        }
+        if (filter.locationId > 0) {
+          builder.where("players.location_id", filter.locationId);
+        }
+        if (filter.currentUserId) {
+          builder.where("players.user_id", "!=", filter.currentUserId);
+        }
+        if (filter.textSearch && filter.textSearch !== "") {
+          builder.where(function () {
+            this.where(
+              "players.fname",
+              "ilike",
+              `%${filter.textSearch}%`
+            ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+          });
+        }
+      })
+      .andWhere("users.user_status_type_id", 1);
+
     const data = {
       players: paginatedPlayers,
-      totalPages: Math.ceil(paginatedPlayers.length / playersPerPage),
+      totalPages: Math.ceil(count.length / playersPerPage),
     };
+
     return data;
   },
 
