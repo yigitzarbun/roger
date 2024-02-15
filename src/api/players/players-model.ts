@@ -118,25 +118,60 @@ const playersModel = {
   async getPlayerProfile(userId: number) {
     try {
       const playerDetails = await db
-        .select("players.*", "users.*", "locations.*", "player_levels.*")
+        .select(
+          "players.*",
+          "users.*",
+          "locations.*",
+          "player_levels.*",
+          db.raw("COUNT(match_scores.match_score_id) as totalMatches"),
+          db.raw(
+            "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN match_scores.winner_id != players.user_id THEN 1 ELSE 0 END) as lostMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 3 ELSE 0 END) as playerPoints"
+          )
+        )
         .from("players")
-        .leftJoin("users", function () {
-          this.on("users.user_id", "=", "players.user_id");
-        })
-        .leftJoin("locations", function () {
-          this.on("locations.location_id", "=", "players.location_id");
-        })
-        .leftJoin("player_levels", function () {
-          this.on(
-            "player_levels.player_level_id",
+        .leftJoin("users", "users.user_id", "=", "players.user_id")
+        .leftJoin(
+          "locations",
+          "locations.location_id",
+          "=",
+          "players.location_id"
+        )
+        .leftJoin(
+          "player_levels",
+          "player_levels.player_level_id",
+          "=",
+          "players.player_level_id"
+        )
+        .leftJoin("bookings", function () {
+          this.on("bookings.inviter_id", "=", userId).orOn(
+            "bookings.invitee_id",
             "=",
-            "players.player_level_id"
+            userId
           );
         })
-        .where("players.user_id", userId);
-      return playerDetails;
+        .leftJoin("match_scores", function () {
+          this.on("match_scores.booking_id", "=", "bookings.booking_id");
+        })
+        .where("players.user_id", userId)
+        .andWhere("bookings.event_type_id", 2)
+        .andWhere("match_scores.match_score_status_type_id", 3)
+        .groupBy(
+          "players.player_id",
+          "users.user_id",
+          "locations.location_id",
+          "player_levels.player_level_id"
+        );
+
+      return playerDetails.length > 0 ? playerDetails : null;
     } catch (error) {
       console.log("Error fetching player profile info: ", error);
+      throw error; // Optionally rethrow the error to handle it elsewhere
     }
   },
   async getByPlayerId(player_id) {

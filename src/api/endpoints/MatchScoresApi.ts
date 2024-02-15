@@ -26,7 +26,10 @@ export const matchScoresSlice = createApi({
       query: (match_score_id) => `/match-scores/${match_score_id}`,
     }),
     getPlayerMatchScoresWithBookingDetails: builder.query({
-      query: (userId) => `/match-scores/match-scores-booking-details/${userId}`,
+      query: (filter) =>
+        `/match-scores/match-scores-booking-details/filter?${new URLSearchParams(
+          filter
+        )}`,
     }),
     getMissingMatchScoresNumber: builder.query({
       query: (userId) => `/match-scores/missing-match-scores/${userId}`,

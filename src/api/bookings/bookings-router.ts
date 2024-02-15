@@ -98,12 +98,11 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
-  "/past-events/:userId",
+  "/past-events/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const bookings = await bookingsModel.getPlayerPastEvents(
-        Number(req.params.userId)
-      );
+      const filter = req.query;
+      const bookings = await bookingsModel.getPlayerPastEvents(filter);
       res.status(200).json(bookings);
     } catch (error) {
       next(error);

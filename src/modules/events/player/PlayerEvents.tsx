@@ -84,7 +84,25 @@ const PlayerEvents = () => {
           handleClear={handleClear}
         />
       )}
-      {display === "scores" && <PlayerScores />}
+      {display === "scores" && (
+        <PlayerScores
+          textSearch={textSearch}
+          clubId={clubId}
+          courtSurfaceTypeId={courtSurfaceTypeId}
+          courtStructureTypeId={courtStructureTypeId}
+          eventTypeId={eventTypeId}
+          clubs={clubs}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          eventTypes={eventTypes}
+          handleTextSearch={handleTextSearch}
+          handleClub={handleClub}
+          handleCourtStructure={handleCourtStructure}
+          handleCourtSurface={handleCourtSurface}
+          handleEventType={handleEventType}
+          handleClear={handleClear}
+        />
+      )}
     </div>
   );
 };

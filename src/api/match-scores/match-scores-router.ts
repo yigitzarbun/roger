@@ -31,13 +31,13 @@ matchScoresRouter.get(
 );
 
 matchScoresRouter.get(
-  "/match-scores-booking-details/:userId",
+  "/match-scores-booking-details/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const filter = req.query;
+
       const scores =
-        await matchScoresModel.getPlayerMatchScoresWithBookingDetails(
-          Number(req.params.userId)
-        );
+        await matchScoresModel.getPlayerMatchScoresWithBookingDetails(filter);
       res.status(200).json(scores);
     } catch (error) {
       next(error);

@@ -4,14 +4,16 @@ import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../api/endpoints/PlayersApi";
 
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
 
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
-import ExplorePlayersProfileSection from "./sections/profile/ExplorePlayersProfileSection";
 import ExplorePlayersInteractionsSections from "./sections/interaction/ExplorePlayersInteractionsSections";
 import ExplorePlayersReviewsSection from "./sections/reviews/ExplorePlayersReviewsSection";
 import ExplorePlayerProfilesEventsSection from "./sections/events/ExplorePlayerProfilesEventsSection";
@@ -23,7 +25,7 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const { user_id } = props;
 
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
-    useGetPlayerByUserIdQuery(Number(user_id));
+    useGetPlayerProfileDetailsQuery(Number(user_id));
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -59,13 +61,10 @@ const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   return (
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>
-        <ExplorePlayersProfileSection
-          selectedPlayer={selectedPlayer}
-          clubs={clubs}
-        />
         <ExplorePlayersInteractionsSections
           selectedPlayer={selectedPlayer}
           user_id={Number(user_id)}
+          clubs={clubs}
         />
       </div>
       <div>

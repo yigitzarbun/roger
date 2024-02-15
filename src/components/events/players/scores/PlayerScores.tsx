@@ -1,33 +1,112 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
+import { FaFilter } from "react-icons/fa6";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 
 import { useGetPlayerMatchScoresWithBookingDetailsQuery } from "../../../../api/endpoints/MatchScoresApi";
-
+import { Club } from "../../../../api/endpoints/ClubsApi";
+import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
 import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";
 import PageLoading from "../../../../components/loading/PageLoading";
+import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 
-const PlayerScores = () => {
+interface PlayerMatchScoressProps {
+  clubId: number;
+  textSearch: string;
+  courtSurfaceTypeId: number;
+  courtStructureTypeId: number;
+  eventTypeId: number;
+  clubs: Club[];
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
+  eventTypes: any;
+  handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleClear: () => void;
+}
+
+const PlayerScores = (props: PlayerMatchScoressProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+  const {
+    clubId,
+    textSearch,
+    courtSurfaceTypeId,
+    courtStructureTypeId,
+    eventTypeId,
+    clubs,
+    courtStructureTypes,
+    courtSurfaceTypes,
+    eventTypes,
+    handleClub,
+    handleCourtStructure,
+    handleCourtSurface,
+    handleTextSearch,
+    handleEventType,
+    handleClear,
+  } = props;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     data: matchScores,
     isLoading: isMatchScoresLoading,
-    refetch: refetchScores,
-  } = useGetPlayerMatchScoresWithBookingDetailsQuery(user?.user?.user_id);
+    refetch: refetchMatchScores,
+  } = useGetPlayerMatchScoresWithBookingDetailsQuery({
+    userId: user?.user?.user_id,
+    clubId: clubId,
+    textSearch: textSearch,
+    courtSurfaceTypeId: courtSurfaceTypeId,
+    courtStructureTypeId: courtStructureTypeId,
+    eventTypeId: eventTypeId,
+    currentPage: currentPage,
+  });
+
+  const pageNumbers = [];
+  for (let i = 1; i <= matchScores?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+  const handleEventPage = (e) => {
+    setCurrentPage(Number(e.target.value));
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % matchScores?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + matchScores?.totalPages) % matchScores?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
 
   const [isAddScoreModalOpen, setIsAddScoreModalOpen] = useState(false);
 
   const [isEditScoreModalOpen, setIsEditScoreModalOpen] = useState(false);
 
   const [selectedMatchScore, setSelectedMatchScore] = useState(null);
+
+  const [isMatchScoresFilterModalOpen, setIsMatchScoresFilterModalOpen] =
+    useState(false);
+  const handleOpenMatchScoresFilterModal = () => {
+    setIsMatchScoresFilterModalOpen(true);
+  };
+
+  const handleCloseMatchScoresFilterModal = () => {
+    setIsMatchScoresFilterModalOpen(false);
+  };
 
   const openAddScoreModal = (matchScoreDetails) => {
     setIsAddScoreModalOpen(true);
@@ -48,19 +127,47 @@ const PlayerScores = () => {
   };
 
   useEffect(() => {
-    refetchScores();
+    refetchMatchScores();
   }, [isAddScoreModalOpen, isEditScoreModalOpen]);
+
+  useEffect(() => {
+    refetchMatchScores();
+  }, [
+    clubId,
+    textSearch,
+    courtSurfaceTypeId,
+    courtStructureTypeId,
+    eventTypeId,
+    currentPage,
+  ]);
+
   if (isMatchScoresLoading) {
     return <PageLoading />;
   }
-  console.log(matchScores);
-  console.log(user?.user?.user_id);
+
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Maç Skorları</h2>
+      <div className={styles["top-container"]}>
+        <div className={styles["title-container"]}>
+          <h2 className={styles.title}>Maç Skorları</h2>
+          <FaFilter
+            onClick={handleOpenMatchScoresFilterModal}
+            className={styles.filter}
+          />
+        </div>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
       </div>
-      {matchScores?.length > 0 ? (
+      {matchScores?.matchScores?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -80,7 +187,7 @@ const PlayerScores = () => {
             </tr>
           </thead>
           <tbody>
-            {matchScores?.map((event) => (
+            {matchScores?.matchScores?.map((event) => (
               <tr key={event.booking_id} className={styles["player-row"]}>
                 <td>
                   <Link
@@ -122,13 +229,13 @@ const PlayerScores = () => {
                 <td>{event?.court_surface_type_name}</td>
                 <td>{event?.court_structure_type_name}</td>
                 <td>
-                  {matchScores?.find(
+                  {matchScores?.matchScores?.find(
                     (match) =>
                       match.booking_id === event.booking_id &&
                       match.inviter_third_set_games_won === 0
                   )?.match_score_status_type_id === 3
                     ? `${event?.inviter_first_set_games_won}-${event?.invitee_first_set_games_won} ${event?.inviter_second_set_games_won}-${event?.invitee_second_set_games_won} `
-                    : matchScores?.find(
+                    : matchScores?.matchScores?.find(
                         (match) =>
                           match.booking_id === event.booking_id &&
                           match.match_score_status_type_id === 3 &&
@@ -180,6 +287,22 @@ const PlayerScores = () => {
       ) : (
         <p>Tamamlanan etkinlik bulunmamaktadır</p>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleEventPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
       {isAddScoreModalOpen && (
         <AddMatchScoreModal
           isAddScoreModalOpen={isAddScoreModalOpen}
@@ -192,6 +315,27 @@ const PlayerScores = () => {
           isEditScoreModalOpen={isEditScoreModalOpen}
           closeEditScoreModal={closeEditScoreModal}
           selectedMatchScore={selectedMatchScore}
+        />
+      )}
+      {isMatchScoresFilterModalOpen && (
+        <PlayerPastEventsFilterModal
+          textSearch={textSearch}
+          clubId={clubId}
+          courtSurfaceTypeId={courtSurfaceTypeId}
+          courtStructureTypeId={courtStructureTypeId}
+          eventTypeId={eventTypeId}
+          clubs={clubs}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          eventTypes={eventTypes}
+          handleTextSearch={handleTextSearch}
+          handleClub={handleClub}
+          handleCourtStructure={handleCourtStructure}
+          handleCourtSurface={handleCourtSurface}
+          handleEventType={handleEventType}
+          isPastEventsModalOpen={isMatchScoresFilterModalOpen}
+          handleClosePastEventsModal={handleCloseMatchScoresFilterModal}
+          handleClear={handleClear}
         />
       )}
     </div>

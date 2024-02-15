@@ -7,6 +7,7 @@ import paths from "../../../../routing/Paths";
 import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { ImBlocked } from "react-icons/im";
 
 import styles from "./styles.module.scss";
 
@@ -60,8 +61,19 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: myEvents, isLoading: isBookingsLoading } =
-    useGetPlayerPastEventsQuery(user?.user?.user_id);
+  const {
+    data: myEvents,
+    isLoading: isBookingsLoading,
+    refetch: refetchMyEvents,
+  } = useGetPlayerPastEventsQuery({
+    userId: user?.user?.user_id,
+    clubId: clubId,
+    textSearch: textSearch,
+    courtSurfaceTypeId: courtSurfaceTypeId,
+    courtStructureTypeId: courtStructureTypeId,
+    eventTypeId: eventTypeId,
+    currentPage: currentPage,
+  });
 
   const {
     data: eventReviews,
@@ -135,6 +147,17 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     }
   }, [isAddReviewModalOpen]);
 
+  useEffect(() => {
+    refetchMyEvents();
+  }, [
+    clubId,
+    textSearch,
+    courtSurfaceTypeId,
+    courtStructureTypeId,
+    eventTypeId,
+    currentPage,
+  ]);
+
   if (isBookingsLoading || isEventReviewsLoading) {
     return <PageLoading />;
   }
@@ -161,7 +184,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
           />
         </div>
       </div>
-      {myEvents?.length > 0 ? (
+      {myEvents?.pastEvents?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -174,12 +197,12 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
               <th>Kort</th>
               <th>Yüzey</th>
               <th>Mekan</th>
-              <th></th>
-              <th></th>
+              <th>Yorum Yap</th>
+              <th>Yorum Görüntüle</th>
             </tr>
           </thead>
           <tbody>
-            {myEvents?.map((event) => (
+            {myEvents?.pastEvents?.map((event) => (
               <tr key={event.booking_id} className={styles["player-row"]}>
                 <td>
                   <Link
@@ -294,23 +317,26 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                         Yorum Yap
                       </button>
                     ))}
+                  {event.event_type_id === 6 && <ImBlocked />}
                 </td>
                 <td>
                   {(event.event_type_id === 1 ||
                     event.event_type_id === 2 ||
                     event.event_type_id === 3) &&
-                    eventReviews?.find(
-                      (review) =>
-                        review.reviewee_id === user?.user?.user_id &&
-                        review.booking_id === event.booking_id
-                    ) && (
-                      <button
-                        className={styles["view-button"]}
-                        onClick={() => openViewReviewModal(event.booking_id)}
-                      >
-                        Yorum Görüntüle
-                      </button>
-                    )}
+                  eventReviews?.find(
+                    (review) =>
+                      review.reviewee_id === user?.user?.user_id &&
+                      review.booking_id === event.booking_id
+                  ) ? (
+                    <button
+                      className={styles["view-button"]}
+                      onClick={() => openViewReviewModal(event.booking_id)}
+                    >
+                      Yorum Görüntüle
+                    </button>
+                  ) : (
+                    <ImBlocked />
+                  )}
                 </td>
               </tr>
             ))}

@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import paths from "../../../../../../routing/Paths";
+import { localUrl } from "../../../../../../common/constants/apiConstants";
 
 import styles from "./styles.module.scss";
 
@@ -18,25 +19,28 @@ import {
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
 import { useAppSelector } from "../../../../../../store/hooks";
+import { Club } from "../../../../../../api/endpoints/ClubsApi";
+import { getAge } from "../../../../../../common/util/TimeFunctions";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: Player;
   user_id: number;
+  clubs: Club[];
 }
 
 const ExplorePlayersInteractionsSections = (
   props: ExplorePlayersInteractionsSectionsProps
 ) => {
-  const { selectedPlayer, user_id } = props;
+  const { selectedPlayer, user_id, clubs } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
-
+  const profileImage = selectedPlayer?.[0]?.image;
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
-
+  console.log(selectedPlayer);
   const userGender = currentPlayer?.[0]?.gender;
 
   const {
@@ -112,64 +116,118 @@ const ExplorePlayersInteractionsSections = (
 
   return (
     <div className={styles["interaction-section"]}>
-      <h2>Etkileşim</h2>
-      <p>{`${playerFavouriters?.length} kişi favorilere ekledi`}</p>
-      <div className={styles["buttons-container"]}>
-        <button
-          onClick={() => handleToggleFavourite(selectedPlayer?.[0]?.user_id)}
-          className={styles["interaction-button"]}
-        >
-          {isPlayerInMyFavourites(selectedPlayer?.[0]?.user_id)?.is_active ===
-          true
-            ? "Favorilerden çıkar"
-            : "Favorilere ekle"}
-        </button>
-        {isUserPlayer && (
-          <Link
-            to={paths.TRAIN_INVITE}
-            state={{
-              fname: selectedPlayer?.[0]?.fname,
-              lname: selectedPlayer?.[0]?.lname,
-              image: selectedPlayer?.[0]?.image,
-              court_price: "",
-              user_id: selectedPlayer?.[0]?.user_id,
-            }}
-          >
-            <button className={styles["interaction-button"]}>
-              Antreman yap
-            </button>
-          </Link>
-        )}
-        {isUserPlayer && selectedPlayer?.[0]?.gender === userGender && (
-          <Link
-            to={paths.MATCH_INVITE}
-            state={{
-              fname: selectedPlayer?.[0]?.fname,
-              lname: selectedPlayer?.[0]?.lname,
-              image: selectedPlayer?.[0]?.image,
-              court_price: "",
-              user_id: selectedPlayer?.[0]?.user_id,
-            }}
-          >
-            <button className={styles["interaction-button"]}>Maç yap</button>
-          </Link>
-        )}
-        {isUserTrainer && (
-          <Link
-            to={paths.LESSON_INVITE}
-            state={{
-              fname: selectedPlayer?.[0]?.fname,
-              lname: selectedPlayer?.[0]?.lname,
-              image: selectedPlayer?.[0]?.image,
-              court_price: "",
-              user_id: selectedPlayer?.[0]?.user_id,
-            }}
-          >
-            <button className={styles["interaction-button"]}>
-              Derse davet et
-            </button>
-          </Link>
-        )}
+      <img
+        src={
+          profileImage
+            ? `${localUrl}/${profileImage}`
+            : "/images/icons/avatar.png"
+        }
+        alt="player picture"
+        className={styles["profile-image"]}
+      />
+
+      <div className={styles["bio-container"]}>
+        <div className={styles["top-container"]}>
+          <div className={styles["name-container"]}>
+            <h2>{`${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`}</h2>
+            <h4>Oyuncu</h4>
+          </div>
+          <div className={styles["table-container"]}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Yaş</th>
+                  <th>Cinsiyet</th>
+                  <th>Konum</th>
+                  <th>Seviye</th>
+                  <th>Maç</th>
+                  <th>W</th>
+                  <th>L</th>
+                  <th>Puan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className={styles["player-row"]}>
+                  <td>{getAge(Number(selectedPlayer?.[0]?.birth_year))}</td>
+                  <td>{selectedPlayer?.[0]?.gender}</td>
+                  <td>{selectedPlayer?.[0]?.location_name}</td>
+                  <td>{selectedPlayer?.[0]?.player_level_name}</td>
+                  <td>{selectedPlayer?.[0]?.totalmatches}</td>
+                  <td className={styles["win-count"]}>
+                    {selectedPlayer?.[0]?.wonmatches}
+                  </td>
+                  <td className={styles["lost-count"]}>
+                    {selectedPlayer?.[0]?.lostmatches}
+                  </td>
+                  <td className={styles["points-count"]}>
+                    {selectedPlayer?.[0]?.playerpoints}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className={styles["buttons-container"]}>
+              <button
+                onClick={() =>
+                  handleToggleFavourite(selectedPlayer?.[0]?.user_id)
+                }
+                className={styles["interaction-button"]}
+              >
+                {isPlayerInMyFavourites(selectedPlayer?.[0]?.user_id)
+                  ?.is_active === true
+                  ? "Favorilerden çıkar"
+                  : "Favorilere ekle"}
+              </button>
+              {isUserPlayer && (
+                <Link
+                  to={paths.TRAIN_INVITE}
+                  state={{
+                    fname: selectedPlayer?.[0]?.fname,
+                    lname: selectedPlayer?.[0]?.lname,
+                    image: selectedPlayer?.[0]?.image,
+                    court_price: "",
+                    user_id: selectedPlayer?.[0]?.user_id,
+                  }}
+                >
+                  <button className={styles["interaction-button"]}>
+                    Antreman yap
+                  </button>
+                </Link>
+              )}
+              {isUserPlayer && selectedPlayer?.[0]?.gender === userGender && (
+                <Link
+                  to={paths.MATCH_INVITE}
+                  state={{
+                    fname: selectedPlayer?.[0]?.fname,
+                    lname: selectedPlayer?.[0]?.lname,
+                    image: selectedPlayer?.[0]?.image,
+                    court_price: "",
+                    user_id: selectedPlayer?.[0]?.user_id,
+                  }}
+                >
+                  <button className={styles["interaction-button"]}>
+                    Maç yap
+                  </button>
+                </Link>
+              )}
+              {isUserTrainer && (
+                <Link
+                  to={paths.LESSON_INVITE}
+                  state={{
+                    fname: selectedPlayer?.[0]?.fname,
+                    lname: selectedPlayer?.[0]?.lname,
+                    image: selectedPlayer?.[0]?.image,
+                    court_price: "",
+                    user_id: selectedPlayer?.[0]?.user_id,
+                  }}
+                >
+                  <button className={styles["interaction-button"]}>
+                    Derse davet et
+                  </button>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

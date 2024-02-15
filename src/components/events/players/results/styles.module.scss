@@ -101,4 +101,26 @@
       }
     }
   }
+  .pages-container {
+    display: flex;
+    column-gap: 20px;
+    margin-top: 2vh;
+    .active-page {
+      background-color: $roger-blue;
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+    }
+    .passive-page {
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+    }
+  }
 }

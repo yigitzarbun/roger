@@ -234,7 +234,7 @@ const LessonResults = (props: TrainSearchProps) => {
                       src={
                         trainer.image
                           ? trainer.image
-                          : "/images/icons/avatar.png"
+                          : "/images/icons/avatar.jpg"
                       }
                       alt={trainer.name}
                       className={styles["trainer-image"]}

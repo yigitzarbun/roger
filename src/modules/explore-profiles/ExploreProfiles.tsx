@@ -2,8 +2,6 @@ import React from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { MdArrowBackIosNew } from "react-icons/md";
-
 import styles from "./styles.module.scss";
 
 import ExplorePlayerProfile from "../../components/explore/explore-profiles/player/ExplorePlayerProfile";
@@ -18,15 +16,9 @@ const ExploreProfiles = () => {
   const isProfileTrainer = Number(params.profile_type) === 2;
   const isProfileClub = Number(params.profile_type) === 3;
   const isProfileCourt = params.profile_type === "kort";
-  const handleBack = () => {
-    navigate(-1);
-  };
+
   return (
-    <div>
-      <div className={styles["back-container"]} onClick={handleBack}>
-        <MdArrowBackIosNew className={styles["back-button"]} />
-        <p className={styles["back-text"]}>Geri</p>
-      </div>
+    <div className={styles["profile-container"]}>
       {isProfilePlayer && <ExplorePlayerProfile user_id={params.id} />}
       {isProfileTrainer && <ExploreTrainerProfile user_id={params.id} />}
       {isProfileClub && <ExploreClubProfile user_id={params.id} />}
