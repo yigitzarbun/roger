@@ -15,12 +15,12 @@ const clubsModel = {
         "clubs.image as clubImage",
         "club_types.*",
         "locations.*",
+        "users.*",
         db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),
         db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffQuantity"),
         db.raw(
           "COUNT(DISTINCT club_subscriptions.club_subscription_id) as memberQuantity"
-        ),
-        "users.*"
+        )
       )
       .from("clubs")
       .leftJoin(
@@ -62,14 +62,11 @@ const clubsModel = {
           builder.where("clubs.club_name", "ilike", `%${filter.textSearch}%`);
         }
         if (filter.subscribedClubs === "true") {
-          builder.whereIn("clubs.club_id", function () {
-            this.select("club_subscriptions.club_id")
-              .from("club_subscriptions")
-              .where("club_subscriptions.player_id", "=", filter.currentUserId)
-              .andWhere("club_subscriptions.is_active", true);
-          });
+          builder
+            .where("club_subscriptions.player_id", "=", filter.currentUserId)
+            .andWhere("club_subscriptions.is_active", true);
         }
-        if (filter.clubTrainers === "true") {
+        if (filter.clubTrainers === true) {
           builder
             .whereNotNull("club_staff.club_staff_id")
             .andWhere("club_staff.club_staff_role_type_id", 2);
@@ -212,6 +209,72 @@ const clubsModel = {
     return club;
   },
 
+  async getClubProfileDetails(userId: number) {
+    try {
+      const clubDetails = await db
+        .select(
+          "clubs.*",
+          "clubs.image as clubImage",
+          "users.*",
+          "locations.*",
+          "club_types.*",
+          db.raw("COUNT(DISTINCT courts.court_id) as courtCount"),
+          db.raw(
+            "COUNT(DISTINCT club_subscription_packages.club_subscription_package_id) as subscriptionPackageCount"
+          ),
+          db.raw(
+            "COUNT(DISTINCT club_subscriptions.club_subscription_id) as subscribersCount"
+          ),
+          db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffCount")
+        )
+        .from("clubs")
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "clubs.user_id");
+        })
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "clubs.location_id");
+        })
+        .leftJoin("club_types", function () {
+          this.on("club_types.club_type_id", "=", "clubs.club_type_id");
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.club_id", "=", "clubs.club_id").andOn(
+            "courts.is_active",
+            "=",
+            db.raw("'true'")
+          );
+        })
+        .leftJoin("club_subscription_packages", function () {
+          this.on("club_subscription_packages.club_id", "=", userId).andOn(
+            "club_subscription_packages.is_active",
+            "=",
+            db.raw("'true'")
+          );
+        })
+        .leftJoin("club_subscriptions", function () {
+          this.on("club_subscriptions.club_id", "=", userId).andOn(
+            "club_subscriptions.is_active",
+            "=",
+            db.raw("'true'")
+          );
+        })
+        .leftJoin("club_staff", function () {
+          this.on("club_staff.club_id", "=", "clubs.club_id")
+            .andOn("club_staff.club_staff_role_type_id", "=", 2)
+            .andOn("club_staff.employment_status", "=", db.raw("'accepted'"));
+        })
+        .where("clubs.user_id", userId)
+        .groupBy(
+          "clubs.club_id",
+          "users.user_id",
+          "locations.location_id",
+          "club_types.club_type_id"
+        );
+      return clubDetails.length > 0 ? clubDetails : null;
+    } catch (error) {
+      console.log("Error fetching club profile details: ", error);
+    }
+  },
   async add(club) {
     const [newClub] = await db("clubs").insert(club).returning("*");
     return newClub;

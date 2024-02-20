@@ -209,29 +209,53 @@ const MatchInviteFormModal = (props: MatchInviteModalProps) => {
   );
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    setConfirmation(true);
-    const bookingData = {
-      event_date: new Date(formData.event_date).toISOString(),
-      event_time: formData.event_time,
-      booking_status_type_id: 1,
-      event_type_id: 2,
-      club_id: formData.club_id,
-      court_id: formData.court_id,
-      inviter_id: user?.user.user_id,
-      invitee_id: inviteePlayer?.[0]?.user_id,
-      lesson_price: null,
-      court_price:
-        selectedClubDetails?.[0]?.higher_price_for_non_subscribers &&
-        selectedCourtDetails?.[0]?.price_hour_non_subscriber &&
-        !isPlayersSubscribed
-          ? selectedCourtDetails?.[0]?.price_hour_non_subscriber
-          : selectedCourtDetails?.[0]?.price_hour,
-      payment_id: null,
-      invitation_note: formData?.invitation_note
-        ? formData?.invitation_note
-        : "",
-    };
-    setBookingFormData(bookingData);
+    if (
+      (inviterPlayerPaymentMethodExists &&
+        inviteePlayerPaymentMethodExists &&
+        selectedClub &&
+        selectedCourt &&
+        selectedTime &&
+        selectedDate &&
+        !selectedClubDetails?.[0]?.is_player_subscription_required) ||
+      (selectedClubDetails?.[0]?.is_player_subscription_required &&
+        isPlayersSubscribed)
+    ) {
+      setConfirmation(true);
+      const bookingData = {
+        event_date: new Date(formData.event_date).toISOString(),
+        event_time: formData.event_time,
+        booking_status_type_id: 1,
+        event_type_id: 2,
+        club_id: formData.club_id,
+        court_id: formData.court_id,
+        inviter_id: user?.user.user_id,
+        invitee_id: inviteePlayer?.[0]?.user_id,
+        lesson_price: null,
+        court_price:
+          selectedClubDetails?.[0]?.higher_price_for_non_subscribers &&
+          selectedCourtDetails?.[0]?.price_hour_non_subscriber &&
+          !isPlayersSubscribed
+            ? selectedCourtDetails?.[0]?.price_hour_non_subscriber
+            : selectedCourtDetails?.[0]?.price_hour,
+        payment_id: null,
+        invitation_note: formData?.invitation_note
+          ? formData?.invitation_note
+          : "",
+      };
+      setBookingFormData(bookingData);
+    } else if (
+      !inviterPlayerPaymentMethodExists ||
+      !inviteePlayerPaymentMethodExists
+    ) {
+      toast.error("Ödeme bilgileri eksik");
+    } else if (
+      selectedClubDetails?.[0]?.is_player_subscription_required &&
+      !isPlayersSubscribed
+    ) {
+      toast.error(
+        "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"
+      );
+    }
   };
 
   const handleModalSubmit = () => {
@@ -475,29 +499,20 @@ const MatchInviteFormModal = (props: MatchInviteModalProps) => {
               >
                 İptal
               </button>
-              <button
-                type="submit"
-                className={styles["submit-button"]}
-                disabled={
-                  (selectedClubDetails?.[0]?.is_player_subscription_required &&
-                    !isPlayersSubscribed) ||
-                  !inviterPlayerPaymentMethodExists ||
-                  !inviteePlayerPaymentMethodExists ||
-                  !selectedClub ||
-                  !selectedCourt ||
-                  !selectedTime ||
-                  !selectedDate
-                }
-              >
-                {(!inviterPlayerPaymentMethodExists ||
-                  !inviteePlayerPaymentMethodExists) &&
-                  "Oyuncuların kort kiralamak için ödeme bilgilerini eklemesi gerekmektedir"}
-                {selectedClubDetails?.[0]?.is_player_subscription_required &&
-                !isPlayersSubscribed
-                  ? "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"
-                  : "Davet Gönder"}
+              <button type="submit" className={styles["submit-button"]}>
+                Davet Gönder
               </button>
             </div>
+            <p className={styles.invalid}>
+              {(!inviterPlayerPaymentMethodExists ||
+                !inviteePlayerPaymentMethodExists) &&
+                "Kort kiralamak için her iki oyuncunun da ödeme bilgilerinin bulunması gerekmektedir."}
+            </p>
+            <p className={styles.invalid}>
+              {selectedClubDetails?.[0]?.is_player_subscription_required &&
+                !isPlayersSubscribed &&
+                "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"}
+            </p>
           </form>
         )}
       </div>

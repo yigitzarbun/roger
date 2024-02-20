@@ -14,6 +14,7 @@ interface TrainSearchProps {
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleFavourite: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
   trainerLevelId: number;
   gender: string;
   locationId: number;
@@ -30,6 +31,7 @@ const LessonSearch = (props: TrainSearchProps) => {
     handleClub,
     handleFavourite,
     handleTextSearch,
+    handleClear,
     trainerLevelId,
     gender,
     locationId,
@@ -132,6 +134,21 @@ const LessonSearch = (props: TrainSearchProps) => {
           </option>
         </select>
       </div>
+      <button
+        onClick={handleClear}
+        className={
+          trainerLevelId > 0 ||
+          textSearch !== "" ||
+          gender !== "" ||
+          locationId > 0 ||
+          clubId > 0 ||
+          favourite === true
+            ? styles["active-clear-button"]
+            : styles["passive-clear-button"]
+        }
+      >
+        Temizle
+      </button>
     </div>
   );
 };

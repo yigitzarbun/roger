@@ -31,6 +31,7 @@ const Match = () => {
   };
 
   const handleClear = () => {
+    setTextSearch("");
     setPlayerLevelId(null);
     setLocationId(null);
     setFavourite(null);
@@ -42,6 +43,7 @@ const Match = () => {
         handleTextSearch={handleTextSearch}
         handleLocation={handleLocation}
         handleFavourite={handleFavourite}
+        handleClear={handleClear}
         playerLevelId={playerLevelId}
         textSearch={textSearch}
         locationId={locationId}

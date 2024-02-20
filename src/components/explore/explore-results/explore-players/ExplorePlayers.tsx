@@ -214,6 +214,8 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
+              <th>{isUserPlayer ? "Antreman" : isUserTrainer ? "Ders" : ""}</th>
+              <th>{isUserPlayer && "Maç"}</th>
             </tr>
           </thead>
           <tbody>
@@ -274,41 +276,44 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                 <td>{getAge(player.birth_year)}</td>
                 <td>{player?.location_name}</td>
                 <td>
-                  <div className={styles["action-buttons-container"]}>
+                  {isUserPlayer ? (
                     <button
                       onClick={() => handleOpenTrainingModal(player?.user_id)}
                       className={styles["training-button"]}
                     >
                       Anterman yap
                     </button>
-
-                    {isUserPlayer && player.gender === userGender ? (
-                      <button
-                        onClick={() => handleOpenMatchModal(player?.user_id)}
-                        className={styles["match-button"]}
-                      >
-                        Maç yap
-                      </button>
-                    ) : (
-                      <ImBlocked />
-                    )}
-                    {isUserTrainer && (
-                      <Link
-                        to={paths.LESSON_INVITE}
-                        state={{
-                          fname: player.fname,
-                          lname: player.lname,
-                          image: player.image,
-                          court_price: "",
-                          user_id: player.user_id,
-                        }}
-                        className={styles["match-button"]}
-                      >
-                        Derse davet et
-                      </Link>
-                    )}
-                  </div>
+                  ) : isUserTrainer ? (
+                    <Link
+                      to={paths.LESSON_INVITE}
+                      state={{
+                        fname: player.fname,
+                        lname: player.lname,
+                        image: player.image,
+                        court_price: "",
+                        user_id: player.user_id,
+                      }}
+                      className={styles["match-button"]}
+                    >
+                      Derse davet et
+                    </Link>
+                  ) : (
+                    ""
+                  )}
                 </td>
+                <td>
+                  {isUserPlayer && player.gender === userGender ? (
+                    <button
+                      onClick={() => handleOpenMatchModal(player?.user_id)}
+                      className={styles["match-button"]}
+                    >
+                      Maç yap
+                    </button>
+                  ) : (
+                    <ImBlocked className={styles.blocked} />
+                  )}
+                </td>
+
                 <td>
                   <SlOptions className={styles.icon} />
                 </td>

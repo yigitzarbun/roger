@@ -5,62 +5,115 @@
   background-color: $roger-box-bg-color;
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
-  width: 45%;
+  width: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  row-gap: 30px;
-
-  .buttons-container {
+  column-gap: 3vw;
+  .image-container {
     display: flex;
-    column-gap: 2vw;
-    margin-top: 50px;
-    align-items: center;
-    .interaction-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      background-color: $roger-black-dark;
-      font-size: 0.8rem;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-      text-align: center;
+    column-gap: 1vw;
+    .profile-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
     }
-    .interaction-button:hover {
-      background-color: $roger-blue;
-      cursor: pointer;
-    }
-    .cancel-student-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 150px;
-      background-color: $roger-red;
-      font-size: 0.8rem;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-      text-align: center;
-    }
-    .cancel-student-button:hover {
-      background-color: $roger-blue;
-      cursor: pointer;
+    .name-container {
+      width: 50%;
+      h4 {
+        font-weight: lighter;
+      }
+      .reviews {
+        margin-top: 2vh;
+        .active-star {
+          color: $roger-green;
+          font-size: 0.9rem;
+          margin-top: 1vh;
+        }
+        .empty-star {
+          color: grey;
+          font-size: 0.9rem;
+          margin-top: 1vh;
+        }
+        .reviews-text {
+          font-size: 0.9rem;
+        }
+      }
     }
   }
-  .pending-confirmation-text {
-    font-size: 0.8rem;
-    color: $roger-yellow;
-    margin-top: auto;
-  }
+  .bio-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4.5vh;
+    .top-container {
+      display: flex;
+      column-gap: 5vw;
+      align-items: start;
+      width: 100%;
+      .table-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 4vh;
+        table {
+          width: 50%;
+          text-align: left;
+          border-collapse: collapse;
+          th {
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+          .player-row {
+            border-bottom: 1px solid $roger-border-color;
+            td {
+              border-top: 1px solid $roger-border-color;
+              vertical-align: middle;
+              padding: 10px;
+              height: 12vh;
+            }
+          }
+        }
+        .buttons-container {
+          display: flex;
+          column-gap: 20px;
 
-  .accept-button {
-    font-weight: bold;
-    text-decoration: none;
-    border: none;
-    background-color: transparent;
+          .interaction-button {
+            padding: 10px;
+            border-radius: $roger-border-radius;
+            border: none;
+            background-color: $roger-black-dark;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+          }
+
+          .interaction-button:hover {
+            background-color: $roger-black-light;
+            cursor: pointer;
+          }
+          .cancel-student-button {
+            padding: 10px;
+            border-radius: $roger-border-radius;
+            border: none;
+            background-color: $roger-red;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+          }
+        }
+      }
+    }
+    .pending-confirmation-text {
+      color: $roger-yellow;
+      font-size: 0.9rem;
+    }
+  }
+  .icon {
     font-size: 1rem;
-    color: $roger-blue;
     cursor: pointer;
   }
 }

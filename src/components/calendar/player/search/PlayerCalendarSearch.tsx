@@ -13,6 +13,7 @@ interface PlayerCalendarSearchProps {
   handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleClear: () => void;
   textSearch: string;
   date: string;
   eventTypeId: number;
@@ -24,6 +25,7 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
     handleEventType,
     handleClub,
     handleTextSearch,
+    handleClear,
     date,
     textSearch,
     eventTypeId,
@@ -95,6 +97,16 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
           ))}
         </select>
       </div>
+      <button
+        onClick={handleClear}
+        className={
+          date !== "" || textSearch !== "" || eventTypeId > 0 || clubId > 0
+            ? styles["active-clear-button"]
+            : styles["passive-clear-button"]
+        }
+      >
+        Temizle
+      </button>
     </div>
   );
 };

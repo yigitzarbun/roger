@@ -123,6 +123,10 @@ const playersModel = {
           "users.*",
           "locations.*",
           "player_levels.*",
+          db.raw("AVG(event_reviews.review_score) as averageReviewScore"),
+          db.raw(
+            "COUNT(DISTINCT event_reviews.review_score) as reviewScoreCount"
+          ),
           db.raw("COUNT(match_scores.match_score_id) as totalMatches"),
           db.raw(
             "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
@@ -148,19 +152,22 @@ const playersModel = {
           "=",
           "players.player_level_id"
         )
+        .leftJoin("event_reviews", function () {
+          this.on("event_reviews.reviewee_id", "=", userId);
+        })
         .leftJoin("bookings", function () {
-          this.on("bookings.inviter_id", "=", userId).orOn(
-            "bookings.invitee_id",
-            "=",
-            userId
-          );
+          this.on("bookings.inviter_id", "=", userId)
+            .orOn("bookings.invitee_id", "=", userId)
+            .andOn("bookings.event_type_id", "=", 2);
         })
         .leftJoin("match_scores", function () {
-          this.on("match_scores.booking_id", "=", "bookings.booking_id");
+          this.on("match_scores.booking_id", "=", "bookings.booking_id").andOn(
+            "match_scores.match_score_status_type_id",
+            "=",
+            3
+          );
         })
         .where("players.user_id", userId)
-        .andWhere("bookings.event_type_id", 2)
-        .andWhere("match_scores.match_score_status_type_id", 3)
         .groupBy(
           "players.player_id",
           "users.user_id",

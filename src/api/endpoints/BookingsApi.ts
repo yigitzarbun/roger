@@ -37,6 +37,9 @@ export const bookingsSlice = createApi({
     getPlayerIncomingRequests: builder.query({
       query: (userId) => `/bookings/incoming-requests/${userId}`,
     }),
+    getUserProfileEvents: builder.query({
+      query: (userId) => `/bookings/user-profile-events/${userId}`,
+    }),
     getPlayerPastEvents: builder.query({
       query: (filter) =>
         `/bookings/past-events/filter?${new URLSearchParams(filter)}`,
@@ -75,6 +78,7 @@ export const {
   useGetPlayerBookingsByUserIdQuery,
   useGetPlayerOutgoingRequestsQuery,
   useGetPlayerIncomingRequestsQuery,
+  useGetUserProfileEventsQuery,
   useGetPlayerPastEventsQuery,
   useGetPlayersLeaderboardQuery,
   useGetBookingsByFilterQuery,

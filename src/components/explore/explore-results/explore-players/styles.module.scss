@@ -114,6 +114,9 @@
         color: white;
         text-decoration: none;
       }
+      .blocked {
+        color: $roger-red;
+      }
       .remove-fav-icon {
         color: $roger-blue;
         cursor: pointer;
@@ -130,45 +133,38 @@
       }
     }
 
-    .action-buttons-container {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      column-gap: 15px;
+    .training-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
 
-      .training-button {
-        background-color: $roger-black-dark;
-        border: none;
-        width: 150px;
-        padding: $roger-button-padding;
-        border-radius: $roger-border-radius;
-        font-size: 0.9rem;
-        cursor: pointer;
-        color: white;
-        text-decoration: none;
-        text-align: center;
-      }
+    .training-button:hover {
+      background-color: $roger-black-light;
+    }
 
-      .training-button:hover {
-        background-color: $roger-black-light;
-      }
+    .match-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
 
-      .match-button {
-        background-color: $roger-black-dark;
-        border: none;
-        width: 150px;
-        padding: $roger-button-padding;
-        border-radius: $roger-border-radius;
-        font-size: 0.9rem;
-        cursor: pointer;
-        color: white;
-        text-decoration: none;
-        text-align: center;
-      }
-
-      .match-button:hover {
-        background-color: $roger-black-light;
-      }
+    .match-button:hover {
+      background-color: $roger-black-light;
     }
   }
 
@@ -186,6 +182,7 @@
       cursor: pointer;
     }
     .passive-page {
+      background-color: $roger-black-dark;
       padding: 5px;
       width: 30px;
       height: 30px;

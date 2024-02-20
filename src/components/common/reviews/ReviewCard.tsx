@@ -13,7 +13,7 @@ const ReviewCard = ({ review }) => {
         <h4>{review.event_review_title}</h4>
         <p>{review.registered_at?.slice(0, 10)}</p>
       </div>
-      <p>{review.event_review_description}</p>
+      <p className={styles.description}>{review.event_review_description}</p>
       <div className={styles["score-type-container"]}>
         <p>
           <span className={styles.subtitle}>Skor:</span>{" "}

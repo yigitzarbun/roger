@@ -98,6 +98,20 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
+  "/user-profile-events/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getUserProfilePastEvents(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
   "/past-events/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

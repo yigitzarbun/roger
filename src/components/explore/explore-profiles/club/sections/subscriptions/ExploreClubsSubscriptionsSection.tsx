@@ -20,7 +20,7 @@ import {
 import { useAppSelector } from "../../../../../../store/hooks";
 
 interface ExploreClubsSubscriptionsSectionProps {
-  selectedClub: Club;
+  selectedClub: any;
   selectedClubSubscribers: ClubSubscription[];
   isUserPlayer: boolean;
 }

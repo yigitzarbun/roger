@@ -56,6 +56,21 @@ eventReviewsRouter.get(
     }
   }
 );
+
+eventReviewsRouter.get(
+  "/user-received-reviews/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const receivedReviews = await eventReviewsModel.getUserReceivedReviews(
+        Number(req.params.userId)
+      );
+      res.status(200).json(receivedReviews);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 eventReviewsRouter.get(
   "/player-missing-reviews/:userId",
   async (req: Request, res: Response, next: NextFunction) => {

@@ -3,41 +3,114 @@
 
 .profile-section {
   background-color: $roger-box-bg-color;
-  width: 40%;
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  row-gap: 20px;
-  .profile-data-container {
+  justify-content: space-between;
+  column-gap: 3vw;
+  .image-container {
     display: flex;
-    column-gap: 20px;
-
-    .secondary-profile-data-container {
-      display: flex;
-      flex-direction: column;
-      row-gap: 10px;
+    column-gap: 1vw;
+    .profile-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .name-container {
       width: 50%;
+      h4 {
+        font-weight: lighter;
+      }
+      address {
+        margin-top: 1vh;
+        font-size: 0.9rem;
+      }
+    }
+  }
+  .bio-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4.5vh;
 
-      .profile-info {
+    .top-container {
+      display: flex;
+      column-gap: 5vw;
+      align-items: start;
+      width: 100%;
+
+      .table-container {
         display: flex;
-        align-items: center;
-        column-gap: 15px;
-        align-items: start;
-        .icon {
-          font-size: 20px;
+        flex-direction: column;
+        row-gap: 4vh;
+        width: 100%;
+        table {
+          width: 100%;
+          text-align: left;
+          border-collapse: collapse;
+          th {
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+          .player-row {
+            border-bottom: 1px solid $roger-border-color;
+            td {
+              border-top: 1px solid $roger-border-color;
+              vertical-align: middle;
+              padding: 10px;
+              height: 12vh;
+            }
+            .win-count {
+              color: $roger-green;
+            }
+            .lost-count {
+              color: $roger-red;
+            }
+            .points-count {
+              color: $roger-blue;
+            }
+          }
         }
-        .info-text {
-          width: 90%;
+        .buttons-container {
+          display: flex;
+          column-gap: 20px;
+
+          .interaction-button {
+            padding: 10px;
+            border-radius: $roger-border-radius;
+            border: none;
+            background-color: $roger-black-dark;
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+          }
+
+          .interaction-button:hover {
+            background-color: $roger-black-light;
+            cursor: pointer;
+          }
+        }
+        .subscribed-container {
+          display: flex;
+          column-gap: 1vw;
+          .subscribed-text {
+            color: $roger-green;
+            font-size: 0.9rem;
+          }
+          .done {
+            color: $roger-green;
+            font-size: 1.2rem;
+          }
         }
       }
     }
   }
-
-  .profile-image {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
+  .icon {
+    font-size: 1rem;
+    cursor: pointer;
   }
 }

@@ -1,63 +1,72 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
+
+.modal-overlay {
+  z-index: $profile-modal-z-index-overlay;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0, 0.8);
+  z-index: $profile-modal-z-index-overlay;
+}
 
 .modal-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  row-gap: 4vh;
-  background-color: $roger-box-bg-color;
-  padding: $roger-box-padding;
-  border-radius: $roger-border-radius;
-  width: 50%;
-  min-height: 40vh;
-  max-height: 80vh;
-  margin: 150px auto 0 auto;
-  margin-top: calc(10vh + 20px);
-  .top-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .close-button {
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-    }
-  }
-  .reviews-container {
+  .modal-content {
+    position: relative;
+    z-index: $profile-modal-z-index;
     display: flex;
     flex-direction: column;
-    row-gap: 10px;
-    height: 50vh;
-    overflow-y: auto;
-    .review-container {
-      background-color: $roger-black-dark;
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
-      width: 100%;
-      row-gap: 20px;
+    justify-content: space-between;
+    row-gap: 4vh;
+    border-radius: $roger-border-radius;
+    background-color: $roger-box-bg-color;
+    padding: $roger-box-padding;
+    border: 1px solid $roger-border-color;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    row-gap: 4vh;
+    background-color: $roger-box-bg-color;
+    padding: $roger-box-padding;
+    border-radius: $roger-border-radius;
+    width: 100%;
+    min-height: 40vh;
+    max-height: 80vh;
+    margin: 150px auto 0 auto;
+    margin-top: calc(10vh + 20px);
+    .top-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .reviews-container {
       display: flex;
       flex-direction: column;
-      .reviewer-container {
+      row-gap: 10px;
+      height: 50vh;
+      overflow-y: auto;
+      .review-container {
+        background-color: $roger-black-dark;
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        width: 100%;
+        row-gap: 20px;
         display: flex;
-        align-items: center;
-        column-gap: 10px;
-
-        .reviewer-image {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          object-fit: cover;
-        }
-        .reviewer-name {
-          font-size: 0.8rem;
-          color: white;
-          text-decoration: none;
-        }
-        .reviewer-name:hover {
-          color: $roger-blue;
-        }
+        flex-direction: column;
       }
     }
   }

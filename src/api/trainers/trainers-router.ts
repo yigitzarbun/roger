@@ -41,6 +41,20 @@ trainersRouter.get(
 );
 
 trainersRouter.get(
+  "/trainer-profile-details/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const trainerDetails = await trainersModel.getTrainerProfileDetails(
+        Number(req.params.userId)
+      );
+      res.status(200).json(trainerDetails);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+trainersRouter.get(
   "/trainer/:trainer_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

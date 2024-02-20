@@ -4,11 +4,10 @@ import styles from "./styles.module.scss";
 
 import ExploreClubSubscribersModal from "../../modals/subscribers/ExploreClubSubscribersModal";
 
-import { Club } from "../../../../../../api/endpoints/ClubsApi";
 import { ClubSubscription } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface ExploreClubsSubscribersSectionProps {
-  selectedClub: Club;
+  selectedClub: any;
   selectedClubSubscribers: ClubSubscription[];
 }
 const ExploreClubsSubscribersSection = (

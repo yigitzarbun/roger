@@ -35,6 +35,14 @@ const Training = () => {
     setFavourite(value === "true");
   };
 
+  const handleClear = () => {
+    setTextSearch("");
+    setPlayerLevelId(null);
+    setGender("");
+    setLocationId(null);
+    setFavourite(false);
+  };
+
   return (
     <div className={styles["training-container"]}>
       <TrainSearch
@@ -48,6 +56,7 @@ const Training = () => {
         gender={gender}
         locationId={locationId}
         favourite={favourite}
+        handleClear={handleClear}
       />
       <TrainResults
         playerLevelId={playerLevelId}

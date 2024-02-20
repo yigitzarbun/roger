@@ -4,7 +4,7 @@ import styles from "./styles.module.scss";
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
 
 interface ExploreClubsRulesSectionProps {
-  selectedClub: Club;
+  selectedClub: any;
 }
 const ExploreClubsRulesSection = (props: ExploreClubsRulesSectionProps) => {
   const { selectedClub } = props;

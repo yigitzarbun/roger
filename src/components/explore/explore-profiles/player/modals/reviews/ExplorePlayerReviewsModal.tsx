@@ -22,24 +22,24 @@ const ExplorePlayerReviewsModal = (props: ExplorePlayerReviewsModalProps) => {
     <ReactModal
       isOpen={isReviewsModalOpen}
       onRequestClose={closeReviewsModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1>Geçmiş Etkinlikler</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={closeReviewsModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <div className={styles["reviews-container"]}>
-        {playerReviewsReceived?.length > 0 ? (
-          playerReviewsReceived?.map((review) => (
-            <ReviewCard key={review.event_review_id} review={review} />
-          ))
-        ) : (
-          <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
-        )}
+      <div className={styles["overlay"]} onClick={closeReviewsModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1>Değerlendirmeler</h1>
+        </div>
+        <div className={styles["reviews-container"]}>
+          {playerReviewsReceived?.length > 0 ? (
+            playerReviewsReceived?.map((review) => (
+              <ReviewCard key={review.event_review_id} review={review} />
+            ))
+          ) : (
+            <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
+          )}
+        </div>
       </div>
     </ReactModal>
   );

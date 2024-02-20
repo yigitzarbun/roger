@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
+import { localUrl } from "../../../../../../common/constants/apiConstants";
 
 import styles from "./styles.module.scss";
 
@@ -9,6 +10,8 @@ import paths from "../../../../../../routing/Paths";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../../../store/hooks";
+import { IoStar } from "react-icons/io5";
+import { SlOptions } from "react-icons/sl";
 
 import {
   useAddFavouriteMutation,
@@ -22,6 +25,7 @@ import {
   useUpdateStudentMutation,
 } from "../../../../../../api/endpoints/StudentsApi";
 import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
+import { getAge } from "../../../../../../common/util/TimeFunctions";
 
 interface ExploreTrainersInteractionSectionProps {
   user_id: number;
@@ -36,14 +40,19 @@ export const ExploreTrainersInteractionSection = (
 
   const isUserPlayer = user?.user?.user_type_id === 1;
 
-  const {
-    data: trainerFavouriters,
-    isLoading: isTrainerFavouritersLoading,
-    refetch: refetchTrainerFavourites,
-  } = useGetFavouritesByFilterQuery({
-    favouritee_id: Number(user_id),
-    is_active: true,
-  });
+  const profileImage = selectedTrainer?.[0]?.trainerImage;
+
+  const generateStars = (count) => {
+    const stars = [];
+    for (let i = 0; i < 10; i++) {
+      if (i < count) {
+        stars.push(<IoStar className={styles["active-star"]} key={i} />);
+      } else {
+        stars.push(<IoStar className={styles["empty-star"]} key={i} />);
+      }
+    }
+    return stars;
+  };
 
   const {
     data: trainerStudents,
@@ -173,7 +182,6 @@ export const ExploreTrainersInteractionSection = (
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      refetchTrainerFavourites();
       refetchMyFavouriteTrainers();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
@@ -186,7 +194,6 @@ export const ExploreTrainersInteractionSection = (
   }, [isAddStudentSuccess, isUpdateStudentSuccess]);
 
   if (
-    isTrainerFavouritersLoading ||
     isStudentsLoading ||
     isTrainerStudentsLoading ||
     isMyFavouriteTrainersLoading
@@ -196,63 +203,129 @@ export const ExploreTrainersInteractionSection = (
 
   return (
     <div className={styles["interaction-section"]}>
-      <h2>Favoriler ve Öğrenciler</h2>
-      <p>{`${trainerFavouriters?.length} kişi favorilere ekledi`}</p>
-      <p>{`${trainerStudents?.length} öğrencisi var`}</p>
-      <div className={styles["buttons-container"]}>
-        <button
-          onClick={() => handleToggleFavourite(selectedTrainer?.[0]?.user_id)}
-          className={styles["interaction-button"]}
-        >
-          {isTrainerInMyFavourites(selectedTrainer?.[0]?.user_id)?.is_active ===
-          true
-            ? "Favorilerden çıkar"
-            : "Favorilere ekle"}
-        </button>
-        {isUserPlayer && (
-          <Link
-            to={paths.LESSON_INVITE}
-            state={{
-              fname: selectedTrainer?.[0]?.fname,
-              lname: selectedTrainer?.[0]?.lname,
-              image: selectedTrainer?.[0]?.image,
-              court_price: "",
-              user_id: selectedTrainer?.[0]?.user_id,
-            }}
-            className={styles["accept-button"]}
-          >
-            <button className={styles["interaction-button"]}>Ders al</button>
-          </Link>
-        )}
-        {isUserPlayer && (
-          <p>
-            {isStudentPending() ? (
-              ""
-            ) : isStudentAccepted() ? (
+      <div className={styles["image-container"]}>
+        <img
+          src={
+            profileImage
+              ? `${localUrl}/${profileImage}`
+              : "/images/icons/avatar.jpg"
+          }
+          alt="player picture"
+          className={styles["profile-image"]}
+        />
+
+        <div className={styles["name-container"]}>
+          <h2>{`${selectedTrainer?.[0]?.fname} ${selectedTrainer?.[0]?.lname}`}</h2>
+          <h4>Eğitmen</h4>
+          <div className={styles.reviews}>
+            {selectedTrainer?.[0]?.averagereviewscore?.length > 0 &&
+              generateStars(selectedTrainer?.[0]?.averagereviewscore).map(
+                (star, index) => <span key={index}>{star}</span>
+              )}
+            {selectedTrainer?.[0]?.averagereviewscore?.length > 0 && (
+              <p className={styles["reviews-text"]}>
+                {selectedTrainer?.[0]?.reviewscorecount} değerlendirme
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className={styles["bio-container"]}>
+        <div className={styles["top-container"]}>
+          <div className={styles["table-container"]}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Yaş</th>
+                  <th>Cinsiyet</th>
+                  <th>Konum</th>
+                  <th>Kulüp</th>
+                  <th>Seviye</th>
+                  <th>Ders</th>
+                  <th>Öğrenci</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className={styles["player-row"]}>
+                  <td>{getAge(Number(selectedTrainer?.[0]?.birth_year))}</td>
+                  <td>{selectedTrainer?.[0]?.gender}</td>
+                  <td>{selectedTrainer?.[0]?.location_name}</td>
+                  <td>
+                    {selectedTrainer?.[0]?.employment_status === "accepted"
+                      ? selectedTrainer?.[0]?.club_name
+                      : "Bağımsız"}
+                  </td>
+                  <td>{selectedTrainer?.[0]?.trainer_experience_type_name}</td>
+                  <td>{selectedTrainer?.[0]?.lessoncount}</td>
+                  <td>{selectedTrainer?.[0]?.studentcount}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div className={styles["buttons-container"]}>
               <button
                 onClick={() =>
-                  handleDeclineStudent(selectedTrainer?.[0]?.user_id)
+                  handleToggleFavourite(selectedTrainer?.[0]?.user_id)
                 }
-                className={styles["cancel-student-button"]}
-              >
-                Öğrenciliği sil
-              </button>
-            ) : (
-              <button
-                onClick={() => handleAddStudent(selectedTrainer?.[0]?.user_id)}
                 className={styles["interaction-button"]}
               >
-                Öğrenci Ol
+                {isTrainerInMyFavourites(selectedTrainer?.[0]?.user_id)
+                  ?.is_active === true
+                  ? "Favorilerden çıkar"
+                  : "Favorilere ekle"}
               </button>
-            )}
+              {isUserPlayer && (
+                <Link
+                  to={paths.LESSON_INVITE}
+                  state={{
+                    fname: selectedTrainer?.[0]?.fname,
+                    lname: selectedTrainer?.[0]?.lname,
+                    image: selectedTrainer?.[0]?.image,
+                    court_price: "",
+                    user_id: selectedTrainer?.[0]?.user_id,
+                  }}
+                  className={styles["accept-button"]}
+                >
+                  <button className={styles["interaction-button"]}>
+                    Ders al
+                  </button>
+                </Link>
+              )}
+              {isUserPlayer && (
+                <p>
+                  {isStudentPending() ? (
+                    ""
+                  ) : isStudentAccepted() ? (
+                    <button
+                      onClick={() =>
+                        handleDeclineStudent(selectedTrainer?.[0]?.user_id)
+                      }
+                      className={styles["cancel-student-button"]}
+                    >
+                      Öğrenciliği sil
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        handleAddStudent(selectedTrainer?.[0]?.user_id)
+                      }
+                      className={styles["interaction-button"]}
+                    >
+                      Öğrenci Ol
+                    </button>
+                  )}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+        {isStudentPending() && (
+          <p className={styles["pending-confirmation-text"]}>
+            Öğrencilik için eğitmen onayı bekleniyor
           </p>
         )}
       </div>
-      {isStudentPending() && (
-        <p className={styles["pending-confirmation-text"]}>
-          Öğrencilik için eğitmen onayı bekleniyor
-        </p>
-      )}
+
+      <SlOptions className={styles.icon} />
     </div>
   );
 };

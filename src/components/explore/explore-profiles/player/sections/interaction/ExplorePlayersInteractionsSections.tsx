@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
 import paths from "../../../../../../routing/Paths";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { SlOptions } from "react-icons/sl";
+import { IoStar } from "react-icons/io5";
 
 import styles from "./styles.module.scss";
 
@@ -19,38 +21,58 @@ import {
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
 import { useAppSelector } from "../../../../../../store/hooks";
-import { Club } from "../../../../../../api/endpoints/ClubsApi";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
+import TrainingInviteFormModal from "../../../../../../components/invite/training/form/TrainingInviteFormModal";
+import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: Player;
   user_id: number;
-  clubs: Club[];
 }
 
 const ExplorePlayersInteractionsSections = (
   props: ExplorePlayersInteractionsSectionsProps
 ) => {
-  const { selectedPlayer, user_id, clubs } = props;
+  const { selectedPlayer, user_id } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const generateStars = (count) => {
+    const stars = [];
+    for (let i = 0; i < 10; i++) {
+      if (i < count) {
+        stars.push(<IoStar className={styles["active-star"]} key={i} />);
+      } else {
+        stars.push(<IoStar className={styles["empty-star"]} key={i} />);
+      }
+    }
+    return stars;
+  };
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
   const profileImage = selectedPlayer?.[0]?.image;
+
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
-  console.log(selectedPlayer);
+
   const userGender = currentPlayer?.[0]?.gender;
 
-  const {
-    data: playerFavouriters,
-    isLoading: isPlayerFavouritersLoading,
-    refetch,
-  } = useGetFavouritesByFilterQuery({
-    is_active: true,
-    favouritee_id: user_id,
-  });
+  const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
+  const handleOpenTrainingModal = () => {
+    setIsTrainingModalOpen(true);
+  };
+  const handleCloseTrainingModal = () => {
+    setIsTrainingModalOpen(false);
+  };
+  const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
+
+  const handleOpenMatchModal = () => {
+    setIsMatchModalOpen(true);
+  };
+  const handleCloseMatchModal = () => {
+    setIsMatchModalOpen(false);
+  };
 
   const {
     data: myFavouritePlayers,
@@ -105,33 +127,46 @@ const ExplorePlayersInteractionsSections = (
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      refetch();
       refetchMyFavourites();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
-  if (isPlayerFavouritersLoading || isMyFavouritePlayersLoading) {
+  if (isMyFavouritePlayersLoading || isCurrentPlayerLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["interaction-section"]}>
-      <img
-        src={
-          profileImage
-            ? `${localUrl}/${profileImage}`
-            : "/images/icons/avatar.png"
-        }
-        alt="player picture"
-        className={styles["profile-image"]}
-      />
+      <div className={styles["image-container"]}>
+        <img
+          src={
+            profileImage
+              ? `${localUrl}/${profileImage}`
+              : "/images/icons/avatar.jpg"
+          }
+          alt="player picture"
+          className={styles["profile-image"]}
+        />
+
+        <div className={styles["name-container"]}>
+          <h2>{`${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`}</h2>
+          <h4>Oyuncu</h4>
+          <div className={styles.reviews}>
+            {selectedPlayer?.[0]?.averagereviewscore?.length > 0 &&
+              generateStars(selectedPlayer?.[0]?.averagereviewscore).map(
+                (star, index) => <span key={index}>{star}</span>
+              )}
+            {selectedPlayer?.[0]?.averagereviewscore?.length > 0 && (
+              <p className={styles["reviews-text"]}>
+                {selectedPlayer?.[0]?.reviewscorecount} değerlendirme
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className={styles["bio-container"]}>
         <div className={styles["top-container"]}>
-          <div className={styles["name-container"]}>
-            <h2>{`${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`}</h2>
-            <h4>Oyuncu</h4>
-          </div>
           <div className={styles["table-container"]}>
             <table>
               <thead>
@@ -178,36 +213,20 @@ const ExplorePlayersInteractionsSections = (
                   : "Favorilere ekle"}
               </button>
               {isUserPlayer && (
-                <Link
-                  to={paths.TRAIN_INVITE}
-                  state={{
-                    fname: selectedPlayer?.[0]?.fname,
-                    lname: selectedPlayer?.[0]?.lname,
-                    image: selectedPlayer?.[0]?.image,
-                    court_price: "",
-                    user_id: selectedPlayer?.[0]?.user_id,
-                  }}
+                <button
+                  onClick={handleOpenTrainingModal}
+                  className={styles["interaction-button"]}
                 >
-                  <button className={styles["interaction-button"]}>
-                    Antreman yap
-                  </button>
-                </Link>
+                  Antreman yap
+                </button>
               )}
               {isUserPlayer && selectedPlayer?.[0]?.gender === userGender && (
-                <Link
-                  to={paths.MATCH_INVITE}
-                  state={{
-                    fname: selectedPlayer?.[0]?.fname,
-                    lname: selectedPlayer?.[0]?.lname,
-                    image: selectedPlayer?.[0]?.image,
-                    court_price: "",
-                    user_id: selectedPlayer?.[0]?.user_id,
-                  }}
+                <button
+                  onClick={handleOpenMatchModal}
+                  className={styles["interaction-button"]}
                 >
-                  <button className={styles["interaction-button"]}>
-                    Maç yap
-                  </button>
-                </Link>
+                  Maç yap
+                </button>
               )}
               {isUserTrainer && (
                 <Link
@@ -229,6 +248,23 @@ const ExplorePlayersInteractionsSections = (
           </div>
         </div>
       </div>
+
+      <SlOptions className={styles.icon} />
+
+      {isTrainingModalOpen && (
+        <TrainingInviteFormModal
+          opponentUserId={user_id}
+          isInviteModalOpen={isTrainingModalOpen}
+          handleCloseInviteModal={handleCloseTrainingModal}
+        />
+      )}
+      {isMatchModalOpen && (
+        <MatchInviteFormModal
+          opponentUserId={user_id}
+          isInviteModalOpen={isMatchModalOpen}
+          handleCloseInviteModal={handleCloseMatchModal}
+        />
+      )}
     </div>
   );
 };

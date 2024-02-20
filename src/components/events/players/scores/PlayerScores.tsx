@@ -7,6 +7,7 @@ import paths from "../../../../routing/Paths";
 import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import styles from "./styles.module.scss";
 
@@ -171,7 +172,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
+              <th></th>
               <th>İsim</th>
               <th>Seviye</th>
               <th>Tarih</th>
@@ -183,7 +184,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
               <th>Mekan</th>
               <th>Skor</th>
               <th>Kazanan</th>
-              <th>Durum</th>
+              <th>Skor Onay</th>
             </tr>
           </thead>
           <tbody>
@@ -275,7 +276,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                       Onayla / Düzelt
                     </button>
                   ) : event?.match_score_status_type_id === 3 ? (
-                    <p className={styles["confirmed-text"]}>Skor onaylandı</p>
+                    <IoIosCheckmarkCircle className={styles.done} />
                   ) : (
                     ""
                   )}

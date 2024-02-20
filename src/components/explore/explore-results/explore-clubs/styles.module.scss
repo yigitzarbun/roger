@@ -128,10 +128,13 @@
       .add-fav-icon:hover {
         color: $roger-blue;
       }
+      .blocked {
+        color: $roger-red;
+      }
 
-      .subscribed-text {
+      .done {
         color: $roger-green;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
       }
 
       .no-subscription-text {
@@ -188,6 +191,7 @@
       cursor: pointer;
     }
     .passive-page {
+      background-color: $roger-black-dark;
       padding: 5px;
       width: 30px;
       height: 30px;

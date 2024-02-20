@@ -114,19 +114,12 @@
         color: white;
         text-decoration: none;
       }
-      .remove-fav-icon {
-        color: $roger-blue;
-        cursor: pointer;
-        font-size: 1.5rem;
-        vertical-align: middle;
+      .done {
+        color: $roger-green;
+        font-size: 1.2rem;
       }
-      .add-fav-icon {
-        cursor: pointer;
-        font-size: 1.5rem;
-        vertical-align: middle;
-      }
-      .add-fav-icon:hover {
-        color: $roger-blue;
+      .blocked {
+        color: $roger-red;
       }
     }
 
@@ -162,6 +155,7 @@
       cursor: pointer;
     }
     .passive-page {
+      background-color: $roger-black-dark;
       padding: 5px;
       width: 30px;
       height: 30px;

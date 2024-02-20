@@ -42,6 +42,9 @@ export const clubsSlice = createApi({
     getClubByUserId: builder.query({
       query: (user_id) => `/clubs/user/${user_id}`,
     }),
+    getClubProfileDetails: builder.query({
+      query: (userId) => `/clubs/club-profile-details/${userId}`,
+    }),
     addClub: builder.mutation({
       query: (club) => {
         const formData = new FormData();
@@ -157,6 +160,7 @@ export const {
   useGetPaginatedClubsQuery,
   useGetClubByClubIdQuery,
   useGetClubByUserIdQuery,
+  useGetClubProfileDetailsQuery,
   useAddClubMutation,
   useUpdateClubMutation,
 } = clubsSlice;

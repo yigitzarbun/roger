@@ -560,6 +560,77 @@ const bookingsModel = {
       throw new Error("Unable to fetch player bookings.");
     }
   },
+  async getUserProfilePastEvents(userId: number) {
+    try {
+      const userPastEvents = await db
+        .select(
+          "bookings.*",
+          "locations.*",
+          "players.*",
+          "players.image as playerImage",
+          "trainers.*",
+          "trainers.image as trainerImage",
+          "clubs.*",
+          "event_types.*",
+          "match_scores.*",
+          db.raw(
+            "CASE WHEN event_types.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.fname END as winner_fname"
+          ),
+          db.raw(
+            "CASE WHEN event_types.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.lname END as winner_lname"
+          )
+        )
+        .from("bookings")
+        .leftJoin("clubs", "clubs.club_id", "=", "bookings.club_id")
+        .leftJoin(
+          "locations",
+          "locations.location_id",
+          "=",
+          "clubs.location_id"
+        )
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin(
+          "event_types",
+          "event_types.event_type_id",
+          "=",
+          "bookings.event_type_id"
+        )
+        .leftJoin(
+          "match_scores",
+          "match_scores.booking_id",
+          "=",
+          "bookings.booking_id"
+        )
+        .where("bookings.booking_status_type_id", 5)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", userId)
+            .orWhere("bookings.inviter_id", userId);
+        })
+        .andWhere((builder) => {
+          builder
+            .whereNot("players.user_id", userId)
+            .orWhereNot("trainers.user_id", userId);
+        });
+
+      return userPastEvents;
+    } catch (error) {
+      console.log("Error fetching user past events: ", error);
+    }
+  },
   async getPlayersLeaderboard(filter) {
     try {
       const playersPerPage = filter.perPage;

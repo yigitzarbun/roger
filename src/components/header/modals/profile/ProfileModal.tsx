@@ -45,26 +45,39 @@ const ProfileModal = (props: ProfileModalProps) => {
 
       <div className={styles["modal-content"]}>
         <p>{email}</p>
-        <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("PROFILE")}>Ayarlar</h4>
+        <div
+          onClick={() => navigateUser("PROFILE")}
+          className={styles["menu-item"]}
+        >
+          <h4>Ayarlar</h4>
           <IoIosSettings className={styles.icon} />
         </div>
-        <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("PAYMENTS")}>Ödemeler</h4>
+        <div
+          onClick={() => navigateUser("PAYMENTS")}
+          className={styles["menu-item"]}
+        >
+          <h4>Ödemeler</h4>
           <FaRegCreditCard className={styles.icon} />
         </div>
-        <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("PLAYER_SUBSCRIPTIONS")}>
-            Üyelikler
-          </h4>
+        <div
+          onClick={() => navigateUser("PLAYER_SUBSCRIPTIONS")}
+          className={styles["menu-item"]}
+        >
+          <h4>Üyelikler</h4>
           <FaBuildingUser className={styles.icon} />
         </div>
-        <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("PLAYER_GROUPS")}>Gruplar</h4>
+        <div
+          onClick={() => navigateUser("PLAYER_GROUPS")}
+          className={styles["menu-item"]}
+        >
+          <h4>Gruplar</h4>
           <RiGroupLine className={styles.icon} />
         </div>
-        <div className={styles["menu-item"]}>
-          <h4 onClick={() => navigateUser("FAVOURITES")}>Favoriler</h4>
+        <div
+          onClick={() => navigateUser("FAVOURITES")}
+          className={styles["menu-item"]}
+        >
+          <h4>Favoriler</h4>
           <IoStar className={styles.icon} />
         </div>
         <button onClick={handleLogout} className={styles.logout}>

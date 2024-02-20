@@ -2,7 +2,7 @@ import React from "react";
 
 import styles from "./styles.module.scss";
 
-import { useGetClubByUserIdQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetClubProfileDetailsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
@@ -11,7 +11,6 @@ import { useAppSelector } from "../../../../store/hooks";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ExploreClubsProfileSection from "./sections/profile/ExploreClubsProfileSection";
 import ExploreClubsCourtsSection from "./sections/courts/ExploreClubsCourtsSection";
-import ExploreClubsFavouritesSection from "./sections/favourites/ExploreClubsFavouritesSection";
 import ExploreClubsTrainersSection from "./sections/trainers/ExploreClubsTrainersSection";
 import ExploreClubsSubscribersSection from "./sections/subscribers/ExploreClubsSubscribersSection";
 import ExploreClubsSubscriptionsSection from "./sections/subscriptions/ExploreClubsSubscriptionsSection";
@@ -29,8 +28,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const { data: selectedClub, isLoading: isSelectedClubLoading } =
-    useGetClubByUserIdQuery(user_id);
+    useGetClubProfileDetailsQuery(user_id);
 
+  console.log(selectedClub);
   // subscriptions
 
   const {
@@ -47,32 +47,26 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
 
   return (
     <div className={styles.profile}>
-      <div className={styles["top-sections-container"]}>
-        <ExploreClubsProfileSection selectedClub={selectedClub} />
-        <ExploreClubsCourtsSection selectedClub={selectedClub} />
-      </div>
-      <div className={styles["mid-top-sections-container"]}>
-        <ExploreClubsFavouritesSection selectedClub={selectedClub} />
-        <ExploreClubsTrainersSection
-          isUserTrainer={isUserTrainer}
-          isUserPlayer={isUserPlayer}
-          selectedClub={selectedClub}
-        />
-      </div>
-      <div className={styles["mid-bottom-sections-container"]}>
-        <ExploreClubsSubscribersSection
-          selectedClub={selectedClub}
-          selectedClubSubscribers={selectedClubSubscribers}
-        />
-        <ExploreClubsSubscriptionsSection
-          selectedClub={selectedClub}
-          selectedClubSubscribers={selectedClubSubscribers}
-          isUserPlayer={isUserPlayer}
-        />
-      </div>
-      <div className={styles["bottom-section-container"]}>
-        <ExploreClubsRulesSection selectedClub={selectedClub} />
-      </div>
+      <ExploreClubsProfileSection selectedClub={selectedClub} />
+
+      <ExploreClubsCourtsSection selectedClub={selectedClub} />
+      <ExploreClubsTrainersSection
+        isUserTrainer={isUserTrainer}
+        isUserPlayer={isUserPlayer}
+        selectedClub={selectedClub}
+      />
+
+      <ExploreClubsSubscribersSection
+        selectedClub={selectedClub}
+        selectedClubSubscribers={selectedClubSubscribers}
+      />
+      <ExploreClubsSubscriptionsSection
+        selectedClub={selectedClub}
+        selectedClubSubscribers={selectedClubSubscribers}
+        isUserPlayer={isUserPlayer}
+      />
+
+      <ExploreClubsRulesSection selectedClub={selectedClub} />
     </div>
   );
 };

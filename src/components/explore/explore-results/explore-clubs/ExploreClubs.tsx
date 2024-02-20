@@ -4,6 +4,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { SlOptions } from "react-icons/sl";
 import { FaFilter } from "react-icons/fa6";
 import { ImBlocked } from "react-icons/im";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
@@ -307,7 +308,9 @@ const ExploreClubs = (props: ExploreClubsProps) => {
               <th>Kort</th>
               <th>Eğitmen</th>
               <th>Üye Sayısı</th>
-              <th>Üyelik Paketi</th>
+              <th>
+                {isUserPlayer ? "Üyelik" : isUserTrainer ? "Antrenörlük" : ""}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -361,7 +364,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                   <td className={styles.status}>
                     {club?.clubHasSubscriptionPackages &&
                     club?.isPlayerSubscribed ? (
-                      <p className={styles["subscribed-text"]}>Üyelik Var</p>
+                      <IoIosCheckmarkCircle className={styles.done} />
                     ) : club?.clubHasSubscriptionPackages &&
                       playerPaymentDetailsExist ? (
                       <button
@@ -380,7 +383,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                         Ödeme bilgilerini ekle
                       </button>
                     ) : (
-                      <ImBlocked />
+                      <ImBlocked className={styles.blocked} />
                     )}
                   </td>
                 )}
@@ -399,7 +402,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                         onClick={() => openEmploymentModal(club.club_id)}
                         className={styles["subscribe-button"]}
                       >
-                        Bu kulüpte çalıştığına dair kulübe başvur
+                        Kulüpte çalıştığına dair başvur
                       </button>
                     )}
                   </td>

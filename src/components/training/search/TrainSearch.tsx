@@ -13,6 +13,7 @@ interface TrainSearchProps {
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleFavourite: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
   playerLevelId: number;
   textSearch: string;
   gender: string;
@@ -26,6 +27,7 @@ const TrainSearch = (props: TrainSearchProps) => {
     handleGender,
     handleLocation,
     handleFavourite,
+    handleClear,
     playerLevelId,
     textSearch,
     gender,
@@ -108,6 +110,20 @@ const TrainSearch = (props: TrainSearchProps) => {
           </option>
         </select>
       </div>
+      <button
+        onClick={handleClear}
+        className={
+          playerLevelId > 0 ||
+          textSearch !== "" ||
+          gender !== "" ||
+          locationId > 0 ||
+          favourite === true
+            ? styles["active-clear-button"]
+            : styles["passive-clear-button"]
+        }
+      >
+        Temizle
+      </button>
     </div>
   );
 };

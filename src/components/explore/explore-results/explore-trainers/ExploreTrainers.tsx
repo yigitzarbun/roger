@@ -25,6 +25,11 @@ import {
   useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
+import {
+  useAddStudentMutation,
+  useGetStudentsByFilterQuery,
+  useUpdateStudentMutation,
+} from "../../../../api/endpoints/StudentsApi";
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
@@ -58,7 +63,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     user,
     locations,
     trainerExperienceTypes,
-    clubStaff,
     clubs,
     isLocationsLoading,
     isTrainerExperienceTypesLoading,
@@ -80,6 +84,8 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
+  const isUserPlayer = user?.user?.user_type_id === 1;
 
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
@@ -154,6 +160,63 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
 
+  const {
+    data: playerStudentships,
+    isLoading: isPlayerStudentshipsLoading,
+    refetch: refetchStudents,
+  } = useGetStudentsByFilterQuery({
+    player_id: user?.user?.user_id,
+  });
+
+  const [addStudent, { isSuccess: isAddStudentSuccess }] =
+    useAddStudentMutation({});
+
+  const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
+    useUpdateStudentMutation({});
+
+  const handleAddStudent = (selectedTrainerId: number) => {
+    const selectedStudent = playerStudentships?.find(
+      (student) =>
+        student.trainer_id === selectedTrainerId &&
+        student.player_id === user?.user?.user_id
+    );
+
+    if (!selectedStudent) {
+      const newStudentData = {
+        student_status: "pending",
+        trainer_id: selectedTrainerId,
+        player_id: user?.user?.user_id,
+      };
+      addStudent(newStudentData);
+    } else if (selectedStudent?.student_status === "declined") {
+      const updatedStudentData = {
+        ...selectedStudent,
+        student_status: "pending",
+      };
+      updateStudent(updatedStudentData);
+    }
+  };
+  const handleDeclineStudent = (selectedTrainerId: number) => {
+    const selectedStudent = playerStudentships?.find(
+      (student) =>
+        student.trainer_id === selectedTrainerId &&
+        student.player_id === user?.user?.user_id &&
+        student.student_status === "accepted"
+    );
+    if (selectedStudent) {
+      const updatedStudentData = {
+        ...selectedStudent,
+        student_status: "declined",
+      };
+      updateStudent(updatedStudentData);
+    }
+  };
+  useEffect(() => {
+    if (isAddStudentSuccess || isUpdateStudentSuccess) {
+      refetchStudents();
+    }
+  }, [isAddStudentSuccess, isUpdateStudentSuccess]);
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetch();
@@ -217,15 +280,16 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           <thead>
             <tr>
               <th></th>
-              <th></th>
               <th>Eğitmen</th>
               <th>İsim</th>
               <th>Seviye</th>
               <th>Kulüp</th>
-              <th>Ücret (Saat / TL)</th>
+              <th>Ücret</th>
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
+              <th>{isUserPlayer ? "Ders" : ""}</th>
+              <th>{isUserPlayer ? "Öğrencilik" : ""}</th>
             </tr>
           </thead>
           <tbody>
@@ -250,14 +314,13 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     <AiOutlineStar className={styles["add-fav-icon"]} />
                   )}
                 </td>
-                <td></td>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
                     <img
                       src={
                         trainer.image
                           ? trainer.image
-                          : "/images/icons/avatar.png"
+                          : "/images/icons/avatar.jpg"
                       }
                       alt={trainer.fname}
                       className={styles["trainer-image"]}
@@ -272,43 +335,55 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     <p> {`${trainer.fname} ${trainer.lname}`}</p>
                   </Link>
                 </td>
+                <td>{trainer?.trainer_experience_type_name}</td>
                 <td>
-                  {
-                    trainerExperienceTypes?.find(
-                      (type) =>
-                        type.trainer_experience_type_id ===
-                        trainer.trainer_experience_type_id
-                    ).trainer_experience_type_name
-                  }
-                </td>
-                <td>
-                  {clubStaff?.find(
-                    (staff) =>
-                      staff.user_id === trainer.user_id &&
-                      staff.employment_status === "accepted"
-                  )
-                    ? clubs?.find((club) => club.club_id === trainer.club_id)
-                        ?.club_name
+                  {trainer?.employment_status === "accepted"
+                    ? trainer?.club_name
                     : "Bağımsız"}
                 </td>
-                <td>{trainer?.price_hour}</td>
+                <td>{trainer?.price_hour} TL</td>
                 <td>{trainer.gender}</td>
                 <td>{getAge(trainer.birth_year)}</td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) => location.location_id === trainer.location_id
-                    ).location_name
-                  }
-                </td>
+                <td>{trainer?.location_name}</td>
 
                 <td>
-                  <button
-                    onClick={() => handleOpenLessonModal(trainer?.user_id)}
-                    className={styles["lesson-button"]}
-                  >
-                    Ders al
-                  </button>
+                  {isUserPlayer && (
+                    <button
+                      onClick={() => handleOpenLessonModal(trainer?.user_id)}
+                      className={styles["lesson-button"]}
+                    >
+                      Ders al
+                    </button>
+                  )}
+                </td>
+                <td>
+                  {playerStudentships?.find(
+                    (student) =>
+                      student.trainer_id === trainer.user_id &&
+                      student.student_status === "pending"
+                  ) ? (
+                    <p className={styles["pending-confirmation-text"]}>
+                      Onayı bekleniyor
+                    </p>
+                  ) : playerStudentships?.find(
+                      (student) =>
+                        student.trainer_id === trainer.user_id &&
+                        student.student_status === "accepted"
+                    ) ? (
+                    <button
+                      onClick={() => handleDeclineStudent(trainer.user_id)}
+                      className={styles["cancel-student-button"]}
+                    >
+                      Öğrenciliği sil
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleAddStudent(trainer.user_id)}
+                      className={styles["add-student-button"]}
+                    >
+                      Öğrenci Ol
+                    </button>
+                  )}
                 </td>
                 <td>
                   <SlOptions className={styles.icon} />

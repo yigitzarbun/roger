@@ -159,7 +159,7 @@ const MatchResults = (props: MatchResultsProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
-              <th></th>
+              <th>Davet</th>
             </tr>
           </thead>
           <tbody>

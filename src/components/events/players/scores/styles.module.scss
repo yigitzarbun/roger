@@ -66,9 +66,9 @@
         color: white;
         text-decoration: none;
       }
-      .confirmed-text {
+      .done {
         color: $roger-green;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
       }
       .waiting-confirmation-text {
         color: $roger-yellow;
@@ -128,6 +128,7 @@
       cursor: pointer;
     }
     .passive-page {
+      background-color: $roger-black-dark;
       padding: 5px;
       width: 30px;
       height: 30px;

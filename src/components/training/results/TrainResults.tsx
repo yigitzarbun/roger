@@ -140,7 +140,7 @@ const TrainResults = (props: TrainResultsProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
-              <th></th>
+              <th>Davet</th>
               <th></th>
             </tr>
           </thead>

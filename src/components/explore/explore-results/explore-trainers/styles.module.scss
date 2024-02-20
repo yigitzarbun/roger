@@ -146,6 +146,47 @@
     .lesson-button:hover {
       background-color: $roger-black-light;
     }
+    .add-student-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .add-student-button:hover {
+      background-color: $roger-black-light;
+    }
+
+    .cancel-student-button {
+      background-color: $roger-red;
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .cancel-student-button:hover {
+      background-color: $roger-black-light;
+    }
+
+    .pending-confirmation-text {
+      color: $roger-yellow;
+      font-size: 0.9rem;
+    }
+    .icon {
+      cursor: pointer;
+    }
   }
 
   .pages-container {
@@ -162,6 +203,7 @@
       cursor: pointer;
     }
     .passive-page {
+      background-color: $roger-black-dark;
       padding: 5px;
       width: 30px;
       height: 30px;

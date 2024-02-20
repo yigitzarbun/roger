@@ -44,7 +44,7 @@ const PlayerHomeLeaderboard = () => {
       1;
     setCurrentPage(prevPage);
   };
-  console.log(leaderboard);
+
   useEffect(() => {
     if (playerDetails) {
       refetchLeaderBoard();
@@ -70,65 +70,75 @@ const PlayerHomeLeaderboard = () => {
           />
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Oyuncu</th>
-            <th>Sıralama</th>
-            <th>Puan</th>
-            <th>İsim</th>
-            <th>Seviye</th>
-            <th>Konum</th>
-            <th>Cinsiyet</th>
-            <th>Yaş</th>
-            <th>Toplam Maç</th>
-            <th>W</th>
-            <th>L</th>
-          </tr>
-        </thead>
-        {leaderboard?.leaderboard?.length > 0 && (
-          <tbody>
-            {leaderboard?.leaderboard?.map((player, index) => (
-              <tr key={player.user_id} className={styles["player-row"]}>
-                <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
-                    <img
-                      src={
-                        player.image ? player.image : "/images/icons/avatar.png"
-                      }
-                      alt={player.fname}
-                      className={styles["player-image"]}
-                    />
-                  </Link>
-                </td>
-                <td>{index + 1}</td>
-                <td className={styles["draw-count"]}>{player.playerpoints}</td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}
-                    className={styles["player-name"]}
-                  >
-                    {`${player.fname} ${player.lname}`}
-                  </Link>
-                </td>
-                <td>{player.player_level_name}</td>
-                <td>{player.location_name}</td>
-                <td>{player.gender}</td>
-                <td>{getAge(player.birth_year)}</td>
-                <td>{player.totalmatches}</td>
-                <td className={styles["win-count"]}>{player.wonmatches}</td>
-                <td className={styles["lost-count"]}>{player.lostmatches}</td>
-              </tr>
-            ))}
-          </tbody>
-        )}
-      </table>
-      <Link
-        to={paths.PLAYERS_LEADERBOARD}
-        className={styles["view-all-button"]}
-      >
-        Tümünü Görüntüle
-      </Link>
+      {leaderboard?.leaderboard?.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Oyuncu</th>
+              <th>Sıralama</th>
+              <th>Puan</th>
+              <th>İsim</th>
+              <th>Seviye</th>
+              <th>Konum</th>
+              <th>Cinsiyet</th>
+              <th>Yaş</th>
+              <th>Maç</th>
+              <th>W</th>
+              <th>L</th>
+            </tr>
+          </thead>
+          {leaderboard?.leaderboard?.length > 0 && (
+            <tbody>
+              {leaderboard?.leaderboard?.map((player, index) => (
+                <tr key={player.user_id} className={styles["player-row"]}>
+                  <td>
+                    <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
+                      <img
+                        src={
+                          player.image
+                            ? player.image
+                            : "/images/icons/avatar.jpg"
+                        }
+                        alt={player.fname}
+                        className={styles["player-image"]}
+                      />
+                    </Link>
+                  </td>
+                  <td>{index + 1}</td>
+                  <td className={styles["draw-count"]}>
+                    {player.playerpoints}
+                  </td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}
+                      className={styles["player-name"]}
+                    >
+                      {`${player.fname} ${player.lname}`}
+                    </Link>
+                  </td>
+                  <td>{player.player_level_name}</td>
+                  <td>{player.location_name}</td>
+                  <td>{player.gender}</td>
+                  <td>{getAge(player.birth_year)}</td>
+                  <td>{player.totalmatches}</td>
+                  <td className={styles["win-count"]}>{player.wonmatches}</td>
+                  <td className={styles["lost-count"]}>{player.lostmatches}</td>
+                </tr>
+              ))}
+            </tbody>
+          )}
+        </table>
+      ) : (
+        <p>Liderlik tablosunda puanı bulunan oyuncu henüz bulunmamaktadır</p>
+      )}
+      {leaderboard?.leaderboard?.length > 0 && (
+        <Link
+          to={paths.PLAYERS_LEADERBOARD}
+          className={styles["view-all-button"]}
+        >
+          Tümünü Görüntüle
+        </Link>
+      )}
     </div>
   );
 };

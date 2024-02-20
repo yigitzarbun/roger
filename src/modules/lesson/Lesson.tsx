@@ -41,6 +41,14 @@ const Lesson = () => {
     setFavourite(value === "true");
   };
 
+  const handleClear = () => {
+    setTextSearch("");
+    setTrainerLevelId(null);
+    setGender("");
+    setLocationId(null);
+    setClubId(null);
+    setFavourite(null);
+  };
   return (
     <div className={styles["lesson-container"]}>
       <LessonSearch
@@ -50,6 +58,7 @@ const Lesson = () => {
         handleClub={handleClub}
         handleTextSearch={handleTextSearch}
         handleFavourite={handleFavourite}
+        handleClear={handleClear}
         trainerLevelId={trainerLevelId}
         gender={gender}
         locationId={locationId}

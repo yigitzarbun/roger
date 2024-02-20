@@ -7,30 +7,50 @@
   border-radius: $roger-border-radius;
   width: 100%;
   display: flex;
+  justify-content: space-between;
   column-gap: 3vw;
-  .profile-image {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: top;
+  .image-container {
+    display: flex;
+    column-gap: 1vw;
+    .profile-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .name-container {
+      width: 50%;
+      h4 {
+        font-weight: lighter;
+      }
+      .reviews {
+        margin-top: 2vh;
+        .active-star {
+          color: $roger-green;
+          font-size: 0.9rem;
+          margin-top: 1vh;
+        }
+        .empty-star {
+          color: grey;
+          font-size: 0.9rem;
+          margin-top: 1vh;
+        }
+        .reviews-text {
+          font-size: 0.9rem;
+        }
+      }
+    }
   }
   .bio-container {
     display: flex;
     flex-direction: column;
     row-gap: 4.5vh;
-
     .top-container {
       display: flex;
       column-gap: 5vw;
       align-items: start;
       width: 100%;
-      .name-container {
-        width: 50%;
-        h4 {
-          font-weight: lighter;
-        }
-      }
       .table-container {
         display: flex;
         flex-direction: column;
@@ -79,11 +99,15 @@
           }
 
           .interaction-button:hover {
-            background-color: $roger-blue;
+            background-color: $roger-black-light;
             cursor: pointer;
           }
         }
       }
     }
+  }
+  .icon {
+    font-size: 1rem;
+    cursor: pointer;
   }
 }

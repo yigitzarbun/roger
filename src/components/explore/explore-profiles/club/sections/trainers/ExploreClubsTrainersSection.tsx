@@ -23,7 +23,7 @@ import ClubEmploymentModal from "../../../../../../components/explore/explore-re
 interface ExploreClubsTrainersSectionProps {
   isUserTrainer: boolean;
   isUserPlayer: boolean;
-  selectedClub: Club;
+  selectedClub: any;
 }
 const ExploreClubsTrainersSection = (
   props: ExploreClubsTrainersSectionProps

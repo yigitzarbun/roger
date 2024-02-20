@@ -8,6 +8,7 @@ import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { ImBlocked } from "react-icons/im";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import styles from "./styles.module.scss";
 
@@ -299,9 +300,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                         review.reviewer_id === user?.user?.user_id &&
                         review.booking_id === event.booking_id
                     ) ? (
-                      <p className={styles["review-sent-text"]}>
-                        Yorum Gönderildi
-                      </p>
+                      <IoIosCheckmarkCircle className={styles.done} />
                     ) : (
                       <button
                         className={styles["comment-button"]}
@@ -317,7 +316,9 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                         Yorum Yap
                       </button>
                     ))}
-                  {event.event_type_id === 6 && <ImBlocked />}
+                  {event.event_type_id === 6 && (
+                    <ImBlocked className={styles.blocked} />
+                  )}
                 </td>
                 <td>
                   {(event.event_type_id === 1 ||
@@ -335,7 +336,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                       Yorum Görüntüle
                     </button>
                   ) : (
-                    <ImBlocked />
+                    <ImBlocked className={styles.blocked} />
                   )}
                 </td>
               </tr>

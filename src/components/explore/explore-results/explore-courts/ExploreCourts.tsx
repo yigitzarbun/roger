@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent, useEffect } from "react";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import { ImBlocked } from "react-icons/im";
 
 import { Link } from "react-router-dom";
 
@@ -207,7 +209,13 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                 </td>
                 <td>{court.club_name}</td>
                 <td>{court?.location_name}</td>
-                <td>{court.is_active ? "Aktif" : "Bloke"}</td>
+                <td>
+                  {court.is_active ? (
+                    <IoIosCheckmarkCircle className={styles.done} />
+                  ) : (
+                    <ImBlocked className={styles.blocked} />
+                  )}
+                </td>
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}

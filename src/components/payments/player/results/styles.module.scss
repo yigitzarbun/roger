@@ -102,4 +102,19 @@
       cursor: pointer;
     }
   }
+  .add-payment-button {
+    background-color: $roger-black-dark;
+    border: none;
+    width: 200px;
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+  .add-payment-button:hover {
+    background-color: $roger-black-light;
+  }
 }

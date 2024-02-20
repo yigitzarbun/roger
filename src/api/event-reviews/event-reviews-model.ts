@@ -31,6 +31,42 @@ const eventReviewsModel = {
     });
     return eventReviews;
   },
+  async getUserReceivedReviews(userId: number) {
+    const userReceivedReviews = await db
+      .select(
+        "event_reviews.*",
+        "users.*",
+        "players.*",
+        "trainers.*",
+        "clubs.*",
+        "bookings.*",
+        "event_types.*"
+      )
+      .from("event_reviews")
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "event_reviews.reviewer_id");
+      })
+      .leftJoin("players", function () {
+        this.on("players.user_id", "=", "event_reviews.reviewer_id");
+      })
+      .leftJoin("trainers", function () {
+        this.on("trainers.user_id", "=", "event_reviews.reviewer_id");
+      })
+      .leftJoin("clubs", function () {
+        this.on("clubs.user_id", "=", "event_reviews.reviewer_id");
+      })
+      .leftJoin("bookings", function () {
+        this.on("bookings.booking_id", "=", "event_reviews.booking_id");
+      })
+      .leftJoin("event_types", function () {
+        this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+      })
+      .where("bookings.booking_status_type_id", 5)
+      .andWhere("event_reviews.reviewee_id", userId)
+      .andWhere("event_reviews.is_active", true);
+
+    return userReceivedReviews;
+  },
   async getReviewDetailsByFilter(filter) {
     const eventDetails = await db
       .select(

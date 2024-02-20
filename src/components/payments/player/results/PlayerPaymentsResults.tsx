@@ -4,10 +4,13 @@ import { useAppSelector } from "../../../../store/hooks";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
+import Paths from "../../../../routing/Paths";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useGetPlayerPaymentssByUserIdQuery } from "../../../../api/endpoints/PaymentsApi";
+import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
+import { useNavigate } from "react-router-dom";
 
 interface PlayerPaymentsResultsProps {
   clubId: number;
@@ -20,6 +23,14 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
   const { clubId, textSearch, status, paymentTypeId } = props;
   const user = useAppSelector((store) => store?.user?.user);
   const [currentPage, setCurrentPage] = useState(1);
+  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
+
+  const paymentDetailsExist =
+    currentPlayer?.[0]?.card_expiry &&
+    currentPlayer?.[0]?.card_number &&
+    currentPlayer?.[0]?.cvc &&
+    currentPlayer?.[0]?.name_on_card;
 
   const {
     data: myPayments,
@@ -54,7 +65,11 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
       ((currentPage - 2 + myPayments?.totalPages) % myPayments?.totalPages) + 1;
     setCurrentPage(prevPage);
   };
-  console.log(currentPage);
+  const navigate = useNavigate();
+
+  const navigateToAddPayment = () => {
+    navigate(Paths.PROFILE);
+  };
   useEffect(() => {
     refetchPayments();
   }, [clubId, textSearch, status, paymentTypeId]);
@@ -147,6 +162,15 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
         </>
       ) : (
         <p>Henüz ödemeniz bulunmamaktadır.</p>
+      )}
+
+      {!paymentDetailsExist && (
+        <button
+          onClick={navigateToAddPayment}
+          className={styles["add-payment-button"]}
+        >
+          Ödeme Bilgilerini Ekle
+        </button>
       )}
     </div>
   );

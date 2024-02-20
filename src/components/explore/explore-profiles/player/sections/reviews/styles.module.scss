@@ -22,7 +22,7 @@
   }
 
   button:hover {
-    background-color: $roger-blue;
+    background-color: $roger-black-light;
     cursor: pointer;
   }
   .reviews-container {
@@ -33,9 +33,6 @@
     justify-content: space-between;
 
     .review-container-wrapper {
-      background-color: $roger-black-dark;
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
       width: 48%;
       row-gap: 20px;
       display: flex;

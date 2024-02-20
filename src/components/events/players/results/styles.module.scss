@@ -66,9 +66,12 @@
         color: white;
         text-decoration: none;
       }
-      .review-sent-text {
+      .done {
         color: $roger-green;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
+      }
+      .blocked {
+        color: $roger-red;
       }
       .view-button {
         background-color: $roger-black-dark;
@@ -85,8 +88,7 @@
         background-color: $roger-box-bg-color-hover;
       }
       .comment-button {
-        background-color: white;
-        color: black;
+        background-color: $roger-black-dark;
         border: none;
         padding: $roger-button-padding;
         border-radius: $roger-border-radius;
@@ -96,8 +98,7 @@
         width: 150px;
       }
       .comment-button:hover {
-        background-color: $roger-white;
-        color: black;
+        background-color: $roger-box-bg-color-hover;
       }
     }
   }
@@ -115,6 +116,7 @@
       cursor: pointer;
     }
     .passive-page {
+      background-color: $roger-black-dark;
       padding: 5px;
       width: 30px;
       height: 30px;

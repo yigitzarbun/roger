@@ -51,4 +51,17 @@
       background-color: $roger-box-bg-color;
     }
   }
+  .passive-clear-button {
+    border-radius: $roger-border-radius;
+    background-color: $roger-box-bg-color-hover;
+    border: none;
+    padding: $roger-button-padding;
+  }
+  .active-clear-button {
+    border-radius: $roger-border-radius;
+    background-color: $roger-red;
+    border: none;
+    padding: $roger-button-padding;
+    cursor: pointer;
+  }
 }

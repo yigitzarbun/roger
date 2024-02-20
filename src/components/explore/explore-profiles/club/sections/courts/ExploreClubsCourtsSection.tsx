@@ -18,7 +18,7 @@ import { useGetCourtStructureTypesQuery } from "../../../../../../api/endpoints/
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
 
 interface ExploreClubsCourtsSectionProps {
-  selectedClub: Club;
+  selectedClub: any;
 }
 
 const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {

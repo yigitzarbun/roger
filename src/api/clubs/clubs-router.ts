@@ -50,7 +50,19 @@ clubsRouter.get(
     }
   }
 );
-
+clubsRouter.get(
+  "/club-profile-details/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const clubDetails = await clubsModel.getClubProfileDetails(
+        Number(req.params.userId)
+      );
+      res.status(200).json(clubDetails);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 clubsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

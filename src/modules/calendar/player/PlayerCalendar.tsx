@@ -27,7 +27,12 @@ const PlayerCalendar = () => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
-
+  const handleClear = () => {
+    setDate("");
+    setTextSearch("");
+    setEventTypeId(null);
+    setClubId(null);
+  };
   return (
     <div className={styles["calendar-container"]}>
       <PlayerCalendarSearch
@@ -35,6 +40,7 @@ const PlayerCalendar = () => {
         handleEventType={handleEventType}
         handleClub={handleClub}
         handleTextSearch={handleTextSearch}
+        handleClear={handleClear}
         textSearch={textSearch}
         date={date}
         eventTypeId={eventTypeId}
