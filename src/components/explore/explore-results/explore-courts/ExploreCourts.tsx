@@ -171,7 +171,12 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
               <th>Fiyat (misafir)</th>
               <th>Kulüp</th>
               <th>Konum</th>
-              <th>Statüsü</th>
+              <th>Statü</th>
+              <th>
+                {isUserPlayer || isUserTrainer
+                  ? "Rezervasyon"
+                  : isUserClub && "Görüntüle"}
+              </th>
             </tr>
           </thead>
           <tbody>

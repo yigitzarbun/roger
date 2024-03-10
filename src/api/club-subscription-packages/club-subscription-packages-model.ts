@@ -30,7 +30,10 @@ const clubSubscriptionPackagesModel = {
       .select(
         "club_subscription_packages.*",
         "club_subscription_types.*",
-        "clubs.*"
+        "clubs.*",
+        db.raw(
+          "COALESCE(COUNT(DISTINCT club_subscriptions.club_subscription_id), 0) as subscriberCount"
+        )
       )
       .from("club_subscription_packages")
       .leftJoin("club_subscription_types", function () {
@@ -43,8 +46,28 @@ const clubSubscriptionPackagesModel = {
       .leftJoin("clubs", function () {
         this.on("clubs.user_id", "=", "club_subscription_packages.club_id");
       })
+      .leftJoin("club_subscriptions", function () {
+        this.on(function () {
+          this.on("club_subscriptions.club_id", "=", "clubs.user_id");
+          this.andOn(
+            "club_subscriptions.club_subscription_package_id",
+            "=",
+            "club_subscription_packages.club_subscription_package_id"
+          );
+          this.andOn("club_subscriptions.is_active", "=", db.raw("'true'"));
+        });
+      })
       .where("club_subscription_packages.club_id", filter.clubId)
-      .andWhere("club_subscription_packages.is_active", true);
+      .andWhere("club_subscription_packages.is_active", true)
+      .groupBy(
+        "club_subscription_packages.club_subscription_package_id",
+        "club_subscription_types.club_subscription_type_id",
+        "clubs.club_id"
+      );
+
+    return clubPackageDetails;
+
+    return clubPackageDetails;
 
     return clubPackageDetails;
   },

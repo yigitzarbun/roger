@@ -1,6 +1,6 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, useLocation } from "react-router-dom";
 
 import MainLayout from "../components/layout/MainLayout";
 import PageLoading from "../components/loading/PageLoading";
@@ -53,8 +53,19 @@ const PlayerGroups = lazy(
 );
 const Favourites = lazy(() => import("../modules/favourites/Favourites"));
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 const getRouteElement = (Component: React.ElementType): React.ReactNode => (
   <Suspense fallback={<PageLoading />}>
+    <ScrollToTop />
     <MainLayout>
       <Component />
     </MainLayout>

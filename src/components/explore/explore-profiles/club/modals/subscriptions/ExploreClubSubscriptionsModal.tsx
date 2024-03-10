@@ -12,7 +12,7 @@ import PageLoading from "../../../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../../../store/hooks";
 
-import { ClubSubscriptionPackage } from "../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useGetClubSubscriptionTypesQuery } from "../../../../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
@@ -20,7 +20,7 @@ interface ExploreClubSubscriptionsModalProps {
   isSubscriptionsModalOpen: boolean;
   closeSubscriptionsModal: () => void;
   selectedClub: Club;
-  selectedClubSubscriptionPackages: ClubSubscriptionPackage[];
+  selectedClubSubscriptionPackages: any[];
   playerPaymentDetailsExist: boolean;
   handleOpenSubscribeModal: (value: number) => void;
 }
@@ -92,73 +92,51 @@ const ExploreClubSubscriptionsModal = (
     <ReactModal
       isOpen={isSubscriptionsModalOpen}
       onRequestClose={closeSubscriptionsModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1>Üyelik Paketleri</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={closeSubscriptionsModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <div className={styles["table-container"]}>
-        {selectedClubSubscriptionPackages?.length > 0 ? (
+      <div className={styles["overlay"]} onClick={closeSubscriptionsModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1>Üyelik Paketleri</h1>
+        </div>
+        <div className={styles["table-container"]}>
           <table>
             <thead>
               <tr>
-                <th>Abonelik Türü</th>
-                <th>Abonelik Süresi (Ay)</th>
+                <th>Tür</th>
+                <th>Süre</th>
+                <th>Fiyat</th>
                 <th>Üye Sayısı</th>
-                <th>Fiyat (TL)</th>
-                <th>{isUserPlayer && "Üyelik"}</th>
+                {isUserPlayer && <th>Üyelik</th>}
               </tr>
             </thead>
             <tbody>
               {selectedClubSubscriptionPackages?.map((clubPackage) => (
-                <tr key={clubPackage.club_subscription_package_id}>
-                  <td>
-                    {
-                      clubSubscriptionTypes?.find(
-                        (type) =>
-                          type.club_subscription_type_id ===
-                          clubPackage.club_subscription_type_id
-                      )?.club_subscription_type_name
-                    }
-                  </td>
-                  <td>
-                    {
-                      clubSubscriptionTypes?.find(
-                        (type) =>
-                          type.club_subscription_type_id ===
-                          clubPackage.club_subscription_type_id
-                      )?.club_subscription_duration_months
-                    }
-                  </td>
-                  <td>
-                    {numberOfSubscribers(
-                      clubPackage.club_subscription_package_id
-                    )}
-                  </td>
-                  <td>{clubPackage.price}</td>
+                <tr
+                  key={clubPackage.club_subscription_package_id}
+                  className={styles["package-row"]}
+                >
+                  <td>{clubPackage?.club_subscription_type_name}</td>
+                  <td>{clubPackage?.club_subscription_duration_months} ay</td>
+                  <td>{clubPackage.price} TL</td>
+                  <td>{clubPackage.subscribercount}</td>
                   {isUserPlayer && (
                     <td>
                       {isUserSubscribedToClubPackage(
                         clubPackage.club_subscription_package_id
                       ) === true ? (
-                        <p className={styles["subscribed-text"]}>Üyelik var</p>
+                        <IoIosCheckmarkCircle className={styles.done} />
                       ) : isUserSubscribedToClub?.length > 0 &&
                         isUserSubscribedToClubPackage(
                           clubPackage.club_subscription_package_id
                         ) === false ? (
-                        <ImBlocked />
+                        <ImBlocked className={styles.blocked} />
                       ) : (
                         <button
+                          onClick={() => handleOpenSubscribeModal}
                           disabled={!playerPaymentDetailsExist}
-                          className={styles["subscribe-button"]}
-                          onClick={() =>
-                            handleOpenSubscribeModal(selectedClub?.[0]?.user_id)
-                          }
                         >
                           {playerPaymentDetailsExist
                             ? "Üye Ol"
@@ -171,9 +149,7 @@ const ExploreClubSubscriptionsModal = (
               ))}
             </tbody>
           </table>
-        ) : (
-          <p>Henüz kulübe ait abonelik paketi bulunmamaktadır</p>
-        )}
+        </div>
       </div>
     </ReactModal>
   );

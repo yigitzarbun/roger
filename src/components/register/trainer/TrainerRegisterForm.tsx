@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
-import i18n from "../../../common/i18n/i18n";
+import { useTranslation } from "react-i18next";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -44,6 +44,8 @@ export type FormValues = {
 
 const TrainerRegisterForm = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
@@ -205,7 +207,7 @@ const TrainerRegisterForm = () => {
               <input
                 {...register("fname", { required: true })}
                 type="text"
-                placeholder={i18n.t("registerFNamelInputPlaceholder")}
+                placeholder={t("registerFNamelInputPlaceholder")}
               />
               {errors.fname && (
                 <span className={styles["error-field"]}>
@@ -218,7 +220,7 @@ const TrainerRegisterForm = () => {
               <input
                 {...register("lname", { required: true })}
                 type="text"
-                placeholder={i18n.t("registerLNamelInputPlaceholder")}
+                placeholder={t("registerLNamelInputPlaceholder")}
               />
               {errors.lname && (
                 <span className={styles["error-field"]}>
@@ -256,7 +258,7 @@ const TrainerRegisterForm = () => {
                   },
                 })}
                 type="number"
-                placeholder={i18n.t("registerBirthYearlInputPlaceholder")}
+                placeholder={t("registerBirthYearlInputPlaceholder")}
               />
               {errors.birth_year && (
                 <span className={styles["error-field"]}>
@@ -377,7 +379,7 @@ const TrainerRegisterForm = () => {
               <input
                 {...register("email", { required: true })}
                 type="email"
-                placeholder={i18n.t("registerEmailInputPlaceholder")}
+                placeholder={t("registerEmailInputPlaceholder")}
               />
               {errors.email && (
                 <span className={styles["error-field"]}>
@@ -428,7 +430,7 @@ const TrainerRegisterForm = () => {
             </div>
           </div>
           <button type="submit" className={styles["form-button"]}>
-            {i18n.t("registerButtonText")}
+            {t("registerButtonText")}
           </button>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>

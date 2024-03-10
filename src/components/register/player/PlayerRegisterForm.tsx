@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
-import i18n from "../../../common/i18n/i18n";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import {
   useAddUserMutation,
@@ -31,10 +31,31 @@ export type FormValues = {
   player_level_id: number;
   image?: string;
   repeat_password: string;
+  language_id: number;
 };
 
 const PlayerRegisterForm = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const userLanguagePreference = localStorage.getItem("tennis_app_language");
+  const broswerLanguage = navigator.language;
+  const browserLanguageConverted =
+    broswerLanguage === "en-GB"
+      ? "en"
+      : broswerLanguage === "tr-TR"
+      ? "tr"
+      : "tr";
+
+  const languageString = userLanguagePreference
+    ? userLanguagePreference
+    : browserLanguageConverted
+    ? browserLanguageConverted
+    : "tr";
+
+  const languageId =
+    languageString === "tr" ? 1 : languageString === "en" ? 2 : 1;
+
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
@@ -74,6 +95,7 @@ const PlayerRegisterForm = () => {
       user_status_type_id: userStatusTypes?.find(
         (u) => u.user_status_type_name === "active"
       ).user_status_type_id,
+      language_id: languageId,
     };
     try {
       // register user
@@ -142,7 +164,7 @@ const PlayerRegisterForm = () => {
               <input
                 {...register("fname", { required: true })}
                 type="text"
-                placeholder={i18n.t("registerFNamelInputPlaceholder")}
+                placeholder={t("registerFNamelInputPlaceholder")}
               />
               {errors.fname && (
                 <span className={styles["error-field"]}>
@@ -155,7 +177,7 @@ const PlayerRegisterForm = () => {
               <input
                 {...register("lname", { required: true })}
                 type="text"
-                placeholder={i18n.t("registerLNamelInputPlaceholder")}
+                placeholder={t("registerLNamelInputPlaceholder")}
               />
               {errors.lname && (
                 <span className={styles["error-field"]}>
@@ -193,7 +215,7 @@ const PlayerRegisterForm = () => {
                   },
                 })}
                 type="number"
-                placeholder={i18n.t("registerBirthYearlInputPlaceholder")}
+                placeholder={t("registerBirthYearlInputPlaceholder")}
               />
               {errors.birth_year && (
                 <span className={styles["error-field"]}>
@@ -248,7 +270,7 @@ const PlayerRegisterForm = () => {
               <input
                 {...register("email", { required: true })}
                 type="email"
-                placeholder={i18n.t("registerEmailInputPlaceholder")}
+                placeholder={t("registerEmailInputPlaceholder")}
               />
               {errors.email && (
                 <span className={styles["error-field"]}>
@@ -299,7 +321,7 @@ const PlayerRegisterForm = () => {
             </div>
           </div>
           <button type="submit" className={styles["form-button"]}>
-            {i18n.t("registerButtonText")}
+            {t("registerButtonText")}
           </button>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>

@@ -37,6 +37,9 @@ export const clubSubscriptionsSlice = createApi({
       query: (club_subscription_id) =>
         `/club-subscriptions/${club_subscription_id}`,
     }),
+    getClubSubscribersById: builder.query({
+      query: (userId) => `/club-subscriptions/club-subscribers/${userId}`,
+    }),
     addClubSubscription: builder.mutation({
       query: (subscription) => ({
         url: "/club-subscriptions",
@@ -60,6 +63,7 @@ export const {
   useGetPlayersTraininSubscriptionStatusQuery,
   useGetPlayerActiveClubSubscriptionsQuery,
   useGetClubSubscriptionsByIdQuery,
+  useGetClubSubscribersByIdQuery,
   useAddClubSubscriptionMutation,
   useUpdateClubSubscriptionMutation,
 } = clubSubscriptionsSlice;

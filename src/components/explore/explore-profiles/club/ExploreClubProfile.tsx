@@ -4,8 +4,6 @@ import styles from "./styles.module.scss";
 
 import { useGetClubProfileDetailsQuery } from "../../../../api/endpoints/ClubsApi";
 
-import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-
 import { useAppSelector } from "../../../../store/hooks";
 
 import PageLoading from "../../../../components/loading/PageLoading";
@@ -30,18 +28,9 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   const { data: selectedClub, isLoading: isSelectedClubLoading } =
     useGetClubProfileDetailsQuery(user_id);
 
-  console.log(selectedClub);
   // subscriptions
 
-  const {
-    data: selectedClubSubscribers,
-    isLoading: isSelectedClubSubscriptionsLoading,
-  } = useGetClubSubscriptionsByFilterQuery({
-    is_active: true,
-    club_id: selectedClub?.[0]?.user_id,
-  });
-
-  if (isSelectedClubSubscriptionsLoading || isSelectedClubLoading) {
+  if (isSelectedClubLoading) {
     return <PageLoading />;
   }
 
@@ -58,14 +47,15 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
 
       <ExploreClubsSubscribersSection
         selectedClub={selectedClub}
-        selectedClubSubscribers={selectedClubSubscribers}
+        isUserPlayer={isUserPlayer}
+        isUserTrainer={isUserTrainer}
+        user={user}
       />
       <ExploreClubsSubscriptionsSection
         selectedClub={selectedClub}
-        selectedClubSubscribers={selectedClubSubscribers}
         isUserPlayer={isUserPlayer}
+        user={user}
       />
-
       <ExploreClubsRulesSection selectedClub={selectedClub} />
     </div>
   );

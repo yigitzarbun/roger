@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { SlOptions } from "react-icons/sl";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import paths from "../../../routing/Paths";
 
@@ -10,7 +11,13 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../store/hooks";
 
 import { useGetPaginatedPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
+
+import {
+  useAddFavouriteMutation,
+  useGetFavouritesByFilterQuery,
+  useUpdateFavouriteMutation,
+} from "../../../api/endpoints/FavouritesApi";
+
 import { getAge } from "../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../components/invite/training/form/TrainingInviteFormModal";
 
@@ -35,14 +42,51 @@ const TrainResults = (props: TrainResultsProps) => {
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
+
   const {
     data: myFavourites,
-    isLoading: isFavouritesLoading,
-    refetch: refetchFavourites,
+    isLoading: isMyFavouritesLoading,
+    refetch: refetchMyFavourites,
   } = useGetFavouritesByFilterQuery({
     favouriter_id: user?.user?.user_id,
-    is_active: true,
   });
+
+  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
+    useAddFavouriteMutation();
+
+  const handleAddFavourite = (favouritee_id: number) => {
+    const favouriteData = {
+      is_active: true,
+      favouriter_id: user?.user?.user_id,
+      favouritee_id: favouritee_id,
+    };
+    addFavourite(favouriteData);
+  };
+
+  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
+    useUpdateFavouriteMutation();
+
+  const handleUpdateFavourite = (userId: number) => {
+    const selectedFavourite = myFavourites?.find(
+      (favourite) => favourite.favouritee_id === userId
+    );
+    const favouriteData = {
+      favourite_id: selectedFavourite.favourite_id,
+      registered_at: selectedFavourite.registered_at,
+      is_active: selectedFavourite.is_active === true ? false : true,
+      favouriter_id: selectedFavourite.favouriter_id,
+      favouritee_id: selectedFavourite.favouritee_id,
+    };
+    updateFavourite(favouriteData);
+  };
+
+  const handleToggleFavourite = (userId: number) => {
+    if (myFavourites?.find((favourite) => favourite.favouritee_id === userId)) {
+      handleUpdateFavourite(userId);
+    } else {
+      handleAddFavourite(userId);
+    }
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const levelId = Number(playerLevelId) ?? null;
@@ -87,7 +131,9 @@ const TrainResults = (props: TrainResultsProps) => {
     } else if (
       (favourite === true &&
         myFavourites.find(
-          (favourite) => favourite.favouritee_id === player.user_id
+          (favourite) =>
+            favourite.favouritee_id === player.user_id &&
+            favourite.is_active === true
         )) ||
       favourite !== true
     ) {
@@ -100,10 +146,12 @@ const TrainResults = (props: TrainResultsProps) => {
   }, [levelId, selectedGender, locationIdValue, textSearch]);
 
   useEffect(() => {
-    refetchFavourites();
-  }, []);
+    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
+      refetchMyFavourites();
+    }
+  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
-  if (isPlayersLoading || isFavouritesLoading) {
+  if (isPlayersLoading || isMyFavouritesLoading) {
     return <div>Loading...</div>;
   }
 
@@ -134,19 +182,44 @@ const TrainResults = (props: TrainResultsProps) => {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
-              <th>Davet</th>
+              <th>Antreman</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {filteredPlayers.map((player) => (
               <tr key={player.player_id} className={styles["player-row"]}>
+                <td>
+                  {myFavourites?.find(
+                    (favourite) =>
+                      favourite.favouritee_id === player.user_id &&
+                      favourite.is_active === true
+                  ) && player.user_id !== user?.user?.user_id ? (
+                    <AiFillStar
+                      onClick={() => handleToggleFavourite(player.user_id)}
+                      className={styles["remove-fav-icon"]}
+                    />
+                  ) : (
+                    player.user_id !== user?.user?.user_id &&
+                    !myFavourites?.find(
+                      (favourite) =>
+                        favourite.favouritee_id === player.user_id &&
+                        favourite.is_active === true
+                    ) && (
+                      <AiOutlineStar
+                        onClick={() => handleToggleFavourite(player.user_id)}
+                        className={styles["add-fav-icon"]}
+                      />
+                    )
+                  )}
+                </td>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
@@ -173,7 +246,7 @@ const TrainResults = (props: TrainResultsProps) => {
                     onClick={() => handleOpenInviteModal(player?.user_id)}
                     className={styles["training-button"]}
                   >
-                    Davet gönder
+                    Antreman yap
                   </button>
                 </td>
                 <td>

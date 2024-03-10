@@ -10,15 +10,14 @@ import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
-import { Club } from "../../../../../../api/endpoints/ClubsApi";
-import { useGetClubStaffByFilterQuery } from "../../../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../../../api/endpoints/TrainersApi";
+import { useGetClubTrainersQuery } from "../../../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../../../api/endpoints/TrainerExperienceTypesApi";
 
 import { useAppSelector } from "../../../../../../store/hooks";
 
 import ExploreClubTrainerModal from "../../modals/trainers/ExploreClubTrainersModal";
 import ClubEmploymentModal from "../../../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
+import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExploreClubsTrainersSectionProps {
   isUserTrainer: boolean;
@@ -33,30 +32,11 @@ const ExploreClubsTrainersSection = (
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
-    useGetClubStaffByFilterQuery({
-      club_id: selectedClub?.[0]?.club_id,
-      employment_status: "accepted",
-      club_staff_role_type_id: 2,
-    });
-
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-
+    useGetClubTrainersQuery(selectedClub?.[0]?.club_id);
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
   } = useGetTrainerExperienceTypesQuery({});
-
-  let confirmedClubTrainers = [];
-  clubStaffTrainers?.forEach((clubTrainer) => {
-    const trainerDetails = trainers?.find(
-      (trainer) => trainer.user_id === clubTrainer.user_id
-    );
-    if (trainerDetails) {
-      confirmedClubTrainers.push(trainerDetails);
-    }
-  });
 
   const [isTrainersModalOpen, setIsTrainersModalOpen] = useState(false);
   const openTrainersModal = () => {
@@ -76,11 +56,16 @@ const ExploreClubsTrainersSection = (
     setEmploymentModalOpen(false);
   };
 
-  if (
-    isTrainersLoading ||
-    isTrainerExperienceTypesLoading ||
-    isClubStaffLoading
-  ) {
+  const [trainerLessonUserId, setTrainerLessonUserId] = useState(null);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const handleOpenLessonModal = (trainerLessonUserId: number) => {
+    setTrainerLessonUserId(trainerLessonUserId);
+    setIsInviteModalOpen(true);
+  };
+  const handleCloseInviteModal = () => {
+    setIsInviteModalOpen(false);
+  };
+  if (isTrainerExperienceTypesLoading || isClubStaffLoading) {
     return <PageLoading />;
   }
   return (
@@ -115,32 +100,40 @@ const ExploreClubsTrainersSection = (
           )
         )}
       </div>
-      {confirmedClubTrainers?.length > 0 ? (
+      {clubStaffTrainers?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Eğitmen</th>
               <th>İsim</th>
               <th>Soyisim</th>
               <th>Cinsiyet</th>
               <th>Tecrübe</th>
+              <th>Konum</th>
+              <th>Ders</th>
+              <th>Öğrenci</th>
               <th>Fiyat</th>
             </tr>
           </thead>
           <tbody>
-            {confirmedClubTrainers
-              ?.slice(confirmedClubTrainers.length - 2)
+            {clubStaffTrainers
+              ?.slice(clubStaffTrainers.length - 2)
               ?.map((trainer) => (
-                <tr key={trainer.user_id}>
+                <tr
+                  key={trainer.trainerUserId}
+                  className={styles["trainer-row"]}
+                >
                   <td>
-                    <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}2/${trainer.trainerUserId} `}
+                    >
                       <img
                         src={
-                          trainer.image
-                            ? `${localUrl}/${trainer.image}`
-                            : "/images/icons/avatar.png"
+                          trainer.trainerImage
+                            ? `${localUrl}/${trainer.trainerImage}`
+                            : "/images/icons/avatar.jpg"
                         }
-                        alt="trainer picture"
+                        alt="trainer_image"
                         className={styles["trainer-image"]}
                       />
                     </Link>
@@ -157,23 +150,21 @@ const ExploreClubsTrainersSection = (
                       )?.trainer_experience_type_name
                     }
                   </td>
+                  <td>{trainer.location_name}</td>
+                  <td>{trainer.lessoncount}</td>
+                  <td>{trainer.studentcount}</td>
                   <td>{trainer.price_hour}</td>
 
                   {isUserPlayer && (
                     <td>
-                      <Link
-                        to={paths.LESSON_INVITE}
-                        state={{
-                          fname: trainer.fname,
-                          lname: trainer.lname,
-                          image: trainer.image,
-                          court_price: "",
-                          user_id: trainer.user_id,
-                        }}
+                      <button
+                        onClick={() =>
+                          handleOpenLessonModal(trainer.trainerUserId)
+                        }
                         className={styles["lesson-button"]}
                       >
                         Derse davet et
-                      </Link>
+                      </button>
                     </td>
                   )}
                 </tr>
@@ -183,12 +174,15 @@ const ExploreClubsTrainersSection = (
       ) : (
         <p>Henüz kulübe bağlı çalışan eğitmen bulunmamaktadır</p>
       )}
-      <button onClick={openTrainersModal}>Tümünü Görüntüle</button>
+      {clubStaffTrainers?.length > 0 && (
+        <button onClick={openTrainersModal}>Tümünü Görüntüle</button>
+      )}
+
       {isTrainersModalOpen && (
         <ExploreClubTrainerModal
           isTrainersModalOpen={isTrainersModalOpen}
           closeTrainersModal={closeTrainersModal}
-          confirmedClubTrainers={confirmedClubTrainers}
+          confirmedClubTrainers={clubStaffTrainers}
         />
       )}
       {employmentModalOpen && (
@@ -196,6 +190,13 @@ const ExploreClubsTrainersSection = (
           employmentModalOpen={employmentModalOpen}
           closeEmploymentModal={closeEmploymentModal}
           trainerEmploymentClubId={trainerEmploymentClubId}
+        />
+      )}
+      {isInviteModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={trainerLessonUserId}
+          isInviteModalOpen={isInviteModalOpen}
+          handleCloseInviteModal={handleCloseInviteModal}
         />
       )}
     </div>

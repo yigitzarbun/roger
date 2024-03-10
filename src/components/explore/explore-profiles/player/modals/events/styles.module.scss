@@ -63,26 +63,61 @@
       height: 50vh;
       overflow-y: auto;
 
-      .opponent-name {
-        color: white;
-        text-decoration: none;
-      }
       table {
         width: 100%;
-        height: 100px;
-        overflow-y: auto;
         text-align: left;
+        border-collapse: collapse;
+        overflow-y: auto;
 
-        td {
-          font-weight: light;
+        .opponent-row {
+          border-bottom: 1px solid $roger-border-color;
+
+          td {
+            border-top: 1px solid $roger-border-color;
+            vertical-align: middle;
+            padding: 10px;
+            height: 12vh;
+
+            .remove-fav-icon {
+              color: $roger-blue;
+              cursor: pointer;
+              font-size: 1.5rem;
+              vertical-align: middle;
+            }
+            .add-fav-icon {
+              cursor: pointer;
+              font-size: 1.5rem;
+              vertical-align: middle;
+            }
+            .add-fav-icon:hover {
+              color: $roger-blue;
+            }
+          }
+
+          .opponent-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto;
+            display: block;
+          }
+
+          .opponent-name {
+            color: white;
+            text-decoration: none;
+          }
+
+          .blocked {
+            color: $roger-red;
+          }
+
+          .done {
+            color: $roger-green;
+            font-size: 1.2rem;
+          }
         }
-        img {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          object-fit: cover;
-        }
-        .book-button {
+        button {
           padding: 10px;
           border-radius: $roger-border-radius;
           border: none;
@@ -92,9 +127,12 @@
           cursor: pointer;
           text-decoration: none;
           color: white;
+          text-align: center;
         }
-        .book-button:hover {
-          background-color: $roger-blue;
+
+        button:hover {
+          background-color: $roger-black-light;
+          cursor: pointer;
         }
       }
     }

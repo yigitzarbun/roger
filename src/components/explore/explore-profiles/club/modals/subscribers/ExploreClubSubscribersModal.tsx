@@ -3,38 +3,32 @@ import React, { useEffect } from "react";
 import ReactModal from "react-modal";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import Paths from "../../../../../../routing/Paths";
+import { ImBlocked } from "react-icons/im";
 
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
-import paths from "../../../../../../routing/Paths";
+import { getAge } from "../../../../../../common/util/TimeFunctions";
 
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 
-import { Club } from "../../../../../../api/endpoints/ClubsApi";
-
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
-import { useAppSelector } from "../../../../../../store/hooks";
-import { useGetPlayersQuery } from "../../../../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../../../../api/endpoints/PlayerLevelsApi";
-import { useGetLocationsQuery } from "../../../../../../api/endpoints/LocationsApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
-import { useGetClubExternalMembersByFilterQuery } from "../../../../../../api/endpoints/ClubExternalMembersApi";
-import { useGetUsersQuery } from "../../../../../../store/auth/apiSlice";
-import { currentYear } from "../../../../../../common/util/TimeFunctions";
-import { ClubSubscription } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface ExploreClubSubscribersModalProps {
   isSubscribersModalOpen: boolean;
   closeSubscribersModal: () => void;
-  selectedClub: Club;
-  selectedClubSubscribers: ClubSubscription[];
+  selectedClubSubscribers: any[];
+  user: any;
+  handleOpenTrainInviteModal: (userId: number) => void;
+  handleOpenMatchInviteModal: (userId: number) => void;
 }
 
 const ExploreClubSubscribersModal = (
@@ -43,26 +37,11 @@ const ExploreClubSubscribersModal = (
   const {
     isSubscribersModalOpen,
     closeSubscribersModal,
-    selectedClub,
     selectedClubSubscribers,
+    user,
+    handleOpenTrainInviteModal,
+    handleOpenMatchInviteModal,
   } = props;
-  const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: clubExternalMembers, isLoading: isClubExternalMembersLoading } =
-    useGetClubExternalMembersByFilterQuery({
-      is_active: true,
-      club_id: selectedClub?.[0]?.club_id,
-    });
 
   const {
     data: myFavourites,
@@ -103,11 +82,9 @@ const ExploreClubSubscribersModal = (
 
   const handleToggleFavourite = (userId: number) => {
     if (myFavourites?.find((favourite) => favourite.favouritee_id === userId)) {
-      console.log("update");
       handleUpdateFavourite(userId);
     } else {
       handleAddFavourite(userId);
-      console.log("add");
     }
   };
 
@@ -115,40 +92,13 @@ const ExploreClubSubscribersModal = (
 
   const isUserTrainer = user?.user?.user_type_id === 2;
 
-  const isSubscriberPlayer = (user_id: number) => {
-    return users?.find((user) => user.user_id === user_id)?.user_type_id === 1
-      ? true
-      : false;
-  };
-
-  const isSubscriberExternalMember = (user_id: number) => {
-    return users?.find((user) => user.user_id === user_id)?.user_type_id === 5
-      ? true
-      : false;
-  };
-
-  const selectedPlayer = (user_id: number) => {
-    return players?.find((player) => player.user_id === user_id);
-  };
-
-  const selectedExternalMember = (user_id: number) => {
-    return clubExternalMembers?.find((member) => member.user_id === user_id);
-  };
-
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavourites();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
-  if (
-    isPlayersLoading ||
-    isPlayerLevelsLoading ||
-    isLocationsLoading ||
-    isMyFavouritesLoading ||
-    isClubExternalMembersLoading ||
-    isUsersLoading
-  ) {
+  if (isMyFavouritesLoading) {
     return <PageLoading />;
   }
 
@@ -156,251 +106,148 @@ const ExploreClubSubscribersModal = (
     <ReactModal
       isOpen={isSubscribersModalOpen}
       onRequestClose={closeSubscribersModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1>Üyeler</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={closeSubscribersModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <div className={styles["table-container"]}>
-        {(selectedClubSubscribers + clubExternalMembers)?.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th></th>
-                <th>İsim</th>
-                <th>Yaş</th>
-                <th>Cinsiyet</th>
-                <th>Seviye</th>
-                <th>Konum</th>
-                <th>Üye Türü</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedClubSubscribers?.map((subscriber) => (
-                <tr key={subscriber.player_id}>
-                  <td>
-                    {myFavourites?.find(
-                      (favourite) =>
-                        favourite.favouritee_id === subscriber.player_id &&
-                        favourite.is_active === true
-                    ) &&
-                    subscriber.player_id !== user?.user?.user_id &&
-                    isSubscriberPlayer(subscriber.player_id) ? (
-                      <AiFillStar
-                        onClick={() =>
-                          handleToggleFavourite(subscriber.player_id)
-                        }
-                        className={styles["remove-fav-icon"]}
-                      />
-                    ) : subscriber.player_id !== user?.user?.user_id &&
-                      !myFavourites?.find(
+      <div className={styles["overlay"]} onClick={closeSubscribersModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1>Üyeler</h1>
+        </div>
+        <div className={styles["table-container"]}>
+          {selectedClubSubscribers?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Üye</th>
+                  <th>İsim</th>
+                  <th>Cinsiyet</th>
+                  <th>Yaş</th>
+                  <th>Konum</th>
+                  <th>Seviye</th>
+                  <th>Yorum</th>
+                  {isUserPlayer && <th>Antreman</th>}
+                  {isUserPlayer && <th>Maç</th>}
+                  {isUserTrainer && <td>Ders</td>}
+                </tr>
+              </thead>
+              <tbody>
+                {selectedClubSubscribers.map((player) => (
+                  <tr
+                    key={player.playerUserId}
+                    className={styles["subscriber-row"]}
+                  >
+                    <td>
+                      {myFavourites?.find(
                         (favourite) =>
-                          favourite.favouritee_id === subscriber.player_id &&
+                          favourite.favouritee_id === player.playerUserId &&
                           favourite.is_active === true
-                      ) &&
-                      isSubscriberPlayer(subscriber.player_id) ? (
-                      <AiOutlineStar
-                        onClick={() =>
-                          handleToggleFavourite(subscriber.player_id)
-                        }
-                        className={styles["add-fav-icon"]}
-                      />
-                    ) : (
-                      ""
-                    )}
-                  </td>
-                  <td>
-                    {selectedPlayer(subscriber.player_id) ? (
+                      ) && player.playerUserId !== user?.user?.user_id ? (
+                        <AiFillStar
+                          onClick={() =>
+                            handleToggleFavourite(player.playerUserId)
+                          }
+                          className={styles["remove-fav-icon"]}
+                        />
+                      ) : (
+                        player.playerUserId !== user?.user?.user_id &&
+                        !myFavourites?.find(
+                          (favourite) =>
+                            favourite.favouritee_id === player.playerUserId &&
+                            favourite.is_active === true
+                        ) && (
+                          <AiOutlineStar
+                            onClick={() =>
+                              handleToggleFavourite(player.playerUserId)
+                            }
+                            className={styles["add-fav-icon"]}
+                          />
+                        )
+                      )}
+                    </td>
+                    <td>
                       <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${subscriber.player_id}`}
+                        to={`${Paths.EXPLORE_PROFILE}1/${player.playerUserId} `}
                       >
                         <img
                           src={
-                            selectedPlayer(subscriber.player_id)?.image
-                              ? `${localUrl}/${
-                                  selectedPlayer(subscriber.player_id)?.image
-                                }`
-                              : "/images/icons/avatar.png"
+                            player.playerImage
+                              ? `${localUrl}/${player.playerImage}`
+                              : "/images/icons/avatar.jpg"
                           }
-                          alt="subscriber picture"
                           className={styles["subscriber-image"]}
                         />
                       </Link>
-                    ) : (
-                      <img
-                        src="/images/icons/avatar.png"
-                        alt="subscriber picture"
-                        className={styles["subscriber-image"]}
-                      />
-                    )}
-                  </td>
-                  <td>
-                    {isSubscriberPlayer(subscriber.player_id) ? (
+                    </td>
+                    <td>
                       <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${subscriber.player_id}`}
+                        to={`${Paths.EXPLORE_PROFILE}1/${player.playerUserId} `}
                         className={styles["subscriber-name"]}
                       >
-                        {`${selectedPlayer(subscriber.player_id)?.fname}
-                        ${selectedPlayer(subscriber.player_id)?.lname}`}
+                        {`${player.fname} ${player.lname}`}
                       </Link>
-                    ) : (
-                      `${selectedExternalMember(subscriber.player_id)?.fname} ${
-                        selectedExternalMember(subscriber.player_id)?.lname
-                      }`
-                    )}
-                  </td>
-                  <td>
-                    {isSubscriberPlayer(subscriber.player_id)
-                      ? currentYear -
-                        selectedPlayer(subscriber.player_id)?.birth_year
-                      : isSubscriberExternalMember(subscriber.player_id)
-                      ? currentYear -
-                        selectedExternalMember(subscriber.player_id)?.birth_year
-                      : ""}
-                  </td>
-                  <td>
-                    {isSubscriberPlayer(subscriber.player_id)
-                      ? selectedPlayer(subscriber.player_id)?.gender
-                      : isSubscriberExternalMember(subscriber.player_id)
-                      ? selectedExternalMember(subscriber.player_id)?.gender
-                      : ""}
-                  </td>
-                  <td>
-                    {isSubscriberPlayer(subscriber.player_id)
-                      ? playerLevels?.find(
-                          (level) =>
-                            level.player_level_id ===
-                            selectedPlayer(subscriber.player_id)
-                              ?.player_level_id
-                        )?.player_level_name
-                      : isSubscriberExternalMember(subscriber.player_id)
-                      ? playerLevels?.find(
-                          (level) =>
-                            level.player_level_id ===
-                            selectedExternalMember(subscriber.player_id)
-                              ?.player_level_id
-                        )?.player_level_name
-                      : ""}
-                  </td>
-                  <td>
-                    {isSubscriberPlayer(subscriber.player_id)
-                      ? locations?.find(
-                          (location) =>
-                            location.location_id ===
-                            selectedPlayer(subscriber.player_id)?.location_id
-                        )?.location_name
-                      : isSubscriberExternalMember(subscriber.player_id)
-                      ? locations?.find(
-                          (location) =>
-                            location.location_id ===
-                            selectedExternalMember(subscriber.player_id)
-                              ?.location_id
-                        )?.location_name
-                      : ""}
-                  </td>
-                  <td>
-                    {isSubscriberPlayer(subscriber.player_id)
-                      ? "Oyuncu"
-                      : isSubscriberExternalMember(subscriber.player_id)
-                      ? "Harici Üye"
-                      : "Diğer"}
-                  </td>
-                  {isUserPlayer && isSubscriberPlayer(subscriber.player_id) && (
-                    <td>
-                      {subscriber.player_id !== user?.user?.user_id && (
-                        <Link
-                          to={paths.TRAIN_INVITE}
-                          state={{
-                            fname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.fname,
-                            lname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.lname,
-                            image: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.image,
-                            court_price: "",
-                            user_id: selectedPlayer(subscriber?.player_id),
-                          }}
-                          className={styles["training-button"]}
-                        >
-                          Antreman yap
-                        </Link>
-                      )}
                     </td>
-                  )}
-                  {isUserPlayer && isSubscriberPlayer(subscriber.player_id) && (
+                    <td>{player.gender}</td>
+                    <td>{getAge(player.birth_year)}</td>
+                    <td>{player.location_name}</td>
+                    <td>{player.player_level_name}</td>
                     <td>
-                      {subscriber.player_id !== user?.user?.user_id && (
-                        <Link
-                          to={paths.MATCH_INVITE}
-                          state={{
-                            fname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.fname,
-                            lname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.lname,
-                            image: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.image,
-                            court_price: "",
-                            user_id: selectedPlayer(subscriber?.player_id),
-                          }}
-                          className={styles["match-button"]}
-                        >
-                          Maç yap
-                        </Link>
-                      )}
+                      {player.reviewscorecount > 0
+                        ? `${Math.round(
+                            Number(player.averagereviewscore)
+                          )} / 10`
+                        : "-"}
                     </td>
-                  )}
-                  {isUserTrainer &&
-                    isSubscriberPlayer(subscriber.player_id) && (
+                    {isUserPlayer && (
                       <td>
-                        <Link
-                          to={paths.LESSON_INVITE}
-                          state={{
-                            fname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.fname,
-                            lname: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.lname,
-                            image: players?.find(
-                              (player) =>
-                                player.user_id === subscriber.player_id
-                            )?.image,
-                            court_price: "",
-                            user_id: selectedPlayer(subscriber?.player_id),
-                          }}
-                          className={styles["match-button"]}
-                        >
-                          Derse davet et
-                        </Link>
+                        {player.playerUserId !== user?.user?.user_id ? (
+                          <button
+                            onClick={() =>
+                              handleOpenTrainInviteModal(player.playerUserId)
+                            }
+                          >
+                            Antreman Yap
+                          </button>
+                        ) : (
+                          <ImBlocked className={styles.blocked} />
+                        )}
                       </td>
                     )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>Henüz kulübe ait kort bulunmamaktadır</p>
-        )}
+
+                    {isUserPlayer && (
+                      <td>
+                        {user?.playerDetails?.gender === player.gender &&
+                        player.playerUserId !== user?.user?.user_id ? (
+                          <button
+                            onClick={() =>
+                              handleOpenMatchInviteModal(player.playerUserId)
+                            }
+                            disabled={
+                              user?.playerDetails?.gender !== player.gender
+                            }
+                          >
+                            Maç Yap
+                          </button>
+                        ) : (
+                          <ImBlocked className={styles.blocked} />
+                        )}
+                      </td>
+                    )}
+                    {isUserTrainer && (
+                      <td>
+                        <button>Ders Yap</button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>Kulübe üye bulunmamaktadır.</p>
+          )}
+        </div>
       </div>
     </ReactModal>
   );

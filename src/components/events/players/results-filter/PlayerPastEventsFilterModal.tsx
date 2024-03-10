@@ -6,6 +6,7 @@ import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 
 interface PlayerPastEventsFilterProps {
+  display: string;
   isPastEventsModalOpen: boolean;
   handleClosePastEventsModal: () => void;
   handleClear: () => void;
@@ -18,14 +19,19 @@ interface PlayerPastEventsFilterProps {
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
   eventTypes: any;
+  missingReviews: number;
+  missingScores: number;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleMissingReviews: () => void;
+  handleMissingScores: () => void;
 }
 const PlayerPastEventsFilterModal = (props: PlayerPastEventsFilterProps) => {
   const {
+    display,
     isPastEventsModalOpen,
     handleClosePastEventsModal,
     clubId,
@@ -37,11 +43,15 @@ const PlayerPastEventsFilterModal = (props: PlayerPastEventsFilterProps) => {
     courtStructureTypes,
     courtSurfaceTypes,
     eventTypes,
+    missingReviews,
+    missingScores,
     handleClub,
     handleCourtStructure,
     handleCourtSurface,
     handleTextSearch,
     handleEventType,
+    handleMissingReviews,
+    handleMissingScores,
     handleClear,
   } = props;
 
@@ -130,6 +140,28 @@ const PlayerPastEventsFilterModal = (props: PlayerPastEventsFilterProps) => {
                 ))}
               </select>
             </div>
+          </div>
+          <div className={styles["missing-review-container"]}>
+            {display === "events" && (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={missingReviews === 1 ? true : false}
+                  onChange={handleMissingReviews}
+                />
+                Yalnızca yorum yapmadıklarım
+              </label>
+            )}
+            {display === "scores" && (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={missingScores === 1 ? true : false}
+                  onChange={handleMissingScores}
+                />
+                Yalnızca maç sonucu paylaşmadıklarım
+              </label>
+            )}
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>

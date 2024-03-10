@@ -11,90 +11,23 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../store/hooks";
-import { useGetBookingsByFilterQuery } from "../../../api/endpoints/BookingsApi";
-import { useGetEventReviewsByFilterQuery } from "../../../api/endpoints/EventReviewsApi";
-import { useGetMatchScoresQuery } from "../../../api/endpoints/MatchScoresApi";
-import {
-  currentDayLocale,
-  currentTimeLocale,
-} from "../../../common/util/TimeFunctions";
+import { useGetPlayerIncomingRequestsQuery } from "../../../api/endpoints/BookingsApi";
 
 const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const {
-    data: bookings,
+    data: incomingBookings,
     isLoading: isBookingsLoading,
-    refetch: refetchIncomingBookings,
-  } = useGetBookingsByFilterQuery({
-    booking_status_type_id: 1,
-    booking_player_id: user?.user?.user_id,
-  });
-
-  const {
-    data: myCompletedBookings,
-    isLoading: isMyCompletedBookingsLoading,
-    refetch: refetchMyCompletedBookings,
-  } = useGetBookingsByFilterQuery({
-    booking_status_type_id: 5,
-    booking_player_id: user?.user?.user_id,
-  });
-
-  const {
-    data: myReviews,
-    isLoading: isEventReviewsLoading,
-    refetch: refetchMyReviews,
-  } = useGetEventReviewsByFilterQuery({
-    is_active: true,
-    reviewer_id: user?.user?.user_id,
-  });
-
-  const { data: scores, isLoading: isScoresLoading } = useGetMatchScoresQuery(
-    {}
-  );
-
-  const incomingBookings = bookings?.filter(
-    (booking) =>
-      new Date(booking.event_date).toLocaleDateString() > currentDayLocale ||
-      (new Date(booking.event_date).toLocaleDateString() === currentDayLocale &&
-        booking.event_time >= currentTimeLocale &&
-        booking.invitee_id === user?.user?.user_id)
-  );
-
-  const myEvents = myCompletedBookings?.filter(
-    (booking) =>
-      booking.event_type_id === 1 ||
-      booking.event_type_id === 2 ||
-      booking.event_type_id === 3
-  );
-
-  const missingScores = scores?.filter(
-    (score) =>
-      (score.match_score_status_type_id === 1 &&
-        myEvents?.find(
-          (event) =>
-            event.booking_id === score.booking_id && event.event_type_id === 2
-        )) ||
-      (score.match_score_status_type_id === 2 &&
-        score.reporter_id !== user?.user?.user_id &&
-        myEvents?.find(
-          (event) =>
-            event.booking_id === score.booking_id && event.event_type_id === 2
-        ))
-  );
+    refetch: refetchBookings,
+  } = useGetPlayerIncomingRequestsQuery(user?.user?.user_id);
 
   useEffect(() => {
-    refetchIncomingBookings();
-    refetchMyCompletedBookings();
-    refetchMyReviews();
-  }, []);
+    refetchBookings();
+  }),
+    [];
 
-  if (
-    isBookingsLoading ||
-    isEventReviewsLoading ||
-    isScoresLoading ||
-    isMyCompletedBookingsLoading
-  ) {
+  if (isBookingsLoading) {
     return <PageLoading />;
   }
 
@@ -183,10 +116,6 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
           }
         >
           Performans
-          {(myEvents?.length > myReviews?.length ||
-            missingScores?.length > 0) && (
-            <FaCircle className={styles["notification"]} />
-          )}
         </NavLink>
       </div>
     </nav>

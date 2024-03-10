@@ -149,7 +149,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                           ? booking.playerImage
                           : booking.trainerImage
                           ? booking.trainerImage
-                          : "/images/icons/avatar.png"
+                          : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
                     />

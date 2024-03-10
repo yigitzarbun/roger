@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { SlOptions } from "react-icons/sl";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import paths from "../../../routing/Paths";
 
@@ -11,7 +12,11 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../store/hooks";
 
 import { useGetPaginatedTrainersQuery } from "../../../api/endpoints/TrainersApi";
-import { useGetFavouritesByFilterQuery } from "../../../api/endpoints/FavouritesApi";
+import {
+  useAddFavouriteMutation,
+  useGetFavouritesByFilterQuery,
+  useUpdateFavouriteMutation,
+} from "../../../api/endpoints/FavouritesApi";
 import {
   useAddStudentMutation,
   useGetStudentsByFilterQuery,
@@ -86,14 +91,51 @@ const LessonResults = (props: TrainSearchProps) => {
       updateStudent(updatedStudentData);
     }
   };
+
   const {
     data: myFavourites,
-    isLoading: isFavouritesLoading,
-    refetch: refetchFavourites,
+    isLoading: isMyFavouritesLoading,
+    refetch: refetchMyFavourites,
   } = useGetFavouritesByFilterQuery({
     favouriter_id: user?.user?.user_id,
-    is_active: true,
   });
+
+  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
+    useAddFavouriteMutation();
+
+  const handleAddFavourite = (favouritee_id: number) => {
+    const favouriteData = {
+      is_active: true,
+      favouriter_id: user?.user?.user_id,
+      favouritee_id: favouritee_id,
+    };
+    addFavourite(favouriteData);
+  };
+
+  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
+    useUpdateFavouriteMutation();
+
+  const handleUpdateFavourite = (userId: number) => {
+    const selectedFavourite = myFavourites?.find(
+      (favourite) => favourite.favouritee_id === userId
+    );
+    const favouriteData = {
+      favourite_id: selectedFavourite.favourite_id,
+      registered_at: selectedFavourite.registered_at,
+      is_active: selectedFavourite.is_active === true ? false : true,
+      favouriter_id: selectedFavourite.favouriter_id,
+      favouritee_id: selectedFavourite.favouritee_id,
+    };
+    updateFavourite(favouriteData);
+  };
+
+  const handleToggleFavourite = (userId: number) => {
+    if (myFavourites?.find((favourite) => favourite.favouritee_id === userId)) {
+      handleUpdateFavourite(userId);
+    } else {
+      handleAddFavourite(userId);
+    }
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const trainerLevelValue = Number(trainerLevelId) ?? null;
@@ -153,7 +195,9 @@ const LessonResults = (props: TrainSearchProps) => {
       } else if (
         (favourite === true &&
           myFavourites.find(
-            (favourite) => favourite.favouritee_id === trainer.user_id
+            (favourite) =>
+              favourite.favouritee_id === trainer.user_id &&
+              favourite.is_active === true
           )) ||
         favourite !== true
       ) {
@@ -168,8 +212,10 @@ const LessonResults = (props: TrainSearchProps) => {
   }, [isAddStudentSuccess, isUpdateStudentSuccess]);
 
   useEffect(() => {
-    refetchFavourites();
-  }, []);
+    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
+      refetchMyFavourites();
+    }
+  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
   useEffect(() => {
     refetchPaginatedTrainers();
@@ -182,7 +228,7 @@ const LessonResults = (props: TrainSearchProps) => {
     textSearch,
   ]);
 
-  if (isFavouritesLoading || isPlayerStudentshipsLoading) {
+  if (isMyFavouritesLoading || isPlayerStudentshipsLoading) {
     return <PageLoading />;
   }
 
@@ -213,6 +259,7 @@ const LessonResults = (props: TrainSearchProps) => {
         <table>
           <thead>
             <tr>
+              <th></th>
               <th>Eğitmen</th>
               <th>İsim</th>
               <th>Kulüp</th>
@@ -228,6 +275,30 @@ const LessonResults = (props: TrainSearchProps) => {
           <tbody>
             {filteredTrainers.map((trainer) => (
               <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
+                <td>
+                  {myFavourites?.find(
+                    (favourite) =>
+                      favourite.favouritee_id === trainer.user_id &&
+                      favourite.is_active === true
+                  ) && trainer.user_id !== user?.user?.user_id ? (
+                    <AiFillStar
+                      onClick={() => handleToggleFavourite(trainer.user_id)}
+                      className={styles["remove-fav-icon"]}
+                    />
+                  ) : (
+                    trainer.user_id !== user?.user?.user_id &&
+                    !myFavourites?.find(
+                      (favourite) =>
+                        favourite.favouritee_id === trainer.user_id &&
+                        favourite.is_active === true
+                    ) && (
+                      <AiOutlineStar
+                        onClick={() => handleToggleFavourite(trainer.user_id)}
+                        className={styles["add-fav-icon"]}
+                      />
+                    )
+                  )}
+                </td>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id}`}>
                     <img

@@ -8,19 +8,32 @@ import { useAppSelector } from "../../store/hooks";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
 import { MdOutlineLanguage } from "react-icons/md";
+import { localUrl } from "../../common/constants/apiConstants";
 
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
 import ClubHeader from "./club/ClubHeader";
 import ProfileModal from "./modals/profile/ProfileModal";
 import PageLoading from "../../components/loading/PageLoading";
+import LanguageModal from "./modals/language/LanguageModal";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
   const navigate = useNavigate();
+
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const handleOpenProfileModal = () => {
     setIsProfileModalOpen(true);
+  };
+
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
+
+  const handleOpenLanguageModal = () => {
+    setIsLanguageModalOpen(true);
+  };
+
+  const handleCloseLanguageModal = () => {
+    setIsLanguageModalOpen(false);
   };
   const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
     useGetPlayerProfileDetailsQuery(user?.user?.user?.user_id);
@@ -63,13 +76,16 @@ const Header = () => {
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
             <IoIosNotificationsOutline className={styles.notification} />
-            <MdOutlineLanguage className={styles.notification} />
+            <MdOutlineLanguage
+              className={styles.notification}
+              onClick={handleOpenLanguageModal}
+            />
 
             {isLoggedIn && (
               <img
                 src={
                   isUserPlayer && playerDetails?.[0]?.image
-                    ? playerDetails?.[0]?.image
+                    ? `${localUrl}/${playerDetails?.[0]?.image}`
                     : //: isUserTrainer && trainerDetails?.[0]?.image
                       //? trainerDetails?.[0]?.image
                       //: isUserClub && clubDetails?.[0]?.image
@@ -106,6 +122,10 @@ const Header = () => {
             >
               Kayıt
             </NavLink>
+            <MdOutlineLanguage
+              className={styles.notification}
+              onClick={handleOpenLanguageModal}
+            />
           </div>
         )}
       </div>
@@ -122,6 +142,12 @@ const Header = () => {
           isProfileModalOpen={isProfileModalOpen}
           handleCloseProfileModal={handleCloseProfileModal}
           email={user?.user?.user?.email}
+        />
+      )}
+      {isLanguageModalOpen && (
+        <LanguageModal
+          isLanguageModalOpen={isLanguageModalOpen}
+          handleCloseLanguageModal={handleCloseLanguageModal}
         />
       )}
     </div>

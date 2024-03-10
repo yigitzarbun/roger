@@ -104,6 +104,18 @@ const matchScoresModel = {
           if (filter.eventTypeId > 0) {
             builder.where("event_types.event_type_id", filter.eventTypeId);
           }
+          if (filter.missingScores > 0) {
+            builder.where(function () {
+              this.where("match_scores.match_score_status_type_id", 1).orWhere(
+                function () {
+                  this.where(
+                    "match_scores.match_score_status_type_id",
+                    2
+                  ).andWhereNot("match_scores.reporter_id", filter.userId);
+                }
+              );
+            });
+          }
         })
         .andWhere("bookings.booking_status_type_id", 5)
         .andWhere((builder) => {
@@ -201,6 +213,18 @@ const matchScoresModel = {
           }
           if (filter.eventTypeId > 0) {
             builder.where("event_types.event_type_id", filter.eventTypeId);
+          }
+          if (filter.missingScores > 0) {
+            builder.where(function () {
+              this.where("match_scores.match_score_status_type_id", 1).orWhere(
+                function () {
+                  this.where(
+                    "match_scores.match_score_status_type_id",
+                    2
+                  ).andWhereNot("match_scores.reporter_id", filter.userId);
+                }
+              );
+            });
           }
         })
         .andWhere("bookings.booking_status_type_id", 5)

@@ -244,7 +244,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   ) {
     return <PageLoading />;
   }
-
+  console.log(paginatedTrainers);
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -337,7 +337,8 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 </td>
                 <td>{trainer?.trainer_experience_type_name}</td>
                 <td>
-                  {trainer?.employment_status === "accepted"
+                  {trainer?.employment_status === "accepted" &&
+                  trainer?.club_name
                     ? trainer?.club_name
                     : "Bağımsız"}
                 </td>

@@ -115,6 +115,59 @@ const clubSubscriptionsModel = {
       throw error;
     }
   },
+
+  async getClubSubscribers(userId: number) {
+    try {
+      const clubSubscribers = await db
+        .select(
+          "club_subscriptions.*",
+          "players.*",
+          "players.image as playerImage",
+          "players.user_id as playerUserId",
+          "locations.*",
+          "player_levels",
+          "player_levels.player_level_name",
+          db.raw("AVG(event_reviews.review_score) as averageReviewScore"),
+          db.raw(
+            "COUNT(DISTINCT event_reviews.review_score) as reviewScoreCount"
+          )
+        )
+        .from("club_subscriptions")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "club_subscriptions.player_id");
+        })
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "players.location_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("event_reviews", function () {
+          this.on(
+            "event_reviews.reviewee_id",
+            "=",
+            "club_subscriptions.player_id"
+          );
+        })
+        .where("club_subscriptions.club_id", userId)
+        .andWhere("club_subscriptions.is_active", true)
+        .groupBy(
+          "club_subscriptions.club_subscription_id",
+          "players.player_id",
+          "locations.location_id",
+          "player_levels.player_level_id"
+        );
+
+      return clubSubscribers.length > 0 ? clubSubscribers : null;
+    } catch (error) {
+      console.log("Error fetching club subscribers: ", error);
+    }
+  },
+
   async add(clubSubscription) {
     const [newClubSubscription] = await db("club_subscriptions")
       .insert(clubSubscription)

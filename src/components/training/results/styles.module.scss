@@ -43,6 +43,21 @@
         vertical-align: middle;
         padding: 10px;
         height: 12vh;
+
+        .remove-fav-icon {
+          color: $roger-blue;
+          cursor: pointer;
+          font-size: 1.5rem;
+          vertical-align: middle;
+        }
+        .add-fav-icon {
+          cursor: pointer;
+          font-size: 1.5rem;
+          vertical-align: middle;
+        }
+        .add-fav-icon:hover {
+          color: $roger-blue;
+        }
       }
 
       .player-image {

@@ -85,7 +85,13 @@
           }
         }
       }
-
+      .missing-review-container {
+        label {
+          font-size: 0.9rem;
+          display: inline-flex;
+          column-gap: 1vw;
+        }
+      }
       .buttons-container {
         display: flex;
         justify-content: space-between;

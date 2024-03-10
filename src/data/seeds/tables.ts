@@ -21,6 +21,7 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("clubs").del();
   await knex("players").del();
   await knex("users").del();
+  await knex("languages").del();
   await knex("booking_status_types").del();
   await knex("permission_types").del();
   await knex("club_staff_role_types").del();
@@ -301,6 +302,10 @@ export async function seed(knex: Knex): Promise<void> {
     { booking_status_type_id: 5, booking_status_type_name: "completed" },
   ]);
 
+  await knex("languages").insert([
+    { language_id: 1, language_name: "tr" },
+    { language_id: 2, language_name: "en" },
+  ]);
   await knex("club_subscription_types").insert([
     {
       club_subscription_type_id: 1,

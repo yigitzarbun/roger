@@ -168,6 +168,7 @@ const playersModel = {
           );
         })
         .where("players.user_id", userId)
+        .andWhere("event_reviews.is_active", true)
         .groupBy(
           "players.player_id",
           "users.user_id",

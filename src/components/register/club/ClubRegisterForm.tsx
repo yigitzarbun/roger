@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
-import i18n from "../../../common/i18n/i18n";
+import { useTranslation } from "react-i18next";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -34,6 +34,8 @@ export type FormValues = {
 };
 
 const ClubRegisterForm = () => {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
@@ -202,7 +204,7 @@ const ClubRegisterForm = () => {
               <input
                 {...register("email", { required: true })}
                 type="email"
-                placeholder={i18n.t("registerEmailInputPlaceholder")}
+                placeholder={t("registerEmailInputPlaceholder")}
               />
               {errors.email && (
                 <span className={styles["error-field"]}>
@@ -253,7 +255,7 @@ const ClubRegisterForm = () => {
             </div>
           </div>
           <button type="submit" className={styles["form-button"]}>
-            {i18n.t("registerButtonText")}
+            {t("registerButtonText")}
           </button>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import styles from "./styles.module.scss";
 
@@ -10,22 +10,39 @@ import { useGetMissingMatchScoresNumberQuery } from "../../../../api/endpoints/M
 
 interface PlayerEventsNavigationProps {
   display: string;
+  isAddScoreModalOpen: boolean;
+  isEditScoreModalOpen: boolean;
+  isAddReviewModalOpen: boolean;
   handleDisplay: (value: string) => void;
 }
 
 const PlayerEventsNavigation = ({
   display,
+  isAddScoreModalOpen,
+  isEditScoreModalOpen,
+  isAddReviewModalOpen,
   handleDisplay,
 }: PlayerEventsNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: missingScores, isLoading: isScoresLoading } =
-    useGetMissingMatchScoresNumberQuery(user?.user?.user_id);
+  const {
+    data: missingScores,
+    isLoading: isScoresLoading,
+    refetch: refetchMissingScores,
+  } = useGetMissingMatchScoresNumberQuery(user?.user?.user_id);
 
-  const { data: missingReviews, isLoading: isReviewsLoading } =
-    useGetPlayerMissingEventReviewsNumberQuery(user?.user?.user_id);
+  const {
+    data: missingReviews,
+    isLoading: isReviewsLoading,
+    refetch: refetchMissingReviews,
+  } = useGetPlayerMissingEventReviewsNumberQuery(user?.user?.user_id);
 
   const missingScoresLength = missingScores?.length;
+
+  useEffect(() => {
+    refetchMissingScores();
+    refetchMissingReviews();
+  }, [isAddScoreModalOpen, isEditScoreModalOpen, isAddReviewModalOpen]);
 
   if (isScoresLoading || isReviewsLoading) {
     return <PageLoading />;
@@ -41,9 +58,9 @@ const PlayerEventsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Geçmiş Etkinlikler
+        <span>Geçmiş Etkinlikler</span>
         <span className={styles.notification}>
-          {missingReviews > 0 && missingReviews}
+          {missingReviews > 0 && `(${missingReviews})`}
         </span>
       </button>
       <button
@@ -56,7 +73,7 @@ const PlayerEventsNavigation = ({
       >
         Skorlar{" "}
         <span className={styles.notification}>
-          {missingScoresLength > 0 && missingScoresLength}
+          {missingScoresLength > 0 && `(${missingScoresLength})`}
         </span>
       </button>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { useNavigate, Link } from "react-router-dom";
 
-import i18n from "../../common/i18n/i18n";
+import { useTranslation } from "react-i18next";
 
 import styles from "./styles.module.scss";
 
@@ -24,6 +24,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [loginUser, { data: credentials, isSuccess }] = useLoginUserMutation();
+  const { t, i18n } = useTranslation();
 
   const {
     register,
@@ -32,19 +33,36 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  const browserLanguage =
+    navigator.language === "en-GB"
+      ? "en"
+      : navigator.language === "tr-TR"
+      ? "tr"
+      : "tr";
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
-      await loginUser(formData).unwrap();
+      const loginData = {
+        email: formData.email,
+        password: formData.password,
+        language: browserLanguage,
+      };
+      await loginUser(loginData).unwrap();
       reset();
     } catch (error) {
       toast.error(error.data.message);
     }
   };
+
   useEffect(() => {
     if (isSuccess) {
       dispatch(
-        setCredentials({ user: credentials.user, token: credentials.token })
+        setCredentials({
+          user: credentials.user,
+          token: credentials.token,
+          language: credentials.language,
+        })
       );
+      i18n.changeLanguage(browserLanguage);
       toast.success("Giriş başarılı");
       navigate(paths.HOME);
     }
@@ -64,7 +82,7 @@ const LoginForm = () => {
             <input
               {...register("email", { required: true })}
               type="email"
-              placeholder={i18n.t("loginEmailInputPlaceholder")}
+              placeholder={t("loginEmailInputPlaceholder")}
             />
             {errors.email && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
@@ -81,7 +99,7 @@ const LoginForm = () => {
             )}
           </div>
           <button type="submit" className={styles["form-button"]}>
-            {i18n.t("loginButtonText")}
+            {t("loginButtonText")}
           </button>
         </form>
         <Link to={paths.REGISTER} className={styles["register-nav"]}>

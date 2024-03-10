@@ -38,7 +38,19 @@ clubStaffRouter.get(
     }
   }
 );
-
+clubStaffRouter.get(
+  "/club-trainers/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const clubTrainers = await clubStaffModel.getClubTrainers(
+        Number(req.params.userId)
+      );
+      res.status(200).json(clubTrainers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 clubStaffRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

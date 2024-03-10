@@ -1,1 +1,22 @@
-{ "hello": "hello" }
+{
+  "headerSearchPlaceholder": "Search players, trainers and clubs",
+  "matchTitle": "Match",
+  "matchText": "Compete, collect point, imrpove your ranking",
+  "matchButtonText": "Find Opponent",
+  "trainTitle": "Training",
+  "trainText": "Train with partners best suited to your game",
+  "trainButtonText": "Find Partner",
+  "lessonTitle": "Lesson",
+  "lessonText": "Take private lessons and improve your skills",
+  "lessonButtonText": "Find Trainer",
+  "equipTitle": "Equipment",
+  "equipText": "Improve your performence with the best equipment",
+  "equipButtonText": "Find Equipment",
+  "loginEmailInputPlaceholder": "john@doe.com",
+  "loginButtonText": "Login",
+  "registerFNamelInputPlaceholder": "John",
+  "registerLNamelInputPlaceholder": "Doe",
+  "registerBirthYearlInputPlaceholder": "eg. 1993",
+  "registerEmailInputPlaceholder": "john@doe.com",
+  "registerButtonText": "Register"
+}

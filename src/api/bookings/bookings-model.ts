@@ -342,7 +342,9 @@ const bookingsModel = {
           "court_surface_types.*",
           "court_structure_types.*",
           "student_groups.*",
-          "users.*"
+          "users.*",
+          "event_reviews.*",
+          "event_reviews.is_active as isEventReviewActive"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -395,6 +397,10 @@ const bookingsModel = {
             )
           );
         })
+        .leftJoin("event_reviews", function () {
+          this.on("event_reviews.booking_id", "=", "bookings.booking_id");
+        })
+
         .where((builder) => {
           if (filter.clubId > 0) {
             builder.where("clubs.user_id", filter.clubId);
@@ -423,6 +429,9 @@ const bookingsModel = {
           if (filter.eventTypeId > 0) {
             builder.where("event_types.event_type_id", filter.eventTypeId);
           }
+          if (filter.missingReviews > 0) {
+            builder.where("event_reviews.is_active", false);
+          }
         })
         .andWhere("bookings.booking_status_type_id", 5)
         .andWhere((builder) => {
@@ -436,6 +445,7 @@ const bookingsModel = {
             .orWhereNot("trainers.user_id", filter.userId)
             .orWhere("student_groups.first_student_id", filter.userId);
         })
+        .andWhere("event_reviews.reviewer_id", "=", filter.userId)
         .limit(eventsPerPage)
         .offset(offset);
 
@@ -455,7 +465,8 @@ const bookingsModel = {
           "court_surface_types.*",
           "court_structure_types.*",
           "student_groups.*",
-          "users.*"
+          "users.*",
+          "event_reviews.*"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -508,6 +519,9 @@ const bookingsModel = {
             )
           );
         })
+        .leftJoin("event_reviews", function () {
+          this.on("event_reviews.booking_id", "=", "bookings.booking_id");
+        })
         .where((builder) => {
           if (filter.clubId > 0) {
             builder.where("clubs.user_id", filter.clubId);
@@ -536,6 +550,9 @@ const bookingsModel = {
           if (filter.eventTypeId > 0) {
             builder.where("event_types.event_type_id", filter.eventTypeId);
           }
+          if (filter.missingReviews > 0) {
+            builder.where("event_reviews.is_active", false);
+          }
         })
         .andWhere("bookings.booking_status_type_id", 5)
         .andWhere((builder) => {
@@ -548,7 +565,9 @@ const bookingsModel = {
           this.whereNot("players.user_id", filter.userId)
             .orWhereNot("trainers.user_id", filter.userId)
             .orWhere("student_groups.first_student_id", filter.userId);
-        });
+        })
+        .andWhere("event_reviews.reviewer_id", "=", filter.userId);
+
       const data = {
         pastEvents: bookings,
         totalPages: Math.ceil(count.length / eventsPerPage),

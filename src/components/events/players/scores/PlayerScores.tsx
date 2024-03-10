@@ -21,6 +21,7 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 
 interface PlayerMatchScoressProps {
+  display: string;
   clubId: number;
   textSearch: string;
   courtSurfaceTypeId: number;
@@ -30,17 +31,29 @@ interface PlayerMatchScoressProps {
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
   eventTypes: any;
+  missingReviews: number;
+  missingScores: number;
+  selectedMatchScore: number;
+  isAddScoreModalOpen: boolean;
+  isEditScoreModalOpen: boolean;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleMissingReviews: () => void;
+  handleMissingScores: () => void;
+  openAddScoreModal: (any) => void;
+  closeAddScoreModal: () => void;
+  openEditScoreModal: (any) => void;
+  closeEditScoreModal: () => void;
   handleClear: () => void;
 }
 
 const PlayerScores = (props: PlayerMatchScoressProps) => {
   const user = useAppSelector((store) => store?.user?.user);
   const {
+    display,
     clubId,
     textSearch,
     courtSurfaceTypeId,
@@ -50,11 +63,22 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
     courtStructureTypes,
     courtSurfaceTypes,
     eventTypes,
+    missingReviews,
+    missingScores,
+    selectedMatchScore,
+    isAddScoreModalOpen,
+    isEditScoreModalOpen,
+    openAddScoreModal,
+    closeAddScoreModal,
+    openEditScoreModal,
+    closeEditScoreModal,
     handleClub,
     handleCourtStructure,
     handleCourtSurface,
     handleTextSearch,
     handleEventType,
+    handleMissingReviews,
+    handleMissingScores,
     handleClear,
   } = props;
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,6 +95,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
     courtStructureTypeId: courtStructureTypeId,
     eventTypeId: eventTypeId,
     currentPage: currentPage,
+    missingScores: missingScores,
   });
 
   const pageNumbers = [];
@@ -93,12 +118,6 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
     setCurrentPage(prevPage);
   };
 
-  const [isAddScoreModalOpen, setIsAddScoreModalOpen] = useState(false);
-
-  const [isEditScoreModalOpen, setIsEditScoreModalOpen] = useState(false);
-
-  const [selectedMatchScore, setSelectedMatchScore] = useState(null);
-
   const [isMatchScoresFilterModalOpen, setIsMatchScoresFilterModalOpen] =
     useState(false);
   const handleOpenMatchScoresFilterModal = () => {
@@ -107,24 +126,6 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
 
   const handleCloseMatchScoresFilterModal = () => {
     setIsMatchScoresFilterModalOpen(false);
-  };
-
-  const openAddScoreModal = (matchScoreDetails) => {
-    setIsAddScoreModalOpen(true);
-    setSelectedMatchScore(matchScoreDetails);
-  };
-
-  const closeAddScoreModal = () => {
-    setIsAddScoreModalOpen(false);
-  };
-
-  const openEditScoreModal = (matchScoreDetails) => {
-    setIsEditScoreModalOpen(true);
-    setSelectedMatchScore(matchScoreDetails);
-  };
-
-  const closeEditScoreModal = () => {
-    setIsEditScoreModalOpen(false);
   };
 
   useEffect(() => {
@@ -140,6 +141,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
     courtStructureTypeId,
     eventTypeId,
     currentPage,
+    missingScores,
   ]);
 
   if (isMatchScoresLoading) {
@@ -320,6 +322,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
       )}
       {isMatchScoresFilterModalOpen && (
         <PlayerPastEventsFilterModal
+          display={display}
           textSearch={textSearch}
           clubId={clubId}
           courtSurfaceTypeId={courtSurfaceTypeId}
@@ -329,11 +332,15 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
           courtStructureTypes={courtStructureTypes}
           courtSurfaceTypes={courtSurfaceTypes}
           eventTypes={eventTypes}
+          missingReviews={missingReviews}
+          missingScores={missingScores}
           handleTextSearch={handleTextSearch}
           handleClub={handleClub}
           handleCourtStructure={handleCourtStructure}
           handleCourtSurface={handleCourtSurface}
           handleEventType={handleEventType}
+          handleMissingReviews={handleMissingReviews}
+          handleMissingScores={handleMissingScores}
           isPastEventsModalOpen={isMatchScoresFilterModalOpen}
           handleClosePastEventsModal={handleCloseMatchScoresFilterModal}
           handleClear={handleClear}

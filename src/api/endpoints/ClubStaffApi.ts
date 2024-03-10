@@ -29,6 +29,9 @@ export const clubStaffSlice = createApi({
     getClubStaffByFilter: builder.query({
       query: (filter) => `/club-staff/filter?${new URLSearchParams(filter)}`,
     }),
+    getClubTrainers: builder.query({
+      query: (userId) => `/club-staff/club-trainers/${userId}`,
+    }),
     addClubStaff: builder.mutation({
       query: (clubStaff) => ({
         url: "/club-staff",
@@ -49,6 +52,7 @@ export const clubStaffSlice = createApi({
 export const {
   useGetClubStaffQuery,
   useGetClubStaffByFilterQuery,
+  useGetClubTrainersQuery,
   useAddClubStaffMutation,
   useUpdateClubStaffMutation,
 } = clubStaffSlice;

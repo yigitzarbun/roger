@@ -10,7 +10,9 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import {
   useAddEventReviewMutation,
+  useGetEventReviewsByFilterQuery,
   useGetEventReviewsQuery,
+  useUpdateEventReviewMutation,
 } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetBookingByIdQuery } from "../../../../api/endpoints/BookingsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
@@ -42,13 +44,19 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
-  const [addReview, { isSuccess: isAddReviewSuccess }] =
-    useAddEventReviewMutation({});
+  const [updateReview, { isSuccess: isUpdateReviewSuccess }] =
+    useUpdateEventReviewMutation({});
 
   const { refetch: refetchReviews } = useGetEventReviewsQuery({});
 
   const { data: bookingData, isLoading: isBookingDataLoading } =
     useGetBookingByIdQuery(selectedBookingId);
+
+  const { data: selectedEventReview, isLoading: isSelectedEventReviewLoading } =
+    useGetEventReviewsByFilterQuery({
+      reviewer_id: user?.user?.user_id,
+      booking_id: selectedBookingId,
+    });
 
   const {
     register,
@@ -60,30 +68,30 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const reviewData = {
+        event_review_id: selectedEventReview?.[0]?.event_review_id,
         event_review_title: formData?.event_review_title,
         event_review_description: formData?.event_review_description,
         review_score: Number(formData?.review_score),
-        booking_id: Number(selectedBookingId),
-        reviewer_id: user?.user?.user_id,
-        reviewee_id:
-          bookingData?.[0]?.inviter_id === user?.user?.user_id
-            ? bookingData?.[0]?.invitee_id
-            : bookingData?.[0]?.inviter_id,
+        is_active: true,
+        registered_at: new Date(),
+        booking_id: selectedEventReview?.[0]?.booking_id,
+        reviewer_id: selectedEventReview?.[0]?.reviewer_id,
+        reviewee_id: selectedEventReview?.[0]?.reviewee_id,
       };
-      addReview(reviewData);
+      updateReview(reviewData);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    if (isAddReviewSuccess) {
+    if (isUpdateReviewSuccess) {
       reset();
       toast.success("Değerlendirme başarılı");
       refetchReviews();
       closeReviewModal();
     }
-  }, [isAddReviewSuccess]);
+  }, [isUpdateReviewSuccess]);
 
   if (isBookingDataLoading) {
     return <PageLoading />;

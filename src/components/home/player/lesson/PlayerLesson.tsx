@@ -1,16 +1,18 @@
 import React from "react";
 
 import styles from "./styles.module.scss";
-import i18n from "../../../../common/i18n/i18n";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 
 const PlayerLesson = () => {
+  const { t } = useTranslation();
+
   return (
     <Link to={paths.LESSON} className={styles["player-lesson-container"]}>
-      <h2>{i18n.t("lessonTitle")}</h2>
-      <p>{i18n.t("lessonText")}</p>
-      <button>{i18n.t("lessonButtonText")}</button>
+      <h2>{t("lessonTitle")}</h2>
+      <p>{t("lessonText")}</p>
+      <button>{t("lessonButtonText")}</button>
     </Link>
   );
 };

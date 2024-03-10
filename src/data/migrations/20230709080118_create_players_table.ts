@@ -66,11 +66,23 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("booking_status_type_id");
       table.string("booking_status_type_name").unique().notNullable();
     })
+    .createTable("languages", (table) => {
+      table.increments("language_id");
+      table.string("language_name").unique().notNullable();
+    })
     .createTable("users", (table) => {
       table.increments("user_id");
       table.string("email").unique().notNullable();
       table.string("password").notNullable();
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table
+        .integer("language_id")
+        .unsigned()
+        .notNullable()
+        .references("language_id")
+        .inTable("languages")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
       table
         .integer("user_type_id")
         .unsigned()
@@ -638,7 +650,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("event_review_title").notNullable();
       table.string("event_review_description").notNullable();
       table.integer("review_score").notNullable();
-      table.boolean("is_active").defaultTo(true).notNullable();
+      table.boolean("is_active").defaultTo(false).notNullable();
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table
         .integer("reviewer_id")
@@ -771,6 +783,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("clubs")
     .dropTableIfExists("players")
     .dropTableIfExists("users")
+    .dropTableIfExists("languages")
     .dropTableIfExists("booking_status_types")
     .dropTableIfExists("permission_types")
     .dropTableIfExists("club_staff_employment_types")

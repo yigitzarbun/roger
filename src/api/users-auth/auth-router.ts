@@ -36,7 +36,7 @@ authRouter.post(
   loginCredentialsExist,
   emailExists,
   (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+    const { email, password, language } = req.body;
     usersModel
       .getByFilter({ email })
       .then((user) => {
@@ -46,7 +46,7 @@ authRouter.post(
           user.user.user_status_type_id === 1
         ) {
           const token = generateToken(user);
-          res.status(200).json({ user, token });
+          res.status(200).json({ user, token, language });
         } else {
           res.status(401).json({ message: "Invalid credentials" });
         }

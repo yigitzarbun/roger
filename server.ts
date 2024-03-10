@@ -36,6 +36,7 @@ import studentsRouter from "./src/api/students/students-router";
 import studentGroupsRouter from "./src/api/student-groups/student-groups-router";
 import clubExternalMembersRouter from "./src/api/external-members/club-external-members-router";
 import eventReviewsRouter from "./src/api/event-reviews/event-reviews-router";
+import languagesRouter from "./src/api/languages/languages-router";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -128,10 +129,27 @@ async function updateCompletedBookings() {
           .where("booking_id", "=", booking.booking_id)
           .update({ booking_status_type_id: 5 });
 
-        console.log("current date: ", currentDate);
-        console.log("current time: ", currentTime);
-        console.log("booking date: ", bookingDate);
-        console.log("booking time", bookingTime);
+        await db("event_reviews").insert({
+          booking_id: booking.booking_id,
+          reviewer_id: booking.inviter_id,
+          reviewee_id: booking.invitee_id,
+          event_review_title: "",
+          event_review_description: "",
+          review_score: 0,
+          is_active: false,
+          registered_at: new Date(),
+        });
+
+        await db("event_reviews").insert({
+          booking_id: booking.booking_id,
+          reviewer_id: booking.invitee_id,
+          reviewee_id: booking.inviter_id,
+          event_review_title: "",
+          event_review_description: "",
+          review_score: 0,
+          is_active: false,
+          registered_at: new Date(),
+        });
       }
     }
   } catch (error) {
@@ -188,6 +206,7 @@ server.use("/api/students", studentsRouter);
 server.use("/api/student-groups", studentGroupsRouter);
 server.use("/api/club-external-members", clubExternalMembersRouter);
 server.use("/api/event-reviews", eventReviewsRouter);
+server.use("/api/languages", languagesRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

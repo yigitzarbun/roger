@@ -12,7 +12,7 @@ import paths from "../../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useState } from "react";
-
+import { localUrl } from "../../../../common/constants/apiConstants";
 import {
   useGetClubByClubIdQuery,
   useGetClubsQuery,
@@ -43,7 +43,6 @@ import {
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
-import PageLoading from "../../../loading/PageLoading";
 import LessonInviteConfirmation from "../confirmation/LessonInviteConfirmation";
 
 interface LessonInviteModalProps {
@@ -81,7 +80,6 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
 
   const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
     useGetTrainerByUserIdQuery(opponentUserId);
-
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
 
@@ -207,7 +205,6 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     courts,
     bookedHoursForSelectedCourtOnSelectedDate
   );
-
   const {
     register,
     handleSubmit,
@@ -357,7 +354,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
           <img
             src={
               selectedTrainer?.[0]?.image
-                ? selectedTrainer?.[0]?.image
+                ? `${localUrl}/${selectedTrainer?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

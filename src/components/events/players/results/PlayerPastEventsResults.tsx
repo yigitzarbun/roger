@@ -24,6 +24,7 @@ import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 
 interface PlayerPastEventsResultsProps {
+  display: string;
   clubId: number;
   textSearch: string;
   courtSurfaceTypeId: number;
@@ -33,16 +34,36 @@ interface PlayerPastEventsResultsProps {
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
   eventTypes: any;
+  missingReviews: number;
+  missingScores: number;
+  selectedBookingId: number;
+  isViewReviewModalOpen: boolean;
+  isAddReviewModalOpen: boolean;
+  fname: string;
+  lname: string;
+  image: any;
+  openReviewModal: (
+    bookingId: number,
+    fname: string,
+    lname: string,
+    playerImage: any
+  ) => void;
+  openViewReviewModal: (number) => void;
+  closeViewReviewModal: () => void;
+  closeReviewModal: () => void;
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourtSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleMissingReviews: () => void;
+  handleMissingScores: () => void;
   handleClear: () => void;
 }
 const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   const user = useAppSelector((store) => store?.user?.user);
   const {
+    display,
     clubId,
     textSearch,
     courtSurfaceTypeId,
@@ -52,11 +73,25 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     courtStructureTypes,
     courtSurfaceTypes,
     eventTypes,
+    missingReviews,
+    missingScores,
+    selectedBookingId,
+    isViewReviewModalOpen,
+    openViewReviewModal,
+    closeViewReviewModal,
+    isAddReviewModalOpen,
+    fname,
+    lname,
+    image,
+    openReviewModal,
+    closeReviewModal,
     handleClub,
     handleCourtStructure,
     handleCourtSurface,
     handleTextSearch,
     handleEventType,
+    handleMissingReviews,
+    handleMissingScores,
     handleClear,
   } = props;
 
@@ -74,6 +109,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     courtStructureTypeId: courtStructureTypeId,
     eventTypeId: eventTypeId,
     currentPage: currentPage,
+    missingReviews: missingReviews,
   });
 
   const {
@@ -83,6 +119,14 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   } = useGetEventReviewsByFilterQuery({
     user_id: user?.user?.user_id,
   });
+
+  const [isPastEventsModalOpen, setIsPastEventsModalOpen] = useState(false);
+  const handleOpenPastEventsModal = () => {
+    setIsPastEventsModalOpen(true);
+  };
+  const handleClosePastEventsModal = () => {
+    setIsPastEventsModalOpen(false);
+  };
 
   const pageNumbers = [];
   for (let i = 1; i <= myEvents?.totalPages; i++) {
@@ -103,48 +147,10 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     setCurrentPage(prevPage);
   };
 
-  const [isPastEventsModalOpen, setIsPastEventsModalOpen] = useState(false);
-  const handleOpenPastEventsModal = () => {
-    setIsPastEventsModalOpen(true);
-  };
-  const handleClosePastEventsModal = () => {
-    setIsPastEventsModalOpen(false);
-  };
-
-  const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
-  const [selectedBookingId, setSelectedBookingId] = useState(null);
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [image, setImage] = useState(null);
-
-  const openReviewModal = (
-    booking_id: number,
-    fname: string,
-    lname: string,
-    image: string | null
-  ) => {
-    setSelectedBookingId(booking_id);
-    setFname(fname);
-    setLname(lname);
-    setImage(image);
-    setIsAddReviewModalOpen(true);
-  };
-  const closeReviewModal = () => {
-    setIsAddReviewModalOpen(false);
-  };
-
-  const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
-  const openViewReviewModal = (booking_id: number) => {
-    setSelectedBookingId(booking_id);
-    setIsViewReviewModalOpen(true);
-  };
-  const closeViewReviewModal = () => {
-    setIsViewReviewModalOpen(false);
-  };
-
   useEffect(() => {
     if (isAddReviewModalOpen === false) {
       refetchReviews();
+      refetchMyEvents();
     }
   }, [isAddReviewModalOpen]);
 
@@ -157,6 +163,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     courtStructureTypeId,
     eventTypeId,
     currentPage,
+    missingReviews,
   ]);
 
   if (isBookingsLoading || isEventReviewsLoading) {
@@ -292,30 +299,23 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                 <td>{event?.court_surface_type_name}</td>
                 <td>{event?.court_structure_type_name}</td>
                 <td>
-                  {(event.event_type_id === 1 ||
-                    event.event_type_id === 2 ||
-                    event.event_type_id === 3) &&
-                    (eventReviews?.find(
-                      (review) =>
-                        review.reviewer_id === user?.user?.user_id &&
-                        review.booking_id === event.booking_id
-                    ) ? (
-                      <IoIosCheckmarkCircle className={styles.done} />
-                    ) : (
-                      <button
-                        className={styles["comment-button"]}
-                        onClick={() =>
-                          openReviewModal(
-                            event.booking_id,
-                            event.fname,
-                            event.lname,
-                            event.image
-                          )
-                        }
-                      >
-                        Yorum Yap
-                      </button>
-                    ))}
+                  {event?.isEventReviewActive ? (
+                    <IoIosCheckmarkCircle className={styles.done} />
+                  ) : (
+                    <button
+                      className={styles["comment-button"]}
+                      onClick={() =>
+                        openReviewModal(
+                          event.booking_id,
+                          event.fname,
+                          event.lname,
+                          event.playerImage
+                        )
+                      }
+                    >
+                      Yorum Yap
+                    </button>
+                  )}
                   {event.event_type_id === 6 && (
                     <ImBlocked className={styles.blocked} />
                   )}
@@ -327,7 +327,8 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                   eventReviews?.find(
                     (review) =>
                       review.reviewee_id === user?.user?.user_id &&
-                      review.booking_id === event.booking_id
+                      review.booking_id === event.booking_id &&
+                      review.is_active
                   ) ? (
                     <button
                       className={styles["view-button"]}
@@ -381,6 +382,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
       )}
       {isPastEventsModalOpen && (
         <PlayerPastEventsFilterModal
+          display={display}
           textSearch={textSearch}
           clubId={clubId}
           courtSurfaceTypeId={courtSurfaceTypeId}
@@ -390,6 +392,8 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
           courtStructureTypes={courtStructureTypes}
           courtSurfaceTypes={courtSurfaceTypes}
           eventTypes={eventTypes}
+          missingReviews={missingReviews}
+          missingScores={missingScores}
           handleTextSearch={handleTextSearch}
           handleClub={handleClub}
           handleCourtStructure={handleCourtStructure}
@@ -397,6 +401,8 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
           handleEventType={handleEventType}
           isPastEventsModalOpen={isPastEventsModalOpen}
           handleClosePastEventsModal={handleClosePastEventsModal}
+          handleMissingReviews={handleMissingReviews}
+          handleMissingScores={handleMissingScores}
           handleClear={handleClear}
         />
       )}

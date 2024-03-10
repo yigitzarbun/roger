@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { ImBlocked } from "react-icons/im";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import styles from "./styles.module.scss";
 
@@ -8,58 +9,54 @@ import ExploreClubSubscriptionsModal from "../../modals/subscriptions/ExploreClu
 import SubscribeToClubModal from "../../../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
-import { useGetClubSubscriptionTypesQuery } from "../../../../../../api/endpoints/ClubSubscriptionTypesApi";
-import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionPackageDetailsQuery } from "../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetPlayerByUserIdQuery } from "../../../../../../api/endpoints/PlayersApi";
 
-import { Club } from "../../../../../../api/endpoints/ClubsApi";
 import {
-  ClubSubscription,
+  useGetClubSubscribersByIdQuery,
   useGetClubSubscriptionsByFilterQuery,
 } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
-import { useAppSelector } from "../../../../../../store/hooks";
 
 interface ExploreClubsSubscriptionsSectionProps {
   selectedClub: any;
-  selectedClubSubscribers: ClubSubscription[];
   isUserPlayer: boolean;
+  user: any;
 }
 const ExploreClubsSubscriptionsSection = (
   props: ExploreClubsSubscriptionsSectionProps
 ) => {
-  const { selectedClub, selectedClubSubscribers, isUserPlayer } = props;
-
-  const user = useAppSelector((store) => store?.user?.user);
-
-  const {
-    data: clubSubscriptionTypes,
-    isLoading: isClubSubscriptionTypesLoading,
-  } = useGetClubSubscriptionTypesQuery({});
+  const { selectedClub, isUserPlayer, user } = props;
 
   const {
     data: selectedClubSubscriptionPackages,
     isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesByFilterQuery({
-    club_id: selectedClub?.[0]?.user_id,
-    is_active: true,
+  } = useGetClubSubscriptionPackageDetailsQuery({
+    clubId: selectedClub?.[0]?.user_id,
   });
+
+  const {
+    data: selectedClubSubscribers,
+    isLoading: isClubSubscribersLoading,
+    refetch: refetchClubSubscribers,
+  } = useGetClubSubscribersByIdQuery(selectedClub?.[0]?.user_id);
 
   const isUserSubscribedToClubPackage = (
     club_subscription_package_id: number
   ) => {
     return selectedClubSubscribers?.find(
       (subscription) =>
-        subscription.player_id === user?.user?.user_id &&
+        subscription.playerUserId === user?.user?.user_id &&
         subscription.club_subscription_package_id ===
-          club_subscription_package_id
+          club_subscription_package_id &&
+        subscription.is_active === true
     )
       ? true
       : false;
   };
-
   const {
     data: isUserSubscribedToClub,
     isLoading: isUserSubscribedtoClubLoading,
+    refetch: refetchIsUserSubscribed,
   } = useGetClubSubscriptionsByFilterQuery({
     is_active: true,
     club_id: selectedClub?.[0]?.user_id,
@@ -82,6 +79,7 @@ const ExploreClubsSubscriptionsSection = (
     }
   }
 
+  // all subscription packages
   const [isSubscriptionsModalOpen, setIsSubscriptionsModalOpen] =
     useState(false);
   const openSubscriptionsModal = () => {
@@ -90,29 +88,32 @@ const ExploreClubsSubscriptionsSection = (
   const closeSubscriptionsModal = () => {
     setIsSubscriptionsModalOpen(false);
   };
+
+  // subscribe to club package
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
 
-  const [selectedClubId, setSelectedClubId] = useState(null);
-
-  const handleOpenSubscribeModal = (value: number) => {
+  const handleOpenSubscribeModal = () => {
     setOpenSubscribeModal(true);
-    setIsSubscriptionsModalOpen(false);
-    setSelectedClubId(value);
   };
   const handleCloseSubscribeModal = () => {
     setOpenSubscribeModal(false);
-    setSelectedClubId(null);
   };
 
+  useEffect(() => {
+    if (openSubscribeModal === false) {
+      refetchClubSubscribers();
+
+      refetchIsUserSubscribed();
+    }
+  }, [openSubscribeModal]);
+
   if (
-    isClubSubscriptionTypesLoading ||
     isClubSubscriptionPackagesLoading ||
     isPlayersLoading ||
     isUserSubscribedtoClubLoading
   ) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles["subscriptions-section"]}>
       <h2>Üyelikler</h2>
@@ -122,67 +123,52 @@ const ExploreClubsSubscriptionsSection = (
             <tr>
               <th>Abonelik Türü</th>
               <th>Abonelik Süresi</th>
-              <th>Fiyat (TL)</th>
-              <th>Üyelik</th>
+              <th>Fiyat</th>
+              <th>Üye Sayısı</th>
+              {isUserPlayer && <th>Üyelik</th>}
             </tr>
           </thead>
           <tbody>
-            {selectedClubSubscriptionPackages
-              ?.slice(selectedClubSubscriptionPackages?.length - 2)
-              ?.map((clubPackage) => (
-                <tr key={clubPackage.club_subscription_package_id}>
+            {selectedClubSubscriptionPackages?.map((clubPackage) => (
+              <tr
+                key={clubPackage.club_subscription_package_id}
+                className={styles["package-row"]}
+              >
+                <td>{clubPackage?.club_subscription_type_name}</td>
+                <td>{clubPackage?.club_subscription_duration_months} ay</td>
+                <td>{clubPackage.price} TL</td>
+                <td>{clubPackage.subscribercount}</td>
+                {isUserPlayer && (
                   <td>
-                    {
-                      clubSubscriptionTypes?.find(
-                        (type) =>
-                          type.club_subscription_type_id ===
-                          clubPackage.club_subscription_type_id
-                      )?.club_subscription_type_name
-                    }
-                  </td>
-                  <td>
-                    {
-                      clubSubscriptionTypes?.find(
-                        (type) =>
-                          type.club_subscription_type_id ===
-                          clubPackage.club_subscription_type_id
-                      )?.club_subscription_duration_months
-                    }
-                  </td>
-                  <td>{clubPackage.price}</td>
-                  {isUserPlayer && (
-                    <td>
-                      {isUserSubscribedToClubPackage(
+                    {isUserSubscribedToClubPackage(
+                      clubPackage.club_subscription_package_id
+                    ) === true ? (
+                      <IoIosCheckmarkCircle className={styles.done} />
+                    ) : isUserSubscribedToClub?.length > 0 &&
+                      isUserSubscribedToClubPackage(
                         clubPackage.club_subscription_package_id
-                      ) === true ? (
-                        <p className={styles["subscribed-text"]}>Üyelik var</p>
-                      ) : isUserSubscribedToClub?.length > 0 &&
-                        isUserSubscribedToClubPackage(
-                          clubPackage.club_subscription_package_id
-                        ) === false ? (
-                        <ImBlocked />
-                      ) : (
-                        <button
-                          onClick={() =>
-                            handleOpenSubscribeModal(selectedClub?.[0]?.user_id)
-                          }
-                          disabled={!playerPaymentDetailsExist}
-                        >
-                          {playerPaymentDetailsExist
-                            ? "Üye Ol"
-                            : "Üye olmak için ödeme bilgilerini ekle"}
-                        </button>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              ))}
+                      ) === false ? (
+                      <ImBlocked className={styles.blocked} />
+                    ) : (
+                      <button onClick={handleOpenSubscribeModal}>
+                        {playerPaymentDetailsExist
+                          ? "Üye Ol"
+                          : "Üye olmak için ödeme bilgilerini ekle"}
+                      </button>
+                    )}
+                  </td>
+                )}
+              </tr>
+            ))}
           </tbody>
         </table>
       ) : (
         <p>Henüz kulübe ait abonelik paketi bulunmamaktadır</p>
       )}
-      <button onClick={openSubscriptionsModal}>Tümünü Görüntüle</button>
+      {selectedClubSubscriptionPackages?.length > 0 && (
+        <button onClick={openSubscriptionsModal}>Tümünü Görüntüle</button>
+      )}
+
       {isSubscriptionsModalOpen && (
         <ExploreClubSubscriptionsModal
           isSubscriptionsModalOpen={isSubscriptionsModalOpen}
@@ -197,7 +183,7 @@ const ExploreClubsSubscriptionsSection = (
         <SubscribeToClubModal
           openSubscribeModal={openSubscribeModal}
           handleCloseSubscribeModal={handleCloseSubscribeModal}
-          selectedClubId={selectedClubId}
+          selectedClubId={selectedClub?.[0]?.user_id}
         />
       )}
     </div>
