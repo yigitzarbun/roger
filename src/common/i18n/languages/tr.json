@@ -1,22 +1,36 @@
 {
   "headerSearchPlaceholder": "Oyuncu, kulüp ve eğitmen ara",
+
   "matchTitle": "Maç",
   "matchText": "Maç yap, puan topla, liderlik tablosunda yüksel",
   "matchButtonText": "Rakip Bul",
+
   "trainTitle": "Antreman",
   "trainText": "Seviyene uygun oyuncularla antreman yap",
   "trainButtonText": "Partner Bul",
+
   "lessonTitle": "Ders",
   "lessonText": "En iyi eğitmenlerden özel ders al, oyununu geliştir",
   "lessonButtonText": "Eğitmen Bul",
+
   "equipTitle": "Ekipman",
   "equipText": "En kaliteli ekipmanlarla performansını arttır",
   "equipButtonText": "Ekipman Bul",
+
   "loginEmailInputPlaceholder": "roger@federer.com",
   "loginButtonText": "Giriş yap",
+
   "registerFNamelInputPlaceholder": "Roger",
   "registerLNamelInputPlaceholder": "Federer",
   "registerBirthYearlInputPlaceholder": "örn. 1993",
   "registerEmailInputPlaceholder": "roger@federer.com",
-  "registerButtonText": "Kayıt ol"
+  "registerButtonText": "Kayıt ol",
+
+  "headerExploreTitle": "Keşfet",
+  "headerTrainingTitle": "Antreman",
+  "headerMatchTitle": "Maç",
+  "headerLessonTitle": "Ders",
+  "headerCalendarTitle": "Takvim",
+  "headerInvitesTitle": "Davetler",
+  "headerPerformanceTitle": "Performans"
 }

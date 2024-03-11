@@ -275,7 +275,17 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
           <FaFilter
             onClick={handleOpenClubFilterModal}
-            className={styles.filter}
+            className={
+              textSearch !== "" ||
+              locationId > 0 ||
+              clubType > 0 ||
+              courtSurfaceType > 0 ||
+              courtStructureType > 0 ||
+              clubTrainers === true ||
+              subscribedClubs === true
+                ? styles["active-filter"]
+                : styles.filter
+            }
           />
         </div>
         <div className={styles["navigation-container"]}>

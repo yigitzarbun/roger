@@ -180,7 +180,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   ) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -188,20 +187,29 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
           <FaFilter
             onClick={handleOpenPlayerFilterModal}
-            className={styles.filter}
+            className={
+              playerLevelId > 0 ||
+              gender !== "" ||
+              locationId > 0 ||
+              textSearch !== ""
+                ? styles["active-filter"]
+                : styles.filter
+            }
           />
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {paginatedPlayers?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {paginatedPlayers?.players?.length > 0 ? (
         <table>

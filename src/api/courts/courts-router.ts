@@ -51,7 +51,19 @@ courtsRouter.get(
     }
   }
 );
-
+courtsRouter.get(
+  "/court-details/:court_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const court = await courtsModel.getCourtDetails(
+        Number(req.params.court_id)
+      );
+      res.status(200).json(court);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 courtsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

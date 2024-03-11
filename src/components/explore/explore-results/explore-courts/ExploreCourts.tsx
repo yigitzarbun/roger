@@ -41,6 +41,7 @@ interface ExploreCourtsProps {
   handleCourtStructureType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
 }
+
 const ExploreCourts = (props: ExploreCourtsProps) => {
   const {
     user,
@@ -135,7 +136,14 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
           <FaFilter
             onClick={handleOpenCourtFilterModal}
-            className={styles.filter}
+            className={
+              locationId > 0 ||
+              clubId > 0 ||
+              courtSurfaceType > 0 ||
+              courtStructureType > 0
+                ? styles["active-filter"]
+                : styles.filter
+            }
           />
         </div>
         <div className={styles["navigation-container"]}>

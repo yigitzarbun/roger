@@ -150,6 +150,42 @@ const courtsModel = {
     return court;
   },
 
+  async getCourtDetails(courtId: number) {
+    try {
+      const courtDetails = await db
+        .select(
+          "courts.*",
+          "clubs.*",
+          "court_surface_types.*",
+          "court_structure_types.*"
+        )
+        .from("courts")
+        .leftJoin("clubs", function () {
+          this.on("courts.club_id", "=", "clubs.club_id");
+        })
+        .leftJoin("court_surface_types", function () {
+          this.on(
+            "court_surface_types.court_surface_type_id",
+            "=",
+            "courts.court_surface_type_id"
+          );
+        })
+        .leftJoin("court_structure_types", function () {
+          this.on(
+            "court_structure_types.court_structure_type_id",
+            "=",
+            "courts.court_structure_type_id"
+          );
+        })
+
+        .where("courts.court_id", courtId);
+
+      return courtDetails;
+    } catch (error) {
+      console.log("Error fetching selected court details: ", error);
+    }
+  },
+
   async add(court) {
     const [newCourt] = await db("courts").insert(court).returning("*");
     return newCourt;

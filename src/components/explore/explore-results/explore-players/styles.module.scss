@@ -23,6 +23,10 @@
       .filter {
         cursor: pointer;
       }
+      .active-filter {
+        color: $roger-blue;
+        cursor: pointer;
+      }
     }
     .navigation-container {
       display: flex;

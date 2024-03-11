@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 
 import "./index.css";
@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { LocalStorageKeys } from "./common/constants/lsConstants";
 import EN from "./common/i18n/languages/en.json";
 import TR from "./common/i18n/languages/tr.json";
+import io from "socket.io-client";
 
 Modal.setAppElement("#root");
 
@@ -49,12 +50,33 @@ i18n.init({
     : defaultLanguage,
   fallbackLng: defaultLanguage,
 });
+
+const SocketIOComponent: React.FC = () => {
+  useEffect(() => {
+    // Connect to the Socket.io server
+    const socket = io("http://localhost:5000"); // Replace with your server URL
+
+    // Listen for Socket.io events
+    socket.on("bookingUpdated", (data) => {
+      console.log("Booking updated:", data);
+      // Update your UI or perform other actions here
+    });
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      socket.off("bookingUpdated");
+    };
+  }, []);
+  return null; // No need to render anything for this component
+};
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <ToastContainer className="toast.container" autoClose={1000} />
         <RouterProvider router={Router} />
+        <SocketIOComponent />
       </I18nextProvider>
     </Provider>
   </React.StrictMode>

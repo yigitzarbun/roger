@@ -1,0 +1,74 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
+
+.modal-overlay {
+  z-index: $profile-modal-z-index-overlay;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0, 0.3);
+  z-index: $profile-modal-z-index-overlay;
+}
+
+.modal-container {
+  .modal-content {
+    position: fixed;
+    z-index: $profile-modal-z-index;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 300px;
+    border-radius: $roger-border-radius;
+    background-color: $roger-box-bg-color;
+    padding: $roger-box-padding;
+    top: 10vh;
+    right: 2vw;
+    border: 1px solid $roger-border-color;
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: top;
+      cursor: pointer;
+      padding: $roger-button-padding;
+      column-gap: 1vw;
+      a {
+        font-size: 0.9rem;
+        font-weight: normal;
+        color: white;
+        text-decoration: none;
+      }
+    }
+    .menu-item:hover {
+      background-color: $roger-box-bg-color-hover;
+    }
+    p {
+      font-size: 0.9rem;
+      padding: $roger-button-padding;
+    }
+    .logout {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 200px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 4vh;
+    }
+    .logout:hover {
+      background-color: $roger-red;
+    }
+  }
+}

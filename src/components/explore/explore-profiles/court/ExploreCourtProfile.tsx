@@ -9,10 +9,8 @@ import { FaClock } from "react-icons/fa";
 
 import { localUrl } from "../../../../common/constants/apiConstants";
 
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetCourtDetailsQuery } from "../../../../api/endpoints/CourtsApi";
+
 import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 
 import {
@@ -41,29 +39,15 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
   const isUserTrainer = user?.user?.user_type_id === 2;
   const isUserClub = user?.user?.user_type_id === 3;
 
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
   const { data: selectedCourt, isLoading: isSelectedCourtLoading } =
-    useGetCourtByIdQuery(Number(court_id));
-
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
-
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
+    useGetCourtDetailsQuery(Number(court_id));
 
   const { data: bookings, isLoading: isBookingsLoading } =
     useGetBookingsByFilterQuery({ court_id: court_id });
 
   const profileImage = selectedCourt?.[0]?.image;
 
-  if (
-    isClubsLoading ||
-    isSelectedCourtLoading ||
-    isBookingsLoading ||
-    isCourtSurfaceTypesLoading ||
-    isCourtStructureTypesLoading
-  ) {
+  if (isSelectedCourtLoading || isBookingsLoading) {
     return <PageLoading />;
   }
 
@@ -76,7 +60,7 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
             src={
               profileImage
                 ? `${localUrl}/${profileImage}`
-                : "/images/icons/avatar.png"
+                : "/images/icons/avatar.jpg"
             }
             alt="court_picture"
             className={styles["profile-image"]}
@@ -96,16 +80,9 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
           </div>
           <div className={styles["profile-info"]}>
             <MdSportsTennis className={styles.icon} />
-            <p>
-              {
-                clubs?.find(
-                  (club) => club.club_id === selectedCourt?.[0]?.club_id
-                )?.club_name
-              }
-            </p>
+            <p>{selectedCourt?.[0]?.club_name}</p>
           </div>
-          {clubs?.find((club) => club.club_id === selectedCourt?.[0]?.club_id)
-            ?.higher_price_for_non_subscribers &&
+          {selectedCourt?.[0]?.higher_price_for_non_subscribers &&
             selectedCourt?.[0]?.price_hour_non_subscriber && (
               <div className={styles["profile-info"]}>
                 <PiMoney className={styles.icon} />
@@ -114,27 +91,11 @@ const ExploreCourtProfile = (props: ExploreCourtProfileProps) => {
             )}
           <div className={styles["profile-info"]}>
             <GiTennisCourt className={styles.icon} />
-            <p>
-              {
-                courtSurfaceTypes?.find(
-                  (type) =>
-                    type.court_surface_type_id ===
-                    selectedCourt?.[0]?.court_surface_type_id
-                )?.court_surface_type_name
-              }
-            </p>
+            <p>{selectedCourt?.[0]?.court_surface_type_name}</p>
           </div>
           <div className={styles["profile-info"]}>
             <GiTennisCourt className={styles.icon} />
-            <p>
-              {
-                courtStructureTypes?.find(
-                  (type) =>
-                    type.court_structure_type_id ===
-                    selectedCourt?.[0]?.court_structure_type_id
-                )?.court_structure_type_name
-              }
-            </p>
+            <p>{selectedCourt?.[0]?.court_structure_type_name}</p>
           </div>
         </div>
         <div className={styles["courts-section"]}>

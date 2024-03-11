@@ -34,6 +34,9 @@ export const courtsSlice = createApi({
     getCourtById: builder.query({
       query: (court_id) => `/courts/${court_id}`,
     }),
+    getCourtDetails: builder.query({
+      query: (court_id) => `/courts/court-details/${court_id}`,
+    }),
     getCourtsByFilter: builder.query({
       query: (filter) => `/courts/filter?${new URLSearchParams(filter)}`,
     }),
@@ -119,6 +122,7 @@ export const {
   useGetCourtsQuery,
   useGetPaginatedCourtsQuery,
   useGetCourtByIdQuery,
+  useGetCourtDetailsQuery,
   useGetCourtsByFilterQuery,
   useAddCourtMutation,
   useUpdateCourtMutation,

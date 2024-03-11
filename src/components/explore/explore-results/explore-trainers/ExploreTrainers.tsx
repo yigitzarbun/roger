@@ -244,7 +244,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   ) {
     return <PageLoading />;
   }
-  console.log(paginatedTrainers);
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -252,7 +252,15 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
           <FaFilter
             onClick={handleOpenTrainerFilterModal}
-            className={styles.filter}
+            className={
+              trainerExperienceTypeId > 0 ||
+              textSearch !== "" ||
+              gender !== "" ||
+              locationId > 0 ||
+              clubId > 0
+                ? styles["active-filter"]
+                : styles.filter
+            }
           />
         </div>
         <div className={styles["navigation-container"]}>
@@ -260,7 +268,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
           />
-
           <FaAngleRight
             onClick={handleNextPage}
             className={styles["nav-arrow"]}

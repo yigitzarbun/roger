@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { FaCircle } from "react-icons/fa";
 
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import paths from "../../../routing/Paths";
 
@@ -15,6 +16,7 @@ import { useGetPlayerIncomingRequestsQuery } from "../../../api/endpoints/Bookin
 
 const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
   const user = useAppSelector((store) => store?.user?.user);
+  const { t } = useTranslation();
 
   const {
     data: incomingBookings,
@@ -24,8 +26,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
 
   useEffect(() => {
     refetchBookings();
-  }),
-    [];
+  }, []);
 
   if (isBookingsLoading) {
     return <PageLoading />;
@@ -46,7 +47,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Keşfet
+          {t("headerExploreTitle")}
         </NavLink>
         <NavLink
           to={paths.TRAIN}
@@ -57,7 +58,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Antreman
+          {t("headerTrainingTitle")}
         </NavLink>
         <NavLink
           to={paths.MATCH}
@@ -68,7 +69,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Maç
+          {t("headerMatchTitle")}
         </NavLink>
         <NavLink
           to={paths.LESSON}
@@ -79,7 +80,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Ders
+          {t("headerLessonTitle")}
         </NavLink>
         <NavLink
           to={paths.CALENDAR}
@@ -90,7 +91,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Takvim
+          {t("headerCalendarTitle")}
         </NavLink>
         <NavLink
           to={paths.REQUESTS}
@@ -101,7 +102,8 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Davetler
+          {t("headerInvitesTitle")}
+
           {incomingBookings?.length > 0 && (
             <FaCircle className={styles["notification"]} />
           )}
@@ -115,7 +117,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Performans
+          {t("headerPerformanceTitle")}
         </NavLink>
       </div>
     </nav>
