@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
+import ReactModal from "react-modal";
+import { localUrl } from "../../../../common/constants/apiConstants";
 
 import { toast } from "react-toastify";
+import { IoIosSearch } from "react-icons/io";
+import { IoListOutline } from "react-icons/io5";
 
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -23,6 +27,7 @@ import {
   useGetClubsQuery,
 } from "../../../../api/endpoints/ClubsApi";
 import {
+  useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
   useGetPlayersQuery,
 } from "../../../../api/endpoints/PlayersApi";
@@ -44,19 +49,34 @@ import {
   useAddPaymentMutation,
   useGetPaymentsQuery,
 } from "../../../../api/endpoints/PaymentsApi";
-import PageLoading from "../../../../components/loading/PageLoading";
+import PageLoading from "../../../loading/PageLoading";
+import CourtBookingConfirmation from "../confirmation/CourtBookingConfirmation";
 
-const CourtBookingForm = () => {
+interface CourtBookingFormModalProps {
+  isCourtBookingModalOpen: boolean;
+  closeCourtBookingInviteModal: () => void;
+  event_date: string;
+  event_time: string;
+  selectedCourt: any;
+}
+const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
+  const {
+    isCourtBookingModalOpen,
+    closeCourtBookingInviteModal,
+    event_date,
+    event_time,
+    selectedCourt,
+  } = props;
+
   const navigate = useNavigate();
-
-  const location = useLocation();
-
-  const courtBookingDetails = location?.state;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
+
+  const { data: currentUser, isLoading: isCurrentUserLoading } =
+    useGetPlayerByUserIdQuery(user?.user_id);
 
   const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
     {}
@@ -68,11 +88,35 @@ const CourtBookingForm = () => {
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+
+  const [searchedPlayer, setSearchedPlayer] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [playerSkip, setPlayerSkip] = useState(true);
+
+  const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchedPlayer(event.target.value);
+  };
+
+  const {
+    data: suggestedPlayers,
+    isLoading: isSuggestedPlayersLoading,
+    refetch: refetchSuggestedPlayers,
+  } = useGetPaginatedPlayersQuery(
+    {
+      currentPage: 1,
+      playerLevelId: null,
+      selectedGender: "",
+      locationId: null,
+      currentUserId: user?.user_id,
+      textSearch: searchedPlayer,
+    },
+    { skip: playerSkip }
+  );
+
+  console.log("search :", searchedPlayer);
+  console.log("playerSkip: ", playerSkip);
+  console.log("suggested players: ", suggestedPlayers);
 
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
@@ -105,21 +149,16 @@ const CourtBookingForm = () => {
     setSelectedTrainer(Number(event.target.value));
   };
 
-  const userGender = players?.find(
-    (player) => player?.user_id === user?.user_id
-  )?.gender;
-
-  const { data: selectedClub, isLoading: isSelectedClubLoading } =
-    useGetClubByClubIdQuery(courtBookingDetails?.club_id);
+  const userGender = currentUser?.[0]?.gender;
 
   let playerSubscriptionRequired =
-    selectedClub?.[0]?.is_player_subscription_required;
+    selectedCourt?.[0]?.is_player_subscription_required;
 
   let playerLessonSubscriptionRequired =
-    selectedClub?.[0]?.is_player_lesson_subscription_required;
+    selectedCourt?.[0]?.is_player_lesson_subscription_required;
 
   let trainerStaffRequired =
-    selectedClub?.[0]?.is_trainer_subscription_required;
+    selectedCourt?.[0]?.is_trainer_subscription_required;
 
   let isTrainerStaff = false;
   let isPlayerSubscribed = false;
@@ -143,7 +182,7 @@ const CourtBookingForm = () => {
   } = useGetClubSubscriptionsByFilterQuery(
     {
       player_id: user?.user_id,
-      club_id: selectedClub?.[0]?.user_id,
+      club_id: selectedCourt?.[0]?.clubUserId,
       is_active: true,
     },
     { skip: trainingMatchSkip }
@@ -155,7 +194,7 @@ const CourtBookingForm = () => {
   } = useGetClubSubscriptionsByFilterQuery(
     {
       player_id: selectedPlayer,
-      club_id: selectedClub?.[0]?.user_id,
+      club_id: selectedCourt?.[0]?.clubUserId,
       is_active: true,
     },
     { skip: trainingMatchSkip }
@@ -223,7 +262,7 @@ const CourtBookingForm = () => {
     useGetClubSubscriptionsByFilterQuery(
       {
         player_id: user?.user_id,
-        club_id: selectedClub?.[0]?.user_id,
+        club_id: selectedCourt?.[0]?.clubUserId,
         is_active: true,
       },
       { skip: lessonSkipPlayer }
@@ -233,7 +272,7 @@ const CourtBookingForm = () => {
     useGetClubStaffByFilterQuery(
       {
         user_id: selectedTrainer,
-        club_id: selectedClub?.[0]?.club_id,
+        club_id: selectedCourt?.[0]?.clubUserId,
         employment_status: "accepted",
       },
       { skip: lessonSkipPlayer }
@@ -248,7 +287,7 @@ const CourtBookingForm = () => {
   } = useGetClubSubscriptionsByFilterQuery(
     {
       player_id: selectedPlayer,
-      club_id: selectedClub?.[0]?.user_id,
+      club_id: selectedCourt?.[0]?.clubUserId,
       is_active: true,
     },
     { skip: lessonSkipTrainer }
@@ -258,7 +297,7 @@ const CourtBookingForm = () => {
     useGetClubStaffByFilterQuery(
       {
         user_id: user?.user_id,
-        club_id: selectedClub?.[0]?.club_id,
+        club_id: selectedCourt?.[0]?.clubUserId,
         employment_status: "accepted",
       },
       { skip: lessonSkipTrainer }
@@ -361,16 +400,19 @@ const CourtBookingForm = () => {
     }
   }
 
-  const [modal, setModal] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
+  const handleCloseConfirmation = () => {
+    setConfirmation(false);
+  };
   const [bookingFormData, setBookingFormData] = useState<FormValues | null>(
     null
   );
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
-    const eventDate = new Date(courtBookingDetails?.event_date);
-    const eventTime = courtBookingDetails?.event_time;
-    const hours = Math.floor(eventTime / 100);
-    const minutes = eventTime % 100;
+    const eventDate = new Date(event_date);
+    const eventTime = event_time;
+    const hours = Math.floor(Number(event_time) / 100);
+    const minutes = Number(event_time) % 100;
 
     const parsedEventDate = new Date(
       eventDate.getFullYear(),
@@ -385,55 +427,39 @@ const CourtBookingForm = () => {
 
     const bookingData = {
       event_date: parsedEventDate.toISOString(),
-      event_time: `${String(courtBookingDetails?.event_time).slice(
-        0,
+      event_time: `${String(eventTime).slice(0, 2)}:${String(eventTime).slice(
         2
-      )}:${String(courtBookingDetails?.event_time).slice(2)}`,
+      )}`,
       booking_status_type_id: 1,
       event_type_id: Number(formData?.event_type_id),
-      club_id: Number(courtBookingDetails?.club_id),
-      court_id: Number(courtBookingDetails?.court_id),
+      club_id: Number(selectedCourt?.[0]?.club_id),
+      court_id: Number(selectedCourt?.[0]?.court_id),
       inviter_id: user?.user_id,
       invitee_id: Number(formData?.invitee_id),
       lesson_price: null,
       court_price:
         (Number(formData?.event_type_id) === 1 ||
           Number(formData?.event_type_id) === 2) &&
-        selectedClub?.[0]?.higher_price_for_non_subscribers &&
-        courts.find(
-          (court) => court.court_id === Number(courtBookingDetails?.court_id)
-        )?.price_hour_non_subscriber &&
+        selectedCourt?.[0]?.higher_price_for_non_subscribers &&
+        selectedCourt?.[0]?.price_hour_non_subscriber &&
         (!inviterPlayerSubscribed || !inviteePlayerSubscribed)
-          ? courts.find(
-              (court) =>
-                court.court_id === Number(courtBookingDetails?.court_id)
-            )?.price_hour_non_subscriber
+          ? selectedCourt?.[0]?.price_hour_non_subscriber
           : Number(formData?.event_type_id) === 3 &&
-            selectedClub?.[0]?.higher_price_for_non_subscribers &&
-            courts.find(
-              (court) =>
-                court.court_id === Number(courtBookingDetails?.court_id)
-            )?.price_hour_non_subscriber &&
+            selectedCourt?.[0]?.higher_price_for_non_subscribers &&
+            selectedCourt?.[0]?.price_hour_non_subscriber &&
             (!isPlayerSubscribed || !isTrainerStaff)
-          ? courts.find(
-              (court) =>
-                court.court_id === Number(courtBookingDetails?.court_id)
-            )?.price_hour_non_subscriber
-          : courts.find(
-              (court) =>
-                court.court_id === Number(courtBookingDetails?.court_id)
-            )?.price_hour,
+          ? selectedCourt?.[0]?.price_hour_non_subscriber
+          : selectedCourt?.[0]?.price_hour,
       payment_id: null,
       invitation_note: formData?.invitation_note
         ? formData?.invitation_note
         : "",
     };
     setBookingFormData(bookingData);
-    setModal(true);
+    setConfirmation(true);
   };
 
   const handleModalSubmit = () => {
-    setModal(false);
     const paymentDetails = {
       payment_amount:
         bookingFormData?.event_type_id === 3 && isUserPlayer
@@ -478,9 +504,7 @@ const CourtBookingForm = () => {
           : bookingFormData?.event_type_id === 3 && isUserTrainer
           ? selectedPlayer
           : null,
-      recipient_club_id: clubs?.find(
-        (club) => club.club_id === Number(bookingFormData?.club_id)
-      )?.user_id,
+      recipient_club_id: selectedCourt?.[0]?.clubUserId,
       recipient_trainer_id:
         bookingFormData?.event_type_id === 3 && isUserTrainer
           ? user?.user_id
@@ -498,12 +522,27 @@ const CourtBookingForm = () => {
     ) {
       addPayment(paymentDetails);
     }
+    setConfirmation(false);
+    closeCourtBookingInviteModal();
   };
 
-  const handleCloseModal = () => {
-    setModal(false);
+  const [searchOption, setSearchOption] = useState("list");
+  const toggleSearchOption = (option: string) => {
+    setSearchOption(option);
   };
 
+  useEffect(() => {
+    if (searchedPlayer !== "") {
+      setPlayerSkip(false);
+    }
+    if (searchedPlayer === "") {
+      setPlayerSkip(true);
+    }
+  }, [searchedPlayer]);
+
+  useEffect(() => {
+    if (playerSkip === false) refetchSuggestedPlayers();
+  }, [setPlayerSkip]);
   useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();
@@ -538,8 +577,6 @@ const CourtBookingForm = () => {
 
   if (
     isBookingsLoading ||
-    isClubsLoading ||
-    isCourtsLoading ||
     isPlayersLoading ||
     isTrainersLoading ||
     isEventTypesLoading
@@ -548,197 +585,264 @@ const CourtBookingForm = () => {
   }
 
   return (
-    <div className={styles["invite-page-container"]}>
-      <div className={styles["top-container"]}>
-        <h1 className={styles["invite-title"]}>Kort Kiralama</h1>
-        <Link to={paths.EXPLORE}>
-          <img src="/images/icons/prev.png" className={styles["prev-button"]} />
-        </Link>
-      </div>
-      <div className={styles["court-container"]}>
-        <img
-          src={
-            courts?.find(
-              (court) => court.court_id === courtBookingDetails?.court_id
-            )?.image
-              ? courts?.find(
-                  (court) => court.court_id === courtBookingDetails?.court_id
-                )?.image
-              : clubs?.find(
-                  (club) => club.club_id === courtBookingDetails?.club_id
-                )?.image
-              ? clubs?.find(
-                  (club) => club.club_id === courtBookingDetails?.club_id
-                )?.image
-              : "/images/icons/avatar.png"
-          }
-          className={styles["court-image"]}
-        />
-        <p className={styles["court-name"]}>{`Kort: ${
-          courts?.find(
-            (court) => court.court_id === courtBookingDetails?.court_id
-          )?.court_name
-        } - Kulüp: ${
-          clubs?.find((club) => club.club_id === courtBookingDetails?.club_id)
-            ?.club_name
-        }`}</p>
-      </div>
-      <p className={styles["court-name"]}>{`Tarih: ${
-        courtBookingDetails?.event_date
-      } - Saat: ${String(courtBookingDetails?.event_time).slice(0, 2)}:${String(
-        courtBookingDetails?.event_time
-      ).slice(2)}`}</p>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        {
-          <div className={styles["input-container"]}>
-            <label>Etkinlik Türü</label>
-            <select
-              {...register("event_type_id", { required: true })}
-              onChange={handleSelectedEvent}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {isUserPlayer &&
-                eventTypes
-                  ?.filter(
-                    (type) =>
-                      type.event_type_id === 1 ||
-                      type.event_type_id === 2 ||
-                      type.event_type_id === 3
-                  )
-                  .map((type) => (
-                    <option key={type.event_type_id} value={type.event_type_id}>
-                      {type.event_type_name}
-                    </option>
-                  ))}
-              {isUserTrainer &&
-                eventTypes
-                  ?.filter((type) => type.event_type_name === "lesson")
-                  .map((type) => (
-                    <option key={type.event_type_id} value={type.event_type_id}>
-                      {type.event_type_name}
-                    </option>
-                  ))}
-            </select>
-            {errors.event_type_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        }
-        {isUserPlayer && selectedEventType === 1 && (
-          <div className={styles["input-container"]}>
-            <label>Oyuncu Seçimi</label>
-            <select
-              {...register("invitee_id", { required: true })}
-              onChange={handleSelectedPlayer}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {players
-                ?.filter((player) => player.user_id !== user?.user_id)
-                .map((player) => (
-                  <option key={player.user_id} value={player.user_id}>
-                    {`${player.fname} ${player.lname} - ${player.gender}`}
-                  </option>
-                ))}
-            </select>
-            {errors.invitee_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        )}
-        {isUserPlayer && selectedEventType === 2 && (
-          <div className={styles["input-container"]}>
-            <label>Oyuncu Seçimi</label>
-            <select
-              {...register("invitee_id", { required: true })}
-              onChange={handleSelectedPlayer}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {players
-                ?.filter(
-                  (player) =>
-                    player.user_id !== user?.user_id &&
-                    player.gender === userGender
-                )
-                .map((player) => (
-                  <option key={player.user_id} value={player.user_id}>
-                    {`${player.fname} ${player.lname} - ${player.gender}`}
-                  </option>
-                ))}
-            </select>
-            {errors.invitee_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        )}
-        {selectedEventType === 3 && (
-          <div className={styles["input-container"]}>
-            <label>
-              {isUserPlayer
-                ? "Eğitmen Seçimi"
-                : isUserTrainer
-                ? "Oyuncu Seçimi"
-                : ""}
-            </label>
-            <select
-              {...register("invitee_id", { required: true })}
-              onChange={
-                isUserPlayer
-                  ? handleSelectedTrainer
-                  : isUserTrainer
-                  ? handleSelectedPlayer
-                  : null
-              }
-            >
-              <option value="">-- Seçim yapın --</option>
-              {isUserPlayer &&
-                trainers.map((trainer) => (
-                  <option key={trainer.user_id} value={trainer.user_id}>
-                    {`${trainer.fname} ${trainer.lname} - ${trainer.price_hour} TL / Saat`}
-                  </option>
-                ))}
-              {isUserTrainer &&
-                players.map((player) => (
-                  <option key={player.user_id} value={player.user_id}>
-                    {`${player.fname} ${player.lname}`}
-                  </option>
-                ))}
-            </select>
-            {errors.invitee_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        )}
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Not</label>
-            <textarea
-              {...register("invitation_note")}
-              placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={isButtonDisabled}
-        >
-          {(selectedPlayer || selectedTrainer) && isButtonDisabled
-            ? buttonText
-            : "Davet Gönder"}
-        </button>
-      </form>
-      <InviteModal
-        modal={modal}
-        handleModalSubmit={handleModalSubmit}
-        formData={bookingFormData}
-        handleCloseModal={handleCloseModal}
+    <ReactModal
+      isOpen={isCourtBookingModalOpen}
+      onRequestClose={closeCourtBookingInviteModal}
+      shouldCloseOnOverlayClick={false}
+      className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
+    >
+      <div
+        className={styles["overlay"]}
+        onClick={closeCourtBookingInviteModal}
       />
-    </div>
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1 className={styles["invite-title"]}>Kort Rezervasyon</h1>
+        </div>
+
+        <div className={styles["table-container"]}>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Kort</th>
+                <th>Kulüp</th>
+                <th>Tarih</th>
+                <th>Saat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className={styles.row}>
+                <td>
+                  <img
+                    src={
+                      selectedCourt?.[0]?.courtImage
+                        ? `${localUrl}/${selectedCourt?.[0]?.courtImage}`
+                        : "/images/icons/avatar.jpg"
+                    }
+                    className={styles["court-image"]}
+                  />
+                </td>
+                <td>{selectedCourt?.[0]?.court_name}</td>
+                <td>{selectedCourt?.[0]?.club_name}</td>
+                <td>{event_date}</td>
+                <td>{`${event_time.slice(0, 2)}:${event_time.slice(2)}`}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {confirmation === false ? (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className={styles["form-container"]}
+          >
+            <div className={styles["input-outer-container"]}>
+              {
+                <div className={styles["input-container"]}>
+                  <label>Etkinlik Türü</label>
+                  <select
+                    {...register("event_type_id", { required: true })}
+                    onChange={handleSelectedEvent}
+                  >
+                    <option value="">-- Seçim yapın --</option>
+                    {isUserPlayer &&
+                      eventTypes
+                        ?.filter(
+                          (type) =>
+                            type.event_type_id === 1 ||
+                            type.event_type_id === 2 ||
+                            type.event_type_id === 3
+                        )
+                        .map((type) => (
+                          <option
+                            key={type.event_type_id}
+                            value={type.event_type_id}
+                          >
+                            {type.event_type_name}
+                          </option>
+                        ))}
+                    {isUserTrainer &&
+                      eventTypes
+                        ?.filter((type) => type.event_type_name === "lesson")
+                        .map((type) => (
+                          <option
+                            key={type.event_type_id}
+                            value={type.event_type_id}
+                          >
+                            {type.event_type_name}
+                          </option>
+                        ))}
+                  </select>
+                  {errors.event_type_id && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              }
+              {isUserPlayer && selectedEventType === 1 && (
+                <div className={styles["input-container"]}>
+                  <div className={styles["search-option-container"]}>
+                    <label>Oyuncu Seçimi</label>
+                    <div className={styles.options}>
+                      <IoListOutline
+                        className={
+                          searchOption === "list"
+                            ? styles["active-option"]
+                            : styles["inactive-option"]
+                        }
+                        onClick={() => toggleSearchOption("list")}
+                      />
+                      <IoIosSearch
+                        className={
+                          searchOption === "textSearch"
+                            ? styles["active-option"]
+                            : styles["inactive-option"]
+                        }
+                        onClick={() => toggleSearchOption("textSearch")}
+                      />
+                    </div>
+                  </div>
+                  {searchOption === "list" ? (
+                    <select
+                      {...register("invitee_id", { required: true })}
+                      onChange={handleSelectedPlayer}
+                    >
+                      <option value="">-- Seçim yapın --</option>
+                      {players
+                        ?.filter((player) => player.user_id !== user?.user_id)
+                        .map((player) => (
+                          <option key={player.user_id} value={player.user_id}>
+                            {`${player.fname} ${player.lname} - ${player.gender}`}
+                          </option>
+                        ))}
+                    </select>
+                  ) : (
+                    <input
+                      onChange={handleTextSearch}
+                      placeholder="Oyuncu adı ile arama"
+                    />
+                  )}
+                </div>
+              )}
+              {isUserPlayer && selectedEventType === 2 && (
+                <div className={styles["input-container"]}>
+                  <label>Oyuncu Seçimi</label>
+                  <select
+                    {...register("invitee_id", { required: true })}
+                    onChange={handleSelectedPlayer}
+                  >
+                    <option value="">-- Seçim yapın --</option>
+                    {players
+                      ?.filter(
+                        (player) =>
+                          player.user_id !== user?.user_id &&
+                          player.gender === userGender
+                      )
+                      .map((player) => (
+                        <option key={player.user_id} value={player.user_id}>
+                          {`${player.fname} ${player.lname} - ${player.gender}`}
+                        </option>
+                      ))}
+                  </select>
+                  {errors.invitee_id && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              )}
+              {selectedEventType === 3 && (
+                <div className={styles["input-container"]}>
+                  <label>
+                    {isUserPlayer
+                      ? "Eğitmen Seçimi"
+                      : isUserTrainer
+                      ? "Oyuncu Seçimi"
+                      : ""}
+                  </label>
+                  <select
+                    {...register("invitee_id", { required: true })}
+                    onChange={
+                      isUserPlayer
+                        ? handleSelectedTrainer
+                        : isUserTrainer
+                        ? handleSelectedPlayer
+                        : null
+                    }
+                  >
+                    <option value="">-- Seçim yapın --</option>
+                    {isUserPlayer &&
+                      trainers.map((trainer) => (
+                        <option key={trainer.user_id} value={trainer.user_id}>
+                          {`${trainer.fname} ${trainer.lname} - ${trainer.price_hour} TL / Saat`}
+                        </option>
+                      ))}
+                    {isUserTrainer &&
+                      players.map((player) => (
+                        <option key={player.user_id} value={player.user_id}>
+                          {`${player.fname} ${player.lname}`}
+                        </option>
+                      ))}
+                  </select>
+                  {errors.invitee_id && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            {selectedEventType && (
+              <div className={styles["text-area-container"]}>
+                <label>Not</label>
+                <textarea
+                  {...register("invitation_note")}
+                  placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
+                />
+              </div>
+            )}
+
+            <div className={styles["buttons-container"]}>
+              <button
+                onClick={closeCourtBookingInviteModal}
+                className={styles["discard-button"]}
+              >
+                İptal et
+              </button>
+
+              <button
+                type="submit"
+                className={styles["submit-button"]}
+                disabled={isButtonDisabled}
+              >
+                {(selectedPlayer || selectedTrainer) && isButtonDisabled
+                  ? buttonText
+                  : "Davet Gönder"}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <CourtBookingConfirmation
+            handleCloseConfirmation={handleCloseConfirmation}
+            handleModalSubmit={handleModalSubmit}
+            eventType={
+              bookingFormData?.event_type_id === 1
+                ? "Antreman"
+                : bookingFormData?.event_type_id === 2
+                ? "Maç"
+                : bookingFormData?.event_type_id === 3
+                ? "Ders"
+                : ""
+            }
+            selectedCourtPrice={bookingFormData?.court_price}
+            invitee={inviteePlayer}
+          />
+        )}
+      </div>
+    </ReactModal>
   );
 };
 
-export default CourtBookingForm;
+export default CourtBookingFormModal;

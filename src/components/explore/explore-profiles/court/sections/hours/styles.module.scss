@@ -1,0 +1,57 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.courts-section {
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 100%;
+  table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+
+    .court-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+
+      .reserved {
+        background-color: $roger-red;
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        cursor: not-allowed;
+      }
+      .available {
+        background-color: $roger-blue;
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: none;
+        cursor: pointer;
+      }
+    }
+
+    .book-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .book-button:hover {
+      background-color: $roger-black-light;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.bio-section {
+  background-color: $roger-box-bg-color;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 3vw;
+  .image-container {
+    display: flex;
+    column-gap: 1vw;
+    .profile-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .name-container {
+      width: 50%;
+      h4 {
+        font-weight: lighter;
+      }
+    }
+  }
+  .bio-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4.5vh;
+    .top-container {
+      display: flex;
+      column-gap: 5vw;
+      align-items: start;
+      width: 100%;
+      .table-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 4vh;
+        table {
+          width: 100%;
+          text-align: left;
+          border-collapse: collapse;
+          th {
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+          .court-row {
+            border-bottom: 1px solid $roger-border-color;
+            td {
+              border-top: 1px solid $roger-border-color;
+              vertical-align: middle;
+              padding: 10px;
+              height: 12vh;
+            }
+          }
+        }
+      }
+    }
+  }
+  .icon {
+    font-size: 1rem;
+    cursor: pointer;
+  }
+}

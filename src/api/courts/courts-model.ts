@@ -155,9 +155,12 @@ const courtsModel = {
       const courtDetails = await db
         .select(
           "courts.*",
+          "courts.image as courtImage",
           "clubs.*",
+          "clubs.user_id as clubUserId",
           "court_surface_types.*",
-          "court_structure_types.*"
+          "court_structure_types.*",
+          "locations.*"
         )
         .from("courts")
         .leftJoin("clubs", function () {
@@ -177,7 +180,9 @@ const courtsModel = {
             "courts.court_structure_type_id"
           );
         })
-
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "clubs.location_id");
+        })
         .where("courts.court_id", courtId);
 
       return courtDetails;

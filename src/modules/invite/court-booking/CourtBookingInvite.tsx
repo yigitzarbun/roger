@@ -1,4 +1,4 @@
-import CourtBookingForm from "../../../components/invite/court-booking/form/CourtBookingForm";
+import CourtBookingForm from "../../../components/invite/court-booking/form/CourtBookingFormModal";
 import CourtBookingHero from "../../../components/invite/court-booking/hero/CourtBookingHero";
 import React from "react";
 

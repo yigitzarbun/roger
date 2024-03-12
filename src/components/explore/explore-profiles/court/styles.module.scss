@@ -1,6 +1,3 @@
-@import "/src/common/styles/colors.scss";
-@import "/src/common/styles/common.scss";
-
 .profile {
   display: flex;
   flex-direction: column;
@@ -9,75 +6,5 @@
   .top-sections-container {
     display: flex;
     justify-content: space-between;
-
-    .profile-section {
-      background-color: $roger-box-bg-color;
-      width: 25%;
-      height: 90vh;
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
-      display: flex;
-      flex-direction: column;
-      row-gap: 10px;
-      .profile-info {
-        display: flex;
-        align-items: center;
-        column-gap: 10px;
-        align-items: start;
-
-        .icon {
-          font-size: 20px;
-        }
-        .info-text {
-          width: 90%;
-        }
-      }
-
-      .club-info {
-        display: flex;
-        align-items: center;
-        column-gap: 15px;
-        align-items: start;
-        .icon {
-          font-size: 20px;
-        }
-        .info-text {
-          width: 90%;
-        }
-      }
-
-      .profile-image {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-    }
-
-    .courts-section {
-      background-color: $roger-box-bg-color;
-      width: 70%;
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
-
-      table {
-        width: 100%;
-        text-align: left;
-
-        .reserved {
-          background-color: $roger-red;
-          border-radius: $roger-border-radius;
-          text-align: center;
-        }
-        .available {
-          background-color: $roger-blue;
-          border-radius: $roger-border-radius;
-          text-align: center;
-          cursor: pointer;
-          text-decoration: none;
-          color: white;
-        }
-      }
-    }
   }
 }
