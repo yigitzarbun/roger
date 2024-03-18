@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { useNavigate, Link } from "react-router-dom";
 
@@ -39,6 +39,14 @@ const LoginForm = () => {
       : navigator.language === "tr-TR"
       ? "tr"
       : "tr";
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+  const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const loginData = {
@@ -70,7 +78,7 @@ const LoginForm = () => {
 
   return (
     <div className={styles["login-page-container"]}>
-      <img className={styles["hero"]} src="/images/hero/court4.jpeg" />
+      <img className={styles["hero"]} src="/images/hero/court5.jpeg" />
       <div className={styles["login-form-content"]}>
         <h1 className={styles["login-title"]}>Giriş</h1>
         <form
@@ -83,6 +91,7 @@ const LoginForm = () => {
               {...register("email", { required: true })}
               type="email"
               placeholder={t("loginEmailInputPlaceholder")}
+              onChange={handleEmail}
             />
             {errors.email && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
@@ -93,14 +102,24 @@ const LoginForm = () => {
             <input
               {...register("password", { required: true })}
               type="password"
+              onChange={handlePassword}
             />
             {errors.password && (
               <span className={styles["error-field"]}>Bu alan zorunludur.</span>
             )}
           </div>
-          <button type="submit" className={styles["form-button"]}>
-            {t("loginButtonText")}
-          </button>
+          <div className={styles["buttons-container"]}>
+            <button
+              type="submit"
+              className={
+                email !== "" && password !== ""
+                  ? styles["active-submit-button"]
+                  : styles["passive-submit-button"]
+              }
+            >
+              {t("loginButtonText")}
+            </button>
+          </div>
         </form>
         <Link to={paths.REGISTER} className={styles["register-nav"]}>
           Hesabın yok mu?{" "}

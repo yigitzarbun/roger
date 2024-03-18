@@ -61,6 +61,7 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
                     <button
                       onClick={() => openCourtBookingInviteModal(day, hour)}
                       className={styles.available}
+                      disabled={isUserClub}
                     >
                       Uygun
                     </button>

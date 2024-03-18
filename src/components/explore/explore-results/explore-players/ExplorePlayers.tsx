@@ -318,7 +318,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       Maç yap
                     </button>
                   ) : (
-                    <ImBlocked className={styles.blocked} />
+                    isUserPlayer &&
+                    player.gender !== userGender && (
+                      <ImBlocked className={styles.blocked} />
+                    )
                   )}
                 </td>
 

@@ -338,10 +338,16 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     )
                   }
                 >
-                  {isClubInMyFavourites(club.user_id)?.is_active === true ? (
+                  {isClubInMyFavourites(club.user_id)?.is_active === true &&
+                  club.user_id !== user?.user?.user_id ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
+                  ) : isClubInMyFavourites(club.user_id)?.is_active ===
+                    false ? (
+                    club.user_id !== user?.user?.user_id && (
+                      <AiOutlineStar className={styles["add-fav-icon"]} />
+                    )
                   ) : (
-                    <AiOutlineStar className={styles["add-fav-icon"]} />
+                    ""
                   )}
                 </td>
                 <td className={styles["vertical-center"]}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../routing/Paths";
@@ -34,7 +34,11 @@ export type FormValues = {
   language_id: number;
 };
 
-const PlayerRegisterForm = () => {
+interface PlayerRegisterProps {
+  setUserType: Dispatch<SetStateAction<string>>;
+}
+const PlayerRegisterForm = (props: PlayerRegisterProps) => {
+  const { setUserType } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -150,7 +154,7 @@ const PlayerRegisterForm = () => {
 
   return (
     <div className={styles["register-page-container"]}>
-      <img className={styles["hero"]} src="/images/hero/court3.jpeg" />
+      <img className={styles["hero"]} src="/images/hero/court2.jpeg" />
       <div className={styles["register-form-content"]}>
         <h1 className={styles["register-title"]}>Oyuncu Kayıt</h1>
         <form
@@ -320,9 +324,17 @@ const PlayerRegisterForm = () => {
               />
             </div>
           </div>
-          <button type="submit" className={styles["form-button"]}>
-            {t("registerButtonText")}
-          </button>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={() => setUserType("")}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              {t("registerButtonText")}
+            </button>
+          </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>
           Hesabın var mı?{" "}

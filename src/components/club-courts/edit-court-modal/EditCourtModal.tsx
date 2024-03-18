@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
@@ -30,6 +30,7 @@ interface EditCourtModalProps {
   court_id: number;
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
+  currentClub: any;
 }
 
 type FormValues = {
@@ -52,14 +53,12 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     court_id,
     courtStructureTypes,
     courtSurfaceTypes,
+    currentClub,
   } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
   const [updateCourt, { isSuccess }] = useUpdateCourtMutation({});
-
-  const { data: currentClub, isLoading: isCurrentClubLoading } =
-    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
   const { refetch: refetchCourts } = useGetCourtsByFilterQuery({
     club_id: user?.clubDetails?.club_id,
@@ -145,189 +144,211 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     }
   }, [isSuccess]);
 
-  if (isCurrentClubLoading || isSelectedCourtLoading) {
+  if (isSelectedCourtLoading) {
     <PageLoading />;
   }
 
   return (
-    <Modal
+    <ReactModal
       isOpen={isEditCourtModalOpen}
       onRequestClose={closeEditCourtModal}
       className={styles["modal-container"]}
+      shouldCloseOnOverlayClick={false}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={closeEditCourtModal} />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Kort Düzenle</h1>
-        <FaWindowClose
-          onClick={closeEditCourtModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-        encType="multipart/form-data"
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kort Adı</label>
-            <input
-              {...register("court_name", { required: true })}
-              type="text"
-            />
-            {errors.court_name && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Fiyat (TL / saat)</label>
-            <input
-              {...register("price_hour", { required: true })}
-              type="number"
-              min="0"
-            />
-            {errors.price_hour && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kort Yüzeyi</label>
-            <select {...register("court_surface_type_id", { required: true })}>
-              <option value="">-- Kort Yüzeyi --</option>
-              {courtSurfaceTypes?.map((surface) => (
-                <option
-                  key={surface.court_surface_type_id}
-                  value={surface.court_surface_type_id}
-                >
-                  {surface.court_surface_type_name}
-                </option>
-              ))}
-            </select>
-            {errors.court_surface_type_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Mekan Tipi</label>
-            <select
-              {...register("court_structure_type_id", { required: true })}
-            >
-              <option value="">-- Mekan Tipi --</option>
-              {courtStructureTypes?.map((structure) => (
-                <option
-                  key={structure.court_structure_type_id}
-                  value={structure.court_structure_type_id}
-                >
-                  {structure.court_structure_type_name}
-                </option>
-              ))}
-            </select>
-            {errors.court_structure_type_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Açılış Saati</label>
-            <select
-              {...register("opening_time", { required: true })}
-              onChange={handleOpeningTime}
-            >
-              <option value="">-- Açılış Saati --</option>
-              {generateTimesArray(24).map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-            {errors.opening_time && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Kapanış Saati</label>
-            <select
-              {...register("closing_time", {
-                required: true,
-                validate: (value) => {
-                  const closing = Number(String(value).slice(0, 2));
-                  const opening = Number(String(openingTime).slice(0, 2));
-                  return closing > opening;
-                },
-              })}
-            >
-              <option value="">-- Kapanış Saati --</option>
-              {generateTimesArray(24).map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-            {errors.closing_time?.type === "required" && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-            {errors.closing_time?.type === "validate" && (
-              <span className={styles["error-field"]}>
-                Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
-              </span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kort Statüsü</label>
-            <select
-              {...register("is_active", {
-                required: "Bu alan zorunludur.",
-              })}
-            >
-              <option value="true">Aktif</option>
-              <option value="false">Bloke</option>
-            </select>
-            {errors.is_active?.type === "required" && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          {currentClub?.[0]["higher_price_for_non_subscribers"] && (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+          encType="multipart/form-data"
+        >
+          <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Fiyat - Üye Olmayanlar (TL / saat)</label>
+              <label>Kort Adı</label>
               <input
-                {...register("price_hour_non_subscriber", { required: true })}
-                type="number"
-                min="0"
+                {...register("court_name", { required: true })}
+                type="text"
               />
-              {errors.price_hour_non_subscriber && (
+              {errors.court_name && (
                 <span className={styles["error-field"]}>
                   Bu alan zorunludur.
                 </span>
               )}
             </div>
-          )}
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kort Resmi</label>
-            <div className={styles["court-picture-container"]}>
-              <img
-                src={existingImage ? existingImage : "/images/icons/avatar.png"}
-                className={styles["court-image"]}
-              />
+            <div className={styles["input-container"]}>
+              <label>Fiyat (TL / saat)</label>
               <input
-                type="file"
-                accept="image/*"
-                name="image"
-                onChange={handleImageChange}
+                {...register("price_hour", { required: true })}
+                type="number"
+                min="0"
               />
+              {errors.price_hour && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Kort Yüzeyi</label>
+              <select
+                {...register("court_surface_type_id", { required: true })}
+              >
+                <option value="">-- Kort Yüzeyi --</option>
+                {courtSurfaceTypes?.map((surface) => (
+                  <option
+                    key={surface.court_surface_type_id}
+                    value={surface.court_surface_type_id}
+                  >
+                    {surface.court_surface_type_name}
+                  </option>
+                ))}
+              </select>
+              {errors.court_surface_type_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
             </div>
           </div>
-        </div>
-        <button type="submit" className={styles["form-button"]}>
-          Tamamla
-        </button>
-      </form>
-    </Modal>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Mekan Tipi</label>
+              <select
+                {...register("court_structure_type_id", { required: true })}
+              >
+                <option value="">-- Mekan Tipi --</option>
+                {courtStructureTypes?.map((structure) => (
+                  <option
+                    key={structure.court_structure_type_id}
+                    value={structure.court_structure_type_id}
+                  >
+                    {structure.court_structure_type_name}
+                  </option>
+                ))}
+              </select>
+              {errors.court_structure_type_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Açılış Saati</label>
+              <select
+                {...register("opening_time", { required: true })}
+                onChange={handleOpeningTime}
+              >
+                <option value="">-- Açılış Saati --</option>
+                {generateTimesArray(24).map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+              {errors.opening_time && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Kapanış Saati</label>
+              <select
+                {...register("closing_time", {
+                  required: true,
+                  validate: (value) => {
+                    const closing = Number(String(value).slice(0, 2));
+                    const opening = Number(String(openingTime).slice(0, 2));
+                    return closing > opening;
+                  },
+                })}
+              >
+                <option value="">-- Kapanış Saati --</option>
+                {generateTimesArray(24).map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+              {errors.closing_time?.type === "required" && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+              {errors.closing_time?.type === "validate" && (
+                <span className={styles["error-field"]}>
+                  Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["input-outer-container"]}></div>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Kort Statüsü</label>
+              <select
+                {...register("is_active", {
+                  required: "Bu alan zorunludur.",
+                })}
+              >
+                <option value="true">Aktif</option>
+                <option value="false">Bloke</option>
+              </select>
+              {errors.is_active?.type === "required" && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            {currentClub?.[0]["higher_price_for_non_subscribers"] && (
+              <div className={styles["input-container"]}>
+                <label>Fiyat - Üye Olmayanlar (TL / saat)</label>
+                <input
+                  {...register("price_hour_non_subscriber", { required: true })}
+                  type="number"
+                  min="0"
+                />
+                {errors.price_hour_non_subscriber && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+            )}
+            <div className={styles["input-container"]}>
+              <label>Kort Resmi</label>
+              <div className={styles["court-picture-container"]}>
+                <img
+                  src={
+                    existingImage ? existingImage : "/images/icons/avatar.jpg"
+                  }
+                  className={styles["court-image"]}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  name="image"
+                  onChange={handleImageChange}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={closeEditCourtModal}
+              className={styles["discard-button"]}
+            >
+              İptal Et
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              Tamamla
+            </button>
+          </div>
+        </form>
+      </div>
+    </ReactModal>
   );
 };
 export default EditCourtModal;

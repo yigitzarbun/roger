@@ -9,27 +9,9 @@ import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
-import { useGetClubStaffByFilterQuery } from "../../../api/endpoints/ClubStaffApi";
-import PageLoading from "../../../components/loading/PageLoading";
 
 const ClubHeader = () => {
   const user = useAppSelector((store) => store?.user?.user);
-
-  const {
-    data: myStaffRequests,
-    isLoading: isMyStaffRequestsLoading,
-    refetch: refetchMyRequests,
-  } = useGetClubStaffByFilterQuery({
-    club_id: user?.clubDetails?.club_id,
-    employment_status: "pending",
-  });
-
-  useEffect(() => {
-    refetchMyRequests();
-  }, []);
-  if (isMyStaffRequestsLoading) {
-    return <PageLoading />;
-  }
 
   return (
     <nav className={styles["header-club-container"]}>
@@ -72,10 +54,7 @@ const ClubHeader = () => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Personel{" "}
-          {myStaffRequests?.length > 0 && (
-            <FaCircle className={styles["notification"]} />
-          )}
+          Personel
         </NavLink>
         <NavLink
           to={paths.CLUB_SUBSCRIPTIONS}

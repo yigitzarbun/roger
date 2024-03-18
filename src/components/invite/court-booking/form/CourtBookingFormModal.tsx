@@ -7,6 +7,7 @@ import { IoIosSearch } from "react-icons/io";
 import { IoListOutline } from "react-icons/io5";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import { MdOutlineMessage } from "react-icons/md";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -114,10 +115,6 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     { skip: playerSkip }
   );
 
-  console.log("search :", searchedPlayer);
-  console.log("playerSkip: ", playerSkip);
-  console.log("suggested players: ", suggestedPlayers);
-
   const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
     {}
   );
@@ -140,8 +137,8 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   };
 
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const handleSelectedPlayer = (event) => {
-    setSelectedPlayer(Number(event.target.value));
+  const handleSelectedPlayer = (id: number) => {
+    setSelectedPlayer(id);
   };
 
   const [selectedTrainer, setSelectedTrainer] = useState(null);
@@ -435,7 +432,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
       club_id: Number(selectedCourt?.[0]?.club_id),
       court_id: Number(selectedCourt?.[0]?.court_id),
       inviter_id: user?.user_id,
-      invitee_id: Number(formData?.invitee_id),
+      invitee_id: Number(selectedPlayer),
       lesson_price: null,
       court_price:
         (Number(formData?.event_type_id) === 1 ||
@@ -529,6 +526,11 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   const [searchOption, setSearchOption] = useState("list");
   const toggleSearchOption = (option: string) => {
     setSearchOption(option);
+  };
+
+  const [inviteMessageArea, setInviteMessageArea] = useState(false);
+  const toggleInviteMessageArea = () => {
+    setInviteMessageArea((curr) => !curr);
   };
 
   useEffect(() => {
@@ -707,7 +709,9 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                   {searchOption === "list" ? (
                     <select
                       {...register("invitee_id", { required: true })}
-                      onChange={handleSelectedPlayer}
+                      onChange={(e) =>
+                        handleSelectedPlayer(Number(e.target.value))
+                      }
                     >
                       <option value="">-- Seçim yapın --</option>
                       {players
@@ -724,6 +728,30 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                       placeholder="Oyuncu adı ile arama"
                     />
                   )}
+                  {searchOption === "textSearch" &&
+                  searchedPlayer !== "" &&
+                  suggestedPlayers?.players?.length > 0 ? (
+                    <div className={styles["suggested-list"]}>
+                      {suggestedPlayers?.players?.map((player) => (
+                        <div key={player.user_id} className={styles.suggestion}>
+                          <p>{`${player.fname} ${player.lname}`}</p>
+                          <button
+                            onClick={() =>
+                              handleSelectedPlayer(Number(player.user_id))
+                            }
+                          >
+                            Seç
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    searchOption === "textSearch" &&
+                    searchedPlayer !== "" &&
+                    suggestedPlayers?.players?.length === 0 && (
+                      <p>Oyuncu bulunamadı</p>
+                    )
+                  )}
                 </div>
               )}
               {isUserPlayer && selectedEventType === 2 && (
@@ -731,7 +759,9 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                   <label>Oyuncu Seçimi</label>
                   <select
                     {...register("invitee_id", { required: true })}
-                    onChange={handleSelectedPlayer}
+                    onChange={(e) =>
+                      handleSelectedPlayer(Number(e.target.value))
+                    }
                   >
                     <option value="">-- Seçim yapın --</option>
                     {players
@@ -768,7 +798,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                       isUserPlayer
                         ? handleSelectedTrainer
                         : isUserTrainer
-                        ? handleSelectedPlayer
+                        ? (e) => handleSelectedPlayer(Number(e.target.value))
                         : null
                     }
                   >
@@ -794,15 +824,14 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 </div>
               )}
             </div>
-            {selectedEventType && (
-              <div className={styles["text-area-container"]}>
-                <label>Not</label>
-                <textarea
-                  {...register("invitation_note")}
-                  placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
-                />
-              </div>
-            )}
+
+            <div className={styles["text-area-container"]}>
+              <label>Not</label>
+              <textarea
+                {...register("invitation_note")}
+                placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
+              />
+            </div>
 
             <div className={styles["buttons-container"]}>
               <button

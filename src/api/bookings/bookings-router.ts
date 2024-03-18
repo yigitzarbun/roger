@@ -125,6 +125,19 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
+  "/paginated-club-calendar-bookings",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const paginatedBookings =
+        await bookingsModel.getPaginatedClubCalendarBookings(filter);
+      res.status(200).json(paginatedBookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+bookingsRouter.get(
   "/:booking_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

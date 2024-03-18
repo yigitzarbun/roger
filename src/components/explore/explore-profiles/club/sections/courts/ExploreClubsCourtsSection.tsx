@@ -13,19 +13,20 @@ import { ImBlocked } from "react-icons/im";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import ExploreClubCourtsModal from "../../modals/courts/ExploreClubCourtsModal";
 
-import { useGetPaginatedCourtsQuery } from "../../../../../../api/endpoints/CourtsApi";
+import { useGetClubCourtsQuery } from "../../../../../../api/endpoints/CourtsApi";
 
 interface ExploreClubsCourtsSectionProps {
   selectedClub: any;
+  isUserPlayer: boolean;
+  isUserTrainer: boolean;
 }
 
 const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
-  const { selectedClub } = props;
+  const { selectedClub, isUserPlayer, isUserTrainer } = props;
 
-  const { data: courts, isLoading: isCourtsLoading } =
-    useGetPaginatedCourtsQuery({
-      clubId: selectedClub?.[0]?.club_id,
-    });
+  const { data: courts, isLoading: isCourtsLoading } = useGetClubCourtsQuery(
+    selectedClub?.[0]?.club_id
+  );
 
   const [isCourtsModalOpen, setIsCourtsModalOpen] = useState(false);
   const openCourtsModal = () => {
@@ -41,7 +42,7 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
   return (
     <div className={styles["courts-section"]}>
       <h2>Kortlar</h2>
-      {courts?.courts?.length > 0 ? (
+      {courts?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -61,7 +62,7 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
             </tr>
           </thead>
           <tbody>
-            {courts?.courts?.slice(courts?.courts?.length - 2).map((court) => (
+            {courts?.slice(courts?.length - 2).map((court) => (
               <tr key={court.court_id} className={styles["court-row"]}>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
@@ -104,7 +105,11 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
                 </td>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
-                    <button>Rezerve et</button>
+                    <button>
+                      {isUserPlayer || isUserTrainer
+                        ? "Rezerve et"
+                        : "Görüntüle"}
+                    </button>
                   </Link>
                 </td>
               </tr>
@@ -114,7 +119,7 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
       ) : (
         <p>Henüz kulübe ait kort bulunmamaktadır</p>
       )}
-      {courts?.courts?.length > 0 && (
+      {courts?.length > 0 && (
         <button onClick={openCourtsModal}>Tümünü Görüntüle</button>
       )}
 
@@ -123,7 +128,9 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
           isCourtsModalOpen={isCourtsModalOpen}
           closeCourtsModal={closeCourtsModal}
           selectedClub={selectedClub}
-          courts={courts?.courts}
+          courts={courts}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
     </div>

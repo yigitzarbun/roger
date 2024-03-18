@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -33,8 +33,12 @@ export type FormValues = {
   repeat_password: string;
 };
 
-const ClubRegisterForm = () => {
+interface ClubRegisterProps {
+  setUserType: Dispatch<SetStateAction<string>>;
+}
+const ClubRegisterForm = (props: ClubRegisterProps) => {
   const { t } = useTranslation();
+  const { setUserType } = props;
 
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
@@ -254,9 +258,17 @@ const ClubRegisterForm = () => {
               />
             </div>
           </div>
-          <button type="submit" className={styles["form-button"]}>
-            {t("registerButtonText")}
-          </button>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={() => setUserType("")}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              {t("registerButtonText")}
+            </button>
+          </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>
           Hesabın var mı?{" "}

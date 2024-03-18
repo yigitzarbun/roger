@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
@@ -24,12 +24,15 @@ import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
 import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 import { generateTimesArray } from "../../../common/util/TimeFunctions";
+import { User } from "../../../store/slices/authSlice";
 
 interface AddCourtModalProps {
   isAddCourtModalOpen: boolean;
   closeAddCourtModal: () => void;
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
+  currentClub: any;
+  user: User;
 }
 
 type FormValues = {
@@ -50,9 +53,9 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     closeAddCourtModal,
     courtStructureTypes,
     courtSurfaceTypes,
+    currentClub,
+    user,
   } = props;
-
-  const user = useAppSelector((store) => store?.user?.user);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
@@ -60,9 +63,6 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     setSelectedImage(imageFile);
     setValue("image", imageFile);
   };
-
-  const { data: currentClub, isLoading: isCurrentClubLoading } =
-    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
   const clubBankDetailsExist =
     currentClub?.[0]["iban"] &&
@@ -124,179 +124,201 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     }
   }, [isSuccess]);
 
-  if (isCurrentClubLoading) {
-    return <PageLoading />;
-  }
-
   return (
-    <Modal
+    <ReactModal
       isOpen={isAddCourtModalOpen}
       onRequestClose={closeAddCourtModal}
       className={styles["modal-container"]}
+      shouldCloseOnOverlayClick={false}
+      overlayClassName={styles["modal-overlay"]}
     >
+      <div className={styles["overlay"]} onClick={closeAddCourtModal} />
       <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Kort Ekle</h1>
-        <FaWindowClose
-          onClick={closeAddCourtModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Kort Adı</label>
-            <input
-              {...register("court_name", { required: true })}
-              type="text"
-            />
-            {errors.court_name && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Fiyat (TL / saat)</label>
-            <input
-              {...register("price_hour", { required: true })}
-              type="number"
-              min="0"
-            />
-            {errors.price_hour && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Kort Yüzeyi</label>
-            <select {...register("court_surface_type_id", { required: true })}>
-              <option value="">-- Kort Yüzeyi --</option>
-              {courtSurfaceTypes?.map((surface) => (
-                <option
-                  key={surface.court_surface_type_id}
-                  value={surface.court_surface_type_id}
+        <div className={styles["modal-content"]}>
+          <h1 className={styles.title}>Kort Ekle</h1>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className={styles["form-container"]}
+          >
+            <div className={styles["input-outer-container"]}>
+              <div className={styles["input-container"]}>
+                <label>Kort Adı</label>
+                <input
+                  {...register("court_name", { required: true })}
+                  type="text"
+                  placeholder="örn. Merkez Kort"
+                />
+                {errors.court_name && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+              <div className={styles["input-container"]}>
+                <label>Fiyat (TL / saat)</label>
+                <input
+                  {...register("price_hour", { required: true })}
+                  type="number"
+                  min="0"
+                />
+                {errors.price_hour && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+              <div className={styles["input-container"]}>
+                <label>Kort Yüzeyi</label>
+                <select
+                  {...register("court_surface_type_id", { required: true })}
                 >
-                  {surface.court_surface_type_name}
-                </option>
-              ))}
-            </select>
-            {errors.court_surface_type_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Mekan Tipi</label>
-            <select
-              {...register("court_structure_type_id", { required: true })}
-            >
-              <option value="">-- Mekan Tipi --</option>
-              {courtStructureTypes?.map((structure) => (
-                <option
-                  key={structure.court_structure_type_id}
-                  value={structure.court_structure_type_id}
-                >
-                  {structure.court_structure_type_name}
-                </option>
-              ))}
-            </select>
-            {errors.court_structure_type_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Açılış Saati</label>
-            <select
-              {...register("opening_time", { required: true })}
-              onChange={handleOpeningTime}
-            >
-              <option value="">-- Açılış Saati --</option>
-              {generateTimesArray(24).map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-            {errors.opening_time && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Kapanış Saati</label>
-            <select
-              {...register("closing_time", {
-                required: true,
-                validate: (value) => {
-                  const closing = Number(String(value).slice(0, 2));
-                  const opening = Number(String(openingTime).slice(0, 2));
-
-                  return closing > opening;
-                },
-              })}
-            >
-              <option value="">-- Kapanış Saati --</option>
-              {generateTimesArray(24).map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-            {errors.closing_time?.type === "required" && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-            {errors.closing_time?.type === "validate" && (
-              <span className={styles["error-field"]}>
-                Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
-              </span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          {currentClub?.[0]["higher_price_for_non_subscribers"] && (
-            <div className={styles["input-container"]}>
-              <label>Üye Olmayanlar İçin Fiyat (TL / saat)</label>
-
-              <input
-                {...register("price_hour_non_subscriber", { required: true })}
-                type="number"
-                min="0"
-              />
-              {errors.price_hour_non_subscriber && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
+                  <option value="">-- Kort Yüzeyi --</option>
+                  {courtSurfaceTypes?.map((surface) => (
+                    <option
+                      key={surface.court_surface_type_id}
+                      value={surface.court_surface_type_id}
+                    >
+                      {surface.court_surface_type_name}
+                    </option>
+                  ))}
+                </select>
+                {errors.court_surface_type_id && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
             </div>
-          )}
-          <div className={styles["input-container"]}>
-            <label>Kort Resmi</label>
-            <input
-              type="file"
-              accept="image/*"
-              name="image"
-              onChange={handleImageChange}
-            />
-          </div>
+            <div className={styles["input-outer-container"]}>
+              <div className={styles["input-container"]}>
+                <label>Mekan Tipi</label>
+                <select
+                  {...register("court_structure_type_id", { required: true })}
+                >
+                  <option value="">-- Mekan Tipi --</option>
+                  {courtStructureTypes?.map((structure) => (
+                    <option
+                      key={structure.court_structure_type_id}
+                      value={structure.court_structure_type_id}
+                    >
+                      {structure.court_structure_type_name}
+                    </option>
+                  ))}
+                </select>
+                {errors.court_structure_type_id && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+              <div className={styles["input-container"]}>
+                <label>Açılış Saati</label>
+                <select
+                  {...register("opening_time", { required: true })}
+                  onChange={handleOpeningTime}
+                >
+                  <option value="">-- Açılış Saati --</option>
+                  {generateTimesArray(24).map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+                {errors.opening_time && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+              </div>
+              <div className={styles["input-container"]}>
+                <label>Kapanış Saati</label>
+                <select
+                  {...register("closing_time", {
+                    required: true,
+                    validate: (value) => {
+                      const closing = Number(String(value).slice(0, 2));
+                      const opening = Number(String(openingTime).slice(0, 2));
+
+                      return closing > opening;
+                    },
+                  })}
+                >
+                  <option value="">-- Kapanış Saati --</option>
+                  {generateTimesArray(24).map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+                {errors.closing_time?.type === "required" && (
+                  <span className={styles["error-field"]}>
+                    Bu alan zorunludur.
+                  </span>
+                )}
+                {errors.closing_time?.type === "validate" && (
+                  <span className={styles["error-field"]}>
+                    Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className={styles["input-outer-container"]}>
+              {currentClub?.[0]["higher_price_for_non_subscribers"] && (
+                <div className={styles["input-container"]}>
+                  <label>Üye Olmayanlar İçin Fiyat (TL / saat)</label>
+
+                  <input
+                    {...register("price_hour_non_subscriber", {
+                      required: true,
+                    })}
+                    type="number"
+                    min="0"
+                  />
+                  {errors.price_hour_non_subscriber && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              )}
+              <div className={styles["input-container"]}>
+                <label>Kort Resmi</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  name="image"
+                  onChange={handleImageChange}
+                />
+              </div>
+            </div>
+            {currentClub?.[0]["higher_price_for_non_subscribers"] && (
+              <p className={styles["description-text"]}>
+                Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
+                kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı
+                eklemek için profilinizdeki kurallar bölümünü ziyaret edin.
+              </p>
+            )}
+            <div className={styles["buttons-container"]}>
+              <button
+                onClick={closeAddCourtModal}
+                className={styles["discard-button"]}
+              >
+                İptal Et
+              </button>
+              <button
+                type="submit"
+                className={styles["submit-button"]}
+                disabled={!clubBankDetailsExist}
+              >
+                {clubBankDetailsExist
+                  ? "Tamamla"
+                  : "Banka Hesap Bilgilerinizi Ekleyin"}
+              </button>
+            </div>
+          </form>
         </div>
-        {currentClub?.[0]["higher_price_for_non_subscribers"] && (
-          <p className={styles["description-text"]}>
-            Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
-            kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı
-            eklemek için profilinizdeki kurallar bölümünü ziyaret edin.
-          </p>
-        )}
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={!clubBankDetailsExist}
-        >
-          {clubBankDetailsExist
-            ? "Tamamla"
-            : "Banka Hesap Bilgilerinizi Ekleyin"}
-        </button>
-      </form>
-    </Modal>
+      </div>
+    </ReactModal>
   );
 };
 

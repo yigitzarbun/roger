@@ -94,6 +94,8 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     clubId: clubId,
     courtSurfaceType: courtSurfaceType,
     courtStructureType: courtStructureType,
+    textSearch: "",
+    isActive: true,
   });
 
   const pageNumbers = [];

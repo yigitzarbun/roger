@@ -17,6 +17,18 @@
   "equipText": "Improve your performence with the best equipment",
   "equipButtonText": "Find Equipment",
 
+  "calendarTitle": "Calendar",
+  "calendarText": "Add, update and track court bookings",
+  "calendarButtonText": "View Calender",
+
+  "courtsTitle": "Courts",
+  "courtsText": "Manage courts from a single dashboard",
+  "courtsButtonText": "View Courts",
+
+  "subscriptionsTitle": "Subscriptions",
+  "subscriptionsText": "Manage subscription packages and subscribers",
+  "subscriptionsButtonText": "View Subscriptions",
+
   "loginEmailInputPlaceholder": "john@doe.com",
   "loginButtonText": "Login",
 

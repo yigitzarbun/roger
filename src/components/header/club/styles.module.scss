@@ -5,7 +5,7 @@
   display: flex;
   justify-content: space-between;
   column-gap: 80px;
-
+  $header-z-index: 10;
   .header-nav-sub-container {
     display: flex;
     justify-content: space-between;
@@ -16,13 +16,13 @@
   .nav-link-club {
     color: $roger-text-color;
     text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
     border: none;
     background-color: inherit;
     display: flex;
     align-items: flex-start;
     cursor: pointer;
+    border-bottom: 1px solid inherit;
+    padding-bottom: 1vh;
     .notification {
       font-size: 0.5rem;
       color: $roger-blue;
@@ -36,13 +36,13 @@
   .active-nav-link-club {
     color: $roger-blue;
     text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
     border: none;
     background-color: inherit;
     display: flex;
     align-items: flex-start;
     cursor: pointer;
+    border-bottom: 1px solid $roger-blue;
+    padding-bottom: 1vh;
     .notification {
       color: white;
       font-size: 0.5rem;

@@ -7,7 +7,7 @@
   margin-top: 100px;
 
   .hero {
-    width: 50%;
+    width: 60%;
     height: auto;
     object-fit: cover;
     object-position: center;
@@ -21,7 +21,7 @@
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
-    width: 45%;
+    width: 35%;
     margin: 0 auto;
   }
 
@@ -39,27 +39,62 @@
   .input-container {
     display: flex;
     flex-direction: column;
-    row-gap: 1vh;
+    row-gap: 2vh;
+    width: 100%;
+    .error-field {
+      font-size: 0.8rem;
+      color: $roger-red;
+    }
+    label {
+      font-size: 0.9rem;
+    }
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: inherit;
+      height: 50px;
+    }
+    .court-picture-container {
+      display: flex;
+    }
   }
 
-  input {
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    border: none;
-  }
+  .buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 1vh 0;
 
-  .form-button {
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    border: none;
-    margin-top: 4vh;
-    font-size: 1rem;
-    font-weight: bold;
-  }
-
-  .form-button:hover {
-    background-color: $roger-blue;
-    cursor: pointer;
+    .passive-submit-button {
+      background-color: $roger-black-dark;
+      color: white;
+      border: none;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      height: 40px;
+      width: 100%;
+    }
+    .passive-submit-button:hover {
+      cursor: pointer;
+    }
+    .active-submit-button {
+      background-color: white;
+      color: black;
+      border: none;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      height: 40px;
+      width: 100%;
+    }
+    .active-submit-button:hover {
+      background-color: $roger-white;
+      color: black;
+    }
   }
 
   .error-field {

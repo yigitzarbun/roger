@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import styles from "./styles.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -41,8 +41,12 @@ export type FormValues = {
   image: string;
   repeat_password;
 };
+interface TrainerRegisterProps {
+  setUserType: Dispatch<SetStateAction<string>>;
+}
+const TrainerRegisterForm = (props: TrainerRegisterProps) => {
+  const { setUserType } = props;
 
-const TrainerRegisterForm = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -429,9 +433,17 @@ const TrainerRegisterForm = () => {
               />
             </div>
           </div>
-          <button type="submit" className={styles["form-button"]}>
-            {t("registerButtonText")}
-          </button>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={() => setUserType("")}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              {t("registerButtonText")}
+            </button>
+          </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>
           Hesabın var mı?{" "}

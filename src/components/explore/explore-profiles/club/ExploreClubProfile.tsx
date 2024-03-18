@@ -38,7 +38,11 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
     <div className={styles.profile}>
       <ExploreClubsProfileSection selectedClub={selectedClub} />
 
-      <ExploreClubsCourtsSection selectedClub={selectedClub} />
+      <ExploreClubsCourtsSection
+        selectedClub={selectedClub}
+        isUserPlayer={isUserPlayer}
+        isUserTrainer={isUserTrainer}
+      />
       <ExploreClubsTrainersSection
         isUserTrainer={isUserTrainer}
         isUserPlayer={isUserPlayer}

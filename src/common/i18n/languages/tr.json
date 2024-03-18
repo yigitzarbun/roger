@@ -17,6 +17,18 @@
   "equipText": "En kaliteli ekipmanlarla performansını arttır",
   "equipButtonText": "Ekipman Bul",
 
+  "calendarTitle": "Takvim",
+  "calendarText": "Kort rezervasyonlarını takip et ve yönet",
+  "calendarButtonText": "Takvimi Görüntüle",
+
+  "courtsTitle": "Kortlar",
+  "courtsText": "Kulübüne ait kortları ekle ve düzenle",
+  "courtsButtonText": "Kortları Görüntüle",
+
+  "subscriptionsTitle": "Üyelikler",
+  "subscriptionsText": "Üyelik paketlerin ile üyelerini ekle ve yönet",
+  "subscriptionsButtonText": "Üyelikleri Görüntüle",
+
   "loginEmailInputPlaceholder": "roger@federer.com",
   "loginButtonText": "Giriş yap",
 

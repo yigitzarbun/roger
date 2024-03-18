@@ -37,7 +37,8 @@
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
-
+    overflow-y: auto;
+    height: 550px;
     h3 {
       font-size: 1.7rem;
     }
@@ -88,14 +89,14 @@
           row-gap: 2vh;
           width: 48%;
 
+          label {
+            font-size: 0.9rem;
+          }
           .search-option-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
 
-            label {
-              font-size: 0.9rem;
-            }
             .options {
               display: flex;
               column-gap: 1vw;
@@ -118,6 +119,32 @@
             width: 100%;
             background-color: inherit;
             height: 50px;
+          }
+          .suggested-list {
+            display: flex;
+            flex-direction: column;
+            row-gap: 0.5vh;
+            .suggestion {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              p {
+                font-size: 0.9rem;
+              }
+              button {
+                background-color: $roger-black-dark;
+                border: none;
+                // width: 150px;
+                padding: 10px;
+                border-radius: $roger-border-radius;
+                font-size: 0.9rem;
+                cursor: pointer;
+                color: white;
+                text-decoration: none;
+                text-align: center;
+                font-size: 0.8rem;
+              }
+            }
           }
         }
       }

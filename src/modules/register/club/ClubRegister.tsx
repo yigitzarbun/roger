@@ -1,10 +1,14 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import ClubRegisterForm from "../../../components/register/club/ClubRegisterForm";
 
-const TrainerRegister = () => {
+interface ClubRegisterProps {
+  setUserType: Dispatch<SetStateAction<string>>;
+}
+const TrainerRegister = (props: ClubRegisterProps) => {
+  const { setUserType } = props;
   return (
     <div>
-      <ClubRegisterForm />
+      <ClubRegisterForm setUserType={setUserType} />
     </div>
   );
 };

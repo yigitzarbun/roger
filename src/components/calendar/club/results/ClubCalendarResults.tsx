@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -13,12 +13,14 @@ import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookin
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import {
+  useGetBookingsQuery,
+  useGetPaginatedClubCalendarBookingsQuery,
+} from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetCourtsByFilterQuery } from "../../../../api/endpoints/CourtsApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
@@ -28,12 +30,13 @@ import {
 } from "../../../../common/util/TimeFunctions";
 
 interface ClubCalendarResultsProps {
-  date: string;
   courtId: number;
   eventTypeId: number;
+  myCourts: any[];
+  textSearch: string;
 }
 const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
-  const { date, courtId, eventTypeId } = props;
+  const { courtId, eventTypeId, myCourts, textSearch } = props;
 
   // fetch data
   const user = useAppSelector((store) => store.user.user);
@@ -55,6 +58,19 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const {
+    data: clubCalendarBookings,
+    isLoading: isClubCalendarBookingsLoading,
+    refetch: refetchClubCalendarBookings,
+  } = useGetPaginatedClubCalendarBookingsQuery({
+    currentPage: currentPage,
+    textSearch: textSearch,
+    courtId: courtId,
+    eventTypeId: eventTypeId,
+    clubId: user?.clubDetails?.club_id,
+  });
   const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
 
   const openAddBookingModal = () => {
@@ -83,11 +99,6 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
 
   // date
 
-  const { data: myCourts, isLoading: isMyCourtsLoading } =
-    useGetCourtsByFilterQuery({
-      club_id: user?.clubDetails?.club_id,
-    });
-
   const { data: myGroups, isLoading: isMyGroupsLoading } =
     useGetStudentGroupsByFilterQuery({
       club_id: user?.user?.user_id,
@@ -109,19 +120,19 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       (new Date(booking.event_date).toLocaleDateString() === currentDayLocale &&
         booking.event_time > currentTime)
   );
-
+  console.log(clubCalendarBookings);
   const filteredBookings = myBookings?.filter((booking) => {
     const eventDate = new Date(booking.event_date);
-    if (date === "" && courtId === null && eventTypeId === null) {
+    if (courtId === null && eventTypeId === null) {
       return true;
-    } else if (
-      (date === eventDate.toLocaleDateString() || date === "") &&
-      (courtId === booking.court_id || courtId === null) &&
-      (eventTypeId === booking.event_type_id || eventTypeId === null)
-    ) {
+    } else {
       return booking;
     }
   });
+
+  useEffect(() => {
+    refetchClubCalendarBookings();
+  }, [currentPage, textSearch, courtId, eventTypeId]);
 
   // data loading check
   if (
@@ -131,7 +142,6 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     isEventTypesLoading ||
     isUsersLoading ||
     isMyExternalMembersLoading ||
-    isMyCourtsLoading ||
     isMyGroupsLoading ||
     isBookingsLoading
   ) {
@@ -155,7 +165,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
         </button>
       </div>
 
-      {filteredBookings?.length === 0 ? (
+      {clubCalendarBookings?.bookings?.length === 0 ? (
         <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
       ) : (
         <table>
@@ -174,7 +184,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
             </tr>
           </thead>
           <tbody>
-            {filteredBookings?.map((booking) => (
+            {clubCalendarBookings?.bookings?.map((booking) => (
               <tr key={booking.booking_id}>
                 <td>
                   <Link
@@ -463,11 +473,13 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       <AddClubCourtBookingModal
         addBookingModalOpen={addBookingModalOpen}
         closeAddBookingModal={closeAddBookingModal}
+        myCourts={myCourts}
       />
       <EditClubCourtBookingModal
         editBookingModalOpen={editBookingModalOpen}
         closeEditBookingModal={closeEditBookingModal}
         selectedBooking={selectedBooking}
+        myCourts={myCourts}
       />
     </div>
   );

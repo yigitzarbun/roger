@@ -15,8 +15,6 @@ const ClubHome = () => {
       <div className={styles["top-container"]}>
         <ClubHomeCalendar />
         <ClubHomeCourts />
-      </div>
-      <div className={styles["mid-container"]}>
         <ClubSubscriptions />
         <ClubEquip />
       </div>

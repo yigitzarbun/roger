@@ -12,9 +12,9 @@ const Register = () => {
   return (
     <div className={styles["register-container"]}>
       {userType === "" && <CommonRegisterNav setUserType={setUserType} />}
-      {userType === "player" && <PlayerRegister />}
-      {userType === "trainer" && <TrainerRegister />}
-      {userType === "club" && <ClubRegister />}
+      {userType === "player" && <PlayerRegister setUserType={setUserType} />}
+      {userType === "trainer" && <TrainerRegister setUserType={setUserType} />}
+      {userType === "club" && <ClubRegister setUserType={setUserType} />}
       {userType !== "" && (
         <button
           onClick={() => setUserType("")}

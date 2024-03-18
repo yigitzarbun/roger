@@ -28,13 +28,15 @@
 
   .user-type-container {
     background-color: $roger-box-bg-color;
-    padding: $roger-box-padding;
+    border: 1px $roger-border-color solid;
     border-radius: $roger-border-radius;
-    width: 30%;
+    padding: $roger-box-padding;
+    font-size: 0.9rem;
     cursor: pointer;
+    width: 30%;
   }
   .user-type-container:hover {
-    background-color: $roger-blue;
+    border-color: white;
   }
   .user-type-title {
     font-size: 1rem;

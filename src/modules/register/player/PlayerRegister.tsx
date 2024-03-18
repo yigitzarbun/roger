@@ -1,11 +1,15 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 import PlayerRegisterForm from "../../../components/register/player/PlayerRegisterForm";
 
-const PlayerRegister = () => {
+interface PlayerRegisterProps {
+  setUserType: Dispatch<SetStateAction<string>>;
+}
+const PlayerRegister = (props: PlayerRegisterProps) => {
+  const { setUserType } = props;
   return (
     <div>
-      <PlayerRegisterForm />
+      <PlayerRegisterForm setUserType={setUserType} />
     </div>
   );
 };

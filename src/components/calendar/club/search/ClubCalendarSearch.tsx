@@ -12,50 +12,47 @@ import {
 import { useAppSelector } from "../../../../store/hooks";
 
 interface ClubCalendarSearchProps {
-  handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleCourt: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClear: () => void;
-  date: string;
   courtId: number;
   eventTypeId: number;
+  myCourts: any[];
+  textSearch: string;
 }
 const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
   const {
-    handleDate,
     handleCourt,
     handleClear,
-    date,
     courtId,
     handleEventType,
     eventTypeId,
+    myCourts,
+    textSearch,
+    handleTextSearch,
   } = props;
 
   // date filter
-  const user = useAppSelector((store) => store?.user);
   const tomorrow = new Date(currentDayObject);
   tomorrow.setDate(currentDayObject.getDate() + 1);
-
-  const { data: myCourts, isLoading: isMyCourtsLoading } =
-    useGetCourtsByFilterQuery({
-      club_id: user?.user?.clubDetails?.club_id,
-    });
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
-  if (isMyCourtsLoading || isEventTypesLoading) {
+  if (isEventTypesLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["calendar-page-container"]}>
-      <div className={styles["input-container"]}>
-        <select onChange={handleDate} value={date}>
-          <option value="">-- Tarih --</option>
-          <option value={currentDayLocale}>Bugün</option>
-          <option value={tomorrow.toLocaleDateString()}>Yarın</option>
-        </select>
+      <div className={styles["search-container"]}>
+        <input
+          type="text"
+          onChange={handleTextSearch}
+          value={textSearch}
+          placeholder="Oyuncu / Eğitmen / Grup adı"
+        />
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleCourt} value={courtId ?? ""}>
@@ -77,7 +74,14 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
           ))}
         </select>
       </div>
-      <button onClick={handleClear} className={styles["button"]}>
+      <button
+        onClick={handleClear}
+        className={
+          textSearch !== "" || courtId > 0 || eventTypeId > 0
+            ? styles["active-clear-button"]
+            : styles["passive-clear-button"]
+        }
+      >
         Temizle
       </button>
     </div>

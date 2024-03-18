@@ -1,179 +1,191 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 import paths from "../../../routing/Paths";
-
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import { ImBlocked } from "react-icons/im";
 import { useAppSelector } from "../../../store/hooks";
 
 import PageLoading from "../../../components/loading/PageLoading";
-import AddCourtButton from "../add-court-button/AddCourtButton";
+import { FaPlusSquare } from "react-icons/fa";
 
 import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetCourtsByFilterQuery } from "../../../api/endpoints/CourtsApi";
-import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
   structureTypeId: number;
-  price: number;
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
+  textSearch: string;
   openEditCourtModal: (value: number) => void;
   openAddCourtModal: () => void;
+  currentClub: any;
+  currentClubCourts: any;
+  currentPage: number;
+  courtStatus: null | boolean;
+  handleCourtPage: (e) => void;
+  handleNextPage: () => void;
+  handlePrevPage: () => void;
 }
 const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   const {
     surfaceTypeId,
     structureTypeId,
-    price,
+    textSearch,
     courtStructureTypes,
     courtSurfaceTypes,
     openEditCourtModal,
     openAddCourtModal,
+    currentClub,
+    currentClubCourts,
+    currentPage,
+    courtStatus,
+    handleCourtPage,
+    handleNextPage,
+    handlePrevPage,
   } = props;
 
-  const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: currentClub, isLoading: isCurrentClubLoading } =
-    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
+  const clubBankDetailsExist =
+    currentClub?.[0]["iban"] &&
+    currentClub?.[0]["bank_id"] &&
+    currentClub?.[0]["name_on_bank_account"];
 
   const higher_price_for_non_subscribers =
     currentClub?.[0]["higher_price_for_non_subscribers"];
 
-  const {
-    data: currentClubCourts,
-    isLoading: isCurrentClubCourtsLoading,
-    refetch: refetchClubCourts,
-  } = useGetCourtsByFilterQuery({
-    club_id: user?.clubDetails.club_id,
-  });
-
-  const courtStructureIdValue = Number(structureTypeId) ?? null;
-  const courtSurfaceIdValue = Number(surfaceTypeId) ?? null;
-  const courtPriceValue = Number(price) ?? null;
-
-  const filteredCourts = currentClubCourts?.filter((court) => {
-    if (
-      courtStructureIdValue === 0 &&
-      courtSurfaceIdValue === 0 &&
-      courtPriceValue === 0
-    ) {
-      return court;
-    } else if (
-      (courtStructureIdValue === court.court_structure_type_id ||
-        courtStructureIdValue === 0) &&
-      (courtSurfaceIdValue === court.court_surface_type_id ||
-        courtSurfaceIdValue === 0) &&
-      (courtPriceValue <= court.price_hour || courtPriceValue === 0)
-    ) {
-      return court;
-    }
-  });
-
-  if (isCurrentClubLoading || isCurrentClubCourtsLoading) {
-    return <PageLoading />;
+  const pageNumbers = [];
+  for (let i = 1; i <= currentClubCourts?.totalPages; i++) {
+    pageNumbers.push(i);
   }
 
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Kortlar</h2>
-        <AddCourtButton openAddCourtModal={openAddCourtModal} />
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Kortlar</h2>
+          <button
+            onClick={openAddCourtModal}
+            className={styles["add-court-button"]}
+            disabled={!clubBankDetailsExist}
+          >
+            {clubBankDetailsExist
+              ? "Yeni Kort Ekle"
+              : "Kort Eklemek İçin Banka Hesap Bilgilerinizi Ekleyin"}
+          </button>
+        </div>
+        {currentClubCourts?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
-      {isCurrentClubCourtsLoading && <p>Yükleniyor...</p>}
-      {currentClubCourts?.length === 0 ? (
+      {currentClubCourts?.courts?.length === 0 ? (
         <p>Henüz sisteme eklenmiş kortunuz bulunmamaktadır.</p>
       ) : (
-        filteredCourts.length === 0 && (
+        currentClubCourts?.courts?.length === 0 &&
+        (surfaceTypeId > 0 || structureTypeId > 0 || textSearch !== "") && (
           <p>
             Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
             tekrar deneyin.
           </p>
         )
       )}
-      {courtStructureTypes &&
-        courtSurfaceTypes &&
-        filteredCourts.length > 0 && (
-          <table>
-            <thead>
-              <tr>
-                <th>Kort</th>
-                <th>Kort Adı</th>
-                <th>Yüzey</th>
-                <th>Mekan</th>
-                <th>Açılış</th>
-                <th>Kapanış</th>
-                <th>Fiyat </th>
-                <th>Fiyat - (misafir)</th>
-                <th>Durum</th>
+      {currentClubCourts?.courts?.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Kort</th>
+              <th>Kort Adı</th>
+              <th>Yüzey</th>
+              <th>Mekan</th>
+              <th>Açılış</th>
+              <th>Kapanış</th>
+              <th>Fiyat </th>
+              <th>Fiyat - (misafir)</th>
+              <th>Aktif</th>
+              <th>Kortu Düzenle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentClubCourts?.courts?.map((court) => (
+              <tr key={court.court_id} className={styles["court-row"]}>
+                <td>
+                  <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}>
+                    <img
+                      src={
+                        court?.courtImage
+                          ? court?.courtImage
+                          : "/images/icons/avatar.jpg"
+                      }
+                      alt="kort"
+                      className={styles["court-image"]}
+                    />
+                  </Link>
+                </td>
+                <td>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
+                    className={styles["court-name"]}
+                  >
+                    {court.court_name}
+                  </Link>
+                </td>
+                <td>{court.court_surface_type_name}</td>
+                <td>{court.court_structure_type_name}</td>
+                <td>{court.opening_time.slice(0, 5)}</td>
+                <td>{court.closing_time.slice(0, 5)}</td>
+                <td>{court.price_hour}</td>
+                <td>
+                  {higher_price_for_non_subscribers &&
+                  court.price_hour_non_subscriber
+                    ? court.price_hour_non_subscriber
+                    : higher_price_for_non_subscribers &&
+                      !court.price_hour_non_subscriber
+                    ? "Fiyat Girin"
+                    : higher_price_for_non_subscribers === false && "-"}
+                </td>
+                <td>
+                  {court.is_active ? (
+                    <IoIosCheckmarkCircle className={styles.done} />
+                  ) : (
+                    <ImBlocked className={styles.blocked} />
+                  )}
+                </td>
+                <td onClick={() => openEditCourtModal(court.court_id)}>
+                  <button className={styles["edit-button"]}>Düzenle</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {filteredCourts.map((court) => (
-                <tr key={court.court_id} className={styles["court-row"]}>
-                  <td>
-                    <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}>
-                      <img
-                        src={
-                          court?.image
-                            ? court?.image
-                            : "/images/icons/avatar.png"
-                        }
-                        alt="kort"
-                        className={styles["court-image"]}
-                      />
-                    </Link>
-                  </td>
-                  <td>
-                    <Link
-                      to={`${paths.EXPLORE_PROFILE}kort/${court.court_id}`}
-                      className={styles.name}
-                    >
-                      {court.court_name}
-                    </Link>
-                  </td>
-                  <td>
-                    {
-                      courtSurfaceTypes.find(
-                        (surface) =>
-                          surface.court_surface_type_id ==
-                          court.court_surface_type_id
-                      ).court_surface_type_name
-                    }
-                  </td>
-                  <td>
-                    {
-                      courtStructureTypes.find(
-                        (structure) =>
-                          structure.court_structure_type_id ==
-                          court.court_structure_type_id
-                      ).court_structure_type_name
-                    }
-                  </td>
-                  <td>{court.opening_time.slice(0, 5)}</td>
-                  <td>{court.closing_time.slice(0, 5)}</td>
-                  <td>{court.price_hour}</td>
-                  <td>
-                    {higher_price_for_non_subscribers &&
-                    court.price_hour_non_subscriber
-                      ? court.price_hour_non_subscriber
-                      : higher_price_for_non_subscribers &&
-                        !court.price_hour_non_subscriber
-                      ? "Fiyat Girin"
-                      : higher_price_for_non_subscribers === false && "-"}
-                  </td>
-                  <td>{court.is_active ? "Aktif" : "Bloke"}</td>
-                  <td onClick={() => openEditCourtModal(court.court_id)}>
-                    <button className={styles["edit-button"]}>Düzenle</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
+      )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleCourtPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

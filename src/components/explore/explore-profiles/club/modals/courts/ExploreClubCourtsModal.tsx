@@ -18,10 +18,19 @@ interface ExploreClubCourtsModalProps {
   closeCourtsModal: () => void;
   selectedClub: any;
   courts: any;
+  isUserPlayer: boolean;
+  isUserTrainer: boolean;
 }
 
 const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
-  const { isCourtsModalOpen, closeCourtsModal, selectedClub, courts } = props;
+  const {
+    isCourtsModalOpen,
+    closeCourtsModal,
+    selectedClub,
+    courts,
+    isUserPlayer,
+    isUserTrainer,
+  } = props;
 
   return (
     <ReactModal
@@ -104,7 +113,11 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                       <Link
                         to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
                       >
-                        <button>Rezerve et</button>
+                        <button>
+                          {isUserPlayer || isUserTrainer
+                            ? "Rezerve et"
+                            : "Görüntüle"}
+                        </button>
                       </Link>
                     </td>
                   </tr>

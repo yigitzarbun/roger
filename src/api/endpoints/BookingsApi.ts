@@ -55,6 +55,13 @@ export const bookingsSlice = createApi({
     getBookingsByFilter: builder.query({
       query: (filter) => `/bookings/filter?${new URLSearchParams(filter)}`,
     }),
+    getPaginatedClubCalendarBookings: builder.query({
+      query: (filter) =>
+        `/bookings/paginated-club-calendar-bookings?${new URLSearchParams(
+          filter
+        )}`,
+    }),
+
     addBooking: builder.mutation({
       query: (booking) => ({
         url: "/bookings",
@@ -83,6 +90,7 @@ export const {
   useGetPlayersLeaderboardQuery,
   useGetBookingsByFilterQuery,
   useGetBookedCourtHoursQuery,
+  useGetPaginatedClubCalendarBookingsQuery,
   useAddBookingMutation,
   useUpdateBookingMutation,
 } = bookingsSlice;

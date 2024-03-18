@@ -10,7 +10,7 @@ interface CommonRegisterNavProps {
 const CommonRegisterNav = ({ setUserType }: CommonRegisterNavProps) => {
   return (
     <div className={styles["common-register-container"]}>
-      <img className={styles["hero"]} src="/images/hero/court5.jpeg" />
+      <img className={styles["hero"]} src="/images/hero/court9.jpeg" />
       <div className={styles["user-type-outer-container"]}>
         <h1>Aşağıdakilerden hangisi seni en iyi tarif ediyor?</h1>
         <div className={styles["user-type-options-container"]}>

@@ -3,14 +3,17 @@
 
 .club-equip-container {
   background-color: $roger-box-bg-color;
-  width: 48%;
+  border: 1px $roger-border-color solid;
+  width: 25%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   row-gap: 25px;
-
+  color: white;
+  text-decoration: none;
+  transition: 1s ease;
   h2 {
     font-weight: bold;
     font-size: 2rem;
@@ -32,4 +35,7 @@
   button:hover {
     background-color: $roger-black-light;
   }
+}
+.club-equip-container:hover {
+  border-color: white;
 }

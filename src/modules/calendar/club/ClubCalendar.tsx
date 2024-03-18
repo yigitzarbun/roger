@@ -1,20 +1,18 @@
 import React, { useState, ChangeEvent } from "react";
+import { useAppSelector } from "../../../store/hooks";
 
-import ClubCalendarHero from "../../../components/calendar/club/hero/ClubCalendarHero";
 import ClubCalendarSearch from "../../../components/calendar/club/search/ClubCalendarSearch";
 import ClubCalendarResults from "../../../components/calendar/club/results/ClubCalendarResults";
+import { useGetCourtsByFilterQuery } from "../../../api/endpoints/CourtsApi";
 
 import styles from "./styles.module.scss";
 
 const ClubCalendar = () => {
-  const [date, setDate] = useState<string>("");
+  const user = useAppSelector((store) => store.user.user);
+
   const [courtId, setCourtId] = useState<number | null>(null);
   const [eventTypeId, setEventTypeId] = useState<number | null>(null);
-
-  const handleDate = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    setDate(event.target.value);
-  };
+  const [textSearch, setTextSearch] = useState<string>("");
 
   const handleCourt = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -25,28 +23,37 @@ const ClubCalendar = () => {
     const value = parseInt(event.target.value, 10);
     setEventTypeId(isNaN(value) ? null : value);
   };
+  const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextSearch(event.target.value);
+  };
+  const { data: myCourts, isLoading: isMyCourtsLoading } =
+    useGetCourtsByFilterQuery({
+      club_id: user?.clubDetails?.club_id,
+      is_active: true,
+    });
 
   const handleClear = () => {
-    setDate("");
     setCourtId(null);
     setEventTypeId(null);
+    setTextSearch("");
   };
   return (
     <div className={styles["calendar-container"]}>
-      <ClubCalendarHero />
       <ClubCalendarSearch
-        handleDate={handleDate}
         handleCourt={handleCourt}
         handleEventType={handleEventType}
+        handleTextSearch={handleTextSearch}
         handleClear={handleClear}
-        date={date}
+        myCourts={myCourts}
         courtId={courtId}
         eventTypeId={eventTypeId}
+        textSearch={textSearch}
       />
       <ClubCalendarResults
-        date={date}
         courtId={courtId}
         eventTypeId={eventTypeId}
+        myCourts={myCourts}
+        textSearch={textSearch}
       />
     </div>
   );

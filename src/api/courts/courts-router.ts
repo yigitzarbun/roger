@@ -27,6 +27,20 @@ courtsRouter.get(
     }
   }
 );
+
+courtsRouter.get(
+  "/get-club-courts/:clubId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const clubCourts = await courtsModel.getClubCourtsByClubId(
+        Number(req.params.clubId)
+      );
+      res.status(200).json(clubCourts);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 courtsRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {

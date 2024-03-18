@@ -39,10 +39,11 @@ import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/Stud
 interface AddClubCourtBookingModalProps {
   addBookingModalOpen: boolean;
   closeAddBookingModal: () => void;
+  myCourts: any[];
 }
 
 const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
-  const { addBookingModalOpen, closeAddBookingModal } = props;
+  const { addBookingModalOpen, closeAddBookingModal, myCourts } = props;
 
   const user = useAppSelector((store) => store?.user);
 
@@ -61,12 +62,6 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     useGetClubStaffByFilterQuery({
       club_id: user?.user?.clubDetails?.club_id,
       employment_status: "accepted",
-    });
-
-  const { data: myCourts, isLoading: isMyCourtsLoading } =
-    useGetCourtsByFilterQuery({
-      club_id: user?.user?.clubDetails?.club_id,
-      is_active: true,
     });
 
   const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
@@ -180,7 +175,6 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     isCourtsLoading ||
     isEventTypesLoading ||
     isTrainersLoading ||
-    isMyCourtsLoading ||
     isMyTrainersLoading ||
     isMyExternalMembersLoading ||
     isMyGroupsLoading ||

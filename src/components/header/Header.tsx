@@ -5,6 +5,7 @@ import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 
 import { FaCircle } from "react-icons/fa";
+import { IoMdSunny } from "react-icons/io";
 
 import { useAppSelector } from "../../store/hooks";
 import { IoIosNotificationsOutline } from "react-icons/io";
@@ -24,6 +25,7 @@ import LanguageModal from "./modals/language/LanguageModal";
 import NotificationsModal from "./modals/notifications/NotificationsModal";
 import { useGetTrainerByUserIdQuery } from "../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../api/endpoints/ClubsApi";
+import { useGetClubStaffByFilterQuery } from "../../api/endpoints/ClubStaffApi";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -114,6 +116,15 @@ const Header = () => {
     refetch: refetchMissingReviews,
   } = useGetPlayerMissingEventReviewsNumberQuery(user?.user?.user?.user_id);
 
+  const {
+    data: myStaffRequests,
+    isLoading: isMyStaffRequestsLoading,
+    refetch: refetchMyRequests,
+  } = useGetClubStaffByFilterQuery({
+    club_id: user?.user?.clubDetails?.club_id,
+    employment_status: "pending",
+  });
+
   const isLoggedIn = user?.token ? true : false;
 
   if (
@@ -141,6 +152,8 @@ const Header = () => {
         </NavLink>
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
+            <IoMdSunny className={styles.language} />
+
             <div className={styles["notification-container"]}>
               {(!hasBankDetails ||
                 incomingRequests?.length > 0 ||
@@ -235,6 +248,10 @@ const Header = () => {
           incomingRequests={incomingRequests}
           missingScoresLength={missingScoresLength}
           missingReviews={missingReviews}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
+          isUserClub={isUserClub}
+          myStaffRequests={myStaffRequests}
         />
       )}
     </div>

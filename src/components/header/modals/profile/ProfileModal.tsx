@@ -5,12 +5,15 @@ import { FaRegCreditCard } from "react-icons/fa";
 import { IoStar } from "react-icons/io5";
 import { RiGroupLine } from "react-icons/ri";
 import { FaBuildingUser } from "react-icons/fa6";
+import { GiTennisCourt } from "react-icons/gi";
+import { IoPeople } from "react-icons/io5";
+import { CgTennis } from "react-icons/cg";
 
 import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import { logOut } from "../../../../store/slices/authSlice";
-import { useAppDispatch } from "../../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 
 interface ProfileModalProps {
   isProfileModalOpen: boolean;
@@ -18,6 +21,11 @@ interface ProfileModalProps {
   email: string;
 }
 const ProfileModal = (props: ProfileModalProps) => {
+  const user = useAppSelector((store) => store.user?.user?.user);
+  const isUserPlayer = user?.user_type_id === 1;
+  const isUserTrainer = user?.user_type_id === 2;
+  const isUserClub = user?.user_type_id === 3;
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isProfileModalOpen, handleCloseProfileModal, email } = props;
@@ -59,20 +67,51 @@ const ProfileModal = (props: ProfileModalProps) => {
           <h4>Ödemeler</h4>
           <FaRegCreditCard className={styles.icon} />
         </div>
-        <div
-          onClick={() => navigateUser("PLAYER_SUBSCRIPTIONS")}
-          className={styles["menu-item"]}
-        >
-          <h4>Üyelikler</h4>
-          <FaBuildingUser className={styles.icon} />
-        </div>
-        <div
-          onClick={() => navigateUser("PLAYER_GROUPS")}
-          className={styles["menu-item"]}
-        >
-          <h4>Gruplar</h4>
-          <RiGroupLine className={styles.icon} />
-        </div>
+        {isUserPlayer && (
+          <div
+            onClick={() => navigateUser("PLAYER_SUBSCRIPTIONS")}
+            className={styles["menu-item"]}
+          >
+            <h4>Üyelikler</h4>
+            <FaBuildingUser className={styles.icon} />
+          </div>
+        )}
+        {isUserPlayer && (
+          <div
+            onClick={() => navigateUser("PLAYER_GROUPS")}
+            className={styles["menu-item"]}
+          >
+            <h4>Gruplar</h4>
+            <RiGroupLine className={styles.icon} />
+          </div>
+        )}
+        {isUserClub && (
+          <div
+            onClick={() => navigateUser("CLUB_COURTS")}
+            className={styles["menu-item"]}
+          >
+            <h4>Kortlar</h4>
+            <GiTennisCourt className={styles.icon} />
+          </div>
+        )}
+        {isUserClub && (
+          <div
+            onClick={() => navigateUser("CLUB_STAFF")}
+            className={styles["menu-item"]}
+          >
+            <h4>Personel</h4>
+            <IoPeople className={styles.icon} />
+          </div>
+        )}
+        {isUserClub && (
+          <div
+            onClick={() => navigateUser("CLUB_SUBSCRIPTIONS")}
+            className={styles["menu-item"]}
+          >
+            <h4>Üyelikler</h4>
+            <CgTennis className={styles.icon} />
+          </div>
+        )}
         <div
           onClick={() => navigateUser("FAVOURITES")}
           className={styles["menu-item"]}

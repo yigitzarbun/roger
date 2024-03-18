@@ -39,11 +39,16 @@ interface EditClubCourtBookingModalProps {
   editBookingModalOpen: boolean;
   closeEditBookingModal: () => void;
   selectedBooking: Booking;
+  myCourts: any[];
 }
 
 const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
-  const { editBookingModalOpen, closeEditBookingModal, selectedBooking } =
-    props;
+  const {
+    editBookingModalOpen,
+    closeEditBookingModal,
+    selectedBooking,
+    myCourts,
+  } = props;
 
   const user = useAppSelector((store) => store?.user);
 
@@ -66,12 +71,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     useGetClubStaffByFilterQuery({
       club_id: user?.user?.clubDetails?.club_id,
       employment_status: "accepted",
-    });
-
-  const { data: myCourts, isLoading: isMyCourtsLoading } =
-    useGetCourtsByFilterQuery({
-      club_id: user?.user?.clubDetails?.club_id,
-      is_active: true,
     });
 
   const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
@@ -232,8 +231,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     isEventTypesLoading ||
     isMyTrainersLoading ||
     isTrainersLoading ||
-    isMyGroupsLoading ||
-    isMyCourtsLoading
+    isMyGroupsLoading
   ) {
     return <PageLoading />;
   }

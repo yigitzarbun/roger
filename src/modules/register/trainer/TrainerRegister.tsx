@@ -1,10 +1,14 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import TrainerRegisterForm from "../../../components/register/trainer/TrainerRegisterForm";
 
-const TrainerRegister = () => {
+interface TrainerRegisterProps {
+  setUserType: Dispatch<SetStateAction<string>>;
+}
+const TrainerRegister = (props: TrainerRegisterProps) => {
+  const { setUserType } = props;
   return (
     <div>
-      <TrainerRegisterForm />
+      <TrainerRegisterForm setUserType={setUserType} />
     </div>
   );
 };

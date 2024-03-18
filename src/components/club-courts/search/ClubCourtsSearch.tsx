@@ -15,30 +15,42 @@ import PageLoading from "../../../components/loading/PageLoading";
 interface ClubCourtSearchProps {
   handleSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handlePrice: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleCourtStatus: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
   surfaceTypeId: number;
   structureTypeId: number;
-  price: number;
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
+  textSearch: string;
+  courtStatus: boolean | null;
 }
 
 const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
   const {
     handleSurface,
     handleStructure,
-    handlePrice,
+    handleTextSearch,
+    handleCourtStatus,
     handleClear,
     surfaceTypeId,
     structureTypeId,
-    price,
     courtStructureTypes,
     courtSurfaceTypes,
+    textSearch,
+    courtStatus,
   } = props;
 
   return (
     <div className={styles["courts-page-container"]}>
+      <div className={styles["search-container"]}>
+        <input
+          type="text"
+          onChange={handleTextSearch}
+          value={textSearch}
+          placeholder="Kort adı"
+        />
+      </div>
       <div className={styles["input-container"]}>
         <select onChange={handleSurface} value={surfaceTypeId ?? ""}>
           <option value="">-- Yüzey --</option>
@@ -65,17 +77,33 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
           ))}
         </select>
       </div>
-      <div className={styles["price-input"]}>
-        <label> {`Fiyat:  ${price} TL / saat`}</label>
-        <input
-          type="number"
-          min={1}
-          max={2500}
-          value={price}
-          onChange={handlePrice}
-        />
+      <div className={styles["input-container"]}>
+        <select
+          onChange={handleCourtStatus}
+          value={
+            courtStatus === true
+              ? "true"
+              : courtStatus === false
+              ? "false"
+              : "null"
+          }
+        >
+          <option value={"null"}>-- Tüm kortlar --</option>
+          <option value={"true"}>Aktif kortlar</option>
+          <option value={"false"}>Bloke kortlar</option>
+        </select>
       </div>
-      <button onClick={handleClear} className={styles["button"]}>
+      <button
+        onClick={handleClear}
+        className={
+          surfaceTypeId > 0 ||
+          textSearch !== "" ||
+          structureTypeId > 0 ||
+          courtStatus !== null
+            ? styles["active-clear-button"]
+            : styles["passive-clear-button"]
+        }
+      >
         Temizle
       </button>
     </div>

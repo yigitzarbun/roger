@@ -59,8 +59,13 @@ const courtsModel = {
             filter.courtStructureType
           );
         }
+        if (filter.textSearch !== "") {
+          builder.where("courts.court_name", "ilike", `%${filter.textSearch}%`);
+        }
+        if (filter.isActive !== "null") {
+          builder.where("courts.is_active", filter.isActive);
+        }
       })
-      .andWhere("courts.is_active", true)
       .orderBy("court_id", "asc")
       .limit(courtsPerPage)
       .offset(offset);
@@ -114,9 +119,13 @@ const courtsModel = {
             filter.courtStructureType
           );
         }
-      })
-      .andWhere("courts.is_active", true);
-
+        if (filter.textSearch !== "") {
+          builder.where("courts.court_name", "ilike", `%${filter.textSearch}%`);
+        }
+        if (filter.isActive !== "null") {
+          builder.where("courts.is_active", filter.isActive);
+        }
+      });
     const data = {
       courts: paginatedCourts,
       totalPages: Math.ceil(pageCount.length / courtsPerPage),
@@ -124,6 +133,43 @@ const courtsModel = {
     return data;
   },
 
+  async getClubCourtsByClubId(clubId: number) {
+    const clubCourts = await db
+      .select(
+        "courts.*",
+        "courts.image as courtImage",
+        "clubs.*",
+        "court_structure_types.*",
+        "court_surface_types.*",
+        "locations.*"
+      )
+      .from("courts")
+      .leftJoin("clubs", function () {
+        this.on("clubs.club_id", "=", "courts.club_id");
+      })
+      .leftJoin("court_structure_types", function () {
+        this.on(
+          "court_structure_types.court_structure_type_id",
+          "=",
+          "courts.court_structure_type_id"
+        );
+      })
+      .leftJoin("court_surface_types", function () {
+        this.on(
+          "court_surface_types.court_surface_type_id",
+          "=",
+          "courts.court_surface_type_id"
+        );
+      })
+      .leftJoin("locations", function () {
+        this.on("locations.location_id", "=", "clubs.location_id");
+      })
+
+      .where("courts.is_active", true)
+      .andWhere("courts.club_id", clubId);
+
+    return clubCourts;
+  },
   async getByFilter(filter) {
     const courts = await db("courts").where((builder) => {
       if (filter.club_id) {

@@ -3,61 +3,65 @@
 
 .courts-page-container {
   display: flex;
-  justify-content: flex-end;
   column-gap: 4vh;
-  background-color: $roger-black-light;
-  padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   width: 100%;
 
   .input-container {
     display: flex;
-    flex-direction: column;
-    row-gap: 1vh;
-    // width: 15%;
-
-    select {
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
-      border: none;
-      width: 100%;
-    }
-  }
-  .price-input {
-    width: 30%;
-    padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
-    display: flex;
-    justify-content: space-around;
+    width: 20%;
     align-items: center;
-    border: none;
-    background-color: rgb(59, 59, 59);
-    border: none;
-    label {
-      font-size: 13px;
-      width: 50%;
-    }
-    input {
-      width: 50%;
-      border-radius: $roger-border-radius;
-      border: 1px solid;
-    }
-  }
-  button {
-    padding: $roger-box-padding;
+    background-color: $roger-black-dark;
+    padding: 2px;
     border-radius: $roger-border-radius;
+    justify-content: center;
+    column-gap: 14px;
+
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+      cursor: pointer;
+    }
+  }
+
+  .search-container {
+    display: flex;
+    width: 40%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
+    border-radius: $roger-border-radius;
+    justify-content: center;
+    column-gap: 14px;
+
+    label {
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+    }
+  }
+  .passive-clear-button {
+    border-radius: $roger-border-radius;
+    background-color: $roger-box-bg-color-hover;
     border: none;
-    font-size: 1rem;
-    font-weight: bold;
+    padding: $roger-button-padding;
   }
-
-  button:hover {
+  .active-clear-button {
+    border-radius: $roger-border-radius;
     background-color: $roger-red;
+    border: none;
+    padding: $roger-button-padding;
     cursor: pointer;
-  }
-
-  .error-field {
-    color: $roger-red;
-    font-size: 0.8rem;
   }
 }

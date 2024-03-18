@@ -135,7 +135,6 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   ) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles["profile-section"]}>
       <div className={styles["image-container"]}>
@@ -181,16 +180,20 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
               </tbody>
             </table>
             <div className={styles["buttons-container"]}>
-              <button
-                onClick={() =>
-                  handleToggleFavourite(selectedClub?.[0]?.user_id)
-                }
-                className={styles["interaction-button"]}
-              >
-                {myFavouriteClubs?.[0]?.is_active === true
-                  ? "Favorilerden çıkar"
-                  : "Favorilere ekle"}
-              </button>
+              {selectedClub?.[0]?.user_id !== user?.user?.user_id && (
+                <button
+                  onClick={() =>
+                    handleToggleFavourite(selectedClub?.[0]?.user_id)
+                  }
+                  className={styles["interaction-button"]}
+                  disabled={selectedClub?.[0]?.user_id === user?.user?.user_id}
+                >
+                  {myFavouriteClubs?.[0]?.is_active === true
+                    ? "Favorilerden çıkar"
+                    : "Favorilere ekle"}
+                </button>
+              )}
+
               {isUserPlayer &&
                 selectedClub?.[0]?.subscriptionpackagecount > 0 &&
                 isUserSubscribedToClub?.length === 0 &&
