@@ -793,72 +793,49 @@ const bookingsModel = {
     const paginatedBookings = await db
       .select(
         db.raw("DISTINCT ON (bookings.booking_id) bookings.*"),
-        "players.*",
-        "trainers.*",
+        db.raw(
+          "(SELECT CONCAT(COALESCE(inviter.fname, trainers.fname, club_external_members.fname, student_groups.student_group_name), ' ', COALESCE(inviter.lname, trainers.lname, club_external_members.lname, '')) FROM (VALUES (bookings.inviter_id)) AS t(user_id) LEFT JOIN players AS inviter ON inviter.user_id = t.user_id LEFT JOIN trainers ON trainers.user_id = t.user_id LEFT JOIN club_external_members ON club_external_members.user_id = t.user_id LEFT JOIN student_groups ON student_groups.user_id = t.user_id LIMIT 1) AS inviterName"
+        ),
+        db.raw(
+          "(SELECT CONCAT(COALESCE(invitee.fname, trainers.fname, club_external_members.fname, student_groups.student_group_name), ' ', COALESCE(invitee.lname, trainers.lname, club_external_members.lname, '')) FROM (VALUES (bookings.invitee_id)) AS t(user_id) LEFT JOIN players AS invitee ON invitee.user_id = t.user_id LEFT JOIN trainers ON trainers.user_id = t.user_id LEFT JOIN club_external_members ON club_external_members.user_id = t.user_id LEFT JOIN student_groups ON student_groups.user_id = t.user_id LIMIT 1) AS inviteeName"
+        ),
         "clubs.*",
-        "club_external_members.*",
         "event_types.*",
-        "student_groups.*",
         "courts.*"
       )
       .from("bookings")
-      .leftJoin("players", function () {
-        this.on("players.user_id", "=", "bookings.inviter_id").orOn(
-          "players.user_id",
-          "=",
-          "bookings.invitee_id"
-        );
-      })
-      .leftJoin("trainers", function () {
-        this.on("trainers.user_id", "=", "bookings.inviter_id").orOn(
-          "trainers.user_id",
-          "=",
-          "bookings.invitee_id"
-        );
-      })
       .leftJoin("clubs", "clubs.club_id", "=", "bookings.club_id")
-      .leftJoin("club_external_members", function () {
-        this.on(
-          "club_external_members.user_id",
-          "=",
-          "bookings.inviter_id"
-        ).orOn("club_external_members.user_id", "=", "bookings.invitee_id");
-      })
-      .leftJoin("event_types", function () {
-        this.on("event_types.event_type_id", "=", "bookings.event_type_id");
-      })
-      .leftJoin("student_groups", function () {
-        this.on("student_groups.user_id", "=", "bookings.inviter_id").orOn(
-          "student_groups.user_id",
-          "=",
-          "bookings.invitee_id"
-        );
-      })
-      .leftJoin("courts", function () {
-        this.on("courts.court_id", "=", "bookings.court_id");
-      })
+      .leftJoin(
+        "event_types",
+        "event_types.event_type_id",
+        "=",
+        "bookings.event_type_id"
+      )
+      .leftJoin("courts", "courts.court_id", "=", "bookings.court_id")
       .where((builder) => {
         if (filter.textSearch !== "") {
           builder.where(function () {
-            this.where("players.fname", "ilike", `%${filter.textSearch}%`)
-              .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
-              .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
-              .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`)
-              .orWhere(
-                "club_external_members.fname",
-                "ilike",
-                `%${filter.textSearch}%`
-              )
-              .orWhere(
-                "club_external_members.lname",
-                "ilike",
-                `%${filter.textSearch}%`
-              )
-              .orWhere(
-                "student_groups.student_group_name",
-                "ilike",
-                `%${filter.textSearch}%`
-              );
+            this.where(function () {
+              this.where("players.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere(
+                  "club_external_members.fname",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                )
+                .orWhere(
+                  "club_external_members.lname",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                )
+                .orWhere(
+                  "student_groups.student_group_name",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                );
+            });
           });
         }
         if (filter.courtId > 0) {
@@ -870,79 +847,45 @@ const bookingsModel = {
       })
       .andWhere("clubs.club_id", filter.clubId)
       .andWhere("bookings.booking_status_type_id", 2)
-      .orderBy("bookings.booking_id") // Order by booking_id to make sure only one instance of each booking_id is returned
+      .orderBy("bookings.booking_id")
       .limit(bookingsPerPage)
       .offset(offset);
 
     const count = await db
-      .select(
-        db.raw("DISTINCT ON (bookings.booking_id) bookings.*"),
-        "players.*",
-        "trainers.*",
-        "clubs.*",
-        "club_external_members.*",
-        "event_types.*",
-        "student_groups.*",
-        "courts.*"
-      )
+      .countDistinct("bookings.booking_id AS count")
       .from("bookings")
-      .leftJoin("players", function () {
-        this.on("players.user_id", "=", "bookings.inviter_id").orOn(
-          "players.user_id",
-          "=",
-          "bookings.invitee_id"
-        );
-      })
-      .leftJoin("trainers", function () {
-        this.on("trainers.user_id", "=", "bookings.inviter_id").orOn(
-          "trainers.user_id",
-          "=",
-          "bookings.invitee_id"
-        );
-      })
       .leftJoin("clubs", "clubs.club_id", "=", "bookings.club_id")
-      .leftJoin("club_external_members", function () {
-        this.on(
-          "club_external_members.user_id",
-          "=",
-          "bookings.inviter_id"
-        ).orOn("club_external_members.user_id", "=", "bookings.invitee_id");
-      })
-      .leftJoin("event_types", function () {
-        this.on("event_types.event_type_id", "=", "bookings.event_type_id");
-      })
-      .leftJoin("student_groups", function () {
-        this.on("student_groups.user_id", "=", "bookings.inviter_id").orOn(
-          "student_groups.user_id",
-          "=",
-          "bookings.invitee_id"
-        );
-      })
-      .leftJoin("courts", function () {
-        this.on("courts.court_id", "=", "bookings.court_id");
-      })
+      .leftJoin(
+        "event_types",
+        "event_types.event_type_id",
+        "=",
+        "bookings.event_type_id"
+      )
+      .leftJoin("courts", "courts.court_id", "=", "bookings.court_id")
       .where((builder) => {
         if (filter.textSearch !== "") {
           builder.where(function () {
-            this.where("players.fname", "ilike", `%${filter.textSearch}%`)
-              .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
-              .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
-              .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`)
-              .orWhere(
-                "club_external_members.fname",
-                "ilike",
-                `%${filter.textSearch}%`
-              )
-              .orWhere(
-                "club_external_members.lname",
-                "ilike",
-                `%${filter.textSearch}%`
-              )
-              .orWhere(
-                "student_groups.student_group_name",
-                "ilike",
-                `%${filter.textSearch}%`
-              );
+            this.where(function () {
+              this.where("players.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere(
+                  "club_external_members.fname",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                )
+                .orWhere(
+                  "club_external_members.lname",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                )
+                .orWhere(
+                  "student_groups.student_group_name",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                );
+            });
           });
         }
         if (filter.courtId > 0) {
@@ -957,10 +900,30 @@ const bookingsModel = {
 
     const data = {
       bookings: paginatedBookings,
-      totalPages: Math.ceil(count.count / bookingsPerPage),
+      totalPages: Math.ceil(count[0].count / bookingsPerPage),
     };
 
     return data;
+  },
+  async getClubCalendarBookedHours(filter) {
+    try {
+      const bookedCourtHours = await db("bookings")
+        .where((builder) => {
+          if (filter.court_id > 0) {
+            builder.where("bookings.court_id", filter.court_id);
+          }
+        })
+        .andWhere("bookings.club_id", filter.club_id)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.booking_status_type_id", 1)
+            .orWhere("bookings.booking_status_type_id", 2);
+        });
+
+      return bookedCourtHours;
+    } catch (error) {
+      console.log("Error fetching club's booked court hours: ", error);
+    }
   },
   async getById(booking_id: number) {
     try {

@@ -25,7 +25,10 @@ import LanguageModal from "./modals/language/LanguageModal";
 import NotificationsModal from "./modals/notifications/NotificationsModal";
 import { useGetTrainerByUserIdQuery } from "../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../api/endpoints/ClubsApi";
-import { useGetClubStaffByFilterQuery } from "../../api/endpoints/ClubStaffApi";
+import {
+  useGetClubNewStaffRequestsQuery,
+  useGetClubStaffByFilterQuery,
+} from "../../api/endpoints/ClubStaffApi";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -120,10 +123,7 @@ const Header = () => {
     data: myStaffRequests,
     isLoading: isMyStaffRequestsLoading,
     refetch: refetchMyRequests,
-  } = useGetClubStaffByFilterQuery({
-    club_id: user?.user?.clubDetails?.club_id,
-    employment_status: "pending",
-  });
+  } = useGetClubNewStaffRequestsQuery(user?.user?.clubDetails?.club_id);
 
   const isLoggedIn = user?.token ? true : false;
 
@@ -131,7 +131,8 @@ const Header = () => {
     isPlayerDetailsLoading ||
     isIncomingRequestsLoading ||
     isScoresLoading ||
-    isReviewsLoading
+    isReviewsLoading ||
+    isMyStaffRequestsLoading
   ) {
     return <PageLoading />;
   }
@@ -158,7 +159,8 @@ const Header = () => {
               {(!hasBankDetails ||
                 incomingRequests?.length > 0 ||
                 missingScoresLength > 0 ||
-                missingReviews > 0) && (
+                missingReviews > 0 ||
+                myStaffRequests?.length > 0) && (
                 <FaCircle className={styles["circle"]} />
               )}
               <IoIosNotificationsOutline

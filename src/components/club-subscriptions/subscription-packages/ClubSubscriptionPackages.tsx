@@ -4,14 +4,19 @@ import ClubSubscriptionPackagesResults from "./results/ClubSubscriptionPackagesR
 import EditSubscriptionPackageModal from "./edit-subscription-package-modal/EditSubscriptionPackageModal";
 import PageLoading from "../../../components/loading/PageLoading";
 
-import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
+import {
+  useGetClubSubscriptionPackageDetailsQuery,
+  useGetClubSubscriptionPackagesByFilterQuery,
+} from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useAppSelector } from "../../../store/hooks";
+import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 const ClubSubscriptionPackages = () => {
   const user = useAppSelector((store) => store?.user?.user);
-
+  const { data: selectedClub, isLoading: isSelectedClubLoading } =
+    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
   const [selectedSubscriptionPackage, setSelectedSubscriptionPackage] =
     useState(null);
 
@@ -27,30 +32,18 @@ const ClubSubscriptionPackages = () => {
     });
 
   const { data: myPackages, isLoading: isMyPackagesLoading } =
-    useGetClubSubscriptionPackagesByFilterQuery({
-      is_active: true,
-      club_id: user?.user?.user_id,
+    useGetClubSubscriptionPackageDetailsQuery({
+      clubId: user?.user?.user_id,
     });
 
   const [openEditPackageModal, setOpenEditPackageModal] = useState(false);
 
-  const [clubSubscriptionPackageId, setClubSubscriptionPackageId] =
-    useState(null);
-
-  const openEditClubSubscriptionPackageModal = (value: number) => {
-    setClubSubscriptionPackageId(null);
+  const openEditClubSubscriptionPackageModal = (subscriptionPackage) => {
     setOpenEditPackageModal(true);
-    setClubSubscriptionPackageId(value);
-    setSelectedSubscriptionPackage(
-      myPackages?.find(
-        (subscriptionPackage) =>
-          subscriptionPackage.club_subscription_package_id === value
-      )
-    );
+    setSelectedSubscriptionPackage(subscriptionPackage);
   };
 
   const closeEditClubSubscriptionPackageModal = () => {
-    setClubSubscriptionPackageId(null);
     setOpenEditPackageModal(false);
   };
 
@@ -86,6 +79,7 @@ const ClubSubscriptionPackages = () => {
         myPackages={myPackages}
         mySubscribers={mySubscribers}
         subscriptionTypes={clubSubscriptionTypes}
+        selectedClub={selectedClub}
       />
 
       <EditSubscriptionPackageModal
@@ -93,7 +87,6 @@ const ClubSubscriptionPackages = () => {
         closeEditClubSubscriptionPackageModal={
           closeEditClubSubscriptionPackageModal
         }
-        clubSubscriptionPackageId={clubSubscriptionPackageId}
         selectedSubscriptionPackage={selectedSubscriptionPackage}
         clubSubscriptionTypes={clubSubscriptionTypes}
       />

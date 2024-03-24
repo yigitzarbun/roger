@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import styles from "./styles.module.scss";
 
-import ClubSubscriptionsHero from "../../components/club-subscriptions/hero/ClubSubscriptionsHero";
 import ClubSubscriptionsNavigation from "../../components/club-subscriptions/navigation/ClubSubscriptionsNavigation";
 import ClubSubscriptionPackages from "../../components/club-subscriptions/subscription-packages/ClubSubscriptionPackages";
 import ClubSubscribersResults from "../../components/club-subscriptions/subscriber-list/ClubSubscribersResults";
@@ -15,7 +14,6 @@ const ClubSubscriptions = () => {
   };
   return (
     <div className={styles["club-subscriptions-container"]}>
-      <ClubSubscriptionsHero />
       <ClubSubscriptionsNavigation
         display={display}
         handleDisplay={handleDisplay}

@@ -37,36 +37,29 @@
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
-    img {
-      height: 40px;
-      width: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
+
     h3 {
       font-size: 1.7rem;
-    }
-    .top-container {
-      display: flex;
-      flex-direction: column;
-      row-gap: 1vh;
-
-      .delete-button {
-        padding: $roger-button-padding;
-        width: 150px;
-        background-color: $roger-box-bg-color-hover;
-        border: 1px solid $roger-red;
-        border-radius: $roger-border-radius;
-      }
-      .delete-button:hover {
-        background-color: $roger-red;
-        cursor: pointer;
-      }
     }
     .form-container {
       display: flex;
       flex-direction: column;
       row-gap: 3vh;
+      .search-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 2vh;
+        width: 100%;
+
+        input {
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          border: 1px solid $roger-border-color;
+          width: 100%;
+          background-color: inherit;
+          height: 50px;
+        }
+      }
       .input-outer-container {
         display: flex;
         justify-content: space-between;
@@ -76,10 +69,7 @@
           flex-direction: column;
           row-gap: 2vh;
           width: 48%;
-          .error-field {
-            font-size: 0.8rem;
-            color: $roger-red;
-          }
+
           label {
             font-size: 0.9rem;
           }
@@ -93,17 +83,12 @@
             background-color: inherit;
             height: 50px;
           }
-          .court-picture-container {
-            display: flex;
-          }
         }
       }
-
       .buttons-container {
         display: flex;
         justify-content: space-between;
-        margin: 1vh 0;
-
+        margin: 4vh 0;
         .discard-button {
           background-color: $roger-black-dark;
           border: none;
@@ -135,10 +120,6 @@
           background-color: $roger-white;
           color: black;
         }
-      }
-      .invalid {
-        color: $roger-yellow;
-        font-size: 0.9rem;
       }
     }
   }

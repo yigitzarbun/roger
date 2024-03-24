@@ -4,8 +4,6 @@ import Modal from "react-modal";
 
 import { toast } from "react-toastify";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
@@ -20,20 +18,15 @@ import {
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
 
-import {
-  useGetCourtsByFilterQuery,
-  useGetCourtsQuery,
-} from "../../../../api/endpoints/CourtsApi";
 import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   Booking,
   useAddBookingMutation,
-  useGetBookingsByFilterQuery,
+  useGetclubCalendarBookerHoursQuery,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 interface AddClubCourtBookingModalProps {
@@ -47,16 +40,10 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
 
   const user = useAppSelector((store) => store?.user);
 
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-
   const { refetch: refetchBookings } = useGetBookingsQuery({});
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
-
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
 
   const { data: myTrainers, isLoading: isMyTrainersLoading } =
     useGetClubStaffByFilterQuery({
@@ -74,11 +61,6 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     useGetStudentGroupsByFilterQuery({
       club_id: user?.user?.user?.user_id,
       is_active: true,
-    });
-
-  const { data: myBookings, isLoading: isMyBookingsLoading } =
-    useGetBookingsByFilterQuery({
-      club_id: user?.user?.clubDetails?.club_id,
     });
 
   const [addBooking, { isSuccess: isAddBookingSuccess }] =
@@ -109,6 +91,12 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     setSelectedGroup(Number(event.target.value));
   };
 
+  const { data: myBookings, isLoading: isMyBookingsLoading } =
+    useGetclubCalendarBookerHoursQuery({
+      club_id: user?.user?.clubDetails?.club_id,
+      court_id: selectedCourt,
+    });
+
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
@@ -129,7 +117,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   const availableTimeSlots = generateAvailableTimeSlots(
     selectedCourt,
     selectedDate,
-    courts,
+    myCourts,
     bookedHoursForSelectedCourtOnSelectedDate
   );
 
@@ -162,7 +150,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     if (isAddBookingSuccess) {
       refetchBookings();
       closeAddBookingModal();
-      toast.success("Kort eklendi");
+      toast.success("Rezervasyon eklendi");
       reset();
     }
   }, [isAddBookingSuccess]);
@@ -172,9 +160,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   }, [closeAddBookingModal]);
 
   if (
-    isCourtsLoading ||
     isEventTypesLoading ||
-    isTrainersLoading ||
     isMyTrainersLoading ||
     isMyExternalMembersLoading ||
     isMyGroupsLoading ||
@@ -188,193 +174,206 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
       isOpen={addBookingModalOpen}
       onRequestClose={closeAddBookingModal}
       className={styles["modal-container"]}
+      shouldCloseOnOverlayClick={false}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Kort Rezervasyonu Ekle</h1>
-        <FaWindowClose
-          onClick={closeAddBookingModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Tarih</label>
-            <input
-              {...register("event_date", {
-                required: "Bu alan zorunludur",
-              })}
-              type="date"
-              onChange={handleSelectedDate}
-              min={currentDay}
-            />
-            {errors.event_date && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Kort</label>
-            <select
-              {...register("court_id", { required: true })}
-              onChange={handleSelectedCourt}
-              disabled={!selectedDate}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {myCourts &&
-                myCourts.map((court) => (
-                  <option key={court.court_id} value={court.court_id}>
-                    {court.court_name}
-                  </option>
-                ))}
-            </select>
-            {errors.court_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
+      <div className={styles["overlay"]} onClick={closeAddBookingModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1 className={styles.title}>Rezervasyon Ekle</h1>
         </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Saat</label>
-            <select
-              {...register("event_time", {
-                required: "Bu alan zorunludur",
-              })}
-              onChange={handleSelectedTime}
-              value={selectedTime}
-              disabled={!selectedDate || !selectedCourt}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {availableTimeSlots.map((timeSlot) => (
-                <option key={timeSlot.start} value={timeSlot.start}>
-                  {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
-                </option>
-              ))}
-            </select>
-            {errors.event_time && (
-              <span className={styles["error-field"]}>
-                {errors.event_time.message}
-              </span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Etkinlik Türü</label>
-            <select
-              {...register("event_type_id", {
-                required: "Bu alan zorunludur",
-              })}
-              onChange={handleSelectedEventType}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {eventTypes
-                .filter(
-                  (type) =>
-                    type.event_type_id === 4 ||
-                    type.event_type_id == 5 ||
-                    type.event_type_id == 6
-                )
-                .map((type) => (
-                  <option key={type.event_type_id} value={type.event_type_id}>
-                    {type.event_type_name}
-                  </option>
-                ))}
-            </select>
-            {errors.event_type_id && (
-              <span className={styles["error-field"]}>
-                {errors.event_type_id.message}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>
-              {selectedEventType === 4
-                ? "1. Oyuncu"
-                : selectedEventType === 5 || selectedEventType === 6
-                ? "Eğitmen"
-                : "Taraf 1"}
-            </label>
-            <select
-              {...register("inviter_id", { required: true })}
-              disabled={selectedEventType === 6 && !selectedGroup}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {selectedEventType === 4 && myExternalMembers
-                ? myExternalMembers.map((member) => (
-                    <option key={member.user_id} value={member.user_id}>
-                      {`${member.fname} ${member.lname}`}
-                    </option>
-                  ))
-                : selectedEventType === 5
-                ? myTrainers?.map((staff) => (
-                    <option key={staff.user_id} value={staff.user_id}>
-                      {
-                        trainers?.find(
-                          (trainer) => trainer.user_id === staff.user_id
-                        )?.fname
-                      }
-                    </option>
-                  ))
-                : selectedEventType === 6 &&
-                  myTrainers
-                    ?.filter(
-                      (trainer) =>
-                        trainer.user_id ===
-                        myGroups?.find(
-                          (group) => group.user_id === selectedGroup
-                        )?.trainer_id
-                    )
-                    .map((trainer) => (
-                      <option key={trainer.user_id} value={trainer.user_id}>
-                        {trainer.fname}
-                      </option>
-                    ))}
-            </select>
-            {errors.inviter_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>
-              {selectedEventType === 4
-                ? "2. Oyuncu"
-                : selectedEventType === 5
-                ? "Öğrenci"
-                : selectedEventType === 6
-                ? "Grup"
-                : "Taraf 1"}
-            </label>
-            <select
-              {...register("invitee_id", {
-                required: true,
-              })}
-              onChange={handleSelectedGroup}
-            >
-              <option value="">-- Seçim yapın --</option>
-              {myExternalMembers && selectedEventType === 6
-                ? myGroups.map((group) => (
-                    <option key={group.user_id} value={group.user_id}>
-                      {group.student_group_name}
-                    </option>
-                  ))
-                : myExternalMembers.map((member) => (
-                    <option key={member.user_id} value={member.user_id}>
-                      {`${member.fname} ${member.lname}`}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+        >
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Tarih</label>
+              <input
+                {...register("event_date", {
+                  required: "Bu alan zorunludur",
+                })}
+                type="date"
+                onChange={handleSelectedDate}
+                min={currentDay}
+              />
+              {errors.event_date && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Kort</label>
+              <select
+                {...register("court_id", { required: true })}
+                onChange={handleSelectedCourt}
+                disabled={!selectedDate}
+              >
+                <option value="">-- Seçim yapın --</option>
+                {myCourts &&
+                  myCourts.map((court) => (
+                    <option key={court.court_id} value={court.court_id}>
+                      {court.court_name}
                     </option>
                   ))}
-            </select>
-            {errors.invitee_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
+              </select>
+              {errors.court_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-        <button type="submit" className={styles["form-button"]}>
-          Tamamla
-        </button>
-      </form>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Saat</label>
+              <select
+                {...register("event_time", {
+                  required: "Bu alan zorunludur",
+                })}
+                onChange={handleSelectedTime}
+                value={selectedTime}
+                disabled={!selectedDate || !selectedCourt}
+              >
+                <option value="">-- Seçim yapın --</option>
+                {availableTimeSlots.map((timeSlot) => (
+                  <option key={timeSlot.start} value={timeSlot.start}>
+                    {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
+                  </option>
+                ))}
+              </select>
+              {errors.event_time && (
+                <span className={styles["error-field"]}>
+                  {errors.event_time.message}
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Etkinlik Türü</label>
+              <select
+                {...register("event_type_id", {
+                  required: "Bu alan zorunludur",
+                })}
+                onChange={handleSelectedEventType}
+              >
+                <option value="">-- Seçim yapın --</option>
+                {eventTypes
+                  .filter(
+                    (type) =>
+                      type.event_type_id === 4 ||
+                      type.event_type_id == 5 ||
+                      type.event_type_id == 6
+                  )
+                  .map((type) => (
+                    <option key={type.event_type_id} value={type.event_type_id}>
+                      {type.event_type_name}
+                    </option>
+                  ))}
+              </select>
+              {errors.event_type_id && (
+                <span className={styles["error-field"]}>
+                  {errors.event_type_id.message}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>
+                {selectedEventType === 4
+                  ? "1. Oyuncu"
+                  : selectedEventType === 5 || selectedEventType === 6
+                  ? "Eğitmen"
+                  : "Taraf 1"}
+              </label>
+              <select
+                {...register("inviter_id", { required: true })}
+                disabled={selectedEventType === 6 && !selectedGroup}
+              >
+                <option value="">-- Seçim yapın --</option>
+                {selectedEventType === 4 && myExternalMembers
+                  ? myExternalMembers.map((member) => (
+                      <option key={member.user_id} value={member.user_id}>
+                        {`${member.fname} ${member.lname}`}
+                      </option>
+                    ))
+                  : selectedEventType === 5
+                  ? myTrainers?.map((staff) => (
+                      <option key={staff.user_id} value={staff.user_id}>
+                        {staff?.fname}
+                      </option>
+                    ))
+                  : selectedEventType === 6 &&
+                    myTrainers
+                      ?.filter(
+                        (trainer) =>
+                          trainer.user_id ===
+                          myGroups?.find(
+                            (group) => group.user_id === selectedGroup
+                          )?.trainer_id
+                      )
+                      .map((trainer) => (
+                        <option key={trainer.user_id} value={trainer.user_id}>
+                          {trainer.fname}
+                        </option>
+                      ))}
+              </select>
+              {errors.inviter_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>
+                {selectedEventType === 4
+                  ? "2. Oyuncu"
+                  : selectedEventType === 5
+                  ? "Öğrenci"
+                  : selectedEventType === 6
+                  ? "Grup"
+                  : "Taraf 2"}
+              </label>
+              <select
+                {...register("invitee_id", {
+                  required: true,
+                })}
+                onChange={handleSelectedGroup}
+              >
+                <option value="">-- Seçim yapın --</option>
+                {myExternalMembers && selectedEventType === 6
+                  ? myGroups.map((group) => (
+                      <option key={group.user_id} value={group.user_id}>
+                        {group.student_group_name}
+                      </option>
+                    ))
+                  : myExternalMembers.map((member) => (
+                      <option key={member.user_id} value={member.user_id}>
+                        {`${member.fname} ${member.lname}`}
+                      </option>
+                    ))}
+              </select>
+              {errors.invitee_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={closeAddBookingModal}
+              className={styles["discard-button"]}
+            >
+              Vazgeç
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              Tamamla
+            </button>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
 };

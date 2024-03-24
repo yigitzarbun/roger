@@ -38,7 +38,6 @@
 
     .menu-item {
       display: flex;
-      justify-content: space-between;
       align-items: top;
       cursor: pointer;
       padding: $roger-button-padding;
@@ -55,7 +54,6 @@
     }
     p {
       font-size: 0.9rem;
-      padding: $roger-button-padding;
     }
     .logout {
       background-color: $roger-black-dark;

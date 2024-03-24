@@ -1,98 +1,96 @@
 import React, { useEffect } from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import styles from "./styles.module.scss";
 
-import PageLoading from "../../../../components/loading/PageLoading";
-
 import {
-  useGetClubStaffByFilterQuery,
+  useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
 
 interface DeclineClubStaffModalProps {
   isDeclineClubStaffModalOpen: boolean;
   closeDeclineClubStaffModal: () => void;
-  selectedClubStaffUserId: number;
+  selectedClubStaff: any;
 }
 
 const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
   const {
     isDeclineClubStaffModalOpen,
     closeDeclineClubStaffModal,
-    selectedClubStaffUserId,
+    selectedClubStaff,
   } = props;
 
-  const {
-    data: selectedClubStaff,
-    isLoading: isSelectedClubStaffLoading,
-    refetch: refetchClubStaff,
-  } = useGetClubStaffByFilterQuery({
-    user_id: selectedClubStaffUserId,
-  });
+  const selectedTrainerImage = selectedClubStaff?.trainerImage;
 
-  const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
-    useGetTrainersByFilterQuery({
-      user_id: selectedClubStaffUserId,
-    });
-
-  const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
+  const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
   const handleDeclineClubStaff = () => {
     const updatedStaffData = {
-      ...selectedClubStaff?.[0],
       employment_status: "declined",
+      club_staff_id: selectedClubStaff.club_staff_id,
+      fname: selectedClubStaff.fname,
+      lname: selectedClubStaff.lname,
+      birth_year: selectedClubStaff.birth_year,
+      gender: selectedClubStaff.gender,
+      image: selectedClubStaff.trainerImage,
+      club_id: selectedClubStaff.club_id,
+      club_staff_role_type_id: selectedClubStaff.club_staff_role_type_id,
+      user_id: selectedClubStaff.user_id,
     };
     updateClubStaff(updatedStaffData);
   };
 
   useEffect(() => {
     if (isSuccess) {
-      refetchClubStaff();
-      toast.success("Personel eklendi");
+      refetchAllClubStaff();
+      toast.success("Başvuru reddedildi");
       closeDeclineClubStaffModal();
     }
   }, [isSuccess]);
 
-  if (isSelectedClubStaffLoading || isSelectedTrainerLoading) {
-    return <PageLoading />;
-  }
-
   return (
-    <Modal
+    <ReactModal
       isOpen={isDeclineClubStaffModalOpen}
       onRequestClose={closeDeclineClubStaffModal}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={closeDeclineClubStaffModal} />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Başvuruyu Reddet</h1>
-        <FaWindowClose
-          onClick={closeDeclineClubStaffModal}
-          className={styles["close-icon"]}
-        />
+
+        <div className={styles["trainer-container"]}>
+          <img
+            src={
+              selectedTrainerImage
+                ? selectedTrainerImage
+                : "images/icons/avatar.jpg"
+            }
+            className={styles["trainer-image"]}
+          />
+          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</p>
+        </div>
+        <div className={styles["buttons-container"]}>
+          <button
+            onClick={closeDeclineClubStaffModal}
+            className={styles["discard-button"]}
+          >
+            İptal
+          </button>
+          <button
+            onClick={handleDeclineClubStaff}
+            className={styles["submit-button"]}
+          >
+            Reddet
+          </button>
+        </div>
       </div>
-      <div className={styles["bottom-container"]}>
-        <img
-          src={
-            selectedTrainerImage
-              ? selectedTrainerImage
-              : "images/icons/avatar.png"
-          }
-          className={styles["trainer-image"]}
-        />
-        <h4>{`${selectedTrainer?.[0]?.["fname"]} ${selectedTrainer?.[0]?.["lname"]} kulübünüzde çalıştığını belirtti. Başvuruyu reddetmek istediğinize emin misiniz?`}</h4>
-      </div>
-      <button onClick={handleDeclineClubStaff} className={styles["button"]}>
-        Reddet
-      </button>
-    </Modal>
+    </ReactModal>
   );
 };
 

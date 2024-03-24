@@ -1,102 +1,93 @@
 import React, { useEffect } from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import styles from "./styles.module.scss";
 
-import PageLoading from "../../../../components/loading/PageLoading";
-
 import {
-  useGetClubStaffByFilterQuery,
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
-import { useAppSelector } from "../../../../store/hooks";
 
 interface DeleteClubStaffModalProps {
   isDeleteStaffModalOpen: boolean;
   closeDeleteStaffModal: () => void;
-  selectedClubStaffUserId: number;
+  selectedClubStaff: any;
 }
 
 const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
-  const user = useAppSelector((store) => store?.user?.user);
+  const { isDeleteStaffModalOpen, closeDeleteStaffModal, selectedClubStaff } =
+    props;
 
-  const {
-    isDeleteStaffModalOpen,
-    closeDeleteStaffModal,
-    selectedClubStaffUserId,
-  } = props;
+  const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
-  const {
-    data: selectedClubStaff,
-    isLoading: isSelectedClubStaffLoading,
-    refetch: refetchClubStaff,
-  } = useGetClubStaffByFilterQuery({
-    user_id: selectedClubStaffUserId,
-  });
-
-  const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
-    useGetTrainersByFilterQuery({
-      user_id: selectedClubStaffUserId,
-    });
-  const selectedTrainerImage = selectedTrainer?.[0]?.["image"];
+  const selectedTrainerImage = selectedClubStaff?.trainerImage;
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
 
   const handleDeleteStaff = () => {
     const updatedStaffData = {
-      ...selectedClubStaff?.[0],
       employment_status: "terminated_by_club",
+      club_staff_id: selectedClubStaff.club_staff_id,
+      fname: selectedClubStaff.fname,
+      lname: selectedClubStaff.lname,
+      birth_year: selectedClubStaff.birth_year,
+      gender: selectedClubStaff.gender,
+      image: selectedClubStaff.trainerImage,
+      club_id: selectedClubStaff.club_id,
+      club_staff_role_type_id: selectedClubStaff.club_staff_role_type_id,
+      user_id: selectedClubStaff.clubStaffUserId,
     };
     updateClubStaff(updatedStaffData);
   };
 
   useEffect(() => {
     if (isSuccess) {
-      refetchClubStaff();
+      refetchAllClubStaff();
       toast.success("Personel silindi");
       closeDeleteStaffModal();
     }
   }, [isSuccess]);
 
-  if (isSelectedClubStaffLoading || isSelectedTrainerLoading) {
-    return <PageLoading />;
-  }
-
   return (
-    <Modal
+    <ReactModal
       isOpen={isDeleteStaffModalOpen}
       onRequestClose={closeDeleteStaffModal}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={closeDeleteStaffModal} />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Personeli Sil</h1>
-        <FaWindowClose
-          onClick={closeDeleteStaffModal}
-          className={styles["close-icon"]}
-        />
+        <div className={styles["trainer-container"]}>
+          <img
+            src={
+              selectedTrainerImage
+                ? selectedTrainerImage
+                : "images/icons/avatar.jpg"
+            }
+            className={styles["trainer-image"]}
+          />
+          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</p>
+        </div>
+        <div className={styles["buttons-container"]}>
+          <button
+            onClick={closeDeleteStaffModal}
+            className={styles["discard-button"]}
+          >
+            İptal
+          </button>
+          <button
+            onClick={handleDeleteStaff}
+            className={styles["submit-button"]}
+          >
+            Onayla
+          </button>
+        </div>
       </div>
-      <div className={styles["bottom-container"]}>
-        <img
-          src={
-            selectedTrainerImage
-              ? selectedTrainerImage
-              : "images/icons/avatar.png"
-          }
-          className={styles["trainer-image"]}
-        />
-        <h4>{`${selectedTrainer?.[0]?.["fname"]} ${selectedTrainer?.[0]?.["lname"]} isimli eğitmeni kulüp çalışanlarınız arasından çıkarmak istediğinize emin misiniz?`}</h4>
-      </div>
-      <button onClick={handleDeleteStaff} className={styles["button"]}>
-        Personeli Sil
-      </button>
-    </Modal>
+    </ReactModal>
   );
 };
 

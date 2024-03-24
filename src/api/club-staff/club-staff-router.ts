@@ -28,6 +28,18 @@ clubStaffRouter.get(
   }
 );
 clubStaffRouter.get(
+  "/paginated",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const paginedStaff = await clubStaffModel.getPaginedClubStaff(filter);
+      res.status(200).json(paginedStaff);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubStaffRouter.get(
   "/:club_staff_id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -46,6 +58,19 @@ clubStaffRouter.get(
         Number(req.params.userId)
       );
       res.status(200).json(clubTrainers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubStaffRouter.get(
+  "/club-new-staff-requests/:club_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const clubStaffRequests = await clubStaffModel.getClubNewStaffRequests(
+        Number(req.params.club_id)
+      );
+      res.status(200).json(clubStaffRequests);
     } catch (error) {
       next(error);
     }

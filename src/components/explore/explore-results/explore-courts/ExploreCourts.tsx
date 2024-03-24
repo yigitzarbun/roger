@@ -121,6 +121,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
   useEffect(() => {
     refetchCourts();
   }, [locationId, clubId, courtSurfaceType, courtStructureType]);
+
   if (
     isClubsLoading ||
     isLocationsLoading ||

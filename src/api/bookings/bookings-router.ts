@@ -137,6 +137,22 @@ bookingsRouter.get(
     }
   }
 );
+
+bookingsRouter.get(
+  "/club-calendar-booked-hours",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const bookedHours = await bookingsModel.getClubCalendarBookedHours(
+        filter
+      );
+      res.status(200).json(bookedHours);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 bookingsRouter.get(
   "/:booking_id",
   async (req: Request, res: Response, next: NextFunction) => {

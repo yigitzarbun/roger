@@ -66,10 +66,6 @@ const clubSubscriptionPackagesModel = {
       );
 
     return clubPackageDetails;
-
-    return clubPackageDetails;
-
-    return clubPackageDetails;
   },
   async getById(club_subscription_package_id) {
     const clubSubscriptionPackage = await db(

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { Link } from "react-router-dom";
 
@@ -7,10 +7,6 @@ import paths from "../../../routing/Paths";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
-import { useAppSelector } from "../../../store/hooks";
-
-import PageLoading from "../../../components/loading/PageLoading";
-import { FaPlusSquare } from "react-icons/fa";
 
 import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";

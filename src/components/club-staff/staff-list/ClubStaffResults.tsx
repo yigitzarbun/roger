@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { Link } from "react-router-dom";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { FaFilter } from "react-icons/fa6";
 
 import paths from "../../../routing/Paths";
 
@@ -13,10 +15,9 @@ import { useAppSelector } from "../../../store/hooks";
 
 import { currentYear } from "../../../common/util/TimeFunctions";
 
-import { useGetClubStaffByFilterQuery } from "../../../api/endpoints/ClubStaffApi";
+import { useGetPaginatedClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetTrainersQuery } from "../../../api/endpoints/TrainersApi";
+import ClubStaffFilterModal from "./filter/ClubStaffFilterModal";
 
 const ClubStaffResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -24,57 +25,132 @@ const ClubStaffResults = () => {
   const { data: clubStaffRoleTypes, isLoading: isClubStaffRoleTypesLoading } =
     useGetClubStaffRoleTypesQuery({});
 
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [locationId, setLocationId] = useState<number | null>(null);
+  const [gender, setGender] = useState<string>("");
+  const [roleId, setRoleId] = useState<number | null>(null);
+  const [textSearch, setTextSearch] = useState<string>("");
 
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const [selectedStaffUserId, setSelectedStaffUserId] = useState(null);
-  const [isDeleteStaffModalOpen, setIsDeleteStaffModalOpen] = useState(false);
-
-  const openDeleteStaffModal = (staffId: number) => {
-    setSelectedStaffUserId(staffId);
-    setIsDeleteStaffModalOpen(true);
+  const handleClear = () => {
+    setLocationId(null);
+    setGender("");
+    setRoleId(null);
+    setTextSearch("");
   };
-  const closeDeleteStaffModal = () => {
-    setIsDeleteStaffModalOpen(false);
+  const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    setTextSearch(event.target.value);
+  };
+  const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setLocationId(isNaN(value) ? null : value);
+  };
+
+  const handleGender = (event: ChangeEvent<HTMLInputElement>) => {
+    setGender(event.target.value);
+  };
+
+  const handleRole = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = parseInt(event.target.value, 10);
+    setRoleId(isNaN(value) ? null : value);
   };
 
   const {
     data: myStaff,
     isLoading: isMyStaffLoading,
     refetch: refetchMyStaff,
-  } = useGetClubStaffByFilterQuery({
-    club_id: user?.clubDetails?.club_id,
-    employment_status: "accepted",
+  } = useGetPaginatedClubStaffQuery({
+    currentPage: currentPage,
+    locationId: locationId,
+    gender: gender,
+    roleId: roleId,
+    textSearch: textSearch,
+    clubId: user?.clubDetails?.club_id,
   });
 
-  const selectedTrainer = (user_id: number) => {
-    return trainers?.find((trainer) => trainer.user_id === user_id);
+  const pageNumbers = [];
+  for (let i = 1; i <= myStaff?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handleStaffPage = (e) => {
+    setCurrentPage(e.target.value);
   };
 
+  const handleNextPage = () => {
+    const nextPage = (currentPage % myStaff?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + myStaff?.totalPages) % myStaff?.totalPages) + 1;
+    setCurrentPage(prevPage);
+  };
+
+  const [selectedStaffUser, setSelectedStaffUser] = useState(null);
+  const [isDeleteStaffModalOpen, setIsDeleteStaffModalOpen] = useState(false);
+
+  const openDeleteStaffModal = (staff) => {
+    setSelectedStaffUser(staff);
+    setIsDeleteStaffModalOpen(true);
+  };
+  const closeDeleteStaffModal = () => {
+    setSelectedStaffUser(null);
+    setIsDeleteStaffModalOpen(false);
+  };
+
+  const [isStaffFilterModalOpen, setIsStaffFilterModalOpen] = useState(false);
+  const handleOpenStaffFilterModal = () => {
+    setIsStaffFilterModalOpen(true);
+  };
+  const closeStaffFilterModal = () => {
+    setIsStaffFilterModalOpen(false);
+  };
   useEffect(() => {
     refetchMyStaff();
-  }, [isDeleteStaffModalOpen]);
+  }, [
+    isDeleteStaffModalOpen,
+    currentPage,
+    locationId,
+    gender,
+    roleId,
+    textSearch,
+  ]);
 
-  if (
-    isMyStaffLoading ||
-    isClubStaffRoleTypesLoading ||
-    isLocationsLoading ||
-    isTrainersLoading
-  ) {
+  if (isMyStaffLoading || isClubStaffRoleTypesLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Personel</h2>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+          <FaFilter
+            onClick={handleOpenStaffFilterModal}
+            className={
+              roleId > 0 || textSearch !== "" || gender !== "" || locationId > 0
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
+        </div>
+
+        {myStaff?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
-      {myStaff?.length === 0 && <p>Kayıtlı personel bulunmamaktadır.</p>}
-      {clubStaffRoleTypes && myStaff?.length > 0 && (
+      {myStaff?.staff?.length === 0 && <p>Kayıtlı personel bulunmamaktadır.</p>}
+      {clubStaffRoleTypes && myStaff?.staff?.length > 0 && (
         <table>
           <thead>
             <tr>
@@ -88,15 +164,15 @@ const ClubStaffResults = () => {
             </tr>
           </thead>
           <tbody>
-            {myStaff.map((staff) => (
-              <tr key={staff.club_staff_id} className={styles["staff-row"]}>
+            {myStaff?.staff?.map((staff) => (
+              <tr key={staff.club_staff_id} className={styles["trainer-row"]}>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}2/${staff.user_id}`}>
+                  <Link to={`${paths.EXPLORE_PROFILE}2/${staff.trainerUserId}`}>
                     <img
                       src={
-                        selectedTrainer(staff.user_id)?.image
-                          ? selectedTrainer(staff.user_id)?.image
-                          : "/images/icons/avatar.png"
+                        staff.trainerImage
+                          ? staff.trainerImage
+                          : "/images/icons/avatar.jpg"
                       }
                       alt="staff_image"
                       className={styles["staff-image"]}
@@ -105,45 +181,26 @@ const ClubStaffResults = () => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${staff.user_id}`}
-                    className={styles["staff-name"]}
+                    to={`${paths.EXPLORE_PROFILE}2/${staff.trainerUserId}`}
+                    className={styles["name"]}
                   >
                     {`
-                    ${selectedTrainer(staff.user_id)?.fname}
-                   ${selectedTrainer(staff.user_id)?.lname}
+                    ${staff?.fname}
+                   ${staff?.lname}
                   
                   `}
                   </Link>
                 </td>
-                <td>
-                  {currentYear -
-                    Number(selectedTrainer(staff.user_id)?.birth_year)}
-                </td>
-                <td>{selectedTrainer(staff.user_id)?.gender}</td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) =>
-                        location.location_id ===
-                        selectedTrainer(staff.user_id)?.location_id
-                    )?.location_name
-                  }
-                </td>
-                <td>
-                  {
-                    clubStaffRoleTypes?.find(
-                      (type) =>
-                        type.club_staff_role_type_id ===
-                        staff.club_staff_role_type_id
-                    )?.club_staff_role_type_name
-                  }
-                </td>
+                <td>{currentYear - Number(staff?.birth_year)}</td>
+                <td>{staff?.gender}</td>
+                <td>{staff?.location_name}</td>
+                <td>{staff?.club_staff_role_type_name}</td>
                 <td>
                   {staff.employment_status === "pending" ? (
                     "Onay Bekliyor"
                   ) : (
                     <button
-                      onClick={() => openDeleteStaffModal(staff.user_id)}
+                      onClick={() => openDeleteStaffModal(staff)}
                       className={styles["delete-button"]}
                     >
                       Sil
@@ -155,11 +212,42 @@ const ClubStaffResults = () => {
           </tbody>
         </table>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleStaffPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
       {isDeleteStaffModalOpen && (
         <DeleteClubStaffModal
           isDeleteStaffModalOpen={isDeleteStaffModalOpen}
           closeDeleteStaffModal={closeDeleteStaffModal}
-          selectedClubStaffUserId={selectedStaffUserId}
+          selectedClubStaff={selectedStaffUser}
+        />
+      )}
+      {isStaffFilterModalOpen && (
+        <ClubStaffFilterModal
+          locationId={locationId}
+          gender={gender}
+          roleId={roleId}
+          textSearch={textSearch}
+          handleClear={handleClear}
+          handleTextSearch={handleTextSearch}
+          handleLocation={handleLocation}
+          handleGender={handleGender}
+          handleRole={handleRole}
+          closeStaffFilterModal={closeStaffFilterModal}
+          isStaffFilterModalOpen={isStaffFilterModalOpen}
         />
       )}
     </div>

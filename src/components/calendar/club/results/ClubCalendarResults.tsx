@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
-import { FaPlusSquare } from "react-icons/fa";
+import { ImBlocked } from "react-icons/im";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 import Paths from "../../../../routing/Paths";
@@ -13,21 +14,10 @@ import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookin
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
-import {
-  useGetBookingsQuery,
-  useGetPaginatedClubCalendarBookingsQuery,
-} from "../../../../api/endpoints/BookingsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
+import { useGetPaginatedClubCalendarBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
-import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
-import {
-  currentDayLocale,
-  currentTime,
-} from "../../../../common/util/TimeFunctions";
 
 interface ClubCalendarResultsProps {
   courtId: number;
@@ -43,21 +33,6 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: trainers, isLoading: isTrainersLoading } = useGetTrainersQuery(
-    {}
-  );
-
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -71,6 +46,28 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     eventTypeId: eventTypeId,
     clubId: user?.clubDetails?.club_id,
   });
+
+  const pageNumbers = [];
+  for (let i = 1; i <= clubCalendarBookings?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+  const handleBookingPage = (e) => {
+    setCurrentPage(Number(e.target.value));
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % clubCalendarBookings?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + clubCalendarBookings?.totalPages) %
+        clubCalendarBookings?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
   const [addBookingModalOpen, setAddBookingModalOpen] = useState(false);
 
   const openAddBookingModal = () => {
@@ -85,11 +82,9 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
 
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const openEditBookingModal = (booking_id: number) => {
+  const openEditBookingModal = (booking: any) => {
     setEditBookingModalOpen(true);
-    setSelectedBooking(
-      myBookings?.find((booking) => booking.booking_id === booking_id)
-    );
+    setSelectedBooking(booking);
   };
 
   const closeEditBookingModal = () => {
@@ -105,66 +100,51 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       is_active: true,
     });
 
-  const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
-    useGetClubExternalMembersByFilterQuery({
-      club_id: user?.clubDetails?.club_id,
-      is_active: true,
-    });
-
-  // bookings
-  const myBookings = bookings?.filter(
-    (booking) =>
-      (booking.club_id === user?.clubDetails?.club_id &&
-        booking.booking_status_type_id === 2 &&
-        new Date(booking.event_date).toLocaleDateString() > currentDayLocale) ||
-      (new Date(booking.event_date).toLocaleDateString() === currentDayLocale &&
-        booking.event_time > currentTime)
-  );
-  console.log(clubCalendarBookings);
-  const filteredBookings = myBookings?.filter((booking) => {
-    const eventDate = new Date(booking.event_date);
-    if (courtId === null && eventTypeId === null) {
-      return true;
-    } else {
-      return booking;
-    }
-  });
-
   useEffect(() => {
     refetchClubCalendarBookings();
-  }, [currentPage, textSearch, courtId, eventTypeId]);
+  }, [
+    currentPage,
+    textSearch,
+    courtId,
+    eventTypeId,
+    editBookingModalOpen,
+    addBookingModalOpen,
+  ]);
 
   // data loading check
-  if (
-    isPlayersLoading ||
-    isTrainersLoading ||
-    isClubsLoading ||
-    isEventTypesLoading ||
-    isUsersLoading ||
-    isMyExternalMembersLoading ||
-    isMyGroupsLoading ||
-    isBookingsLoading
-  ) {
+  if (isUsersLoading || isMyGroupsLoading || isClubCalendarBookingsLoading) {
     return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["add-booking-container"]}>
-        <h2 className={styles["result-title"]}>Takvim</h2>
-        <button
-          className={styles["add-booking-button"]}
-          onClick={openAddBookingModal}
-          disabled={myCourts?.length === 0}
-        >
-          <FaPlusSquare className={styles["add-icon"]} />
-          <h2 className={styles["add-title"]}>
+      <div className={styles["top-container"]}>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Takvim</h2>
+          <button
+            className={styles["add-booking-button"]}
+            onClick={openAddBookingModal}
+            disabled={myCourts?.length === 0}
+          >
             {myCourts?.length === 0
-              ? "Kort Rezervasyonu için Kort Ekleyin"
-              : "Kort Rezervasyonu Ekle"}
-          </h2>
-        </button>
-      </div>
+              ? "Rezervasyon için Kort Ekleyin"
+              : "Rezervasyon Ekle"}
+          </button>
+        </div>
 
+        {clubCalendarBookings?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
+      </div>
       {clubCalendarBookings?.bookings?.length === 0 ? (
         <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
       ) : (
@@ -172,201 +152,41 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
           <thead>
             <tr>
               <th>Davet Eden</th>
-              <th>Davet Eden İsim</th>
               <th>Davet Edilen</th>
-              <th>Davet Edilen İsim</th>
               <th>Tür </th>
               <th>Tarih</th>
               <th>Saat </th>
               <th>Kort</th>
               <th>Konum</th>
-              <th>Ücret (TL / Saat)</th>
+              <th>Ücret</th>
+              <th>Düzenle</th>
             </tr>
           </thead>
           <tbody>
             {clubCalendarBookings?.bookings?.map((booking) => (
-              <tr key={booking.booking_id}>
+              <tr key={booking.booking_id} className={styles["booking-row"]}>
                 <td>
                   <Link
                     to={`${Paths.EXPLORE_PROFILE}${
-                      users?.find((user) => user.user_id === booking.inviter_id)
-                        ?.user_type_id === 1
+                      booking.event_type_id === 1 || booking.event_type_id === 2
                         ? 1
-                        : users?.find(
-                            (user) => user.user_id === booking.inviter_id
-                          )?.user_type_id === 2
-                        ? 2
-                        : ""
-                    }/${booking.inviter_id}`}
-                  >
-                    <img
-                      src={
-                        users?.find(
-                          (user) => user.user_id === booking.inviter_id
-                        )?.user_type_id === 1 &&
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.image
-                          ? players?.find(
-                              (player) => player.user_id === booking.inviter_id
-                            )?.image
-                          : users?.find(
-                              (user) => user.user_id === booking.inviter_id
-                            )?.user_type_id === 2 &&
-                            trainers?.find(
-                              (trainer) =>
-                                trainer.user_id === booking.inviter_id
-                            )?.image
-                          ? trainers?.find(
-                              (trainer) =>
-                                trainer.user_id === booking.inviter_id
-                            )?.image
-                          : "/images/icons/avatar.png"
-                      }
-                      className={styles.image}
-                    />
-                  </Link>
-                </td>
-                <td>
-                  <Link
-                    to={`${Paths.EXPLORE_PROFILE}${
-                      users?.find((user) => user.user_id === booking.inviter_id)
-                        ?.user_type_id === 1
-                        ? 1
-                        : users?.find(
-                            (user) => user.user_id === booking.inviter_id
-                          )?.user_type_id === 2
+                        : booking.event_type_id === 3
                         ? 2
                         : ""
                     }/${booking.inviter_id}`}
                     className={styles.name}
                   >
-                    {users?.find((user) => user.user_id === booking.inviter_id)
-                      ?.user_type_id === 1 &&
-                      `${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.lname
-                      }`}
-                    {users?.find((user) => user.user_id === booking.inviter_id)
-                      ?.user_type_id === 2 &&
-                      `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.inviter_id
-                        )?.lname
-                      }`}
-                    {users?.find((user) => user.user_id === booking.inviter_id)
-                      ?.user_type_id === 5 &&
-                      `${
-                        myExternalMembers?.find(
-                          (member) => member.user_id === booking.inviter_id
-                        )?.fname
-                      } ${
-                        myExternalMembers?.find(
-                          (member) => member.user_id === booking.inviter_id
-                        )?.lname
-                      }`}
+                    {booking.invitername}
                   </Link>
                 </td>
+
                 <td>
                   <Link
                     to={`${Paths.EXPLORE_PROFILE}${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 1
+                      booking.event_type_id === 1 || booking.event_type_id === 2
                         ? 1
-                        : users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id === 2
+                        : booking.event_type_id === 3
                         ? 2
-                        : users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id === 6
-                        ? 3
-                        : ""
-                    }/${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 1 ||
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 2
-                        ? booking.invitee_id
-                        : users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id === 6
-                        ? myGroups?.find(
-                            (group) => group.user_id === booking.invitee_id
-                          )?.club_id
-                        : ""
-                    }`}
-                  >
-                    <img
-                      src={
-                        users?.find(
-                          (user) => user.user_id === booking.invitee_id
-                        )?.user_type_id === 1 &&
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.image
-                          ? players?.find(
-                              (player) => player.user_id === booking.invitee_id
-                            )?.image
-                          : users?.find(
-                              (user) => user.user_id === booking.invitee_id
-                            )?.user_type_id === 2 &&
-                            trainers?.find(
-                              (trainer) =>
-                                trainer.user_id === booking.invitee_id
-                            )?.image
-                          ? trainers?.find(
-                              (trainer) =>
-                                trainer.user_id === booking.invitee_id
-                            )?.image
-                          : users?.find(
-                              (user) => user.user_id === booking.invitee_id
-                            )?.user_type_id === 6 &&
-                            clubs?.find(
-                              (club) =>
-                                club.user_id ===
-                                myGroups?.find(
-                                  (group) =>
-                                    group.user_id === booking.invitee_id
-                                )?.club_id
-                            )?.image
-                          ? clubs?.find(
-                              (club) =>
-                                club.user_id ===
-                                myGroups?.find(
-                                  (group) =>
-                                    group.user_id === booking.invitee_id
-                                )?.club_id
-                            )?.image
-                          : "/images/icons/avatar.png"
-                      }
-                      className={styles.image}
-                    />
-                  </Link>
-                </td>
-                <td>
-                  <Link
-                    to={`${Paths.EXPLORE_PROFILE}${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 1
-                        ? 1
-                        : users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id === 2
-                        ? 2
-                        : users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id === 6
-                        ? 3
                         : ""
                     }/${
                       users?.find((user) => user.user_id === booking.invitee_id)
@@ -384,103 +204,67 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                     }`}
                     className={styles.name}
                   >
-                    {users?.find((user) => user.user_id === booking.invitee_id)
-                      ?.user_type_id === 1 &&
-                      `${
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.lname
-                      }`}
-                    {users?.find((user) => user.user_id === booking.invitee_id)
-                      ?.user_type_id === 2 &&
-                      `${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        trainers?.find(
-                          (trainer) => trainer.user_id === booking.invitee_id
-                        )?.lname
-                      }`}
-                    {users?.find((user) => user.user_id === booking.invitee_id)
-                      ?.user_type_id === 5 &&
-                      `${
-                        myExternalMembers?.find(
-                          (member) => member.user_id === booking.invitee_id
-                        )?.fname
-                      } ${
-                        myExternalMembers?.find(
-                          (member) => member.user_id === booking.invitee_id
-                        )?.lname
-                      }`}
-                    {users?.find((user) => user.user_id === booking.invitee_id)
-                      ?.user_type_id === 6 &&
-                      myGroups?.find(
-                        (group) => group.user_id === booking.invitee_id
-                      )?.student_group_name}
+                    {booking.inviteename}
                   </Link>
                 </td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === booking.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
+                <td>{booking?.event_type_name}</td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
+                <td>{booking?.court_name}</td>
+                <td>{booking?.club_name}</td>
+                <td>{booking?.price_hour} TL</td>
                 <td>
-                  {
-                    myCourts?.find(
-                      (court) => court.court_id === booking.court_id
-                    )?.court_name
-                  }
-                </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === booking.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {
-                    myCourts?.find(
-                      (court) => court.court_id === booking.court_id
-                    )?.price_hour
-                  }
-                </td>
-                {(booking.event_type_id === 4 ||
+                  {booking.event_type_id === 4 ||
                   booking.event_type_id === 5 ||
-                  booking.event_type_id === 6) && (
-                  <td>
+                  booking.event_type_id === 6 ? (
                     <button
-                      onClick={() => openEditBookingModal(booking.booking_id)}
+                      onClick={() => openEditBookingModal(booking)}
                       className={styles["edit-button"]}
                     >
                       Düzenle
                     </button>
-                  </td>
-                )}
+                  ) : (
+                    <ImBlocked className={styles.blocked} />
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      <AddClubCourtBookingModal
-        addBookingModalOpen={addBookingModalOpen}
-        closeAddBookingModal={closeAddBookingModal}
-        myCourts={myCourts}
-      />
-      <EditClubCourtBookingModal
-        editBookingModalOpen={editBookingModalOpen}
-        closeEditBookingModal={closeEditBookingModal}
-        selectedBooking={selectedBooking}
-        myCourts={myCourts}
-      />
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleBookingPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
+      {addBookingModalOpen && (
+        <AddClubCourtBookingModal
+          addBookingModalOpen={addBookingModalOpen}
+          closeAddBookingModal={closeAddBookingModal}
+          myCourts={myCourts}
+        />
+      )}
+
+      {editBookingModalOpen && (
+        <EditClubCourtBookingModal
+          editBookingModalOpen={editBookingModalOpen}
+          closeEditBookingModal={closeEditBookingModal}
+          selectedBooking={selectedBooking}
+          myCourts={myCourts}
+          user={user}
+        />
+      )}
     </div>
   );
 };

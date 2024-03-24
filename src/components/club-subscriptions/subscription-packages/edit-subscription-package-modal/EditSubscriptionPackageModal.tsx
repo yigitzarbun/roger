@@ -23,7 +23,6 @@ import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptio
 interface EditSubscriptionPackageModalProps {
   openEditPackageModal: boolean;
   closeEditClubSubscriptionPackageModal: () => void;
-  clubSubscriptionPackageId: number;
   selectedSubscriptionPackage: ClubSubscriptionPackage;
   clubSubscriptionTypes: ClubSubscriptionTypes[];
 }
@@ -38,7 +37,6 @@ const EditSubscriptionPackageModal = (
   const {
     openEditPackageModal,
     closeEditClubSubscriptionPackageModal,
-    clubSubscriptionPackageId,
     selectedSubscriptionPackage,
     clubSubscriptionTypes,
   } = props;
@@ -71,7 +69,8 @@ const EditSubscriptionPackageModal = (
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const updatedSubscriptionPackageData = {
-        club_subscription_package_id: clubSubscriptionPackageId,
+        club_subscription_package_id:
+          selectedSubscriptionPackage.club_subscription_package_id,
         price: Number(formData.price),
         is_active: true,
         club_subscription_type_id:

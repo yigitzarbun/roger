@@ -8,41 +8,171 @@
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
+  border: 1px $roger-border-color solid;
 
-  .result-title {
-    font-size: 2rem;
+  .top-container {
+    display: flex;
+    justify-content: space-between;
+    .title-container {
+      display: flex;
+      align-items: center;
+      column-gap: 2vw;
+      .result-title {
+        font-size: 2rem;
+      }
+      .filter {
+        cursor: pointer;
+      }
+      .active-filter {
+        color: $roger-blue;
+        cursor: pointer;
+      }
+      .add-trainer-button {
+        background-color: $roger-black-dark;
+        border: none;
+        width: 150px;
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+      }
+      .add-trainer-button:hover {
+        background-color: $roger-black-light;
+      }
+    }
+    .navigation-container {
+      display: flex;
+      column-gap: 10px;
+
+      .nav-arrow {
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      .nav-arrow:hover {
+        color: $roger-blue;
+      }
+    }
   }
+  .nav-filter-container {
+    display: flex;
+    column-gap: 2vw;
 
+    .input-container {
+      display: flex;
+      width: 15%;
+      align-items: center;
+      background-color: $roger-black-dark;
+      padding: 2px;
+      border-radius: $roger-border-radius;
+      justify-content: center;
+      column-gap: 14px;
+
+      select,
+      input {
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: 1px solid $roger-border-color;
+        width: 100%;
+        background-color: $roger-box-bg-color;
+        cursor: pointer;
+      }
+    }
+
+    .search-container {
+      display: flex;
+      width: 30%;
+      align-items: center;
+      background-color: $roger-black-dark;
+      padding: 2px;
+      border-radius: $roger-border-radius;
+      justify-content: center;
+      column-gap: 14px;
+
+      label {
+        font-weight: bold;
+      }
+
+      select,
+      input {
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: 1px solid $roger-border-color;
+        width: 100%;
+        background-color: $roger-box-bg-color;
+      }
+    }
+  }
   table {
     width: 100%;
     text-align: left;
+    border-collapse: collapse;
 
-    .staff-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .staff-name {
-      color: white;
-      text-decoration: none;
+    .trainer-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+      .name {
+        color: white;
+        text-decoration: none;
+      }
+      .done {
+        color: $roger-green;
+        font-size: 1.2rem;
+      }
+      .blocked {
+        color: $roger-red;
+      }
     }
     .delete-button {
-      padding: 10px;
+      background-color: $roger-red;
+      border: none;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+  }
+
+  .pages-container {
+    display: flex;
+    column-gap: 20px;
+    margin-top: 2vh;
+    .active-page {
+      background-color: $roger-blue;
+      padding: 5px;
+      width: 30px;
+      height: 30px;
       border-radius: $roger-border-radius;
       border: none;
-      background-color: $roger-red;
-      font-size: 0.8rem;
       cursor: pointer;
-      text-decoration: none;
-      color: $roger-black-dark;
-      text-align: center;
-      width: 100px;
     }
-
-    .delete-button:hover {
+    .passive-page {
       background-color: $roger-black-dark;
-      color: white;
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
     }
   }
 }

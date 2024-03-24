@@ -26,11 +26,18 @@ export const clubStaffSlice = createApi({
     getClubStaff: builder.query({
       query: () => "/club-staff",
     }),
+    getPaginatedClubStaff: builder.query({
+      query: (filter) =>
+        `/club-staff/paginated?currentPage=${filter.currentPage}&locationId=${filter.locationId}&gender=${filter.gender}&roleId=${filter.roleId}&textSearch=${filter.textSearch}&clubId=${filter.clubId}`,
+    }),
     getClubStaffByFilter: builder.query({
       query: (filter) => `/club-staff/filter?${new URLSearchParams(filter)}`,
     }),
     getClubTrainers: builder.query({
       query: (userId) => `/club-staff/club-trainers/${userId}`,
+    }),
+    getClubNewStaffRequests: builder.query({
+      query: (clubId) => `/club-staff/club-new-staff-requests/${clubId}`,
     }),
     addClubStaff: builder.mutation({
       query: (clubStaff) => ({
@@ -52,7 +59,9 @@ export const clubStaffSlice = createApi({
 export const {
   useGetClubStaffQuery,
   useGetClubStaffByFilterQuery,
+  useGetPaginatedClubStaffQuery,
   useGetClubTrainersQuery,
+  useGetClubNewStaffRequestsQuery,
   useAddClubStaffMutation,
   useUpdateClubStaffMutation,
 } = clubStaffSlice;
