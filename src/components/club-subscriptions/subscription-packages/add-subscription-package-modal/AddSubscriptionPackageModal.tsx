@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
-
-import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -28,6 +26,8 @@ interface AddSubscriptionPackageModalProps {
   closeAddClubSubscriptionPackageModal: () => void;
   clubSubscriptionTypes: ClubSubscriptionTypes[];
   myPackages: ClubSubscriptionPackage[];
+  user: any;
+  selectedClub: any;
 }
 
 type FormValues = {
@@ -43,12 +43,9 @@ const AddSubscriptionPackageModal = (
     closeAddClubSubscriptionPackageModal,
     clubSubscriptionTypes,
     myPackages,
+    user,
+    selectedClub,
   } = props;
-
-  const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: selectedClub, isLoading: isSelectedClubLoading } =
-    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
   const { refetch: refetchMyPackages } =
     useGetClubSubscriptionPackagesByFilterQuery({
@@ -100,75 +97,81 @@ const AddSubscriptionPackageModal = (
     }
   }, [isSuccess]);
 
-  if (isSelectedClubLoading) {
-    return <PageLoading />;
-  }
-
   return (
-    <Modal
+    <ReactModal
       isOpen={openAddPackageModal}
       onRequestClose={closeAddClubSubscriptionPackageModal}
       className={styles["modal-container"]}
+      shouldCloseOnOverlayClick={false}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div
+        className={styles["overlay"]}
+        onClick={closeAddClubSubscriptionPackageModal}
+      />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Üyelik Paketi Ekle</h1>
-        <FaWindowClose
-          onClick={closeAddClubSubscriptionPackageModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Üyelik Türü</label>
-            <select
-              {...register("club_subscription_type_id", { required: true })}
-            >
-              <option value="">-- Üyelik Türü --</option>
-              {clubSubscriptionTypes
-                ?.filter(
-                  (type) =>
-                    !myPackageTypes.includes(type.club_subscription_type_id)
-                )
-                ?.map((type) => (
-                  <option
-                    key={type.club_subscription_type_id}
-                    value={type.club_subscription_type_id}
-                  >
-                    {type.club_subscription_type_name}
-                  </option>
-                ))}
-            </select>
-            {errors.club_subscription_type_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Fiyat (TL)</label>
-            <input
-              {...register("price", { required: true })}
-              type="number"
-              min="0"
-            />
-            {errors.price && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={!clubBankDetailsExist}
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
         >
-          {clubBankDetailsExist
-            ? "Tamamla"
-            : "Banka Hesap Bilgilerinizi Ekleyin"}
-        </button>
-      </form>
-    </Modal>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Üyelik Türü</label>
+              <select
+                {...register("club_subscription_type_id", { required: true })}
+              >
+                <option value="">-- Üyelik Türü --</option>
+                {clubSubscriptionTypes
+                  ?.filter(
+                    (type) =>
+                      !myPackageTypes.includes(type.club_subscription_type_id)
+                  )
+                  ?.map((type) => (
+                    <option
+                      key={type.club_subscription_type_id}
+                      value={type.club_subscription_type_id}
+                    >
+                      {type.club_subscription_type_name}
+                    </option>
+                  ))}
+              </select>
+              {errors.club_subscription_type_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Fiyat (TL)</label>
+              <input
+                {...register("price", { required: true })}
+                type="number"
+                min="0"
+              />
+              {errors.price && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button className={styles["discard-button"]}>İptal</button>
+            <button
+              type="submit"
+              className={styles["submit-button"]}
+              disabled={!clubBankDetailsExist}
+            >
+              {clubBankDetailsExist
+                ? "Tamamla"
+                : "Banka Hesap Bilgilerinizi Ekleyin"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </ReactModal>
   );
 };
 export default AddSubscriptionPackageModal;

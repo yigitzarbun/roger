@@ -124,9 +124,15 @@ const clubSubscriptionsModel = {
           "players.*",
           "players.image as playerImage",
           "players.user_id as playerUserId",
+          "players.fname as playerFname",
+          "players.lname as playerLname",
           "locations.*",
           "player_levels",
           "player_levels.player_level_name",
+          "club_external_members.fname as playerFname",
+          "club_external_members.lname as playerLname",
+          "club_external_members.user_id as playerUserId",
+          "users.*",
           db.raw("AVG(event_reviews.review_score) as averageReviewScore"),
           db.raw(
             "COUNT(DISTINCT event_reviews.review_score) as reviewScoreCount"
@@ -153,16 +159,223 @@ const clubSubscriptionsModel = {
             "club_subscriptions.player_id"
           );
         })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "club_subscriptions.player_id");
+        })
+        .leftJoin("club_external_members", function () {
+          this.on("club_external_members.user_id", "=", "users.user_id");
+        })
         .where("club_subscriptions.club_id", userId)
         .andWhere("club_subscriptions.is_active", true)
         .groupBy(
           "club_subscriptions.club_subscription_id",
           "players.player_id",
           "locations.location_id",
-          "player_levels.player_level_id"
+          "player_levels.player_level_id",
+          "club_external_members.fname",
+          "club_external_members.lname",
+          "club_external_members.user_id",
+          "players.fname",
+          "players.lname",
+          "users.user_id"
         );
 
       return clubSubscribers.length > 0 ? clubSubscribers : null;
+    } catch (error) {
+      console.log("Error fetching club subscribers: ", error);
+    }
+  },
+
+  async getPaginatedlubSubscribers(filter) {
+    const subscribersPerPage = 4;
+    const offset = (filter.page - 1) * subscribersPerPage;
+
+    try {
+      const clubSubscribers = await db
+        .select(
+          "club_subscriptions.*",
+          "players.*",
+          "players.image as playerImage",
+          "players.user_id as playerUserId",
+          "locations.*",
+          "player_levels",
+          "player_levels.player_level_name",
+          "club_external_members.*",
+          "club_subscription_packages.*",
+          "club_subscription_types.*",
+          "user_types.*",
+          "users.*"
+        )
+        .from("club_subscriptions")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "club_subscriptions.player_id");
+        })
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "players.location_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "club_subscriptions.player_id");
+        })
+        .leftJoin("club_external_members", function () {
+          this.on("club_external_members.user_id", "=", "users.user_id");
+        })
+        .leftJoin("club_subscription_packages", function () {
+          this.on(
+            "club_subscription_packages.club_subscription_package_id",
+            "=",
+            "club_subscriptions.club_subscription_package_id"
+          );
+        })
+        .leftJoin("club_subscription_types", function () {
+          this.on(
+            "club_subscription_types.club_subscription_type_id",
+            "=",
+            "club_subscription_packages.club_subscription_type_id"
+          );
+        })
+        .leftJoin("user_types", function () {
+          this.on("user_types.user_type_id", "=", "users.user_type_id");
+        })
+        .where((builder) => {
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder
+              .where("players.fname", "ilike", `%${filter.textSearch}%`)
+              .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+              .orWhere(
+                "club_external_members.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              )
+              .orWhere(
+                "club_external_members.lname",
+                "ilike",
+                `%${filter.textSearch}%`
+              );
+          }
+          if (filter.clubSubscriptionTypeId > 0) {
+            builder.where(
+              "club_subscription_types.club_subscription_type_id",
+              filter.clubSubscriptionTypeId
+            );
+          }
+          if (filter.playerLevelId > 0) {
+            builder.where(
+              "player_levels.player_level_id",
+              filter.playerLevelId
+            );
+          }
+          if (filter.locationId > 0) {
+            builder.where("locations.location_id", filter.locationId);
+          }
+          if (filter.userTypeId > 0) {
+            builder.where("user_types.user_type_id", filter.userTypeId);
+          }
+        })
+        .andWhere("club_subscriptions.club_id", filter.userId)
+        .andWhere("club_subscriptions.is_active", true)
+        .offset(offset)
+        .limit(subscribersPerPage);
+
+      const count = await db
+        .select(
+          "club_subscriptions.*",
+          "players.*",
+          "locations.*",
+          "player_levels",
+          "club_external_members.*",
+          "club_subscription_packages.*",
+          "club_subscription_types.*",
+          "user_types.*",
+          "users.*"
+        )
+        .from("club_subscriptions")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "club_subscriptions.player_id");
+        })
+        .leftJoin("locations", function () {
+          this.on("locations.location_id", "=", "players.location_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "club_subscriptions.player_id");
+        })
+        .leftJoin("club_external_members", function () {
+          this.on("club_external_members.user_id", "=", "users.user_id");
+        })
+        .leftJoin("club_subscription_packages", function () {
+          this.on(
+            "club_subscription_packages.club_subscription_package_id",
+            "=",
+            "club_subscriptions.club_subscription_package_id"
+          );
+        })
+        .leftJoin("club_subscription_types", function () {
+          this.on(
+            "club_subscription_types.club_subscription_type_id",
+            "=",
+            "club_subscription_packages.club_subscription_type_id"
+          );
+        })
+        .leftJoin("user_types", function () {
+          this.on("user_types.user_type_id", "=", "users.user_type_id");
+        })
+        .where((builder) => {
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder
+              .where("players.fname", "ilike", `%${filter.textSearch}%`)
+              .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+              .orWhere(
+                "club_external_members.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              )
+              .orWhere(
+                "club_external_members.lname",
+                "ilike",
+                `%${filter.textSearch}%`
+              );
+          }
+          if (filter.clubSubscriptionTypeId > 0) {
+            builder.where(
+              "club_subscription_types.club_subscription_type_id",
+              filter.clubSubscriptionTypeId
+            );
+          }
+          if (filter.playerLevelId > 0) {
+            builder.where(
+              "player_levels.player_level_id",
+              filter.playerLevelId
+            );
+          }
+          if (filter.locationId > 0) {
+            builder.where("locations.location_id", filter.locationId);
+          }
+          if (filter.userTypeId > 0) {
+            builder.where("user_types.user_type_id", filter.userTypeId);
+          }
+        })
+        .andWhere("club_subscriptions.club_id", filter.userId)
+        .andWhere("club_subscriptions.is_active", true);
+
+      const data = {
+        subscribers: clubSubscribers,
+        totalPages: Math.ceil(count.length / subscribersPerPage),
+      };
+
+      return data;
     } catch (error) {
       console.log("Error fetching club subscribers: ", error);
     }

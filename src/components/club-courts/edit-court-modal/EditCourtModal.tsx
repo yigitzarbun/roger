@@ -4,8 +4,6 @@ import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { useAppSelector } from "../../../store/hooks";
@@ -22,7 +20,6 @@ import {
   useUpdateCourtMutation,
 } from "../../../api/endpoints/CourtsApi";
 import PageLoading from "../../../components/loading/PageLoading";
-import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 interface EditCourtModalProps {
   isEditCourtModalOpen: boolean;

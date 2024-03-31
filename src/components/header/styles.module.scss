@@ -44,27 +44,26 @@
       display: flex;
       column-gap: 15px;
       align-items: center;
-
-      .notification-container {
-        height: 30px;
-        position: relative;
-        .circle {
-          position: absolute;
-          top: 0;
-          left: 0;
-          color: $roger-blue;
-          font-size: 0.5rem;
-          border-radius: 50%;
-        }
-        .notification {
-          font-size: 1.6rem;
-          cursor: pointer;
-        }
-      }
       .language {
-        height: 30px;
+        height: 23px;
         cursor: pointer;
         font-size: 1.6rem;
+      }
+      .theme {
+        height: 23px;
+        cursor: pointer;
+        font-size: 1.6rem;
+      }
+      .passive-notification {
+        height: 23px;
+        cursor: pointer;
+        font-size: 1.6rem;
+      }
+      .active-notification {
+        height: 23px;
+        cursor: pointer;
+        font-size: 1.6rem;
+        color: $roger-blue;
       }
       .profile-image {
         height: 30px;

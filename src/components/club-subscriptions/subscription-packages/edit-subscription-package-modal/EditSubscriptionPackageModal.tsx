@@ -1,30 +1,23 @@
 import React, { useEffect } from "react";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
-
-import { FaWindowClose } from "react-icons/fa";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../store/hooks";
-
 import {
-  ClubSubscriptionPackage,
   useGetClubSubscriptionPackagesByFilterQuery,
   useUpdateClubSubscriptionPackageMutation,
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
-import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
-
 interface EditSubscriptionPackageModalProps {
   openEditPackageModal: boolean;
   closeEditClubSubscriptionPackageModal: () => void;
-  selectedSubscriptionPackage: ClubSubscriptionPackage;
-  clubSubscriptionTypes: ClubSubscriptionTypes[];
+  selectedSubscriptionPackage: any;
+  user: any;
 }
 
 type FormValues = {
@@ -38,10 +31,8 @@ const EditSubscriptionPackageModal = (
     openEditPackageModal,
     closeEditClubSubscriptionPackageModal,
     selectedSubscriptionPackage,
-    clubSubscriptionTypes,
+    user,
   } = props;
-
-  const user = useAppSelector((store) => store?.user?.user);
 
   const { refetch: refetchMyPackages } =
     useGetClubSubscriptionPackagesByFilterQuery({
@@ -97,45 +88,49 @@ const EditSubscriptionPackageModal = (
   }, [closeEditClubSubscriptionPackageModal]);
 
   return (
-    <Modal
+    <ReactModal
       isOpen={openEditPackageModal}
       onRequestClose={closeEditClubSubscriptionPackageModal}
       className={styles["modal-container"]}
+      shouldCloseOnOverlayClick={false}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div
+        className={styles["overlay"]}
+        onClick={closeEditClubSubscriptionPackageModal}
+      />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Üyelik Paketi Düzenle</h1>
-        <FaWindowClose
-          onClick={closeEditClubSubscriptionPackageModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <h3>
-        {
-          clubSubscriptionTypes?.find(
-            (type) =>
-              type.club_subscription_type_id ===
-              selectedSubscriptionPackage?.club_subscription_type_id
-          )?.club_subscription_type_name
-        }
-      </h3>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Fiyat (TL)</label>
-            <input {...register("price", { required: true })} type="number" />
-            {errors.price && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
+        <h4>{selectedSubscriptionPackage?.club_subscription_type_name}</h4>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+        >
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Fiyat (TL)</label>
+              <input {...register("price", { required: true })} type="number" />
+              {errors.price && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-        <button type="submit" className={styles["form-button"]}>
-          Tamamla
-        </button>
-      </form>
-    </Modal>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={closeEditClubSubscriptionPackageModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              Tamamla
+            </button>
+          </div>
+        </form>
+      </div>
+    </ReactModal>
   );
 };
 export default EditSubscriptionPackageModal;

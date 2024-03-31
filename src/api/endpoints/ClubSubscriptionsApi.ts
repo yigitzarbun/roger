@@ -29,6 +29,10 @@ export const clubSubscriptionsSlice = createApi({
           filter
         )}`,
     }),
+    getPaginatedClubSubscribers: builder.query({
+      query: (filter) =>
+        `/club-subscriptions/paginated?${new URLSearchParams(filter)}`,
+    }),
     getPlayerActiveClubSubscriptions: builder.query({
       query: (userId) =>
         `/club-subscriptions/player-active-club-subscriptions/${userId}`,
@@ -60,6 +64,7 @@ export const clubSubscriptionsSlice = createApi({
 export const {
   useGetClubSubscriptionsQuery,
   useGetClubSubscriptionsByFilterQuery,
+  useGetPaginatedClubSubscribersQuery,
   useGetPlayersTraininSubscriptionStatusQuery,
   useGetPlayerActiveClubSubscriptionsQuery,
   useGetClubSubscriptionsByIdQuery,

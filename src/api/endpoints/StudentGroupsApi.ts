@@ -26,6 +26,12 @@ export const studentGroupsSlice = createApi({
       query: (filter) =>
         `/student-groups/filter?${new URLSearchParams(filter)}`,
     }),
+    getPaginatedStudentGroups: builder.query({
+      query: (filter) =>
+        `/student-groups/paginated-student-groups/filter?${new URLSearchParams(
+          filter
+        )}`,
+    }),
     getPlayerActiveStudentGroupsByUserId: builder.query({
       query: (userId) =>
         `/student-groups/player-active-student-groups/${userId}`,
@@ -51,6 +57,7 @@ export const {
   useGetStudentGroupsQuery,
   useGetStudentGroupsByFilterQuery,
   useGetPlayerActiveStudentGroupsByUserIdQuery,
+  useGetPaginatedStudentGroupsQuery,
   useAddStudentGroupMutation,
   useUpdateStudentGroupMutation,
 } = studentGroupsSlice;

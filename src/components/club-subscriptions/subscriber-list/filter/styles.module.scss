@@ -41,11 +41,25 @@
     h3 {
       font-size: 1.7rem;
     }
-
     .form-container {
       display: flex;
       flex-direction: column;
       row-gap: 3vh;
+      .search-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 2vh;
+        width: 100%;
+
+        input {
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          border: 1px solid $roger-border-color;
+          width: 100%;
+          background-color: inherit;
+          height: 50px;
+        }
+      }
       .input-outer-container {
         display: flex;
         justify-content: space-between;
@@ -54,15 +68,14 @@
           display: flex;
           flex-direction: column;
           row-gap: 2vh;
-          width: 100%;
-          .error-field {
-            font-size: 0.8rem;
-            color: $roger-red;
-          }
+          width: 48%;
+
           label {
             font-size: 0.9rem;
           }
-          input {
+          input,
+          select,
+          textArea {
             padding: $roger-button-padding;
             border-radius: $roger-border-radius;
             border: 1px solid $roger-border-color;
@@ -70,17 +83,12 @@
             background-color: inherit;
             height: 50px;
           }
-          .court-picture-container {
-            display: flex;
-          }
         }
       }
-
       .buttons-container {
         display: flex;
         justify-content: space-between;
-        margin: 1vh 0;
-
+        margin: 4vh 0;
         .discard-button {
           background-color: $roger-black-dark;
           border: none;

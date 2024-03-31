@@ -25,10 +25,7 @@ import LanguageModal from "./modals/language/LanguageModal";
 import NotificationsModal from "./modals/notifications/NotificationsModal";
 import { useGetTrainerByUserIdQuery } from "../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../api/endpoints/ClubsApi";
-import {
-  useGetClubNewStaffRequestsQuery,
-  useGetClubStaffByFilterQuery,
-} from "../../api/endpoints/ClubStaffApi";
+import { useGetClubNewStaffRequestsQuery } from "../../api/endpoints/ClubStaffApi";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -153,21 +150,19 @@ const Header = () => {
         </NavLink>
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
-            <IoMdSunny className={styles.language} />
-
-            <div className={styles["notification-container"]}>
-              {(!hasBankDetails ||
+            <IoMdSunny className={styles.theme} />
+            <IoIosNotificationsOutline
+              onClick={handleOpenNotificationsModal}
+              className={
+                !hasBankDetails ||
                 incomingRequests?.length > 0 ||
                 missingScoresLength > 0 ||
                 missingReviews > 0 ||
-                myStaffRequests?.length > 0) && (
-                <FaCircle className={styles["circle"]} />
-              )}
-              <IoIosNotificationsOutline
-                onClick={handleOpenNotificationsModal}
-                className={styles.notification}
-              />
-            </div>
+                myStaffRequests?.length > 0
+                  ? styles["active-notification"]
+                  : styles["passive-notification"]
+              }
+            />
             <MdOutlineLanguage
               className={styles.language}
               onClick={handleOpenLanguageModal}
@@ -178,10 +173,10 @@ const Header = () => {
                   isUserPlayer && playerDetails?.[0]?.image
                     ? `${localUrl}/${playerDetails?.[0]?.image}`
                     : //: isUserTrainer && trainerDetails?.[0]?.image
-                      //? trainerDetails?.[0]?.image
-                      //: isUserClub && clubDetails?.[0]?.image
-                      //? clubDetails?.[0]?.image
-                      "/images/icons/avatar.jpg"
+                    //? trainerDetails?.[0]?.image
+                    isUserClub && clubDetails?.[0]?.image
+                    ? clubDetails?.[0]?.image
+                    : "/images/icons/avatar.jpg"
                 }
                 alt="avatar"
                 className={styles["profile-image"]}

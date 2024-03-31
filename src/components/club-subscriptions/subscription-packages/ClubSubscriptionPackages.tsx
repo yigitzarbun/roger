@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ClubSubscriptionPackagesResults from "./results/ClubSubscriptionPackagesResults";
 import EditSubscriptionPackageModal from "./edit-subscription-package-modal/EditSubscriptionPackageModal";
 import PageLoading from "../../../components/loading/PageLoading";
 
-import {
-  useGetClubSubscriptionPackageDetailsQuery,
-  useGetClubSubscriptionPackagesByFilterQuery,
-} from "../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useGetClubSubscriptionPackageDetailsQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useAppSelector } from "../../../store/hooks";
@@ -15,8 +12,10 @@ import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
 const ClubSubscriptionPackages = () => {
   const user = useAppSelector((store) => store?.user?.user);
+
   const { data: selectedClub, isLoading: isSelectedClubLoading } =
     useGetClubByClubIdQuery(user?.clubDetails?.club_id);
+
   const [selectedSubscriptionPackage, setSelectedSubscriptionPackage] =
     useState(null);
 
@@ -31,10 +30,13 @@ const ClubSubscriptionPackages = () => {
       club_id: user?.user?.user_id,
     });
 
-  const { data: myPackages, isLoading: isMyPackagesLoading } =
-    useGetClubSubscriptionPackageDetailsQuery({
-      clubId: user?.user?.user_id,
-    });
+  const {
+    data: myPackages,
+    isLoading: isMyPackagesLoading,
+    refetch: refetchMyPackages,
+  } = useGetClubSubscriptionPackageDetailsQuery({
+    clubId: user?.user?.user_id,
+  });
 
   const [openEditPackageModal, setOpenEditPackageModal] = useState(false);
 
@@ -56,6 +58,9 @@ const ClubSubscriptionPackages = () => {
     setOpenAddPackageModal(false);
   };
 
+  useEffect(() => {
+    refetchMyPackages();
+  }, [openAddPackageModal, openEditPackageModal]);
   if (
     isClubSubscriptionTypesLoading ||
     isMySubscribersLoading ||
@@ -80,6 +85,7 @@ const ClubSubscriptionPackages = () => {
         mySubscribers={mySubscribers}
         subscriptionTypes={clubSubscriptionTypes}
         selectedClub={selectedClub}
+        user={user}
       />
 
       <EditSubscriptionPackageModal
@@ -88,7 +94,7 @@ const ClubSubscriptionPackages = () => {
           closeEditClubSubscriptionPackageModal
         }
         selectedSubscriptionPackage={selectedSubscriptionPackage}
-        clubSubscriptionTypes={clubSubscriptionTypes}
+        user={user}
       />
     </div>
   );

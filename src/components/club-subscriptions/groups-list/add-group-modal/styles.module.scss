@@ -1,94 +1,119 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
+
+.modal-overlay {
+  z-index: $profile-modal-z-index-overlay;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0, 0.8);
+  z-index: $profile-modal-z-index-overlay;
+}
 
 .modal-container {
-  color: black;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 50%;
-  row-gap: 2vh;
-  margin: 70px auto;
-  background-color: $roger-box-bg-color;
-  padding: $roger-modal-padding;
-  border-radius: $roger-border-radius;
-  color: $roger-text-color;
-
-  .top-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .title {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-    .close-icon {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
-    .close-icon:hover {
-      color: $roger-red;
-    }
-  }
-  .form-container {
+  .modal-content {
+    position: relative;
+    z-index: $profile-modal-z-index;
     display: flex;
     flex-direction: column;
-    row-gap: 2vh;
+    justify-content: space-between;
+    width: 450px;
+    row-gap: 4vh;
+    border-radius: $roger-border-radius;
+    background-color: $roger-box-bg-color;
+    padding: $roger-box-padding;
+    border: 1px solid $roger-border-color;
 
-    .input-outer-container {
+    h3 {
+      font-size: 1.7rem;
+    }
+
+    .form-container {
       display: flex;
-      justify-content: space-between;
-
-      .input-container {
+      flex-direction: column;
+      row-gap: 4vh;
+      .input-outer-container {
         display: flex;
-        flex-direction: column;
-        row-gap: 1vh;
-        width: 100%;
+        justify-content: space-between;
 
-        input,
-        select {
-          padding: $roger-box-padding;
-          border-radius: $roger-border-radius;
-          border: none;
-          width: 95%;
+        .input-container {
+          display: flex;
+          flex-direction: column;
+          row-gap: 2vh;
+          width: 45%;
+          .error-field {
+            font-size: 0.8rem;
+            color: $roger-red;
+          }
+          label {
+            font-size: 0.9rem;
+          }
+          input,
+          select {
+            padding: $roger-button-padding;
+            border-radius: $roger-border-radius;
+            border: 1px solid $roger-border-color;
+            width: 100%;
+            background-color: inherit;
+            height: 50px;
+          }
+          .court-picture-container {
+            display: flex;
+          }
         }
       }
-    }
-    .more-players-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: $roger-green;
-      padding: 10px;
-      border-radius: $roger-border-radius;
-      color: black;
-      width: 250px;
-      cursor: pointer;
-      margin-top: 4vh;
-    }
-    .more-players-container:hover {
-      background-color: $roger-blue;
-      color: white;
-    }
-    .form-button {
-      padding: $roger-box-padding;
-      border-radius: $roger-border-radius;
-      border: none;
-      margin-top: 4vh;
-      font-size: 1rem;
-      font-weight: bold;
-    }
 
-    .form-button:hover {
-      background-color: $roger-blue;
-      cursor: pointer;
-    }
+      .buttons-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 1vh 0;
 
-    .error-field {
-      color: $roger-red;
-      font-size: 0.8rem;
+        .discard-button {
+          background-color: $roger-black-dark;
+          border: none;
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          font-size: 0.9rem;
+          cursor: pointer;
+          height: 40px;
+          width: 150px;
+        }
+        .discard-button:hover {
+          background-color: $roger-black-dark;
+        }
+        .discard-button:hover {
+          background-color: $roger-box-bg-color-hover;
+        }
+        .submit-button {
+          background-color: white;
+          color: black;
+          border: none;
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          font-size: 0.9rem;
+          cursor: pointer;
+          height: 40px;
+          width: 150px;
+        }
+        .submit-button:hover {
+          background-color: $roger-white;
+          color: black;
+        }
+      }
     }
   }
 }

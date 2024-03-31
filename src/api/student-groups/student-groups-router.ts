@@ -57,6 +57,21 @@ studentGroupsRouter.get(
   }
 );
 
+studentGroupsRouter.get(
+  "/paginated-student-groups/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const studentGroup = await studentGroupsModel.getPaginatedStudentGroups(
+        filter
+      );
+      res.status(200).json(studentGroup);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 studentGroupsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

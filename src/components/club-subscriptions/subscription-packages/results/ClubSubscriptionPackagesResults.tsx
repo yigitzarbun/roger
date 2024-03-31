@@ -16,6 +16,7 @@ interface ClubSubscriptionPackagesResultsProps {
   mySubscribers: ClubSubscription[];
   subscriptionTypes: ClubSubscriptionTypes[];
   selectedClub: any;
+  user: any;
 }
 const ClubSubscriptionPackagesResults = (
   props: ClubSubscriptionPackagesResultsProps
@@ -28,6 +29,7 @@ const ClubSubscriptionPackagesResults = (
     myPackages,
     subscriptionTypes,
     selectedClub,
+    user,
   } = props;
 
   const clubBankDetailsExist =
@@ -101,6 +103,8 @@ const ClubSubscriptionPackagesResults = (
         }
         clubSubscriptionTypes={subscriptionTypes}
         myPackages={myPackages}
+        user={user}
+        selectedClub={selectedClub}
       />
     </div>
   );

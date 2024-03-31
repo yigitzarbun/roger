@@ -29,6 +29,19 @@ clubSubscriptionsRouter.get(
   }
 );
 clubSubscriptionsRouter.get(
+  "/paginated",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const subscribers =
+        await clubSubscriptionsModel.getPaginatedlubSubscribers(filter);
+      res.status(200).json(subscribers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubSubscriptionsRouter.get(
   "/players-training-subscription-status/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
