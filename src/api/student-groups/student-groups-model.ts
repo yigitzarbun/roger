@@ -124,7 +124,9 @@ const studentGroupsModel = {
           "trainers.fname as trainer_fname",
           "trainers.lname as trainer_lname",
           "sg.student_group_id", // Corrected column name
-          "sg.student_group_name" // Corrected column name
+          "sg.student_group_name", // Corrected column name
+          "sg.user_id",
+          "sg.registered_at"
         )
         .from({ sg: "student_groups" })
         .leftJoin({ p1: "players" }, "sg.first_student_id", "p1.user_id")

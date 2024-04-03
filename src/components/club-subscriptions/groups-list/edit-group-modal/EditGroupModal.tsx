@@ -14,29 +14,19 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import { useAppSelector } from "../../../../store/hooks";
+
 import {
-  Trainer,
-  useGetTrainersByFilterQuery,
-} from "../../../../api/endpoints/TrainersApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import {
-  ClubExternalMember,
-  useGetClubExternalMembersByFilterQuery,
-} from "../../../../api/endpoints/ClubExternalMembersApi";
-import {
-  StudentGroup,
   useGetStudentGroupsQuery,
   useUpdateStudentGroupMutation,
 } from "../../../../api/endpoints/StudentGroupsApi";
-import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
+import { useGetClubSubscribersByIdQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface EditGroupModalProps {
   isEditGroupModalOpen: boolean;
   closeEditGroupModal: () => void;
-  selectedGroup: StudentGroup;
-  myTrainers: Trainer[];
-  myExternalMembers: ClubExternalMember[];
+  selectedGroup: any;
+  myTrainers: any[];
+  user: any;
 }
 
 type FormValues = {
@@ -54,32 +44,17 @@ const EditGroupModal = (props: EditGroupModalProps) => {
     closeEditGroupModal,
     selectedGroup,
     myTrainers,
-    myExternalMembers,
+    user,
   } = props;
 
-  const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
-
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
   const { data: mySubscribers, isLoading: isMySubscribersLoading } =
-    useGetClubSubscriptionsByFilterQuery({
-      club_id: user?.user?.user_id,
-      is_active: true,
-    });
+    useGetClubSubscribersByIdQuery(user?.user?.user_id);
 
   const { isLoading: isGroupsLoading, refetch: refetchGroups } =
     useGetStudentGroupsQuery({});
 
   const [updateGroup, { isSuccess: isUpdateGroupSuccess }] =
     useUpdateStudentGroupMutation({});
-
-  const [addMoreUsers, setAddMoreUsers] = useState(false);
-
-  const handleAddMoreUsers = () => {
-    setAddMoreUsers(true);
-  };
 
   const {
     register,
@@ -89,22 +64,35 @@ const EditGroupModal = (props: EditGroupModalProps) => {
   } = useForm<FormValues>({
     defaultValues: {
       student_group_name: selectedGroup?.student_group_name,
-      trainer_id: selectedGroup?.trainer_id,
-      first_student_id: selectedGroup?.first_student_id,
-      second_student_id: selectedGroup?.second_student_id,
-      third_student_id: selectedGroup?.third_student_id
-        ? selectedGroup?.third_student_id
+      trainer_id: selectedGroup?.trainer_user_id,
+      first_student_id: selectedGroup?.cem1_user_id
+        ? selectedGroup?.cem1_user_id
+        : selectedGroup?.student1_user_id
+        ? selectedGroup?.student1_user_id
         : null,
-      fourth_student_id: selectedGroup?.fourth_student_id
-        ? selectedGroup?.fourth_student_id
+      second_student_id: selectedGroup?.cem2_user_id
+        ? selectedGroup?.cem2_user_id
+        : selectedGroup?.student2_user_id
+        ? selectedGroup?.student2_user_id
+        : null,
+      third_student_id: selectedGroup?.cem3_user_id
+        ? selectedGroup?.cem3_user_id
+        : selectedGroup?.student3_user_id
+        ? selectedGroup?.student3_user_id
+        : null,
+      fourth_student_id: selectedGroup?.cem4_user_id
+        ? selectedGroup?.cem4_user_id
+        : selectedGroup?.student4_user_id
+        ? selectedGroup?.student4_user_id
         : null,
     },
   });
-
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const groupData = {
-        ...selectedGroup,
+        student_group_id: selectedGroup?.student_group_id,
+        registered_at: selectedGroup?.registered_at,
+        user_id: selectedGroup?.user_id,
         student_group_name: formData?.student_group_name,
         is_active: true,
         club_id: user?.user?.user_id,
@@ -119,28 +107,67 @@ const EditGroupModal = (props: EditGroupModalProps) => {
           : null,
       };
       updateGroup(groupData);
-      console.log(groupData);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const selectedExternalMember = (user_id: number) => {
-    return myExternalMembers?.find((member) => member.user_id === user_id);
+  const handleDeleteGroup = () => {
+    const deleteGroupData = {
+      student_group_id: selectedGroup?.student_group_id,
+      registered_at: selectedGroup?.registered_at,
+      user_id: selectedGroup?.user_id,
+      is_active: false,
+      student_group_name: selectedGroup?.student_group_name,
+      trainer_id: selectedGroup?.trainer_user_id,
+      first_student_id: selectedGroup?.cem1_user_id
+        ? selectedGroup?.cem1_user_id
+        : selectedGroup?.student1_user_id
+        ? selectedGroup?.student1_user_id
+        : null,
+      second_student_id: selectedGroup?.cem2_user_id
+        ? selectedGroup?.cem2_user_id
+        : selectedGroup?.student2_user_id
+        ? selectedGroup?.student2_user_id
+        : null,
+      third_student_id: selectedGroup?.cem3_user_id
+        ? selectedGroup?.cem3_user_id
+        : selectedGroup?.student3_user_id
+        ? selectedGroup?.student3_user_id
+        : null,
+      fourth_student_id: selectedGroup?.cem4_user_id
+        ? selectedGroup?.cem4_user_id
+        : selectedGroup?.student4_user_id
+        ? selectedGroup?.student4_user_id
+        : null,
+    };
+    updateGroup(deleteGroupData);
   };
 
   useEffect(() => {
     if (selectedGroup) {
       reset({
         student_group_name: selectedGroup?.student_group_name,
-        trainer_id: selectedGroup?.trainer_id,
-        first_student_id: selectedGroup?.first_student_id,
-        second_student_id: selectedGroup?.second_student_id,
-        third_student_id: selectedGroup?.third_student_id
-          ? selectedGroup?.third_student_id
+        trainer_id: selectedGroup?.trainer_user_id,
+        first_student_id: selectedGroup?.cem1_user_id
+          ? selectedGroup?.cem1_user_id
+          : selectedGroup?.student1_user_id
+          ? selectedGroup?.student1_user_id
           : null,
-        fourth_student_id: selectedGroup?.fourth_student_id
-          ? selectedGroup?.fourth_student_id
+        second_student_id: selectedGroup?.cem2_user_id
+          ? selectedGroup?.cem2_user_id
+          : selectedGroup?.student2_user_id
+          ? selectedGroup?.student2_user_id
+          : null,
+        third_student_id: selectedGroup?.cem3_user_id
+          ? selectedGroup?.cem3_user_id
+          : selectedGroup?.student3_user_id
+          ? selectedGroup?.student3_user_id
+          : null,
+        fourth_student_id: selectedGroup?.cem4_user_id
+          ? selectedGroup?.cem4_user_id
+          : selectedGroup?.student4_user_id
+          ? selectedGroup?.student4_user_id
           : null,
       });
     }
@@ -155,16 +182,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
     }
   }, [isUpdateGroupSuccess]);
 
-  useEffect(() => {
-    setAddMoreUsers(false);
-  }, [closeEditGroupModal]);
-
-  if (
-    isGroupsLoading ||
-    isUsersLoading ||
-    isPlayersLoading ||
-    isMySubscribersLoading
-  ) {
+  if (isGroupsLoading || isMySubscribersLoading) {
     return <PageLoading />;
   }
 
@@ -173,126 +191,112 @@ const EditGroupModal = (props: EditGroupModalProps) => {
       isOpen={isEditGroupModalOpen}
       onRequestClose={closeEditGroupModal}
       className={styles["modal-container"]}
+      shouldCloseOnOverlayClick={false}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Grup Düzenle</h1>
-        <FaWindowClose
-          onClick={closeEditGroupModal}
-          className={styles["close-icon"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Grup Adı</label>
-            <input
-              {...register("student_group_name", { required: true })}
-              type="text"
-            />
-            {errors.student_group_name && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Eğitmen</label>
-            <select
-              {...register("trainer_id", {
-                required: true,
-              })}
-            >
-              <option value="">-- Eğitmen --</option>
-              {myTrainers?.map((staff) => (
-                <option key={staff.user_id} value={staff.user_id}>{`${
-                  myTrainers?.find(
-                    (trainer) => trainer.user_id === staff.user_id
-                  )?.fname
-                } ${
-                  myTrainers?.find(
-                    (trainer) => trainer.user_id === staff.user_id
-                  )?.lname
-                }`}</option>
-              ))}
-            </select>
-            {errors.trainer_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
+      <div className={styles["overlay"]} onClick={closeEditGroupModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1 className={styles.title}>Grup Düzenle</h1>
+          <button
+            onClick={handleDeleteGroup}
+            className={styles["delete-button"]}
+          >
+            Grubu sil
+          </button>
         </div>
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>1. Oyuncu</label>
-            <select
-              {...register("first_student_id", {
-                required: true,
-              })}
-            >
-              <option value="">-- 1. Oyuncu --</option>
-              {mySubscribers.map((subscriber) => (
-                <option key={subscriber.player_id} value={subscriber.player_id}>
-                  {users?.find((user) => user.user_id === subscriber.player_id)
-                    ?.user_type_id === 5
-                    ? `${selectedExternalMember(subscriber.player_id)?.fname} ${
-                        selectedExternalMember(subscriber.player_id)?.lname
-                      }`
-                    : users?.find(
-                        (user) => user.user_id === subscriber.player_id
-                      )?.user_type_id === 1 &&
-                      `${
-                        players?.find(
-                          (player) => player.user_id === subscriber.player_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === subscriber.player_id
-                        )?.lname
-                      } `}
-                </option>
-              ))}
-            </select>
-            {errors.first_student_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+        >
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Grup Adı</label>
+              <input
+                {...register("student_group_name", { required: true })}
+                type="text"
+              />
+              {errors.student_group_name && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Eğitmen</label>
+              <select
+                {...register("trainer_id", {
+                  required: true,
+                })}
+              >
+                <option value="">-- Eğitmen --</option>
+                {myTrainers?.map((staff) => (
+                  <option key={staff.user_id} value={staff.user_id}>{`${
+                    myTrainers?.find(
+                      (trainer) => trainer.user_id === staff.user_id
+                    )?.fname
+                  } ${
+                    myTrainers?.find(
+                      (trainer) => trainer.user_id === staff.user_id
+                    )?.lname
+                  }`}</option>
+                ))}
+              </select>
+              {errors.trainer_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
           </div>
-          <div className={styles["input-container"]}>
-            <label>2. Oyuncu</label>
-            <select
-              {...register("second_student_id", {
-                required: true,
-              })}
-            >
-              <option value="">-- 2. Oyuncu --</option>
-              {mySubscribers.map((subscriber) => (
-                <option key={subscriber.player_id} value={subscriber.player_id}>
-                  {users?.find((user) => user.user_id === subscriber.player_id)
-                    ?.user_type_id === 5
-                    ? `${selectedExternalMember(subscriber.player_id)?.fname} ${
-                        selectedExternalMember(subscriber.player_id)?.lname
-                      }`
-                    : users?.find(
-                        (user) => user.user_id === subscriber.player_id
-                      )?.user_type_id === 1 &&
-                      `${
-                        players?.find(
-                          (player) => player.user_id === subscriber.player_id
-                        )?.fname
-                      } ${
-                        players?.find(
-                          (player) => player.user_id === subscriber.player_id
-                        )?.lname
-                      } `}
-                </option>
-              ))}
-            </select>
-            {errors.second_student_id && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>1. Oyuncu</label>
+              <select
+                {...register("first_student_id", {
+                  required: true,
+                })}
+              >
+                <option value="">-- 1. Oyuncu --</option>
+                {mySubscribers.map((subscriber) => (
+                  <option
+                    key={subscriber.playerUserId}
+                    value={subscriber.playerUserId}
+                  >
+                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
+                  </option>
+                ))}
+              </select>
+              {errors.first_student_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>2. Oyuncu</label>
+              <select
+                {...register("second_student_id", {
+                  required: true,
+                })}
+              >
+                <option value="">-- 2. Oyuncu --</option>
+                {mySubscribers.map((subscriber) => (
+                  <option
+                    key={subscriber.playerUserId}
+                    value={subscriber.playerUserId}
+                  >
+                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
+                  </option>
+                ))}
+              </select>
+              {errors.second_student_id && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-
-        {addMoreUsers ? (
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
               <label>3. Oyuncu</label>
@@ -300,29 +304,10 @@ const EditGroupModal = (props: EditGroupModalProps) => {
                 <option value="">-- 3. Oyuncu --</option>
                 {mySubscribers.map((subscriber) => (
                   <option
-                    key={subscriber.player_id}
-                    value={subscriber.player_id}
+                    key={subscriber.playerUserId}
+                    value={subscriber.playerUserId}
                   >
-                    {users?.find(
-                      (user) => user.user_id === subscriber.player_id
-                    )?.user_type_id === 5
-                      ? `${
-                          selectedExternalMember(subscriber.player_id)?.fname
-                        } ${
-                          selectedExternalMember(subscriber.player_id)?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === subscriber.player_id
-                        )?.user_type_id === 1 &&
-                        `${
-                          players?.find(
-                            (player) => player.user_id === subscriber.player_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) => player.user_id === subscriber.player_id
-                          )?.lname
-                        } `}
+                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
                   </option>
                 ))}
               </select>
@@ -338,29 +323,10 @@ const EditGroupModal = (props: EditGroupModalProps) => {
                 <option value="">-- 4. Oyuncu --</option>
                 {mySubscribers.map((subscriber) => (
                   <option
-                    key={subscriber.player_id}
-                    value={subscriber.player_id}
+                    key={subscriber.playerUserId}
+                    value={subscriber.playerUserId}
                   >
-                    {users?.find(
-                      (user) => user.user_id === subscriber.player_id
-                    )?.user_type_id === 5
-                      ? `${
-                          selectedExternalMember(subscriber.player_id)?.fname
-                        } ${
-                          selectedExternalMember(subscriber.player_id)?.lname
-                        }`
-                      : users?.find(
-                          (user) => user.user_id === subscriber.player_id
-                        )?.user_type_id === 1 &&
-                        `${
-                          players?.find(
-                            (player) => player.user_id === subscriber.player_id
-                          )?.fname
-                        } ${
-                          players?.find(
-                            (player) => player.user_id === subscriber.player_id
-                          )?.lname
-                        } `}
+                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
                   </option>
                 ))}
               </select>
@@ -371,20 +337,19 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               )}
             </div>
           </div>
-        ) : (
-          <div
-            onClick={handleAddMoreUsers}
-            className={styles["more-players-container"]}
-          >
-            <AiOutlineUserAdd />
-            Daha fazla oyuncu ekle
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={closeEditGroupModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["submit-button"]}>
+              Tamamla
+            </button>
           </div>
-        )}
-
-        <button type="submit" className={styles["form-button"]}>
-          Tamamla
-        </button>
-      </form>
+        </form>
+      </div>
     </Modal>
   );
 };

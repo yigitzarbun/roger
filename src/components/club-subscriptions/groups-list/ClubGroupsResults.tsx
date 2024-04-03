@@ -35,12 +35,6 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
       employment_status: "accepted",
     });
 
-  const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
-    useGetClubExternalMembersByFilterQuery({
-      club_id: user?.clubDetails?.club_id,
-      is_active: true,
-    });
-
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: groups, refetch: refetchGroups } =
@@ -64,8 +58,8 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
 
   const [selectedGroup, setSelectedGroup] = useState(null);
 
-  const openEditGroupModal = (group_id: number) => {
-    setSelectedGroup(group_id);
+  const openEditGroupModal = (group) => {
+    setSelectedGroup(group);
     setIsEditGroupModalOpen(true);
   };
 
@@ -104,7 +98,7 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
     refetchGroups();
   }, [currentPage, textSearch, isEditGroupModalOpen, isAddGroupModalOpen]);
 
-  if (isMyTrainersLoading || isMyExternalMembersLoading) {
+  if (isMyTrainersLoading) {
     return <PageLoading />;
   }
 
@@ -219,7 +213,7 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                 </td>
                 <td>
                   <button
-                    onClick={() => openEditGroupModal(group.student_group_id)}
+                    onClick={() => openEditGroupModal(group)}
                     className={styles["edit-button"]}
                   >
                     Düzenle
@@ -243,7 +237,7 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
         closeEditGroupModal={closeEditGroupModal}
         selectedGroup={selectedGroup}
         myTrainers={myTrainers}
-        myExternalMembers={myExternalMembers}
+        user={user}
       />
       {isClubStudentGroupsFilterOpen && (
         <ClubStudentGroupsFilterModal

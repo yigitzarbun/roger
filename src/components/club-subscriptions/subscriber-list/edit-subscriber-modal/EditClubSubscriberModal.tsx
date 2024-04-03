@@ -4,8 +4,6 @@ import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
@@ -15,7 +13,6 @@ import { useAppSelector } from "../../../../store/hooks";
 import {
   useUpdateClubExternalMemberMutation,
   useGetClubExternalMembersQuery,
-  ClubExternalMember,
   useGetClubExternalMembersByFilterQuery,
 } from "../../../../api/endpoints/ClubExternalMembersApi";
 
