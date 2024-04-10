@@ -15,10 +15,8 @@ interface ExplorePlayerProfileProps {
 }
 const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const { user_id } = props;
-
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
     useGetPlayerProfileDetailsQuery(Number(user_id));
-
   if (isSelectedPlayerLoading) {
     return <PageLoading />;
   }

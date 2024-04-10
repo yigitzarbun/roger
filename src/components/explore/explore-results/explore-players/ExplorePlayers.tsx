@@ -32,6 +32,7 @@ import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions
 import TrainingInviteFormModal from "../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../components/invite/match/form/MatchInviteFormModal";
 import ExplorePlayersFilterModal from "./explore-players-filter/ExplorePlayersFilterModal";
+import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExplorePlayersProps {
   user: User;
@@ -138,6 +139,17 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const handleCloseMatchModal = () => {
     setIsMatchModalOpen(false);
   };
+
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
+  const handleOpenLessonModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsLessonModalOpen(true);
+  };
+  const handleCloseLessonModal = () => {
+    setIsLessonModalOpen(false);
+  };
+
   const {
     data: myFavouritePlayers,
     isLoading: isFavouritesLoading,
@@ -185,17 +197,19 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
-          <FaFilter
-            onClick={handleOpenPlayerFilterModal}
-            className={
-              playerLevelId > 0 ||
-              gender !== "" ||
-              locationId > 0 ||
-              textSearch !== ""
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {paginatedPlayers?.players?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenPlayerFilterModal}
+              className={
+                playerLevelId > 0 ||
+                gender !== "" ||
+                locationId > 0 ||
+                textSearch !== ""
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
         {paginatedPlayers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -292,19 +306,12 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       Anterman yap
                     </button>
                   ) : isUserTrainer ? (
-                    <Link
-                      to={paths.LESSON_INVITE}
-                      state={{
-                        fname: player.fname,
-                        lname: player.lname,
-                        image: player.image,
-                        court_price: "",
-                        user_id: player.user_id,
-                      }}
+                    <button
+                      onClick={() => handleOpenLessonModal(player.user_id)}
                       className={styles["match-button"]}
                     >
                       Derse davet et
-                    </Link>
+                    </button>
                   ) : (
                     ""
                   )}
@@ -366,6 +373,15 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isMatchModalOpen}
           handleCloseInviteModal={handleCloseMatchModal}
+        />
+      )}
+      {isLessonModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isLessonModalOpen}
+          handleCloseInviteModal={handleCloseLessonModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
       {isPlayerFilterModalOpen && (

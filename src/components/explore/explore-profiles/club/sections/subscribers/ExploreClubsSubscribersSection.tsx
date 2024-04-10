@@ -13,6 +13,7 @@ import { getAge } from "../../../../../../common/util/TimeFunctions";
 import Paths from "../../../../../../routing/Paths";
 import TrainingInviteFormModal from "../../../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
+import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExploreClubsSubscribersSectionProps {
   selectedClub: any;
@@ -27,7 +28,7 @@ const ExploreClubsSubscribersSection = (
 
   const { data: clubSubscribers, isLoading: isClubsubscribersLoading } =
     useGetClubSubscribersByIdQuery(selectedClub?.[0]?.user_id);
-
+  console.log(clubSubscribers);
   const [isSubscribersModalOpen, setIsSubscribersModalOpen] = useState(false);
   const openSubscribersModal = () => {
     setIsSubscribersModalOpen(true);
@@ -53,6 +54,15 @@ const ExploreClubsSubscribersSection = (
   };
   const handleCloseMatchInviteModal = () => {
     setIsMatchInviteModalOpen(false);
+  };
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
+  const handleOpenLessonModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsLessonModalOpen(true);
+  };
+  const handleCloseLessonModal = () => {
+    setIsLessonModalOpen(false);
   };
   return (
     <div className={styles["subscribers-section"]}>
@@ -83,7 +93,11 @@ const ExploreClubsSubscribersSection = (
                 >
                   <td>
                     <Link
-                      to={`${Paths.EXPLORE_PROFILE}1/${player.playerUserId} `}
+                      to={`${Paths.EXPLORE_PROFILE}1/${
+                        player.playerUserId
+                          ? player.playerUserId
+                          : player.user_id
+                      }`}
                     >
                       <img
                         src={
@@ -97,16 +111,50 @@ const ExploreClubsSubscribersSection = (
                   </td>
                   <td>
                     <Link
-                      to={`${Paths.EXPLORE_PROFILE}1/${player.playerUserId} `}
+                      to={`${Paths.EXPLORE_PROFILE}1/${
+                        player.playerUserId
+                          ? player.playerUserId
+                          : player.user_id
+                      }`}
                       className={styles["subscriber-name"]}
                     >
-                      {`${player.fname} ${player.lname}`}
+                      {player.user_type_id === 1
+                        ? `${player.playerFname} ${player.playerLname}`
+                        : player.user_type_id === 5
+                        ? `${player.externalFname} ${player.externalLname}`
+                        : ""}
                     </Link>
                   </td>
-                  <td>{player.gender}</td>
-                  <td>{getAge(player.birth_year)}</td>
-                  <td>{player.location_name}</td>
-                  <td>{player.player_level_name}</td>
+                  <td>
+                    {player.playerGenderName
+                      ? player.playerGenderName
+                      : player.externalGenderName
+                      ? player.externalGenderName
+                      : ""}
+                  </td>
+                  <td>
+                    {getAge(
+                      player.birth_year
+                        ? player.birth_year
+                        : player.externalBirthYear
+                        ? player.externalBirthYear
+                        : null
+                    )}
+                  </td>
+                  <td>
+                    {player.location_name
+                      ? player.location_name
+                      : player.externalLocationName
+                      ? player.externalLocationName
+                      : ""}
+                  </td>
+                  <td>
+                    {player.playerLevelName
+                      ? player.playerLevelName
+                      : player.externalLevelName
+                      ? player.externalLevelName
+                      : ""}
+                  </td>
                   <td>
                     {player.reviewscorecount > 0
                       ? `${Math.round(Number(player.averagereviewscore))} / 10`
@@ -147,9 +195,15 @@ const ExploreClubsSubscribersSection = (
                       )}
                     </td>
                   )}
-                  {isUserTrainer && (
+                  {isUserTrainer && player.user_type_id === 1 && (
                     <td>
-                      <button>Ders Yap</button>
+                      <button
+                        onClick={() =>
+                          handleOpenLessonModal(player.playerUserId)
+                        }
+                      >
+                        Derse davet et
+                      </button>
                     </td>
                   )}
                 </tr>
@@ -171,6 +225,7 @@ const ExploreClubsSubscribersSection = (
           user={user}
           handleOpenTrainInviteModal={handleOpenTrainInviteModal}
           handleOpenMatchInviteModal={handleOpenMatchInviteModal}
+          handleOpenLessonModal={handleOpenLessonModal}
         />
       )}
       {isTrainInviteModalOpen && (
@@ -185,6 +240,15 @@ const ExploreClubsSubscribersSection = (
           opponentUserId={opponentUserId}
           isInviteModalOpen={isMatchInviteModalOpen}
           handleCloseInviteModal={handleCloseMatchInviteModal}
+        />
+      )}
+      {isLessonModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isLessonModalOpen}
+          handleCloseInviteModal={handleCloseLessonModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
     </div>

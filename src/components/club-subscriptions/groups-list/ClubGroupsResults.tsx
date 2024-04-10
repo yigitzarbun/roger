@@ -16,7 +16,6 @@ import PageLoading from "../../../components/loading/PageLoading";
 
 import { useGetPaginatedStudentGroupsQuery } from "../../../api/endpoints/StudentGroupsApi";
 import { useGetTrainersByFilterQuery } from "../../../api/endpoints/TrainersApi";
-import { useGetClubExternalMembersByFilterQuery } from "../../../api/endpoints/ClubExternalMembersApi";
 import ClubStudentGroupsFilterModal from "./filter/ClubStudentGroupsFilterModal";
 
 interface ClubGroupsResultsProps {
@@ -113,12 +112,14 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
           >
             <p className={styles["add-title"]}>Yeni Grup Ekle</p>
           </div>
-          <FaFilter
-            onClick={handleOpenClubStudentGroupsFilter}
-            className={
-              textSearch !== "" ? styles["active-filter"] : styles.filter
-            }
-          />
+          {groups?.studentGroups?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenClubStudentGroupsFilter}
+              className={
+                textSearch !== "" ? styles["active-filter"] : styles.filter
+              }
+            />
+          )}
         </div>
         {groups?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -226,19 +227,24 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
       ) : (
         <p>Kayıtlı grubunuz bulunmamaktadır.</p>
       )}
-      <AddGroupModal
-        isAddGroupModalOpen={isAddGroupModalOpen}
-        closeAddGroupModal={closeAddGroupModal}
-        myTrainers={myTrainers}
-        user={user}
-      />
-      <EditGroupModal
-        isEditGroupModalOpen={isEditGroupModalOpen}
-        closeEditGroupModal={closeEditGroupModal}
-        selectedGroup={selectedGroup}
-        myTrainers={myTrainers}
-        user={user}
-      />
+      {isAddGroupModalOpen && (
+        <AddGroupModal
+          isAddGroupModalOpen={isAddGroupModalOpen}
+          closeAddGroupModal={closeAddGroupModal}
+          myTrainers={myTrainers}
+          user={user}
+        />
+      )}
+      {isEditGroupModalOpen && (
+        <EditGroupModal
+          isEditGroupModalOpen={isEditGroupModalOpen}
+          closeEditGroupModal={closeEditGroupModal}
+          selectedGroup={selectedGroup}
+          myTrainers={myTrainers}
+          user={user}
+        />
+      )}
+
       {isClubStudentGroupsFilterOpen && (
         <ClubStudentGroupsFilterModal
           textSearch={textSearch}

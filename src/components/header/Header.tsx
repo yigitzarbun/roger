@@ -50,7 +50,15 @@ const Header = () => {
     useState(false);
 
   const handleOpenNotificationsModal = () => {
-    setIsNotificationsModalOpen(true);
+    if (
+      !hasBankDetails ||
+      incomingRequests?.length > 0 ||
+      missingScoresLength > 0 ||
+      missingReviews > 0 ||
+      myStaffRequests?.length > 0
+    ) {
+      setIsNotificationsModalOpen(true);
+    }
   };
   const handleCloseNotificationsModal = () => {
     setIsNotificationsModalOpen(false);

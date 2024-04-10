@@ -1,0 +1,67 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.payments-page-container {
+  display: flex;
+  column-gap: 4vh;
+  border-radius: $roger-border-radius;
+  width: 100%;
+
+  .input-container {
+    display: flex;
+    width: 15%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
+    border-radius: $roger-border-radius;
+    justify-content: center;
+    column-gap: 14px;
+
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+      cursor: pointer;
+    }
+  }
+
+  .search-container {
+    display: flex;
+    width: 40%;
+    align-items: center;
+    background-color: $roger-black-dark;
+    padding: 2px;
+    border-radius: $roger-border-radius;
+    justify-content: center;
+    column-gap: 14px;
+
+    label {
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      border: 1px solid $roger-border-color;
+      width: 100%;
+      background-color: $roger-box-bg-color;
+    }
+  }
+  .passive-clear-button {
+    border-radius: $roger-border-radius;
+    background-color: $roger-box-bg-color-hover;
+    border: none;
+    padding: $roger-button-padding;
+  }
+  .active-clear-button {
+    border-radius: $roger-border-radius;
+    background-color: $roger-red;
+    border: none;
+    padding: $roger-button-padding;
+    cursor: pointer;
+  }
+}

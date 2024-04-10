@@ -126,16 +126,20 @@ const ClubStaffResults = () => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
-          <FaFilter
-            onClick={handleOpenStaffFilterModal}
-            className={
-              roleId > 0 || textSearch !== "" || gender !== "" || locationId > 0
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {myStaff?.staff?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenStaffFilterModal}
+              className={
+                roleId > 0 ||
+                textSearch !== "" ||
+                gender !== "" ||
+                locationId > 0
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
-
         {myStaff?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
             <FaAngleLeft

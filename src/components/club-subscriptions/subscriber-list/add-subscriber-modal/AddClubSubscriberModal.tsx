@@ -118,6 +118,7 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
       user_status_type_id: userStatusTypes?.find(
         (u) => u.user_status_type_name === "active"
       ).user_status_type_id,
+      language_id: 1,
     };
     try {
       const selectedPackage = mySubscriptionPackages?.find(

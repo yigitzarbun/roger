@@ -171,7 +171,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 })}
               >
                 <option value="">-- 1. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
                     key={subscriber.player_id}
                     value={subscriber.player_id}
@@ -194,7 +194,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 })}
               >
                 <option value="">-- 2. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
                     key={subscriber.player_id}
                     value={subscriber.player_id}
@@ -215,7 +215,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               <label>3. Oyuncu</label>
               <select {...register("third_student_id")}>
                 <option value="">-- 3. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
                     key={subscriber.player_id}
                     value={subscriber.player_id}
@@ -234,7 +234,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               <label>4. Oyuncu</label>
               <select {...register("fourth_student_id")}>
                 <option value="">-- 4. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
                     key={subscriber.player_id}
                     value={subscriber.player_id}

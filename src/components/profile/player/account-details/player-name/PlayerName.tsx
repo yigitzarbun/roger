@@ -33,8 +33,7 @@ const PlayerName = (props) => {
 
     if (
       (isFnameEmpty && isLnameEmpty) ||
-      (newFname === playerDetails?.[0]?.fname &&
-        newLname === playerDetails?.[0]?.lname)
+      (newFname === playerDetails?.fname && newLname === playerDetails?.lname)
     ) {
       setButtonDisabled(true);
     } else {
@@ -49,24 +48,24 @@ const PlayerName = (props) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      fname: playerDetails?.[0]?.fname,
-      lname: playerDetails?.[0]?.lname,
+      fname: playerDetails?.fname,
+      lname: playerDetails?.lname,
     },
   });
 
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const updatedProfileData = {
-      player_id: playerDetails?.[0]?.player_id,
+      player_id: playerDetails?.player_id,
       fname: formData?.fname,
       lname: formData?.lname,
-      birth_year: playerDetails?.[0]?.birth_year,
-      gender: playerDetails?.[0]?.gender,
+      birth_year: playerDetails?.birth_year,
+      gender: playerDetails?.gender,
       phone_number: null,
-      image: playerDetails?.[0]?.image,
+      image: playerDetails?.image,
       player_bio_description: null,
-      location_id: Number(playerDetails?.[0]?.location_id),
-      player_level_id: Number(playerDetails?.[0]?.player_level_id),
-      user_id: playerDetails?.[0]?.user_id,
+      location_id: Number(playerDetails?.location_id),
+      player_level_id: Number(playerDetails?.player_level_id),
+      user_id: playerDetails?.user_id,
     };
     updatePlayer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);

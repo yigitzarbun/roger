@@ -15,8 +15,6 @@ const TrainerHome = () => {
       <div className={styles["top-container"]}>
         <TrainerRequests />
         <TrainerCalendar />
-      </div>
-      <div className={styles["mid-container"]}>
         <TrainerStudents />
         <TrainerEquip />
       </div>

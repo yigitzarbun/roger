@@ -10,36 +10,39 @@ import styles from "./styles.module.scss";
 
 import {
   Club,
-  useGetClubByUserIdQuery,
   useUpdateClubMutation,
 } from "../../../../../api/endpoints/ClubsApi";
-
-import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../../api/endpoints/ClubSubscriptionPackagesApi";
-
-import { useAppSelector } from "../../../../../store/hooks";
-import PageLoading from "../../../../../components/loading/PageLoading";
 
 interface UpdateCourtRuleModallProps {
   isCourtRuleModalOpen: boolean;
   handleCloseModal: () => void;
+  selectedClub: any;
+  refetchClubDetails: () => void;
+  clubHasSubscriptionPackages: any;
 }
 
 const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
-  const { isCourtRuleModalOpen, handleCloseModal } = props;
-  const user = useAppSelector((store) => store?.user?.user?.user);
-
   const {
-    data: selectedClub,
-    isLoading: isSelectedClubLoading,
-    refetch: refetchClub,
-  } = useGetClubByUserIdQuery(user?.user_id);
+    isCourtRuleModalOpen,
+    handleCloseModal,
+    selectedClub,
+    refetchClubDetails,
+    clubHasSubscriptionPackages,
+  } = props;
+
+  const [selectedCourtPriceRule, setSelectedCourtPriceRule] = useState(
+    selectedClub?.[0]?.higher_price_for_non_subscribers
+  );
+  let isButtonDisabled = false;
+
+  if (
+    selectedCourtPriceRule === "true" &&
+    clubHasSubscriptionPackages?.length === 0
+  ) {
+    isButtonDisabled = true;
+  }
 
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
-
-  const {
-    data: clubHasSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesByFilterQuery({ club_id: user?.user_id });
 
   const {
     register,
@@ -63,24 +66,17 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
           ? false
           : "",
     };
-    updateClub(updatedClubData);
+
+    if (!isButtonDisabled) {
+      updateClub(updatedClubData);
+    } else {
+      toast.error("Üyelik kuralı koymak için üyelik paketi eklemelisiniz");
+    }
   };
-  const [selectedCourtPriceRule, setSelectedCourtPriceRule] = useState(
-    selectedClub?.[0]?.higher_price_for_non_subscribers
-  );
 
   const handleSelectedCourtPriceRule = (event) => {
     setSelectedCourtPriceRule(event.target.value);
   };
-
-  let isButtonDisabled = false;
-
-  if (
-    selectedCourtPriceRule === "true" &&
-    clubHasSubscriptionPackages?.length === 0
-  ) {
-    isButtonDisabled = true;
-  }
 
   useEffect(() => {
     isButtonDisabled =
@@ -92,64 +88,62 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetchClub();
+      refetchClubDetails();
       handleCloseModal();
       reset();
       toast.success("Kural güncellendi");
     }
   }, [isSuccess]);
 
-  if (isSelectedClubLoading || isClubSubscriptionPackagesLoading) {
-    return <PageLoading />;
-  }
   return (
     <ReactModal
       isOpen={isCourtRuleModalOpen}
       onRequestClose={handleCloseModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={handleCloseModal} />
+      <div className={styles["modal-content"]}>
         <h1>Kort Fiyatlandırma Kuralı</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={handleCloseModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-        encType="multipart/form-data"
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <select
-              {...register("higher_price_for_non_subscribers")}
-              onChange={handleSelectedCourtPriceRule}
-            >
-              <option value="true">
-                Üye olmayanlara farklı fiyat uygulanır
-              </option>
-              <option value="false">
-                Üye olmayanlara farklı fiyat uygulanmaz
-              </option>
-            </select>
-            {errors.higher_price_for_non_subscribers && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={isButtonDisabled}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+          encType="multipart/form-data"
         >
-          {isButtonDisabled
-            ? "Üyelik kuralı koymak için üyelik paketi eklemelisiniz"
-            : "Onayla"}
-        </button>
-      </form>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <select
+                {...register("higher_price_for_non_subscribers")}
+                onChange={handleSelectedCourtPriceRule}
+              >
+                <option value="true">
+                  Üye olmayanlara farklı fiyat uygulanır
+                </option>
+                <option value="false">
+                  Üye olmayanlara farklı fiyat uygulanmaz
+                </option>
+              </select>
+              {errors.higher_price_for_non_subscribers && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={handleCloseModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["delete-button"]}>
+              Onayla
+            </button>
+          </div>
+        </form>
+      </div>
     </ReactModal>
   );
 };

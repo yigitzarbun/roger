@@ -20,69 +20,46 @@ import DeclineInviteModal, {
 import PageLoading from "../../../../components/loading/PageLoading";
 
 import {
-  useGetBookingsQuery,
+  useGetTrainerIncomingRequestsQuery,
   useUpdateBookingMutation,
 } from "../../../../api/endpoints/BookingsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
+
 import {
-  useGetPaymentsQuery,
+  useGetPaymentByIdQuery,
   useUpdatePaymentMutation,
 } from "../../../../api/endpoints/PaymentsApi";
 
 import {
-  useGetStudentsQuery,
+  useGetIsStudentQuery,
   useAddStudentMutation,
+  useGetStudentsByFilterQuery,
 } from "../../../../api/endpoints/StudentsApi";
+import { getAge } from "../../../../common/util/TimeFunctions";
 
 const TrainerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
+  const [selectedPaymentId, setSelectedPaymentId] = useState(null);
+  const [skipSelectedPayment, setSkipSelectedPayment] = useState(true);
+  const [skipStudent, setSkipStudent] = useState(true);
+  const [selectedPlayerUserId, setSelectedPlayerUserId] = useState(null);
 
   const {
-    data: bookings,
-    isLoading: isBookingsLoading,
+    data: incomingBookings,
+    isLoading: isIncomingBookingsLoading,
     refetch: refetchBookings,
-  } = useGetBookingsQuery({});
+  } = useGetTrainerIncomingRequestsQuery(user?.user_id);
 
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const {
-    data: students,
-    isLoading: isStudentsLoading,
-    refetch: refetchStudents,
-  } = useGetStudentsQuery({});
-
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-
-  const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const {
-    data: payments,
-    isLoading: isPaymentsLoading,
-    refetch: refetchPayments,
-  } = useGetPaymentsQuery({});
-
-  const date = new Date();
-  const today = date.toLocaleDateString();
-  const now = date.toLocaleTimeString();
-
-  const incomingBookings = bookings?.filter(
-    (booking) =>
-      booking.invitee_id === user?.user_id &&
-      booking.booking_status_type_id === 1 &&
-      (new Date(booking.event_date).toLocaleDateString() > today ||
-        (new Date(booking.event_date).toLocaleDateString() === today &&
-          booking.event_time >= now))
+  const { data: isStudent, isLoading: isStudentLoading } = useGetIsStudentQuery(
+    {
+      player_id: selectedPlayerUserId,
+      trainer_id: user?.user_id,
+    },
+    { skip: skipStudent }
   );
 
-  const currentYear = new Date().getFullYear();
+  const { refetch: refetchStudents } = useGetStudentsByFilterQuery({
+    trainer_id: user?.user_id,
+  });
 
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
@@ -101,6 +78,8 @@ const TrainerRequestsIncoming = () => {
 
   const handleOpenAcceptModal = (data) => {
     setAcceptBookingData(data);
+    setSelectedPaymentId(data.payment_id);
+    setSkipSelectedPayment(false);
     setIsAcceptModalOpen(true);
   };
 
@@ -108,12 +87,15 @@ const TrainerRequestsIncoming = () => {
     setIsAcceptModalOpen(false);
   };
 
+  const {
+    data: selectedPayment,
+    isLoading: isSelectedPaymentLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentByIdQuery(selectedPaymentId, { skip: skipSelectedPayment });
+
   const handleAcceptBooking = () => {
-    const selectedPayment = payments?.find(
-      (payment) => payment.payment_id === acceptBookingData?.payment_id
-    );
     const updatedPaymentData = {
-      ...selectedPayment,
+      ...selectedPayment?.[0],
       payment_status: "success",
     };
     updatePayment(updatedPaymentData);
@@ -135,11 +117,8 @@ const TrainerRequestsIncoming = () => {
   };
 
   const handleDeclineBooking = () => {
-    const selectedPayment = payments?.find(
-      (payment) => payment.payment_id === acceptBookingData?.payment_id
-    );
     const updatedPaymentData = {
-      ...selectedPayment,
+      ...selectedPayment?.[0],
       payment_status: "declined",
     };
     updatePayment(updatedPaymentData);
@@ -149,17 +128,40 @@ const TrainerRequestsIncoming = () => {
     if (isPaymentSuccess && paymentData) {
       if (paymentData[0]?.payment_status === "success") {
         const acceptedBookingData = {
-          ...acceptBookingData,
+          booking_id: acceptBookingData?.booking_id,
+          event_date: acceptBookingData?.event_date,
+          event_time: acceptBookingData?.event_time,
+          court_price: acceptBookingData?.court_price,
+          lesson_price: acceptBookingData?.lesson_price,
+          payment_id: acceptBookingData?.payment_id,
+          event_type_id: acceptBookingData?.event_type_id,
+          club_id: acceptBookingData?.club_id,
+          court_id: acceptBookingData?.court_id,
+          inviter_id: acceptBookingData?.inviter_id,
+          invitee_id: acceptBookingData?.invitee_id,
+          invitation_note: acceptBookingData?.invitation_note,
           booking_status_type_id: 2,
         };
         updateBooking(acceptedBookingData);
       } else if (paymentData[0]?.payment_status === "declined") {
-        const declineddBookingData = {
-          ...declineBookingData,
+        const declinedBookingData = {
+          booking_id: declineBookingData?.booking_id,
+          event_date: declineBookingData?.event_date,
+          event_time: declineBookingData?.event_time,
+          court_price: declineBookingData?.court_price,
+          lesson_price: declineBookingData?.lesson_price,
+          payment_id: declineBookingData?.payment_id,
+          event_type_id: declineBookingData?.event_type_id,
+          club_id: declineBookingData?.club_id,
+          court_id: declineBookingData?.court_id,
+          inviter_id: declineBookingData?.inviter_id,
+          invitee_id: declineBookingData?.invitee_id,
+          invitation_note: declineBookingData?.invitation_note,
           booking_status_type_id: 3,
         };
-        updateBooking(declineddBookingData);
+        updateBooking(declinedBookingData);
       }
+      refetchPayments();
     }
   }, [isPaymentSuccess]);
 
@@ -167,34 +169,26 @@ const TrainerRequestsIncoming = () => {
     if (isUpdateBookingSuccess) {
       toast.success("İşlem başarılı");
       // check if player is not student. add if not
-      const selectedPlayerId = players?.find(
-        (player) => player.user_id === acceptBookingData.inviter_id
-      )
-        ? acceptBookingData.inviter_id
-        : acceptBookingData.invitee_id;
-
-      const isStudent = students?.find(
-        (student) =>
-          student.player_id === selectedPlayerId &&
-          student.trainer_id === user?.user_id &&
-          (student.student_status === "pending" ||
-            student.student_status === "accepted")
-      );
-      if (!isStudent) {
-        const newStudent = {
-          student_status: "pending",
-          trainer_id: user?.user_id,
-          player_id: selectedPlayerId,
-        };
-        addStudent(newStudent);
-      }
+      setSelectedPlayerUserId(acceptBookingData?.inviter_id);
+      setSkipStudent(false);
+      refetchBookings();
+      refetchPayments();
+      setAcceptBookingData(null);
+      handleCloseAcceptModal();
+      handleCloseDeclineModal();
     }
-    refetchBookings();
-    refetchPayments();
-    setAcceptBookingData(null);
-    handleCloseAcceptModal();
-    handleCloseDeclineModal();
   }, [isUpdateBookingSuccess]);
+
+  useEffect(() => {
+    if (!isStudent) {
+      const newStudent = {
+        student_status: "pending",
+        trainer_id: user?.user_id,
+        player_id: acceptBookingData.inviter_id,
+      };
+      addStudent(newStudent);
+    }
+  }, [isStudent]);
 
   useEffect(() => {
     if (isAddStudentSuccess) {
@@ -202,16 +196,7 @@ const TrainerRequestsIncoming = () => {
     }
   }, [isAddStudentSuccess]);
 
-  if (
-    isBookingsLoading ||
-    isCourtsLoading ||
-    isClubsLoading ||
-    isEventTypesLoading ||
-    isPlayersLoading ||
-    isPlayerLevelTypesLoading ||
-    isPaymentsLoading ||
-    isStudentsLoading
-  ) {
+  if (isIncomingBookingsLoading) {
     return <PageLoading />;
   }
 
@@ -244,7 +229,7 @@ const TrainerRequestsIncoming = () => {
           </thead>
           <tbody>
             {incomingBookings?.map((booking) => (
-              <tr key={booking.booking_id} className={styles["trainer-row"]}>
+              <tr key={booking.booking_id} className={styles["player-row"]}>
                 <td>
                   {booking.booking_status_type_id === 1 ? (
                     <p className={styles["pending-confirmation-text"]}>
@@ -258,13 +243,9 @@ const TrainerRequestsIncoming = () => {
                   <Link to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}>
                     <img
                       src={
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.image
-                          ? players?.find(
-                              (player) => player.user_id === booking.inviter_id
-                            )?.image
-                          : "/images/icons/avatar.png"
+                        booking?.playerImage
+                          ? booking?.playerImage
+                          : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
                     />
@@ -275,69 +256,18 @@ const TrainerRequestsIncoming = () => {
                     to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}
                     className={styles["player-name"]}
                   >
-                    {`${
-                      players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.fname
-                    } ${
-                      players?.find(
-                        (player) => player.user_id === booking.inviter_id
-                      )?.lname
-                    }`}
+                    {`${booking?.fname} ${booking?.lname}`}
                   </Link>
                 </td>
-                <td>
-                  {
-                    playerLevelTypes?.find(
-                      (level) =>
-                        level.player_level_id ===
-                        players?.find(
-                          (player) => player.user_id === booking.inviter_id
-                        )?.player_level_id
-                    )?.player_level_name
-                  }
-                </td>
-                <td>
-                  {
-                    players?.find(
-                      (player) => player.user_id === booking.inviter_id
-                    )?.gender
-                  }
-                </td>
-                <td>
-                  {currentYear -
-                    players?.find(
-                      (player) => player.user_id === booking.inviter_id
-                    )?.birth_year}
-                </td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === booking.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
+                <td>{booking?.player_level_name}</td>
+                <td>{booking?.gender}</td>
+                <td>{getAge(booking?.birth_year)}</td>
+                <td>{booking?.event_type_name}</td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
-                <td>
-                  {
-                    courts?.find((court) => court.court_id === booking.court_id)
-                      ?.court_name
-                  }
-                </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === booking.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {
-                    payments?.find(
-                      (payment) => payment.payment_id === booking.payment_id
-                    )?.lesson_price
-                  }
-                </td>
+                <td>{booking?.court_name}</td>
+                <td>{booking?.club_name}</td>
+                <td>{booking?.lesson_price}</td>
                 <td>
                   <button
                     onClick={() => handleOpenAcceptModal(booking)}
@@ -359,19 +289,23 @@ const TrainerRequestsIncoming = () => {
           </tbody>
         </table>
       )}
-      <AcceptInviteModal
-        isAcceptModalOpen={isAcceptModalOpen}
-        handleCloseAcceptModal={handleCloseAcceptModal}
-        acceptBookingData={acceptBookingData}
-        handleAcceptBooking={handleAcceptBooking}
-        players={players}
-      />
-      <DeclineInviteModal
-        isDeclineModalOpen={isDeclineModalOpen}
-        handleCloseDeclineModal={handleCloseDeclineModal}
-        declineBookingData={declineBookingData}
-        handleDeclineBooking={handleDeclineBooking}
-      />
+      {isAcceptModalOpen && (
+        <AcceptInviteModal
+          isAcceptModalOpen={isAcceptModalOpen}
+          handleCloseAcceptModal={handleCloseAcceptModal}
+          acceptBookingData={acceptBookingData}
+          handleAcceptBooking={handleAcceptBooking}
+          user={user}
+        />
+      )}
+      {isDeclineModalOpen && (
+        <DeclineInviteModal
+          isDeclineModalOpen={isDeclineModalOpen}
+          handleCloseDeclineModal={handleCloseDeclineModal}
+          declineBookingData={declineBookingData}
+          handleDeclineBooking={handleDeclineBooking}
+        />
+      )}
     </div>
   );
 };

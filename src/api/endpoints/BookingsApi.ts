@@ -31,11 +31,21 @@ export const bookingsSlice = createApi({
       query: (filter) =>
         `/bookings/player-bookings/filter?${new URLSearchParams(filter)}`,
     }),
+    getTrainerBookingsByUserId: builder.query({
+      query: (filter) =>
+        `/bookings/trainer-bookings/filter?${new URLSearchParams(filter)}`,
+    }),
     getPlayerOutgoingRequests: builder.query({
-      query: (userId) => `/bookings/outgoing-requests/${userId}`,
+      query: (userId) => `/bookings/player-outgoing-requests/${userId}`,
     }),
     getPlayerIncomingRequests: builder.query({
-      query: (userId) => `/bookings/incoming-requests/${userId}`,
+      query: (userId) => `/bookings/player-incoming-requests/${userId}`,
+    }),
+    getTrainerOutgoingRequests: builder.query({
+      query: (userId) => `/bookings/trainer-outgoing-requests/${userId}`,
+    }),
+    getTrainerIncomingRequests: builder.query({
+      query: (userId) => `/bookings/trainer-incoming-requests/${userId}`,
     }),
     getUserProfileEvents: builder.query({
       query: (userId) => `/bookings/user-profile-events/${userId}`,
@@ -86,11 +96,14 @@ export const {
   useGetBookingsQuery,
   useGetBookingByIdQuery,
   useGetPlayerBookingsByUserIdQuery,
+  useGetTrainerBookingsByUserIdQuery,
   useGetPlayerOutgoingRequestsQuery,
   useGetPlayerIncomingRequestsQuery,
   useGetUserProfileEventsQuery,
   useGetPlayerPastEventsQuery,
   useGetPlayersLeaderboardQuery,
+  useGetTrainerOutgoingRequestsQuery,
+  useGetTrainerIncomingRequestsQuery,
   useGetBookingsByFilterQuery,
   useGetBookedCourtHoursQuery,
   useGetPaginatedClubCalendarBookingsQuery,

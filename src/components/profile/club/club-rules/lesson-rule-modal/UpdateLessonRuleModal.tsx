@@ -10,35 +10,28 @@ import styles from "./styles.module.scss";
 
 import {
   Club,
-  useGetClubByUserIdQuery,
   useUpdateClubMutation,
 } from "../../../../../api/endpoints/ClubsApi";
 
-import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../../api/endpoints/ClubSubscriptionPackagesApi";
-
 import { useAppSelector } from "../../../../../store/hooks";
-import PageLoading from "../../../../loading/PageLoading";
 
 interface UpdateLessonRuleModallProps {
   isLessonRuleModalOpen: boolean;
   handleCloseModal: () => void;
+  selectedClub: any;
+  refetchClubDetails: () => void;
+  clubHasSubscriptionPackages: any;
 }
 const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
-  const { isLessonRuleModalOpen, handleCloseModal } = props;
+  const {
+    isLessonRuleModalOpen,
+    handleCloseModal,
+    selectedClub,
+    refetchClubDetails,
+    clubHasSubscriptionPackages,
+  } = props;
   const user = useAppSelector((store) => store?.user?.user?.user);
-
-  const {
-    data: selectedClub,
-    isLoading: isSelectedClubLoading,
-    refetch: refetchClub,
-  } = useGetClubByUserIdQuery(user?.user_id);
-
   const [updateClub, { data, isSuccess }] = useUpdateClubMutation({});
-
-  const {
-    data: clubHasSubscriptionPackages,
-    isLoading: isClubSubscriptionPackagesLoading,
-  } = useGetClubSubscriptionPackagesByFilterQuery({ club_id: user?.user_id });
 
   const {
     register,
@@ -70,7 +63,11 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
           ? false
           : "",
     };
-    updateClub(updatedClubData);
+    if (!isButtonDisabled) {
+      updateClub(updatedClubData);
+    } else {
+      toast.error("Üyelik kuralı koymak için üyelik paketi eklemelisiniz");
+    }
   };
 
   const [selectedPlayerRule, setSelectedPlayerRule] = useState(
@@ -107,7 +104,7 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetchClub();
+      refetchClubDetails();
       handleCloseModal();
       reset({
         is_trainer_subscription_required:
@@ -119,69 +116,74 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
     }
   }, [isSuccess]);
 
-  if (isClubSubscriptionPackagesLoading || isSelectedClubLoading) {
-    return <PageLoading />;
-  }
-
   return (
     <ReactModal
       isOpen={isLessonRuleModalOpen}
       onRequestClose={handleCloseModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={handleCloseModal} />
+      <div className={styles["modal-content"]}>
         <h1>Ders Kuralları</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={handleCloseModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={styles["form-container"]}
-        encType="multipart/form-data"
-      >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>Oyuncu Üyelik Şartı</label>
-            <select
-              {...register("is_player_lesson_subscription_required")}
-              onChange={handleSelectedPlayerRule}
-            >
-              <option value={"true"}>Oyuncunun üye olması zorunlu</option>
-              <option value={"false"}>Oyuncunun üye olmasına gerek yok</option>
-            </select>
-            {errors.is_player_lesson_subscription_required && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Eğitmen Personel Şartı</label>
-            <select
-              {...register("is_trainer_subscription_required")}
-              onChange={handleSelectedTrainerRule}
-            >
-              <option value={"true"}>Eğitmenin personel olması zorunlu</option>
-              <option value={"false"}>
-                Eğitmenin personel olmasına gerek yok
-              </option>
-            </select>
-            {errors.is_trainer_subscription_required && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-        </div>
-        <button
-          type="submit"
-          className={styles["form-button"]}
-          disabled={isButtonDisabled}
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles["form-container"]}
+          encType="multipart/form-data"
         >
-          {isButtonDisabled
-            ? "Üyelik kuralı koymak için üyelik paketi eklemelisiniz"
-            : "Onayla"}
-        </button>
-      </form>
+          <div className={styles["input-outer-container"]}>
+            <div className={styles["input-container"]}>
+              <label>Oyuncu Üyelik Şartı</label>
+              <select
+                {...register("is_player_lesson_subscription_required")}
+                onChange={handleSelectedPlayerRule}
+              >
+                <option value={"true"}>Oyuncunun üye olması zorunlu</option>
+                <option value={"false"}>
+                  Oyuncunun üye olmasına gerek yok
+                </option>
+              </select>
+              {errors.is_player_lesson_subscription_required && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+            <div className={styles["input-container"]}>
+              <label>Eğitmen Personel Şartı</label>
+              <select
+                {...register("is_trainer_subscription_required")}
+                onChange={handleSelectedTrainerRule}
+              >
+                <option value={"true"}>
+                  Eğitmenin personel olması zorunlu
+                </option>
+                <option value={"false"}>
+                  Eğitmenin personel olmasına gerek yok
+                </option>
+              </select>
+              {errors.is_trainer_subscription_required && (
+                <span className={styles["error-field"]}>
+                  Bu alan zorunludur.
+                </span>
+              )}
+            </div>
+          </div>
+          <div className={styles["buttons-container"]}>
+            <button
+              onClick={handleCloseModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
+            <button type="submit" className={styles["delete-button"]}>
+              Onayla
+            </button>
+          </div>
+        </form>
+      </div>
     </ReactModal>
   );
 };

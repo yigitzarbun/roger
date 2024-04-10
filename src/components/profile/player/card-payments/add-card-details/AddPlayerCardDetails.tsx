@@ -23,9 +23,7 @@ const AddPlayerCardDetails = (props) => {
   } = props;
 
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
-
   const [expiryValue, setExpiryValue] = useState("");
-
   const handleExpiryChange = (event) => {
     const input = event.target;
     let value = input.value.replace(/\D/g, "");
@@ -43,23 +41,23 @@ const AddPlayerCardDetails = (props) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name_on_card: playerDetails?.[0]?.name_on_card,
-      card_number: playerDetails?.[0]?.card_number,
-      cvc: playerDetails?.[0]?.cvc,
-      card_expiry: playerDetails?.[0]?.card_expiry,
+      name_on_card: playerDetails?.name_on_card,
+      card_number: playerDetails?.card_number,
+      cvc: playerDetails?.cvc,
+      card_expiry: playerDetails?.card_expiry,
     },
   });
 
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const playerCardDetails = {
-      player_id: playerDetails?.[0]?.player_id,
-      fname: playerDetails?.[0]?.fname,
-      lname: playerDetails?.[0]?.lname,
-      birth_year: playerDetails?.[0]?.birth_year,
-      gender: playerDetails?.[0]?.gender,
-      location_id: playerDetails?.[0]?.location_id,
-      player_level_id: playerDetails?.[0]?.player_level_id,
-      user_id: playerDetails?.[0]?.user_id,
+      player_id: playerDetails?.player_id,
+      fname: playerDetails?.fname,
+      lname: playerDetails?.lname,
+      birth_year: playerDetails?.birth_year,
+      gender: playerDetails?.gender,
+      location_id: playerDetails?.location_id,
+      player_level_id: playerDetails?.player_level_id,
+      user_id: playerDetails?.user_id,
       name_on_card: formData?.name_on_card,
       card_number: formData?.card_number,
       cvc: Number(formData?.cvc),
@@ -119,7 +117,7 @@ const AddPlayerCardDetails = (props) => {
                   Bu alan zorunludur.
                 </span>
               )}
-            </div>{" "}
+            </div>
           </div>
           <div className={styles["outer-container"]}>
             <div className={styles["input-container"]}>

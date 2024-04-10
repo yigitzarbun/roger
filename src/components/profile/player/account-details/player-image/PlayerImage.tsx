@@ -16,9 +16,7 @@ const PlayerImage = (props) => {
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const existingImage = playerDetails?.[0]?.image
-    ? playerDetails?.[0]?.image
-    : null;
+  const existingImage = playerDetails?.image ? playerDetails?.image : null;
 
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -32,23 +30,23 @@ const PlayerImage = (props) => {
 
   const { handleSubmit, reset, setValue } = useForm({
     defaultValues: {
-      image: playerDetails?.[0]?.image,
+      image: playerDetails?.image,
     },
   });
 
   const onSubmit: SubmitHandler<Player> = () => {
     const updatedProfileData = {
-      player_id: playerDetails?.[0]?.player_id,
-      fname: playerDetails?.[0]?.fname,
-      lname: playerDetails?.[0]?.lname,
-      birth_year: playerDetails?.[0]?.birth_year,
-      gender: playerDetails?.[0]?.gender,
+      player_id: playerDetails?.player_id,
+      fname: playerDetails?.fname,
+      lname: playerDetails?.lname,
+      birth_year: playerDetails?.birth_year,
+      gender: playerDetails?.gender,
       phone_number: null,
       image: selectedImage ? selectedImage : existingImage,
       player_bio_description: null,
-      location_id: Number(playerDetails?.[0]?.location_id),
-      player_level_id: Number(playerDetails?.[0]?.player_level_id),
-      user_id: playerDetails?.[0]?.user_id,
+      location_id: Number(playerDetails?.location_id),
+      player_level_id: Number(playerDetails?.player_level_id),
+      user_id: playerDetails?.user_id,
     };
     updatePlayer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
@@ -86,7 +84,7 @@ const PlayerImage = (props) => {
             src={
               selectedImage
                 ? URL.createObjectURL(selectedImage)
-                : playerDetails?.[0]?.image || "/images/icons/avatar.jpg"
+                : playerDetails?.image || "/images/icons/avatar.jpg"
             }
             alt="player-image"
             className={styles["profile-image"]}

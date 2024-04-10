@@ -20,6 +20,8 @@ import { useGetPlayerByUserIdQuery } from "../../../../../../api/endpoints/Playe
 import SubscribeToClubModal from "../../../../../../components/explore/subscribe-club-modal/SubscribeToClubModal";
 import { useNavigate } from "react-router-dom";
 import Paths from "../../../../../../routing/Paths";
+import { useGetIsTrainerClubStaffQuery } from "../../../../../../api/endpoints/ClubStaffApi";
+import ClubEmploymentModal from "../../../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
 
 interface ExploreClubsProfileSectionProps {
   selectedClub: any;
@@ -32,6 +34,15 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const profileImage = selectedClub?.[0]?.clubImage;
+
+  const {
+    data: isTrainerStaff,
+    isLoading: isTrainerStaffLoading,
+    refetch: refetchIsTrainerStaff,
+  } = useGetIsTrainerClubStaffQuery({
+    clubId: selectedClub?.[0]?.club_id,
+    trainerUserId: user?.user?.user_id,
+  });
 
   const {
     data: isUserSubscribedToClub,
@@ -63,7 +74,15 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   const handleCloseSubscribeModal = () => {
     setOpenSubscribeModal(false);
   };
+  const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
 
+  const openEmploymentModal = () => {
+    setEmploymentModalOpen(true);
+  };
+
+  const closeEmploymentModal = () => {
+    setEmploymentModalOpen(false);
+  };
   const { refetch: refetchAllFavourites } = useGetFavouritesQuery({});
 
   const {
@@ -111,7 +130,6 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
       handleAddFavourite(userId);
     }
   };
-
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavouriteClubs();
@@ -122,6 +140,10 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   useEffect(() => {
     refetchIsSubscribed();
   }, [openSubscribeModal]);
+
+  useEffect(() => {
+    refetchIsTrainerStaff();
+  }, [employmentModalOpen]);
 
   useEffect(() => {
     refetchAllFavourites();
@@ -216,10 +238,23 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                     Üye olmak için kart bilgilerini ekle
                   </button>
                 )}
-              {isUserTrainer && (
-                <button className={styles["interaction-button"]}>
+              {isUserTrainer &&
+              (!isTrainerStaff ||
+                isTrainerStaff?.[0]?.employment_status === "declined") ? (
+                <button
+                  onClick={openEmploymentModal}
+                  className={styles["interaction-button"]}
+                >
                   İş Başvurusu Yap
                 </button>
+              ) : isUserTrainer &&
+                isTrainerStaff?.[0]?.employment_status === "accepted" ? (
+                <p className={styles.accepted}>Bu kulüpte çalışıyorsun</p>
+              ) : isUserTrainer &&
+                isTrainerStaff?.[0]?.employment_status === "pending" ? (
+                <p className={styles.pending}>Başvurun henüz yanıtlanmadı</p>
+              ) : (
+                ""
               )}
             </div>
             {isUserPlayer && isUserSubscribedToClub?.length > 0 && (
@@ -237,6 +272,13 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
           openSubscribeModal={openSubscribeModal}
           handleCloseSubscribeModal={handleCloseSubscribeModal}
           selectedClubId={selectedClub?.[0]?.user_id}
+        />
+      )}
+      {openEmploymentModal && (
+        <ClubEmploymentModal
+          employmentModalOpen={employmentModalOpen}
+          closeEmploymentModal={closeEmploymentModal}
+          selectedClub={selectedClub?.[0]}
         />
       )}
     </div>

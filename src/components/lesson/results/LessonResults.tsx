@@ -39,7 +39,8 @@ const LessonResults = (props: TrainSearchProps) => {
   const { trainerLevelId, gender, locationId, clubId, favourite, textSearch } =
     props;
   const user = useAppSelector((store) => store?.user?.user);
-
+  const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
   const {
     data: playerStudentships,
     isLoading: isPlayerStudentshipsLoading,
@@ -394,6 +395,8 @@ const LessonResults = (props: TrainSearchProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isInviteModalOpen}
           handleCloseInviteModal={handleCloseInviteModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
     </div>

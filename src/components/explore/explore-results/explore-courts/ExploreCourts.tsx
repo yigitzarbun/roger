@@ -137,29 +137,33 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
-          <FaFilter
-            onClick={handleOpenCourtFilterModal}
-            className={
-              locationId > 0 ||
-              clubId > 0 ||
-              courtSurfaceType > 0 ||
-              courtStructureType > 0
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {courts?.courts?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenCourtFilterModal}
+              className={
+                locationId > 0 ||
+                clubId > 0 ||
+                courtSurfaceType > 0 ||
+                courtStructureType > 0
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {courts?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
 
       {courts && courts?.courts?.length === 0 && (

@@ -33,6 +33,10 @@ export const clubStaffSlice = createApi({
     getClubStaffByFilter: builder.query({
       query: (filter) => `/club-staff/filter?${new URLSearchParams(filter)}`,
     }),
+    getIsTrainerClubStaff: builder.query({
+      query: (filter) =>
+        `/club-staff/is-trainer-staff/filter?${new URLSearchParams(filter)}`,
+    }),
     getClubTrainers: builder.query({
       query: (userId) => `/club-staff/club-trainers/${userId}`,
     }),
@@ -60,6 +64,7 @@ export const {
   useGetClubStaffQuery,
   useGetClubStaffByFilterQuery,
   useGetPaginatedClubStaffQuery,
+  useGetIsTrainerClubStaffQuery,
   useGetClubTrainersQuery,
   useGetClubNewStaffRequestsQuery,
   useAddClubStaffMutation,

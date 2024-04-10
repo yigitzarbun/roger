@@ -29,6 +29,7 @@ interface ExploreClubSubscribersModalProps {
   user: any;
   handleOpenTrainInviteModal: (userId: number) => void;
   handleOpenMatchInviteModal: (userId: number) => void;
+  handleOpenLessonModal: (userId: number) => void;
 }
 
 const ExploreClubSubscribersModal = (
@@ -41,6 +42,7 @@ const ExploreClubSubscribersModal = (
     user,
     handleOpenTrainInviteModal,
     handleOpenMatchInviteModal,
+    handleOpenLessonModal,
   } = props;
 
   const {
@@ -120,7 +122,6 @@ const ExploreClubSubscribersModal = (
             <table>
               <thead>
                 <tr>
-                  <th></th>
                   <th>Üye</th>
                   <th>İsim</th>
                   <th>Cinsiyet</th>
@@ -140,36 +141,12 @@ const ExploreClubSubscribersModal = (
                     className={styles["subscriber-row"]}
                   >
                     <td>
-                      {myFavourites?.find(
-                        (favourite) =>
-                          favourite.favouritee_id === player.playerUserId &&
-                          favourite.is_active === true
-                      ) && player.playerUserId !== user?.user?.user_id ? (
-                        <AiFillStar
-                          onClick={() =>
-                            handleToggleFavourite(player.playerUserId)
-                          }
-                          className={styles["remove-fav-icon"]}
-                        />
-                      ) : (
-                        player.playerUserId !== user?.user?.user_id &&
-                        !myFavourites?.find(
-                          (favourite) =>
-                            favourite.favouritee_id === player.playerUserId &&
-                            favourite.is_active === true
-                        ) && (
-                          <AiOutlineStar
-                            onClick={() =>
-                              handleToggleFavourite(player.playerUserId)
-                            }
-                            className={styles["add-fav-icon"]}
-                          />
-                        )
-                      )}
-                    </td>
-                    <td>
                       <Link
-                        to={`${Paths.EXPLORE_PROFILE}1/${player.playerUserId} `}
+                        to={`${Paths.EXPLORE_PROFILE}1/${
+                          player.playerUserId
+                            ? player.playerUserId
+                            : player.user_id
+                        } `}
                       >
                         <img
                           src={
@@ -183,16 +160,50 @@ const ExploreClubSubscribersModal = (
                     </td>
                     <td>
                       <Link
-                        to={`${Paths.EXPLORE_PROFILE}1/${player.playerUserId} `}
+                        to={`${Paths.EXPLORE_PROFILE}1/${
+                          player.playerUserId
+                            ? player.playerUserId
+                            : player.user_id
+                        } `}
                         className={styles["subscriber-name"]}
                       >
-                        {`${player.fname} ${player.lname}`}
+                        {player.user_type_id === 1
+                          ? `${player.playerFname} ${player.playerLname}`
+                          : player.user_type_id === 5
+                          ? `${player.externalFname} ${player.externalLname}`
+                          : ""}
                       </Link>
                     </td>
-                    <td>{player.gender}</td>
-                    <td>{getAge(player.birth_year)}</td>
-                    <td>{player.location_name}</td>
-                    <td>{player.player_level_name}</td>
+                    <td>
+                      {player.playerGenderName
+                        ? player.playerGenderName
+                        : player.externalGenderName
+                        ? player.externalGenderName
+                        : ""}
+                    </td>
+                    <td>
+                      {getAge(
+                        player.birth_year
+                          ? player.birth_year
+                          : player.externalBirthYear
+                          ? player.externalBirthYear
+                          : null
+                      )}
+                    </td>
+                    <td>
+                      {player.location_name
+                        ? player.location_name
+                        : player.externalLocationName
+                        ? player.externalLocationName
+                        : ""}
+                    </td>
+                    <td>
+                      {player.playerLevelName
+                        ? player.playerLevelName
+                        : player.externalLevelName
+                        ? player.externalLevelName
+                        : ""}
+                    </td>
                     <td>
                       {player.reviewscorecount > 0
                         ? `${Math.round(
@@ -235,9 +246,15 @@ const ExploreClubSubscribersModal = (
                         )}
                       </td>
                     )}
-                    {isUserTrainer && (
+                    {isUserTrainer && player.user_type_id === 1 && (
                       <td>
-                        <button>Ders Yap</button>
+                        <button
+                          onClick={() =>
+                            handleOpenLessonModal(player.playerUserId)
+                          }
+                        >
+                          Derse davet et
+                        </button>
                       </td>
                     )}
                   </tr>

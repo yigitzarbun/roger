@@ -19,7 +19,7 @@ const PlayerGender = (props) => {
           üzerinden iletişime geçin.
         </p>
       </div>
-      <p className={styles.gender}>{playerDetails?.[0]?.gender}</p>
+      <p className={styles.gender}>{playerDetails?.gender}</p>
     </div>
   );
 };

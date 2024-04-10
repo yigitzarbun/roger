@@ -68,9 +68,20 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
-  "/outgoing-requests/:userId",
+  "/trainer-bookings/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const bookings = await bookingsModel.getTrainerBookingsByUserId(filter);
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+bookingsRouter.get(
+  "/player-outgoing-requests/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const bookings = await bookingsModel.getOutgoingPlayerRequests(
@@ -84,10 +95,38 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
-  "/incoming-requests/:userId",
+  "/player-incoming-requests/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const bookings = await bookingsModel.getIncomingPlayerRequests(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
+  "/trainer-outgoing-requests/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getOutgoingTrainerRequests(
+        Number(req.params.userId)
+      );
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
+  "/trainer-incoming-requests/:userId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const bookings = await bookingsModel.getIncomingTrainerRequests(
         Number(req.params.userId)
       );
       res.status(200).json(bookings);

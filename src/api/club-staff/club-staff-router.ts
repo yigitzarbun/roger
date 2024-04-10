@@ -28,6 +28,18 @@ clubStaffRouter.get(
   }
 );
 clubStaffRouter.get(
+  "/is-trainer-staff/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const isTrainerStaff = await clubStaffModel.isTrainerClubStaff(filter);
+      res.status(200).json(isTrainerStaff);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubStaffRouter.get(
   "/paginated",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

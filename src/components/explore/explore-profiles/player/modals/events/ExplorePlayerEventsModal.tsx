@@ -26,7 +26,7 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
     playerBookings,
     selectedPlayer,
   } = props;
-
+  console.log(playerBookings);
   return (
     <ReactModal
       isOpen={isEventsModalOpen}
@@ -72,10 +72,9 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             ? 2
                             : ""
                         }/${
-                          booking.inviter_id === selectedPlayer?.[0]?.user_id
+                          booking.inviter_id === selectedPlayer?.user_id
                             ? booking.invitee_id
-                            : booking.invitee_id ===
-                              selectedPlayer?.[0]?.user_id
+                            : booking.invitee_id === selectedPlayer?.user_id
                             ? booking.inviter_id
                             : ""
                         }`}
@@ -106,10 +105,9 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             ? 2
                             : ""
                         }/${
-                          booking.inviter_id === selectedPlayer?.[0]?.user_id
+                          booking.inviter_id === selectedPlayer?.user_id
                             ? booking.invitee_id
-                            : booking.invitee_id ===
-                              selectedPlayer?.[0]?.user_id
+                            : booking.invitee_id === selectedPlayer?.user_id
                             ? booking.inviter_id
                             : ""
                         }`}
@@ -144,17 +142,17 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                       {booking.event_type_id === 2 &&
                       booking.winner_id &&
                       booking.match_score_status_type_id === 3 &&
-                      booking?.winner_id === selectedPlayer?.[0]?.user_id ? (
+                      booking?.winner_id === selectedPlayer?.user_id ? (
                         <Link
-                          to={`${paths.EXPLORE_PROFILE}1/${selectedPlayer?.[0]?.user_id}`}
+                          to={`${paths.EXPLORE_PROFILE}1/${selectedPlayer?.user_id}`}
                           className={styles["opponent-name"]}
                         >
-                          {`${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`}
+                          {`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}
                         </Link>
                       ) : booking.event_type_id === 2 &&
                         booking.winner_id &&
                         booking.match_score_status_type_id === 3 &&
-                        booking?.winner_id !== selectedPlayer?.[0]?.user_id ? (
+                        booking?.winner_id !== selectedPlayer?.user_id ? (
                         <Link
                           to={`${paths.EXPLORE_PROFILE}1/${booking?.winner_id}`}
                           className={styles["opponent-name"]}

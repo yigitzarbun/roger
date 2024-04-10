@@ -126,12 +126,18 @@ const clubSubscriptionsModel = {
           "players.user_id as playerUserId",
           "players.fname as playerFname",
           "players.lname as playerLname",
-          "locations.*",
-          "player_levels",
-          "player_levels.player_level_name",
-          "club_external_members.fname as playerFname",
-          "club_external_members.lname as playerLname",
-          "club_external_members.user_id as playerUserId",
+          "players.gender as playerGenderName",
+          "players.birth_year as playerBirthYear",
+          "player_levels.player_level_name as playerLevelName",
+          "player_locations.*",
+          "player_locations.location_name as locationName",
+          "club_external_members.fname as externalFname",
+          "club_external_members.lname as externalLname",
+          "club_external_members.user_id as externalUserId",
+          "club_external_members.gender as externalGenderName",
+          "club_external_members.birth_year as externalBirthYear",
+          "external_levels.player_level_name as externalLevelName",
+          "external_locations.location_name as externalLocationName",
           "users.*",
           db.raw("AVG(event_reviews.review_score) as averageReviewScore"),
           db.raw(
@@ -139,17 +145,37 @@ const clubSubscriptionsModel = {
           )
         )
         .from("club_subscriptions")
-        .leftJoin("players", function () {
-          this.on("players.user_id", "=", "club_subscriptions.player_id");
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "club_subscriptions.player_id");
         })
-        .leftJoin("locations", function () {
-          this.on("locations.location_id", "=", "players.location_id");
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "users.user_id");
+        })
+        .leftJoin("club_external_members", function () {
+          this.on("club_external_members.user_id", "=", "users.user_id");
+        })
+        .leftJoin("locations as player_locations", function () {
+          this.on("player_locations.location_id", "=", "players.location_id");
+        })
+        .leftJoin("locations as external_locations", function () {
+          this.on(
+            "external_locations.location_id",
+            "=",
+            "club_external_members.location_id"
+          );
         })
         .leftJoin("player_levels", function () {
           this.on(
             "player_levels.player_level_id",
             "=",
             "players.player_level_id"
+          );
+        })
+        .leftJoin("player_levels as external_levels", function () {
+          this.on(
+            "external_levels.player_level_id",
+            "=",
+            "club_external_members.player_level_id"
           );
         })
         .leftJoin("event_reviews", function () {
@@ -159,24 +185,23 @@ const clubSubscriptionsModel = {
             "club_subscriptions.player_id"
           );
         })
-        .leftJoin("users", function () {
-          this.on("users.user_id", "=", "club_subscriptions.player_id");
-        })
-        .leftJoin("club_external_members", function () {
-          this.on("club_external_members.user_id", "=", "users.user_id");
-        })
         .where("club_subscriptions.club_id", userId)
         .andWhere("club_subscriptions.is_active", true)
         .groupBy(
           "club_subscriptions.club_subscription_id",
           "players.player_id",
-          "locations.location_id",
+          "player_locations.location_id",
           "player_levels.player_level_id",
+          "player_levels.player_level_name",
+          "player_locations.location_name",
+          "players.birth_year",
           "club_external_members.fname",
           "club_external_members.lname",
           "club_external_members.user_id",
-          "players.fname",
-          "players.lname",
+          "club_external_members.gender",
+          "external_levels.player_level_name",
+          "external_locations.location_name",
+          "club_external_members.birth_year",
           "users.user_id"
         );
 
@@ -185,7 +210,6 @@ const clubSubscriptionsModel = {
       console.log("Error fetching club subscribers: ", error);
     }
   },
-
   async getPaginatedlubSubscribers(filter) {
     const subscribersPerPage = 4;
     const offset = (filter.page - 1) * subscribersPerPage;

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import paths from "../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
-
+import { toast } from "react-toastify";
 import {
   useAddUserMutation,
   useGetUsersQuery,
@@ -49,6 +49,24 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
 
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const userLanguagePreference = localStorage.getItem("tennis_app_language");
+  const broswerLanguage = navigator.language;
+  const browserLanguageConverted =
+    broswerLanguage === "en-GB"
+      ? "en"
+      : broswerLanguage === "tr-TR"
+      ? "tr"
+      : "tr";
+
+  const languageString = userLanguagePreference
+    ? userLanguagePreference
+    : browserLanguageConverted
+    ? browserLanguageConverted
+    : "tr";
+
+  const languageId =
+    languageString === "tr" ? 1 : languageString === "en" ? 2 : 1;
 
   const [selectedImage, setSelectedImage] = useState(null);
   const handleImageChange = (e) => {
@@ -115,6 +133,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
       user_status_type_id: userStatusTypes?.find(
         (u) => u.user_status_type_name === "active"
       ).user_status_type_id,
+      language_id: languageId,
     };
     try {
       // register user
@@ -175,6 +194,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
 
   useEffect(() => {
     if (isAddTrainerSuccess) {
+      toast.success("Kayıt başarılı");
       refetchUsers();
       refetchTrainers();
     }

@@ -26,7 +26,7 @@ const PlayerLocation = (props) => {
   const handleButtonDisabled = () => {
     const isLocationEmpty = !newLocation;
 
-    if (isLocationEmpty || newLocation === playerDetails?.[0]?.location_id) {
+    if (isLocationEmpty || newLocation === playerDetails?.location_id) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
@@ -41,22 +41,22 @@ const PlayerLocation = (props) => {
     setValue,
   } = useForm({
     defaultValues: {
-      location_id: Number(playerDetails?.[0]?.location_id),
+      location_id: Number(playerDetails?.location_id),
     },
   });
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const updatedProfileData = {
-      player_id: playerDetails?.[0]?.player_id,
-      fname: playerDetails?.[0]?.fname,
-      lname: playerDetails?.[0]?.lname,
-      birth_year: playerDetails?.[0]?.birth_year,
-      gender: playerDetails?.[0]?.gender,
+      player_id: playerDetails?.player_id,
+      fname: playerDetails?.fname,
+      lname: playerDetails?.lname,
+      birth_year: playerDetails?.birth_year,
+      gender: playerDetails?.gender,
       phone_number: null,
-      image: playerDetails?.[0]?.image,
+      image: playerDetails?.image,
       player_bio_description: null,
       location_id: Number(formData?.location_id),
-      player_level_id: Number(playerDetails?.[0]?.player_level_id),
-      user_id: playerDetails?.[0]?.user_id,
+      player_level_id: Number(playerDetails?.player_level_id),
+      user_id: playerDetails?.user_id,
     };
     updatePlayer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
@@ -78,7 +78,7 @@ const PlayerLocation = (props) => {
   useEffect(() => {
     // Set default value for location_id when locations data changes
     if (locations && locations.length > 0) {
-      setValue("location_id", Number(playerDetails?.[0]?.location_id));
+      setValue("location_id", Number(playerDetails?.location_id));
     }
   }, [locations, setValue, playerDetails]);
   return (

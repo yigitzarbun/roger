@@ -40,7 +40,7 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
       image: selectedClubStaff.trainerImage,
       club_id: selectedClubStaff.club_id,
       club_staff_role_type_id: selectedClubStaff.club_staff_role_type_id,
-      user_id: selectedClubStaff.user_id,
+      user_id: selectedClubStaff.clubStaffUserId,
     };
     updateClubStaff(updatedStaffData);
   };

@@ -113,10 +113,7 @@ const TrainerHeader = () => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Davetler{" "}
-          {incomingBookings?.length > 0 && (
-            <FaCircle className={styles["notification"]} />
-          )}
+          Davetler
         </NavLink>
         <NavLink
           to={paths.STUDENTS}
@@ -126,10 +123,7 @@ const TrainerHeader = () => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Öğrenciler{" "}
-          {newStudentRequests.length > 0 && (
-            <FaCircle className={styles["notification"]} />
-          )}
+          Öğrenciler
         </NavLink>
         <NavLink
           to={paths.PERFORMANCE}
@@ -139,10 +133,7 @@ const TrainerHeader = () => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Performans{" "}
-          {myEvents.length > myReviews.length && (
-            <FaCircle className={styles["notification"]} />
-          )}
+          Performans
         </NavLink>
       </div>
     </nav>

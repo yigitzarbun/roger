@@ -33,6 +33,7 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
 
   const [trainerLessonUserId, setTrainerLessonUserId] = useState(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -214,6 +215,8 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
           opponentUserId={trainerLessonUserId}
           isInviteModalOpen={isInviteModalOpen}
           handleCloseInviteModal={handleCloseInviteModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
     </ReactModal>

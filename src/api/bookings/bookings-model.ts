@@ -180,6 +180,115 @@ const bookingsModel = {
       throw new Error("Unable to fetch player bookings.");
     }
   },
+  async getTrainerBookingsByUserId(filter) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "players.image as playerImage",
+          "trainers.*",
+          "trainers.image as trainerImage",
+          "clubs.*",
+          "clubs.user_id as clubUserId",
+          "clubs.image as clubImage",
+          "courts.*",
+          "student_groups.*",
+          "users.user_type_id",
+          "users.user_id",
+          "player_levels.*",
+          "event_types.*",
+          "payments.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("student_groups", function () {
+          this.on("student_groups.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("users", function () {
+          this.on(
+            "users.user_id",
+            "=",
+            db.raw(
+              "(CASE WHEN ? = bookings.inviter_id THEN bookings.invitee_id ELSE bookings.inviter_id END)",
+              [filter.userId]
+            )
+          );
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("payments", function () {
+          this.on("payments.payment_id", "=", "bookings.payment_id");
+        })
+        .where("bookings.booking_status_type_id", 2)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", filter.userId)
+            .orWhere("bookings.inviter_id", filter.userId)
+            .orWhere("student_groups.trainer_id", filter.userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", filter.userId).orWhereNot(
+            "trainers.user_id",
+            filter.userId
+          );
+        })
+        .andWhere(function () {
+          if (filter.date != "") {
+            this.where("bookings.event_date", "=", filter.date);
+          }
+          if (filter.eventTypeId > 0) {
+            this.where("bookings.event_type_id", "=", filter.eventTypeId);
+          }
+          if (filter.clubId > 0) {
+            this.where("bookings.club_id", "=", filter.clubId);
+          }
+          if (filter.textSearch && filter.textSearch !== "") {
+            this.where(function () {
+              this.where(
+                "players.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+        });
+
+      return bookings;
+    } catch (error) {
+      // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
   async getOutgoingPlayerRequests(userId: number) {
     try {
       const bookings = await db
@@ -575,6 +684,119 @@ const bookingsModel = {
       return data;
     } catch (error) {
       // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
+  async getOutgoingTrainerRequests(userId: number) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "players.image as playerImage",
+          "trainers.*",
+          "trainers.image as trainerImage",
+          "clubs.*",
+          "clubs.image as clubImage",
+          "courts.*",
+          "event_types.*",
+          "player_levels.*",
+          "users.*",
+          "payments.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("payments", function () {
+          this.on("payments.payment_id", "=", "bookings.payment_id");
+        })
+        .where("bookings.booking_status_type_id", 1)
+        .andWhere((builder) => {
+          builder.where("bookings.inviter_id", userId);
+        });
+      return bookings;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unable to fetch trainer outgoing bookings.");
+    }
+  },
+  async getIncomingTrainerRequests(userId: number) {
+    try {
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "players.image as playerImage",
+          "trainers.*",
+          "trainers.image as trainerImage",
+          "clubs.*",
+          "clubs.image as clubImage",
+          "courts.*",
+          "event_types.*",
+          "player_levels.*",
+          "users.*",
+          "payments.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.inviter_id");
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.inviter_id");
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("player_levels", function () {
+          this.on(
+            "player_levels.player_level_id",
+            "=",
+            "players.player_level_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "bookings.inviter_id");
+        })
+        .leftJoin("payments", function () {
+          this.on("payments.payment_id", "=", "bookings.payment_id");
+        })
+        .where("bookings.booking_status_type_id", 1)
+        .andWhere((builder) => {
+          builder.where("bookings.invitee_id", userId);
+        });
+
+      return bookings;
+    } catch (error) {
       console.error(error);
       throw new Error("Unable to fetch player bookings.");
     }

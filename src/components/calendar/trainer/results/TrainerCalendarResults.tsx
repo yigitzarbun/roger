@@ -15,7 +15,10 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
+import {
+  useGetBookingsQuery,
+  useGetTrainerBookingsByUserIdQuery,
+} from "../../../../api/endpoints/BookingsApi";
 import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
 import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
@@ -23,10 +26,7 @@ import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
 import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
 import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-import {
-  useGetStudentGroupsByFilterQuery,
-  useGetStudentGroupsQuery,
-} from "../../../../api/endpoints/StudentGroupsApi";
+import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   currentDayLocale,
@@ -37,13 +37,26 @@ import {
 interface TrainerCalendarResultsProps {
   date: string;
   clubId: number;
+  eventTypeId: number;
+  textSearch: string;
 }
 const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
-  const { date, clubId } = props;
+  const { date, clubId, eventTypeId, textSearch } = props;
 
   // fetch data
   const user = useAppSelector((store) => store.user.user.user);
-
+  const formattedDate = date
+    ? date.split("/").reverse().join("-") // Convert to "YYYY-MM-DD" format
+    : "";
+  const { data: trainerBookings, isLoading: isTrainerBookingsLoading } =
+    useGetTrainerBookingsByUserIdQuery({
+      date: formattedDate,
+      eventTypeId: eventTypeId,
+      clubId: clubId,
+      userId: user?.user_id,
+      textSearch: textSearch,
+    });
+  console.log(trainerBookings);
   const {
     data: bookings,
     isLoading: isBookingsLoading,
@@ -175,7 +188,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
           </thead>
           <tbody>
             {filteredBookings?.map((booking) => (
-              <tr key={booking.booking_id}>
+              <tr key={booking.booking_id} className={styles["trainer-row"]}>
                 <td>
                   {booking.booking_status_type_id === 2 && (
                     <p className={styles["confirmed-text"]}>Onaylandı</p>
@@ -254,9 +267,9 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                                     group.user_id === booking.invitee_id
                                 )?.club_id
                             )?.image
-                          : "/images/icons/avatar.png"
+                          : "/images/icons/avatar.jpg"
                       }
-                      className={styles["player-image"]}
+                      className={styles["trainer-image"]}
                     />
                   </Link>
                 </td>
@@ -290,7 +303,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                           )?.user_id
                         : ""
                     }`}
-                    className={styles["player-name"]}
+                    className={styles["trainer-name"]}
                   >
                     {booking.inviter_id === user.user_id &&
                     booking.event_type_id === 3
@@ -479,12 +492,14 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
           </tbody>
         </table>
       )}
-      <CancelInviteModal
-        isModalOpen={isModalOpen}
-        handleCloseModal={handleCloseModal}
-        bookingData={bookingData}
-        handleCancelBooking={handleCancelBooking}
-      />
+      {isModalOpen && (
+        <CancelInviteModal
+          isModalOpen={isModalOpen}
+          handleCloseModal={handleCloseModal}
+          bookingData={bookingData}
+          handleCancelBooking={handleCancelBooking}
+        />
+      )}
     </div>
   );
 };

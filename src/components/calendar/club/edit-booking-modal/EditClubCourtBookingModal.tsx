@@ -59,9 +59,9 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     useGetEventTypesQuery({});
 
   const { data: myTrainers, isLoading: isMyTrainersLoading } =
-    useGetClubTrainersQuery({
-      userId: user?.user?.user?.user_id,
-    });
+    useGetClubTrainersQuery(user?.user?.user_id);
+
+  console.log("my trainers: ", myTrainers);
 
   const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
     useGetClubExternalMembersByFilterQuery({

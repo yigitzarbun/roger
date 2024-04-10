@@ -9,12 +9,8 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
 
-import { useGetBookingsQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
+import { useGetTrainerOutgoingRequestsQuery } from "../../../../api/endpoints/BookingsApi";
+
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 
 import CancelInviteModal, {
@@ -22,45 +18,16 @@ import CancelInviteModal, {
 } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
+import { getAge } from "../../../../common/util/TimeFunctions";
 
 const TrainerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
 
   const {
-    data: bookings,
-    isLoading: isBookingsLoading,
+    data: outgoingBookings,
+    isLoading: isOutgoingBookingsLoading,
     refetch,
-  } = useGetBookingsQuery({});
-
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-
-  const { data: playerLevelTypes, isLoading: isPlayerLevelTypesLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
-
-  const date = new Date();
-  const today = date.toLocaleDateString();
-  const now = date.toLocaleTimeString();
-
-  const outgoingBookings = bookings?.filter(
-    (booking) =>
-      booking.inviter_id === user?.user_id &&
-      booking.booking_status_type_id === 1 &&
-      (new Date(booking.event_date).toLocaleDateString() > today ||
-        (new Date(booking.event_date).toLocaleDateString() === today &&
-          booking.event_time >= now))
-  );
-
-  const currentYear = new Date().getFullYear();
+  } = useGetTrainerOutgoingRequestsQuery(user?.user_id);
 
   const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
@@ -93,14 +60,7 @@ const TrainerRequestsOutgoing = () => {
     }
   }, [isSuccess]);
 
-  if (
-    isBookingsLoading ||
-    isCourtsLoading ||
-    isClubsLoading ||
-    isEventTypesLoading ||
-    isPlayersLoading ||
-    isPlayerLevelTypesLoading
-  ) {
+  if (isOutgoingBookingsLoading) {
     return <PageLoading />;
   }
 
@@ -131,7 +91,7 @@ const TrainerRequestsOutgoing = () => {
           </thead>
           <tbody>
             {outgoingBookings?.map((booking) => (
-              <tr key={booking.booking_id}>
+              <tr key={booking.booking_id} className={styles["player-row"]}>
                 <td className={styles["pending-text"]}>
                   {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
                 </td>
@@ -139,13 +99,9 @@ const TrainerRequestsOutgoing = () => {
                   <Link to={`${paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}>
                     <img
                       src={
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.image
-                          ? players?.find(
-                              (player) => player.user_id === booking.invitee_id
-                            )?.image
-                          : "/images/icons/avatar.png"
+                        booking?.playerImage
+                          ? booking?.playerImage
+                          : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
                     />
@@ -156,69 +112,18 @@ const TrainerRequestsOutgoing = () => {
                     to={`${paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}
                     className={styles["player-name"]}
                   >
-                    {`${
-                      players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )?.fname
-                    } ${
-                      players?.find(
-                        (player) => player.user_id === booking.invitee_id
-                      )?.lname
-                    }`}
+                    {`${booking?.fname} ${booking?.lname}`}
                   </Link>
                 </td>
-                <td>
-                  {
-                    playerLevelTypes?.find(
-                      (level) =>
-                        level.player_level_id ===
-                        players?.find(
-                          (player) => player.user_id === booking.invitee_id
-                        )?.player_level_id
-                    )?.player_level_name
-                  }
-                </td>
-                <td>
-                  {
-                    players?.find(
-                      (player) => player.user_id === booking.invitee_id
-                    )?.gender
-                  }
-                </td>
-                <td>
-                  {currentYear -
-                    players?.find(
-                      (player) => player.user_id === booking.invitee_id
-                    )?.birth_year}
-                </td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === booking.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
+                <td>{booking?.player_level_name}</td>
+                <td>{booking?.gender}</td>
+                <td>{getAge(booking?.birth_year)}</td>
+                <td>{booking?.event_type_name}</td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
-                <td>
-                  {
-                    courts?.find((court) => court.court_id === booking.court_id)
-                      ?.court_name
-                  }
-                </td>
-                <td>
-                  {
-                    clubs?.find((club) => club.club_id === booking.club_id)
-                      ?.club_name
-                  }
-                </td>
-                <td>
-                  {
-                    payments?.find(
-                      (payment) => payment.payment_id === booking.payment_id
-                    )?.lesson_price
-                  }
-                </td>
+                <td>{booking?.court_name}</td>
+                <td>{booking?.club_name}</td>
+                <td>{booking?.lesson_price}</td>
                 <td>
                   <button
                     onClick={() => handleOpenModal(booking)}
@@ -232,12 +137,14 @@ const TrainerRequestsOutgoing = () => {
           </tbody>
         </table>
       )}
-      <CancelInviteModal
-        isModalOpen={isModalOpen}
-        handleCloseModal={handleCloseModal}
-        bookingData={bookingData}
-        handleCancelBooking={handleCancelBooking}
-      />
+      {isModalOpen && (
+        <CancelInviteModal
+          isModalOpen={isModalOpen}
+          handleCloseModal={handleCloseModal}
+          bookingData={bookingData}
+          handleCancelBooking={handleCancelBooking}
+        />
+      )}
     </div>
   );
 };

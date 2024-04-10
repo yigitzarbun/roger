@@ -8,50 +8,76 @@
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
+  border: 1px $roger-border-color solid;
 
-  .result-title {
-    font-size: 2rem;
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    .title {
+      font-size: 2rem;
+    }
+    .nav-container {
+      display: flex;
+      column-gap: 1vw;
+
+      .nav-arrow {
+        font-size: 1.3rem;
+        cursor: pointer;
+      }
+      .nav-arrow:hover {
+        color: $roger-text-color-hover;
+      }
+    }
   }
 
   table {
     width: 100%;
     text-align: left;
+    border-collapse: collapse;
 
-    .player-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
+    .player-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+
+      .player-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .player-name {
+        color: white;
+        text-decoration: none;
+      }
     }
-    .player-name {
-      color: white;
-      text-decoration: none;
-    }
-    .pending-text {
-      color: $roger-yellow;
-    }
+
     .cancel-button {
-      padding: 10px;
-      border-radius: $roger-border-radius;
+      background-color: $roger-black-dark;
       border: none;
-      background-color: $roger-red;
-      font-size: 0.8rem;
+      width: 100px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
       cursor: pointer;
-      text-decoration: none;
       color: white;
+      text-decoration: none;
       text-align: center;
     }
 
     .cancel-button:hover {
-      background-color: $roger-black-dark;
-      color: white;
+      background-color: $roger-black-light;
     }
-    .fee {
-      color: $roger-green;
+    .icon {
+      cursor: pointer;
     }
-  }
-  .fee-text {
-    color: $roger-green;
-    font-size: 0.9rem;
   }
 }

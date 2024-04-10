@@ -25,7 +25,7 @@ const ExplorePlayerProfilesEventsSection = (
   const { selectedPlayer } = props;
 
   const { data: playerBookings, isLoading: isPlayerBookingsLoading } =
-    useGetUserProfileEventsQuery(selectedPlayer?.[0]?.user_id);
+    useGetUserProfileEventsQuery(selectedPlayer?.user_id);
 
   const [isEventsModalOpen, setIsEventModalOpen] = useState(false);
   const openEventsModal = () => {
@@ -71,9 +71,9 @@ const ExplorePlayerProfilesEventsSection = (
                           ? 2
                           : ""
                       }/${
-                        booking.inviter_id === selectedPlayer?.[0]?.user_id
+                        booking.inviter_id === selectedPlayer?.user_id
                           ? booking.invitee_id
-                          : booking.invitee_id === selectedPlayer?.[0]?.user_id
+                          : booking.invitee_id === selectedPlayer?.user_id
                           ? booking.inviter_id
                           : ""
                       }`}
@@ -104,9 +104,9 @@ const ExplorePlayerProfilesEventsSection = (
                           ? 2
                           : ""
                       }/${
-                        booking.inviter_id === selectedPlayer?.[0]?.user_id
+                        booking.inviter_id === selectedPlayer?.user_id
                           ? booking.invitee_id
-                          : booking.invitee_id === selectedPlayer?.[0]?.user_id
+                          : booking.invitee_id === selectedPlayer?.user_id
                           ? booking.inviter_id
                           : ""
                       }`}
@@ -141,17 +141,17 @@ const ExplorePlayerProfilesEventsSection = (
                     {booking.event_type_id === 2 &&
                     booking.winner_id &&
                     booking.match_score_status_type_id === 3 &&
-                    booking?.winner_id === selectedPlayer?.[0]?.user_id ? (
+                    booking?.winner_id === selectedPlayer?.user_id ? (
                       <Link
-                        to={`${Paths.EXPLORE_PROFILE}1/${selectedPlayer?.[0]?.user_id}`}
+                        to={`${Paths.EXPLORE_PROFILE}1/${selectedPlayer?.user_id}`}
                         className={styles["opponent-name"]}
                       >
-                        {`${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`}
+                        {`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}
                       </Link>
                     ) : booking.event_type_id === 2 &&
                       booking.winner_id &&
                       booking.match_score_status_type_id === 3 &&
-                      booking?.winner_id !== selectedPlayer?.[0]?.user_id ? (
+                      booking?.winner_id !== selectedPlayer?.user_id ? (
                       <Link
                         to={`${Paths.EXPLORE_PROFILE}1/${booking?.winner_id}`}
                         className={styles["opponent-name"]}

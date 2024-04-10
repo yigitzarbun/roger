@@ -218,7 +218,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                       event.event_type_id === 1 || event.event_type_id === 2
                         ? 1
                         : event.event_type_id === 3
-                        ? 3
+                        ? 2
                         : event.event_type_id === 6
                         ? 3
                         : ""
@@ -261,7 +261,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                       event.event_type_id === 1 || event.event_type_id === 2
                         ? 1
                         : event.event_type_id === 3
-                        ? 3
+                        ? 2
                         : event.event_type_id === 6
                         ? 3
                         : ""
@@ -310,6 +310,10 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                           event.fname,
                           event.lname,
                           event.playerImage
+                            ? event.playerImage
+                            : event.trainerImage
+                            ? event.trainerImage
+                            : null
                         )
                       }
                     >

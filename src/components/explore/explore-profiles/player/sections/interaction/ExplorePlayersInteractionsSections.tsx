@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
-
-import paths from "../../../../../../routing/Paths";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 import { SlOptions } from "react-icons/sl";
 import { IoStar } from "react-icons/io5";
@@ -11,10 +8,7 @@ import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
-import {
-  Player,
-  useGetPlayerByUserIdQuery,
-} from "../../../../../../api/endpoints/PlayersApi";
+import { useGetPlayerByUserIdQuery } from "../../../../../../api/endpoints/PlayersApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
@@ -24,9 +18,10 @@ import { useAppSelector } from "../../../../../../store/hooks";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
+import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExplorePlayersInteractionsSectionsProps {
-  selectedPlayer: Player;
+  selectedPlayer: any;
   user_id: number;
 }
 
@@ -51,7 +46,7 @@ const ExplorePlayersInteractionsSections = (
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
-  const profileImage = selectedPlayer?.[0]?.image;
+  const profileImage = selectedPlayer?.image;
 
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
@@ -72,6 +67,14 @@ const ExplorePlayersInteractionsSections = (
   };
   const handleCloseMatchModal = () => {
     setIsMatchModalOpen(false);
+  };
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
+  const handleOpenLessonModal = () => {
+    setIsLessonModalOpen(true);
+  };
+  const handleCloseLessonModal = () => {
+    setIsLessonModalOpen(false);
   };
 
   const {
@@ -149,16 +152,16 @@ const ExplorePlayersInteractionsSections = (
         />
 
         <div className={styles["name-container"]}>
-          <h2>{`${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`}</h2>
+          <h2>{`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}</h2>
           <h4>Oyuncu</h4>
           <div className={styles.reviews}>
-            {selectedPlayer?.[0]?.averagereviewscore?.length > 0 &&
-              generateStars(selectedPlayer?.[0]?.averagereviewscore).map(
+            {selectedPlayer?.averagereviewscore?.length > 0 &&
+              generateStars(selectedPlayer?.averagereviewscore).map(
                 (star, index) => <span key={index}>{star}</span>
               )}
-            {selectedPlayer?.[0]?.averagereviewscore?.length > 0 && (
+            {selectedPlayer?.averagereviewscore?.length > 0 && (
               <p className={styles["reviews-text"]}>
-                {selectedPlayer?.[0]?.reviewscorecount} değerlendirme
+                {selectedPlayer?.reviewscorecount} değerlendirme
               </p>
             )}
           </div>
@@ -183,32 +186,30 @@ const ExplorePlayersInteractionsSections = (
               </thead>
               <tbody>
                 <tr className={styles["player-row"]}>
-                  <td>{getAge(Number(selectedPlayer?.[0]?.birth_year))}</td>
-                  <td>{selectedPlayer?.[0]?.gender}</td>
-                  <td>{selectedPlayer?.[0]?.location_name}</td>
-                  <td>{selectedPlayer?.[0]?.player_level_name}</td>
-                  <td>{selectedPlayer?.[0]?.totalmatches}</td>
+                  <td>{getAge(Number(selectedPlayer?.birth_year))}</td>
+                  <td>{selectedPlayer?.gender}</td>
+                  <td>{selectedPlayer?.location_name}</td>
+                  <td>{selectedPlayer?.player_level_name}</td>
+                  <td>{selectedPlayer?.totalmatches}</td>
                   <td className={styles["win-count"]}>
-                    {selectedPlayer?.[0]?.wonmatches}
+                    {selectedPlayer?.wonmatches}
                   </td>
                   <td className={styles["lost-count"]}>
-                    {selectedPlayer?.[0]?.lostmatches}
+                    {selectedPlayer?.lostmatches}
                   </td>
                   <td className={styles["points-count"]}>
-                    {selectedPlayer?.[0]?.playerpoints}
+                    {selectedPlayer?.playerpoints}
                   </td>
                 </tr>
               </tbody>
             </table>
             <div className={styles["buttons-container"]}>
               <button
-                onClick={() =>
-                  handleToggleFavourite(selectedPlayer?.[0]?.user_id)
-                }
+                onClick={() => handleToggleFavourite(selectedPlayer?.user_id)}
                 className={styles["interaction-button"]}
               >
-                {isPlayerInMyFavourites(selectedPlayer?.[0]?.user_id)
-                  ?.is_active === true
+                {isPlayerInMyFavourites(selectedPlayer?.user_id)?.is_active ===
+                true
                   ? "Favorilerden çıkar"
                   : "Favorilere ekle"}
               </button>
@@ -220,7 +221,7 @@ const ExplorePlayersInteractionsSections = (
                   Antreman yap
                 </button>
               )}
-              {isUserPlayer && selectedPlayer?.[0]?.gender === userGender && (
+              {isUserPlayer && selectedPlayer?.gender === userGender && (
                 <button
                   onClick={handleOpenMatchModal}
                   className={styles["interaction-button"]}
@@ -229,20 +230,12 @@ const ExplorePlayersInteractionsSections = (
                 </button>
               )}
               {isUserTrainer && (
-                <Link
-                  to={paths.LESSON_INVITE}
-                  state={{
-                    fname: selectedPlayer?.[0]?.fname,
-                    lname: selectedPlayer?.[0]?.lname,
-                    image: selectedPlayer?.[0]?.image,
-                    court_price: "",
-                    user_id: selectedPlayer?.[0]?.user_id,
-                  }}
+                <button
+                  onClick={handleOpenLessonModal}
+                  className={styles["interaction-button"]}
                 >
-                  <button className={styles["interaction-button"]}>
-                    Derse davet et
-                  </button>
-                </Link>
+                  Derse davet et
+                </button>
               )}
             </div>
           </div>
@@ -263,6 +256,15 @@ const ExplorePlayersInteractionsSections = (
           opponentUserId={user_id}
           isInviteModalOpen={isMatchModalOpen}
           handleCloseInviteModal={handleCloseMatchModal}
+        />
+      )}
+      {isLessonModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={user_id}
+          isInviteModalOpen={isLessonModalOpen}
+          handleCloseInviteModal={handleCloseLessonModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
     </div>

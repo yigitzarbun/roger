@@ -64,6 +64,7 @@ const clubStaffModel = {
         .leftJoin("locations", function () {
           this.on("locations.location_id", "=", "trainers.location_id");
         })
+
         .leftJoin("bookings", function () {
           this.on("bookings.inviter_id", "=", "trainers.user_id")
             .orOn("bookings.invitee_id", "=", "trainers.user_id")
@@ -243,7 +244,16 @@ const clubStaffModel = {
     );
     return clubStaff;
   },
-
+  async isTrainerClubStaff(filter) {
+    try {
+      const staff = await db("club_staff")
+        .where("club_staff.club_id", filter.clubId)
+        .andWhere("club_staff.user_id", filter.trainerUserId);
+      return staff;
+    } catch (error) {
+      console.log("Error fetching isTrainerClubStaff: ", error);
+    }
+  },
   async add(clubStaff) {
     const [newClubStaff] = await db("club_staff")
       .insert(clubStaff)

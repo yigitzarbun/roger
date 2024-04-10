@@ -76,7 +76,7 @@
         .buttons-container {
           display: flex;
           column-gap: 20px;
-
+          align-items: center;
           .interaction-button {
             padding: 10px;
             border-radius: $roger-border-radius;
@@ -92,6 +92,14 @@
           .interaction-button:hover {
             background-color: $roger-black-light;
             cursor: pointer;
+          }
+          .accepted {
+            color: $roger-green;
+            font-size: 0.9rem;
+          }
+          .pending {
+            color: $roger-yellow;
+            font-size: 0.9rem;
           }
         }
         .subscribed-container {

@@ -17,13 +17,7 @@ const Match = lazy(() => import("../modules/match/Match"));
 const Lesson = lazy(() => import("../modules/lesson/Lesson"));
 const Calendar = lazy(() => import("../modules/calendar/Calendar"));
 const Requests = lazy(() => import("../modules/requests/Requests"));
-const LessonInvite = lazy(
-  () => import("../modules/invite/lesson/LessonInvite")
-);
-const MatchInvite = lazy(() => import("../modules/invite/match/MatchInivte"));
-const TrainInvite = lazy(
-  () => import("../modules/invite/training/TrainingInvite")
-);
+
 const ClubCourts = lazy(() => import("../modules/club-courts/ClubCourts"));
 const TrainerStudents = lazy(
   () => import("../modules/trainer-students/TrainerStudents")
@@ -32,9 +26,7 @@ const Explore = lazy(() => import("../modules/explore/Explore"));
 const ExploreProfile = lazy(
   () => import("../modules/explore-profiles/ExploreProfiles")
 );
-const CourtBookingInvite = lazy(
-  () => import("../modules/invite/court-booking/CourtBookingInvite")
-);
+
 const ClubSubscriptions = lazy(
   () => import("../modules/club-subscriptions/ClubSubscriptions")
 );
@@ -87,9 +79,6 @@ const routes: Route[] = [
   { path: paths.LESSON, element: getRouteElement(Lesson) },
   { path: paths.CALENDAR, element: getRouteElement(Calendar) },
   { path: paths.REQUESTS, element: getRouteElement(Requests) },
-  { path: paths.LESSON_INVITE, element: getRouteElement(LessonInvite) },
-  { path: paths.MATCH_INVITE, element: getRouteElement(MatchInvite) },
-  { path: paths.TRAIN_INVITE, element: getRouteElement(TrainInvite) },
   { path: paths.CLUB_COURTS, element: getRouteElement(ClubCourts) },
   { path: paths.STUDENTS, element: getRouteElement(TrainerStudents) },
   { path: paths.EXPLORE, element: getRouteElement(Explore) },
@@ -97,10 +86,7 @@ const routes: Route[] = [
     path: `${paths.EXPLORE_PROFILE}:profile_type/:id`,
     element: getRouteElement(ExploreProfile),
   },
-  {
-    path: paths.COURT_BOOKING_INVITE,
-    element: getRouteElement(CourtBookingInvite),
-  },
+
   {
     path: paths.CLUB_SUBSCRIPTIONS,
     element: getRouteElement(ClubSubscriptions),

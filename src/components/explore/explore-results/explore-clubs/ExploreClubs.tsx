@@ -173,11 +173,11 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   }
 
   // add club staff
-  const [trainerEmploymentClubId, setTrainerEmploymentClubId] = useState(null);
+  const [trainerEmploymentClub, setTrainerEmploymentClub] = useState(null);
   const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
 
-  const openEmploymentModal = (club_id: number) => {
-    setTrainerEmploymentClubId(club_id);
+  const openEmploymentModal = (club) => {
+    setTrainerEmploymentClub(club);
     setEmploymentModalOpen(true);
   };
 
@@ -217,18 +217,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   const handleCloseSubscribeModal = () => {
     setOpenSubscribeModal(false);
     setSelectedClubId(null);
-  };
-
-  const isUserStaff = (club_id: number) => {
-    const staffMember = clubStaff?.find(
-      (staff) =>
-        staff.club_id === club_id &&
-        staff.user_id === user?.user?.user_id &&
-        (staff.employment_status === "accepted" ||
-          staff.employment_status === "pending")
-    );
-
-    return staffMember ? staffMember.employment_status : null;
   };
 
   useEffect(() => {
@@ -273,32 +261,36 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
-          <FaFilter
-            onClick={handleOpenClubFilterModal}
-            className={
-              textSearch !== "" ||
-              locationId > 0 ||
-              clubType > 0 ||
-              courtSurfaceType > 0 ||
-              courtStructureType > 0 ||
-              clubTrainers === true ||
-              subscribedClubs === true
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {clubs?.clubs && clubs?.clubs.length > 0 && (
+            <FaFilter
+              onClick={handleOpenClubFilterModal}
+              className={
+                textSearch !== "" ||
+                locationId > 0 ||
+                clubType > 0 ||
+                courtSurfaceType > 0 ||
+                courtStructureType > 0 ||
+                clubTrainers === true ||
+                subscribedClubs === true
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {clubs?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {clubs?.clubs && clubs?.clubs.length === 0 && (
         <p>
@@ -341,13 +333,8 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                   {isClubInMyFavourites(club.user_id)?.is_active === true &&
                   club.user_id !== user?.user?.user_id ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
-                  ) : isClubInMyFavourites(club.user_id)?.is_active ===
-                    false ? (
-                    club.user_id !== user?.user?.user_id && (
-                      <AiOutlineStar className={styles["add-fav-icon"]} />
-                    )
                   ) : (
-                    ""
+                    <AiOutlineStar className={styles["add-fav-icon"]} />
                   )}
                 </td>
                 <td className={styles["vertical-center"]}>
@@ -405,20 +392,21 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                 )}
                 {isUserTrainer && (
                   <td className={styles.status}>
-                    {isUserStaff(club.club_id) === "accepted" ? (
-                      <p className={styles["employed-text"]}>
+                    {club?.isTrainerStaff?.employment_status === "accepted" ? (
+                      <p className={styles["employment-confirmed-text"]}>
                         Bu kulüpte çalışıyorsun
                       </p>
-                    ) : isUserStaff(club.club_id) === "pending" ? (
+                    ) : club?.isTrainerStaff?.employment_status ===
+                      "pending" ? (
                       <p className={styles["employment-pending-text"]}>
                         Başvurun henüz yanıtlanmadı
                       </p>
                     ) : (
                       <button
-                        onClick={() => openEmploymentModal(club.club_id)}
+                        onClick={() => openEmploymentModal(club)}
                         className={styles["subscribe-button"]}
                       >
-                        Kulüpte çalıştığına dair başvur
+                        Kulübe başvur
                       </button>
                     )}
                   </td>
@@ -458,7 +446,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
         <ClubEmploymentModal
           employmentModalOpen={employmentModalOpen}
           closeEmploymentModal={closeEmploymentModal}
-          trainerEmploymentClubId={trainerEmploymentClubId}
+          selectedClub={trainerEmploymentClub}
         />
       )}
       {isClubFilterModalOpen && (

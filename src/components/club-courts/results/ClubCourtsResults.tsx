@@ -70,7 +70,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
           >
             {clubBankDetailsExist
               ? "Yeni Kort Ekle"
-              : "Kort Eklemek İçin Banka Hesap Bilgilerinizi Ekleyin"}
+              : "Kort Eklemek İçin Banka Bilgilerinizi Ekleyin"}
           </button>
         </div>
         {currentClubCourts?.totalPages > 1 && (

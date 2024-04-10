@@ -18,7 +18,7 @@ const ExplorePlayersReviewsSection = (
   const { selectedPlayer } = props;
 
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetUserReceivedEventReviewsNumberQuery(selectedPlayer?.[0]?.user_id);
+    useGetUserReceivedEventReviewsNumberQuery(selectedPlayer?.user_id);
 
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const openReviewsModal = () => {

@@ -5,7 +5,7 @@ interface PlayerProfileNavProps {
   handlePage: (page: string) => void;
   page: string;
 }
-const PlayerProfileNavigation = (props) => {
+const PlayerProfileNavigation = (props: PlayerProfileNavProps) => {
   const { handlePage, page } = props;
   return (
     <div className={styles.nav}>

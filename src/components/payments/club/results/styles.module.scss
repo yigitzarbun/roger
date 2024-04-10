@@ -1,25 +1,120 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.payment-results-container {
+.result-container {
+  display: flex;
+  flex-direction: column;
   background-color: $roger-box-bg-color;
-  border-radius: $roger-border-radius;
   padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 20px;
+  border: 1px $roger-border-color solid;
 
-  .title {
-    font-size: 2rem;
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    .title {
+      font-size: 2rem;
+    }
+    .nav-container {
+      display: flex;
+      column-gap: 1vw;
+
+      .nav-arrow {
+        font-size: 1.3rem;
+        cursor: pointer;
+      }
+      .nav-arrow:hover {
+        color: $roger-text-color-hover;
+      }
+    }
   }
+
   table {
     width: 100%;
     text-align: left;
+    border-collapse: collapse;
 
-    .payment-row:hover {
+    .payment-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+
+      .payment-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .payment-name {
+        color: white;
+        text-decoration: none;
+      }
+    }
+
+    .match-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .match-button:hover {
       background-color: $roger-black-light;
+    }
+    .icon {
       cursor: pointer;
     }
-    .payment-image {
+  }
+  .pages-container {
+    display: flex;
+    column-gap: 20px;
+    margin-top: 2vh;
+    .active-page {
+      background-color: $roger-blue;
+      padding: 5px;
       width: 30px;
       height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
     }
+    .passive-page {
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+    }
+  }
+  .add-payment-button {
+    background-color: $roger-black-dark;
+    border: none;
+    width: 200px;
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+  }
+  .add-payment-button:hover {
+    background-color: $roger-black-light;
   }
 }

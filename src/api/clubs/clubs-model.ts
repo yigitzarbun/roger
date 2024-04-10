@@ -167,6 +167,11 @@ const clubsModel = {
           .andWhere("club_subscriptions.is_active", true)
           .first();
 
+        const isTrainerStaff = await db("club_staff")
+          .where("club_staff.club_id", club.club_id)
+          .andWhere("club_staff.user_id", filter.currentUserId)
+          .first();
+
         const clubHasSubscriptionPackages = await db(
           "club_subscription_packages"
         )
@@ -177,6 +182,7 @@ const clubsModel = {
         return {
           ...club,
           isPlayerSubscribed,
+          isTrainerStaff,
           clubHasSubscriptionPackages,
         };
       })

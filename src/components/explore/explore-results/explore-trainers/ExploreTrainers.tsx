@@ -86,6 +86,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
 
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
@@ -250,29 +251,33 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
-          <FaFilter
-            onClick={handleOpenTrainerFilterModal}
-            className={
-              trainerExperienceTypeId > 0 ||
-              textSearch !== "" ||
-              gender !== "" ||
-              locationId > 0 ||
-              clubId > 0
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {paginatedTrainers?.trainers?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenTrainerFilterModal}
+              className={
+                trainerExperienceTypeId > 0 ||
+                textSearch !== "" ||
+                gender !== "" ||
+                locationId > 0 ||
+                clubId > 0
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+        {paginatedTrainers?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
 
       {paginatedTrainers?.trainers?.length === 0 && (
@@ -364,35 +369,38 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     </button>
                   )}
                 </td>
-                <td>
-                  {playerStudentships?.find(
-                    (student) =>
-                      student.trainer_id === trainer.user_id &&
-                      student.student_status === "pending"
-                  ) ? (
-                    <p className={styles["pending-confirmation-text"]}>
-                      Onayı bekleniyor
-                    </p>
-                  ) : playerStudentships?.find(
+                {isUserPlayer && (
+                  <td>
+                    {playerStudentships?.find(
                       (student) =>
                         student.trainer_id === trainer.user_id &&
-                        student.student_status === "accepted"
+                        student.student_status === "pending"
                     ) ? (
-                    <button
-                      onClick={() => handleDeclineStudent(trainer.user_id)}
-                      className={styles["cancel-student-button"]}
-                    >
-                      Öğrenciliği sil
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleAddStudent(trainer.user_id)}
-                      className={styles["add-student-button"]}
-                    >
-                      Öğrenci Ol
-                    </button>
-                  )}
-                </td>
+                      <p className={styles["pending-confirmation-text"]}>
+                        Onayı bekleniyor
+                      </p>
+                    ) : playerStudentships?.find(
+                        (student) =>
+                          student.trainer_id === trainer.user_id &&
+                          student.student_status === "accepted"
+                      ) ? (
+                      <button
+                        onClick={() => handleDeclineStudent(trainer.user_id)}
+                        className={styles["cancel-student-button"]}
+                      >
+                        Öğrenciliği sil
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleAddStudent(trainer.user_id)}
+                        className={styles["add-student-button"]}
+                      >
+                        Öğrenci Ol
+                      </button>
+                    )}
+                  </td>
+                )}
+
                 <td>
                   <SlOptions className={styles.icon} />
                 </td>
@@ -422,6 +430,8 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isLessonModalOpen}
           handleCloseInviteModal={handleCloseLessonModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
       {isTrainerFilterModalOpen && (

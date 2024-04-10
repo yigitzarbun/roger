@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
@@ -11,7 +11,6 @@ import ExploreCourtProfile from "../../components/explore/explore-profiles/court
 
 const ExploreProfiles = () => {
   const params = useParams();
-  const navigate = useNavigate();
   const isProfilePlayer = Number(params.profile_type) === 1;
   const isProfileTrainer = Number(params.profile_type) === 2;
   const isProfileClub = Number(params.profile_type) === 3;

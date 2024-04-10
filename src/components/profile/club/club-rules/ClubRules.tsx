@@ -13,15 +13,23 @@ import UpdateLessonRuleModal from "./lesson-rule-modal/UpdateLessonRuleModal";
 import UpdatePlayerRuleModal from "./player-rule-modal/UpdatePlayerRuleModal";
 
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 const ClubRules = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const {
-    data: clubDetails,
+    data: selectedClub,
     isLoading: isClubDetailsLoading,
     refetch: refetchClubDetails,
   } = useGetClubByUserIdQuery(user?.user?.user_id);
+
+  const {
+    data: clubHasSubscriptionPackages,
+    isLoading: isClubSubscriptionPackagesLoading,
+  } = useGetClubSubscriptionPackagesByFilterQuery({
+    club_id: user?.user?.user_id,
+  });
 
   const [isCourtRuleModalOpen, setIsCourtRuleModalOpen] = useState(false);
   const openCourtRuleModal = () => {
@@ -70,7 +78,7 @@ const ClubRules = () => {
           <tbody>
             <tr className={styles["rule-row"]}>
               <td>{`Oyuncuların kort kiralamak için üye olmasına gerek ${
-                clubDetails?.[0]?.is_player_subscription_required === true
+                selectedClub?.[0]?.is_player_subscription_required === true
                   ? "var"
                   : "yok"
               }`}</td>
@@ -92,24 +100,25 @@ const ClubRules = () => {
           <tbody>
             <tr className={styles["rule-row"]}>
               <td>
-                {clubDetails?.[0]?.is_trainer_subscription_required === false &&
-                clubDetails?.[0]?.is_player_lesson_subscription_required ===
+                {selectedClub?.[0]?.is_trainer_subscription_required ===
+                  false &&
+                selectedClub?.[0]?.is_player_lesson_subscription_required ===
                   false
                   ? "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok"
-                  : clubDetails?.[0]?.is_trainer_subscription_required ===
+                  : selectedClub?.[0]?.is_trainer_subscription_required ===
                       false &&
-                    clubDetails?.[0]?.is_player_lesson_subscription_required ===
-                      true
+                    selectedClub?.[0]
+                      ?.is_player_lesson_subscription_required === true
                   ? "Eğitmen kulüp çalışanı değil ama oyuncu üye ise kort kiralanabilir"
-                  : clubDetails?.[0]?.is_trainer_subscription_required ===
+                  : selectedClub?.[0]?.is_trainer_subscription_required ===
                       true &&
-                    clubDetails?.[0]?.is_player_lesson_subscription_required ===
-                      false
+                    selectedClub?.[0]
+                      ?.is_player_lesson_subscription_required === false
                   ? "Eğitmen kulüp çalışanı ise ama oyuncu üye değil ise kort kiralanabilir"
-                  : clubDetails?.[0]?.is_trainer_subscription_required ===
+                  : selectedClub?.[0]?.is_trainer_subscription_required ===
                       true &&
-                    clubDetails?.[0]?.is_player_lesson_subscription_required ===
-                      true
+                    selectedClub?.[0]
+                      ?.is_player_lesson_subscription_required === true
                   ? "Eğitmenin kulüp çalışanı olması, oyuncunun üye olması zorunludur"
                   : ""}
               </td>
@@ -131,7 +140,7 @@ const ClubRules = () => {
           <tbody>
             <tr className={styles["rule-row"]}>
               <td>{`Üye olmayanlara farklı fiyat politikası ${
-                clubDetails?.[0]?.higher_price_for_non_subscribers === true
+                selectedClub?.[0]?.higher_price_for_non_subscribers === true
                   ? "uygulanır"
                   : "uygulanmaz"
               }`}</td>
@@ -143,18 +152,27 @@ const ClubRules = () => {
         <UpdateCourtRuleModal
           isCourtRuleModalOpen={isCourtRuleModalOpen}
           handleCloseModal={handleCloseModal}
+          selectedClub={selectedClub}
+          refetchClubDetails={refetchClubDetails}
+          clubHasSubscriptionPackages={clubHasSubscriptionPackages}
         />
       )}
       {isLessonRuleModalOpen && (
         <UpdateLessonRuleModal
           isLessonRuleModalOpen={isLessonRuleModalOpen}
           handleCloseModal={handleCloseModal}
+          selectedClub={selectedClub}
+          refetchClubDetails={refetchClubDetails}
+          clubHasSubscriptionPackages={clubHasSubscriptionPackages}
         />
       )}
       {isPlayerRuleModalOpen && (
         <UpdatePlayerRuleModal
           isPlayerRuleModalOpen={isPlayerRuleModalOpen}
           handleCloseModal={handleCloseModal}
+          selectedClub={selectedClub}
+          refetchClubDetails={refetchClubDetails}
+          clubHasSubscriptionPackages={clubHasSubscriptionPackages}
         />
       )}
     </div>

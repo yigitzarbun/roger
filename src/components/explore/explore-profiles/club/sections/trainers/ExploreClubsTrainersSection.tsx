@@ -13,10 +13,7 @@ import PageLoading from "../../../../../../components/loading/PageLoading";
 import { useGetClubTrainersQuery } from "../../../../../../api/endpoints/ClubStaffApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../../../../api/endpoints/TrainerExperienceTypesApi";
 
-import { useAppSelector } from "../../../../../../store/hooks";
-
 import ExploreClubTrainerModal from "../../modals/trainers/ExploreClubTrainersModal";
-import ClubEmploymentModal from "../../../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExploreClubsTrainersSectionProps {
@@ -29,10 +26,9 @@ const ExploreClubsTrainersSection = (
 ) => {
   const { isUserTrainer, isUserPlayer, selectedClub } = props;
 
-  const user = useAppSelector((store) => store?.user?.user);
-
   const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
-    useGetClubTrainersQuery(selectedClub?.[0]?.club_id);
+    useGetClubTrainersQuery(selectedClub?.[0]?.user_id);
+  console.log(clubStaffTrainers);
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
@@ -44,16 +40,6 @@ const ExploreClubsTrainersSection = (
   };
   const closeTrainersModal = () => {
     setIsTrainersModalOpen(false);
-  };
-
-  const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
-  const [trainerEmploymentClubId, setTrainerEmploymentClubId] = useState(null);
-  const openEmploymentModal = (club_id: number) => {
-    setTrainerEmploymentClubId(club_id);
-    setEmploymentModalOpen(true);
-  };
-  const closeEmploymentModal = () => {
-    setEmploymentModalOpen(false);
   };
 
   const [trainerLessonUserId, setTrainerLessonUserId] = useState(null);
@@ -72,33 +58,6 @@ const ExploreClubsTrainersSection = (
     <div className={styles["trainers-section"]}>
       <div className={styles["trainers-section-title-container"]}>
         <h2>Eğitmenler</h2>
-        {isUserTrainer &&
-        clubStaffTrainers?.find(
-          (staff) =>
-            staff.club_id === selectedClub?.[0]?.club_id &&
-            staff.user_id === user?.user?.user_id &&
-            staff.employment_status === "accepted"
-        ) ? (
-          <p className={styles["employed-text"]}>Bu kulüpte çalışıyorsun</p>
-        ) : isUserTrainer &&
-          clubStaffTrainers?.find(
-            (staff) =>
-              staff.club_id === selectedClub?.[0]?.club_id &&
-              staff.user_id === user?.user?.user_id &&
-              staff.employment_status === "pending"
-          ) ? (
-          <p className={styles["employment-pending-text"]}>
-            Başvurun henüz yanıtlanmadı
-          </p>
-        ) : (
-          isUserTrainer && (
-            <button
-              onClick={() => openEmploymentModal(selectedClub?.[0]?.club_id)}
-            >
-              Bu kulüpte çalıştığına dair kulübe başvur
-            </button>
-          )
-        )}
       </div>
       {clubStaffTrainers?.length > 0 ? (
         <table>
@@ -185,18 +144,13 @@ const ExploreClubsTrainersSection = (
           confirmedClubTrainers={clubStaffTrainers}
         />
       )}
-      {employmentModalOpen && (
-        <ClubEmploymentModal
-          employmentModalOpen={employmentModalOpen}
-          closeEmploymentModal={closeEmploymentModal}
-          trainerEmploymentClubId={trainerEmploymentClubId}
-        />
-      )}
       {isInviteModalOpen && (
         <LessonInviteFormModal
           opponentUserId={trainerLessonUserId}
           isInviteModalOpen={isInviteModalOpen}
           handleCloseInviteModal={handleCloseInviteModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
         />
       )}
     </div>

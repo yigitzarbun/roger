@@ -1,11 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 
 import styles from "./styles.module.scss";
-
-import paths from "../../../../../../routing/Paths";
 
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
@@ -26,6 +24,7 @@ import {
 } from "../../../../../../api/endpoints/StudentsApi";
 import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
+import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExploreTrainersInteractionSectionProps {
   user_id: number;
@@ -39,8 +38,17 @@ export const ExploreTrainersInteractionSection = (
   const user = useAppSelector((store) => store.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
 
   const profileImage = selectedTrainer?.[0]?.trainerImage;
+
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+  const handleOpenLessonModal = (userId: number) => {
+    setIsLessonModalOpen(true);
+  };
+  const handleCloseLessonModal = () => {
+    setIsLessonModalOpen(false);
+  };
 
   const generateStars = (count) => {
     const stars = [];
@@ -179,7 +187,7 @@ export const ExploreTrainersInteractionSection = (
     );
     return student ? student : false;
   };
-
+  console.log(selectedTrainer);
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavouriteTrainers();
@@ -218,11 +226,11 @@ export const ExploreTrainersInteractionSection = (
           <h2>{`${selectedTrainer?.[0]?.fname} ${selectedTrainer?.[0]?.lname}`}</h2>
           <h4>Eğitmen</h4>
           <div className={styles.reviews}>
-            {selectedTrainer?.[0]?.averagereviewscore?.length > 0 &&
+            {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 &&
               generateStars(selectedTrainer?.[0]?.averagereviewscore).map(
                 (star, index) => <span key={index}>{star}</span>
               )}
-            {selectedTrainer?.[0]?.averagereviewscore?.length > 0 && (
+            {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 && (
               <p className={styles["reviews-text"]}>
                 {selectedTrainer?.[0]?.reviewscorecount} değerlendirme
               </p>
@@ -274,21 +282,14 @@ export const ExploreTrainersInteractionSection = (
                   : "Favorilere ekle"}
               </button>
               {isUserPlayer && (
-                <Link
-                  to={paths.LESSON_INVITE}
-                  state={{
-                    fname: selectedTrainer?.[0]?.fname,
-                    lname: selectedTrainer?.[0]?.lname,
-                    image: selectedTrainer?.[0]?.image,
-                    court_price: "",
-                    user_id: selectedTrainer?.[0]?.user_id,
-                  }}
-                  className={styles["accept-button"]}
+                <button
+                  onClick={() =>
+                    handleOpenLessonModal(selectedTrainer?.[0]?.user_id)
+                  }
+                  className={styles["interaction-button"]}
                 >
-                  <button className={styles["interaction-button"]}>
-                    Ders al
-                  </button>
-                </Link>
+                  Ders al
+                </button>
               )}
               {isUserPlayer && (
                 <p>
@@ -326,6 +327,15 @@ export const ExploreTrainersInteractionSection = (
       </div>
 
       <SlOptions className={styles.icon} />
+      {isLessonModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={user_id}
+          isInviteModalOpen={isLessonModalOpen}
+          handleCloseInviteModal={handleCloseLessonModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
+        />
+      )}
     </div>
   );
 };

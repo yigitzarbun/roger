@@ -49,6 +49,8 @@ interface LessonInviteModalProps {
   opponentUserId: number;
   isInviteModalOpen: boolean;
   handleCloseInviteModal: () => void;
+  isUserPlayer: boolean;
+  isUserTrainer: boolean;
 }
 
 export type FormValues = {
@@ -67,7 +69,13 @@ export type FormValues = {
 };
 
 const LessonInviteFormModal = (props: LessonInviteModalProps) => {
-  const { opponentUserId, isInviteModalOpen, handleCloseInviteModal } = props;
+  const {
+    opponentUserId,
+    isInviteModalOpen,
+    handleCloseInviteModal,
+    isUserPlayer,
+    isUserTrainer,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -79,10 +87,13 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
   };
 
   const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
-    useGetTrainerByUserIdQuery(opponentUserId);
+    useGetTrainerByUserIdQuery(
+      isUserPlayer ? opponentUserId : isUserTrainer ? user?.user?.user_id : null
+    );
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
-    useGetPlayerByUserIdQuery(user?.user?.user_id);
-
+    useGetPlayerByUserIdQuery(
+      isUserPlayer ? user?.user?.user_id : isUserTrainer ? opponentUserId : null
+    );
   const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
     {}
   );
@@ -175,7 +186,11 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
   const { data: isTrainerStaff, isLoading: isTrainerStaffLoading } =
     useGetClubStaffByFilterQuery(
       {
-        user_id: opponentUserId,
+        user_id: isUserPlayer
+          ? opponentUserId
+          : isUserTrainer
+          ? user?.user?.user_id
+          : null,
         club_id: selectedClubDetails?.[0]?.club_id,
         employment_status: "accepted",
       },
@@ -226,7 +241,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
       club_id: formData.club_id,
       court_id: formData.court_id,
       inviter_id: user?.user.user_id,
-      invitee_id: selectedTrainer?.[0]?.user_id,
+      invitee_id: opponentUserId,
       lesson_price: selectedTrainer?.[0]?.price_hour,
       court_price:
         selectedClubDetails?.[0]?.higher_price_for_non_subscribers &&
@@ -249,15 +264,18 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
         court_price: bookingFormData?.court_price,
         payment_status: "pending",
         payment_type_id: 2,
-        sender_inviter_id: user?.user.user_id,
+        sender_inviter_id: selectedPlayer?.[0]?.user_id,
         sender_invitee_id: null,
         recipient_club_id: selectedClubDetails?.[0]?.user_id,
-        recipient_trainer_id: opponentUserId,
+        recipient_trainer_id: isUserPlayer
+          ? opponentUserId
+          : isUserTrainer
+          ? user?.user?.user_id
+          : null,
       };
       addPayment(paymentDetails);
     }
   };
-
   useEffect(() => {
     availableTimeSlots = generateAvailableTimeSlots(
       selectedCourt,
@@ -353,15 +371,21 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
         <div className={styles["opponent-container"]}>
           <img
             src={
-              selectedTrainer?.[0]?.image
+              isUserPlayer && selectedTrainer?.[0]?.image
                 ? `${localUrl}/${selectedTrainer?.[0]?.image}`
+                : isUserTrainer && selectedPlayer?.[0]?.image
+                ? `${localUrl}/${selectedPlayer?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}
           />
-          <p
-            className={styles["trainer-name"]}
-          >{`${selectedTrainer?.[0].fname} ${selectedTrainer?.[0].lname}`}</p>
+          <p className={styles["trainer-name"]}>
+            {isUserPlayer
+              ? `${selectedTrainer?.[0]?.fname} ${selectedTrainer?.[0]?.lname}`
+              : isUserTrainer
+              ? `${selectedPlayer?.[0]?.fname} ${selectedPlayer?.[0]?.lname}`
+              : ""}
+          </p>
         </div>
         {confirmation ? (
           <LessonInviteConfirmation
@@ -504,27 +528,49 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                 Davet Gönder
               </button>
             </div>
-            {selectedClubDetails?.[0]?.is_player_lesson_subscription_required &&
+            {isUserPlayer &&
+              selectedClubDetails?.[0]
+                ?.is_player_lesson_subscription_required &&
               isPlayerSubscribed?.length === 0 && (
                 <p className={styles["validation-text"]}>
                   Bu kortu kiralayabilmek için kulüp üyeliği gerekmektedir
                 </p>
               )}
-            {selectedClubDetails?.[0]?.is_trainer_subscription_required &&
+            {isUserPlayer &&
+              selectedClubDetails?.[0]?.is_trainer_subscription_required &&
               isTrainerStaff?.length === 0 && (
                 <p className={styles["validation-text"]}>
-                  Bu kulüpte yalnızca çalışan eğitmenlerden ders alabilirsiniz
+                  Bu kulüpte ders alabilmek için eğitmenin kulüp çalışanı olması
+                  gerekmektedir.
                 </p>
               )}
-            {!playerPaymentDetailsExist && (
+            {isUserTrainer &&
+              selectedClubDetails?.[0]?.is_trainer_subscription_required &&
+              isTrainerStaff?.length === 0 && (
+                <p className={styles["validation-text"]}>
+                  Bu kulüpte ders verebilmek için kulüp çalışanı olmanız
+                  gerekmektedir.
+                </p>
+              )}
+            {isUserTrainer && !playerPaymentDetailsExist && (
               <p className={styles["validation-text"]}>
-                Kort kiralamak için ödeme bilgilerinizi ekleyin
+                Kort kiralamak içi öğrencinin ödeme bilgilerini eklemesi
+                gerekmektedir.
               </p>
             )}
-            {!trainerBankDetailsExist && (
+            {isUserPlayer && !playerPaymentDetailsExist && (
+              <p className={styles["validation-text"]}>
+                Kort kiralamak içi ödeme bilgilerinizi eklemeniz gerekmektedir.
+              </p>
+            )}
+            {isUserTrainer && !trainerBankDetailsExist && (
+              <p className={styles["validation-text"]}>
+                Kort kiralamak içi ödeme bilgilerinizi eklemeniz gerekmektedir.
+              </p>
+            )}
+            {isUserPlayer && !trainerBankDetailsExist && (
               <p className={styles["validation-text"]}>
                 Seçtiğiniz eğitmenin henüz banka bilgileri mevcut değildir.
-                Lütfen başka bir eğitmen seçin.
               </p>
             )}
           </form>

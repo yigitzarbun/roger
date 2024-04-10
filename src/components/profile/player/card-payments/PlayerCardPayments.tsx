@@ -10,10 +10,10 @@ const PlayerCardPayments = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
 
   const cardDetailsExist =
-    playerDetails?.[0]?.name_on_card &&
-    playerDetails?.[0]?.card_number &&
-    playerDetails?.[0]?.cvc &&
-    playerDetails?.[0]?.card_expiry;
+    playerDetails?.name_on_card &&
+    playerDetails?.card_number &&
+    playerDetails?.cvc &&
+    playerDetails?.card_expiry;
 
   const [isAddCardModalOpen, setIsAddCardModalOpen] = useState(false);
 
@@ -41,8 +41,8 @@ const PlayerCardPayments = (props) => {
             <div className={styles["card-exists-container"]}>
               <IoIosCheckmarkCircle className={styles.done} />
               <p className={styles["card-exists-text"]}>
-                {`${(playerDetails?.[0]?.card_number).slice(
-                  (playerDetails?.[0]?.card_number).length - 4
+                {`${(playerDetails?.card_number).slice(
+                  (playerDetails?.card_number).length - 4
                 )}
             ile biten kartınız aktiftir`}
               </p>

@@ -26,7 +26,7 @@ const PlayerLevel = (props) => {
   const handleButtonDisabled = () => {
     const isLevelEmpty = !newLevel;
 
-    if (isLevelEmpty || newLevel === playerDetails?.[0]?.player_level_id) {
+    if (isLevelEmpty || newLevel === playerDetails?.player_level_id) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
@@ -41,22 +41,22 @@ const PlayerLevel = (props) => {
     setValue,
   } = useForm({
     defaultValues: {
-      player_level_id: Number(playerDetails?.[0]?.player_level_id),
+      player_level_id: Number(playerDetails?.player_level_id),
     },
   });
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const updatedProfileData = {
-      player_id: playerDetails?.[0]?.player_id,
-      fname: playerDetails?.[0]?.fname,
-      lname: playerDetails?.[0]?.lname,
-      birth_year: playerDetails?.[0]?.birth_year,
-      gender: playerDetails?.[0]?.gender,
+      player_id: playerDetails?.player_id,
+      fname: playerDetails?.fname,
+      lname: playerDetails?.lname,
+      birth_year: playerDetails?.birth_year,
+      gender: playerDetails?.gender,
       phone_number: null,
-      image: playerDetails?.[0]?.image,
+      image: playerDetails?.image,
       player_bio_description: null,
-      location_id: playerDetails?.[0]?.location_id,
+      location_id: playerDetails?.location_id,
       player_level_id: Number(formData?.player_level_id),
-      user_id: playerDetails?.[0]?.user_id,
+      user_id: playerDetails?.user_id,
     };
     updatePlayer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
@@ -77,7 +77,7 @@ const PlayerLevel = (props) => {
   }, [newLevel]);
   useEffect(() => {
     if (playerLevels && playerLevels.length > 0) {
-      setValue("player_level_id", Number(playerDetails?.[0]?.player_level_id));
+      setValue("player_level_id", Number(playerDetails?.player_level_id));
     }
   }, [playerLevels, setValue, playerDetails]);
   return (

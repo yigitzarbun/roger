@@ -14,7 +14,7 @@ const DeletePlayerModal = (props) => {
     handleCloseDeletePlayerModal,
   } = props;
 
-  const [deleteUser] = useUpdateUserMutation(playerDetails?.[0]?.user_id);
+  const [deleteUser] = useUpdateUserMutation(playerDetails?.user_id);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
@@ -26,15 +26,15 @@ const DeletePlayerModal = (props) => {
   };
   const handleDelete = () => {
     if (
-      email === playerDetails?.[0]?.email &&
+      email === playerDetails?.email &&
       deleteConfirmation === "hesabımı silmek istiyorum"
     ) {
       const updatedUser = {
-        user_id: playerDetails?.[0]?.user_id,
-        email: playerDetails?.[0]?.email,
-        password: playerDetails?.[0]?.password,
-        registered_at: playerDetails?.[0]?.registered_at,
-        user_type_id: playerDetails?.[0]?.user_type_id,
+        user_id: playerDetails?.user_id,
+        email: playerDetails?.email,
+        password: playerDetails?.password,
+        registered_at: playerDetails?.registered_at,
+        user_type_id: playerDetails?.user_type_id,
         user_status_type_id: 3,
       };
       deleteUser(updatedUser);

@@ -186,18 +186,20 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                 : "Üyelik Eklemek İçin Üyelik Paketi Ekleyin"}
             </p>
           </button>
-          <FaFilter
-            onClick={handleOpenSubscribersFilterModal}
-            className={
-              clubSubscriptionTypeId > 0 ||
-              textSearch !== "" ||
-              locationId > 0 ||
-              playerLevelId > 0 ||
-              userTypeId > 0
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {mySubscriptions?.subscribers?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenSubscribersFilterModal}
+              className={
+                clubSubscriptionTypeId > 0 ||
+                textSearch !== "" ||
+                locationId > 0 ||
+                playerLevelId > 0 ||
+                userTypeId > 0
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
         {mySubscriptions?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>

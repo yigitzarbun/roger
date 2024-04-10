@@ -49,6 +49,18 @@ const studentsModel = {
     }
   },
 
+  async getTrainerStudents(trainerUserId: number) {
+    try {
+      const students = await db("students").where(
+        "students.trainer_id",
+        trainerUserId
+      );
+      return students;
+    } catch (error) {
+      console.log("error fetching trainer students");
+    }
+  },
+
   async getById(student_id) {
     const student = await db("students").where("student_id", student_id);
     return student;

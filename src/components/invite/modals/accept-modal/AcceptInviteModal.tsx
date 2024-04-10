@@ -29,7 +29,8 @@ const AcceptInviteModal = (props) => {
     user,
   } = props;
 
-  const isUserPlayer = user.user_type_id === 1;
+  const isUserPlayer = user?.user_type_id === 1;
+  const isUserTrainer = user?.user_type_id === 2;
 
   const isEventTraining = acceptBookingData?.event_type_id === 1;
   const isEventMatch = acceptBookingData?.event_type_id === 2;
@@ -71,6 +72,7 @@ const AcceptInviteModal = (props) => {
               <th>Saat</th>
               <th>Konum</th>
               <th>Kort</th>
+              <th>Tür</th>
               {isUserPlayer && isEventLesson && <th>Kort Ücreti</th>}
               {isEventLesson && <th>Ders Ücreti</th>}
               {isUserPlayer && <th>Toplam Tutar</th>}
@@ -84,6 +86,7 @@ const AcceptInviteModal = (props) => {
               <td>{acceptBookingData?.event_time.slice(0, 5)}</td>
               <td>{acceptBookingData?.club_name}</td>
               <td>{acceptBookingData?.court_name}</td>
+              <td>{acceptBookingData?.event_type_name}</td>
               {isUserPlayer && isEventLesson && (
                 <td>{acceptBookingData?.court_price} TL</td>
               )}

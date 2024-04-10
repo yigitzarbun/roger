@@ -1,36 +1,102 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 
 import styles from "./styles.module.scss";
+import Paths from "../../../../routing/Paths";
 
-import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
-import { useGetPaymentsQuery } from "../../../../api/endpoints/PaymentsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetClubPaymentssByUserIdQuery } from "../../../../api/endpoints/PaymentsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { useGetClubByUserIdQuery } from "../../../../api/endpoints/ClubsApi";
+import { useNavigate } from "react-router-dom";
 
-const ClubPaymentsResults = () => {
+interface ClubPaymentsResultsProps {
+  textSearch: string;
+  status: string;
+  paymentTypeId: number;
+}
+
+const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
+  const { textSearch, status, paymentTypeId } = props;
   const user = useAppSelector((store) => store?.user?.user);
-  const { data: payments, isLoading: isPaymentsLoading } = useGetPaymentsQuery(
-    {}
-  );
-  const { data: paymentTypes, isLoading: isPaymentTypesLoading } =
-    useGetPaymentTypesQuery({});
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const {
+    data: clubPayments,
+    isLoading: isClubPaymentsLoading,
+    refetch: refetchClubPayments,
+  } = useGetClubPaymentssByUserIdQuery({
+    textSearch: textSearch,
+    status: status,
+    paymentTypeId: paymentTypeId,
+    userId: user?.user?.user_id,
+    currentPageNumber: currentPage,
+  });
 
-  const myPayments = payments?.filter(
-    (payment) => payment.recipient_club_id === user?.user?.user_id
-  );
+  const { data: clubDetails, isLoading: isClubDetailsLoading } =
+    useGetClubByUserIdQuery(user?.user?.user_id);
 
-  if (isPaymentsLoading || isPaymentTypesLoading || isPlayersLoading) {
-    return <PageLoading />;
+  const bankDetails = {
+    bank_id: clubDetails?.[0]?.bank_id,
+    iban: clubDetails?.[0]?.iban,
+    name_on_bank_account: clubDetails?.[0]?.name_on_bank_account,
+  };
+
+  const bankDetailsExist =
+    bankDetails?.iban &&
+    bankDetails?.bank_id &&
+    bankDetails?.name_on_bank_account;
+
+  const navigate = useNavigate();
+
+  const navigateToAddPayment = () => {
+    navigate(Paths.PROFILE);
+  };
+
+  const pageNumbers = [];
+  for (let i = 1; i <= clubPayments?.totalPages; i++) {
+    pageNumbers.push(i);
   }
+  const handlePaymentPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % clubPayments?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + clubPayments?.totalPages) %
+        clubPayments?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
+  useEffect(() => {
+    refetchClubPayments();
+  }, [textSearch, paymentTypeId, status, currentPage]);
 
   return (
-    <div className={styles["payment-results-container"]}>
-      <h2 className={styles.title}>Ödemeler</h2>
-      {myPayments?.length > 0 ? (
+    <div className={styles["result-container"]}>
+      <div className={styles["title-container"]}>
+        <h2 className={styles.title}>Ödemeler</h2>
+        {clubPayments?.payments?.length > 0 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
+      </div>
+      {clubPayments?.payments?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -43,118 +109,38 @@ const ClubPaymentsResults = () => {
             </tr>
           </thead>
           <tbody>
-            {myPayments?.map((payment) => (
+            {clubPayments?.payments?.map((payment) => (
               <tr key={payment.payment_id} className={styles["payment-row"]}>
                 <td>{payment.registered_at.slice(0, 10)}</td>
                 <td>{payment.payment_status}</td>
+                <td>{payment?.payment_type_name}</td>
                 <td>
-                  {
-                    paymentTypes?.find(
-                      (type) => type.payment_type_id === payment.payment_type_id
-                    )?.payment_type_name
-                  }
+                  {payment.payment_type_id === 5
+                    ? payment.subscription_price
+                    : (payment.payment_type_id === 1 ||
+                        payment.payment_type_id === 2 ||
+                        payment.payment_type_id === 3) &&
+                      payment.court_price}
+                  TL
                 </td>
-                {payment.payment_type_id === 5 && (
-                  <td>{`${payment.subscription_price} TL`}</td>
-                )}
-                {(payment.payment_type_id === 1 ||
-                  payment.payment_type_id === 2 ||
-                  payment.payment_type_id === 3) && (
-                  <td>{`${payment.court_price} TL`}</td>
-                )}
-                {payment.payment_type_id === 5 && (
-                  <td>
-                    {`${
-                      players?.find(
-                        (player) =>
-                          player.user_id === payment.sender_subscriber_id
-                      )?.fname
-                    }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_subscriber_id
-                        )?.lname
-                      }
-                      `}
-                  </td>
-                )}
-                {(payment.payment_type_id === 1 ||
-                  payment.payment_type_id === 2) && (
-                  <td>
-                    {`${
-                      players?.find(
-                        (player) => player.user_id === payment.sender_inviter_id
-                      )?.fname
-                    }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_inviter_id
-                        )?.lname
-                      }
-                      `}
-                  </td>
-                )}
-                {(payment.payment_type_id === 1 ||
-                  payment.payment_type_id === 2) && (
-                  <td>
-                    {`${
-                      players?.find(
-                        (player) => player.user_id === payment.sender_invitee_id
-                      )?.fname
-                    }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_invitee_id
-                        )?.lname
-                      }
-                      `}
-                  </td>
-                )}
-                {payment.payment_type_id === 3 &&
-                  players?.find(
-                    (player) => player.user_id === payment.sender_inviter_id
-                  ) && (
-                    <td>
-                      {`${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_inviter_id
-                        )?.fname
-                      }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_inviter_id
-                        )?.lname
-                      }
-                      `}
-                    </td>
-                  )}
-                {payment.payment_type_id === 3 &&
-                  players?.find(
-                    (player) => player.user_id === payment.sender_invitee_id
-                  ) && (
-                    <td>
-                      {`${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_invitee_id
-                        )?.fname
-                      }
-                      ${
-                        players?.find(
-                          (player) =>
-                            player.user_id === payment.sender_invitee_id
-                        )?.lname
-                      }
-                      `}
-                    </td>
-                  )}
-                {(payment.payment_type_id === 3 ||
-                  payment.payment_type_id === 5) && <td>-</td>}
+                <td>
+                  {payment.payment_type_id === 5
+                    ? `${payment.subscriber_fname}
+                      ${payment?.subscriber_lname}
+                      `
+                    : (payment.payment_type_id === 1 ||
+                        payment.payment_type_id === 2) &&
+                      `${payment?.inviter_fname}
+                    ${payment?.inviter_lname}`}
+                </td>
+                <td>
+                  {payment.payment_type_id === 1 ||
+                  payment.payment_type_id === 2
+                    ? `${payment?.invitee_fname}
+                      ${payment?.invitee_lname}
+                      `
+                    : "-"}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -162,6 +148,30 @@ const ClubPaymentsResults = () => {
       ) : (
         <p>Henüz ödemeniz bulunmamaktadır.</p>
       )}
+      {!bankDetailsExist && (
+        <button
+          onClick={navigateToAddPayment}
+          className={styles["add-payment-button"]}
+        >
+          Ödeme Bilgilerini Ekle
+        </button>
+      )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handlePaymentPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
