@@ -10,6 +10,8 @@ interface LessonInviteConfirmationProps {
   selectedTrainerPrice: number;
   selectedTime: string;
   selectedDate: string;
+  isUserPlayer: boolean;
+  isUserTrainer: boolean;
 }
 const LessonInviteConfirmation = (props: LessonInviteConfirmationProps) => {
   const {
@@ -21,6 +23,8 @@ const LessonInviteConfirmation = (props: LessonInviteConfirmationProps) => {
     selectedTrainerPrice,
     selectedDate,
     selectedTime,
+    isUserPlayer,
+    isUserTrainer,
   } = props;
   return (
     <div className={styles["confirmation-container"]}>
@@ -40,11 +44,27 @@ const LessonInviteConfirmation = (props: LessonInviteConfirmationProps) => {
             <td>{selectedTime}</td>
             <td>{selectedClubName}</td>
             <td>{selectedCourtName}</td>
-            <td>{selectedCourtPrice + selectedTrainerPrice} TL</td>
+            <td>
+              {isUserPlayer
+                ? selectedCourtPrice + selectedTrainerPrice
+                : isUserTrainer
+                ? selectedTrainerPrice
+                : null}{" "}
+              TL
+            </td>
           </tr>
         </tbody>
       </table>
-      <p>Ücret bilgisi kort ve ders ücreti dahil fiyattır.</p>
+      {isUserPlayer && (
+        <p className={styles["information-text"]}>
+          Ücret bilgisi kort ve ders ücreti dahil fiyattır.
+        </p>
+      )}
+      {isUserTrainer && (
+        <p className={styles["information-text"]}>
+          Ücret bilgisi ders ücretini ifade eder. Tüm masraflar oyuncuya aittir.
+        </p>
+      )}
       <div className={styles["buttons-container"]}>
         <button
           onClick={handleCloseConfirmation}

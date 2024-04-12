@@ -85,7 +85,6 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                           : "/images/icons/avatar.jpg"
                       }
                       alt="request"
-                      className={styles["trainer-image"]}
                     />
                   </Link>
                 </td>

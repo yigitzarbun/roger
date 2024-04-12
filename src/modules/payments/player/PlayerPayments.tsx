@@ -26,7 +26,12 @@ const PlayerPayments = () => {
     const value = parseInt(event.target.value, 10);
     setPaymentTypeId(isNaN(value) ? null : value);
   };
-
+  const handleClear = () => {
+    setTextSearch("");
+    setStatus("");
+    setClubId(null);
+    setPaymentTypeId(null);
+  };
   return (
     <div className={styles["player-payments-container"]}>
       <PlayerPaymentsFilter
@@ -38,6 +43,7 @@ const PlayerPayments = () => {
         handlePaymentType={handlePaymentType}
         handleTextSearch={handleTextSearch}
         handleStatus={handleStatus}
+        handleClear={handleClear}
       />
       <PlayerPaymentsResults
         clubId={clubId}

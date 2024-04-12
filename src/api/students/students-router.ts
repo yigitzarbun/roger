@@ -30,6 +30,21 @@ studentsRouter.get(
 );
 
 studentsRouter.get(
+  "/paginated-trainer-students/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredStudents = await studentsModel.getPaginatedTrainerStudents(
+        filter
+      );
+      res.status(200).json(filteredStudents);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+studentsRouter.get(
   "/is-student/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -41,7 +56,19 @@ studentsRouter.get(
     }
   }
 );
-
+studentsRouter.get(
+  "/trainer-new-student-requests-list/:trainerUserId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const student = await studentsModel.getTrainerNewStudentRequestsList(
+        Number(req.params.trainerUserId)
+      );
+      res.status(200).json(student);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 studentsRouter.get(
   "/:student_id",
   async (req: Request, res: Response, next: NextFunction) => {

@@ -59,6 +59,21 @@ paymentsRouter.get(
 );
 
 paymentsRouter.get(
+  "/trainer-payments/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredPayments = await paymentsModel.getTrainerPaymentsByUserId(
+        filter
+      );
+      res.status(200).json(filteredPayments);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+paymentsRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

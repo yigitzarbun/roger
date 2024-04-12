@@ -67,6 +67,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
         password: String(Date.now()),
         user_type_id: 6,
         user_status_type_id: 1,
+        language_id: 1,
       };
       addUser(newUser);
       const groupData = {
@@ -88,7 +89,6 @@ const AddGroupModal = (props: AddGroupModalProps) => {
       console.log(error);
     }
   };
-
   useEffect(() => {
     if (isAddUserSuccess) {
       newGroup.user_id = newUserData?.user_id;
@@ -109,7 +109,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
   if (isGroupsLoading || isMySubscribersLoading) {
     return <PageLoading />;
   }
-  console.log(mySubscribers);
+
   return (
     <ReactModal
       isOpen={isAddGroupModalOpen}
@@ -173,10 +173,26 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 <option value="">-- 1. Oyuncu --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.player_id}
-                    value={subscriber.player_id}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber?.playerFname} ${subscriber?.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -196,10 +212,26 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 <option value="">-- 2. Oyuncu --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.player_id}
-                    value={subscriber.player_id}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber?.playerFname} ${subscriber?.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -217,10 +249,26 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 <option value="">-- 3. Oyuncu --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.player_id}
-                    value={subscriber.player_id}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber?.playerFname} ${subscriber?.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -236,10 +284,26 @@ const AddGroupModal = (props: AddGroupModalProps) => {
                 <option value="">-- 4. Oyuncu --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.player_id}
-                    value={subscriber.player_id}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber?.playerFname} ${subscriber?.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>

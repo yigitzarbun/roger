@@ -164,6 +164,21 @@ bookingsRouter.get(
 );
 
 bookingsRouter.get(
+  "/trainer-past-events/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const trainerPastEvents = await bookingsModel.getTrainerPastEvents(
+        filter
+      );
+      res.status(200).json(trainerPastEvents);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+bookingsRouter.get(
   "/paginated-club-calendar-bookings",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

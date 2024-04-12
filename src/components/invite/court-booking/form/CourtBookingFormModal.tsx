@@ -173,6 +173,8 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   const [lessonSkipPlayer, setLessonSkipPlayer] = useState(true);
   const [lessonSkipTrainer, setLessonSkipTrainer] = useState(true);
 
+  // TRAINING AND MATCH
+  // player  subscription control
   const {
     data: isInviterPlayerSubscribed,
     isLoading: isInviterPlayerSubscribedLoading,
@@ -197,14 +199,15 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     { skip: trainingMatchSkip }
   );
 
+  // invitee and inviter player
   const { data: inviterPlayer, isLoading: isInviterPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user_id, { skip: trainingMatchSkip });
 
   const { data: inviteePlayer, isLoading: isInviteePlayerLoading } =
     useGetPlayerByUserIdQuery(selectedPlayer, { skip: trainingMatchSkip });
 
+  //player subscription and payment details control
   if (selectedEventType === 1 || selectedEventType === 2) {
-    // subscription
     inviterPlayerSubscribed =
       isInviterPlayerSubscribed?.length > 0 ? true : false;
     inviteePlayerSubscribed =
@@ -231,7 +234,6 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     ) {
       inviterPlayerPaymentDetailsExist = true;
     }
-
     let inviteePlayerPaymentDetailsExist = false;
     if (
       inviteePlayer?.[0]?.name_on_card &&
@@ -252,6 +254,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     }
   }
 
+  // LESSON
   const { data: lessonPlayerDetails, isLoading: isLessonPlayerDetailsLoading } =
     useGetPlayerByUserIdQuery(user?.user_id, { skip: lessonSkipPlayer });
 
@@ -866,7 +869,17 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 : ""
             }
             selectedCourtPrice={bookingFormData?.court_price}
-            invitee={inviteePlayer}
+            invitee={
+              selectedEventType === 1 || selectedEventType === 2
+                ? inviteePlayer
+                : selectedEventType === 3 && isUserTrainer
+                ? lessonSelectedPlayer
+                : selectedEventType === 3 && isUserPlayer
+                ? selectedTrainerDetails
+                : ""
+            }
+            isUserPlayer={isUserPlayer}
+            isUserTrainer={isUserTrainer}
           />
         )}
       </div>

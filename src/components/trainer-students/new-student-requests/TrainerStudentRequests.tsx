@@ -7,68 +7,44 @@ import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
+
 import {
-  useGetStudentsQuery,
+  useGetTrainerNewStudentRequestsListQuery,
   useUpdateStudentMutation,
 } from "../../../api/endpoints/StudentsApi";
 
 import PageLoading from "../../../components/loading/PageLoading";
+import { getAge } from "../../../common/util/TimeFunctions";
+import { toast } from "react-toastify";
 
 const TrainerStudentRequests = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
   const {
-    data: students,
-    isLoading: isStudentsLoading,
+    data: newStudentRequestsList,
+    isLoading: isNewStudentRequestsListLoading,
     refetch: refetchStudents,
-  } = useGetStudentsQuery({});
-
+  } = useGetTrainerNewStudentRequestsListQuery(user?.user?.user_id);
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
-  const date = new Date();
-  const currentYear = date.getFullYear();
-
-  const myStudents = students?.filter(
-    (student) =>
-      student.trainer_id === user?.user?.user_id &&
-      student.student_status === "pending"
-  );
-
-  const handleAddStudent = (student_id: number) => {
-    const selectedStudent = students?.find(
-      (student) =>
-        student.student_id === student_id &&
-        student.trainer_id === user?.user?.user_id &&
-        student.student_status === "pending"
-    );
+  const handleAddStudent = (student) => {
     const updatedStudentData = {
-      ...selectedStudent,
+      student_id: student.student_id,
+      registered_at: student.registered_at,
+      trainer_id: student.trainer_id,
+      //player_id: student.player_id,
       student_status: "accepted",
     };
     updateStudent(updatedStudentData);
   };
 
-  const handleDeclineStudent = (student_id: number) => {
-    const selectedStudent = students?.find(
-      (student) =>
-        student.student_id === student_id &&
-        student.trainer_id === user?.user?.user_id &&
-        student.student_status === "pending"
-    );
+  const handleDeclineStudent = (student) => {
     const updatedStudentData = {
-      ...selectedStudent,
+      student_id: student.student_id,
+      registered_at: student.registered_at,
+      trainer_id: student.trainer_id,
+      //player_id: student.player_id,
       student_status: "declined",
     };
     updateStudent(updatedStudentData);
@@ -76,22 +52,18 @@ const TrainerStudentRequests = () => {
 
   useEffect(() => {
     if (isUpdateStudentSuccess) {
+      toast.success("İşlem başarılı");
       refetchStudents();
     }
   }, [isUpdateStudentSuccess]);
 
-  if (
-    isPlayersLoading ||
-    isPlayerLevelsLoading ||
-    isLocationsLoading ||
-    isStudentsLoading
-  ) {
+  if (isNewStudentRequestsListLoading) {
     return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
       <h2 className={styles["result-title"]}>Öğrenciler</h2>
-      {myStudents?.length > 0 ? (
+      {newStudentRequestsList?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -104,89 +76,48 @@ const TrainerStudentRequests = () => {
             </tr>
           </thead>
           <tbody>
-            {myStudents?.map((student) => (
-              <tr key={student.student_id}>
+            {newStudentRequestsList?.map((student) => (
+              <tr key={student.student_id} className={styles["player-row"]}>
                 <td className={styles["vertical-center"]}>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${student.playerUserId}`}
+                  >
                     <img
                       src={
-                        players?.find(
-                          (player) => player.user_id === student.player_id
-                        )?.image
-                          ? players?.find(
-                              (player) => player.user_id === student.player_id
-                            )?.image
-                          : "/images/icons/avatar.png"
+                        student.playerImage
+                          ? student.playerImage
+                          : "/images/icons/avatar.jpg"
                       }
                       alt={student.name}
-                      className={styles["student-image"]}
+                      className={styles["player-image"]}
                     />
                   </Link>
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}
-                    className={styles["student-name"]}
-                  >{`${
-                    players?.find(
-                      (player) => player.user_id === student.player_id
-                    )?.fname
-                  } ${
-                    players?.find(
-                      (player) => player.user_id === student.player_id
-                    )?.lname
-                  }`}</Link>
+                    to={`${paths.EXPLORE_PROFILE}1/${student.playerUserId}`}
+                    className={styles["player-name"]}
+                  >{`${student?.playerFname} ${student?.playerLname}`}</Link>
                 </td>
+                <td>{getAge(student?.playerBirthYear)}</td>
+                <td>{student?.playerGender}</td>
+                <td>{student?.location_name}</td>
+                <td>{student?.player_level_name}</td>
                 <td>
-                  {currentYear -
-                    players?.find(
-                      (player) => player.user_id === student.player_id
-                    )?.birth_year}
-                </td>
+                  <button
+                    onClick={() => handleDeclineStudent(student)}
+                    className={styles["decline-button"]}
+                  >
+                    Reddet
+                  </button>{" "}
+                </td>{" "}
                 <td>
-                  {
-                    players?.find(
-                      (player) => player.user_id === student.player_id
-                    )?.gender
-                  }
-                </td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) =>
-                        location.location_id ===
-                        players?.find(
-                          (player) => player.user_id === student.player_id
-                        )?.location_id
-                    )?.location_name
-                  }
-                </td>
-                <td>
-                  {
-                    playerLevels?.find(
-                      (level) =>
-                        level.player_level_id ===
-                        players?.find(
-                          (player) => player.user_id === student.player_id
-                        )?.player_level_id
-                    )?.player_level_name
-                  }
-                </td>
-                <td>
-                  <div className={styles["action-buttons-container"]}>
-                    <button
-                      onClick={() => handleAddStudent(student.student_id)}
-                      className={styles["accept-button"]}
-                    >
-                      Kabul Et
-                    </button>
-                    <button
-                      onClick={() => handleDeclineStudent(student.student_id)}
-                      className={styles["decline-button"]}
-                    >
-                      Reddet
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => handleAddStudent(student)}
+                    className={styles["accept-button"]}
+                  >
+                    Kabul Et
+                  </button>
                 </td>
               </tr>
             ))}

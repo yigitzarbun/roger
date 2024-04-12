@@ -30,7 +30,8 @@ const CancelInviteModal = (props) => {
     user,
   } = props;
 
-  const isUserPlayer = user.user_type_id === 1;
+  const isUserPlayer = user?.user_type_id === 1;
+  const isUserTrainer = user?.user_type_id === 2;
 
   const isEventTraining = bookingData?.event_type_id === 1;
   const isEventMatch = bookingData?.event_type_id === 2;
@@ -60,8 +61,10 @@ const CancelInviteModal = (props) => {
             src={
               (isEventTraining || isEventMatch) && bookingData?.playerImage
                 ? bookingData?.playerImage
-                : isEventLesson && bookingData?.trainerImage
+                : isEventLesson && isUserPlayer && bookingData?.trainerImage
                 ? bookingData?.trainerImage
+                : isEventLesson && isUserTrainer && bookingData?.playerImage
+                ? bookingData?.playerImage
                 : "images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}
@@ -69,6 +72,8 @@ const CancelInviteModal = (props) => {
           <p className={styles["player-name"]}>
             {bookingData?.user_type_id === 6
               ? bookingData?.student_group_name
+              : bookingData?.event_type_id === 3 && isUserTrainer
+              ? `${bookingData?.playerFName} ${bookingData?.playerLName}`
               : `${bookingData?.fname} ${bookingData?.lname}`}
           </p>
         </div>
@@ -79,8 +84,8 @@ const CancelInviteModal = (props) => {
               <th>Saat</th>
               <th>Konum</th>
               <th>Kort</th>
-              {isEventLesson && <th>Ders Ücreti (TL)</th>}
-              {isUserPlayer && <th>Tutar (TL)</th>}
+              {isEventLesson && isUserTrainer && <th>Ders Ücreti</th>}
+              {isUserPlayer && <th>Tutar</th>}
             </tr>
           </thead>
           <tbody>
@@ -90,18 +95,22 @@ const CancelInviteModal = (props) => {
               <td>{bookingData?.club_name}</td>
               <td>{bookingData?.court_name}</td>
               {/* ders ücreti */}
-              {isEventLesson && (
+              {isEventLesson && isUserTrainer && (
                 <td>
-                  {bookingData?.lesson_price ? bookingData?.lesson_price : "-"}
+                  {bookingData?.lesson_price
+                    ? `${bookingData?.lesson_price} TL`
+                    : "-"}
                 </td>
               )}
               {/* toplam ücret */}
               {isUserPlayer && isEventLesson && (
-                <td>{bookingData?.payment_amount}</td>
+                <td>
+                  {bookingData?.lesson_price + bookingData?.court_price} TL
+                </td>
               )}
               {((isUserPlayer && isEventTraining) ||
                 (isUserPlayer && isEventMatch)) && (
-                <td>{bookingData?.payment_amount / 2}</td>
+                <td>{bookingData?.payment_amount / 2} TL</td>
               )}
             </tr>
           </tbody>

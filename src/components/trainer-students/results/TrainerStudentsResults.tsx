@@ -1,70 +1,159 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 
 import { Link } from "react-router-dom";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
-
+import { FaFilter } from "react-icons/fa6";
 import { useAppSelector } from "../../../store/hooks";
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetStudentsQuery } from "../../../api/endpoints/StudentsApi";
-import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
-
+import { useGetPaginatedTrainerStudentsQuery } from "../../../api/endpoints/StudentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import DeleteTrainerStudentModal from "./delete-student-modal/DeleteTrainerStudentModal";
+import { getAge } from "../../../common/util/TimeFunctions";
+import LessonInviteFormModal from "../../../components/invite/lesson/form/LessonInviteFormModal";
+import TrainerStudentsFilterModal from "./trainer-students-filter-modal/TrainerStudentsFilterModal";
 
-const TrainerStudentsResults = () => {
+interface TrainerStudentsProps {
+  playerLevelId: number;
+  textSearch: string;
+  locationId: number;
+  gender: string;
+  handleLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleClear: () => void;
+}
+const TrainerStudentsResults = (props: TrainerStudentsProps) => {
+  const {
+    playerLevelId,
+    textSearch,
+    locationId,
+    gender,
+    handleLevel,
+    handleTextSearch,
+    handleGender,
+    handleLocation,
+    handleClear,
+  } = props;
   const user = useAppSelector((store) => store?.user?.user);
+  const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
+  const {
+    data: paginatedTrainerStudents,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useGetPaginatedTrainerStudentsQuery({
+    perPage: 4,
+    currentPage: currentPage,
+    playerLevelId: playerLevelId,
+    textSearch: textSearch,
+    locationId: locationId,
+    gender: gender,
+    trainerUserId: user?.user?.user_id,
+    studentStatus: "accepted",
+  });
+
+  const pageNumbers = [];
+  for (let i = 1; i <= paginatedTrainerStudents?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % paginatedTrainerStudents?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + paginatedTrainerStudents?.totalPages) %
+        paginatedTrainerStudents?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
+  const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+  const [opponentUserId, setOpponentUserId] = useState(null);
+
+  const handleOpenLessonModal = (userId: number) => {
+    setOpponentUserId(userId);
+    setIsLessonModalOpen(true);
+  };
+  const handleCloseLessonModal = () => {
+    setIsLessonModalOpen(false);
+  };
+
+  const [isPlayerFilterModalOpen, setIsPlayerFilterModalOpen] = useState(false);
+  const handleOpenPlayerFilterModal = () => {
+    setIsPlayerFilterModalOpen(true);
+  };
+  const handleClosePlayerFilterModal = () => {
+    setIsPlayerFilterModalOpen(false);
+  };
+
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
-  const {
-    data: students,
-    isLoading: isStudentsLoading,
-    refetch: refetchStudents,
-  } = useGetStudentsQuery({});
 
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
-  const date = new Date();
-  const currentYear = date.getFullYear();
-
-  const myStudents = students?.filter(
-    (student) =>
-      student.trainer_id === user?.user?.user_id &&
-      student.student_status === "accepted"
-  );
-
-  const [deleteStudentId, setDeleteStudentId] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const openDeleteModal = (student_id: number) => {
-    setDeleteStudentId(student_id);
+  const [student, setStudent] = useState(null);
+
+  const openDeleteModal = (student) => {
+    setStudent(student);
     setDeleteModalOpen(true);
   };
   const closeDeleteModal = () => {
     setDeleteModalOpen(false);
   };
 
-  if (
-    isPlayersLoading ||
-    isPlayerLevelsLoading ||
-    isLocationsLoading ||
-    isStudentsLoading ||
-    isBookingsLoading
-  ) {
+  if (isPlayerLevelsLoading || isLocationsLoading || isStudentsLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["result-container"]}>
-      <h2 className={styles["result-title"]}>Öğrenciler</h2>
-      {myStudents?.length > 0 ? (
+      <div className={styles["top-container"]}>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Öğrenciler</h2>
+          {paginatedTrainerStudents?.students?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenPlayerFilterModal}
+              className={
+                playerLevelId > 0 ||
+                gender !== "" ||
+                locationId > 0 ||
+                textSearch !== ""
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
+        </div>
+        {paginatedTrainerStudents?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
+      </div>
+      {paginatedTrainerStudents?.students?.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -78,118 +167,51 @@ const TrainerStudentsResults = () => {
             </tr>
           </thead>
           <tbody>
-            {myStudents?.map((student) => (
-              <tr key={student.student_id}>
+            {paginatedTrainerStudents?.students?.map((student) => (
+              <tr key={student.student_id} className={styles["player-row"]}>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}1/${student.playerUserId}`}
+                  >
                     <img
                       src={
-                        players?.find(
-                          (player) => player.user_id === student.player_id
-                        )?.image
-                          ? players?.find(
-                              (player) => player.user_id === student.player_id
-                            )?.image
-                          : "/images/icons/avatar.png"
+                        student?.playerImage
+                          ? student?.playerImage
+                          : "/images/icons/avatar.jpg"
                       }
                       alt={student.name}
-                      className={styles["student-image"]}
+                      className={styles["player-image"]}
                     />
                   </Link>
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${student.player_id}`}
-                    className={styles["student-name"]}
+                    to={`${paths.EXPLORE_PROFILE}1/${student.playerUserId}`}
+                    className={styles["player-name"]}
                   >
-                    {`${
-                      players?.find(
-                        (player) => player.user_id === student.player_id
-                      )?.fname
-                    } ${
-                      players?.find(
-                        (player) => player.user_id === student.player_id
-                      )?.lname
-                    }`}
+                    {`${student?.playerFname} ${student?.playerLname}`}
                   </Link>
                 </td>
-                <td>
-                  {currentYear -
-                    players?.find(
-                      (player) => player.user_id === student.player_id
-                    )?.birth_year}
-                </td>
-                <td>
-                  {
-                    players?.find(
-                      (player) => player.user_id === student.player_id
-                    )?.gender
-                  }
-                </td>
-                <td>
-                  {
-                    locations?.find(
-                      (location) =>
-                        location.location_id ===
-                        players?.find(
-                          (player) => player.user_id === student.player_id
-                        )?.location_id
-                    )?.location_name
-                  }
-                </td>
-                <td>
-                  {
-                    playerLevels?.find(
-                      (level) =>
-                        level.player_level_id ===
-                        players?.find(
-                          (player) => player.user_id === student.player_id
-                        )?.player_level_id
-                    )?.player_level_name
-                  }
-                </td>
-                <td>
-                  {
-                    bookings?.filter(
-                      (booking) =>
-                        booking.booking_status_type_id === 5 &&
-                        ((booking.inviter_id === user?.user?.user_id &&
-                          booking.invitee_id === student.player_id) ||
-                          (booking.invitee_id === user?.user?.user_id &&
-                            booking.inviter_id === student.player_id))
-                    )?.length
-                  }
-                </td>
+                <td>{getAge(student?.playerBirthYear)}</td>
+                <td>{student?.gender}</td>
+                <td>{student?.location_name}</td>
+                <td>{student?.player_level_name}</td>
+                <td>{student?.lessoncount}</td>
                 <td>
                   <button
-                    onClick={() => openDeleteModal(student.student_id)}
-                    className={styles["decline-button"]}
+                    onClick={() => openDeleteModal(student)}
+                    className={styles["delete-button"]}
                   >
                     Öğrenciyi Sil
                   </button>
                 </td>
                 <td>
-                  <Link
-                    to={paths.LESSON_INVITE}
-                    state={{
-                      fname: players?.find(
-                        (player) => player.user_id === student.player_id
-                      ).fname,
-                      lname: players?.find(
-                        (player) => player.user_id === student.player_id
-                      ).lname,
-                      image: players?.find(
-                        (player) => player.user_id === student.player_id
-                      ).image,
-                      court_price: "",
-                      user_id: players?.find(
-                        (player) => player.user_id === student.player_id
-                      ).user_id,
-                    }}
-                    className={styles["lesson-button"]}
+                  <button
+                    onClick={() => handleOpenLessonModal(student.playerUserId)}
+                    className={styles["invite-button"]}
                   >
                     Derse davet et
-                  </Link>
+                  </button>
                 </td>
               </tr>
             ))}
@@ -198,14 +220,40 @@ const TrainerStudentsResults = () => {
       ) : (
         <p>Henüz aktif öğrenci bulunmamaktadır</p>
       )}
-      <DeleteTrainerStudentModal
-        deleteModalOpen={deleteModalOpen}
-        closeDeleteModal={closeDeleteModal}
-        deleteStudentId={deleteStudentId}
-        trainerUserId={user?.user?.user_id}
-        students={students}
-        players={players}
-      />
+      {deleteModalOpen && (
+        <DeleteTrainerStudentModal
+          deleteModalOpen={deleteModalOpen}
+          closeDeleteModal={closeDeleteModal}
+          student={student}
+          refetchStudents={refetchStudents}
+        />
+      )}
+
+      {isLessonModalOpen && (
+        <LessonInviteFormModal
+          opponentUserId={opponentUserId}
+          isInviteModalOpen={isLessonModalOpen}
+          handleCloseInviteModal={handleCloseLessonModal}
+          isUserPlayer={isUserPlayer}
+          isUserTrainer={isUserTrainer}
+        />
+      )}
+      {isPlayerFilterModalOpen && (
+        <TrainerStudentsFilterModal
+          isPlayerFilterModalOpen={isPlayerFilterModalOpen}
+          handleClosePlayerFilterModal={handleClosePlayerFilterModal}
+          locations={locations}
+          handleLocation={handleLocation}
+          handleClear={handleClear}
+          locationId={locationId}
+          handleTextSearch={handleTextSearch}
+          textSearch={textSearch}
+          handleLevel={handleLevel}
+          playerLevelId={playerLevelId}
+          playerLevels={playerLevels}
+          handleGender={handleGender}
+        />
+      )}
     </div>
   );
 };

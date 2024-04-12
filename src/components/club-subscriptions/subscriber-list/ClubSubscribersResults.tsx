@@ -12,7 +12,7 @@ import styles from "./styles.module.scss";
 import AddClubSubscriberModal from "./add-subscriber-modal/AddClubSubscriberModal";
 import EditClubSubscriberModal from "./edit-subscriber-modal/EditClubSubscriberModal";
 import PageLoading from "../../../components/loading/PageLoading";
-import { currentYear } from "../../../common/util/TimeFunctions";
+import { currentYear, getAge } from "../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
 
 import { useGetPaginatedClubSubscribersQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
@@ -169,7 +169,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
   ) {
     return <PageLoading />;
   }
-
+  console.log(mySubscriptions.subscribers);
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -279,10 +279,22 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                   )}
                 </td>
                 <td>{subscription?.user_type_name}</td>
-                <td>{subscription?.player_level_name}</td>
+                <td>
+                  {subscription?.playerLevelName
+                    ? subscription?.playerLevelName
+                    : subscription?.externalLevelName
+                    ? subscription?.externalLevelName
+                    : ""}
+                </td>
                 <td>{subscription?.gender}</td>
-                <td>{currentYear - Number(subscription.birth_year)}</td>
-                <td>{subscription?.location_name}</td>
+                <td>{getAge(Number(subscription.birth_year))}</td>
+                <td>
+                  {subscription?.playerLocationName
+                    ? subscription?.playerLocationName
+                    : subscription?.externalLocationName
+                    ? subscription?.externalLocationName
+                    : ""}
+                </td>
                 <td>{subscription?.club_subscription_type_name}</td>
                 <td>{subscription.start_date.slice(0, 10)}</td>
                 <td>{subscription.end_date.slice(0, 10)}</td>

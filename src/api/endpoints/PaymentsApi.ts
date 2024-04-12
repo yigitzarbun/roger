@@ -32,6 +32,10 @@ export const paymentsSlice = createApi({
       query: (filter) =>
         `/payments/club-payments/filter?${new URLSearchParams(filter)}`,
     }),
+    getTrainerPaymentsByUserId: builder.query({
+      query: (filter) =>
+        `/payments/trainer-payments/filter?${new URLSearchParams(filter)}`,
+    }),
     getPaymentsByFilter: builder.query({
       query: (filter) => `/payments/filter?${new URLSearchParams(filter)}`,
     }),
@@ -57,6 +61,7 @@ export const {
   useGetPaymentByIdQuery,
   useGetPlayerPaymentssByUserIdQuery,
   useGetClubPaymentssByUserIdQuery,
+  useGetTrainerPaymentsByUserIdQuery,
   useGetPaymentsByFilterQuery,
   useAddPaymentMutation,
   useUpdatePaymentMutation,

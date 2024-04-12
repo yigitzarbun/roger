@@ -9,12 +9,10 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
 
 import {
-  useAddEventReviewMutation,
   useGetEventReviewsByFilterQuery,
   useGetEventReviewsQuery,
   useUpdateEventReviewMutation,
 } from "../../../../api/endpoints/EventReviewsApi";
-import { useGetBookingByIdQuery } from "../../../../api/endpoints/BookingsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ReactModal from "react-modal";
 
@@ -49,9 +47,6 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
 
   const { refetch: refetchReviews } = useGetEventReviewsQuery({});
 
-  const { data: bookingData, isLoading: isBookingDataLoading } =
-    useGetBookingByIdQuery(selectedBookingId);
-
   const { data: selectedEventReview, isLoading: isSelectedEventReviewLoading } =
     useGetEventReviewsByFilterQuery({
       reviewer_id: user?.user?.user_id,
@@ -83,7 +78,6 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
       console.log(error);
     }
   };
-
   useEffect(() => {
     if (isUpdateReviewSuccess) {
       reset();
@@ -93,7 +87,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
     }
   }, [isUpdateReviewSuccess]);
 
-  if (isBookingDataLoading) {
+  if (isSelectedEventReviewLoading) {
     return <PageLoading />;
   }
 

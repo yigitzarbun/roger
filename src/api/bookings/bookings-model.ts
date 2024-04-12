@@ -187,6 +187,11 @@ const bookingsModel = {
           "bookings.*",
           "players.*",
           "players.image as playerImage",
+          "players.fname as playerFName",
+          "players.lname as playerLName",
+          "players.user_id as playerUserId",
+          "players.gender as playerGender",
+          "players.birth_year as playerBirthYear",
           "trainers.*",
           "trainers.image as trainerImage",
           "clubs.*",
@@ -563,6 +568,269 @@ const bookingsModel = {
           "bookings.*",
           "players.*",
           "players.image as playerImage",
+          "trainers.*",
+          "trainers.image as trainerImage",
+          "trainers.user_id as trainerUserId",
+          "clubs.*",
+          "clubs.user_id as clubUserId",
+          "clubs.image as clubImage",
+          "courts.*",
+          "event_types.*",
+          "court_surface_types.*",
+          "court_structure_types.*",
+          "student_groups.*",
+          "users.*",
+          "event_reviews.*"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("student_groups", function () {
+          this.on("student_groups.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("court_surface_types", function () {
+          this.on(
+            "court_surface_types.court_surface_type_id",
+            "=",
+            "courts.court_surface_type_id"
+          );
+        })
+        .leftJoin("court_structure_types", function () {
+          this.on(
+            "court_structure_types.court_structure_type_id",
+            "=",
+            "courts.court_structure_type_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on(
+            "users.user_id",
+            "=",
+            db.raw(
+              "(CASE WHEN ? = bookings.inviter_id THEN bookings.invitee_id ELSE bookings.inviter_id END)",
+              [filter.userId]
+            )
+          );
+        })
+        .leftJoin("event_reviews", function () {
+          this.on("event_reviews.booking_id", "=", "bookings.booking_id");
+        })
+        .where((builder) => {
+          if (filter.clubId > 0) {
+            builder.where("clubs.user_id", filter.clubId);
+          }
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where(
+                "players.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+          if (filter.courtSurfaceTypeId > 0) {
+            builder.where(
+              "court_surface_types.court_surface_type_id",
+              filter.courtSurfaceTypeId
+            );
+          }
+          if (filter.courtStructureTypeId > 0) {
+            builder.where(
+              "court_structure_types.court_structure_type_id",
+              filter.courtStructureTypeId
+            );
+          }
+          if (filter.eventTypeId > 0) {
+            builder.where("event_types.event_type_id", filter.eventTypeId);
+          }
+          if (filter.missingReviews > 0) {
+            builder.where("event_reviews.is_active", false);
+          }
+        })
+        .andWhere("bookings.booking_status_type_id", 5)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", filter.userId)
+            .orWhere("bookings.inviter_id", filter.userId)
+            .orWhere("student_groups.first_student_id", filter.userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", filter.userId)
+            .orWhereNot("trainers.user_id", filter.userId)
+            .orWhere("student_groups.first_student_id", filter.userId);
+        })
+        .andWhere("event_reviews.reviewer_id", "=", filter.userId);
+
+      const data = {
+        pastEvents: bookings,
+        totalPages: Math.ceil(count.length / eventsPerPage),
+      };
+      return data;
+    } catch (error) {
+      // Handle any potential errors
+      console.error(error);
+      throw new Error("Unable to fetch player bookings.");
+    }
+  },
+  async getTrainerPastEvents(filter) {
+    try {
+      const eventsPerPage = 4;
+      const offset = (filter.currentPage - 1) * eventsPerPage;
+      const bookings = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "players.image as playerImage",
+          "players.fname as playerFname",
+          "players.lname as playerLname",
+          "players.user_id as playerUserId",
+          "trainers.*",
+          "trainers.image as trainerImage",
+          "trainers.user_id as trainerUserId",
+          "clubs.*",
+          "clubs.user_id as clubUserId",
+          "clubs.image as clubImage",
+          "courts.*",
+          "event_types.*",
+          "court_surface_types.*",
+          "court_structure_types.*",
+          "student_groups.*",
+          "users.*",
+          "event_reviews.*",
+          "event_reviews.is_active as isEventReviewActive"
+        )
+        .from("bookings")
+        .leftJoin("players", function () {
+          this.on("players.user_id", "=", "bookings.invitee_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("trainers", function () {
+          this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
+            "trainers.user_id",
+            "=",
+            "bookings.inviter_id"
+          );
+        })
+        .leftJoin("student_groups", function () {
+          this.on("student_groups.user_id", "=", "bookings.invitee_id");
+        })
+        .leftJoin("courts", function () {
+          this.on("courts.court_id", "=", "bookings.court_id");
+        })
+        .leftJoin("clubs", function () {
+          this.on("clubs.club_id", "=", "bookings.club_id");
+        })
+        .leftJoin("event_types", function () {
+          this.on("event_types.event_type_id", "=", "bookings.event_type_id");
+        })
+        .leftJoin("court_surface_types", function () {
+          this.on(
+            "court_surface_types.court_surface_type_id",
+            "=",
+            "courts.court_surface_type_id"
+          );
+        })
+        .leftJoin("court_structure_types", function () {
+          this.on(
+            "court_structure_types.court_structure_type_id",
+            "=",
+            "courts.court_structure_type_id"
+          );
+        })
+        .leftJoin("users", function () {
+          this.on(
+            "users.user_id",
+            "=",
+            db.raw(
+              "(CASE WHEN ? = bookings.inviter_id THEN bookings.invitee_id ELSE bookings.inviter_id END)",
+              [filter.userId]
+            )
+          );
+        })
+        .leftJoin("event_reviews", function () {
+          this.on("event_reviews.booking_id", "=", "bookings.booking_id");
+        })
+
+        .where((builder) => {
+          if (filter.clubId > 0) {
+            builder.where("clubs.user_id", filter.clubId);
+          }
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where(
+                "players.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+          if (filter.courtSurfaceTypeId > 0) {
+            builder.where(
+              "court_surface_types.court_surface_type_id",
+              filter.courtSurfaceTypeId
+            );
+          }
+          if (filter.courtStructureTypeId > 0) {
+            builder.where(
+              "court_structure_types.court_structure_type_id",
+              filter.courtStructureTypeId
+            );
+          }
+          if (filter.eventTypeId > 0) {
+            builder.where("event_types.event_type_id", filter.eventTypeId);
+          }
+          if (filter.missingReviews > 0) {
+            builder.where("event_reviews.is_active", false);
+          }
+        })
+        .andWhere("bookings.booking_status_type_id", 5)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.invitee_id", filter.userId)
+            .orWhere("bookings.inviter_id", filter.userId)
+            .orWhere("student_groups.first_student_id", filter.userId);
+        })
+        .andWhere(function () {
+          this.whereNot("players.user_id", filter.userId)
+            .orWhereNot("trainers.user_id", filter.userId)
+            .orWhere("student_groups.first_student_id", filter.userId);
+        })
+        .andWhere("event_reviews.reviewer_id", "=", filter.userId)
+        .limit(eventsPerPage)
+        .offset(offset);
+
+      const count = await db
+        .select(
+          "bookings.*",
+          "players.*",
+          "players.image as playerImage",
+          "players.fname as playerFname",
+          "players.lname as playerLname",
+          "players.user_id as playerUserId",
           "trainers.*",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",

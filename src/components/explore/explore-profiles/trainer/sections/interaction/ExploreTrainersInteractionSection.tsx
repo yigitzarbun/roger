@@ -88,10 +88,9 @@ export const ExploreTrainersInteractionSection = (
     const selectedStudent = students?.find(
       (student) =>
         student.trainer_id === selectedTrainerId &&
-        student.player_id === user?.user?.user_id &&
-        (student.student_status === "pending" ||
-          student.student_status === "accepted")
+        student.player_id === user?.user?.user_id
     );
+
     if (!selectedStudent) {
       const newStudentData = {
         student_status: "pending",
@@ -99,6 +98,15 @@ export const ExploreTrainersInteractionSection = (
         player_id: user?.user?.user_id,
       };
       addStudent(newStudentData);
+    } else {
+      const updatedStudent = {
+        student_id: selectedStudent.student_id,
+        registered_at: selectedStudent.registeret_at,
+        student_status: "pending",
+        trainer_id: selectedStudent.trainer_id,
+        player_id: selectedStudent.player_id,
+      };
+      updateStudent(updatedStudent);
     }
   };
 
@@ -187,7 +195,7 @@ export const ExploreTrainersInteractionSection = (
     );
     return student ? student : false;
   };
-  console.log(selectedTrainer);
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavouriteTrainers();

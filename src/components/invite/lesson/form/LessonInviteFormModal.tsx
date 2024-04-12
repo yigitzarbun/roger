@@ -29,6 +29,7 @@ import {
   useAddBookingMutation,
   useGetBookedCourtHoursQuery,
   useGetPlayerOutgoingRequestsQuery,
+  useGetTrainerOutgoingRequestsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
@@ -106,6 +107,8 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
   const { refetch: refetchBookings } = useGetPlayerOutgoingRequestsQuery(
     user?.user?.user_id
   );
+  const { refetch: refetchTrainerBookings } =
+    useGetTrainerOutgoingRequestsQuery(user?.user?.user_id);
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
 
@@ -344,6 +347,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     if (isBookingSuccess) {
       refetchBookings();
       refetchBookedHours();
+      refetchTrainerBookings();
       availableTimeSlots = generateAvailableTimeSlots(
         selectedCourt,
         selectedDate,
@@ -397,6 +401,8 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
             selectedTrainerPrice={selectedTrainer?.[0]?.price_hour}
             selectedTime={selectedTime}
             selectedDate={selectedDate}
+            isUserPlayer={isUserPlayer}
+            isUserTrainer={isUserTrainer}
           />
         ) : (
           <form

@@ -29,12 +29,11 @@ const DeclineInviteModal = (props) => {
     user,
   } = props;
 
-  const isUserPlayer = user.user_type_id === 1;
-
+  const isUserPlayer = user?.user_type_id === 1;
   const isEventTraining = declineBookingData?.event_type_id === 1;
   const isEventMatch = declineBookingData?.event_type_id === 2;
   const isEventLesson = declineBookingData?.event_type_id === 3;
-
+  console.log(declineBookingData);
   return (
     <ReactModal
       isOpen={isDeclineModalOpen}
@@ -93,7 +92,11 @@ const DeclineInviteModal = (props) => {
               {isEventLesson && <td>{declineBookingData?.lesson_price} TL</td>}
               {/* toplam ücret */}
               {isUserPlayer && isEventLesson && (
-                <td>{declineBookingData?.payment_amount} TL</td>
+                <td>
+                  {declineBookingData?.lesson_price +
+                    declineBookingData?.court_price}
+                  TL
+                </td>
               )}
               {((isUserPlayer && isEventTraining) ||
                 (isUserPlayer && isEventMatch)) && (

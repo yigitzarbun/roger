@@ -1,79 +1,137 @@
-import React, { useState } from "react";
-
-import { AiOutlineEye } from "react-icons/ai";
-
-import { BiCommentAdd } from "react-icons/bi";
+import React, { useState, useEffect, ChangeEvent } from "react";
 
 import { Link } from "react-router-dom";
 
 import paths from "../../../../routing/Paths";
 
 import { useAppSelector } from "../../../../store/hooks";
+import { ImBlocked } from "react-icons/im";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import styles from "./styles.module.scss";
-
+import { FaFilter } from "react-icons/fa6";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
 import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
 import PageLoading from "../../../../components/loading/PageLoading";
-
-import { useGetBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
-import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { Club } from "../../../../api/endpoints/ClubsApi";
+import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
+import { useGetTrainerPastEventsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventReviewsQuery } from "../../../../api/endpoints/EventReviewsApi";
-import { useGetClubExternalMembersQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
-import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import TrainerPastEventsFilterModal from "./results-filter/TrainerPastEventsFilterModal";
 
-const TrainerEventsResults = () => {
+interface TrainerEventsResultsProps {
+  clubId: number;
+  textSearch: string;
+  courtSurfaceTypeId: number;
+  courtStructureTypeId: number;
+  eventTypeId: number;
+  clubs: Club[];
+  courtStructureTypes: CourtStructureType[];
+  courtSurfaceTypes: CourtSurfaceType[];
+  eventTypes: any;
+  missingReviews: number;
+  handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtStructure: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleCourtSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleEventType: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleMissingReviews: () => void;
+  handleClear: () => void;
+}
+const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
   const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: myEvents, isLoading: isMyEventsLoading } =
-    useGetBookingsByFilterQuery({
-      booking_player_id: user?.user?.user_id,
-      booking_status_type_id: 5,
-    });
-
-  const { data: eventReviews, isLoading: isEventReviewsLoading } =
-    useGetEventReviewsQuery({});
-
-  const { data: eventTypes, isLoading: isEventTypesLoading } =
-    useGetEventTypesQuery({});
-
-  const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
-
-  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
-    useGetCourtSurfaceTypesQuery({});
-
-  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
-    useGetCourtStructureTypesQuery({});
-
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-
-  const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
-    useGetPlayerLevelsQuery({});
-
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
-
-  const { data: externalMembers, isLoading: isExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
-
-  const { data: myGroups, isLoading: isMyGroupsLoading } =
-    useGetStudentGroupsByFilterQuery({ trainer_id: user?.user?.user_id });
-
+  const {
+    clubId,
+    textSearch,
+    courtSurfaceTypeId,
+    courtStructureTypeId,
+    eventTypeId,
+    clubs,
+    courtStructureTypes,
+    courtSurfaceTypes,
+    eventTypes,
+    missingReviews,
+    handleClub,
+    handleCourtStructure,
+    handleCourtSurface,
+    handleTextSearch,
+    handleEventType,
+    handleMissingReviews,
+    handleClear,
+  } = props;
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
-  const [selectedBookingId, setSelectedBookingId] = useState(null);
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [image, setImage] = useState(null);
 
-  const openReviewModal = (booking_id: number) => {
+  const openReviewModal = (
+    booking_id: number,
+    fname: string,
+    lname: string,
+    image: string | null
+  ) => {
     setSelectedBookingId(booking_id);
+    setFname(fname);
+    setLname(lname);
+    setImage(image);
     setIsAddReviewModalOpen(true);
   };
   const closeReviewModal = () => {
     setIsAddReviewModalOpen(false);
   };
+
+  const [isPastEventsModalOpen, setIsPastEventsModalOpen] = useState(false);
+  const handleOpenPastEventsModal = () => {
+    setIsPastEventsModalOpen(true);
+  };
+  const handleClosePastEventsModal = () => {
+    setIsPastEventsModalOpen(false);
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const {
+    data: trainerPastEvents,
+    isLoading: isTrainerPastEventsLoading,
+    refetch: refetchTrainerPastEvents,
+  } = useGetTrainerPastEventsQuery({
+    userId: user?.user?.user_id,
+    clubId: clubId,
+    textSearch: textSearch,
+    courtSurfaceTypeId: courtSurfaceTypeId,
+    courtStructureTypeId: courtStructureTypeId,
+    eventTypeId: eventTypeId,
+    currentPage: currentPage,
+    missingReviews: missingReviews,
+  });
+  console.log(trainerPastEvents);
+  const pageNumbers = [];
+  for (let i = 1; i <= trainerPastEvents?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+  const handleEventPage = (e) => {
+    setCurrentPage(Number(e.target.value));
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % trainerPastEvents?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + trainerPastEvents?.totalPages) %
+        trainerPastEvents?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
+  const { data: eventReviews, isLoading: isEventReviewsLoading } =
+    useGetEventReviewsQuery({});
+
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
   const openViewReviewModal = (booking_id: number) => {
@@ -84,205 +142,176 @@ const TrainerEventsResults = () => {
     setIsViewReviewModalOpen(false);
   };
 
-  const selectedPlayer = (user_id: number) => {
-    return players?.find((player) => player.user_id === user_id);
-  };
-
-  const selectedExternalMember = (user_id: number) => {
-    return externalMembers?.find((member) => member.user_id === user_id);
-  };
-
-  const selectedClub = (club_id: number) => {
-    return clubs?.find((club) => club.club_id === club_id);
-  };
-
-  const selectedCourt = (court_id: number) => {
-    return courts?.find((court) => court.court_id === court_id);
-  };
-
-  const selectedPlayerLevel = (player_level_id: number) => {
-    return playerLevels?.find(
-      (level) => level.player_level_id === player_level_id
-    );
-  };
-
-  const isEventLesson = (event_type_id: number) => {
-    return event_type_id === 3 ? true : false;
-  };
-
-  const isEventExternalLesson = (event_type_id: number) => {
-    return event_type_id === 5 ? true : false;
-  };
-
-  const isEventGroupLesson = (event_type_id: number) => {
-    return event_type_id === 6 ? true : false;
-  };
-
-  const isTrainerInviter = (inviter_id: number) => {
-    return inviter_id === user?.user?.user_id ? true : false;
-  };
-
-  const isTrainerInvitee = (invitee_id: number) => {
-    return invitee_id === user?.user?.user_id;
-  };
-
-  const selectedGroup = (invitee_id: number) => {
-    return myGroups?.find((group) => group.user_id === invitee_id);
-  };
-
-  if (
-    isMyEventsLoading ||
-    isEventTypesLoading ||
-    isCourtsLoading ||
-    isCourtsLoading ||
-    isPlayerLevelsLoading ||
-    isClubsLoading ||
-    isCourtSurfaceTypesLoading ||
-    isCourtStructureTypesLoading ||
-    isPlayersLoading ||
-    isEventReviewsLoading ||
-    isExternalMembersLoading ||
-    isMyGroupsLoading
-  ) {
+  useEffect(() => {
+    refetchTrainerPastEvents();
+  }, [
+    textSearch,
+    clubId,
+    courtStructureTypeId,
+    courtStructureTypeId,
+    eventTypeId,
+    missingReviews,
+    currentPage,
+    isAddReviewModalOpen,
+  ]);
+  if (isTrainerPastEventsLoading) {
     return <PageLoading />;
   }
+
   return (
-    <div className={styles["results-container"]}>
-      <h2 className={styles.title}>Etkinlik Geçmişi</h2>
-      {myEvents?.length > 0 ? (
+    <div className={styles["result-container"]}>
+      <div className={styles["top-container"]}>
+        <div className={styles["title-container"]}>
+          <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+          <FaFilter
+            onClick={handleOpenPastEventsModal}
+            className={styles.filter}
+          />
+        </div>
+        <div className={styles["navigation-container"]}>
+          <FaAngleLeft
+            onClick={handlePrevPage}
+            className={styles["nav-arrow"]}
+          />
+
+          <FaAngleRight
+            onClick={handleNextPage}
+            className={styles["nav-arrow"]}
+          />
+        </div>
+      </div>
+      {trainerPastEvents?.pastEvents?.length > 0 ? (
         <table>
           <thead>
             <tr>
+              <th></th>
+              <th>İsim</th>
               <th>Tarih</th>
               <th>Saat</th>
               <th>Tür</th>
               <th>Konum</th>
               <th>Kort</th>
-              <th>Kort Yüzey</th>
-              <th>Kort Mekan</th>
-              <th>Oyuncu</th>
-              <th>Oyuncu Seviye</th>
+              <th>Yüzey</th>
+              <th>Mekan</th>
+              <th>Yorum Yap</th>
+              <th>Yorum Görüntüle</th>
             </tr>
           </thead>
           <tbody>
-            {myEvents?.map((event) => (
-              <tr key={event.booking_id}>
-                <td>{event.event_date.slice(0, 10)}</td>
-                <td>{event.event_time.slice(0, 5)}</td>
-                <td>
-                  {
-                    eventTypes?.find(
-                      (type) => type.event_type_id === event.event_type_id
-                    )?.event_type_name
-                  }
-                </td>
-                <td>{selectedClub(event.club_id)?.club_name}</td>
-                <td>{selectedCourt(event.court_id)?.court_name}</td>
-                <td>
-                  {
-                    courtSurfaceTypes?.find(
-                      (type) =>
-                        type.court_surface_type_id ===
-                        selectedCourt(event.court_id)?.court_surface_type_id
-                    )?.court_surface_type_name
-                  }
-                </td>
-                <td>
-                  {
-                    courtStructureTypes?.find(
-                      (type) =>
-                        type.court_structure_type_id ===
-                        selectedCourt(event.court_id)?.court_structure_type_id
-                    )?.court_structure_type_name
-                  }
-                </td>
+            {trainerPastEvents?.pastEvents?.map((event) => (
+              <tr key={event.booking_id} className={styles["player-row"]}>
                 <td>
                   <Link
-                    to={
-                      isEventLesson(event.event_type_id) &&
-                      isTrainerInviter(event.inviter_id)
-                        ? `${paths.EXPLORE_PROFILE}1/${event.invitee_id}`
-                        : isEventLesson(event.event_type_id) &&
-                          isTrainerInvitee(event.invitee_id)
-                        ? `${paths.EXPLORE_PROFILE}1/${event.inviter_id}`
-                        : isEventExternalLesson(event.event_type_id) ||
-                          isEventGroupLesson(event.event_type_id)
-                        ? `${paths.EXPLORE_PROFILE}3/${
-                            selectedClub(event.club_id)?.user_id
-                          }`
+                    to={`${paths.EXPLORE_PROFILE}${
+                      event.event_type_id === 3
+                        ? 1
+                        : event.event_type_id === 6
+                        ? 3
                         : ""
-                    }
-                    className={styles["student-name"]}
+                    }/${
+                      event.event_type_id === 3 &&
+                      event.inviter_id === user?.user?.user_id
+                        ? event.invitee_id
+                        : event.event_type_id === 3 &&
+                          event.invitee_id === user?.user?.user_id
+                        ? event.inviter_id
+                        : event.event_type_id === 6
+                        ? event?.clubUserId
+                        : ""
+                    }`}
                   >
-                    {isEventLesson(event.event_type_id) &&
-                    isTrainerInviter(event.inviter_id)
-                      ? `${selectedPlayer(event.invitee_id)?.fname} ${
-                          selectedPlayer(event.invitee_id)?.lname
-                        }`
-                      : isEventLesson(event.event_type_id) &&
-                        isTrainerInvitee(event.invitee_id)
-                      ? `${selectedPlayer(event.inviter_id)?.fname} ${
-                          selectedPlayer(event.inviter_id)?.lname
-                        }`
-                      : isEventExternalLesson(event.event_type_id)
-                      ? `${selectedExternalMember(event.invitee_id)?.fname} ${
-                          selectedExternalMember(event.invitee_id)?.lname
-                        }`
-                      : isEventGroupLesson(event.event_type_id)
-                      ? selectedGroup(event.invitee_id)?.student_group_name
-                      : "-"}
+                    <img
+                      src={
+                        event?.playerImage && event?.event_type_id === 3
+                          ? event?.playerImage
+                          : event?.clubImage && event?.event_type_id === 6
+                          ? event?.clubImage
+                          : "/images/icons/avatar.jpg"
+                      }
+                      className={styles["player-image"]}
+                      alt="player-image"
+                    />
                   </Link>
                 </td>
                 <td>
-                  {isEventLesson(event.event_type_id) &&
-                  isTrainerInviter(event.inviter_id)
-                    ? selectedPlayerLevel(
-                        selectedPlayer(event.invitee_id)?.player_level_id
-                      )?.player_level_name
-                    : isEventLesson(event.event_type_id) &&
-                      isTrainerInvitee(event.invitee_id)
-                    ? selectedPlayerLevel(
-                        selectedPlayer(event.inviter_id)?.player_level_id
-                      )?.player_level_name
-                    : isEventExternalLesson(event.event_type_id)
-                    ? selectedPlayerLevel(
-                        selectedExternalMember(event.invitee_id)
-                          ?.player_level_id
-                      )?.player_level_name
-                    : "-"}
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}${
+                      event.event_type_id === 3
+                        ? 1
+                        : event.event_type_id === 6
+                        ? 3
+                        : ""
+                    }/${
+                      event.event_type_id === 3 &&
+                      event.inviter_id === user?.user?.user_id
+                        ? event.invitee_id
+                        : event.event_type_id === 3 &&
+                          event.invitee_id === user?.user?.user_id
+                        ? event.inviter_id
+                        : event.event_type_id === 6
+                        ? event?.clubUserId
+                        : ""
+                    }`}
+                    className={styles["player-name"]}
+                  >
+                    {event.event_type_id === 1 ||
+                    event.event_type_id === 2 ||
+                    event.event_type_id === 3
+                      ? `${event?.playerFname} ${event?.playerLname}`
+                      : event.event_type_id === 6
+                      ? event?.student_group_name
+                      : ""}
+                  </Link>
                 </td>
-                {isEventLesson(event.event_type_id) && (
-                  <td>
-                    {eventReviews?.find(
-                      (eventReview) =>
-                        eventReview.reviewer_id === user?.user?.user_id &&
-                        eventReview.booking_id === event.booking_id
-                    ) ? (
-                      <p className={styles["review-sent-text"]}>
-                        Yorum Gönderildi
-                      </p>
-                    ) : (
-                      <BiCommentAdd
-                        onClick={() => openReviewModal(event.booking_id)}
-                        className={styles["view-icon"]}
-                      />
-                    )}
-                  </td>
-                )}
-                {isEventLesson(event.event_type_id) && (
-                  <td>
-                    {eventReviews?.find(
-                      (eventReview) =>
-                        eventReview.reviewer_id !== user?.user?.user_id &&
-                        eventReview.booking_id === event.booking_id
-                    ) && (
-                      <AiOutlineEye
-                        onClick={() => openViewReviewModal(event.booking_id)}
-                        className={styles["view-icon"]}
-                      />
-                    )}
-                  </td>
-                )}
+                <td>{event.event_date.slice(0, 10)}</td>
+                <td>{event.event_time.slice(0, 5)}</td>
+                <td>{event?.event_type_name}</td>
+                <td>{event?.club_name}</td>
+                <td>{event?.court_name}</td>
+                <td>{event?.court_surface_type_name}</td>
+                <td>{event?.court_structure_type_name}</td>
+                <td>
+                  {event?.isEventReviewActive ? (
+                    <IoIosCheckmarkCircle className={styles.done} />
+                  ) : (
+                    <button
+                      className={styles["comment-button"]}
+                      onClick={() =>
+                        openReviewModal(
+                          event.booking_id,
+                          event.playerFname,
+                          event.playerLname,
+                          event.playerImage ? event.playerImage : null
+                        )
+                      }
+                    >
+                      Yorum Yap
+                    </button>
+                  )}
+                  {event.event_type_id === 6 && (
+                    <ImBlocked className={styles.blocked} />
+                  )}
+                </td>
+                <td>
+                  {(event.event_type_id === 1 ||
+                    event.event_type_id === 2 ||
+                    event.event_type_id === 3) &&
+                  eventReviews?.find(
+                    (review) =>
+                      review.reviewee_id === user?.user?.user_id &&
+                      review.booking_id === event.booking_id &&
+                      review.is_active
+                  ) ? (
+                    <button
+                      className={styles["view-button"]}
+                      onClick={() => openViewReviewModal(event.booking_id)}
+                    >
+                      Yorum Görüntüle
+                    </button>
+                  ) : (
+                    <ImBlocked className={styles.blocked} />
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -290,11 +319,30 @@ const TrainerEventsResults = () => {
       ) : (
         <p>Tamamlanmış etkinlik bulunmamaktadır</p>
       )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleEventPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
       {isAddReviewModalOpen && (
         <AddEventReviewModal
           isAddReviewModalOpen={isAddReviewModalOpen}
           closeReviewModal={closeReviewModal}
           selectedBookingId={selectedBookingId}
+          fname={fname}
+          lname={lname}
+          image={image}
         />
       )}
       {isViewReviewModalOpen && (
@@ -302,6 +350,29 @@ const TrainerEventsResults = () => {
           isViewReviewModalOpen={isViewReviewModalOpen}
           closeViewReviewModal={closeViewReviewModal}
           selectedBookingId={selectedBookingId}
+        />
+      )}
+      {isPastEventsModalOpen && (
+        <TrainerPastEventsFilterModal
+          textSearch={textSearch}
+          clubId={clubId}
+          courtSurfaceTypeId={courtSurfaceTypeId}
+          courtStructureTypeId={courtStructureTypeId}
+          eventTypeId={eventTypeId}
+          clubs={clubs}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          eventTypes={eventTypes}
+          missingReviews={missingReviews}
+          handleTextSearch={handleTextSearch}
+          handleClub={handleClub}
+          handleCourtStructure={handleCourtStructure}
+          handleCourtSurface={handleCourtSurface}
+          handleEventType={handleEventType}
+          isPastEventsModalOpen={isPastEventsModalOpen}
+          handleClosePastEventsModal={handleClosePastEventsModal}
+          handleMissingReviews={handleMissingReviews}
+          handleClear={handleClear}
         />
       )}
     </div>

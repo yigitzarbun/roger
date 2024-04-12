@@ -34,7 +34,7 @@ clubSubscriptionsRouter.get(
     try {
       const filter = req.query;
       const subscribers =
-        await clubSubscriptionsModel.getPaginatedlubSubscribers(filter);
+        await clubSubscriptionsModel.getPaginatedClubSubscribers(filter);
       res.status(200).json(subscribers);
     } catch (error) {
       next(error);

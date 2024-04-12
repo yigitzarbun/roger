@@ -2,59 +2,30 @@ import React, { useEffect } from "react";
 
 import { toast } from "react-toastify";
 
-import Modal from "react-modal";
-
-import { FaWindowClose } from "react-icons/fa";
+import ReactModal from "react-modal";
 
 import styles from "./styles.module.scss";
 
-import {
-  Student,
-  useGetStudentsQuery,
-  useUpdateStudentMutation,
-} from "../../../../api/endpoints/StudentsApi";
-import { Player } from "../../../../api/endpoints/PlayersApi";
+import { useUpdateStudentMutation } from "../../../../api/endpoints/StudentsApi";
 
 interface DeleteTrainerStudentModalProps {
   deleteModalOpen: boolean;
   closeDeleteModal: () => void;
-  deleteStudentId: number;
-  trainerUserId: number;
-  students: Student[];
-  players: Player[];
+  student: any;
+  refetchStudents: () => void;
 }
 
 const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
-  const {
-    deleteModalOpen,
-    closeDeleteModal,
-    deleteStudentId,
-    trainerUserId,
-    students,
-    players,
-  } = props;
-
+  const { deleteModalOpen, closeDeleteModal, student, refetchStudents } = props;
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
-  const { refetch } = useGetStudentsQuery({});
-
-  const selectedStudent = players?.find(
-    (player) =>
-      player.user_id ===
-      students?.find((student) => student.student_id === deleteStudentId)
-        ?.player_id
-  );
-
   const handleDeleteStudent = () => {
-    const selectedStudentData = students?.find(
-      (student) =>
-        student.student_id === deleteStudentId &&
-        student.trainer_id === trainerUserId &&
-        student.student_status === "accepted"
-    );
     const updatedStudentData = {
-      ...selectedStudentData,
+      student_id: student?.student_id,
+      registered_at: student?.registered_at,
+      trainer_id: student?.trainer_id,
+      player_id: student?.playerUserId,
       student_status: "declined",
     };
     updateStudent(updatedStudentData);
@@ -62,39 +33,51 @@ const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
 
   useEffect(() => {
     if (isUpdateStudentSuccess) {
-      refetch();
+      refetchStudents();
       toast.success("Öğrenci silindi");
       closeDeleteModal();
     }
   }, [isUpdateStudentSuccess]);
+
   return (
-    <Modal
+    <ReactModal
       isOpen={deleteModalOpen}
       onRequestClose={closeDeleteModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
+      <div className={styles["overlay"]} onClick={closeDeleteModal} />
+      <div className={styles["modal-content"]}>
         <h1 className={styles.title}>Öğrenciyi sil</h1>
-        <FaWindowClose
-          onClick={closeDeleteModal}
-          className={styles["close-icon"]}
-        />
+        <div className={styles["bottom-container"]}>
+          <img
+            src={
+              student?.playerImage
+                ? student?.playerImage
+                : "/images/icons/avatar.jpg"
+            }
+            alt="request"
+            className={styles["trainer-image"]}
+          />
+          <p>{`${student?.fname} ${student?.lname} isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?`}</p>
+        </div>
+        <div className={styles["buttons-container"]}>
+          <button
+            onClick={closeDeleteModal}
+            className={styles["discard-button"]}
+          >
+            Vazgeç
+          </button>
+          <button
+            onClick={handleDeleteStudent}
+            className={styles["submit-button"]}
+          >
+            Sil
+          </button>
+        </div>
       </div>
-      <div className={styles["bottom-container"]}>
-        <img
-          src={
-            selectedStudent?.image
-              ? selectedStudent?.image
-              : "images/icons/avatar.png"
-          }
-          className={styles["trainer-image"]}
-        />
-        <h4>{`${selectedStudent?.fname} ${selectedStudent?.lname} isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?`}</h4>
-      </div>
-      <button onClick={handleDeleteStudent} className={styles["button"]}>
-        Onayla
-      </button>
-    </Modal>
+    </ReactModal>
   );
 };
 

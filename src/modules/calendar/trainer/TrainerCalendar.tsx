@@ -12,7 +12,6 @@ const TrainerCalendar = () => {
   const [eventTypeId, setEventTypeId] = useState<number>(null);
 
   const handleDate = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
     setDate(event.target.value);
   };
 

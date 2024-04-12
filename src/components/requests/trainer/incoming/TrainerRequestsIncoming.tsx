@@ -108,6 +108,8 @@ const TrainerRequestsIncoming = () => {
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
 
   const handleOpenDeclineModal = (data) => {
+    setSelectedPaymentId(data.payment_id);
+    setSkipSelectedPayment(false);
     setDeclineBookingData(data);
     setIsDeclineModalOpen(true);
   };
@@ -184,7 +186,7 @@ const TrainerRequestsIncoming = () => {
       const newStudent = {
         student_status: "pending",
         trainer_id: user?.user_id,
-        player_id: acceptBookingData.inviter_id,
+        player_id: acceptBookingData?.inviter_id,
       };
       addStudent(newStudent);
     }
@@ -240,7 +242,7 @@ const TrainerRequestsIncoming = () => {
                   )}
                 </td>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}>
+                  <Link to={`${paths.EXPLORE_PROFILE}1/${booking?.inviter_id}`}>
                     <img
                       src={
                         booking?.playerImage
@@ -253,7 +255,7 @@ const TrainerRequestsIncoming = () => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}
+                    to={`${paths.EXPLORE_PROFILE}1/${booking?.inviter_id}`}
                     className={styles["player-name"]}
                   >
                     {`${booking?.fname} ${booking?.lname}`}

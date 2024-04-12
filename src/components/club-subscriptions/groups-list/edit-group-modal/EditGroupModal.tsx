@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import Modal from "react-modal";
 
 import { toast } from "react-toastify";
-
-import { FaWindowClose } from "react-icons/fa";
-import { AiOutlineUserAdd } from "react-icons/ai";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../components/loading/PageLoading";
-
-import { useAppSelector } from "../../../../store/hooks";
 
 import {
   useGetStudentGroupsQuery,
@@ -55,7 +50,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
 
   const [updateGroup, { isSuccess: isUpdateGroupSuccess }] =
     useUpdateStudentGroupMutation({});
-
+  console.log(selectedGroup);
   const {
     register,
     handleSubmit,
@@ -185,7 +180,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
   if (isGroupsLoading || isMySubscribersLoading) {
     return <PageLoading />;
   }
-
+  console.log(mySubscribers);
   return (
     <Modal
       isOpen={isEditGroupModalOpen}
@@ -258,12 +253,28 @@ const EditGroupModal = (props: EditGroupModalProps) => {
                 })}
               >
                 <option value="">-- 1. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.playerUserId}
-                    value={subscriber.playerUserId}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -281,12 +292,28 @@ const EditGroupModal = (props: EditGroupModalProps) => {
                 })}
               >
                 <option value="">-- 2. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.playerUserId}
-                    value={subscriber.playerUserId}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -302,12 +329,28 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               <label>3. Oyuncu</label>
               <select {...register("third_student_id")}>
                 <option value="">-- 3. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.playerUserId}
-                    value={subscriber.playerUserId}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -321,12 +364,28 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               <label>4. Oyuncu</label>
               <select {...register("fourth_student_id")}>
                 <option value="">-- 4. Oyuncu --</option>
-                {mySubscribers.map((subscriber) => (
+                {mySubscribers?.map((subscriber) => (
                   <option
-                    key={subscriber.playerUserId}
-                    value={subscriber.playerUserId}
+                    key={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
+                    value={
+                      subscriber?.playerUserId
+                        ? subscriber.playerUserId
+                        : subscriber?.externalUserId
+                        ? subscriber?.externalUserId
+                        : null
+                    }
                   >
-                    {`${subscriber.playerFname} ${subscriber.playerLname}`}
+                    {subscriber?.playerUserId
+                      ? `${subscriber?.playerFname} ${subscriber?.playerLname}`
+                      : subscriber?.externalUserId
+                      ? `${subscriber?.externalFname} ${subscriber?.externalLname}`
+                      : ""}
                   </option>
                 ))}
               </select>

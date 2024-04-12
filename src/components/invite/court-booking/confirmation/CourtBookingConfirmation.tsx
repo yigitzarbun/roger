@@ -8,6 +8,8 @@ interface CourtBookingConfirmationProps {
   eventType: string;
   selectedCourtPrice: number;
   invitee: any;
+  isUserPlayer: boolean;
+  isUserTrainer: boolean;
 }
 const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
   const {
@@ -16,8 +18,9 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
     eventType,
     selectedCourtPrice,
     invitee,
+    isUserTrainer,
+    isUserPlayer,
   } = props;
-
   return (
     <div className={styles["confirmation-container"]}>
       <div className={styles["table-container"]}>
@@ -25,7 +28,7 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
           <thead>
             <tr>
               <th></th>
-              <th>Oyuncu</th>
+              <th>{eventType === "Ders" ? "Eğitmen" : "Oyuncu"}</th>
               <th>Tür</th>
               <th>Ücret</th>
             </tr>
@@ -49,10 +52,13 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
           </tbody>
         </table>
       </div>
-      <p className={styles.pricing}>
-        Toplam kort ücreti <span>{selectedCourtPrice}</span> TL'dir. Bu tutar
-        oyuncular arasında eşit bölünerek tahsil edilecektir.
-      </p>
+      {isUserPlayer && (eventType === "Maç" || eventType === "Antreman") && (
+        <p className={styles.pricing}>
+          Toplam kort ücreti <span>{selectedCourtPrice}</span> TL'dir. Bu tutar
+          oyuncular arasında eşit bölünerek tahsil edilecektir.
+        </p>
+      )}
+
       <div className={styles["buttons-container"]}>
         <button
           onClick={handleCloseConfirmation}

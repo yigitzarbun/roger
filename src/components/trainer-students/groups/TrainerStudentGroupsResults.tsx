@@ -1,71 +1,115 @@
-import React from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
 import { useAppSelector } from "../../../store/hooks";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
+import { FaFilter } from "react-icons/fa6";
 
 import paths from "../../../routing/Paths";
 
 import PageLoading from "../../../components/loading/PageLoading";
 
-import { useGetStudentGroupsQuery } from "../../../api/endpoints/StudentGroupsApi";
-import { useGetPlayersQuery } from "../../../api/endpoints/PlayersApi";
-import { useGetClubExternalMembersQuery } from "../../../api/endpoints/ClubExternalMembersApi";
-import { useGetBookingsQuery } from "../../../api/endpoints/BookingsApi";
-import { useGetUsersQuery } from "../../../store/auth/apiSlice";
+import { useGetPaginatedTrainerStudentGroupsQuery } from "../../../api/endpoints/StudentGroupsApi";
+import TrainerStudentGroupsFilterModal from "./filter/TrainerStudentGroupsFilter";
 
-const TrainerStudentGroupsResults = () => {
+interface TrainerStudentGroupsResultsProps {
+  textSearch: string;
+  handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleClear: () => void;
+}
+
+const TrainerStudentGroupsResults = (
+  props: TrainerStudentGroupsResultsProps
+) => {
   const user = useAppSelector((store) => store?.user?.user);
+  const { textSearch, handleTextSearch, handleClear } = props;
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
+  const {
+    data: paginatedTrainerStudentGroups,
+    isLoading: isPaginatedTrainerStudentGroupsLoading,
+    refetch: refetchStudentGroups,
+  } = useGetPaginatedTrainerStudentGroupsQuery({
+    trainerUserId: user?.user?.user_id,
+    page: currentPage,
+    textSearch: textSearch,
+  });
 
-  const { data: studentGroups, isLoading: isStudentGroupsLoading } =
-    useGetStudentGroupsQuery({});
-  const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
-  const { data: externalMembers, isLoading: isExternalMembersLoading } =
-    useGetClubExternalMembersQuery({});
-  const { data: bookings, isLoading: isBookingsLoading } = useGetBookingsQuery(
-    {}
-  );
+  const [
+    isTrainerStudentGroupsFilterOpen,
+    setIsTrainerStudentGroupsFilterOpen,
+  ] = useState(false);
+  const handleOpenTrainerStudentGroupsFilter = () => {
+    setIsTrainerStudentGroupsFilterOpen(true);
+  };
+  const handleCloseTrainerStudentGroupsFilter = () => {
+    setIsTrainerStudentGroupsFilterOpen(false);
+  };
+  const handleTrainersPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
 
-  const myGroups = studentGroups?.filter(
-    (group) => group.trainer_id === user?.user?.user_id
-  );
+  const handleNextPage = () => {
+    const nextPage =
+      (currentPage % paginatedTrainerStudentGroups?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
 
-  let myGroupUserIds = [];
-  myGroups?.forEach((group) => myGroupUserIds.push(group.user_id));
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + paginatedTrainerStudentGroups?.totalPages) %
+        paginatedTrainerStudentGroups?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
 
-  const myGroupBookings = bookings?.filter(
-    (booking) =>
-      (booking.inviter_id === user?.user?.user_id ||
-        booking.invitee_id === user?.user?.user_id) &&
-      booking.booking_status_type_id === 5 &&
-      booking.event_type_id == 6 &&
-      (myGroupUserIds.includes(booking.invitee_id) ||
-        myGroupUserIds.includes(booking.inviter_id))
-  );
+  const pageNumbers = [];
+  for (let i = 1; i <= paginatedTrainerStudentGroups?.totalPages; i++) {
+    pageNumbers.push(i);
+  }
+  useEffect(() => {
+    refetchStudentGroups();
+  }, [currentPage, textSearch]);
 
-  if (
-    isUsersLoading ||
-    isStudentGroupsLoading ||
-    isPlayersLoading ||
-    isExternalMembersLoading ||
-    isBookingsLoading
-  ) {
+  if (isPaginatedTrainerStudentGroupsLoading) {
     return <PageLoading />;
   }
   return (
     <div className={styles["result-container"]}>
-      <h2 className={styles["result-title"]}>Öğrenciler</h2>
-      {myGroups?.length > 0 ? (
+      <div className={styles["top-container"]}>
+        <div className={styles["title-container"]}>
+          <h2 className={styles["result-title"]}>Gruplar</h2>
+          {paginatedTrainerStudentGroups?.studentGroups?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenTrainerStudentGroupsFilter}
+              className={
+                textSearch !== "" ? styles["active-filter"] : styles.filter
+              }
+            />
+          )}
+        </div>
+        {paginatedTrainerStudentGroups?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
+      </div>
+      {paginatedTrainerStudentGroups?.studentGroups?.length > 0 ? (
         <table>
           <thead>
             <tr>
               <th>Grup Adı</th>
-              <th>Öğrenci Sayısı</th>
-              <th>Anterman Sayısı</th>
+              <th>Kulüp</th>
               <th>Oyuncu 1</th>
               <th>Oyuncu 2</th>
               <th>Oyuncu 3</th>
@@ -73,181 +117,58 @@ const TrainerStudentGroupsResults = () => {
             </tr>
           </thead>
           <tbody>
-            {myGroups.map((group) => (
-              <tr key={group.user_id}>
+            {paginatedTrainerStudentGroups.studentGroups?.map((group) => (
+              <tr key={group.user_id} className={styles["player-row"]}>
                 <td>{group.student_group_name}</td>
+                <td>{group.clubName}</td>
                 <td>
-                  {group.fourth_student_id ? 4 : group.third_student_id ? 3 : 2}
+                  {group.student1_user_id ? (
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${group.student1_user_id}`}
+                      className={styles.name}
+                    >
+                      {`${group.student1_fname} ${group.student1_lname}`}
+                    </Link>
+                  ) : (
+                    `${group.student1_fname} ${group.student1_lname}`
+                  )}
                 </td>
                 <td>
-                  {
-                    myGroupBookings?.filter(
-                      (booking) =>
-                        booking.inviter_id === group.user_id ||
-                        booking.invitee_id === group.user_id
-                    ).length
-                  }
+                  {group.student2_user_id ? (
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${group.student2_user_id}`}
+                      className={styles.name}
+                    >
+                      {`${group.student2_fname} ${group.student2_lname}`}
+                    </Link>
+                  ) : (
+                    `${group.student2_fname} ${group.student2_lname}`
+                  )}
                 </td>
                 <td>
-                  {group.first_student_id ? (
-                    users?.find(
-                      (user) => user.user_id === group.first_student_id
-                    )?.user_type_id === 1 ? (
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${group.first_student_id}`}
-                        className={styles["student-name"]}
-                      >
-                        {`${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.first_student_id
-                          )?.fname
-                        }
-                        ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.first_student_id
-                          )?.lname
-                        }
-                        `}
-                      </Link>
-                    ) : (
-                      users?.find(
-                        (user) => user.user_id === group.first_student_id
-                      )?.user_type_id === 5 &&
-                      `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.first_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.first_student_id
-                        )?.lname
-                      }`
-                    )
+                  {group.student3_user_id ? (
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${group.student3_user_id}`}
+                      className={styles.name}
+                    >
+                      {`${group.student3_fname} ${group.student3_lname}`}
+                    </Link>
+                  ) : group.cem3_user_id ? (
+                    `${group.student3_fname} ${group.student3_lname}`
                   ) : (
                     "-"
                   )}
                 </td>
                 <td>
-                  {group.second_student_id ? (
-                    users?.find(
-                      (user) => user.user_id === group.second_student_id
-                    )?.user_type_id === 1 ? (
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${group.second_student_id}`}
-                        className={styles["student-name"]}
-                      >
-                        {`${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.second_student_id
-                          )?.fname
-                        }
-                        ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.second_student_id
-                          )?.lname
-                        }
-                        `}
-                      </Link>
-                    ) : (
-                      users?.find(
-                        (user) => user.user_id === group.second_student_id
-                      )?.user_type_id === 5 &&
-                      `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.second_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.second_student_id
-                        )?.lname
-                      }`
-                    )
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td>
-                  {group.third_student_id ? (
-                    users?.find(
-                      (user) => user.user_id === group.third_student_id
-                    )?.user_type_id === 1 ? (
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${group.third_student_id}`}
-                        className={styles["student-name"]}
-                      >
-                        {`${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.third_student_id
-                          )?.fname
-                        }
-                        ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.third_student_id
-                          )?.lname
-                        }
-                        `}
-                      </Link>
-                    ) : (
-                      users?.find(
-                        (user) => user.user_id === group.third_student_id
-                      )?.user_type_id === 5 &&
-                      `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.third_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.third_student_id
-                        )?.lname
-                      }`
-                    )
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td>
-                  {group.fourth_student_id ? (
-                    users?.find(
-                      (user) => user.user_id === group.fourth_student_id
-                    )?.user_type_id === 1 ? (
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}1/${group.fourth_student_id}`}
-                        className={styles["student-name"]}
-                      >
-                        {`${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.fourth_student_id
-                          )?.fname
-                        }
-                        ${
-                          players.find(
-                            (player) =>
-                              player.user_id === group.fourth_student_id
-                          )?.lname
-                        }
-                        `}
-                      </Link>
-                    ) : (
-                      users?.find(
-                        (user) => user.user_id === group.fourth_student_id
-                      )?.user_type_id === 5 &&
-                      `${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.fourth_student_id
-                        )?.fname
-                      } ${
-                        externalMembers?.find(
-                          (member) => member.user_id === group.fourth_student_id
-                        )?.lname
-                      }`
-                    )
+                  {group.student4_user_id ? (
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}1/${group.student4_user_id}`}
+                      className={styles.name}
+                    >
+                      {`${group.student4_fname} ${group.student4_lname}`}
+                    </Link>
+                  ) : group.cem4_user_id ? (
+                    `${group.student4_fname} ${group.student4_lname}`
                   ) : (
                     "-"
                   )}
@@ -258,6 +179,33 @@ const TrainerStudentGroupsResults = () => {
         </table>
       ) : (
         <p>Henüz aktif öğrenci grubu bulunmamaktadır</p>
+      )}
+      <div className={styles["pages-container"]}>
+        {pageNumbers?.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            value={pageNumber}
+            onClick={handleTrainersPage}
+            className={
+              pageNumber === Number(currentPage)
+                ? styles["active-page"]
+                : styles["passive-page"]
+            }
+          >
+            {pageNumber}
+          </button>
+        ))}
+      </div>
+      {isTrainerStudentGroupsFilterOpen && (
+        <TrainerStudentGroupsFilterModal
+          textSearch={textSearch}
+          isTrainerStudentGroupsFilterOpen={isTrainerStudentGroupsFilterOpen}
+          handleCloseTrainerStudentGroupsFilter={
+            handleCloseTrainerStudentGroupsFilter
+          }
+          handleTextSearch={handleTextSearch}
+          handleClear={handleClear}
+        />
       )}
     </div>
   );

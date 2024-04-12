@@ -253,6 +253,158 @@ const studentGroupsModel = {
       throw error; // Rethrow the error to ensure it's caught by the caller
     }
   },
+  async getPaginatedTrainerStudentGroups(filter) {
+    const groupsPerPage = 4;
+    const offset = (filter.page - 1) * groupsPerPage;
+    try {
+      const query = db
+        .select(
+          "p1.user_id as student1_user_id",
+          "cem1.user_id as cem1_user_id",
+          db.raw("COALESCE(p1.fname, cem1.fname) AS student1_fname"),
+          db.raw("COALESCE(p1.lname, cem1.lname) AS student1_lname"),
+          "p2.user_id as student2_user_id",
+          "cem2.user_id as cem2_user_id",
+          db.raw("COALESCE(p2.fname, cem2.fname) AS student2_fname"),
+          db.raw("COALESCE(p2.lname, cem2.lname) AS student2_lname"),
+          "p3.user_id as student3_user_id",
+          "cem3.user_id as cem3_user_id",
+          db.raw("COALESCE(p3.fname, cem3.fname) AS student3_fname"),
+          db.raw("COALESCE(p3.lname, cem3.lname) AS student3_lname"),
+          "p4.user_id as student4_user_id",
+          "cem4.user_id as cem4_user_id",
+          db.raw("COALESCE(p4.fname, cem4.fname) AS student4_fname"),
+          db.raw("COALESCE(p4.lname, cem4.lname) AS student4_lname"),
+          "sg.student_group_id", // Corrected column name
+          "sg.student_group_name", // Corrected column name
+          "sg.user_id",
+          "sg.registered_at",
+          "clubs.club_name as clubName"
+        )
+        .from({ sg: "student_groups" })
+        .leftJoin("clubs", function () {
+          this.on("clubs.user_id", "=", "sg.club_id");
+        })
+        .leftJoin({ p1: "players" }, "sg.first_student_id", "p1.user_id")
+        .leftJoin(
+          { cem1: "club_external_members" },
+          "sg.first_student_id",
+          "cem1.user_id"
+        )
+        .leftJoin({ p2: "players" }, "sg.second_student_id", "p2.user_id")
+        .leftJoin(
+          { cem2: "club_external_members" },
+          "sg.second_student_id",
+          "cem2.user_id"
+        )
+        .leftJoin({ p3: "players" }, "sg.third_student_id", "p3.user_id")
+        .leftJoin(
+          { cem3: "club_external_members" },
+          "sg.third_student_id",
+          "cem3.user_id"
+        )
+        .leftJoin({ p4: "players" }, "sg.fourth_student_id", "p4.user_id")
+        .leftJoin(
+          { cem4: "club_external_members" },
+          "sg.fourth_student_id",
+          "cem4.user_id"
+        )
+        .andWhere("sg.trainer_id", filter.trainerUserId)
+        .andWhere("sg.is_active", true)
+        .limit(groupsPerPage)
+        .offset(offset);
+
+      if (filter.textSearch !== "") {
+        query.andWhere((builder) => {
+          builder
+            .orWhere("clubs.club_name", "ilike", `%${filter.textSearch}%`)
+            .orWhere("sg.student_group_name", "ilike", `%${filter.textSearch}%`)
+            .orWhere(
+              db.raw("COALESCE(p1.fname, cem1.fname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p1.lname, cem1.lname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p2.fname, cem2.fname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p2.lname, cem2.lname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p3.fname, cem3.fname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p3.lname, cem3.lname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p4.fname, cem4.fname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            )
+            .orWhere(
+              db.raw("COALESCE(p4.lname, cem4.lname)"),
+              "ilike",
+              `%${filter.textSearch}%`
+            );
+        });
+      }
+
+      const groups = await query;
+
+      const count = await db
+        .count("* as total")
+        .from({ sg: "student_groups" })
+        .leftJoin("clubs", function () {
+          this.on("clubs.user_id", "=", "sg.club_id");
+        })
+        .leftJoin({ p1: "players" }, "sg.first_student_id", "p1.user_id")
+        .leftJoin(
+          { cem1: "club_external_members" },
+          "sg.first_student_id",
+          "cem1.user_id"
+        )
+        .leftJoin({ p2: "players" }, "sg.second_student_id", "p2.user_id")
+        .leftJoin(
+          { cem2: "club_external_members" },
+          "sg.second_student_id",
+          "cem2.user_id"
+        )
+        .leftJoin({ p3: "players" }, "sg.third_student_id", "p3.user_id")
+        .leftJoin(
+          { cem3: "club_external_members" },
+          "sg.third_student_id",
+          "cem3.user_id"
+        )
+        .leftJoin({ p4: "players" }, "sg.fourth_student_id", "p4.user_id")
+        .leftJoin(
+          { cem4: "club_external_members" },
+          "sg.fourth_student_id",
+          "cem4.user_id"
+        )
+        .andWhere("sg.trainer_id", filter.trainerUserId)
+        .andWhere("sg.is_active", true);
+
+      const totalPage = Math.ceil(count[0].total / groupsPerPage);
+
+      return { studentGroups: groups, totalPages: totalPage };
+    } catch (error) {
+      console.error("Error fetching trainer student groups: ", error);
+      throw error; // Rethrow the error to ensure it's caught by the caller
+    }
+  },
   async update(updates) {
     return await db("student_groups")
       .where("student_group_id", updates.student_group_id)

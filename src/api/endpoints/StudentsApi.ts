@@ -23,6 +23,16 @@ export const studentsSlice = createApi({
       query: (filter) =>
         `/students/is-student/filter?${new URLSearchParams(filter)}`,
     }),
+    getPaginatedTrainerStudents: builder.query({
+      query: (filter) =>
+        `/students/paginated-trainer-students/filter?${new URLSearchParams(
+          filter
+        )}`,
+    }),
+    getTrainerNewStudentRequestsList: builder.query({
+      query: (trainerUserId) =>
+        `/students/trainer-new-student-requests-list/${trainerUserId}`,
+    }),
     addStudent: builder.mutation({
       query: (student) => ({
         url: "/students",
@@ -44,6 +54,8 @@ export const {
   useGetStudentsQuery,
   useGetStudentsByFilterQuery,
   useGetIsStudentQuery,
+  useGetPaginatedTrainerStudentsQuery,
+  useGetTrainerNewStudentRequestsListQuery,
   useAddStudentMutation,
   useUpdateStudentMutation,
 } = studentsSlice;

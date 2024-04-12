@@ -4,7 +4,7 @@ import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 
-interface PlayerPaymentsFilterProps {
+interface TrainerPaymentsFilterProps {
   clubId: number;
   textSearch: string;
   status: string;
@@ -15,7 +15,7 @@ interface PlayerPaymentsFilterProps {
   handleStatus: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
 }
-const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
+const TrainerPaymentsFilter = (props: TrainerPaymentsFilterProps) => {
   const {
     clubId,
     textSearch,
@@ -42,7 +42,7 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu / Eğitmen adı"
+          placeholder="Oyuncu adı"
         />
       </div>
       <div className={styles["input-container"]}>
@@ -98,4 +98,4 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
   );
 };
 
-export default PlayerPaymentsFilter;
+export default TrainerPaymentsFilter;

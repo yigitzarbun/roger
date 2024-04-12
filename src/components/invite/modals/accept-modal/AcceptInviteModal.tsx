@@ -92,7 +92,11 @@ const AcceptInviteModal = (props) => {
               )}
               {isEventLesson && <td>{acceptBookingData?.lesson_price} TL</td>}
               {isUserPlayer && isEventLesson && (
-                <td>{acceptBookingData?.payment_amount} TL</td>
+                <td>
+                  {acceptBookingData?.court_price +
+                    acceptBookingData?.lesson_price}{" "}
+                  TL
+                </td>
               )}
 
               {((isUserPlayer && isEventTraining) ||

@@ -50,7 +50,7 @@ const TrainerCalendarSearch = (props: TrainerCalendarSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu / Eğitmen adı"
+          placeholder="Oyuncu / Grup adı"
         />
       </div>
       <div className={styles["input-container"]}>
