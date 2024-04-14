@@ -26,7 +26,7 @@ const ExploreTrainersEventsSection = (
 
   const { data: trainerBookings, isLoading: isTrainerBookingLoading } =
     useGetUserProfileEventsQuery(selectedTrainer?.[0]?.user_id);
-
+  console.log(trainerBookings);
   const [isEventsModalOpen, setIsEventsModalOpen] = useState(false);
   const openEventsModal = () => {
     setIsEventsModalOpen(true);
@@ -119,7 +119,7 @@ const ExploreTrainersEventsSection = (
                       className={styles["opponent-name"]}
                     >
                       {booking.event_type_id === 3
-                        ? `${booking.fname} ${booking.lname}`
+                        ? `${booking.playerFname} ${booking.playerLname}`
                         : booking.event_type_id === 6
                         ? trainerGroup(booking.invitee_id)?.student_group_name
                         : "-"}

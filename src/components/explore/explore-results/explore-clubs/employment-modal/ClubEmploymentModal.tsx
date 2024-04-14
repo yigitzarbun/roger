@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { FaWindowClose } from "react-icons/fa";
 
-import Modal from "react-modal";
+import ReactModal from "react-modal";
 
 import { localUrl } from "../../../../../common/constants/apiConstants";
 
@@ -34,11 +34,14 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
 
   const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
-  const { data: isTrainerStaff, isLoading: isTrainerStaffLoading } =
-    useGetIsTrainerClubStaffQuery({
-      clubId: selectedClub?.club_id,
-      trainerUserId: user?.user?.user_id,
-    });
+  const {
+    data: isTrainerStaff,
+    isLoading: isTrainerStaffLoading,
+    refetch: refetchIsTrainer,
+  } = useGetIsTrainerClubStaffQuery({
+    clubId: selectedClub?.club_id,
+    trainerUserId: user?.user?.user_id,
+  });
 
   const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
     useAddClubStaffMutation({});
@@ -95,6 +98,7 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
   useEffect(() => {
     if (isAddClubStaffSuccess || isUpdateStaffSuccess) {
       refetchAllClubStaff();
+      refetchIsTrainer();
       closeEmploymentModal();
     }
   }, [isAddClubStaffSuccess, isUpdateStaffSuccess]);
@@ -104,33 +108,43 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
   }
 
   return (
-    <Modal
+    <ReactModal
       isOpen={employmentModalOpen}
       onRequestClose={closeEmploymentModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1 className={styles.title}>Çalışan Başvurunu Gönder</h1>
-        <FaWindowClose
-          onClick={closeEmploymentModal}
-          className={styles["close-icon"]}
-        />
+      <div className={styles["overlay"]} onClick={closeEmploymentModal} />
+      <div className={styles["modal-content"]}>
+        <h1 className={styles.title}>Çalışan Başvurusu</h1>
+        <div className={styles["opponent-container"]}>
+          <img
+            src={
+              selectedClub?.image
+                ? `${localUrl}/${selectedClub?.image}`
+                : "/images/icons/avatar.jpg"
+            }
+            className={styles["opponent-image"]}
+          />
+          <p>{`${selectedClub?.club_name} kulubüne başvurunuzu göndermeyi onaylıyor musunuz?`}</p>
+        </div>
+        <div className={styles["buttons-container"]}>
+          <button
+            onClick={handleAddClubStaff}
+            className={styles["discard-button"]}
+          >
+            İptal
+          </button>
+          <button
+            onClick={closeEmploymentModal}
+            className={styles["submit-button"]}
+          >
+            Onayla
+          </button>
+        </div>
       </div>
-      <div className={styles["bottom-container"]}>
-        <img
-          src={
-            selectedClub?.image
-              ? `${localUrl}/${selectedClub?.image}`
-              : "/images/icons/avatar.jpg"
-          }
-          className={styles["trainer-image"]}
-        />
-        <h4>{`${selectedClub?.club_name} kulubüne başvurunuzu göndermeyi onaylıyor musunuz?`}</h4>
-      </div>
-      <button onClick={handleAddClubStaff} className={styles["button"]}>
-        Onayla
-      </button>
-    </Modal>
+    </ReactModal>
   );
 };
 

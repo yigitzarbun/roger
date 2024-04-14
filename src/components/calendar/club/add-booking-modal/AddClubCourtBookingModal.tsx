@@ -301,7 +301,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
                   : selectedEventType === 5
                   ? myTrainers?.map((staff) => (
                       <option key={staff.user_id} value={staff.user_id}>
-                        {staff?.fname}
+                        {`${staff.fname} ${staff.lname}`}
                       </option>
                     ))
                   : selectedEventType === 6 &&
@@ -315,7 +315,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
                       )
                       .map((trainer) => (
                         <option key={trainer.user_id} value={trainer.user_id}>
-                          {trainer.fname}
+                          {`${trainer.fname} ${trainer.lname}`}
                         </option>
                       ))}
               </select>

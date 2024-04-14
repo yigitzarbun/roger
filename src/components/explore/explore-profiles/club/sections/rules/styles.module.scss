@@ -2,9 +2,14 @@
 @import "/src/common/styles/common.scss";
 
 .rules-section {
+  background-color: $roger-box-bg-color;
+  width: 100%;
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
   display: flex;
   flex-direction: column;
-  row-gap: 3vh;
+  justify-content: space-between;
+  row-gap: 20px;
   .rules-container {
     display: flex;
     flex-wrap: wrap;

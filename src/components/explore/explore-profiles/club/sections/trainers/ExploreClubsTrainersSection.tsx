@@ -28,7 +28,7 @@ const ExploreClubsTrainersSection = (
 
   const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
     useGetClubTrainersQuery(selectedClub?.[0]?.user_id);
-  console.log(clubStaffTrainers);
+
   const {
     data: trainerExperienceTypes,
     isLoading: isTrainerExperienceTypesLoading,
@@ -65,7 +65,6 @@ const ExploreClubsTrainersSection = (
             <tr>
               <th>Eğitmen</th>
               <th>İsim</th>
-              <th>Soyisim</th>
               <th>Cinsiyet</th>
               <th>Tecrübe</th>
               <th>Konum</th>
@@ -97,8 +96,12 @@ const ExploreClubsTrainersSection = (
                       />
                     </Link>
                   </td>
-                  <td>{trainer.fname}</td>
-                  <td>{trainer.lname}</td>
+                  <td>
+                    <Link
+                      to={`${paths.EXPLORE_PROFILE}2/${trainer.trainerUserId} `}
+                      className={styles["trainer-name"]}
+                    >{`${trainer.fname} ${trainer.lname}`}</Link>
+                  </td>
                   <td>{trainer.gender}</td>
                   <td>
                     {

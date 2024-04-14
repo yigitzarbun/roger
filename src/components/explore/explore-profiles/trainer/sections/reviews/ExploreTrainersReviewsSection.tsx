@@ -40,7 +40,7 @@ const ExploreTrainersReviewsSection = (
       <h2>Eğitmen Hakkında Değerlendirmeler</h2>
       <div className={styles["reviews-container"]}>
         {eventReviews?.length > 0 ? (
-          eventReviews?.map((review) => (
+          eventReviews?.slice(eventReviews?.length - 2)?.map((review) => (
             <div
               className={styles["review-container-wrapper"]}
               key={review.event_review_id}

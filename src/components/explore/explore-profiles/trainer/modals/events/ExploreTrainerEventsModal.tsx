@@ -38,34 +38,32 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
     <ReactModal
       isOpen={isEventsModalOpen}
       onRequestClose={closeEventsModal}
+      shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
+      overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["top-container"]}>
-        <h1>Geçmiş Etkinlikler</h1>
-        <img
-          src="/images/icons/close.png"
-          onClick={closeEventsModal}
-          className={styles["close-button"]}
-        />
-      </div>
-      <div className={styles["table-container"]}>
-        {trainerBookings?.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Oyuncu</th>
-                <th>Tür</th>
-                <th>Tarih</th>
-                <th>Saat</th>
-                <th>Konum</th>
-                <th>Kort</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trainerBookings
-                ?.slice(trainerBookings.length - 4)
-                ?.map((booking) => (
+      <div className={styles["overlay"]} onClick={closeEventsModal} />
+      <div className={styles["modal-content"]}>
+        <div className={styles["top-container"]}>
+          <h1>Geçmiş Etkinlikler</h1>
+        </div>
+
+        <div className={styles["table-container"]}>
+          {trainerBookings?.length > 0 ? (
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Oyuncu</th>
+                  <th>Tür</th>
+                  <th>Tarih</th>
+                  <th>Saat</th>
+                  <th>Konum</th>
+                  <th>Kort</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trainerBookings?.map((booking) => (
                   <tr
                     key={booking.booking_id}
                     className={styles["opponent-row"]}
@@ -127,7 +125,7 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
                         className={styles["opponent-name"]}
                       >
                         {booking.event_type_id === 3
-                          ? `${booking.fname} ${booking.lname}`
+                          ? `${booking.playerFname} ${booking.playerLname}`
                           : booking.event_type_id === 6
                           ? trainerGroup(booking.invitee_id)?.student_group_name
                           : "-"}
@@ -140,11 +138,12 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
                     <td>{booking?.court_name}</td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>Henüz tamamlanan ders bulunmamaktadır.</p>
-        )}
+              </tbody>
+            </table>
+          ) : (
+            <p>Henüz tamamlanan ders bulunmamaktadır.</p>
+          )}
+        </div>
       </div>
     </ReactModal>
   );

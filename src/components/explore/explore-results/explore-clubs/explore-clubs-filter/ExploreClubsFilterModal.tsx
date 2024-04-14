@@ -37,7 +37,6 @@ const ExploreClubsFilterModal = (props) => {
       <div className={styles["overlay"]} onClick={handleCloseclubFilterModal} />
       <div className={styles["modal-content"]}>
         <h3>Kulüpleri Filtrele</h3>
-
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input

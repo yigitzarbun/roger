@@ -4,13 +4,9 @@ import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
-
-import { useAppSelector } from "../../../../store/hooks";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
@@ -20,23 +16,14 @@ import {
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
 
-import {
-  useGetCourtsByFilterQuery,
-  useGetCourtsQuery,
-} from "../../../../api/endpoints/CourtsApi";
 import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   Booking,
   useUpdateBookingMutation,
-  useGetBookingsQuery,
   useGetBookedCourtHoursQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import {
-  useGetClubStaffByFilterQuery,
-  useGetClubTrainersQuery,
-} from "../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetClubTrainersQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
 
 interface EditClubCourtBookingModalProps {
@@ -60,8 +47,6 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
 
   const { data: myTrainers, isLoading: isMyTrainersLoading } =
     useGetClubTrainersQuery(user?.user?.user_id);
-
-  console.log("my trainers: ", myTrainers);
 
   const { data: myExternalMembers, isLoading: isMyExternalMembersLoading } =
     useGetClubExternalMembersByFilterQuery({
@@ -200,7 +185,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
         invitee_id: selectedBooking?.invitee_id,
       });
     }
-  }, [selectedBooking]);
+  }, [editBookingModalOpen]);
 
   useEffect(() => {
     if (selectedBooking) {
@@ -306,12 +291,29 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                 value={selectedTime}
                 disabled={!selectedDate || !selectedCourt}
               >
-                {availableTimeSlots.map((timeSlot) => (
-                  <option key={timeSlot.start} value={timeSlot.start}>
-                    {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
-                  </option>
-                ))}
+                {/* Render default option with selectedBooking.event_time */}
+                <option value={selectedBooking.event_time}>
+                  {`${selectedBooking.event_time?.slice(0, 5)} - ${
+                    Number(selectedBooking.event_time?.split(":")[0]) +
+                    1 +
+                    ":00"
+                  }`}
+                </option>
+
+                {/* Render other available time slots */}
+                {availableTimeSlots.map((timeSlot) => {
+                  // Skip rendering the selectedBooking.event_time
+                  if (timeSlot.start === selectedBooking.event_time) {
+                    return null;
+                  }
+                  return (
+                    <option key={timeSlot.start} value={timeSlot.start}>
+                      {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
+                    </option>
+                  );
+                })}
               </select>
+
               {errors.event_time && (
                 <span className={styles["error-field"]}>
                   {errors.event_time.message}
@@ -358,6 +360,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               <select
                 {...register("inviter_id", { required: true })}
                 disabled={selectedEventType === 6 && !selectedGroup}
+                defaultValue={selectedBooking.inviter_id}
               >
                 {selectedEventType === 4 && myExternalMembers
                   ? myExternalMembers?.map((member) => (
@@ -367,7 +370,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                     ))
                   : selectedEventType === 5
                   ? myTrainers?.map((staff) => (
-                      <option key={staff.user_id} value={staff.user_id}>
+                      <option
+                        key={staff.trainerUserId}
+                        value={staff.trainerUserId}
+                      >
                         {`${staff.fname} ${staff.lname}`}
                       </option>
                     ))
@@ -375,14 +381,17 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                     myTrainers
                       ?.filter(
                         (trainer) =>
-                          trainer.user_id ===
+                          trainer.trainerUserId ===
                           myGroups?.find(
                             (group) => group.user_id === selectedGroup
                           )?.trainer_id
                       )
                       ?.map((trainer) => (
-                        <option key={trainer.user_id} value={trainer.user_id}>
-                          {trainer.fname}
+                        <option
+                          key={trainer.trainerUserId}
+                          value={trainer.trainerUserId}
+                        >
+                          {`${trainer.fname} ${trainer.lname}`}
                         </option>
                       ))}
               </select>

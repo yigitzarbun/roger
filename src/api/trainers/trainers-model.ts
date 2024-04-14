@@ -163,10 +163,10 @@ const trainersModel = {
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
           db.raw("COUNT(DISTINCT students.student_id) as studentCount"),
           db.raw(
-            "AVG(DISTINCT event_reviews.review_score) as averageReviewScore"
+            "AVG(CASE WHEN event_reviews.is_active = true THEN event_reviews.review_score ELSE NULL END) as averageReviewScore"
           ),
           db.raw(
-            "COUNT(DISTINCT event_reviews.review_score) as reviewScoreCount"
+            "COUNT(DISTINCT CASE WHEN event_reviews.is_active = true THEN event_reviews.event_review_id ELSE NULL END) as reviewScoreCount"
           )
         )
         .from("trainers")
@@ -186,8 +186,14 @@ const trainersModel = {
         .leftJoin("bookings", function () {
           this.on("bookings.inviter_id", "=", userId)
             .orOn("bookings.invitee_id", "=", userId)
-            .andOn("bookings.event_type_id", "=", 3)
-            .andOn("bookings.booking_status_type_id", 5);
+            .andOn(function () {
+              this.on(function () {
+                this.on("bookings.event_type_id", "=", 3)
+                  .orOn("bookings.event_type_id", "=", 5)
+                  .orOn("bookings.event_type_id", "=", 6);
+              });
+            })
+            .andOn("bookings.booking_status_type_id", "=", 5);
         })
         .leftJoin("club_staff", function () {
           this.on("club_staff.user_id", "=", userId).andOn(

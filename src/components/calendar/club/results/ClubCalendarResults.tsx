@@ -166,53 +166,74 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
             {clubCalendarBookings?.bookings?.map((booking) => (
               <tr key={booking.booking_id} className={styles["booking-row"]}>
                 <td>
-                  <Link
-                    to={`${Paths.EXPLORE_PROFILE}${
-                      booking.event_type_id === 1 || booking.event_type_id === 2
-                        ? 1
-                        : booking.event_type_id === 3
-                        ? 2
-                        : ""
-                    }/${booking.inviter_id}`}
-                    className={styles.name}
-                  >
-                    {booking.invitername}
-                  </Link>
+                  {booking.event_type_id !== 4 ? (
+                    <Link
+                      to={`${Paths.EXPLORE_PROFILE}${
+                        booking.event_type_id === 1 ||
+                        booking.event_type_id === 2
+                          ? 1
+                          : booking.event_type_id === 3
+                          ? 2
+                          : booking.event_type_id === 5 ||
+                            booking.event_type_id === 6
+                          ? 2
+                          : ""
+                      }/${booking.inviter_id}`}
+                      className={styles.name}
+                    >
+                      {booking.invitername}
+                    </Link>
+                  ) : (
+                    booking.invitername
+                  )}
                 </td>
 
                 <td>
-                  <Link
-                    to={`${Paths.EXPLORE_PROFILE}${
-                      booking.event_type_id === 1 || booking.event_type_id === 2
-                        ? 1
-                        : booking.event_type_id === 3
-                        ? 2
-                        : ""
-                    }/${
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 1 ||
-                      users?.find((user) => user.user_id === booking.invitee_id)
-                        ?.user_type_id === 2
-                        ? booking.invitee_id
-                        : users?.find(
-                            (user) => user.user_id === booking.invitee_id
-                          )?.user_type_id === 6
-                        ? myGroups?.find(
-                            (group) => group.user_id === booking.invitee_id
-                          )?.club_id
-                        : ""
-                    }`}
-                    className={styles.name}
-                  >
-                    {booking.inviteename}
-                  </Link>
+                  {booking.event_type_id === 1 ||
+                  booking.event_type_id === 2 ||
+                  booking.event_type_id === 3 ? (
+                    <Link
+                      to={`${Paths.EXPLORE_PROFILE}${
+                        booking.event_type_id === 1 ||
+                        booking.event_type_id === 2
+                          ? 1
+                          : booking.event_type_id === 3
+                          ? 2
+                          : ""
+                      }/${
+                        users?.find(
+                          (user) => user.user_id === booking.invitee_id
+                        )?.user_type_id === 1 ||
+                        users?.find(
+                          (user) => user.user_id === booking.invitee_id
+                        )?.user_type_id === 2
+                          ? booking.invitee_id
+                          : users?.find(
+                              (user) => user.user_id === booking.invitee_id
+                            )?.user_type_id === 6
+                          ? myGroups?.find(
+                              (group) => group.user_id === booking.invitee_id
+                            )?.club_id
+                          : ""
+                      }`}
+                      className={styles.name}
+                    >
+                      {booking.inviteename}
+                    </Link>
+                  ) : (
+                    booking.inviteename
+                  )}
                 </td>
                 <td>{booking?.event_type_name}</td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
                 <td>{booking?.club_name}</td>
-                <td>{booking?.price_hour} TL</td>
+                <td>
+                  {booking?.event_type_id !== 6
+                    ? `${booking?.price_hour} TL}`
+                    : "-"}
+                </td>
                 <td>
                   {booking.event_type_id === 4 ||
                   booking.event_type_id === 5 ||

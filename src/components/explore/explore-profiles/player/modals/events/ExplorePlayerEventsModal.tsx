@@ -26,7 +26,6 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
     playerBookings,
     selectedPlayer,
   } = props;
-  console.log(playerBookings);
   return (
     <ReactModal
       isOpen={isEventsModalOpen}

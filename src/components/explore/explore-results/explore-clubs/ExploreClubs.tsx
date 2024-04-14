@@ -244,6 +244,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     courtStructureType,
     clubTrainers,
     subscribedClubs,
+    employmentModalOpen,
   ]);
   if (
     isClubsLoading ||
