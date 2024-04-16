@@ -7,6 +7,7 @@ import TrainerName from "./trainer-name/TrainerName";
 import TrainerAge from "./trainer-age/TrainerAge";
 import TrainerLocation from "./trainer-location/TrainerLocation";
 import TrainerGender from "./trainer-gender/TrainerGender";
+import TrainerExperience from "./trainer-experience/TrainerExperience";
 
 interface TrainerAccountDetailsProps {
   trainerDetails: any;
@@ -14,6 +15,7 @@ interface TrainerAccountDetailsProps {
 }
 const TrainerAccountDetails = (props: TrainerAccountDetailsProps) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
   return (
     <div className={styles["trainer-account-details-container"]}>
       <TrainerImage
@@ -33,6 +35,10 @@ const TrainerAccountDetails = (props: TrainerAccountDetailsProps) => {
         refetchTrainerDetails={refetchTrainerDetails}
       />
       <TrainerGender
+        trainerDetails={trainerDetails}
+        refetchTrainerDetails={refetchTrainerDetails}
+      />
+      <TrainerExperience
         trainerDetails={trainerDetails}
         refetchTrainerDetails={refetchTrainerDetails}
       />

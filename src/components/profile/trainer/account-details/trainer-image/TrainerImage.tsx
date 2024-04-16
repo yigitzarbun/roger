@@ -18,7 +18,9 @@ const TrainerImage = (props) => {
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const existingImage = trainerDetails?.image ? trainerDetails?.image : null;
+  const existingImage = trainerDetails?.trainerImage
+    ? trainerDetails?.trainerImage
+    : null;
 
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -32,10 +34,9 @@ const TrainerImage = (props) => {
 
   const { handleSubmit, reset, setValue } = useForm({
     defaultValues: {
-      image: trainerDetails?.image,
+      image: trainerDetails?.trainerImage,
     },
   });
-
   const onSubmit: SubmitHandler<Trainer> = () => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
@@ -55,7 +56,7 @@ const TrainerImage = (props) => {
       trainer_experience_type_id: Number(
         trainerDetails?.trainer_experience_type_id
       ),
-      user_id: trainerDetails?.user_id,
+      user_id: trainerDetails?.trainerUserId,
     };
     updateTrainer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
@@ -93,7 +94,7 @@ const TrainerImage = (props) => {
             src={
               selectedImage
                 ? URL.createObjectURL(selectedImage)
-                : trainerDetails?.image || "/images/icons/avatar.jpg"
+                : trainerDetails?.trainerImage || "/images/icons/avatar.jpg"
             }
             alt="trainer-image"
             className={styles["profile-image"]}

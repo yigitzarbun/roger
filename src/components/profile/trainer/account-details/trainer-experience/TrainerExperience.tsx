@@ -4,37 +4,35 @@ import { toast } from "react-toastify";
 import styles from "./styles.module.scss";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
+import { useGetTrainerExperienceTypesQuery } from "../../../../../api/endpoints/TrainerExperienceTypesApi";
 import {
   Trainer,
   useUpdateTrainerMutation,
 } from "../../../../../api/endpoints/TrainersApi";
+import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 
-const TrainerName = (props) => {
+const TrainerExperience = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+  const { data: trainerExperienceTypes } = useGetTrainerExperienceTypesQuery(
+    {}
+  );
   const dispatch = useAppDispatch();
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
   const [updatedProfile, setUpdatedProfile] = useState(null);
-  const [newFname, setNewFname] = useState("");
-  const [newLname, setNewLname] = useState("");
+  const [newType, setNewType] = useState(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
-  const handleFnameChange = (e) => {
-    setNewFname(e.target.value);
-  };
-
-  const handleLnameChange = (e) => {
-    setNewLname(e.target.value);
+  const handleLevelChange = (e) => {
+    setNewType(Number(e.target.value));
   };
 
   const handleButtonDisabled = () => {
-    const isFnameEmpty = !newFname.trim();
-    const isLnameEmpty = !newLname.trim();
+    const isLevelEmpty = !newType;
 
     if (
-      (isFnameEmpty && isLnameEmpty) ||
-      (newFname === trainerDetails?.fname && newLname === trainerDetails?.lname)
+      isLevelEmpty ||
+      newType === trainerDetails?.trainer_experience_type_id
     ) {
       setButtonDisabled(true);
     } else {
@@ -47,18 +45,19 @@ const TrainerName = (props) => {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
-      fname: trainerDetails?.fname,
-      lname: trainerDetails?.lname,
+      trainer_experience_type_id: Number(
+        trainerDetails?.trainer_experience_type_id
+      ),
     },
   });
-
   const onSubmit: SubmitHandler<Trainer> = (formData) => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
-      fname: formData?.fname,
-      lname: formData?.lname,
+      fname: trainerDetails?.fname,
+      lname: trainerDetails?.lname,
       birth_year: trainerDetails?.birth_year,
       gender: trainerDetails?.gender,
       phone_number: null,
@@ -70,9 +69,7 @@ const TrainerName = (props) => {
       trainer_employment_type_id: Number(
         trainerDetails?.trainer_employment_type_id
       ),
-      trainer_experience_type_id: Number(
-        trainerDetails?.trainer_experience_type_id
-      ),
+      trainer_experience_type_id: Number(formData?.trainer_experience_type_id),
       user_id: trainerDetails?.user_id,
     };
     updateTrainer(updatedProfileData);
@@ -82,50 +79,52 @@ const TrainerName = (props) => {
   useEffect(() => {
     if (isSuccess) {
       dispatch(updateTrainerDetails(updatedProfile));
-      setButtonDisabled(true);
       toast.success("Profil güncellendi");
       refetchTrainerDetails();
       reset(updatedProfile);
+      setButtonDisabled(true);
     }
   }, [isSuccess]);
 
   useEffect(() => {
     handleButtonDisabled();
-  }, [newFname, newLname]);
-
+  }, [newType]);
+  useEffect(() => {
+    if (trainerExperienceTypes && trainerExperienceTypes.length > 0) {
+      setValue(
+        "trainer_experience_type_id",
+        Number(trainerDetails?.trainer_experience_type_id)
+      );
+    }
+  }, [trainerExperienceTypes, setValue, trainerDetails]);
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Eğitmen Adı</h4>
+        <h4>Seviye</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className={styles["form-container"]}
         encType="multipart/form-data"
       >
-        <div className={styles["input-outer-container"]}>
-          <div className={styles["input-container"]}>
-            <label>İsim</label>
-            <input
-              {...register("fname", { required: true })}
-              type="text"
-              onChange={handleFnameChange}
-            />
-            {errors.fname && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
-          <div className={styles["input-container"]}>
-            <label>Soyisim</label>
-            <input
-              {...register("lname", { required: true })}
-              type="text"
-              onChange={handleLnameChange}
-            />
-            {errors.lname && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
-            )}
-          </div>
+        <div className={styles["input-container"]}>
+          <label>Tecrübe</label>
+          <select
+            {...register("trainer_experience_type_id", { required: true })}
+            onChange={handleLevelChange}
+          >
+            {trainerExperienceTypes?.map((experienceType) => (
+              <option
+                key={experienceType.trainer_experience_type_id}
+                value={experienceType.trainer_experience_type_id}
+              >
+                {experienceType.trainer_experience_type_name}
+              </option>
+            ))}
+          </select>
+          {errors.trainer_experience_type_id && (
+            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+          )}
         </div>
         <button
           type="submit"
@@ -141,4 +140,4 @@ const TrainerName = (props) => {
   );
 };
 
-export default TrainerName;
+export default TrainerExperience;

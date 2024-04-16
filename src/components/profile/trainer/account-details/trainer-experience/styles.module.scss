@@ -1,7 +1,7 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.trainer-bank-details-container {
+.trainer-account-details-container {
   background-color: $roger-box-bg-color;
   width: 100%;
   border-radius: $roger-border-radius;
@@ -23,31 +23,37 @@
       font-size: 1.2rem;
     }
     p {
-      width: 500px;
+      width: 400px;
     }
   }
 
-  .section {
+  .form-container {
     display: flex;
+    column-gap: 2vh;
     justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    align-items: end;
 
-    .card-exists-container {
+    label {
+      font-size: 0.9rem;
+    }
+
+    .input-container {
       display: flex;
-      align-items: center;
-      column-gap: 1vw;
-      .done {
-        color: $roger-green;
-        font-size: 1.2rem;
-      }
-      .card-exists-text {
-        color: $roger-green;
+      flex-direction: column;
+      row-gap: 1vh;
+      width: 250px;
+
+      select {
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        border: 1px solid $roger-border-color;
+        width: 100%;
+        background-color: inherit;
       }
     }
-    .button {
-      background-color: $roger-white;
-      color: black;
+
+    .active-button {
+      background-color: $roger-blue;
       border: none;
       width: 200px;
       padding: $roger-button-padding;
@@ -56,9 +62,18 @@
       cursor: pointer;
       height: 40px;
     }
-    .button:hover {
-      background-color: $roger-blue;
-      color: $roger-white;
+    .active-button:hover {
+      background-color: $roger-black-dark;
+    }
+    .disabled-button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 200px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 1rem;
+      cursor: not-allowed;
+      height: 40px;
     }
   }
 }

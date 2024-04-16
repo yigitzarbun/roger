@@ -3,17 +3,19 @@ import { toast } from "react-toastify";
 
 import styles from "./styles.module.scss";
 
-import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Player } from "../../../../../api/endpoints/PlayersApi";
 import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
+import {
+  Trainer,
+  useUpdateTrainerMutation,
+} from "../../../../../api/endpoints/TrainersApi";
 
 const TrainerAge = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
   const dispatch = useAppDispatch();
 
-  const [updateTrainer, { isSuccess }] = useUpdatePlayerMutation({});
+  const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
   const [updatedProfile, setUpdatedProfile] = useState(null);
   const [newBirthYear, setNewBirthYear] = useState(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -43,7 +45,7 @@ const TrainerAge = (props) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Player> = (formData) => {
+  const onSubmit: SubmitHandler<Trainer> = (formData) => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
       fname: trainerDetails?.fname,
@@ -73,8 +75,8 @@ const TrainerAge = (props) => {
       dispatch(updateTrainerDetails(updatedProfile));
       toast.success("Profil güncellendi");
       refetchTrainerDetails();
-      reset(updatedProfile);
       setButtonDisabled(true);
+      reset(updatedProfile);
     }
   }, [isSuccess]);
 

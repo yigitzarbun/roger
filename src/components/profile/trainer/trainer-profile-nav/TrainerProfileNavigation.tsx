@@ -17,7 +17,7 @@ const TrainerProfileNavigation = (props: TrainerProfileNavProps) => {
       </h4>
       <h4
         onClick={() => handlePage("payment")}
-        className={page === "account" ? styles["active-page"] : ""}
+        className={page === "payment" ? styles["active-page"] : ""}
       >
         Ödeme
       </h4>

@@ -20,11 +20,13 @@ export const emailUnique = async (
   next: NextFunction
 ) => {
   const { email } = req.body;
-  const emailExist = await usersModel.getByFilter({ email });
-  if (emailExist) {
-    res.status(400).json({ message: "Email is already registered" });
-  } else {
+  const userExists = await usersModel.getByFilter({ email });
+  if (!userExists) {
     next();
+  } else if (userExists && userExists?.user?.user_status_type_id === 3) {
+    next();
+  } else {
+    res.status(400).json({ message: "Email is already registered" });
   }
 };
 

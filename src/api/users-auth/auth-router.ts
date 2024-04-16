@@ -23,8 +23,26 @@ authRouter.post(
       const credentials = req.body;
       const hash = bcrypt.hashSync(credentials.password, 8);
       credentials.password = hash;
-      const newUser = await usersModel.add(credentials);
-      res.status(201).json(newUser);
+      const userPreviouslyExisted = await usersModel.getUserByEmail(
+        credentials.email
+      );
+
+      if (userPreviouslyExisted.length > 0) {
+        const returningUser = {
+          user_id: userPreviouslyExisted?.[0]?.user_id,
+          email: credentials?.email,
+          user_type_id: credentials?.user_type_id,
+          user_status_type_id: 1,
+          language_id: credentials?.language_id,
+          password: credentials?.password,
+          registered_at: userPreviouslyExisted?.[0]?.registered_at,
+        };
+        const updatedUser = await usersModel.update(returningUser);
+        res.status(201).json(updatedUser);
+      } else {
+        const newUser = await usersModel.add(credentials);
+        res.status(201).json(newUser);
+      }
     } catch (error) {
       next(error);
     }

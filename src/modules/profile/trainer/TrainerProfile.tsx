@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../store/hooks";
 import TrainerProfileNavigation from "../../../components/profile/trainer/trainer-profile-nav/TrainerProfileNavigation";
 import { useGetTrainerProfileDetailsQuery } from "../../../api/endpoints/TrainersApi";
 import PageLoading from "../../../components/loading/PageLoading";
+import TrainerOtherDetails from "../../../components/profile/trainer/other-details/TrainerOtherDetails";
 
 const TrainerProfile = () => {
   const user = useAppSelector((store) => store?.user?.user);
@@ -40,7 +41,18 @@ const TrainerProfile = () => {
               refetchTrainerDetails={refetchTrainerDetails}
             />
           )}
-          {page === "payment" && <TrainerBankAccountDetails />}
+          {page === "payment" && (
+            <TrainerBankAccountDetails
+              trainerDetails={trainerDetails?.[0]}
+              refetchTrainerDetails={refetchTrainerDetails}
+            />
+          )}
+          {page === "other" && (
+            <TrainerOtherDetails
+              trainerDetails={trainerDetails?.[0]}
+              refetchTrainerDetails={refetchTrainerDetails}
+            />
+          )}
         </div>
       </div>
     </div>

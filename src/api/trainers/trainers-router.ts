@@ -84,8 +84,19 @@ trainersRouter.post(
       if (req.file) {
         trainerData.image = req.file.path;
       }
-      const newTrainer = await trainersModel.add(trainerData);
-      res.status(201).json(newTrainer);
+
+      const returningTrainer = await trainersModel.getByFilter({
+        user_id: Number(trainerData.user_id),
+      });
+
+      if (returningTrainer.length > 0) {
+        trainerData.trainer_id = returningTrainer?.[0]?.trainer_id;
+        let newTrainer = await trainersModel.update(trainerData);
+        res.status(201).json(newTrainer);
+      } else {
+        let newTrainer = await trainersModel.add(trainerData);
+        res.status(201).json(newTrainer);
+      }
     } catch (error) {
       next(error);
     }

@@ -3,18 +3,20 @@ import { toast } from "react-toastify";
 
 import styles from "./styles.module.scss";
 
-import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Player } from "../../../../../api/endpoints/PlayersApi";
-import { updatePlayerDetails } from "../../../../../store/slices/authSlice";
+import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { useGetLocationsQuery } from "../../../../../api/endpoints/LocationsApi";
+import {
+  Trainer,
+  useUpdateTrainerMutation,
+} from "../../../../../api/endpoints/TrainersApi";
 
 const TrainerLocation = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
   const { data: locations } = useGetLocationsQuery({});
   const dispatch = useAppDispatch();
-  const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+  const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
   const [updatedProfile, setUpdatedProfile] = useState(null);
   const [newLocation, setNewLocation] = useState(null);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -44,7 +46,7 @@ const TrainerLocation = (props) => {
       location_id: Number(trainerDetails?.location_id),
     },
   });
-  const onSubmit: SubmitHandler<Player> = (formData) => {
+  const onSubmit: SubmitHandler<Trainer> = (formData) => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
       fname: trainerDetails?.fname,
@@ -65,13 +67,13 @@ const TrainerLocation = (props) => {
       ),
       user_id: trainerDetails?.user_id,
     };
-    updatePlayer(updatedProfileData);
+    updateTrainer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
   };
 
   useEffect(() => {
     if (isSuccess) {
-      dispatch(updatePlayerDetails(updatedProfile));
+      dispatch(updateTrainerDetails(updatedProfile));
       toast.success("Profil güncellendi");
       refetchTrainerDetails();
       reset(updatedProfile);

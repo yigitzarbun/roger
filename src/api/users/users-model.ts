@@ -6,6 +6,15 @@ const usersModel = {
     return users;
   },
 
+  async getUserByEmail(email: string) {
+    try {
+      const user = await db("users").where("email", email);
+      return user;
+    } catch (error) {
+      console.log("Error fetching user by email: ", error);
+    }
+  },
+
   async getByFilter(filter) {
     const user = await db("users").where(filter).first();
 
@@ -61,7 +70,11 @@ const usersModel = {
   },
 
   async update(updates) {
-    return await db("users").where("user_id", updates.user_id).update(updates);
+    const [updatedUser] = await db("users")
+      .where("user_id", updates.user_id)
+      .update(updates)
+      .returning("*");
+    return updatedUser;
   },
 };
 
