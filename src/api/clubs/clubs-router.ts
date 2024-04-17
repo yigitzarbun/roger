@@ -71,8 +71,17 @@ clubsRouter.post(
       if (req.file) {
         clubData.image = req.file.path;
       }
-      const newClub = await clubsModel.add(clubData);
-      res.status(201).json(newClub);
+
+      const returningClub = await clubsModel.getByUserId(clubData.user_id);
+
+      if (returningClub.length > 0) {
+        clubData.club_id = returningClub?.[0]?.club_id;
+        const updatedClub = await clubsModel.update(clubData);
+        res.status(201).json(updatedClub);
+      } else {
+        const newClub = await clubsModel.add(clubData);
+        res.status(201).json(newClub);
+      }
     } catch (error) {
       next(error);
     }

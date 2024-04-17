@@ -91,10 +91,10 @@ trainersRouter.post(
 
       if (returningTrainer.length > 0) {
         trainerData.trainer_id = returningTrainer?.[0]?.trainer_id;
-        let newTrainer = await trainersModel.update(trainerData);
-        res.status(201).json(newTrainer);
+        const updatedTrainer = await trainersModel.update(trainerData);
+        res.status(201).json(updatedTrainer);
       } else {
-        let newTrainer = await trainersModel.add(trainerData);
+        const newTrainer = await trainersModel.add(trainerData);
         res.status(201).json(newTrainer);
       }
     } catch (error) {

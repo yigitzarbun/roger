@@ -83,8 +83,17 @@ playersRouter.post(
       if (req.file) {
         playerData.image = req.file.path;
       }
-      const newPlayer = await playersModel.add(playerData);
-      res.status(201).json(newPlayer);
+      const returningPlayer = await playersModel.getByUserId(
+        Number(playerData.user_id)
+      );
+      if (returningPlayer.length > 0) {
+        playerData.player_id = returningPlayer?.[0]?.player_id;
+        const updatedPlayer = await playersModel.update(playerData);
+        res.status(201).json(updatedPlayer);
+      } else {
+        const newPlayer = await playersModel.add(playerData);
+        res.status(201).json(newPlayer);
+      }
     } catch (error) {
       next(error);
     }

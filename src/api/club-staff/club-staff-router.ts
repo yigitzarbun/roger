@@ -92,8 +92,18 @@ clubStaffRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const newClubStaff = await clubStaffModel.add(req.body);
-      res.status(201).json(newClubStaff);
+      const clubStaffData = req.body;
+      const returningStaff = await clubStaffModel.getByFilter({
+        user_id: Number(clubStaffData.user_id),
+      });
+      if (returningStaff.length > 0) {
+        clubStaffData.club_staff_id = returningStaff?.[0]?.club_staff_id;
+        const updatedStaff = await clubStaffModel.update(clubStaffData);
+        res.status(201).json(updatedStaff);
+      } else {
+        const newClubStaff = await clubStaffModel.add(clubStaffData);
+        res.status(201).json(newClubStaff);
+      }
     } catch (error) {
       next(error);
     }

@@ -162,7 +162,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
           user_id: Number(newUser.user_id),
         };
         await addTrainer(trainerRegisterData);
-        // register trainer as club staff, if applicablenp
+        // register trainer as club staff, if applicable
         if (Number(formData.trainer_employment_type_id) !== 1) {
           const clubStaffRegisterData = {
             fname: formData.fname,

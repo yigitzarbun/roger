@@ -5,7 +5,7 @@ import styles from "./styles.module.scss";
 import ClubAccountDetails from "../../../components/profile/club/account-details/ClubAccountDetails";
 import ClubBankAccountDetails from "../../../components/profile/club/bank-details/ClubBankAccountDetails";
 import ClubRules from "../../../components/profile/club/club-rules/ClubRules";
-import { useGetClubByUserIdQuery } from "../../../api/endpoints/ClubsApi";
+import { useGetClubProfileDetailsQuery } from "../../../api/endpoints/ClubsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import ClubProfileNavigation from "../../../components/profile/club/club-profile-nav/ClubProfileNavigation";
 import ClubOtherDetails from "../../../components/profile/club/club-other-details/ClubOtherDetails";
@@ -16,7 +16,7 @@ const ClubProfile = () => {
     data: clubDetails,
     isLoading: isClubDetailsLoading,
     refetch: refetchClubDetails,
-  } = useGetClubByUserIdQuery(user?.user?.user_id);
+  } = useGetClubProfileDetailsQuery(user?.user?.user_id);
 
   const [page, setPage] = useState("account");
 

@@ -68,6 +68,7 @@ const Header = () => {
 
   const { data: trainerDetails, isLoading: isTrainerDetailsLoading } =
     useGetTrainerByUserIdQuery(user?.user?.user?.user_id);
+
   const { data: clubDetails, isLoading: isClubDetailsLoading } =
     useGetClubByUserIdQuery(user?.user?.user?.user_id);
 
@@ -78,6 +79,7 @@ const Header = () => {
     navigate(paths[path]);
     handleCloseProfileModal();
   };
+
   let isUserPlayer = false;
   let isUserTrainer = false;
   let isUserClub = false;
@@ -180,9 +182,9 @@ const Header = () => {
                 src={
                   isUserPlayer && playerDetails?.[0]?.image
                     ? `${localUrl}/${playerDetails?.[0]?.image}`
-                    : //: isUserTrainer && trainerDetails?.[0]?.image
-                    //? trainerDetails?.[0]?.image
-                    isUserClub && clubDetails?.[0]?.image
+                    : isUserTrainer && trainerDetails?.[0]?.image
+                    ? trainerDetails?.[0]?.image
+                    : isUserClub && clubDetails?.[0]?.image
                     ? clubDetails?.[0]?.image
                     : "/images/icons/avatar.jpg"
                 }

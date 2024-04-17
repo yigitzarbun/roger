@@ -21,6 +21,7 @@ const DeleteClubModal = (props) => {
   const handleDeleteConfirmation = (e) => {
     setDeleteConfirmation(e.target.value);
   };
+
   const handleDelete = () => {
     if (
       email === clubDetails?.[0]?.email &&
