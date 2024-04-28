@@ -21,7 +21,14 @@ export type BookingData = {
   registered_at: string;
 };
 
-const CancelInviteModal = (props) => {
+interface CancelInviteModalProps {
+  isModalOpen: boolean;
+  handleCloseModal: () => void;
+  bookingData: any;
+  handleCancelBooking: () => void;
+  user: any;
+}
+const CancelInviteModal = (props: CancelInviteModalProps) => {
   const {
     isModalOpen,
     handleCloseModal,
@@ -39,6 +46,7 @@ const CancelInviteModal = (props) => {
     bookingData?.event_type_id === 3 ||
     bookingData?.event_type_id === 5 ||
     bookingData?.event_type_id === 6;
+
   return (
     <ReactModal
       isOpen={isModalOpen}
@@ -70,10 +78,10 @@ const CancelInviteModal = (props) => {
             className={styles["opponent-image"]}
           />
           <p className={styles["player-name"]}>
-            {bookingData?.user_type_id === 6
+            {bookingData?.event_type_id === 6
               ? bookingData?.student_group_name
               : bookingData?.event_type_id === 3 && isUserTrainer
-              ? `${bookingData?.playerFName} ${bookingData?.playerLName}`
+              ? `${bookingData?.playerFname} ${bookingData?.playerLname}`
               : `${bookingData?.fname} ${bookingData?.lname}`}
           </p>
         </div>

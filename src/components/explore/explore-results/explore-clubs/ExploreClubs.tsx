@@ -41,7 +41,6 @@ import ExploreClubsFilterModal from "./explore-clubs-filter/ExploreClubsFilterMo
 
 interface ExploreClubsProps {
   user: User;
-  clubs: PaginatedClubs;
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
   locations: Location[];

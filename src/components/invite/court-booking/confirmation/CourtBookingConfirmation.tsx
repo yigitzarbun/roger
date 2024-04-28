@@ -7,9 +7,12 @@ interface CourtBookingConfirmationProps {
   handleModalSubmit: () => void;
   eventType: string;
   selectedCourtPrice: number;
+  lessonPrice: number;
   invitee: any;
   isUserPlayer: boolean;
   isUserTrainer: boolean;
+  isButtonDisabled: boolean;
+  buttonText: string;
 }
 const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
   const {
@@ -18,8 +21,11 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
     eventType,
     selectedCourtPrice,
     invitee,
+    lessonPrice,
     isUserTrainer,
     isUserPlayer,
+    isButtonDisabled,
+    buttonText,
   } = props;
   return (
     <div className={styles["confirmation-container"]}>
@@ -47,7 +53,17 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
               </td>
               <td>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</td>
               <td>{eventType}</td>
-              <td>{selectedCourtPrice / 2} TL</td>
+              <td>
+                {isUserPlayer &&
+                (eventType === "Maç" || eventType === "Antreman")
+                  ? selectedCourtPrice / 2
+                  : isUserPlayer && eventType === "Ders"
+                  ? selectedCourtPrice + lessonPrice
+                  : isUserTrainer && eventType === "Ders"
+                  ? lessonPrice
+                  : ""}{" "}
+                TL
+              </td>
             </tr>
           </tbody>
         </table>
@@ -66,8 +82,12 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
         >
           İptal
         </button>
-        <button onClick={handleModalSubmit} className={styles["submit-button"]}>
-          Onayla
+        <button
+          onClick={handleModalSubmit}
+          className={styles["submit-button"]}
+          disabled={isButtonDisabled}
+        >
+          {isButtonDisabled ? buttonText : "Davet Gönder"}
         </button>
       </div>
     </div>

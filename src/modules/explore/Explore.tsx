@@ -196,7 +196,6 @@ const Explore = () => {
         <ExploreClubs
           user={user}
           locations={locations}
-          clubs={clubs}
           clubTypes={clubTypes}
           courts={courts}
           clubStaff={clubStaff}

@@ -39,7 +39,8 @@ const TrainerCalendarSearch = (props: TrainerCalendarSearchProps) => {
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
-  if (isClubsLoading) {
+
+  if (isClubsLoading || isEventTypesLoading) {
     return <PageLoading />;
   }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -10,6 +10,8 @@ import { ImBlocked } from "react-icons/im";
 
 import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
+import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
+import { useGetBanksQuery } from "../../../api/endpoints/BanksApi";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
@@ -26,6 +28,7 @@ interface ClubCourtResultsProps {
   handleCourtPage: (e) => void;
   handleNextPage: () => void;
   handlePrevPage: () => void;
+  refetchClubDetails: () => void;
 }
 const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   const {
@@ -43,6 +46,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     handleCourtPage,
     handleNextPage,
     handlePrevPage,
+    refetchClubDetails,
   } = props;
 
   const clubBankDetailsExist =
@@ -57,21 +61,43 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   for (let i = 1; i <= currentClubCourts?.totalPages; i++) {
     pageNumbers.push(i);
   }
+  const [isEditBankModalOpen, setIsEditBankModalOpen] = useState(false);
+
+  const handleOpenEditBankModal = () => {
+    setIsEditBankModalOpen(true);
+  };
+
+  const handleCloseEditBankModal = () => {
+    setIsEditBankModalOpen(false);
+  };
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
+  const bankDetails = {
+    bank_id: currentClub?.[0]?.bank_id,
+    iban: currentClub?.[0]?.iban,
+    name_on_bank_account: currentClub?.[0]?.name_on_bank_account,
+  };
+
+  const bankDetailsExist =
+    bankDetails?.iban &&
+    bankDetails?.bank_id &&
+    bankDetails?.name_on_bank_account;
 
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kortlar</h2>
-          <button
-            onClick={openAddCourtModal}
-            className={styles["add-court-button"]}
-            disabled={!clubBankDetailsExist}
-          >
-            {clubBankDetailsExist
-              ? "Yeni Kort Ekle"
-              : "Kort Eklemek İçin Banka Bilgilerinizi Ekleyin"}
-          </button>
+          {clubBankDetailsExist && (
+            <button
+              onClick={openAddCourtModal}
+              className={styles["add-court-button"]}
+              disabled={!clubBankDetailsExist}
+            >
+              {clubBankDetailsExist
+                ? "Yeni Kort Ekle"
+                : "Banka Bilgilerini Ekle"}
+            </button>
+          )}
         </div>
         {currentClubCourts?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -86,7 +112,14 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
           </div>
         )}
       </div>
-      {currentClubCourts?.courts?.length === 0 ? (
+      {currentClubCourts?.courts?.length === 0 && !clubBankDetailsExist ? (
+        <div className={styles["add-bank-details-container"]}>
+          <p>Kort eklemek için banka bilgilerinizi ekleyin.</p>
+          <button className={styles.button} onClick={handleOpenEditBankModal}>
+            Banka Bilgilerini Ekle
+          </button>
+        </div>
+      ) : currentClubCourts?.courts?.length === 0 && clubBankDetailsExist ? (
         <p>Henüz sisteme eklenmiş kortunuz bulunmamaktadır.</p>
       ) : (
         currentClubCourts?.courts?.length === 0 &&
@@ -182,6 +215,16 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
           </button>
         ))}
       </div>
+      {isEditBankModalOpen && (
+        <EditClubBankDetailsModal
+          isModalOpen={isEditBankModalOpen}
+          handleCloseModal={handleCloseEditBankModal}
+          banks={banks}
+          clubDetails={currentClub}
+          bankDetailsExist={bankDetailsExist}
+          refetchClubDetails={refetchClubDetails}
+        />
+      )}
     </div>
   );
 };

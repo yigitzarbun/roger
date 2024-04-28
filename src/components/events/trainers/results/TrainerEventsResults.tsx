@@ -61,6 +61,7 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
     handleMissingReviews,
     handleClear,
   } = props;
+
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
@@ -78,11 +79,13 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
     setImage(image);
     setIsAddReviewModalOpen(true);
   };
+
   const closeReviewModal = () => {
     setIsAddReviewModalOpen(false);
   };
 
   const [isPastEventsModalOpen, setIsPastEventsModalOpen] = useState(false);
+
   const handleOpenPastEventsModal = () => {
     setIsPastEventsModalOpen(true);
   };
@@ -106,11 +109,13 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
     currentPage: currentPage,
     missingReviews: missingReviews,
   });
-  console.log(trainerPastEvents);
+
   const pageNumbers = [];
+
   for (let i = 1; i <= trainerPastEvents?.totalPages; i++) {
     pageNumbers.push(i);
   }
+
   const handleEventPage = (e) => {
     setCurrentPage(Number(e.target.value));
   };
@@ -134,10 +139,12 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
   const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
+
   const openViewReviewModal = (booking_id: number) => {
     setSelectedBookingId(booking_id);
     setIsViewReviewModalOpen(true);
   };
+
   const closeViewReviewModal = () => {
     setIsViewReviewModalOpen(false);
   };
@@ -154,7 +161,8 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
     currentPage,
     isAddReviewModalOpen,
   ]);
-  if (isTrainerPastEventsLoading) {
+
+  if (isTrainerPastEventsLoading || isEventReviewsLoading) {
     return <PageLoading />;
   }
 
@@ -173,7 +181,6 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
             onClick={handlePrevPage}
             className={styles["nav-arrow"]}
           />
-
           <FaAngleRight
             onClick={handleNextPage}
             className={styles["nav-arrow"]}

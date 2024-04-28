@@ -105,6 +105,27 @@
       }
     }
   }
+  .add-bank-details-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4vh;
+
+    .button {
+      background-color: $roger-white;
+      color: black;
+      border: none;
+      width: 200px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 1rem;
+      cursor: pointer;
+      height: 40px;
+    }
+    .button:hover {
+      background-color: $roger-blue;
+      color: $roger-white;
+    }
+  }
   table {
     width: 100%;
     text-align: left;

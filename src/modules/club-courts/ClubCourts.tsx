@@ -8,9 +8,11 @@ import AddCourtModal from "../../components/club-courts/add-court-modal/AddCourt
 import EditCourtModal from "../../components/club-courts/edit-court-modal/EditCourtModal";
 import { useGetCourtStructureTypesQuery } from "../../api/endpoints/CourtStructureTypesApi";
 import { useGetCourtSurfaceTypesQuery } from "../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetClubByClubIdQuery } from "../../api/endpoints/ClubsApi";
+import { useGetClubProfileDetailsQuery } from "../../api/endpoints/ClubsApi";
 import { useAppSelector } from "../../store/hooks";
 import { useGetPaginatedCourtsQuery } from "../../api/endpoints/CourtsApi";
+import PageLoading from "../../components/loading/PageLoading";
+
 const ClubCourts = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -19,8 +21,11 @@ const ClubCourts = () => {
   const [textSearch, setTextSearch] = useState("");
   const [courtStatus, setCourtStatus] = useState<boolean | null>(null);
 
-  const { data: currentClub, isLoading: isCurrentClubLoading } =
-    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
+  const {
+    data: currentClub,
+    isLoading: isClubDetailsLoading,
+    refetch: refetchClubDetails,
+  } = useGetClubProfileDetailsQuery(user?.user?.user_id);
 
   const handleSurface = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
@@ -110,6 +115,7 @@ const ClubCourts = () => {
   };
   useEffect(() => {
     refetchClubCourts();
+    refetchClubDetails();
   }, [
     surfaceTypeId,
     structureTypeId,
@@ -119,6 +125,10 @@ const ClubCourts = () => {
     isEditCourtModalOpen,
     isAddCourtModalOpen,
   ]);
+
+  if (isClubDetailsLoading || isCurrentClubCourtsLoading) {
+    return <PageLoading />;
+  }
 
   return (
     <div className={styles["club-courts-container"]}>
@@ -151,6 +161,7 @@ const ClubCourts = () => {
         handleCourtPage={handleCourtPage}
         handleNextPage={handleNextPage}
         handlePrevPage={handlePrevPage}
+        refetchClubDetails={refetchClubDetails}
       />
       {isAddCourtModalOpen && (
         <AddCourtModal

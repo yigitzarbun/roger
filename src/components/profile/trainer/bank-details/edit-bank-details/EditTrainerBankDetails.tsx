@@ -43,9 +43,9 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      iban: trainerDetails?.iban,
-      name_on_bank_account: trainerDetails?.name_on_bank_account,
-      bank_id: trainerDetails?.bank_id,
+      iban: trainerDetails?.trainerIban,
+      name_on_bank_account: trainerDetails?.trainerBankAccountName,
+      bank_id: trainerDetails?.trainerBankId,
     },
   });
 

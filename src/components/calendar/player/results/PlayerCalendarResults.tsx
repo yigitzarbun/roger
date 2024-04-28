@@ -14,7 +14,7 @@ import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteMod
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetPlayerBookingsByUserIdQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetPlayerCalendarBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
 
@@ -24,18 +24,20 @@ interface PlayerCalendarResultsProps {
   clubId: number;
   textSearch: string;
 }
+
 const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const { date, eventTypeId, clubId, textSearch } = props;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
-  const formattedDate = date
-    ? date.split("/").reverse().join("-") // Convert to "YYYY-MM-DD" format
-    : "";
+
+  // Convert to "YYYY-MM-DD" format
+  const formattedDate = date ? date.split("/").reverse().join("-") : "";
+
   const {
     data: filteredBookings,
     isLoading: isBookingsLoading,
     refetch: refetchBookings,
-  } = useGetPlayerBookingsByUserIdQuery({
+  } = useGetPlayerCalendarBookingsByFilterQuery({
     date: formattedDate,
     eventTypeId: eventTypeId,
     clubId: clubId,
@@ -43,7 +45,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     textSearch: textSearch,
   });
 
-  // update booking
   const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
@@ -145,9 +146,11 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                       src={
                         booking.event_type_id === 6 && booking?.clubImage
                           ? booking?.clubImage
-                          : booking.playerImage
+                          : (booking.event_type_id === 1 ||
+                              booking.event_type_id === 2) &&
+                            booking.playerImage
                           ? booking.playerImage
-                          : booking.trainerImage
+                          : booking.event_type_id === 3 && booking.trainerImage
                           ? booking.trainerImage
                           : "/images/icons/avatar.jpg"
                       }
@@ -211,7 +214,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   {booking.event_type_id === 1 || booking.event_type_id === 2
                     ? booking?.payment_amount / 2
                     : booking.event_type_id === 3
-                    ? booking?.lesson_price + booking?.court_price
+                    ? booking?.payment_amount
                     : "-"}
                 </td>
                 <td>

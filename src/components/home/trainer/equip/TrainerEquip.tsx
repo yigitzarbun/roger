@@ -8,13 +8,17 @@ const TrainerEquip = () => {
   const { t } = useTranslation();
 
   return (
-    <div className={styles["trainer-equip-container"]}>
+    <a
+      href="https://www.spx.com.tr/sporlar-tenis/"
+      target="_blank"
+      className={styles["trainer-equip-container"]}
+    >
       <h2>{t("equipTitle")}</h2>
       <p>{t("equipText")}</p>
       <a href="https://www.spx.com.tr/sporlar-tenis/" target="_blank">
         <button>{t("equipButtonText")}</button>
       </a>
-    </div>
+    </a>
   );
 };
 

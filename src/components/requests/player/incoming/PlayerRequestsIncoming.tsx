@@ -31,11 +31,7 @@ import {
   useAddMatchScoreMutation,
   useGetMatchScoresQuery,
 } from "../../../../api/endpoints/MatchScoresApi";
-import {
-  useAddStudentMutation,
-  useGetIsStudentQuery,
-  useGetStudentsByFilterQuery,
-} from "../../../../api/endpoints/StudentsApi";
+
 import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerRequestsIncoming = () => {
@@ -44,7 +40,6 @@ const PlayerRequestsIncoming = () => {
   const [skipSelectedPayment, setSkipSelectedPayment] = useState(true);
   const [isAcceptModalOpen, setIsAcceptModalOpen] = useState(false);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-  const [skipStudent, setSkipStudent] = useState(true);
   const [declineBookingData, setDeclineBookingData] =
     useState<DeclineBookingData | null>(null);
   const [acceptBookingData, setAcceptBookingData] =
@@ -57,8 +52,6 @@ const PlayerRequestsIncoming = () => {
   } = useGetPlayerIncomingRequestsQuery(user?.user_id);
 
   const { refetch: refetchMatchScores } = useGetMatchScoresQuery({});
-
-  const [addStudent] = useAddStudentMutation({});
 
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
@@ -79,18 +72,6 @@ const PlayerRequestsIncoming = () => {
   const handleCloseAcceptModal = () => {
     setIsAcceptModalOpen(false);
   };
-
-  const { data: isStudent, isLoading: isStudentLoading } = useGetIsStudentQuery(
-    {
-      player_id: user?.user_id,
-      trainer_id: acceptBookingData?.inviter_id,
-    },
-    { skip: skipStudent }
-  );
-
-  const { refetch: refetchStudents } = useGetStudentsByFilterQuery({
-    player_id: user?.user_id,
-  });
 
   const {
     data: selectedPayment,
@@ -166,8 +147,6 @@ const PlayerRequestsIncoming = () => {
     }
   }, [isPaymentSuccess]);
 
-  const isEventLesson = acceptBookingData?.event_type_id === 3;
-
   useEffect(() => {
     // initiate matchScore
     if (
@@ -182,25 +161,7 @@ const PlayerRequestsIncoming = () => {
       };
       addMatchScore(matchScoreData);
     }
-    if (isEventLesson) {
-      setSkipStudent(false);
-    }
   }, [isUpdateBookingSuccess]);
-
-  // ***
-  // TO DO: check if this works (adding student)
-  // ***
-
-  useEffect(() => {
-    if (isEventLesson && !isStudent) {
-      const newStudent = {
-        student_status: "pending",
-        trainer_id: acceptBookingData?.inviter_id,
-        player_id: user?.user_id,
-      };
-      addStudent(newStudent);
-    }
-  }, [isStudent]);
 
   useEffect(() => {
     if (isMatchScoreSuccess) {
@@ -208,14 +169,13 @@ const PlayerRequestsIncoming = () => {
     }
     if (isUpdateBookingSuccess) {
       refetchBookings();
-      refetchStudents();
       setAcceptBookingData(null);
       handleCloseAcceptModal();
       handleCloseDeclineModal();
     }
   }, [isMatchScoreSuccess, isUpdateBookingSuccess]);
 
-  if (isBookingsLoading || isSelectedPaymentLoading || isStudentLoading) {
+  if (isBookingsLoading || isSelectedPaymentLoading) {
     return <PageLoading />;
   }
 

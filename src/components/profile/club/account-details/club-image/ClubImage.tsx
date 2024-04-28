@@ -12,7 +12,7 @@ import { updateClubDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
 
 const ClubImage = (props) => {
-  const { clubDetails, refetchclubDetails } = props;
+  const { clubDetails, refetchClubDetails } = props;
   const dispatch = useAppDispatch();
 
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
@@ -78,7 +78,7 @@ const ClubImage = (props) => {
       };
       dispatch(updateClubDetails(updatedData));
       toast.success("Profil güncellendi");
-      refetchclubDetails();
+      refetchClubDetails();
       reset(updatedProfile);
       setSelectedImage(null);
     }

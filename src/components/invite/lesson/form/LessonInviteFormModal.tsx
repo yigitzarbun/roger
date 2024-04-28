@@ -168,6 +168,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     useGetClubByClubIdQuery(selectedClub, { skip: skipClubDetails });
 
   const [skipCourtDetails, setSkipCourtDetails] = useState(true);
+
   const {
     data: selectedCourtDetails,
     isLoading: isSelectedCourtDetailsLoading,
@@ -223,6 +224,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     courts,
     bookedHoursForSelectedCourtOnSelectedDate
   );
+
   const {
     register,
     handleSubmit,
@@ -263,8 +265,10 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
   const handleModalSubmit = () => {
     if (playerPaymentDetailsExist && trainerBankDetailsExist) {
       const paymentDetails = {
-        payment_amount: bookingFormData?.court_price,
+        payment_amount:
+          bookingFormData?.lesson_price + bookingFormData?.court_price,
         court_price: bookingFormData?.court_price,
+        lesson_price: bookingFormData?.lesson_price,
         payment_status: "pending",
         payment_type_id: 2,
         sender_inviter_id: selectedPlayer?.[0]?.user_id,

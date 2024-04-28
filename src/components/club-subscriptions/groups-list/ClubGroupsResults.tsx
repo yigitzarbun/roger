@@ -100,18 +100,17 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
   if (isMyTrainersLoading) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Gruplar</h2>
-          <div
+          <button
             onClick={openAddGroupModal}
             className={styles["add-group-button"]}
           >
             <p className={styles["add-title"]}>Yeni Grup Ekle</p>
-          </div>
+          </button>
           {groups?.studentGroups?.length > 0 && (
             <FaFilter
               onClick={handleOpenClubStudentGroupsFilter}
@@ -134,7 +133,6 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
           </div>
         )}
       </div>
-      <div className={styles["top-container"]}></div>
       {groups?.studentGroups?.length > 0 ? (
         <table>
           <thead>
@@ -161,55 +159,47 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                   </Link>
                 </td>
                 <td>
-                  {group.student1_user_id ? (
+                  {group?.students_info?.[0]?.user_id && (
                     <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${group.student1_user_id}`}
+                      to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[0]?.user_id}`}
                       className={styles.name}
                     >
-                      {`${group.student1_fname} ${group.student1_lname}`}
+                      {`${group.students_info?.[0]?.name}`}
                     </Link>
-                  ) : (
-                    `${group.student1_fname} ${group.student1_lname}`
                   )}
                 </td>
                 <td>
-                  {group.student2_user_id ? (
+                  {group?.students_info?.[1]?.user_id && (
                     <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${group.student2_user_id}`}
+                      to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[1]?.user_id}`}
                       className={styles.name}
                     >
-                      {`${group.student2_fname} ${group.student2_lname}`}
+                      {`${group.students_info?.[1]?.name}`}
                     </Link>
-                  ) : (
-                    `${group.student2_fname} ${group.student2_lname}`
                   )}
                 </td>
                 <td>
-                  {group.student3_user_id ? (
+                  {group?.students_info?.[2]?.user_id ? (
                     <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${group.student3_user_id}`}
+                      to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[2]?.user_id}`}
                       className={styles.name}
                     >
-                      {`${group.student3_fname} ${group.student3_lname}`}
+                      {`${group.students_info?.[2]?.name}`}
                     </Link>
-                  ) : group.cem3_user_id ? (
-                    `${group.student3_fname} ${group.student3_lname}`
                   ) : (
-                    "-"
+                    ""
                   )}
                 </td>
                 <td>
-                  {group.student4_user_id ? (
+                  {group?.students_info?.[3]?.user_id ? (
                     <Link
-                      to={`${paths.EXPLORE_PROFILE}1/${group.student4_user_id}`}
+                      to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[3]?.user_id}`}
                       className={styles.name}
                     >
-                      {`${group.student4_fname} ${group.student4_lname}`}
+                      {`${group.students_info?.[3]?.name}`}
                     </Link>
-                  ) : group.cem4_user_id ? (
-                    `${group.student4_fname} ${group.student4_lname}`
                   ) : (
-                    "-"
+                    ""
                   )}
                 </td>
                 <td>

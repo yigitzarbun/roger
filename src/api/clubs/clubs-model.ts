@@ -2,7 +2,9 @@ const db = require("../../data/dbconfig");
 
 const clubsModel = {
   async getAll() {
-    const clubs = await db("clubs");
+    const clubs = await db
+      .select("clubs.club_id", "clubs.club_name", "clubs.user_id")
+      .from("clubs");
     return clubs;
   },
   async getPaginated(filter) {
@@ -11,11 +13,12 @@ const clubsModel = {
 
     const paginatedClubs = await db
       .select(
-        "clubs.*",
+        "clubs.club_id",
+        "clubs.user_id",
+        "clubs.club_name",
         "clubs.image as clubImage",
-        "club_types.*",
-        "locations.*",
-        "users.*",
+        "club_types.club_type_name",
+        "locations.location_name",
         db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),
         db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffQuantity"),
         db.raw(
@@ -31,7 +34,13 @@ const clubsModel = {
       )
       .leftJoin("locations", "locations.location_id", "=", "clubs.location_id")
       .leftJoin("courts", "courts.club_id", "=", "clubs.club_id")
-      .leftJoin("club_staff", "club_staff.club_id", "=", "clubs.club_id")
+      .leftJoin("club_staff", function () {
+        this.on("club_staff.club_id", "=", "clubs.club_id").andOn(
+          "club_staff.employment_status",
+          "=",
+          db.raw("?", ["accepted"])
+        );
+      })
       .leftJoin("users", "users.user_id", "=", "clubs.user_id")
       .leftJoin(
         "club_subscriptions",
@@ -85,16 +94,17 @@ const clubsModel = {
 
     const totalCountQuery = await db
       .select(
-        "clubs.*",
+        "clubs.club_id",
+        "clubs.user_id",
+        "clubs.club_name",
         "clubs.image as clubImage",
-        "club_types.*",
-        "locations.*",
+        "club_types.club_type_name",
+        "locations.location_name",
         db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),
         db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffQuantity"),
         db.raw(
           "COUNT(DISTINCT club_subscriptions.club_subscription_id) as memberQuantity"
-        ),
-        "users.*"
+        )
       )
       .from("clubs")
       .leftJoin(
@@ -105,7 +115,14 @@ const clubsModel = {
       )
       .leftJoin("locations", "locations.location_id", "=", "clubs.location_id")
       .leftJoin("courts", "courts.club_id", "=", "clubs.club_id")
-      .leftJoin("club_staff", "club_staff.club_id", "=", "clubs.club_id")
+      .leftJoin("club_staff", function () {
+        this.on("club_staff.club_id", "=", "clubs.club_id").andOn(
+          "club_staff.employment_status",
+          "=",
+          db.raw("?", ["accepted"])
+        );
+      })
+
       .leftJoin("users", "users.user_id", "=", "clubs.user_id")
       .leftJoin(
         "club_subscriptions",
@@ -203,7 +220,20 @@ const clubsModel = {
 
   async getByClubId(club_id: number) {
     try {
-      const club = await db("clubs").where("club_id", Number(club_id));
+      const club = await db
+        .select(
+          "clubs.user_id",
+          "clubs.club_id",
+          "clubs.higher_price_for_non_subscribers",
+          "clubs.price_hour_non_subscriber",
+          "clubs.price_hour",
+          "clubs.club_name",
+          "clubs.is_player_lesson_subscription_required",
+          "clubs.is_trainer_subscription_required",
+          "clubs.is_player_subscription_required"
+        )
+        .from("clubs")
+        .where("club_id", Number(club_id));
       return club;
     } catch (error) {
       console.log(error);
@@ -211,7 +241,28 @@ const clubsModel = {
   },
 
   async getByUserId(user_id) {
-    const club = await db("clubs").where("user_id", user_id);
+    const club = await db
+      .select(
+        "clubs.iban",
+        "clubs.name_on_bank_account",
+        "clubs.bank_id",
+        "clubs.image",
+        "clubs.is_player_subscription_required",
+        "clubs.is_trainer_subscription_required",
+        "clubs.is_player_lesson_subscription_required",
+        "clubs.higher_price_for_non_subscribers",
+        "clubs.club_address",
+        "clubs.club_bio_description",
+        "clubs.club_name",
+        "clubs.is_premium",
+        "clubs.phone_number",
+        "clubs.location_id",
+        "clubs.club_type_id",
+        "clubs.club_id",
+        "clubs.user_id"
+      )
+      .from("clubs")
+      .where("user_id", user_id);
     return club;
   },
 

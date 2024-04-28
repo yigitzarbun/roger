@@ -21,6 +21,8 @@ authRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const credentials = req.body;
+      const trimmedEmail = credentials.email.trim().toLowerCase();
+      credentials.email = trimmedEmail;
       const hash = bcrypt.hashSync(credentials.password, 8);
       credentials.password = hash;
       const userPreviouslyExisted = await usersModel.getUserByEmail(

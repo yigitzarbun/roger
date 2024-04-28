@@ -175,22 +175,26 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
-          <FaFilter
-            onClick={handleOpenPastEventsModal}
-            className={styles.filter}
-          />
+          {myEvents?.pastEvents?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenPastEventsModal}
+              className={styles.filter}
+            />
+          )}
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {myEvents?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {myEvents?.pastEvents?.length > 0 ? (
         <table>

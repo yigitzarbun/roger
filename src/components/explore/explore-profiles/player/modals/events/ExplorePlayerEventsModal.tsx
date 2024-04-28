@@ -77,6 +77,7 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             ? booking.inviter_id
                             : ""
                         }`}
+                        onClick={closeEventsModal}
                       >
                         <img
                           src={
@@ -111,6 +112,7 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             : ""
                         }`}
                         className={styles["opponent-name"]}
+                        onClick={closeEventsModal}
                       >
                         {`${booking?.fname} ${booking?.lname}`}
                       </Link>

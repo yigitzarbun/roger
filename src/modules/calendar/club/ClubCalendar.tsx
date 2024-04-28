@@ -6,6 +6,7 @@ import ClubCalendarResults from "../../../components/calendar/club/results/ClubC
 import { useGetCourtsByFilterQuery } from "../../../api/endpoints/CourtsApi";
 
 import styles from "./styles.module.scss";
+import PageLoading from "../../../components/loading/PageLoading";
 
 const ClubCalendar = () => {
   const user = useAppSelector((store) => store.user.user);
@@ -26,17 +27,24 @@ const ClubCalendar = () => {
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
-  const { data: myCourts, isLoading: isMyCourtsLoading } =
-    useGetCourtsByFilterQuery({
-      club_id: user?.clubDetails?.club_id,
-      is_active: true,
-    });
+  const {
+    data: myCourts,
+    isLoading: isMyCourtsLoading,
+    refetch: refecthMyCourts,
+  } = useGetCourtsByFilterQuery({
+    club_id: user?.clubDetails?.club_id,
+    is_active: true,
+  });
 
   const handleClear = () => {
     setCourtId(null);
     setEventTypeId(null);
     setTextSearch("");
   };
+
+  if (isMyCourtsLoading) {
+    return <PageLoading />;
+  }
   return (
     <div className={styles["calendar-container"]}>
       <ClubCalendarSearch
@@ -54,6 +62,7 @@ const ClubCalendar = () => {
         eventTypeId={eventTypeId}
         myCourts={myCourts}
         textSearch={textSearch}
+        refecthMyCourts={refecthMyCourts}
       />
     </div>
   );

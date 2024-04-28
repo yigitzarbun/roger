@@ -12,7 +12,7 @@ import styles from "./styles.module.scss";
 import AddClubSubscriberModal from "./add-subscriber-modal/AddClubSubscriberModal";
 import EditClubSubscriberModal from "./edit-subscriber-modal/EditClubSubscriberModal";
 import PageLoading from "../../../components/loading/PageLoading";
-import { currentYear, getAge } from "../../../common/util/TimeFunctions";
+import { getAge } from "../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
 
 import { useGetPaginatedClubSubscribersQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
@@ -22,6 +22,10 @@ import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSub
 import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import ClubSubscriptionsFilterModal from "./filter/ClubSubscriptionsFilterModal";
+import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
+import { useGetBanksQuery } from "../../../api/endpoints/BanksApi";
+import AddSubscriptionPackageModal from "../subscription-packages/add-subscription-package-modal/AddSubscriptionPackageModal";
+import { useGetClubSubscriptionPackageDetailsQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 interface ClubSubscribersResultsProps {
   textSearch: any;
@@ -35,6 +39,8 @@ interface ClubSubscribersResultsProps {
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleUserType: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
+  currentClub: any;
+  refetchClubDetails: () => any;
 }
 const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
   const {
@@ -49,6 +55,8 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     handleLocation,
     handleUserType,
     handleClear,
+    currentClub,
+    refetchClubDetails,
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -63,6 +71,8 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
 
   const { data: subscriptionTypes, isLoading: isSubscriptionTypesLoading } =
     useGetClubSubscriptionTypesQuery({});
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -114,6 +124,14 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     club_id: user?.user?.user_id,
   });
 
+  const {
+    data: myPackages,
+    isLoading: isMyPackagesLoading,
+    refetch: refetchMyPackages,
+  } = useGetClubSubscriptionPackageDetailsQuery({
+    clubId: user?.user?.user_id,
+  });
+
   const handleCourtPage = (e) => {
     setCurrentPage(e.target.value);
   };
@@ -146,6 +164,36 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     setSubscriberFilterModalOpen(false);
   };
 
+  const bankDetails = {
+    bank_id: currentClub?.[0]?.bank_id,
+    iban: currentClub?.[0]?.iban,
+    name_on_bank_account: currentClub?.[0]?.name_on_bank_account,
+  };
+
+  const bankDetailsExist =
+    bankDetails?.iban &&
+    bankDetails?.bank_id &&
+    bankDetails?.name_on_bank_account;
+
+  const [isEditBankModalOpen, setIsEditBankModalOpen] = useState(false);
+
+  const handleOpenEditBankModal = () => {
+    setIsEditBankModalOpen(true);
+  };
+
+  const handleCloseEditBankModal = () => {
+    setIsEditBankModalOpen(false);
+  };
+
+  const [openAddPackageModal, setOpenAddPackageModal] = useState(false);
+
+  const openAddClubSubscriptionPackageModal = () => {
+    setOpenAddPackageModal(true);
+  };
+  const closeAddClubSubscriptionPackageModal = () => {
+    setOpenAddPackageModal(false);
+  };
+
   useEffect(() => {
     refetchMySubscriptions();
   }, [
@@ -159,6 +207,14 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     isAddSubscriberModalOpen,
   ]);
 
+  useEffect(() => {
+    refetchClubDetails();
+  }, [isEditBankModalOpen]);
+
+  useEffect(() => {
+    refetchMyPackages();
+  }, [openAddPackageModal]);
+
   if (
     isMySubscriptionsLoading ||
     isLocationsLoading ||
@@ -169,23 +225,21 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
   ) {
     return <PageLoading />;
   }
-  console.log(mySubscriptions.subscribers);
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Üyeler</h2>
-          <button
-            onClick={openAddClubSubscriberModal}
-            className={styles["add-subscription-package-button"]}
-            disabled={mySubscriptionPackages?.length === 0}
-          >
-            <p className={styles["add-title"]}>
-              {mySubscriptionPackages?.length > 0
-                ? "Yeni Üye Ekle"
-                : "Üyelik Eklemek İçin Üyelik Paketi Ekleyin"}
-            </p>
-          </button>
+          {bankDetailsExist && mySubscriptionPackages?.length > 0 && (
+            <button
+              onClick={openAddClubSubscriberModal}
+              className={styles["add-subscription-package-button"]}
+              disabled={mySubscriptionPackages?.length === 0}
+            >
+              <p className={styles["add-title"]}>Yeni Üye Ekle</p>
+            </button>
+          )}
           {mySubscriptions?.subscribers?.length > 0 && (
             <FaFilter
               onClick={handleOpenSubscribersFilterModal}
@@ -214,9 +268,27 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
           </div>
         )}
       </div>
-      <div className={styles["top-container"]}></div>
-      {mySubscriptions?.subscribers?.length === 0 && (
-        <p>Kayıtlı aktif üye bulunmamaktadır.</p>
+      {!bankDetailsExist ? (
+        <div className={styles["add-bank-details-container"]}>
+          <p>Üyelik satışı yapmak için banka bilgilerinizi ekleyin.</p>
+          <button className={styles.button} onClick={handleOpenEditBankModal}>
+            Banka Bilgilerini Ekle
+          </button>
+        </div>
+      ) : bankDetailsExist && mySubscriptionPackages?.length === 0 ? (
+        <div className={styles["add-bank-details-container"]}>
+          <p>Üyelik satışı yapmak için üyelik paketi ekleyin.</p>
+          <button
+            className={styles.button}
+            onClick={openAddClubSubscriptionPackageModal}
+          >
+            Üyelik Paketi Ekle
+          </button>
+        </div>
+      ) : (
+        mySubscriptions?.subscribers?.length === 0 && (
+          <p>Kayıtlı aktif üye bulunmamaktadır.</p>
+        )
       )}
       {mySubscriptions?.subscribers?.length > 0 && (
         <table>
@@ -323,22 +395,25 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
           </tbody>
         </table>
       )}
-      <div className={styles["pages-container"]}>
-        {pageNumbers?.map((pageNumber) => (
-          <button
-            key={pageNumber}
-            value={pageNumber}
-            onClick={handleCourtPage}
-            className={
-              pageNumber === Number(currentPage)
-                ? styles["active-page"]
-                : styles["passive-page"]
-            }
-          >
-            {pageNumber}
-          </button>
-        ))}
-      </div>
+      {mySubscriptions?.subscribers?.length > 0 && (
+        <div className={styles["pages-container"]}>
+          {pageNumbers?.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              value={pageNumber}
+              onClick={handleCourtPage}
+              className={
+                pageNumber === Number(currentPage)
+                  ? styles["active-page"]
+                  : styles["passive-page"]
+              }
+            >
+              {pageNumber}
+            </button>
+          ))}
+        </div>
+      )}
+
       {isAddSubscriberModalOpen && (
         <AddClubSubscriberModal
           isAddSubscriberModalOpen={isAddSubscriberModalOpen}
@@ -375,6 +450,28 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
           handleLocation={handleLocation}
           handleUserType={handleUserType}
           handleClear={handleClear}
+        />
+      )}
+      {isEditBankModalOpen && (
+        <EditClubBankDetailsModal
+          isModalOpen={isEditBankModalOpen}
+          handleCloseModal={handleCloseEditBankModal}
+          banks={banks}
+          clubDetails={currentClub}
+          bankDetailsExist={bankDetailsExist}
+          refetchClubDetails={refetchClubDetails}
+        />
+      )}
+      {openAddPackageModal && (
+        <AddSubscriptionPackageModal
+          openAddPackageModal={openAddPackageModal}
+          closeAddClubSubscriptionPackageModal={
+            closeAddClubSubscriptionPackageModal
+          }
+          clubSubscriptionTypes={subscriptionTypes}
+          myPackages={myPackages}
+          user={user}
+          currentClub={currentClub}
         />
       )}
     </div>

@@ -20,7 +20,14 @@ export type DeclineBookingData = {
   invitation_note: string;
 };
 
-const DeclineInviteModal = (props) => {
+interface DeclineInviteModalProps {
+  isDeclineModalOpen: boolean;
+  handleCloseDeclineModal: () => void;
+  declineBookingData: any;
+  handleDeclineBooking: () => void;
+  user: any;
+}
+const DeclineInviteModal = (props: DeclineInviteModalProps) => {
   const {
     isDeclineModalOpen,
     handleCloseDeclineModal,
@@ -30,10 +37,11 @@ const DeclineInviteModal = (props) => {
   } = props;
 
   const isUserPlayer = user?.user_type_id === 1;
+  const isUserTrainer = user?.user_type_id === 2;
   const isEventTraining = declineBookingData?.event_type_id === 1;
   const isEventMatch = declineBookingData?.event_type_id === 2;
   const isEventLesson = declineBookingData?.event_type_id === 3;
-  console.log(declineBookingData);
+
   return (
     <ReactModal
       isOpen={isDeclineModalOpen}
@@ -51,8 +59,14 @@ const DeclineInviteModal = (props) => {
               (isEventTraining || isEventMatch) &&
               declineBookingData?.playerImage
                 ? declineBookingData?.playerImage
-                : isEventLesson && declineBookingData?.trainerImage
+                : isEventLesson &&
+                  isUserPlayer &&
+                  declineBookingData?.trainerImage
                 ? declineBookingData?.trainerImage
+                : isEventLesson &&
+                  isUserTrainer &&
+                  declineBookingData?.playerImage
+                ? declineBookingData?.playerImage
                 : "images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

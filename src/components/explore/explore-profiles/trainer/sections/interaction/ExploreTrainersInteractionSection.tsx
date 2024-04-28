@@ -259,6 +259,7 @@ export const ExploreTrainersInteractionSection = (
                   <th>Seviye</th>
                   <th>Ders</th>
                   <th>Öğrenci</th>
+                  <th>Ücret</th>
                 </tr>
               </thead>
               <tbody>
@@ -274,6 +275,11 @@ export const ExploreTrainersInteractionSection = (
                   <td>{selectedTrainer?.[0]?.trainer_experience_type_name}</td>
                   <td>{selectedTrainer?.[0]?.lessoncount}</td>
                   <td>{selectedTrainer?.[0]?.studentcount}</td>
+                  <td>
+                    {selectedTrainer?.[0]?.price_hour
+                      ? `${selectedTrainer?.[0]?.price_hour} TL`
+                      : "-"}
+                  </td>
                 </tr>
               </tbody>
             </table>

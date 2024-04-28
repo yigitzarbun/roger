@@ -1,6 +1,6 @@
 import React from "react";
 import ReactModal from "react-modal";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { FaRegCreditCard } from "react-icons/fa";
 import { BiTennisBall } from "react-icons/bi";
@@ -14,13 +14,15 @@ interface NotificationsModalProps {
   handleCloseNotificationsModal: () => void;
   user: any;
   hasBankDetails: boolean;
-  incomingRequests: any;
+  playerIncomingRequests: any;
   missingScoresLength: number;
   missingReviews: any;
   isUserPlayer: boolean;
   isUserTrainer: boolean;
   isUserClub: boolean;
   myStaffRequests: any;
+  trainerIncomingRequests: any;
+  newStudentRequests: any;
 }
 const NotificationsModal = (props: NotificationsModalProps) => {
   const {
@@ -28,15 +30,23 @@ const NotificationsModal = (props: NotificationsModalProps) => {
     handleCloseNotificationsModal,
     user,
     hasBankDetails,
-    incomingRequests,
+    playerIncomingRequests,
     missingScoresLength,
     missingReviews,
     isUserPlayer,
     isUserTrainer,
     isUserClub,
     myStaffRequests,
+    trainerIncomingRequests,
+    newStudentRequests,
   } = props;
 
+  const navigate = useNavigate();
+
+  const handleNavigate = (path: string) => {
+    navigate(Paths[path]);
+    handleCloseNotificationsModal();
+  };
   // TO do
   // add:
   //accepted invitations
@@ -59,33 +69,63 @@ const NotificationsModal = (props: NotificationsModalProps) => {
         {!hasBankDetails && (
           <div className={styles["menu-item"]}>
             <FaRegCreditCard className={styles.icon} />
-            <Link to={Paths.PROFILE}>Ödeme bilgilerinizi ekleyin</Link>
+            <p onClick={() => handleNavigate("PROFILE")}>
+              Ödeme bilgilerinizi ekleyin
+            </p>
           </div>
         )}
         {isUserPlayer &&
-          incomingRequests?.length > 0 &&
-          incomingRequests?.map((request) => (
-            <div className={styles["menu-item"]}>
+          playerIncomingRequests?.length > 0 &&
+          playerIncomingRequests?.map((request) => (
+            <div className={styles["menu-item"]} key={request.booking_id}>
               <BiTennisBall className={styles.icon} />
-              <Link
-                to={Paths.REQUESTS}
-              >{`${request.fname} ${request.lname} ${request.event_type_name} daveti gönderdi`}</Link>
+              <p
+                onClick={() => handleNavigate("REQUESTS")}
+              >{`${request.fname} ${request.lname} ${request.event_type_name} daveti gönderdi`}</p>
             </div>
           ))}
         {isUserPlayer && (missingScoresLength > 0 || missingReviews > 0) && (
           <div className={styles["menu-item"]}>
             <MdOutlineComment className={styles.icon} />
-            <Link to={Paths.PERFORMANCE}>
+            <p onClick={() => handleNavigate("PERFORMANCE")}>
               Yorumunuzu bekleyen etkinlikler var
-            </Link>
+            </p>
+          </div>
+        )}
+        {isUserTrainer && missingReviews > 0 && (
+          <div className={styles["menu-item"]}>
+            <MdOutlineComment className={styles.icon} />
+            <p onClick={() => handleNavigate("PERFORMANCE")}>
+              Yorumunuzu bekleyen etkinlikler var
+            </p>
+          </div>
+        )}
+        {isUserTrainer && newStudentRequests?.length > 0 && (
+          <div className={styles["menu-item"]}>
+            <IoPeople className={styles.icon} />
+            <p onClick={() => handleNavigate("STUDENTS")}>
+              Yeni öğrenci talebiniz var
+            </p>
           </div>
         )}
         {isUserClub && myStaffRequests?.length > 0 && (
           <div className={styles["menu-item"]}>
             <IoPeople className={styles.icon} />
-            <Link to={Paths.CLUB_STAFF}>Çalışan başvurunuz var</Link>
+            <p onClick={() => handleNavigate("CLUB_STAFF")}>
+              Çalışan başvurunuz var
+            </p>
           </div>
         )}
+        {isUserTrainer &&
+          trainerIncomingRequests?.length > 0 &&
+          trainerIncomingRequests?.map((request) => (
+            <div className={styles["menu-item"]} key={request.booking_id}>
+              <BiTennisBall className={styles.icon} />
+              <p
+                onClick={() => handleNavigate("REQUESTS")}
+              >{`${request.fname} ${request.lname} ${request.event_type_name} daveti gönderdi`}</p>
+            </div>
+          ))}
       </div>
     </ReactModal>
   );

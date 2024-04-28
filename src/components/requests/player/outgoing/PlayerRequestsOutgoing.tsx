@@ -171,7 +171,7 @@ const PlayerRequestsOutgoing = () => {
                     {booking.event_type_id === 1 || booking.event_type_id === 2
                       ? booking?.payment_amount / 2
                       : booking.event_type_id === 3
-                      ? booking?.payment_amount
+                      ? booking?.court_price + booking.lesson_price
                       : "External Booking"}
                   </td>
                   <td>

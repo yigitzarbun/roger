@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import styles from "./styles.module.scss";
 
@@ -6,6 +6,8 @@ import AddSubscriptionPackageModal from "../add-subscription-package-modal/AddSu
 
 import { ClubSubscription } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
+import EditClubBankDetailsModal from "../../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
+import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 
 interface ClubSubscriptionPackagesResultsProps {
   openEditClubSubscriptionPackageModal: (subscriptionPackage: any) => void;
@@ -15,8 +17,9 @@ interface ClubSubscriptionPackagesResultsProps {
   myPackages: any;
   mySubscribers: ClubSubscription[];
   subscriptionTypes: ClubSubscriptionTypes[];
-  selectedClub: any;
+  currentClub: any;
   user: any;
+  refetchClubDetails: () => void;
 }
 const ClubSubscriptionPackagesResults = (
   props: ClubSubscriptionPackagesResultsProps
@@ -28,36 +31,57 @@ const ClubSubscriptionPackagesResults = (
     openAddPackageModal,
     myPackages,
     subscriptionTypes,
-    selectedClub,
+    currentClub,
     user,
+    refetchClubDetails,
   } = props;
 
-  const clubBankDetailsExist =
-    selectedClub?.[0]?.iban &&
-    selectedClub?.[0]?.bank_id &&
-    selectedClub?.[0]?.name_on_bank_account;
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
+
+  const bankDetailsExist =
+    currentClub?.[0]?.iban &&
+    currentClub?.[0]?.bank_id &&
+    currentClub?.[0]?.name_on_bank_account;
+
+  const [isEditBankModalOpen, setIsEditBankModalOpen] = useState(false);
+
+  const handleOpenEditBankModal = () => {
+    setIsEditBankModalOpen(true);
+  };
+
+  const handleCloseEditBankModal = () => {
+    setIsEditBankModalOpen(false);
+  };
 
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Üyelikler</h2>
-          <button
-            onClick={openAddClubSubscriptionPackageModal}
-            className={styles["add-subscription-package-button"]}
-            disabled={!clubBankDetailsExist}
-          >
-            <p className={styles["add-title"]}>
-              {clubBankDetailsExist
-                ? "Üyelik Paketi Ekle"
-                : "Üyelik Paketi Eklemek İçin Banka Hesap Bilgilerinizi Ekleyin"}
-            </p>
-          </button>
+          {bankDetailsExist && (
+            <button
+              onClick={openAddClubSubscriptionPackageModal}
+              className={styles["add-subscription-package-button"]}
+              disabled={!bankDetailsExist}
+            >
+              <p className={styles["add-title"]}>Üyelik Paketi Ekle</p>
+            </button>
+          )}
         </div>
       </div>
 
-      {myPackages?.length === 0 && (
-        <p>Henüz sisteme eklenmiş üyelik paketiniz bulunmamaktadır.</p>
+      {!bankDetailsExist ? (
+        <div className={styles["add-bank-details-container"]}>
+          <p>Üyelik satışı yapmak için banka bilgilerinizi ekleyin.</p>
+          <button className={styles.button} onClick={handleOpenEditBankModal}>
+            Banka Bilgilerini Ekle
+          </button>
+        </div>
+      ) : (
+        bankDetailsExist &&
+        myPackages?.length === 0 && (
+          <p>Henüz sisteme eklenmiş üyelik paketiniz bulunmamaktadır.</p>
+        )
       )}
       {subscriptionTypes && myPackages?.length > 0 && (
         <table>
@@ -96,16 +120,28 @@ const ClubSubscriptionPackagesResults = (
           </tbody>
         </table>
       )}
-      <AddSubscriptionPackageModal
-        openAddPackageModal={openAddPackageModal}
-        closeAddClubSubscriptionPackageModal={
-          closeAddClubSubscriptionPackageModal
-        }
-        clubSubscriptionTypes={subscriptionTypes}
-        myPackages={myPackages}
-        user={user}
-        selectedClub={selectedClub}
-      />
+      {openAddPackageModal && (
+        <AddSubscriptionPackageModal
+          openAddPackageModal={openAddPackageModal}
+          closeAddClubSubscriptionPackageModal={
+            closeAddClubSubscriptionPackageModal
+          }
+          clubSubscriptionTypes={subscriptionTypes}
+          myPackages={myPackages}
+          user={user}
+          currentClub={currentClub}
+        />
+      )}
+      {isEditBankModalOpen && (
+        <EditClubBankDetailsModal
+          isModalOpen={isEditBankModalOpen}
+          handleCloseModal={handleCloseEditBankModal}
+          banks={banks}
+          clubDetails={currentClub}
+          bankDetailsExist={bankDetailsExist}
+          refetchClubDetails={refetchClubDetails}
+        />
+      )}
     </div>
   );
 };

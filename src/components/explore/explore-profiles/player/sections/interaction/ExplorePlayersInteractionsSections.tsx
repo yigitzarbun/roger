@@ -203,41 +203,43 @@ const ExplorePlayersInteractionsSections = (
                 </tr>
               </tbody>
             </table>
-            <div className={styles["buttons-container"]}>
-              <button
-                onClick={() => handleToggleFavourite(selectedPlayer?.user_id)}
-                className={styles["interaction-button"]}
-              >
-                {isPlayerInMyFavourites(selectedPlayer?.user_id)?.is_active ===
-                true
-                  ? "Favorilerden çıkar"
-                  : "Favorilere ekle"}
-              </button>
-              {isUserPlayer && (
+            {user_id !== user?.user?.user_id && (
+              <div className={styles["buttons-container"]}>
                 <button
-                  onClick={handleOpenTrainingModal}
+                  onClick={() => handleToggleFavourite(selectedPlayer?.user_id)}
                   className={styles["interaction-button"]}
                 >
-                  Antreman yap
+                  {isPlayerInMyFavourites(selectedPlayer?.user_id)
+                    ?.is_active === true
+                    ? "Favorilerden çıkar"
+                    : "Favorilere ekle"}
                 </button>
-              )}
-              {isUserPlayer && selectedPlayer?.gender === userGender && (
-                <button
-                  onClick={handleOpenMatchModal}
-                  className={styles["interaction-button"]}
-                >
-                  Maç yap
-                </button>
-              )}
-              {isUserTrainer && (
-                <button
-                  onClick={handleOpenLessonModal}
-                  className={styles["interaction-button"]}
-                >
-                  Derse davet et
-                </button>
-              )}
-            </div>
+                {isUserPlayer && (
+                  <button
+                    onClick={handleOpenTrainingModal}
+                    className={styles["interaction-button"]}
+                  >
+                    Antreman yap
+                  </button>
+                )}
+                {isUserPlayer && selectedPlayer?.gender === userGender && (
+                  <button
+                    onClick={handleOpenMatchModal}
+                    className={styles["interaction-button"]}
+                  >
+                    Maç yap
+                  </button>
+                )}
+                {isUserTrainer && (
+                  <button
+                    onClick={handleOpenLessonModal}
+                    className={styles["interaction-button"]}
+                  >
+                    Derse davet et
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

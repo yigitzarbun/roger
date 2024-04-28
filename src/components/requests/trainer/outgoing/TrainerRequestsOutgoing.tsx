@@ -46,7 +46,19 @@ const TrainerRequestsOutgoing = () => {
 
   const handleCancelBooking = () => {
     const cancelledBookingData = {
-      ...bookingData,
+      booking_id: bookingData?.booking_id,
+      registered_at: bookingData?.registered_at,
+      event_date: bookingData?.event_date,
+      event_time: bookingData?.event_time,
+      court_price: bookingData?.court_price,
+      lesson_price: bookingData?.lesson_price,
+      payment_id: bookingData?.payment_id,
+      event_type_id: bookingData?.event_type_id,
+      club_id: bookingData?.club_id,
+      court_id: bookingData?.court_id,
+      inviter_id: bookingData?.inviter_id,
+      invitee_id: bookingData?.invitee_id,
+      invitation_note: bookingData?.invitation_note,
       booking_status_type_id: 4,
     };
     updateBooking(cancelledBookingData);
@@ -143,6 +155,7 @@ const TrainerRequestsOutgoing = () => {
           handleCloseModal={handleCloseModal}
           bookingData={bookingData}
           handleCancelBooking={handleCancelBooking}
+          user={user}
         />
       )}
     </div>

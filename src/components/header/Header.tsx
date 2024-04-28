@@ -12,7 +12,10 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
 import { MdOutlineLanguage } from "react-icons/md";
 import { localUrl } from "../../common/constants/apiConstants";
-import { useGetPlayerIncomingRequestsQuery } from "../../api/endpoints/BookingsApi";
+import {
+  useGetPlayerIncomingRequestsQuery,
+  useGetTrainerIncomingRequestsQuery,
+} from "../../api/endpoints/BookingsApi";
 import { useGetMissingMatchScoresNumberQuery } from "../../api/endpoints/MatchScoresApi";
 import { useGetPlayerMissingEventReviewsNumberQuery } from "../../api/endpoints/EventReviewsApi";
 
@@ -26,6 +29,7 @@ import NotificationsModal from "./modals/notifications/NotificationsModal";
 import { useGetTrainerByUserIdQuery } from "../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../api/endpoints/ClubsApi";
 import { useGetClubNewStaffRequestsQuery } from "../../api/endpoints/ClubStaffApi";
+import { useGetTrainerNewStudentRequestsListQuery } from "../../api/endpoints/StudentsApi";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -52,7 +56,8 @@ const Header = () => {
   const handleOpenNotificationsModal = () => {
     if (
       !hasBankDetails ||
-      incomingRequests?.length > 0 ||
+      playerIncomingRequests?.length > 0 ||
+      trainerIncomingRequests?.length > 0 ||
       missingScoresLength > 0 ||
       missingReviews > 0 ||
       myStaffRequests?.length > 0
@@ -92,10 +97,10 @@ const Header = () => {
 
   const hasBankDetails =
     isUserPlayer &&
-    playerDetails?.[0]?.card_expiry &&
-    playerDetails?.[0]?.card_number &&
-    playerDetails?.[0]?.cvc &&
-    playerDetails?.[0]?.name_on_card
+    playerDetails?.card_expiry &&
+    playerDetails?.card_number &&
+    playerDetails?.cvc &&
+    playerDetails?.name_on_card
       ? true
       : isUserTrainer &&
         trainerDetails?.[0]?.iban &&
@@ -109,8 +114,13 @@ const Header = () => {
       ? true
       : false;
 
-  const { data: incomingRequests, isLoading: isIncomingRequestsLoading } =
+  const { data: playerIncomingRequests, isLoading: isIncomingRequestsLoading } =
     useGetPlayerIncomingRequestsQuery(user?.user?.user?.user_id);
+
+  const {
+    data: trainerIncomingRequests,
+    isLoading: isTrainerIncomingRequestsLoading,
+  } = useGetTrainerIncomingRequestsQuery(user?.user?.user?.user_id);
 
   const {
     data: missingScores,
@@ -130,7 +140,12 @@ const Header = () => {
     data: myStaffRequests,
     isLoading: isMyStaffRequestsLoading,
     refetch: refetchMyRequests,
-  } = useGetClubNewStaffRequestsQuery(user?.user?.clubDetails?.club_id);
+  } = useGetClubNewStaffRequestsQuery(
+    user?.user?.user?.user_type_id === 3 ? user?.user?.clubDetails?.club_id : 0
+  );
+
+  const { data: newStudentRequests, isLoading: isNewStudentRequestsLoading } =
+    useGetTrainerNewStudentRequestsListQuery(user?.user?.user?.user_id);
 
   const isLoggedIn = user?.token ? true : false;
 
@@ -139,7 +154,11 @@ const Header = () => {
     isIncomingRequestsLoading ||
     isScoresLoading ||
     isReviewsLoading ||
-    isMyStaffRequestsLoading
+    isMyStaffRequestsLoading ||
+    isTrainerIncomingRequestsLoading ||
+    isNewStudentRequestsLoading ||
+    isTrainerDetailsLoading ||
+    isClubDetailsLoading
   ) {
     return <PageLoading />;
   }
@@ -165,9 +184,11 @@ const Header = () => {
               onClick={handleOpenNotificationsModal}
               className={
                 !hasBankDetails ||
-                incomingRequests?.length > 0 ||
+                playerIncomingRequests?.length > 0 ||
+                trainerIncomingRequests?.length > 0 ||
                 missingScoresLength > 0 ||
                 missingReviews > 0 ||
+                newStudentRequests?.length > 0 ||
                 myStaffRequests?.length > 0
                   ? styles["active-notification"]
                   : styles["passive-notification"]
@@ -180,8 +201,8 @@ const Header = () => {
             {isLoggedIn && (
               <img
                 src={
-                  isUserPlayer && playerDetails?.[0]?.image
-                    ? `${localUrl}/${playerDetails?.[0]?.image}`
+                  isUserPlayer && playerDetails?.image
+                    ? `${localUrl}/${playerDetails?.image}`
                     : isUserTrainer && trainerDetails?.[0]?.image
                     ? trainerDetails?.[0]?.image
                     : isUserClub && clubDetails?.[0]?.image
@@ -231,7 +252,12 @@ const Header = () => {
           handleCloseProfileModal={handleCloseProfileModal}
         />
       )}
-      {isUserTrainer && <TrainerHeader />}
+      {isUserTrainer && (
+        <TrainerHeader
+          trainerIncomingRequests={trainerIncomingRequests}
+          newStudentRequests={newStudentRequests}
+        />
+      )}
       {isUserClub && <ClubHeader />}
       {isProfileModalOpen && (
         <ProfileModal
@@ -252,13 +278,15 @@ const Header = () => {
           handleCloseNotificationsModal={handleCloseNotificationsModal}
           user={user}
           hasBankDetails={hasBankDetails}
-          incomingRequests={incomingRequests}
+          playerIncomingRequests={playerIncomingRequests}
+          trainerIncomingRequests={trainerIncomingRequests}
           missingScoresLength={missingScoresLength}
           missingReviews={missingReviews}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
           isUserClub={isUserClub}
           myStaffRequests={myStaffRequests}
+          newStudentRequests={newStudentRequests}
         />
       )}
     </div>

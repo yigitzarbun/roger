@@ -43,7 +43,7 @@
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
-    width: 100%;
+    width: 900px;
     min-height: 40vh;
     max-height: 80vh;
     margin: 150px auto 0 auto;
@@ -52,12 +52,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-
-      .close-button {
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-      }
     }
     .table-container {
       height: 50vh;

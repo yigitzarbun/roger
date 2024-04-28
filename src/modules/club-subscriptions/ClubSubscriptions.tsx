@@ -6,8 +6,19 @@ import ClubSubscriptionsNavigation from "../../components/club-subscriptions/nav
 import ClubSubscriptionPackages from "../../components/club-subscriptions/subscription-packages/ClubSubscriptionPackages";
 import ClubSubscribersResults from "../../components/club-subscriptions/subscriber-list/ClubSubscribersResults";
 import ClubGroupsResults from "../../components/club-subscriptions/groups-list/ClubGroupsResults";
+import { useGetClubProfileDetailsQuery } from "../../api/endpoints/ClubsApi";
+import { useAppSelector } from "../../store/hooks";
+import PageLoading from "../../components/loading/PageLoading";
 
 const ClubSubscriptions = () => {
+  const user = useAppSelector((store) => store?.user?.user);
+
+  const {
+    data: currentClub,
+    isLoading: isClubDetailsLoading,
+    refetch: refetchClubDetails,
+  } = useGetClubProfileDetailsQuery(user?.user?.user_id);
+
   const [display, setDisplay] = useState("subscriptions");
   const handleDisplay = (value: string) => {
     setDisplay(value);
@@ -51,14 +62,21 @@ const ClubSubscriptions = () => {
     setLocationId(null);
     setUserTypeId(null);
   };
-
+  if (isClubDetailsLoading) {
+    return <PageLoading />;
+  }
   return (
     <div className={styles["club-subscriptions-container"]}>
       <ClubSubscriptionsNavigation
         display={display}
         handleDisplay={handleDisplay}
       />
-      {display === "subscriptions" && <ClubSubscriptionPackages />}
+      {display === "subscriptions" && (
+        <ClubSubscriptionPackages
+          currentClub={currentClub}
+          refetchClubDetails={refetchClubDetails}
+        />
+      )}
       {display === "subscribers" && (
         <ClubSubscribersResults
           textSearch={textSearch}
@@ -72,6 +90,8 @@ const ClubSubscriptions = () => {
           handleLocation={handleLocation}
           handleUserType={handleUserType}
           handleClear={handleClear}
+          currentClub={currentClub}
+          refetchClubDetails={refetchClubDetails}
         />
       )}
       {display === "groups" && (

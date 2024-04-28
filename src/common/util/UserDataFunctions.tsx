@@ -43,3 +43,15 @@ export const handleToggleFavourite = (
     handleAddFavourite(userId, user, addFavourite);
   }
 };
+
+export const isEventTraining = (eventTypeId: number) => {
+  return eventTypeId === 1;
+};
+
+export const isEventMatch = (eventTypeId: number) => {
+  return eventTypeId === 2;
+};
+
+export const isEventLesson = (eventTypeId: number) => {
+  return eventTypeId === 3;
+};

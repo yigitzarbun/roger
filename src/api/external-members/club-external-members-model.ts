@@ -7,8 +7,14 @@ const clubExternalMembersModel = {
   },
 
   async getByFilter(filter) {
-    const clubExternalMembers = await db("club_external_members").where(
-      (builder) => {
+    const clubExternalMembers = await db
+      .select(
+        "club_external_members.user_id",
+        "club_external_members.fname",
+        "club_external_members.lname"
+      )
+      .from("club_external_members")
+      .where((builder) => {
         if (filter.club_id) {
           builder.where("club_id", filter.club_id);
         }
@@ -20,8 +26,7 @@ const clubExternalMembersModel = {
           // handle sorting here if required
           builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
         }
-      }
-    );
+      });
 
     return clubExternalMembers;
   },

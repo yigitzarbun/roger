@@ -26,8 +26,9 @@ const ExploreTrainersEventsSection = (
 
   const { data: trainerBookings, isLoading: isTrainerBookingLoading } =
     useGetUserProfileEventsQuery(selectedTrainer?.[0]?.user_id);
-  console.log(trainerBookings);
+
   const [isEventsModalOpen, setIsEventsModalOpen] = useState(false);
+
   const openEventsModal = () => {
     setIsEventsModalOpen(true);
   };
@@ -87,9 +88,8 @@ const ExploreTrainersEventsSection = (
                     >
                       <img
                         src={
-                          booking.event_type_id === 3 &&
-                          selectedTrainer?.[0]?.image
-                            ? `${localUrl}/${selectedTrainer?.[0]?.image}`
+                          booking.event_type_id === 3 && booking.playerImage
+                            ? `${localUrl}/${booking.playerImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         className={styles["opponent-image"]}

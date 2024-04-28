@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 

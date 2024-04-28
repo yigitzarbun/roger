@@ -162,7 +162,8 @@ const ExploreClubsSubscribersSection = (
                   </td>
                   {isUserPlayer && (
                     <td>
-                      {player.playerUserId !== user?.user?.user_id ? (
+                      {player.playerUserId !== user?.user?.user_id &&
+                      player.user_type_id === 1 ? (
                         <button
                           onClick={() =>
                             handleOpenTrainInviteModal(player.playerUserId)
@@ -179,7 +180,8 @@ const ExploreClubsSubscribersSection = (
                   {isUserPlayer && (
                     <td>
                       {user?.playerDetails?.gender === player.gender &&
-                      player.playerUserId !== user?.user?.user_id ? (
+                      player.playerUserId !== user?.user?.user_id &&
+                      player.user_type_id === 1 ? (
                         <button
                           onClick={() =>
                             handleOpenMatchInviteModal(player.playerUserId)

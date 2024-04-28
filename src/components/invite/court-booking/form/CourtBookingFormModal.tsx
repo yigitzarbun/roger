@@ -6,8 +6,7 @@ import { toast } from "react-toastify";
 import { IoIosSearch } from "react-icons/io";
 import { IoListOutline } from "react-icons/io5";
 
-import { useLocation, useNavigate } from "react-router-dom";
-import { MdOutlineMessage } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -15,18 +14,14 @@ import paths from "../../../../routing/Paths";
 
 import styles from "./styles.module.scss";
 
-import InviteModal, { FormValues } from "../../modals/invite-modal/InviteModal";
+import { FormValues } from "../../modals/invite-modal/InviteModal";
 
 import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-import { useGetCourtsQuery } from "../../../../api/endpoints/CourtsApi";
-import {
-  useGetClubByClubIdQuery,
-  useGetClubsQuery,
-} from "../../../../api/endpoints/ClubsApi";
+
 import {
   useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
@@ -36,14 +31,8 @@ import {
   useGetTrainerByUserIdQuery,
   useGetTrainersQuery,
 } from "../../../../api/endpoints/TrainersApi";
-import {
-  useGetClubSubscriptionsByFilterQuery,
-  useGetClubSubscriptionsQuery,
-} from "../../../../api/endpoints/ClubSubscriptionsApi";
-import {
-  useGetClubStaffByFilterQuery,
-  useGetClubStaffQuery,
-} from "../../../../api/endpoints/ClubStaffApi";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 import { useAppSelector } from "../../../../store/hooks";
 import {
@@ -79,6 +68,9 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   const { data: currentUser, isLoading: isCurrentUserLoading } =
     useGetPlayerByUserIdQuery(user?.user_id);
 
+  const { data: currentTrainer, isLoading: isCurrentTrainerLoading } =
+    useGetTrainerByUserIdQuery(user?.user_id);
+
   const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
     {}
   );
@@ -92,7 +84,6 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const [searchedPlayer, setSearchedPlayer] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [playerSkip, setPlayerSkip] = useState(true);
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -435,8 +426,21 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
       club_id: Number(selectedCourt?.[0]?.club_id),
       court_id: Number(selectedCourt?.[0]?.court_id),
       inviter_id: user?.user_id,
-      invitee_id: Number(selectedPlayer),
-      lesson_price: null,
+      invitee_id:
+        Number(formData?.event_type_id) === 1 ||
+        Number(formData?.event_type_id) === 2
+          ? Number(selectedPlayer)
+          : Number(formData?.event_type_id) === 3 && isUserPlayer
+          ? Number(selectedTrainer)
+          : Number(formData?.event_type_id) === 3 && isUserTrainer
+          ? Number(selectedPlayer)
+          : null,
+      lesson_price:
+        isUserPlayer && Number(formData?.event_type_id) === 3
+          ? selectedTrainerDetails?.[0]?.price_hour
+          : isUserTrainer && Number(formData?.event_type_id) === 3
+          ? currentTrainer?.[0]?.price_hour
+          : null,
       court_price:
         (Number(formData?.event_type_id) === 1 ||
           Number(formData?.event_type_id) === 2) &&
@@ -474,8 +478,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
           : null,
       lesson_price:
         bookingFormData?.event_type_id === 3 && isUserPlayer
-          ? trainers?.find((trainer) => trainer.user_id === selectedTrainer)
-              ?.price_hour
+          ? selectedTrainerDetails?.[0]?.price_hour
           : bookingFormData?.event_type_id === 3 && isUserTrainer
           ? trainers?.find((trainer) => trainer.user_id === user?.user_id)
               ?.price_hour
@@ -531,11 +534,6 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     setSearchOption(option);
   };
 
-  const [inviteMessageArea, setInviteMessageArea] = useState(false);
-  const toggleInviteMessageArea = () => {
-    setInviteMessageArea((curr) => !curr);
-  };
-
   useEffect(() => {
     if (searchedPlayer !== "") {
       setPlayerSkip(false);
@@ -552,6 +550,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     if (isPaymentSuccess) {
       refetchPayments();
       bookingFormData.payment_id = paymentData?.payment_id;
+      console.log("booking data: ", bookingFormData);
       addBooking(bookingFormData);
       reset();
     }
@@ -869,6 +868,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 : ""
             }
             selectedCourtPrice={bookingFormData?.court_price}
+            lessonPrice={bookingFormData.lesson_price}
             invitee={
               selectedEventType === 1 || selectedEventType === 2
                 ? inviteePlayer
@@ -880,6 +880,8 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
             }
             isUserPlayer={isUserPlayer}
             isUserTrainer={isUserTrainer}
+            isButtonDisabled={isButtonDisabled}
+            buttonText={buttonText}
           />
         )}
       </div>

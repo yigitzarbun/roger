@@ -33,7 +33,6 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   if (isSelectedClubLoading) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles.profile}>
       <ExploreClubsProfileSection selectedClub={selectedClub} />

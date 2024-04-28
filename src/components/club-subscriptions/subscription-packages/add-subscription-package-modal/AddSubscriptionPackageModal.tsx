@@ -8,18 +8,13 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { useAppSelector } from "../../../../store/hooks";
-
 import {
   ClubSubscriptionPackage,
   useAddClubSubscriptionPackageMutation,
   useGetClubSubscriptionPackagesByFilterQuery,
 } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
-import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
-
 import { ClubSubscriptionTypes } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
-import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddSubscriptionPackageModalProps {
   openAddPackageModal: boolean;
@@ -27,7 +22,7 @@ interface AddSubscriptionPackageModalProps {
   clubSubscriptionTypes: ClubSubscriptionTypes[];
   myPackages: ClubSubscriptionPackage[];
   user: any;
-  selectedClub: any;
+  currentClub: any;
 }
 
 type FormValues = {
@@ -44,7 +39,7 @@ const AddSubscriptionPackageModal = (
     clubSubscriptionTypes,
     myPackages,
     user,
-    selectedClub,
+    currentClub,
   } = props;
 
   const { refetch: refetchMyPackages } =
@@ -54,9 +49,9 @@ const AddSubscriptionPackageModal = (
     });
 
   const clubBankDetailsExist =
-    selectedClub?.[0]?.iban &&
-    selectedClub?.[0]?.bank_id &&
-    selectedClub?.[0]?.name_on_bank_account;
+    currentClub?.[0]?.iban &&
+    currentClub?.[0]?.bank_id &&
+    currentClub?.[0]?.name_on_bank_account;
 
   const [addClubSubscriptionPackage, { isSuccess }] =
     useAddClubSubscriptionPackageMutation({});

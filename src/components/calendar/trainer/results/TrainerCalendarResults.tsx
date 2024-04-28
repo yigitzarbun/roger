@@ -16,7 +16,7 @@ import { useAppSelector } from "../../../../store/hooks";
 
 import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
-import { useGetTrainerBookingsByUserIdQuery } from "../../../../api/endpoints/BookingsApi";
+import { useGetTrainerCalendarBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 
@@ -40,7 +40,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     data: trainerBookings,
     isLoading: isTrainerBookingsLoading,
     refetch,
-  } = useGetTrainerBookingsByUserIdQuery({
+  } = useGetTrainerCalendarBookingsByFilterQuery({
     date: formattedDate,
     eventTypeId: eventTypeId,
     clubId: clubId,

@@ -11,9 +11,9 @@ const TrainerBankAccountDetails = (props) => {
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const bankDetailsExist =
-    trainerDetails?.iban &&
-    trainerDetails?.bank_id &&
-    trainerDetails?.name_on_bank_account;
+    trainerDetails?.trainerIban &&
+    trainerDetails?.trainerBankId &&
+    trainerDetails?.trainerBankAccountName;
 
   const [isEditBankModalOpen, setIsEditBankModalOpen] = useState(false);
 
@@ -39,12 +39,13 @@ const TrainerBankAccountDetails = (props) => {
               <p>
                 {
                   banks?.find(
-                    (bank) => bank.bank_id === trainerDetails?.bank_id
+                    (bank) => bank.bank_id === trainerDetails?.trainerBankId
                   )?.bank_name
                 }
               </p>
               <p>
-                {trainerDetails?.name_on_bank_account} isimli hesabınız aktiftir
+                {trainerDetails?.trainerBankAccountName} isimli hesabınız
+                aktiftir
               </p>
             </div>
             <button className={styles.button} onClick={handleOpenEditBankModal}>

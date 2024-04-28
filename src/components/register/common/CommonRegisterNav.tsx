@@ -21,16 +21,16 @@ const CommonRegisterNav = ({ setUserType }: CommonRegisterNavProps) => {
             <h2 className={styles["user-type-title"]}>Oyuncu</h2>
           </div>
           <div
-            onClick={() => setUserType("club")}
-            className={styles["user-type-container"]}
-          >
-            <h2 className={styles["user-type-title"]}>Kulüp</h2>
-          </div>
-          <div
             onClick={() => setUserType("trainer")}
             className={styles["user-type-container"]}
           >
             <h2 className={styles["user-type-title"]}>Eğitmen</h2>
+          </div>
+          <div
+            onClick={() => setUserType("club")}
+            className={styles["user-type-container"]}
+          >
+            <h2 className={styles["user-type-title"]}>Kulüp</h2>
           </div>
         </div>
       </div>

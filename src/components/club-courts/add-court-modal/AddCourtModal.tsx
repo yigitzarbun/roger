@@ -3,17 +3,9 @@ import React, { useEffect, useState } from "react";
 import ReactModal from "react-modal";
 
 import { toast } from "react-toastify";
-
-import { FaWindowClose } from "react-icons/fa";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../components/loading/PageLoading";
-
-import { useAppSelector } from "../../../store/hooks";
-
 import {
   useAddCourtMutation,
   useGetCourtsByFilterQuery,
@@ -21,8 +13,6 @@ import {
 } from "../../../api/endpoints/CourtsApi";
 import { CourtStructureType } from "../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../api/endpoints/CourtSurfaceTypesApi";
-import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
-
 import { generateTimesArray } from "../../../common/util/TimeFunctions";
 import { User } from "../../../store/slices/authSlice";
 

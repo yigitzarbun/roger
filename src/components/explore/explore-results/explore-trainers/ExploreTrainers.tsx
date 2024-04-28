@@ -234,7 +234,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     trainerExperienceTypeId,
     clubId,
   ]);
-
+  console.log(paginatedTrainers);
   if (
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
@@ -327,11 +327,13 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                   )}
                 </td>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.trainerUserId} `}
+                  >
                     <img
                       src={
-                        trainer.image
-                          ? trainer.image
+                        trainer.trainerImage
+                          ? trainer.trainerImage
                           : "/images/icons/avatar.jpg"
                       }
                       alt={trainer.fname}
@@ -341,7 +343,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id} `}
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.trainerUserId} `}
                     className={styles["trainer-name"]}
                   >
                     <p> {`${trainer.fname} ${trainer.lname}`}</p>

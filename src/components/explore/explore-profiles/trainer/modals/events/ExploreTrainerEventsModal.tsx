@@ -89,12 +89,12 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
                             ? trainerGroup(booking.invitee_id)?.club_id
                             : ""
                         }`}
+                        onClick={closeEventsModal}
                       >
                         <img
                           src={
-                            booking.event_type_id === 3 &&
-                            selectedTrainer?.[0]?.image
-                              ? `${localUrl}/${selectedTrainer?.[0]?.image}`
+                            booking.event_type_id === 3 && booking.playerImage
+                              ? `${localUrl}/${booking.playerImage}`
                               : "/images/icons/avatar.jpg"
                           }
                           className={styles["opponent-image"]}
@@ -123,6 +123,7 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
                             : ""
                         }`}
                         className={styles["opponent-name"]}
+                        onClick={closeEventsModal}
                       >
                         {booking.event_type_id === 3
                           ? `${booking.playerFname} ${booking.playerLname}`

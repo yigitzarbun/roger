@@ -18,22 +18,45 @@ import { useGetPaginatedClubCalendarBookingsQuery } from "../../../../api/endpoi
 
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetStudentGroupsByFilterQuery } from "../../../../api/endpoints/StudentGroupsApi";
+import AddCourtModal from "../../../../components/club-courts/add-court-modal/AddCourtModal";
+import { useGetClubProfileDetailsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetCourtStructureTypesQuery } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { useGetCourtSurfaceTypesQuery } from "../../../../api/endpoints/CourtSurfaceTypesApi";
+import EditClubBankDetailsModal from "../../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
+import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 
 interface ClubCalendarResultsProps {
   courtId: number;
   eventTypeId: number;
   myCourts: any[];
   textSearch: string;
+  refecthMyCourts: () => void;
 }
 const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
-  const { courtId, eventTypeId, myCourts, textSearch } = props;
+  const { courtId, eventTypeId, myCourts, textSearch, refecthMyCourts } = props;
 
   // fetch data
   const user = useAppSelector((store) => store.user.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
+  const {
+    data: currentClub,
+    isLoading: isClubDetailsLoading,
+    refetch: refetchClubDetails,
+  } = useGetClubProfileDetailsQuery(user?.user?.user_id);
 
+  const clubBankDetailsExist =
+    currentClub?.[0]["iban"] &&
+    currentClub?.[0]["bank_id"] &&
+    currentClub?.[0]["name_on_bank_account"];
+
+  const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
+    useGetCourtStructureTypesQuery({});
+
+  const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
+    useGetCourtSurfaceTypesQuery({});
   const [currentPage, setCurrentPage] = useState(1);
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {
     data: clubCalendarBookings,
@@ -100,6 +123,26 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       is_active: true,
     });
 
+  const [isAddCourtModalOpen, setIsAddCourtModalOpen] = useState(false);
+
+  const openAddCourtModal = () => {
+    setIsAddCourtModalOpen(true);
+  };
+
+  const closeAddCourtModal = () => {
+    setIsAddCourtModalOpen(false);
+  };
+
+  const [isEditBankModalOpen, setIsEditBankModalOpen] = useState(false);
+
+  const handleOpenEditBankModal = () => {
+    setIsEditBankModalOpen(true);
+  };
+
+  const handleCloseEditBankModal = () => {
+    setIsEditBankModalOpen(false);
+  };
+
   useEffect(() => {
     refetchClubCalendarBookings();
   }, [
@@ -111,8 +154,20 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     addBookingModalOpen,
   ]);
 
+  useEffect(() => {
+    refetchClubDetails();
+  }, [isEditBankModalOpen]);
+
+  useEffect(() => {
+    refecthMyCourts();
+  }, [isAddCourtModalOpen]);
   // data loading check
-  if (isUsersLoading || isMyGroupsLoading || isClubCalendarBookingsLoading) {
+  if (
+    isUsersLoading ||
+    isMyGroupsLoading ||
+    isClubCalendarBookingsLoading ||
+    isClubDetailsLoading
+  ) {
     return <PageLoading />;
   }
   return (
@@ -120,15 +175,15 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Takvim</h2>
-          <button
-            className={styles["add-booking-button"]}
-            onClick={openAddBookingModal}
-            disabled={myCourts?.length === 0}
-          >
-            {myCourts?.length === 0
-              ? "Rezervasyon için Kort Ekleyin"
-              : "Rezervasyon Ekle"}
-          </button>
+          {myCourts?.length > 0 && (
+            <button
+              className={styles["add-booking-button"]}
+              onClick={openAddBookingModal}
+              disabled={myCourts?.length === 0}
+            >
+              Rezervasyon Ekle
+            </button>
+          )}
         </div>
 
         {clubCalendarBookings?.totalPages > 1 && (
@@ -145,7 +200,30 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
           </div>
         )}
       </div>
-      {clubCalendarBookings?.bookings?.length === 0 ? (
+      {!clubBankDetailsExist ? (
+        <div className={styles["add-bank-details-container"]}>
+          <p>
+            Kort satışı gerçekleştirmek için öncelikle banka bilgilerinizi
+            eklemeniz gerekmektedir.
+          </p>
+          <button className={styles.button} onClick={handleOpenEditBankModal}>
+            Banka Bilgilerini Ekle
+          </button>
+        </div>
+      ) : clubBankDetailsExist &&
+        clubCalendarBookings?.bookings?.length === 0 &&
+        myCourts?.length === 0 ? (
+        <div className={styles["add-bank-details-container"]}>
+          <p>
+            Kendi üyeleriniz ve diğer oyuncu / eğitmenlerin rezervasyon
+            yapabilmesi için kort ekleyin.
+          </p>
+          <button onClick={openAddCourtModal} className={styles.button}>
+            Kort Ekle
+          </button>
+        </div>
+      ) : clubBankDetailsExist &&
+        clubCalendarBookings?.bookings?.length === 0 ? (
         <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
       ) : (
         <table>
@@ -284,6 +362,27 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
           selectedBooking={selectedBooking}
           myCourts={myCourts}
           user={user}
+        />
+      )}
+
+      {isAddCourtModalOpen && (
+        <AddCourtModal
+          isAddCourtModalOpen={isAddCourtModalOpen}
+          closeAddCourtModal={closeAddCourtModal}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          currentClub={currentClub}
+          user={user}
+        />
+      )}
+      {isEditBankModalOpen && (
+        <EditClubBankDetailsModal
+          isModalOpen={isEditBankModalOpen}
+          handleCloseModal={handleCloseEditBankModal}
+          banks={banks}
+          clubDetails={currentClub}
+          bankDetailsExist={clubBankDetailsExist}
+          refetchClubDetails={refetchClubDetails}
         />
       )}
     </div>

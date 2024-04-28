@@ -61,7 +61,9 @@ bookingsRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const filter = req.query;
-      const bookings = await bookingsModel.getPlayerBookingsByUserId(filter);
+      const bookings = await bookingsModel.getPlayerCalendarBookingsByFilter(
+        filter
+      );
       res.status(200).json(bookings);
     } catch (error) {
       next(error);
@@ -73,7 +75,9 @@ bookingsRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const filter = req.query;
-      const bookings = await bookingsModel.getTrainerBookingsByUserId(filter);
+      const bookings = await bookingsModel.getTrainerCalendarBookingsByFilter(
+        filter
+      );
       res.status(200).json(bookings);
     } catch (error) {
       next(error);

@@ -40,8 +40,8 @@ const TrainerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [skipSelectedPayment, setSkipSelectedPayment] = useState(true);
-  const [skipStudent, setSkipStudent] = useState(true);
-  const [selectedPlayerUserId, setSelectedPlayerUserId] = useState(null);
+  //const [skipStudent, setSkipStudent] = useState(true);
+  //const [selectedPlayerUserId, setSelectedPlayerUserId] = useState(null);
 
   const {
     data: incomingBookings,
@@ -49,6 +49,7 @@ const TrainerRequestsIncoming = () => {
     refetch: refetchBookings,
   } = useGetTrainerIncomingRequestsQuery(user?.user_id);
 
+  /*
   const { data: isStudent, isLoading: isStudentLoading } = useGetIsStudentQuery(
     {
       player_id: selectedPlayerUserId,
@@ -60,15 +61,17 @@ const TrainerRequestsIncoming = () => {
   const { refetch: refetchStudents } = useGetStudentsByFilterQuery({
     trainer_id: user?.user_id,
   });
-
+*/
   const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
     useUpdateBookingMutation({});
 
   const [updatePayment, { data: paymentData, isSuccess: isPaymentSuccess }] =
     useUpdatePaymentMutation({});
 
+  /*
   const [addStudent, { isSuccess: isAddStudentSuccess }] =
     useAddStudentMutation({});
+*/
 
   // accept booking
   const [acceptBookingData, setAcceptBookingData] =
@@ -171,8 +174,8 @@ const TrainerRequestsIncoming = () => {
     if (isUpdateBookingSuccess) {
       toast.success("İşlem başarılı");
       // check if player is not student. add if not
-      setSelectedPlayerUserId(acceptBookingData?.inviter_id);
-      setSkipStudent(false);
+      //setSelectedPlayerUserId(acceptBookingData?.inviter_id);
+      //setSkipStudent(false);
       refetchBookings();
       refetchPayments();
       setAcceptBookingData(null);
@@ -181,6 +184,7 @@ const TrainerRequestsIncoming = () => {
     }
   }, [isUpdateBookingSuccess]);
 
+  /*
   useEffect(() => {
     if (!isStudent) {
       const newStudent = {
@@ -197,6 +201,7 @@ const TrainerRequestsIncoming = () => {
       refetchStudents();
     }
   }, [isAddStudentSuccess]);
+*/
 
   if (isIncomingBookingsLoading) {
     return <PageLoading />;
@@ -272,18 +277,18 @@ const TrainerRequestsIncoming = () => {
                 <td>{booking?.lesson_price}</td>
                 <td>
                   <button
-                    onClick={() => handleOpenAcceptModal(booking)}
-                    className={styles["accept-button"]}
-                  >
-                    Onay
-                  </button>
-                </td>
-                <td>
-                  <button
                     onClick={() => handleOpenDeclineModal(booking)}
                     className={styles["decline-button"]}
                   >
                     Reddet
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleOpenAcceptModal(booking)}
+                    className={styles["accept-button"]}
+                  >
+                    Onay
                   </button>
                 </td>
               </tr>
@@ -306,6 +311,7 @@ const TrainerRequestsIncoming = () => {
           handleCloseDeclineModal={handleCloseDeclineModal}
           declineBookingData={declineBookingData}
           handleDeclineBooking={handleDeclineBooking}
+          user={user}
         />
       )}
     </div>

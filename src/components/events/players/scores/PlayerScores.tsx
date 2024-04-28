@@ -153,22 +153,26 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles.title}>Maç Skorları</h2>
-          <FaFilter
-            onClick={handleOpenMatchScoresFilterModal}
-            className={styles.filter}
-          />
+          {matchScores?.matchScores?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenMatchScoresFilterModal}
+              className={styles.filter}
+            />
+          )}
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {matchScores?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {matchScores?.matchScores?.length > 0 ? (
         <table>

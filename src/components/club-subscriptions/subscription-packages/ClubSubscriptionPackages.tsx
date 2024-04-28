@@ -8,13 +8,14 @@ import { useGetClubSubscriptionPackageDetailsQuery } from "../../../api/endpoint
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useAppSelector } from "../../../store/hooks";
-import { useGetClubByClubIdQuery } from "../../../api/endpoints/ClubsApi";
 
-const ClubSubscriptionPackages = () => {
+interface ClubSubscriptionPackagesProps {
+  currentClub: any;
+  refetchClubDetails: () => void;
+}
+const ClubSubscriptionPackages = (props: ClubSubscriptionPackagesProps) => {
+  const { currentClub, refetchClubDetails } = props;
   const user = useAppSelector((store) => store?.user?.user);
-
-  const { data: selectedClub, isLoading: isSelectedClubLoading } =
-    useGetClubByClubIdQuery(user?.clubDetails?.club_id);
 
   const [selectedSubscriptionPackage, setSelectedSubscriptionPackage] =
     useState(null);
@@ -61,6 +62,7 @@ const ClubSubscriptionPackages = () => {
   useEffect(() => {
     refetchMyPackages();
   }, [openAddPackageModal, openEditPackageModal]);
+
   if (
     isClubSubscriptionTypesLoading ||
     isMySubscribersLoading ||
@@ -84,18 +86,20 @@ const ClubSubscriptionPackages = () => {
         myPackages={myPackages}
         mySubscribers={mySubscribers}
         subscriptionTypes={clubSubscriptionTypes}
-        selectedClub={selectedClub}
+        currentClub={currentClub}
         user={user}
+        refetchClubDetails={refetchClubDetails}
       />
-
-      <EditSubscriptionPackageModal
-        openEditPackageModal={openEditPackageModal}
-        closeEditClubSubscriptionPackageModal={
-          closeEditClubSubscriptionPackageModal
-        }
-        selectedSubscriptionPackage={selectedSubscriptionPackage}
-        user={user}
-      />
+      {openEditPackageModal && (
+        <EditSubscriptionPackageModal
+          openEditPackageModal={openEditPackageModal}
+          closeEditClubSubscriptionPackageModal={
+            closeEditClubSubscriptionPackageModal
+          }
+          selectedSubscriptionPackage={selectedSubscriptionPackage}
+          user={user}
+        />
+      )}
     </div>
   );
 };

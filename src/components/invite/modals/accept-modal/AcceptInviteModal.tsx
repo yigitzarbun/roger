@@ -20,7 +20,15 @@ export type AcceptBookingData = {
   invitation_note: string;
 };
 
-const AcceptInviteModal = (props) => {
+interface AcceptInviteModalProps {
+  isAcceptModalOpen: boolean;
+  handleCloseAcceptModal: () => void;
+  acceptBookingData: any;
+  handleAcceptBooking: () => void;
+  user: any;
+}
+
+const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   const {
     isAcceptModalOpen,
     handleCloseAcceptModal,
@@ -31,11 +39,9 @@ const AcceptInviteModal = (props) => {
 
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
-
   const isEventTraining = acceptBookingData?.event_type_id === 1;
   const isEventMatch = acceptBookingData?.event_type_id === 2;
   const isEventLesson = acceptBookingData?.event_type_id === 3;
-
   return (
     <ReactModal
       isOpen={isAcceptModalOpen}
@@ -53,8 +59,14 @@ const AcceptInviteModal = (props) => {
               (isEventTraining || isEventMatch) &&
               acceptBookingData?.playerImage
                 ? acceptBookingData?.playerImage
-                : isEventLesson && acceptBookingData?.trainerImage
+                : isEventLesson &&
+                  isUserPlayer &&
+                  acceptBookingData?.trainerImage
                 ? acceptBookingData?.trainerImage
+                : isEventLesson &&
+                  isUserTrainer &&
+                  acceptBookingData?.playerImage
+                ? acceptBookingData?.playerImage
                 : "images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

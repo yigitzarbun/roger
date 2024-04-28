@@ -85,6 +85,7 @@ const clubStaffModel = {
           );
         })
         .where("clubs.user_id", userId)
+        .where("club_staff.employment_status", "accepted")
         .groupBy(
           "club_staff.club_staff_id",
           "trainers.trainer_id",

@@ -13,6 +13,8 @@ const trainersModel = {
     const trainersQuery = db("trainers")
       .select(
         "trainers.*",
+        "trainers.image as trainerImage",
+        "trainers.user_id as trainerUserId",
         "locations.*",
         "trainer_experience_types.*",
         "clubs.club_name",
@@ -160,6 +162,9 @@ const trainersModel = {
           "trainers.*",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
+          "trainers.iban as trainerIban",
+          "trainers.bank_id as trainerBankId",
+          "trainers.name_on_bank_account as trainerBankAccountName",
           "users.*",
           "locations.*",
           "trainer_experience_types.*",

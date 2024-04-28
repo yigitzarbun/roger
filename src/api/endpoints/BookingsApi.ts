@@ -27,11 +27,11 @@ export const bookingsSlice = createApi({
     getBookingById: builder.query({
       query: (booking_id) => `/bookings/${booking_id}`,
     }),
-    getPlayerBookingsByUserId: builder.query({
+    getPlayerCalendarBookingsByFilter: builder.query({
       query: (filter) =>
         `/bookings/player-bookings/filter?${new URLSearchParams(filter)}`,
     }),
-    getTrainerBookingsByUserId: builder.query({
+    getTrainerCalendarBookingsByFilter: builder.query({
       query: (filter) =>
         `/bookings/trainer-bookings/filter?${new URLSearchParams(filter)}`,
     }),
@@ -99,8 +99,8 @@ export const bookingsSlice = createApi({
 export const {
   useGetBookingsQuery,
   useGetBookingByIdQuery,
-  useGetPlayerBookingsByUserIdQuery,
-  useGetTrainerBookingsByUserIdQuery,
+  useGetPlayerCalendarBookingsByFilterQuery,
+  useGetTrainerCalendarBookingsByFilterQuery,
   useGetPlayerOutgoingRequestsQuery,
   useGetPlayerIncomingRequestsQuery,
   useGetUserProfileEventsQuery,

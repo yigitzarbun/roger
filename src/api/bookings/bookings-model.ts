@@ -6,85 +6,112 @@ const bookingsModel = {
     return bookings;
   },
   async getByFilter(filter) {
-    const bookings = await db("bookings").where((builder) => {
-      if (filter.booking_id) {
-        builder.where("booking_id", filter.booking_id);
-      }
-      if (filter.event_date) {
-        builder.where("event_date", filter.event_date);
-      }
-      if (filter.event_time) {
-        builder.where("event_time", filter.event_time);
-      }
-      if (filter.booking_status_type_id) {
-        builder.where("booking_status_type_id", filter.booking_status_type_id);
-      }
-      if (filter.event_type_id) {
-        builder.where("event_type_id", filter.event_type_id);
-      }
-      if (filter.club_id) {
-        builder.where("club_id", filter.club_id);
-      }
-      if (filter.court_id) {
-        builder.where("court_id", filter.court_id);
-      }
-      if (filter.inviter_id) {
-        builder.where("inviter_id", filter.inviter_id);
-      }
-      if (filter.invitee_id) {
-        builder.where("invitee_id", filter.invitee_id);
-      }
-      if (filter.user_id) {
-        builder.andWhere(function () {
-          this.where("bookings.inviter_id", filter.user_id)
-            .orWhere("bookings.invitee_id", filter.user_id)
-            .orWhereExists(function () {
-              this.select(db.raw(1))
-                .from("student_groups")
-                .whereRaw("student_groups.first_student_id = ?", [
-                  filter.user_id,
-                ])
-                .orWhereRaw("student_groups.second_student_id = ?", [
-                  filter.user_id,
-                ])
-                .orWhereRaw("student_groups.third_student_id = ?", [
-                  filter.user_id,
-                ])
-                .orWhereRaw("student_groups.fourth_student_id = ?", [
-                  filter.user_id,
-                ]);
-            });
-        });
-      }
+    const bookings = await db
+      .select(
+        "bookings.event_date",
+        "bookings.event_time",
+        "bookings.court_id",
+        "bookings.booking_status_type_id"
+      )
+      .from("bookings")
+      .where((builder) => {
+        if (filter.booking_id) {
+          builder.where("booking_id", filter.booking_id);
+        }
+        if (filter.event_date) {
+          builder.where("event_date", filter.event_date);
+        }
+        if (filter.event_time) {
+          builder.where("event_time", filter.event_time);
+        }
+        if (filter.booking_status_type_id) {
+          builder.where(
+            "booking_status_type_id",
+            filter.booking_status_type_id
+          );
+        }
+        if (filter.event_type_id) {
+          builder.where("event_type_id", filter.event_type_id);
+        }
+        if (filter.club_id) {
+          builder.where("club_id", filter.club_id);
+        }
+        if (filter.court_id) {
+          builder.where("court_id", filter.court_id);
+        }
+        if (filter.inviter_id) {
+          builder.where("inviter_id", filter.inviter_id);
+        }
+        if (filter.invitee_id) {
+          builder.where("invitee_id", filter.invitee_id);
+        }
+        if (filter.user_id) {
+          builder.andWhere(function () {
+            this.where("bookings.inviter_id", filter.user_id)
+              .orWhere("bookings.invitee_id", filter.user_id)
+              .orWhereExists(function () {
+                this.select(db.raw(1))
+                  .from("student_groups")
+                  .whereRaw("student_groups.first_student_id = ?", [
+                    filter.user_id,
+                  ])
+                  .orWhereRaw("student_groups.second_student_id = ?", [
+                    filter.user_id,
+                  ])
+                  .orWhereRaw("student_groups.third_student_id = ?", [
+                    filter.user_id,
+                  ])
+                  .orWhereRaw("student_groups.fourth_student_id = ?", [
+                    filter.user_id,
+                  ]);
+              });
+          });
+        }
 
-      if (filter.sortBy) {
-        // handle sorting here if required
-        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
-      }
-    });
+        if (filter.sortBy) {
+          // handle sorting here if required
+          builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+        }
+      });
 
     return bookings;
   },
-  async getPlayerBookingsByUserId(filter) {
+  async getPlayerCalendarBookingsByFilter(filter) {
     try {
       const bookings = await db
         .select(
-          "bookings.*",
-          "players.*",
-          "players.image as playerImage",
-          "trainers.*",
-          "trainers.image as trainerImage",
-          "clubs.*",
+          "bookings.booking_id",
+          "bookings.booking_status_type_id",
+          "bookings.event_type_id",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "courts.*",
-          "student_groups.*",
+          "players.image as playerImage",
+          "trainers.image as trainerImage",
+          "players.fname",
+          "players.lname",
+          "trainers.fname",
+          "trainers.lname",
+          "student_groups.student_group_name",
+          "player_levels.player_level_name",
+          "trainer_experience_types.trainer_experience_type_name",
+          "players.gender",
+          "trainers.gender",
+          "players.birth_year",
+          "trainers.birth_year",
+          "event_types.event_type_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "courts.court_name",
+          "clubs.club_name",
+          "payments.payment_amount",
+          "payments.lesson_price",
+          "payments.court_price",
+          "bookings.registered_at",
+          "bookings.invitation_note",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "users.user_type_id",
-          "users.user_id",
-          "player_levels.*",
-          "trainer_experience_types.*",
-          "event_types.*",
-          "payments.*"
+          "users.user_id"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -175,35 +202,36 @@ const bookingsModel = {
 
       return bookings;
     } catch (error) {
-      // Handle any potential errors
       console.error(error);
-      throw new Error("Unable to fetch player bookings.");
+      throw new Error("Unable to fetch player calendar bookings.");
     }
   },
-  async getTrainerBookingsByUserId(filter) {
+  async getTrainerCalendarBookingsByFilter(filter) {
     try {
       const bookings = await db
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.booking_status_type_id",
+          "bookings.event_type_id",
           "players.image as playerImage",
           "players.fname as playerFName",
           "players.lname as playerLName",
           "players.user_id as playerUserId",
           "players.gender as playerGender",
           "players.birth_year as playerBirthYear",
-          "trainers.*",
           "trainers.image as trainerImage",
-          "clubs.*",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "courts.*",
-          "student_groups.*",
-          "users.user_type_id",
-          "users.user_id",
-          "player_levels.*",
-          "event_types.*",
-          "payments.*"
+          "student_groups.student_group_name",
+          "player_levels.player_level_name",
+          "event_types.event_type_name",
+          "bookings.event_time",
+          "bookings.event_date",
+          "clubs.club_name",
+          "courts.court_name",
+          "payments.lesson_price",
+          "payments.court_price",
+          "payments.payment_amount"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -299,19 +327,33 @@ const bookingsModel = {
     try {
       const bookings = await db
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.booking_status_type_id",
+          "bookings.event_date",
+          "bookings.event_time",
+          "bookings.invitee_id",
+          "bookings.inviter_id",
+          "bookings.event_type_id",
+          "users.user_type_id",
           "players.image as playerImage",
-          "trainers.*",
+          "players.fname",
+          "players.lname",
+          "players.gender",
+          "players.birth_year",
+          "trainers.birth_year",
           "trainers.image as trainerImage",
-          "clubs.*",
+          "trainers.fname",
+          "trainers.lname",
+          "trainers.gender",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "player_levels.*",
-          "users.*",
-          "trainer_experience_types.*",
-          "payments.*"
+          "clubs.club_name",
+          "player_levels.player_level_name",
+          "trainer_experience_types.trainer_experience_type_name",
+          "courts.court_name",
+          "payments.payment_amount",
+          "payments.court_price",
+          "payments.lesson_price",
+          "event_types.event_type_name"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -370,19 +412,38 @@ const bookingsModel = {
     try {
       const bookings = await db
         .select(
-          "bookings.*",
-          "players.*",
+          "players.fname",
+          "players.lname",
+          "trainers.fname",
+          "trainers.lname",
+          "event_types.event_type_name",
+          "bookings.event_type_id",
+          "bookings.booking_id",
+          "bookings.booking_status_type_id",
+          "users.user_type_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "players.image as playerImage",
-          "trainers.*",
           "trainers.image as trainerImage",
-          "clubs.*",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "player_levels.*",
-          "users.*",
-          "trainer_experience_types.*",
-          "payments.*"
+          "player_levels.player_level_name",
+          "trainer_experience_types.trainer_experience_type_name",
+          "players.gender",
+          "trainers.gender",
+          "players.birth_year",
+          "trainers.birth_year",
+          "bookings.event_date",
+          "bookings.event_time",
+          "courts.court_name",
+          "clubs.club_name",
+          "payments.payment_amount",
+          "payments.court_price",
+          "payments.lesson_price",
+          "bookings.invitation_note",
+          "payments.payment_id",
+          "payments.payment_status",
+          "courts.court_id",
+          "clubs.club_id"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -442,24 +503,30 @@ const bookingsModel = {
       const eventsPerPage = 4;
       const offset = (filter.currentPage - 1) * eventsPerPage;
       const bookings = await db
+        .distinct("bookings.booking_id")
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.event_type_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "players.image as playerImage",
-          "trainers.*",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
-          "clubs.*",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "student_groups.*",
-          "users.*",
-          "event_reviews.*",
-          "event_reviews.is_active as isEventReviewActive"
+          "event_reviews.is_active as isEventReviewActive",
+          "players.fname",
+          "players.lname",
+          "trainers.fname",
+          "trainers.lname",
+          "student_groups.student_group_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "clubs.club_name",
+          "courts.court_name",
+          "court_structure_types.court_structure_type_name",
+          "court_surface_types.court_surface_type_name",
+          "event_types.event_type_name"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -522,11 +589,10 @@ const bookingsModel = {
           }
           if (filter.textSearch && filter.textSearch !== "") {
             builder.where(function () {
-              this.where(
-                "players.fname",
-                "ilike",
-                `%${filter.textSearch}%`
-              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+              this.where("players.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
             });
           }
           if (filter.courtSurfaceTypeId > 0) {
@@ -552,36 +618,45 @@ const bookingsModel = {
         .andWhere((builder) => {
           builder
             .where("bookings.invitee_id", filter.userId)
-            .orWhere("bookings.inviter_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+            .orWhere("bookings.inviter_id", filter.userId);
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere(function () {
-          this.whereNot("players.user_id", filter.userId)
-            .orWhereNot("trainers.user_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+          this.whereNot("players.user_id", filter.userId).orWhereNot(
+            "trainers.user_id",
+            filter.userId
+          );
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere("event_reviews.reviewer_id", "=", filter.userId)
         .limit(eventsPerPage)
         .offset(offset);
 
       const count = await db
+        .distinct("bookings.booking_id")
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.event_type_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "players.image as playerImage",
-          "trainers.*",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
-          "clubs.*",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "student_groups.*",
-          "users.*",
-          "event_reviews.*"
+          "event_reviews.is_active as isEventReviewActive",
+          "players.fname",
+          "players.lname",
+          "trainers.fname",
+          "trainers.lname",
+          "student_groups.student_group_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "clubs.club_name",
+          "courts.court_name",
+          "court_structure_types.court_structure_type_name",
+          "court_surface_types.court_surface_type_name",
+          "event_types.event_type_name"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -637,17 +712,17 @@ const bookingsModel = {
         .leftJoin("event_reviews", function () {
           this.on("event_reviews.booking_id", "=", "bookings.booking_id");
         })
+
         .where((builder) => {
           if (filter.clubId > 0) {
             builder.where("clubs.user_id", filter.clubId);
           }
           if (filter.textSearch && filter.textSearch !== "") {
             builder.where(function () {
-              this.where(
-                "players.fname",
-                "ilike",
-                `%${filter.textSearch}%`
-              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+              this.where("players.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
             });
           }
           if (filter.courtSurfaceTypeId > 0) {
@@ -673,13 +748,15 @@ const bookingsModel = {
         .andWhere((builder) => {
           builder
             .where("bookings.invitee_id", filter.userId)
-            .orWhere("bookings.inviter_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+            .orWhere("bookings.inviter_id", filter.userId);
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere(function () {
-          this.whereNot("players.user_id", filter.userId)
-            .orWhereNot("trainers.user_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+          this.whereNot("players.user_id", filter.userId).orWhereNot(
+            "trainers.user_id",
+            filter.userId
+          );
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere("event_reviews.reviewer_id", "=", filter.userId);
 
@@ -699,27 +776,29 @@ const bookingsModel = {
       const eventsPerPage = 4;
       const offset = (filter.currentPage - 1) * eventsPerPage;
       const bookings = await db
+        .distinct("bookings.booking_id")
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.event_type_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "players.image as playerImage",
           "players.fname as playerFname",
           "players.lname as playerLname",
           "players.user_id as playerUserId",
-          "trainers.*",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
-          "clubs.*",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "student_groups.*",
-          "users.*",
-          "event_reviews.*",
-          "event_reviews.is_active as isEventReviewActive"
+          "event_reviews.is_active as isEventReviewActive",
+          "student_groups.student_group_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "event_types.event_type_name",
+          "court_surface_types.court_surface_type_name",
+          "court_structure_types.court_structure_type_name",
+          "courts.court_name",
+          "clubs.club_name"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -811,41 +890,44 @@ const bookingsModel = {
         .andWhere((builder) => {
           builder
             .where("bookings.invitee_id", filter.userId)
-            .orWhere("bookings.inviter_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+            .orWhere("bookings.inviter_id", filter.userId);
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
-        /*
         .andWhere(function () {
-          this.whereNot("players.user_id", filter.userId)
-            .orWhereNot("trainers.user_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+          this.whereNot("players.user_id", filter.userId).orWhereNot(
+            "trainers.user_id",
+            filter.userId
+          );
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
-        */
         .andWhere("event_reviews.reviewer_id", "=", filter.userId)
         .limit(eventsPerPage)
         .offset(offset);
 
       const count = await db
+        .distinct("bookings.booking_id")
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.event_type_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "players.image as playerImage",
           "players.fname as playerFname",
           "players.lname as playerLname",
           "players.user_id as playerUserId",
-          "trainers.*",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
-          "clubs.*",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "student_groups.*",
-          "users.*",
-          "event_reviews.*"
+          "event_reviews.is_active as isEventReviewActive",
+          "student_groups.student_group_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "event_types.event_type_name",
+          "court_surface_types.court_surface_type_name",
+          "court_structure_types.court_structure_type_name",
+          "courts.court_name",
+          "clubs.club_name"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -937,13 +1019,15 @@ const bookingsModel = {
         .andWhere((builder) => {
           builder
             .where("bookings.invitee_id", filter.userId)
-            .orWhere("bookings.inviter_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+            .orWhere("bookings.inviter_id", filter.userId);
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere(function () {
-          this.whereNot("players.user_id", filter.userId)
-            .orWhereNot("trainers.user_id", filter.userId)
-            .orWhere("student_groups.first_student_id", filter.userId);
+          this.whereNot("players.user_id", filter.userId).orWhereNot(
+            "trainers.user_id",
+            filter.userId
+          );
+          //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere("event_reviews.reviewer_id", "=", filter.userId);
 
@@ -955,32 +1039,36 @@ const bookingsModel = {
     } catch (error) {
       // Handle any potential errors
       console.error(error);
-      throw new Error("Unable to fetch player bookings.");
+      throw new Error("Unable to fetch trainer past bookings.");
     }
   },
   async getOutgoingTrainerRequests(userId: number) {
     try {
       const bookings = await db
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.booking_status_type_id",
+          "bookings.event_type_id",
+          "bookings.invitee_id",
+          "bookings.inviter_id",
           "players.image as playerImage",
-          "trainers.*",
-          "trainers.image as trainerImage",
-          "clubs.*",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "player_levels.*",
-          "users.*",
-          "payments.*"
+          "players.fname",
+          "players.lname",
+          "players.fname as playerFname",
+          "players.lname as playerLname",
+          "players.gender",
+          "players.birth_year",
+          "player_levels.player_level_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "courts.court_name",
+          "clubs.club_name",
+          "payments.lesson_price"
         )
         .from("bookings")
         .leftJoin("players", function () {
           this.on("players.user_id", "=", "bookings.invitee_id");
-        })
-        .leftJoin("trainers", function () {
-          this.on("trainers.user_id", "=", "bookings.invitee_id");
         })
         .leftJoin("courts", function () {
           this.on("courts.court_id", "=", "bookings.court_id");
@@ -997,9 +1085,6 @@ const bookingsModel = {
             "=",
             "players.player_level_id"
           );
-        })
-        .leftJoin("users", function () {
-          this.on("users.user_id", "=", "bookings.invitee_id");
         })
         .leftJoin("payments", function () {
           this.on("payments.payment_id", "=", "bookings.payment_id");
@@ -1018,25 +1103,34 @@ const bookingsModel = {
     try {
       const bookings = await db
         .select(
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "players.fname",
+          "players.lname",
+          "players.gender",
+          "players.birth_year",
+          "event_types.event_type_name",
           "players.image as playerImage",
-          "trainers.*",
-          "trainers.image as trainerImage",
-          "clubs.*",
           "clubs.image as clubImage",
-          "courts.*",
-          "event_types.*",
-          "player_levels.*",
-          "users.*",
-          "payments.*"
+          "bookings.event_date",
+          "bookings.event_time",
+          "payments.court_price",
+          "payments.lesson_price",
+          "bookings.event_type_id",
+          "payments.payment_id",
+          "clubs.club_id",
+          "clubs.club_name",
+          "courts.court_id",
+          "courts.court_name",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
+          "bookings.invitation_note",
+          "bookings.booking_status_type_id",
+          "player_levels.player_level_name",
+          "users.user_type_id"
         )
         .from("bookings")
         .leftJoin("players", function () {
           this.on("players.user_id", "=", "bookings.inviter_id");
-        })
-        .leftJoin("trainers", function () {
-          this.on("trainers.user_id", "=", "bookings.inviter_id");
         })
         .leftJoin("courts", function () {
           this.on("courts.court_id", "=", "bookings.court_id");
@@ -1075,23 +1169,39 @@ const bookingsModel = {
     try {
       const userPastEvents = await db
         .select(
-          "bookings.*",
-          "locations.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.event_type_id",
+          "bookings.invitee_id",
+          "bookings.inviter_id",
           "players.fname as playerFname",
           "players.lname as playerLname",
           "players.user_id as playerUserId",
           "players.image as playerImage",
-          "trainers.*",
           "trainers.fname as trainerFname",
           "trainers.lname as trainerLname",
           "trainers.user_id as trainerUserId",
           "trainers.image as trainerImage",
-          "clubs.*",
-          "event_types.*",
-          "match_scores.*",
-          "courts.*",
-          "student_groups.*",
+          "players.fname",
+          "players.lname",
+          "trainers.fname",
+          "trainers.lname",
+          "clubs.club_name",
+          "clubs.user_id as clubUserId",
+          "event_types.event_type_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "match_scores.match_score_status_type_id",
+          "match_scores.inviter_first_set_games_won",
+          "match_scores.invitee_first_set_games_won",
+          "match_scores.inviter_second_set_games_won",
+          "match_scores.invitee_second_set_games_won",
+          "match_scores.inviter_third_set_games_won",
+          "match_scores.inviter_third_set_games_won",
+          "match_scores.invitee_third_set_games_won",
+          "match_scores.invitee_third_set_games_won",
+          "match_scores.winner_id",
+          "courts.court_name",
+          "student_groups.student_group_name",
           db.raw(
             "CASE WHEN event_types.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.fname END as winner_fname"
           ),
@@ -1146,13 +1256,14 @@ const bookingsModel = {
           builder
             .where("bookings.invitee_id", userId)
             .orWhere("bookings.inviter_id", userId);
-        });
-      /*
+        })
+
         .andWhere((builder) => {
-          builder.whereNot("players.user_id", userId)
-           .orWhereNot("trainers.user_id", userId);
+          builder
+            .whereNot("players.user_id", userId)
+            .orWhereNot("trainers.user_id", userId);
         });
-*/
+
       return userPastEvents;
     } catch (error) {
       console.log("Error fetching user past events: ", error);
@@ -1171,8 +1282,8 @@ const bookingsModel = {
           "players.lname",
           "players.gender",
           "players.birth_year",
-          "player_levels.*",
-          "locations.*",
+          "player_levels.player_level_name",
+          "locations.location_name",
           db.raw("COUNT(match_scores.match_score_id) as totalMatches"),
           db.raw(
             "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
@@ -1246,8 +1357,54 @@ const bookingsModel = {
         )
         .limit(playersPerPage)
         .offset(offset);
-      /*
-      const totalPlayersCount = await db("players")
+
+      const count = await db
+        .select(
+          "players.user_id",
+          "players.image",
+          "players.fname",
+          "players.lname",
+          "players.gender",
+          "players.birth_year",
+          "player_levels.player_level_name",
+          "locations.location_name",
+          db.raw("COUNT(match_scores.match_score_id) as totalMatches"),
+          db.raw(
+            "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN match_scores.winner_id != players.user_id THEN 1 ELSE 0 END) as lostMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 3 ELSE 0 END) as playerPoints"
+          )
+        )
+        .from("players")
+        .leftJoin(
+          "player_levels",
+          "player_levels.player_level_id",
+          "=",
+          "players.player_level_id"
+        )
+        .leftJoin(
+          "locations",
+          "locations.location_id",
+          "=",
+          "players.location_id"
+        )
+        .leftJoin("bookings", function () {
+          this.on("players.user_id", "=", "bookings.inviter_id").orOn(
+            "players.user_id",
+            "=",
+            "bookings.invitee_id"
+          );
+        })
+        .leftJoin(
+          "match_scores",
+          "match_scores.booking_id",
+          "=",
+          "bookings.booking_id"
+        )
         .where((builder) => {
           if (filter.playerLevelId > 0) {
             builder.where("players.player_level_id", filter.playerLevelId);
@@ -1265,12 +1422,27 @@ const bookingsModel = {
             builder.where("players.location_id", filter.locationId);
           }
         })
-        .count("players.user_id as total")
-        .first();
-*/
+        .andWhere("bookings.event_type_id", 2)
+        .andWhere("match_scores.match_score_status_type_id", 3)
+        .andWhere("players.gender", filter.gender)
+        .groupBy(
+          "players.user_id",
+          "players.image",
+          "players.player_id",
+          "players.fname",
+          "players.lname",
+          "players.gender",
+          "players.birth_year",
+          "player_levels.player_level_id",
+          "locations.location_id"
+        )
+        .orderByRaw(
+          "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) DESC"
+        );
+
       const data = {
         leaderboard: playersLeaderboard,
-        totalPages: Math.ceil(playersLeaderboard.total / playersPerPage),
+        totalPages: Math.ceil(count.length / playersPerPage),
       };
       return data;
     } catch (error) {
@@ -1280,7 +1452,15 @@ const bookingsModel = {
   },
   async getBookedCourtHours(filter) {
     try {
-      const bookings = await db("bookings")
+      const bookings = await db
+        .select(
+          "bookings.booking_id",
+          "bookings.event_time",
+          "bookings.event_date",
+          "bookings.court_id",
+          "bookings.booking_status_type_id"
+        )
+        .from("bookings")
         .where("court_id", filter.courtId)
         .andWhere("event_date", filter.eventDate)
         .andWhere((builder) =>
