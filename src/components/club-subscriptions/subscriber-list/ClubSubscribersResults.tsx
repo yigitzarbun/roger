@@ -319,8 +319,8 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                     >
                       <img
                         src={
-                          subscription?.image
-                            ? subscription?.image
+                          subscription?.playerImage
+                            ? subscription?.playerImage
                             : "/images/icons/avatar.jpg"
                         }
                         alt="subsciption"

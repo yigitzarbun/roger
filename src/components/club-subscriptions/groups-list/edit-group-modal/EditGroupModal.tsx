@@ -180,7 +180,6 @@ const EditGroupModal = (props: EditGroupModalProps) => {
   if (isGroupsLoading || isMySubscribersLoading) {
     return <PageLoading />;
   }
-  console.log(mySubscribers);
   return (
     <Modal
       isOpen={isEditGroupModalOpen}

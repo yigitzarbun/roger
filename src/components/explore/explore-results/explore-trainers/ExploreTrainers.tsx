@@ -234,7 +234,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     trainerExperienceTypeId,
     clubId,
   ]);
-  console.log(paginatedTrainers);
+
   if (
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||

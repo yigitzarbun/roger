@@ -225,8 +225,6 @@ const clubsModel = {
           "clubs.user_id",
           "clubs.club_id",
           "clubs.higher_price_for_non_subscribers",
-          "clubs.price_hour_non_subscriber",
-          "clubs.price_hour",
           "clubs.club_name",
           "clubs.is_player_lesson_subscription_required",
           "clubs.is_trainer_subscription_required",

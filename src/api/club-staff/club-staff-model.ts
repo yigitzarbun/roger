@@ -4,39 +4,53 @@ const db = require("../../data/dbconfig");
 
 const clubStaffModel = {
   async getAll() {
-    const clubStaff = await db("club_staff");
+    const clubStaff = await db
+      .select(
+        "club_staff.employment_status",
+        "club_staff.user_id",
+        "club_staff.club_id"
+      )
+      .from("club_staff");
     return clubStaff;
   },
   async getByFilter(filter) {
-    const club_staff = await db("club_staff").where((builder) => {
-      if (filter.user_id) {
-        builder.where("user_id", filter.user_id);
-      }
+    const club_staff = await db
+      .select("club_staff.*")
+      .from("club_staff")
+      .where((builder) => {
+        if (filter.user_id) {
+          builder.where("user_id", filter.user_id);
+        }
 
-      if (filter.club_staff_id) {
-        builder.where("club_staff_id", filter.club_staff_id);
-      }
+        if (filter.club_staff_id) {
+          builder.where("club_staff_id", filter.club_staff_id);
+        }
 
-      if (filter.club_id) {
-        builder.where("club_id", filter.club_id);
-      }
+        if (filter.club_id) {
+          builder.where("club_id", filter.club_id);
+        }
 
-      if (filter.employment_status) {
-        builder.where("employment_status", filter.employment_status);
-      }
+        if (filter.employment_status) {
+          builder.where("employment_status", filter.employment_status);
+        }
 
-      if (filter.club_staff_role_type_id) {
-        builder.where(
-          "club_staff_role_type_id",
-          filter.club_staff_role_type_id
-        );
-      }
+        if (filter.club_staff_role_type_id) {
+          builder.where(
+            "club_staff_role_type_id",
+            filter.club_staff_role_type_id
+          );
+        }
+        if (filter.returningStaff) {
+          builder
+            .where("club_staff.employment_status", "declined")
+            .orWhere("club_staff.employment_status", "terminated_by_club");
+        }
 
-      if (filter.sortBy) {
-        // handle sorting here if required
-        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
-      }
-    });
+        if (filter.sortBy) {
+          // handle sorting here if required
+          builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+        }
+      });
 
     return club_staff;
   },
@@ -44,13 +58,19 @@ const clubStaffModel = {
     try {
       const clubTrainers = await db
         .select(
-          "club_staff.*",
-          "trainers.*",
+          "club_staff.club_staff_id",
+          "club_staff.user_id as clubStaffUserId",
           "trainers.user_id as trainerUserId",
           "trainers.image as trainerImage",
-          "clubs.*",
-          "locations.*",
-          "trainer_experience_types.*",
+          "trainers.fname",
+          "trainers.lname",
+          "trainers.birth_year",
+          "trainers.gender",
+          "locations.location_name",
+          "club_staff.employment_status",
+          "club_staff.club_staff_role_type_id",
+          "trainers.price_hour",
+          "trainer_experience_types.trainer_experience_type_name",
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
           db.raw("COUNT(DISTINCT students.student_id) as studentCount")
         )
@@ -102,14 +122,18 @@ const clubStaffModel = {
   async getClubNewStaffRequests(clubId: number) {
     const newStaffRequests = await db
       .select(
-        "club_staff.*",
+        "club_staff.club_staff_id",
         "club_staff.user_id as clubStaffUserId",
-        "trainers.*",
         "trainers.image as trainerImage",
-        "trainer_experience_types.*",
-        "locations.*",
-        "club_staff_role_types.*",
-        "clubs.*"
+        "trainers.fname",
+        "trainers.lname",
+        "trainers.birth_year",
+        "trainers.gender",
+        "trainer_experience_types.trainer_experience_type_name",
+        "locations.location_name",
+        "club_staff_role_types.club_staff_role_type_name",
+        "clubs.club_id",
+        "club_staff.club_staff_role_type_id"
       )
       .from("club_staff")
       .leftJoin("trainers", function () {
@@ -146,12 +170,18 @@ const clubStaffModel = {
 
     const paginatedStaff = await db
       .select(
-        "club_staff.*",
-        "trainers.*",
+        "club_staff.club_staff_id",
+        "club_staff.user_id as clubStaffUserId",
         "trainers.user_id as trainerUserId",
         "trainers.image as trainerImage",
-        "locations.*",
-        "club_staff_role_types.*"
+        "trainers.fname",
+        "trainers.lname",
+        "trainers.birth_year",
+        "trainers.gender",
+        "locations.location_name",
+        "club_staff_role_types.club_staff_role_type_name",
+        "club_staff.employment_status",
+        "club_staff.club_staff_role_type_id"
       )
       .from("club_staff")
       .leftJoin("trainers", function () {
@@ -193,7 +223,20 @@ const clubStaffModel = {
       .offset(offset);
 
     const count = await db
-      .select("club_staff.*", "trainers.*", "locations.*")
+      .select(
+        "club_staff.club_staff_id",
+        "club_staff.user_id as clubStaffUserId",
+        "trainers.user_id as trainerUserId",
+        "trainers.image as trainerImage",
+        "trainers.fname",
+        "trainers.lname",
+        "trainers.birth_year",
+        "trainers.gender",
+        "locations.location_name",
+        "club_staff_role_types.club_staff_role_type_name",
+        "club_staff.employment_status",
+        "club_staff.club_staff_role_type_id"
+      )
       .from("club_staff")
       .leftJoin("trainers", function () {
         this.on("trainers.user_id", "=", "club_staff.user_id");
@@ -263,7 +306,6 @@ const clubStaffModel = {
   },
 
   async update(updates) {
-    console.log(updates);
     return await db("club_staff")
       .where("club_staff_id", updates.club_staff_id)
       .update(updates);

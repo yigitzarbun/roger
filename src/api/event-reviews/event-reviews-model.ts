@@ -34,13 +34,24 @@ const eventReviewsModel = {
   async getUserReceivedReviews(userId: number) {
     const userReceivedReviews = await db
       .select(
-        "event_reviews.*",
-        "users.*",
-        "players.*",
-        "trainers.*",
-        "clubs.*",
-        "bookings.*",
-        "event_types.*"
+        "event_reviews.event_review_id",
+        "event_reviews.event_review_title",
+        "event_reviews.registered_at",
+        "event_reviews.event_review_description",
+        "event_reviews.review_score",
+        "event_reviews.reviewer_id",
+
+        "users.user_type_id",
+        "players.image",
+        "players.fname",
+        "players.lname",
+        "trainers.image",
+        "trainers.fname",
+        "trainers.lname",
+        //"clubs.*",
+        //"bookings.*",
+        "event_types.event_type_name",
+        "event_types.event_type_id"
       )
       .from("event_reviews")
       .leftJoin("users", function () {
@@ -52,9 +63,11 @@ const eventReviewsModel = {
       .leftJoin("trainers", function () {
         this.on("trainers.user_id", "=", "event_reviews.reviewer_id");
       })
+      /*
       .leftJoin("clubs", function () {
         this.on("clubs.user_id", "=", "event_reviews.reviewer_id");
       })
+      */
       .leftJoin("bookings", function () {
         this.on("bookings.booking_id", "=", "event_reviews.booking_id");
       })
@@ -70,13 +83,21 @@ const eventReviewsModel = {
   async getReviewDetailsByFilter(filter) {
     const eventDetails = await db
       .select(
-        "event_reviews.*",
-        "users.*",
-        "players.*",
-        "trainers.*",
-        "bookings.*",
-        "event_types.*",
-        "student_groups.*"
+        "event_reviews.event_review_id",
+        "event_reviews.event_review_title",
+        "event_reviews.registered_at",
+        "event_review.event_review_description",
+        "event_review.review_score",
+        "event_types.event_type_name",
+        "event_types.event_type_id",
+        "event_review.reviewer_id",
+        "users.user_type_id",
+        "players.image",
+        "trainers.image",
+        "players.fname",
+        "players.lname",
+        "trainers.fname",
+        "trainers.lname"
       )
       .from("event_reviews")
       .leftJoin("users", function () {
@@ -98,16 +119,18 @@ const eventReviewsModel = {
       .leftJoin("event_types", function () {
         this.on("event_types.event_type_id", "=", "bookings.event_type_id");
       })
+      /*
       .leftJoin("student_groups", function () {
         this.on("student_groups.user_id", "=", "bookings.invitee_id");
       })
+      */
       .where("bookings.booking_status_type_id", 5)
       .andWhere("bookings.booking_id", filter.bookingId)
       .andWhere((builder) => {
         builder
           .where("bookings.invitee_id", filter.userId)
-          .orWhere("bookings.inviter_id", filter.userId)
-          .orWhere("student_groups.first_student_id", filter.userId);
+          .orWhere("bookings.inviter_id", filter.userId);
+        //.orWhere("student_groups.first_student_id", filter.userId);
       })
       .andWhere(function () {
         this.whereNot("players.user_id", filter.userId).orWhereNot(

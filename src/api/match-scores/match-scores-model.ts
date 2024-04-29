@@ -5,12 +5,10 @@ const matchScoresModel = {
     const matchScores = await db("match_scores");
     return matchScores;
   },
-
   async getByFilter(filter) {
     const matchScore = await db("match_scores").where(filter).first();
     return matchScore;
   },
-
   async getById(match_score_id) {
     const matchScore = await db("match_scores").where(
       "match_score_id",
@@ -25,15 +23,18 @@ const matchScoresModel = {
       const bookings = await db
         .select(
           "match_scores.*",
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "players.image as playerImage",
-          "clubs.*",
-          "courts.*",
+          "players.fname",
+          "players.lname",
+          "player_levels.player_level_name",
           "event_types.*",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "player_levels.*"
+          "clubs.club_name",
+          "courts.court_name",
+          "court_surface_types.court_surface_type_name",
+          "court_structure_types.court_structure_type_name"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -253,7 +254,7 @@ const matchScoresModel = {
   async getPlayerMissingMatchScoreNumbers(userId: number) {
     try {
       const missingScores = await db
-        .select("match_scores.*", "bookings.*")
+        .select("match_scores.match_score_id", "bookings.booking_id")
         .from("match_scores")
         .leftJoin("bookings", function () {
           this.on("bookings.booking_id", "=", "match_scores.booking_id");
@@ -281,7 +282,6 @@ const matchScoresModel = {
       throw new Error("Unable to fetch player match scores and bookings.");
     }
   },
-
   async add(matchScore) {
     const [newMatchScore] = await db("match_scores")
       .insert(matchScore)

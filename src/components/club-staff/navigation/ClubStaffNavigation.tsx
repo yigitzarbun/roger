@@ -1,9 +1,5 @@
-import React, { useEffect } from "react";
-
+import React from "react";
 import styles from "./styles.module.scss";
-
-import { useGetClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
-import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubStaffNavigationProps {
   display: string;

@@ -41,11 +41,6 @@ const ExploreClubSubscriptionsModal = (
 
   const isUserPlayer = user?.user?.user_type_id === 1;
 
-  const {
-    data: clubSubscriptionTypes,
-    isLoading: isClubSubscriptionTypesLoading,
-  } = useGetClubSubscriptionTypesQuery({});
-
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsByFilterQuery({
       is_active: true,
@@ -81,11 +76,7 @@ const ExploreClubSubscriptionsModal = (
         club_subscription_package_id
     )?.length;
   };
-  if (
-    isClubSubscriptionsLoading ||
-    isClubSubscriptionTypesLoading ||
-    isUserSubscribedtoClubLoading
-  ) {
+  if (isClubSubscriptionsLoading || isUserSubscribedtoClubLoading) {
     return <PageLoading />;
   }
   return (

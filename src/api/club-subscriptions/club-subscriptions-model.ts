@@ -2,7 +2,13 @@ const db = require("../../data/dbconfig");
 
 const clubSubscriptionsModel = {
   async getAll() {
-    const clubSubscriptions = await db("club_subscriptions");
+    const clubSubscriptions = await db
+      .select(
+        "club_subscriptions.club_id",
+        "club_subscriptions.is_active",
+        "club_subscriptions.player_id"
+      )
+      .from("club_subscriptions");
 
     return clubSubscriptions;
   },
@@ -35,11 +41,16 @@ const clubSubscriptionsModel = {
     try {
       const subscriptions = await db
         .select(
-          "club_subscriptions.*",
-          "clubs.*",
-          "locations.*",
-          "club_subscription_packages.*",
-          "club_subscription_types.*"
+          "club_subscriptions.club_subscription_id",
+          "club_subscriptions.start_date",
+          "club_subscriptions.end_date",
+          "club_subscriptions.is_active",
+          "clubs.user_id as clubUserId",
+          "clubs.image as clubImage",
+          "clubs.club_name",
+          "locations.location_name",
+          //"club_subscription_packages.",
+          "club_subscription_types.club_subscription_type_name"
         )
         .from("club_subscriptions")
         .leftJoin("clubs", function () {
@@ -86,13 +97,13 @@ const clubSubscriptionsModel = {
   async getPlayersTrainingSubscriptionStatus(filter) {
     try {
       const inviterSubscriptionStatus = await db("club_subscriptions")
-        .select("*")
+        .select("club_subscriptions.club_subscription_id")
         .where("player_id", filter.inviterId)
         .andWhere("club_id", filter.clubId)
         .andWhere("is_active", true);
 
       const inviteeSubscriptionStatus = await db("club_subscriptions")
-        .select("*")
+        .select("club_subscriptions.club_subscription_id")
         .where("player_id", filter.inviteeId)
         .andWhere("club_id", filter.clubId)
         .andWhere("is_active", true);
@@ -116,12 +127,10 @@ const clubSubscriptionsModel = {
     }
   },
 
-  async getClubSubscribers(userId: number) {
+  async getClubSubscribersByUserId(userId: number) {
     try {
       const clubSubscribers = await db
         .select(
-          "club_subscriptions.*",
-          "players.*",
           "players.image as playerImage",
           "players.user_id as playerUserId",
           "players.fname as playerFname",
@@ -138,11 +147,13 @@ const clubSubscriptionsModel = {
           "club_external_members.birth_year as externalBirthYear",
           "external_player_levels.player_level_name as externalLevelName",
           "external_locations.location_name as externalLocationName",
-          "users.*",
           db.raw("AVG(event_reviews.review_score) as averageReviewScore"),
           db.raw(
             "COUNT(DISTINCT event_reviews.review_score) as reviewScoreCount"
-          )
+          ),
+          "users.user_type_id",
+          "club_subscriptions.club_subscription_package_id",
+          "club_subscriptions.is_active"
         )
         .from("club_subscriptions")
         .leftJoin("users", function () {
@@ -217,19 +228,30 @@ const clubSubscriptionsModel = {
     try {
       const clubSubscribers = await db
         .select(
-          "club_subscriptions.*",
-          "players.*",
-          "players.image as playerImage",
+          "club_subscriptions.club_subscription_id",
+          "club_subscriptions.payment_id",
+          "club_subscriptions.registered_at",
           "players.user_id as playerUserId",
+          "players.image as playerImage",
+          "users.user_type_id",
+          "players.fname",
+          "players.lname",
+          "club_external_members.*",
+          "club_external_members.user_id as clubExternalMemberUserId",
+          "user_types.user_type_name",
           "player_locations.location_name as playerLocationName",
           "player_levels.player_level_name as playerLevelName",
-          "club_external_members.*",
           "external_locations.location_name as externalLocationName",
           "external_player_levels.player_level_name as externalLevelName",
-          "club_subscription_packages.*",
-          "club_subscription_types.*",
-          "user_types.*",
-          "users.*"
+          "players.gender",
+          "club_external_members.gender",
+          "players.birth_year",
+          "club_external_members.birth_year",
+          "club_subscriptions.start_date",
+          "club_subscriptions.end_date",
+          "club_subscription_types.club_subscription_type_name",
+          "club_subscriptions.club_subscription_package_id",
+          "club_subscription_types.club_subscription_duration_months"
         )
         .from("club_subscriptions")
         .leftJoin("players", function () {

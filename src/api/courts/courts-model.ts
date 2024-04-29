@@ -12,12 +12,19 @@ const courtsModel = {
 
     const paginatedCourts = await db
       .select(
-        "courts.*",
+        "courts.court_id",
         "courts.image as courtImage",
-        "clubs.*",
-        "court_structure_types.*",
-        "court_surface_types.*",
-        "locations.*"
+        "courts.court_name",
+        "courts.opening_time",
+        "courts.closing_time",
+        "courts.price_hour",
+        "courts.is_active",
+        "courts.price_hour_non_subscriber",
+        "clubs.higher_price_for_non_subscribers",
+        "clubs.club_name",
+        "court_structure_types.court_structure_type_name",
+        "court_surface_types.court_surface_type_name",
+        "locations.location_name"
       )
       .from("courts")
       .leftJoin("clubs", function () {
@@ -72,12 +79,18 @@ const courtsModel = {
 
     const pageCount = await db
       .select(
-        "courts.*",
+        "courts.court_id",
         "courts.image as courtImage",
-        "clubs.*",
-        "court_structure_types.*",
-        "court_surface_types.*",
-        "locations.*"
+        "courts.court_name",
+        "courts.opening_time",
+        "courts.closing_time",
+        "courts.price_hour",
+        "courts.price_hour_non_subscriber",
+        "clubs.higher_price_for_non_subscribers",
+        "clubs.club_name",
+        "court_structure_types.court_structure_type_name",
+        "court_surface_types.court_surface_type_name",
+        "locations.location_name"
       )
       .from("courts")
       .leftJoin("clubs", function () {
@@ -136,12 +149,18 @@ const courtsModel = {
   async getClubCourtsByClubId(clubId: number) {
     const clubCourts = await db
       .select(
-        "courts.*",
+        "courts.court_id",
         "courts.image as courtImage",
-        "clubs.*",
-        "court_structure_types.*",
-        "court_surface_types.*",
-        "locations.*"
+        "courts.court_name",
+        "courts.price_hour",
+        "courts.price_hour_non_subscriber",
+        "courts.opening_time",
+        "courts.closing_time",
+        "courts.is_active",
+        "clubs.higher_price_for_non_subscribers",
+        "court_structure_types.court_structure_type_name",
+        "court_surface_types.court_surface_type_name",
+        "locations.location_name"
       )
       .from("courts")
       .leftJoin("clubs", function () {
@@ -200,13 +219,24 @@ const courtsModel = {
     try {
       const courtDetails = await db
         .select(
-          "courts.*",
+          "courts.court_id",
+          "courts.court_name",
+          "courts.price_hour_non_subscriber",
           "courts.image as courtImage",
-          "clubs.*",
+          "courts.opening_time",
+          "courts.closing_time",
+          "courts.price_hour",
+          "courts.is_active",
+          "clubs.higher_price_for_non_subscribers",
+          "clubs.is_player_subscription_required",
+          "clubs.is_player_lesson_subscription_required",
+          "clubs.is_trainer_subscription_required",
           "clubs.user_id as clubUserId",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "locations.*"
+          "clubs.club_id",
+          "clubs.club_name",
+          "court_surface_types.court_surface_type_name",
+          "court_structure_types.court_structure_type_name",
+          "locations.location_name"
         )
         .from("courts")
         .leftJoin("clubs", function () {

@@ -54,12 +54,12 @@ const PlayerSubscriptionResults = () => {
               >
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}3/${subscription.club_id}`}
+                    to={`${paths.EXPLORE_PROFILE}3/${subscription.clubUserId}`}
                   >
                     <img
                       src={
-                        subscription?.image
-                          ? subscription?.image
+                        subscription?.clubImage
+                          ? subscription?.clubImage
                           : "images/icons/avatar.jpg"
                       }
                       className={styles["club-image"]}
@@ -68,7 +68,7 @@ const PlayerSubscriptionResults = () => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}3/${subscription.club_id}`}
+                    to={`${paths.EXPLORE_PROFILE}3/${subscription.clubUserId}`}
                     className={styles["club-name"]}
                   >
                     {subscription?.club_name}

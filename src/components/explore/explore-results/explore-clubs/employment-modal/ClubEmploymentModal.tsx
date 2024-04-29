@@ -74,6 +74,7 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
       };
       addClubStaff(newClubStaffData);
     }
+
     if (isUserTrainer && isPastApplicationExist) {
       const updatedClubStaffData = {
         club_staff_id: isTrainerStaff?.[0]?.club_staff_id,
@@ -131,13 +132,13 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
         </div>
         <div className={styles["buttons-container"]}>
           <button
-            onClick={handleAddClubStaff}
+            onClick={closeEmploymentModal}
             className={styles["discard-button"]}
           >
             İptal
           </button>
           <button
-            onClick={closeEmploymentModal}
+            onClick={handleAddClubStaff}
             className={styles["submit-button"]}
           >
             Onayla

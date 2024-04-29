@@ -103,15 +103,7 @@ const ExploreClubsTrainersSection = (
                     >{`${trainer.fname} ${trainer.lname}`}</Link>
                   </td>
                   <td>{trainer.gender}</td>
-                  <td>
-                    {
-                      trainerExperienceTypes?.find(
-                        (type) =>
-                          type.trainer_experience_type_id ===
-                          trainer.trainer_experience_type_id
-                      )?.trainer_experience_type_name
-                    }
-                  </td>
+                  <td>{trainer?.trainer_experience_type_name}</td>
                   <td>{trainer.location_name}</td>
                   <td>{trainer.lessoncount}</td>
                   <td>{trainer.studentcount}</td>

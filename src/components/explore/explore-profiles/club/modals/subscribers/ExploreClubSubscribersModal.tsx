@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 
 import ReactModal from "react-modal";
 
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import Paths from "../../../../../../routing/Paths";
 import { ImBlocked } from "react-icons/im";
 
@@ -145,8 +144,10 @@ const ExploreClubSubscribersModal = (
                         to={`${Paths.EXPLORE_PROFILE}1/${
                           player.playerUserId
                             ? player.playerUserId
-                            : player.user_id
-                        } `}
+                            : player.externalUserId
+                            ? player.externalUserId
+                            : null
+                        }`}
                       >
                         <img
                           src={
@@ -163,8 +164,10 @@ const ExploreClubSubscribersModal = (
                         to={`${Paths.EXPLORE_PROFILE}1/${
                           player.playerUserId
                             ? player.playerUserId
-                            : player.user_id
-                        } `}
+                            : player.externalUserId
+                            ? player.externalUserId
+                            : null
+                        }`}
                         className={styles["subscriber-name"]}
                       >
                         {player.user_type_id === 1
@@ -183,16 +186,16 @@ const ExploreClubSubscribersModal = (
                     </td>
                     <td>
                       {getAge(
-                        player.birth_year
-                          ? player.birth_year
+                        player.playerBirthYear
+                          ? player.playerBirthYear
                           : player.externalBirthYear
                           ? player.externalBirthYear
                           : null
                       )}
                     </td>
                     <td>
-                      {player.location_name
-                        ? player.location_name
+                      {player.locationName
+                        ? player.locationName
                         : player.externalLocationName
                         ? player.externalLocationName
                         : ""}
@@ -230,7 +233,8 @@ const ExploreClubSubscribersModal = (
 
                     {isUserPlayer && (
                       <td>
-                        {user?.playerDetails?.gender === player.gender &&
+                        {user?.playerDetails?.gender ===
+                          player.playerGenderName &&
                         player.playerUserId !== user?.user?.user_id &&
                         player.user_type_id === 1 ? (
                           <button

@@ -95,6 +95,7 @@ clubStaffRouter.post(
       const clubStaffData = req.body;
       const returningStaff = await clubStaffModel.getByFilter({
         user_id: Number(clubStaffData.user_id),
+        returningStaff: true,
       });
       if (returningStaff.length > 0) {
         clubStaffData.club_staff_id = returningStaff?.[0]?.club_staff_id;

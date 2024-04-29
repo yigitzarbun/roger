@@ -74,9 +74,10 @@ clubSubscriptionsRouter.get(
   "/club-subscribers/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const subscribers = await clubSubscriptionsModel.getClubSubscribers(
-        Number(req.params.userId)
-      );
+      const subscribers =
+        await clubSubscriptionsModel.getClubSubscribersByUserId(
+          Number(req.params.userId)
+        );
       res.status(200).json(subscribers);
     } catch (error) {
       next(error);

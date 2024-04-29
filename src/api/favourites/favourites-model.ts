@@ -34,14 +34,19 @@ const favouritesModel = {
       const favourites = await db
         .select(
           "favourites.*",
-          "players.*",
-          "trainers.*",
-          "clubs.*",
-          "users.*",
-          "user_types.*",
-          "locations.*",
-          "player_levels.*",
-          "trainer_experience_types.*"
+          "users.user_type_id",
+          "user_types.user_type_name",
+          "players.image",
+          "trainers.image",
+          "clubs.image",
+          "players.fname",
+          "players.lname",
+          "trainers.fname",
+          "trainers.lname",
+          "clubs.club_name",
+          "player_levels.player_level_name",
+          "trainer_experience_types.trainer_experience_type_name",
+          "locations.location_name"
         )
         .from("favourites")
         .leftJoin("players", function () {

@@ -6,7 +6,6 @@ import PageLoading from "../../../components/loading/PageLoading";
 
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../api/endpoints/ClubSubscriptionTypesApi";
-import { useGetClubSubscriptionsByFilterQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useAppSelector } from "../../../store/hooks";
 
 interface ClubSubscriptionPackagesProps {
@@ -24,12 +23,6 @@ const ClubSubscriptionPackages = (props: ClubSubscriptionPackagesProps) => {
     data: clubSubscriptionTypes,
     isLoading: isClubSubscriptionTypesLoading,
   } = useGetClubSubscriptionTypesQuery({});
-
-  const { data: mySubscribers, isLoading: isMySubscribersLoading } =
-    useGetClubSubscriptionsByFilterQuery({
-      is_active: true,
-      club_id: user?.user?.user_id,
-    });
 
   const {
     data: myPackages,
@@ -63,11 +56,7 @@ const ClubSubscriptionPackages = (props: ClubSubscriptionPackagesProps) => {
     refetchMyPackages();
   }, [openAddPackageModal, openEditPackageModal]);
 
-  if (
-    isClubSubscriptionTypesLoading ||
-    isMySubscribersLoading ||
-    isMyPackagesLoading
-  ) {
+  if (isClubSubscriptionTypesLoading || isMyPackagesLoading) {
     return <PageLoading />;
   }
   return (
@@ -84,7 +73,6 @@ const ClubSubscriptionPackages = (props: ClubSubscriptionPackagesProps) => {
         }
         openAddPackageModal={openAddPackageModal}
         myPackages={myPackages}
-        mySubscribers={mySubscribers}
         subscriptionTypes={clubSubscriptionTypes}
         currentClub={currentClub}
         user={user}

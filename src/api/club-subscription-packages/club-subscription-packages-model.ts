@@ -6,7 +6,6 @@ const clubSubscriptionPackagesModel = {
 
     return clubSubscriptionPackages;
   },
-
   async getByFilter(filter) {
     const clubSubscriptionPackages = await db(
       "club_subscription_packages"
@@ -30,7 +29,7 @@ const clubSubscriptionPackagesModel = {
       .select(
         "club_subscription_packages.*",
         "club_subscription_types.*",
-        "clubs.*",
+        // "clubs.*",
         db.raw(
           "COALESCE(COUNT(DISTINCT club_subscriptions.club_subscription_id), 0) as subscriberCount"
         )
@@ -73,14 +72,12 @@ const clubSubscriptionPackagesModel = {
     ).where("club_subscription_package_id", club_subscription_package_id);
     return clubSubscriptionPackage;
   },
-
   async add(clubSubscriptionPackage) {
     const [newClubSubscriptionPackage] = await db("club_subscription_packages")
       .insert(clubSubscriptionPackage)
       .returning("*");
     return newClubSubscriptionPackage;
   },
-
   async update(updates) {
     return await db("club_subscription_packages")
       .where(

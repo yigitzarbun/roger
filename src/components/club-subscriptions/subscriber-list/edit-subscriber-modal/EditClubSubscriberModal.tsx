@@ -23,7 +23,6 @@ import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/Club
 import { Location } from "../../../../api/endpoints/LocationsApi";
 
 import {
-  useGetClubSubscriptionsByFilterQuery,
   useGetClubSubscriptionsQuery,
   useUpdateClubSubscriptionMutation,
 } from "../../../../api/endpoints/ClubSubscriptionsApi";
@@ -223,7 +222,11 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
         is_active: updatedExternalSubscriberData[0].is_active,
         payment_id: selectedSubscriptionDetails?.payment_id,
         club_id: user?.user?.user_id,
-        player_id: selectedSubscriptionDetails?.user_id,
+        player_id: selectedSubscriptionDetails?.playerUserId
+          ? playerUserId
+          : selectedSubscriptionDetails?.clubExternalMemberUserId
+          ? selectedSubscriptionDetails?.clubExternalMemberUserId
+          : null,
       };
       editClubSubscription(updatedClubSubscription);
     }

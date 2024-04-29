@@ -32,11 +32,11 @@ const clubExternalMembersModel = {
   },
 
   async getById(club_external_member_id) {
-    const favourite = await db("club_external_members").where(
+    const member = await db("club_external_members").where(
       "club_external_member_id",
       club_external_member_id
     );
-    return favourite;
+    return member;
   },
 
   async add(externalMember) {

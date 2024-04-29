@@ -7,8 +7,6 @@ import ReviewCard from "../../../../../../components/common/reviews/ReviewCard";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
 import { useGetUserReceivedEventReviewsNumberQuery } from "../../../../../../api/endpoints/EventReviewsApi";
-import { Booking } from "../../../../../../api/endpoints/BookingsApi";
-import { Player } from "../../../../../../api/endpoints/PlayersApi";
 
 interface ExploreTrainersReviewsSectionProps {
   user_id: number;

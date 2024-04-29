@@ -96,7 +96,9 @@ const ExploreClubsSubscribersSection = (
                       to={`${Paths.EXPLORE_PROFILE}1/${
                         player.playerUserId
                           ? player.playerUserId
-                          : player.user_id
+                          : player.externalUserId
+                          ? player.externalUserId
+                          : null
                       }`}
                     >
                       <img
@@ -114,7 +116,9 @@ const ExploreClubsSubscribersSection = (
                       to={`${Paths.EXPLORE_PROFILE}1/${
                         player.playerUserId
                           ? player.playerUserId
-                          : player.user_id
+                          : player.externalUserId
+                          ? player.externalUserId
+                          : null
                       }`}
                       className={styles["subscriber-name"]}
                     >
@@ -134,16 +138,16 @@ const ExploreClubsSubscribersSection = (
                   </td>
                   <td>
                     {getAge(
-                      player.birth_year
-                        ? player.birth_year
+                      player.playerBirthYear
+                        ? player.playerBirthYear
                         : player.externalBirthYear
                         ? player.externalBirthYear
                         : null
                     )}
                   </td>
                   <td>
-                    {player.location_name
-                      ? player.location_name
+                    {player.locationName
+                      ? player.locationName
                       : player.externalLocationName
                       ? player.externalLocationName
                       : ""}
@@ -179,7 +183,8 @@ const ExploreClubsSubscribersSection = (
 
                   {isUserPlayer && (
                     <td>
-                      {user?.playerDetails?.gender === player.gender &&
+                      {user?.playerDetails?.gender ===
+                        player.playerGenderName &&
                       player.playerUserId !== user?.user?.user_id &&
                       player.user_type_id === 1 ? (
                         <button

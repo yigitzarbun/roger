@@ -15,7 +15,6 @@ interface ClubSubscriptionPackagesResultsProps {
   closeAddClubSubscriptionPackageModal: () => void;
   openAddPackageModal: boolean;
   myPackages: any;
-  mySubscribers: ClubSubscription[];
   subscriptionTypes: ClubSubscriptionTypes[];
   currentClub: any;
   user: any;
