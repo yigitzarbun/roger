@@ -26,6 +26,8 @@ const matchScoresModel = {
           "bookings.booking_id",
           "bookings.inviter_id",
           "bookings.invitee_id",
+          "bookings.event_date",
+          "bookings.event_time",
           "players.image as playerImage",
           "players.fname",
           "players.lname",

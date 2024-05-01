@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 
@@ -6,7 +6,6 @@ import styles from "./styles.module.scss";
 import Paths from "../../../../routing/Paths";
 
 import { useGetClubPaymentssByUserIdQuery } from "../../../../api/endpoints/PaymentsApi";
-import PageLoading from "../../../../components/loading/PageLoading";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { useGetClubByUserIdQuery } from "../../../../api/endpoints/ClubsApi";
 import { useNavigate } from "react-router-dom";
@@ -15,12 +14,14 @@ interface ClubPaymentsResultsProps {
   textSearch: string;
   status: string;
   paymentTypeId: number;
+  currentPage: number;
+  setCurrentPage: (e: number) => void;
 }
 
 const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
-  const { textSearch, status, paymentTypeId } = props;
+  const { textSearch, status, paymentTypeId, currentPage, setCurrentPage } =
+    props;
   const user = useAppSelector((store) => store?.user?.user);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     data: clubPayments,
@@ -100,27 +101,37 @@ const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Tarih</th>
               <th>Durum</th>
-              <th>Konu</th>
+              <th>Ödeme Tarih</th>
+              <th>Etkinlik Tarih</th>
+              <th>Etkinlik Saat</th>
+              <th>Tür</th>
+              <th>Kort</th>
               <th>Tutar</th>
-              <th>Gönderen 1</th>
-              <th>Gönderen 2</th>
+              <th>Taraf 1</th>
+              <th>Taraf 2</th>
             </tr>
           </thead>
           <tbody>
             {clubPayments?.payments?.map((payment) => (
               <tr key={payment.payment_id} className={styles["payment-row"]}>
-                <td>{payment.registered_at.slice(0, 10)}</td>
                 <td>{payment.payment_status}</td>
+                <td>{payment.registered_at.slice(0, 10)}</td>
+                <td>
+                  {payment.eventDate ? payment.eventDate.slice(0, 10) : "-"}
+                </td>
+                <td>
+                  {payment.eventTime ? payment.eventTime.slice(0, 5) : "-"}
+                </td>
                 <td>{payment?.payment_type_name}</td>
+                <td>{payment.court_name ? payment.court_name : "-"}</td>
                 <td>
                   {payment.payment_type_id === 5
                     ? payment.subscription_price
                     : (payment.payment_type_id === 1 ||
                         payment.payment_type_id === 2 ||
                         payment.payment_type_id === 3) &&
-                      payment.court_price}
+                      payment.court_price}{" "}
                   TL
                 </td>
                 <td>
@@ -129,13 +140,15 @@ const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
                       ${payment?.subscriber_lname}
                       `
                     : (payment.payment_type_id === 1 ||
-                        payment.payment_type_id === 2) &&
+                        payment.payment_type_id === 2 ||
+                        payment.payment_type_id === 3) &&
                       `${payment?.inviter_fname}
                     ${payment?.inviter_lname}`}
                 </td>
                 <td>
                   {payment.payment_type_id === 1 ||
-                  payment.payment_type_id === 2
+                  payment.payment_type_id === 2 ||
+                  payment.payment_type_id === 3
                     ? `${payment?.invitee_fname}
                       ${payment?.invitee_lname}
                       `

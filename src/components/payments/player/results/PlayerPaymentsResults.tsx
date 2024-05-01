@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useAppSelector } from "../../../../store/hooks";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
@@ -17,12 +17,20 @@ interface PlayerPaymentsResultsProps {
   textSearch: string;
   status: string;
   paymentTypeId: number;
+  currentPage: number;
+  setCurrentPage: (e: number) => void;
 }
 
 const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
-  const { clubId, textSearch, status, paymentTypeId } = props;
+  const {
+    clubId,
+    textSearch,
+    status,
+    paymentTypeId,
+    currentPage,
+    setCurrentPage,
+  } = props;
   const user = useAppSelector((store) => store?.user?.user);
-  const [currentPage, setCurrentPage] = useState(1);
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
 
@@ -72,7 +80,7 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
   };
   useEffect(() => {
     refetchPayments();
-  }, [clubId, textSearch, status, paymentTypeId]);
+  }, [clubId, textSearch, status, paymentTypeId, currentPage]);
 
   if (isPaymentsLoading) {
     return <PageLoading />;
@@ -111,16 +119,26 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
             <tbody>
               {myPayments?.payments?.map((payment) => (
                 <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.paymentDate.slice(0, 10)}</td>
+                  <td>{payment?.paymentDate?.slice(0, 10)}</td>
                   <td>{payment.payment_status}</td>
                   <td>{payment?.payment_type_name}</td>
                   <td>
-                    {payment.fname && payment.lname
-                      ? `${payment.fname} ${payment.lname}`
+                    {payment?.player_names
+                      ? payment?.player_names[0]
+                      : payment?.trainer_names
+                      ? payment?.trainer_names[0]
                       : "-"}
                   </td>
-                  <td>{payment.event_date.slice(0, 10)}</td>
-                  <td>{payment.event_time.slice(0, 5)}</td>
+                  <td>
+                    {payment?.event_date
+                      ? payment?.event_date?.slice(0, 10)
+                      : "-"}
+                  </td>
+                  <td>
+                    {payment?.event_time
+                      ? payment?.event_time?.slice(0, 5)
+                      : "-"}
+                  </td>
                   <td>{payment?.club_name}</td>
                   <td>{payment.court_name ? payment.court_name : "-"}</td>
                   {(payment.payment_type_id === 1 ||

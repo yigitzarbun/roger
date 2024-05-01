@@ -16,12 +16,20 @@ interface TrainerPaymentsResultsProps {
   textSearch: string;
   status: string;
   paymentTypeId: number;
+  currentPage: number;
+  setCurrentPage: (e: number) => void;
 }
 const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
-  const { clubId, textSearch, status, paymentTypeId } = props;
+  const {
+    clubId,
+    textSearch,
+    status,
+    paymentTypeId,
+    currentPage,
+    setCurrentPage,
+  } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     data: myPayments,
@@ -97,9 +105,11 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
           <table>
             <thead>
               <tr>
-                <th>Ödeme Tarih</th>
                 <th>Durum</th>
-                <th>Konu</th>
+                <th>Ödeme Tarih</th>
+                <th>Etkinlik Tarih</th>
+                <th>Etkinlik Saat</th>
+                <th>Tür</th>
                 <th>Tutar</th>
                 <th>Öğrenci</th>
                 <th>Kulüp</th>
@@ -109,8 +119,14 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
             <tbody>
               {myPayments?.payments?.map((payment) => (
                 <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.registered_at.slice(0, 10)}</td>
                   <td>{payment.payment_status}</td>
+                  <td>{payment.registered_at?.slice(0, 10)}</td>
+                  <td>
+                    {payment.eventDate ? payment.eventDate.slice(0, 10) : "-"}
+                  </td>
+                  <td>
+                    {payment.eventTime ? payment.eventTime.slice(0, 5) : "-"}
+                  </td>
                   <td>{payment?.payment_type_name}</td>
                   <td>{`${payment.lesson_price} TL`}</td>
                   <td>{`${payment?.fname} ${payment?.lname}`}</td>

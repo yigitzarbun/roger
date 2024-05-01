@@ -270,7 +270,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
         court_price: bookingFormData?.court_price,
         lesson_price: bookingFormData?.lesson_price,
         payment_status: "pending",
-        payment_type_id: 2,
+        payment_type_id: 3,
         sender_inviter_id: selectedPlayer?.[0]?.user_id,
         sender_invitee_id: null,
         recipient_club_id: selectedClubDetails?.[0]?.user_id,
