@@ -183,6 +183,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     refetchPaginatedPlayers();
   }, [currentPage, textSearch, playerLevelId, gender, locationId]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [textSearch, playerLevelId, gender, locationId]);
+
   if (
     isPaginatedPlayersLoading ||
     isLocationsLoading ||
@@ -197,19 +201,17 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
-          {paginatedPlayers?.players?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenPlayerFilterModal}
-              className={
-                playerLevelId > 0 ||
-                gender !== "" ||
-                locationId > 0 ||
-                textSearch !== ""
-                  ? styles["active-filter"]
-                  : styles.filter
-              }
-            />
-          )}
+          <FaFilter
+            onClick={handleOpenPlayerFilterModal}
+            className={
+              playerLevelId > 0 ||
+              gender !== "" ||
+              locationId > 0 ||
+              textSearch !== ""
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
         </div>
         {paginatedPlayers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>

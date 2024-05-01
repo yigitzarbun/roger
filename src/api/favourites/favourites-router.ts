@@ -27,6 +27,22 @@ favouritesRouter.get(
     }
   }
 );
+
+favouritesRouter.get(
+  "/paginated-favourites/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const paginatedFavourites = await favouritesModel.getPaginatedFavourites(
+        filter
+      );
+      res.status(200).json(paginatedFavourites);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 favouritesRouter.get(
   "/player-active-favourites/:userId",
   async (req: Request, res: Response, next: NextFunction) => {

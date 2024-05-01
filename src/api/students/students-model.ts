@@ -6,7 +6,6 @@ const studentsModel = {
 
     return students;
   },
-
   async getByFilter(filter) {
     const students = await db("students").where((builder) => {
       if (filter.student_status) {
@@ -31,7 +30,6 @@ const studentsModel = {
 
     return students;
   },
-
   async isStudent(filter) {
     try {
       const isStudent = await db("students")
@@ -48,7 +46,6 @@ const studentsModel = {
       console.log("Error checking if player is student: ", error);
     }
   },
-
   async getPaginatedTrainerStudents(filter) {
     const playersPerPage = filter.perPage;
     const currentPage = filter.currentPageNumber || 1;
@@ -56,13 +53,13 @@ const studentsModel = {
     try {
       const students = await db
         .select(
-          "students.*",
-          "players.*",
           "players.image as playerImage",
           "players.fname as playerFname",
           "players.lname as playerLname",
           "players.user_id as playerUserId",
           "players.birth_year as playerBirthYear",
+          "players.gender",
+          "students.*",
           "locations.*",
           "player_levels.*",
           db.raw(
@@ -170,7 +167,6 @@ const studentsModel = {
       const newStudentRequests = await db
         .select(
           "students.*",
-          "players.*",
           "players.user_id as playerUserId",
           "players.fname as playerFname",
           "players.lname as playerLname",
@@ -206,12 +202,10 @@ const studentsModel = {
     const student = await db("students").where("student_id", student_id);
     return student;
   },
-
   async add(student) {
     const [newStudent] = await db("students").insert(student).returning("*");
     return newStudent;
   },
-
   async update(updates) {
     return await db("students")
       .where("student_id", updates.student_id)

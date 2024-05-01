@@ -73,7 +73,7 @@ const PlayerGroupResults = () => {
               <tr key={group.student_group_id} className={styles.row}>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}3/${group.club_id}`}
+                    to={`${paths.EXPLORE_PROFILE}3/${group.clubUserId}`}
                     className={styles.image}
                   >
                     <img
@@ -88,7 +88,7 @@ const PlayerGroupResults = () => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}3/${group.club_id}`}
+                    to={`${paths.EXPLORE_PROFILE}3/${group.clubUserId}`}
                     className={styles["name"]}
                   >
                     {group?.club_name}

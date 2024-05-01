@@ -10,7 +10,11 @@ import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../store/hooks";
 
-const ClubHeader = () => {
+interface ClubHeaderProps {
+  myStaffRequests: any;
+}
+const ClubHeader = (props: ClubHeaderProps) => {
+  const { myStaffRequests } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
   return (
@@ -55,6 +59,9 @@ const ClubHeader = () => {
           }
         >
           Personel
+          {myStaffRequests?.length > 0 && (
+            <FaCircle className={styles["notification"]} />
+          )}
         </NavLink>
         <NavLink
           to={paths.CLUB_SUBSCRIPTIONS}

@@ -7,19 +7,25 @@ const trainersModel = {
   },
   async getPaginated(filter) {
     const trainersPerPage = 4;
-    const currentPage = filter.currentPage || 1;
-    const offset = (currentPage - 1) * trainersPerPage;
+    const offset = (filter.currentPage - 1) * trainersPerPage;
 
-    const trainersQuery = db("trainers")
+    const paginatedTrainers = await db
+      .distinct("trainers.user_id")
       .select(
-        "trainers.*",
+        "trainers.trainer_id",
         "trainers.image as trainerImage",
         "trainers.user_id as trainerUserId",
+        "trainers.price_hour",
+        "trainers.gender",
+        "trainers.birth_year",
+        "trainers.fname",
+        "trainers.lname",
         "locations.*",
         "trainer_experience_types.*",
         "clubs.club_name",
-        "club_staff.*"
+        "club_staff.employment_status"
       )
+      .from("trainers")
       .leftJoin(
         "locations",
         "trainers.location_id",
@@ -69,14 +75,50 @@ const trainersModel = {
           });
         }
       })
-      .andWhere("users.user_status_type_id", 1);
-
-    const paginatedTrainers = await trainersQuery
+      .andWhere("users.user_status_type_id", 1)
+      .groupBy(
+        "trainers.trainer_id",
+        "locations.location_id",
+        "trainer_experience_types.trainer_experience_type_id",
+        "clubs.club_name",
+        "club_staff.employment_status",
+        "trainers.user_id"
+      )
       .orderBy("trainers.trainer_id", "asc")
       .limit(trainersPerPage)
       .offset(offset);
 
-    const totalTrainersCount = await db("trainers")
+    const pageCount = await db
+      .distinct("trainers.user_id")
+      .select(
+        "trainers.trainer_id",
+        "trainers.image as trainerImage",
+        "trainers.user_id as trainerUserId",
+        "trainers.price_hour",
+        "trainers.gender",
+        "trainers.birth_year",
+        "trainers.fname",
+        "trainers.lname",
+        "locations.*",
+        "trainer_experience_types.*",
+        "clubs.club_name",
+        "club_staff.employment_status"
+      )
+      .from("trainers")
+      .leftJoin(
+        "locations",
+        "trainers.location_id",
+        "=",
+        "locations.location_id"
+      )
+      .leftJoin(
+        "trainer_experience_types",
+        "trainer_experience_types.trainer_experience_type_id",
+        "=",
+        "trainers.trainer_experience_type_id"
+      )
+      .leftJoin("clubs", "clubs.club_id", "=", "trainers.club_id")
+      .leftJoin("club_staff", "club_staff.user_id", "=", "trainers.user_id")
       .leftJoin("users", "users.user_id", "=", "trainers.user_id")
       .where((builder) => {
         if (filter.trainerExperienceTypeId > 0) {
@@ -113,41 +155,54 @@ const trainersModel = {
         }
       })
       .andWhere("users.user_status_type_id", 1)
-      .count("trainers.trainer_id as total")
-      .first();
-
+      .groupBy(
+        "trainers.trainer_id",
+        "locations.location_id",
+        "trainer_experience_types.trainer_experience_type_id",
+        "clubs.club_name",
+        "club_staff.employment_status",
+        "trainers.user_id"
+      );
     const data = {
       trainers: paginatedTrainers,
-      totalPages: Math.ceil(totalTrainersCount.total / trainersPerPage),
+      totalPages: Math.ceil(pageCount.length / trainersPerPage),
     };
     return data;
   },
   async getByFilter(filter) {
-    const trainers = await db("trainers").where((builder) => {
-      if (filter.fname) {
-        builder.where("fname", filter.fname);
-      }
-      if (filter.lname) {
-        builder.where("lname", filter.lname);
-      }
+    const trainers = await db
+      .select(
+        "trainers.user_id",
+        "trainers.trainer_id",
+        "trainers.fname",
+        "trainers.lname"
+      )
+      .from("trainers")
+      .where((builder) => {
+        if (filter.fname) {
+          builder.where("fname", filter.fname);
+        }
+        if (filter.lname) {
+          builder.where("lname", filter.lname);
+        }
 
-      if (filter.club_id) {
-        builder.where("club_id", filter.club_id);
-      }
+        if (filter.club_id) {
+          builder.where("club_id", filter.club_id);
+        }
 
-      if (filter.user_id) {
-        builder.where("user_id", filter.user_id);
-      }
+        if (filter.user_id) {
+          builder.where("user_id", filter.user_id);
+        }
 
-      if (filter.trainer_id) {
-        builder.where("trainer_id");
-      }
+        if (filter.trainer_id) {
+          builder.where("trainer_id");
+        }
 
-      if (filter.sortBy) {
-        // handle sorting here if required
-        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
-      }
-    });
+        if (filter.sortBy) {
+          // handle sorting here if required
+          builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+        }
+      });
 
     return trainers;
   },
@@ -165,10 +220,9 @@ const trainersModel = {
           "trainers.iban as trainerIban",
           "trainers.bank_id as trainerBankId",
           "trainers.name_on_bank_account as trainerBankAccountName",
-          "users.*",
           "locations.*",
           "trainer_experience_types.*",
-          "clubs.*",
+          "clubs.club_name",
           "club_staff.*",
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
           db.raw("COUNT(DISTINCT students.student_id) as studentCount"),

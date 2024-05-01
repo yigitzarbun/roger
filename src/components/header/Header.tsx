@@ -258,7 +258,7 @@ const Header = () => {
           newStudentRequests={newStudentRequests}
         />
       )}
-      {isUserClub && <ClubHeader />}
+      {isUserClub && <ClubHeader myStaffRequests={myStaffRequests} />}
       {isProfileModalOpen && (
         <ProfileModal
           isProfileModalOpen={isProfileModalOpen}

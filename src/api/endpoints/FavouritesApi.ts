@@ -22,6 +22,12 @@ export const favouritesSlice = createApi({
     getPlayerActiveFavouritesByUserId: builder.query({
       query: (userId) => `/favourites/player-active-favourites/${userId}`,
     }),
+    getPaginatedFavourites: builder.query({
+      query: (filter) =>
+        `/favourites/paginated-favourites/filter?${new URLSearchParams(
+          filter
+        )}`,
+    }),
     addFavourite: builder.mutation({
       query: (favourite) => ({
         url: "/favourites",
@@ -43,6 +49,7 @@ export const {
   useGetFavouritesQuery,
   useGetFavouritesByFilterQuery,
   useGetPlayerActiveFavouritesByUserIdQuery,
+  useGetPaginatedFavouritesQuery,
   useAddFavouriteMutation,
   useUpdateFavouriteMutation,
 } = favouritesSlice;

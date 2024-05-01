@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import ReactModal from "react-modal";
 
 import { localUrl } from "../../../../../common/constants/apiConstants";
@@ -17,7 +15,9 @@ import {
   useAddClubStaffMutation,
   useUpdateClubStaffMutation,
   useGetIsTrainerClubStaffQuery,
+  useGetClubStaffByFilterQuery,
 } from "../../../../../api/endpoints/ClubStaffApi";
+import { toast } from "react-toastify";
 
 interface ClubEmploymentModalProps {
   employmentModalOpen: boolean;
@@ -43,6 +43,11 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
     trainerUserId: user?.user?.user_id,
   });
 
+  const { data: clubStaffDetails, isLoading: isClubStaffDetailsLoading } =
+    useGetClubStaffByFilterQuery({
+      user_id: user?.user?.user_id,
+    });
+
   const [addClubStaff, { isSuccess: isAddClubStaffSuccess }] =
     useAddClubStaffMutation({});
 
@@ -56,6 +61,15 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
     isTrainerStaff?.[0]?.employment_status === "terminated_by_club";
 
   const handleAddClubStaff = () => {
+    if (
+      clubStaffDetails?.[0]?.employment_status === "accepted" ||
+      clubStaffDetails?.[0]?.employment_status === "pending"
+    ) {
+      toast.error("Aynı anda birden fazla kulüpte çalışamazsınız");
+      closeEmploymentModal();
+      return;
+    }
+
     if (isUserTrainer && !isPastApplicationExist) {
       const newClubStaffData = {
         fname: currentTrainer?.[0]?.fname,

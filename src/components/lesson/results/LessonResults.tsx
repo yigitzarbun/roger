@@ -279,29 +279,35 @@ const LessonResults = (props: TrainSearchProps) => {
                 <td>
                   {myFavourites?.find(
                     (favourite) =>
-                      favourite.favouritee_id === trainer.user_id &&
+                      favourite.favouritee_id === trainer.trainerUserId &&
                       favourite.is_active === true
-                  ) && trainer.user_id !== user?.user?.user_id ? (
+                  ) && trainer.trainerUserId !== user?.user?.user_id ? (
                     <AiFillStar
-                      onClick={() => handleToggleFavourite(trainer.user_id)}
+                      onClick={() =>
+                        handleToggleFavourite(trainer.trainerUserId)
+                      }
                       className={styles["remove-fav-icon"]}
                     />
                   ) : (
-                    trainer.user_id !== user?.user?.user_id &&
+                    trainer.trainerUserId !== user?.user?.user_id &&
                     !myFavourites?.find(
                       (favourite) =>
-                        favourite.favouritee_id === trainer.user_id &&
+                        favourite.favouritee_id === trainer.trainerUserId &&
                         favourite.is_active === true
                     ) && (
                       <AiOutlineStar
-                        onClick={() => handleToggleFavourite(trainer.user_id)}
+                        onClick={() =>
+                          handleToggleFavourite(trainer.trainerUserId)
+                        }
                         className={styles["add-fav-icon"]}
                       />
                     )
                   )}
                 </td>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}2/${trainer.user_id}`}>
+                  <Link
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer.trainerUserId}`}
+                  >
                     <img
                       src={
                         trainer.image
@@ -315,7 +321,7 @@ const LessonResults = (props: TrainSearchProps) => {
                 </td>
                 <td>
                   <Link
-                    to={`${paths.EXPLORE_PROFILE}2/${trainer?.user_id}`}
+                    to={`${paths.EXPLORE_PROFILE}2/${trainer?.trainerUserId}`}
                     className={styles["trainer-name"]}
                   >{`${trainer.fname} ${trainer.lname}`}</Link>
                 </td>
@@ -331,7 +337,9 @@ const LessonResults = (props: TrainSearchProps) => {
                 <td>{parseFloat(trainer.price_hour).toFixed(2)} TL</td>
                 <td>
                   <button
-                    onClick={() => handleOpenInviteModal(trainer?.user_id)}
+                    onClick={() =>
+                      handleOpenInviteModal(trainer?.trainerUserId)
+                    }
                     className={styles["lesson-button"]}
                   >
                     Ders al
@@ -340,7 +348,7 @@ const LessonResults = (props: TrainSearchProps) => {
                 <td>
                   {playerStudentships?.find(
                     (student) =>
-                      student.trainer_id === trainer.user_id &&
+                      student.trainer_id === trainer.trainerUserId &&
                       student.student_status === "pending"
                   ) ? (
                     <p className={styles["pending-confirmation-text"]}>
@@ -348,18 +356,20 @@ const LessonResults = (props: TrainSearchProps) => {
                     </p>
                   ) : playerStudentships?.find(
                       (student) =>
-                        student.trainer_id === trainer.user_id &&
+                        student.trainer_id === trainer.trainerUserId &&
                         student.student_status === "accepted"
                     ) ? (
                     <button
-                      onClick={() => handleDeclineStudent(trainer.user_id)}
+                      onClick={() =>
+                        handleDeclineStudent(trainer.trainerUserId)
+                      }
                       className={styles["cancel-student-button"]}
                     >
                       Öğrenciliği sil
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleAddStudent(trainer.user_id)}
+                      onClick={() => handleAddStudent(trainer.trainerUserId)}
                       className={styles["add-student-button"]}
                     >
                       Öğrenci Ol

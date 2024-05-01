@@ -10,7 +10,21 @@ const playersModel = {
     const playersPerPage = 4;
     const offset = (filter.currentPage - 1) * playersPerPage;
 
-    const paginatedPlayers = await db("players")
+    const paginatedPlayers = await db
+      .select(
+        "players.player_id",
+        "players.user_id",
+        "players.image",
+        "players.fname",
+        "players.lname",
+        "players.gender",
+        "players.birth_year",
+        "player_levels.player_level_name",
+        "player_levels.player_level_id",
+        "locations.location_name",
+        "locations.location_id"
+      )
+      .from("players")
       .leftJoin("users", function () {
         this.on("users.user_id", "=", "players.user_id");
       })
@@ -98,29 +112,47 @@ const playersModel = {
 
     return data;
   },
-
   async getByFilter(filter) {
-    const players = await db("players").where((builder) => {
-      if (filter.player_id) {
-        builder.where("player_id", filter.player_id);
-      }
-      if (filter.user_id) {
-        builder.where("user_id", filter.user_id);
-      }
-      if (filter.sortBy) {
-        // handle sorting here if required
-        builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
-      }
-    });
+    const players = await db
+      .select(
+        "players.user_id",
+        "players.player_id",
+        "players.image",
+        "players.fname",
+        "players.lname"
+      )
+      .from("players")
+      .where((builder) => {
+        if (filter.player_id) {
+          builder.where("player_id", filter.player_id);
+        }
+        if (filter.user_id) {
+          builder.where("user_id", filter.user_id);
+        }
+        if (filter.sortBy) {
+          // handle sorting here if required
+          builder.orderBy(filter.sortBy, filter.sortDirection || "asc");
+        }
+      });
     return players;
   },
-
   async getPlayerProfile(userId) {
     try {
       const playerDetails = await db
         .select(
-          "players.*",
-          "users.*",
+          "players.image",
+          "players.fname",
+          "players.lname",
+          "players.birth_year",
+          "players.gender",
+          "players.user_id",
+          "players.card_expiry",
+          "players.card_number",
+          "players.cvc",
+          "players.name_on_card",
+          "players.player_id",
+          "players.player_bio_description",
+          "players.phone_number",
           "locations.*",
           "player_levels.*",
           db.raw(
@@ -194,17 +226,14 @@ const playersModel = {
     const player = await db("players").where("player_id", player_id);
     return player;
   },
-
   async getByUserId(user_id) {
     const player = await db("players").where("user_id", user_id);
     return player;
   },
-
   async add(player) {
     const [newPlayer] = await db("players").insert(player).returning("*");
     return newPlayer;
   },
-
   async update(updates) {
     return await db("players")
       .where("player_id", updates.player_id)

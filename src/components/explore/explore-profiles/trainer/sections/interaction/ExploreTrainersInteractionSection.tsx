@@ -229,7 +229,6 @@ export const ExploreTrainersInteractionSection = (
           alt="player picture"
           className={styles["profile-image"]}
         />
-
         <div className={styles["name-container"]}>
           <h2>{`${selectedTrainer?.[0]?.fname} ${selectedTrainer?.[0]?.lname}`}</h2>
           <h4>Eğitmen</h4>
@@ -339,7 +338,6 @@ export const ExploreTrainersInteractionSection = (
           </p>
         )}
       </div>
-
       <SlOptions className={styles.icon} />
       {isLessonModalOpen && (
         <LessonInviteFormModal

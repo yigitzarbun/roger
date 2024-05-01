@@ -60,25 +60,17 @@ const EditGroupModal = (props: EditGroupModalProps) => {
     defaultValues: {
       student_group_name: selectedGroup?.student_group_name,
       trainer_id: selectedGroup?.trainer_user_id,
-      first_student_id: selectedGroup?.cem1_user_id
-        ? selectedGroup?.cem1_user_id
-        : selectedGroup?.student1_user_id
-        ? selectedGroup?.student1_user_id
+      first_student_id: selectedGroup?.students_info?.[0]
+        ? selectedGroup?.students_info?.[0]?.user_id
         : null,
-      second_student_id: selectedGroup?.cem2_user_id
-        ? selectedGroup?.cem2_user_id
-        : selectedGroup?.student2_user_id
-        ? selectedGroup?.student2_user_id
+      second_student_id: selectedGroup?.students_info?.[1]
+        ? selectedGroup?.students_info?.[1]?.user_id
         : null,
-      third_student_id: selectedGroup?.cem3_user_id
-        ? selectedGroup?.cem3_user_id
-        : selectedGroup?.student3_user_id
-        ? selectedGroup?.student3_user_id
+      third_student_id: selectedGroup?.students_info?.[2]
+        ? selectedGroup?.students_info?.[2]?.user_id
         : null,
-      fourth_student_id: selectedGroup?.cem4_user_id
-        ? selectedGroup?.cem4_user_id
-        : selectedGroup?.student4_user_id
-        ? selectedGroup?.student4_user_id
+      fourth_student_id: selectedGroup?.students_info?.[3]
+        ? selectedGroup?.students_info?.[3]?.user_id
         : null,
     },
   });
@@ -144,25 +136,17 @@ const EditGroupModal = (props: EditGroupModalProps) => {
       reset({
         student_group_name: selectedGroup?.student_group_name,
         trainer_id: selectedGroup?.trainer_user_id,
-        first_student_id: selectedGroup?.cem1_user_id
-          ? selectedGroup?.cem1_user_id
-          : selectedGroup?.student1_user_id
-          ? selectedGroup?.student1_user_id
+        first_student_id: selectedGroup?.students_info?.[0]
+          ? selectedGroup?.students_info?.[0]?.user_id
           : null,
-        second_student_id: selectedGroup?.cem2_user_id
-          ? selectedGroup?.cem2_user_id
-          : selectedGroup?.student2_user_id
-          ? selectedGroup?.student2_user_id
+        second_student_id: selectedGroup?.students_info?.[1]
+          ? selectedGroup?.students_info?.[1]?.user_id
           : null,
-        third_student_id: selectedGroup?.cem3_user_id
-          ? selectedGroup?.cem3_user_id
-          : selectedGroup?.student3_user_id
-          ? selectedGroup?.student3_user_id
+        third_student_id: selectedGroup?.students_info?.[2]
+          ? selectedGroup?.students_info?.[2]?.user_id
           : null,
-        fourth_student_id: selectedGroup?.cem4_user_id
-          ? selectedGroup?.cem4_user_id
-          : selectedGroup?.student4_user_id
-          ? selectedGroup?.student4_user_id
+        fourth_student_id: selectedGroup?.students_info?.[3]
+          ? selectedGroup?.students_info?.[3]?.user_id
           : null,
       });
     }

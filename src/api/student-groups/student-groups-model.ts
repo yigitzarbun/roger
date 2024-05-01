@@ -5,7 +5,6 @@ const studentGroupsModel = {
     const studentGroups = await db("student_groups");
     return studentGroups;
   },
-
   async getByFilter(filter) {
     const studentGroups = await db("student_groups").where((builder) => {
       if (filter.club_id) {
@@ -44,9 +43,11 @@ const studentGroupsModel = {
           db.raw(
             "MIN(CASE WHEN bookings.booking_status_type_id = 2 THEN bookings.event_time END) as latest_event_time"
           ),
-          "trainers.*",
-          "clubs.*",
-          "clubs.image as clubImage"
+          "trainers.fname",
+          "trainers.lname",
+          "clubs.user_id as clubUserId",
+          "clubs.image as clubImage",
+          "clubs.club_name"
         )
         .from("student_groups")
         .leftJoin(

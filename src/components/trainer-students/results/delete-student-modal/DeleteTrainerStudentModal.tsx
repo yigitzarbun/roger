@@ -60,7 +60,7 @@ const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
             alt="request"
             className={styles["trainer-image"]}
           />
-          <p>{`${student?.fname} ${student?.lname} isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?`}</p>
+          <p>{`${student?.playerFname} ${student?.playerLname} isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?`}</p>
         </div>
         <div className={styles["buttons-container"]}>
           <button

@@ -235,6 +235,10 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     clubId,
   ]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [textSearch, trainerExperienceTypeId, clubId, gender, locationId]);
+
   if (
     isLocationsLoading ||
     isTrainerExperienceTypesLoading ||
@@ -306,11 +310,11 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           </thead>
           <tbody>
             {paginatedTrainers?.trainers?.map((trainer) => (
-              <tr key={trainer.trainer_id} className={styles["trainer-row"]}>
+              <tr key={trainer.trainerUserId} className={styles["trainer-row"]}>
                 <td
                   onClick={() =>
                     handleToggleFavourite(
-                      trainer.user_id,
+                      trainer.trainerUserId,
                       isTrainerInMyFavourites,
                       updateFavourite,
                       myFavouriteTrainers,
@@ -319,7 +323,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     )
                   }
                 >
-                  {isTrainerInMyFavourites(trainer.user_id)?.is_active ===
+                  {isTrainerInMyFavourites(trainer.trainerUserId)?.is_active ===
                   true ? (
                     <AiFillStar className={styles["remove-fav-icon"]} />
                   ) : (
@@ -364,7 +368,9 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                 <td>
                   {isUserPlayer && (
                     <button
-                      onClick={() => handleOpenLessonModal(trainer?.user_id)}
+                      onClick={() =>
+                        handleOpenLessonModal(trainer?.trainerUserId)
+                      }
                       className={styles["lesson-button"]}
                     >
                       Ders al
@@ -375,7 +381,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                   <td>
                     {playerStudentships?.find(
                       (student) =>
-                        student.trainer_id === trainer.user_id &&
+                        student.trainer_id === trainer.trainerUserId &&
                         student.student_status === "pending"
                     ) ? (
                       <p className={styles["pending-confirmation-text"]}>
@@ -383,18 +389,20 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                       </p>
                     ) : playerStudentships?.find(
                         (student) =>
-                          student.trainer_id === trainer.user_id &&
+                          student.trainer_id === trainer.trainerUserId &&
                           student.student_status === "accepted"
                       ) ? (
                       <button
-                        onClick={() => handleDeclineStudent(trainer.user_id)}
+                        onClick={() =>
+                          handleDeclineStudent(trainer.trainerUserId)
+                        }
                         className={styles["cancel-student-button"]}
                       >
                         Öğrenciliği sil
                       </button>
                     ) : (
                       <button
-                        onClick={() => handleAddStudent(trainer.user_id)}
+                        onClick={() => handleAddStudent(trainer.trainerUserId)}
                         className={styles["add-student-button"]}
                       >
                         Öğrenci Ol
