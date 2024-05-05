@@ -198,6 +198,7 @@ const clubSubscriptionsModel = {
         })
         .where("club_subscriptions.club_id", userId)
         .andWhere("club_subscriptions.is_active", true)
+        .andWhere("users.user_status_type_id", 1)
         .groupBy(
           "club_subscriptions.club_subscription_id",
           "players.player_id",

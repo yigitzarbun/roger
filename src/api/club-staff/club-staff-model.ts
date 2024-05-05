@@ -72,7 +72,9 @@ const clubStaffModel = {
           "trainers.price_hour",
           "trainer_experience_types.trainer_experience_type_name",
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
-          db.raw("COUNT(DISTINCT students.student_id) as studentCount")
+          db.raw(
+            "COUNT(DISTINCT CASE WHEN users.user_status_type_id = 1 THEN students.student_id END) as studentCount"
+          )
         )
         .from("club_staff")
         .leftJoin("trainers", function () {
@@ -96,6 +98,9 @@ const clubStaffModel = {
             "=",
             db.raw("'accepted'")
           );
+        })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "students.player_id");
         })
         .leftJoin("trainer_experience_types", function () {
           this.on(
@@ -304,7 +309,6 @@ const clubStaffModel = {
       .returning("*");
     return newClubStaff;
   },
-
   async update(updates) {
     return await db("club_staff")
       .where("club_staff_id", updates.club_staff_id)

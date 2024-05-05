@@ -24,6 +24,7 @@ const DeletePlayerModal = (props) => {
   const handleDeleteConfirmation = (e) => {
     setDeleteConfirmation(e.target.value);
   };
+  console.log(playerDetails);
   const handleDelete = () => {
     if (
       email === playerDetails?.email &&

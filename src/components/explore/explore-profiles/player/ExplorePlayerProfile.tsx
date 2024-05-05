@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
@@ -9,17 +10,29 @@ import { useGetPlayerProfileDetailsQuery } from "../../../../api/endpoints/Playe
 import ExplorePlayersInteractionsSections from "./sections/interaction/ExplorePlayersInteractionsSections";
 import ExplorePlayersReviewsSection from "./sections/reviews/ExplorePlayersReviewsSection";
 import ExplorePlayerProfilesEventsSection from "./sections/events/ExplorePlayerProfilesEventsSection";
+import Paths from "../../../../routing/Paths";
 
 interface ExplorePlayerProfileProps {
   user_id: string;
 }
 const ExplorePlayerProfile = (props: ExplorePlayerProfileProps) => {
   const { user_id } = props;
+
+  const navigate = useNavigate();
+
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
     useGetPlayerProfileDetailsQuery(Number(user_id));
+
+  useEffect(() => {
+    if (selectedPlayer && selectedPlayer?.user_status_type_id !== 1) {
+      navigate(Paths.HOME);
+    }
+  }, [selectedPlayer, isSelectedPlayerLoading]);
+
   if (isSelectedPlayerLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles.profile}>
       <div className={styles["top-sections-container"]}>

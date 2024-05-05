@@ -53,6 +53,7 @@ const LoginForm = () => {
         email: formData.email,
         password: formData.password,
         language: browserLanguage,
+        theme: "dark",
       };
       await loginUser(loginData).unwrap();
       reset();
@@ -68,6 +69,7 @@ const LoginForm = () => {
           user: credentials.user,
           token: credentials.token,
           language: credentials.language,
+          theme: "dark",
         })
       );
       i18n.changeLanguage(browserLanguage);

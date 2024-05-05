@@ -17,10 +17,10 @@ interface ExploreTrainerProfileProps {
 }
 const ExploreTrainerProfile = (props: ExploreTrainerProfileProps) => {
   const { user_id } = props;
-
+  console.log("user id: ", user_id);
   const { data: selectedTrainer, isLoading: isSelectedTrainerLoading } =
     useGetTrainerProfileDetailsQuery(Number(user_id));
-
+  console.log(selectedTrainer);
   const { data: trainerGroups, isLoading: isTrainerGroupsLoading } =
     useGetStudentGroupsByFilterQuery({
       is_active: true,

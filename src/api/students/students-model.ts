@@ -62,6 +62,7 @@ const studentsModel = {
           "students.*",
           "locations.*",
           "player_levels.*",
+          "users.user_status_type_id",
           db.raw(
             "(SELECT COUNT(DISTINCT bookings.booking_id) FROM bookings WHERE (bookings.inviter_id = students.player_id AND bookings.invitee_id = ?) OR (bookings.invitee_id = students.player_id AND bookings.inviter_id = ?) AND bookings.booking_status_type_id = 5 AND bookings.invitee_id = ? AND bookings.inviter_id = ?) as lessonCount",
             [
@@ -86,6 +87,9 @@ const studentsModel = {
             "players.player_level_id"
           );
         })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "students.player_id");
+        })
         .where((builder) => {
           if (filter.playerLevelId > 0) {
             builder.where("players.player_level_id", filter.playerLevelId);
@@ -106,6 +110,7 @@ const studentsModel = {
             builder.where("players.gender", filter.gender);
           }
         })
+        .andWhere("users.user_status_type_id", 1)
         .andWhere("students.trainer_id", filter.trainerUserId)
         .andWhere("students.student_status", filter.studentStatus)
         .limit(playersPerPage)
@@ -129,6 +134,9 @@ const studentsModel = {
             );
           });
         })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "students.player_id");
+        })
         .where((builder) => {
           builder
             .where(function () {
@@ -146,6 +154,7 @@ const studentsModel = {
               ).andWhere("bookings.inviter_id", "=", filter.trainerUserId);
             });
         })
+        .andWhere("users.user_status_type_id", 1)
         .andWhere("bookings.booking_status_type_id", "=", 5)
         .andWhere((builder) => {
           builder
@@ -190,7 +199,11 @@ const studentsModel = {
             "players.player_level_id"
           );
         })
+        .leftJoin("users", function () {
+          this.on("users.user_id", "=", "students.player_id");
+        })
         .where("students.trainer_id", trainerUserId)
+        .andWhere("users.user_status_type_id", 1)
         .andWhere("students.student_status", "pending");
 
       return newStudentRequests;

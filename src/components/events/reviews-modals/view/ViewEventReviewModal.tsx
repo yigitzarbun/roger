@@ -34,7 +34,8 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
       userId: user?.user?.user_id,
       bookingId: selectedBookingId,
     });
-
+  console.log(selectedBookingId);
+  console.log(selectedEventReview);
   if (isSelectedEventReviewLoading) {
     return <PageLoading />;
   }

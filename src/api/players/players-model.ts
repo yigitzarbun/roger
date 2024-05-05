@@ -155,6 +155,8 @@ const playersModel = {
           "players.phone_number",
           "locations.*",
           "player_levels.*",
+          "users.email",
+          "users.user_status_type_id",
           db.raw(
             "AVG(CASE WHEN event_reviews.is_active = true THEN event_reviews.review_score ELSE NULL END) as averageReviewScore"
           ),

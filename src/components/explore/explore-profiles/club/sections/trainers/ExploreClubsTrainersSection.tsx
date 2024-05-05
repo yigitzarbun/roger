@@ -11,7 +11,6 @@ import styles from "./styles.module.scss";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 
 import { useGetClubTrainersQuery } from "../../../../../../api/endpoints/ClubStaffApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../../../api/endpoints/TrainerExperienceTypesApi";
 
 import ExploreClubTrainerModal from "../../modals/trainers/ExploreClubTrainersModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
@@ -28,11 +27,6 @@ const ExploreClubsTrainersSection = (
 
   const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
     useGetClubTrainersQuery(selectedClub?.[0]?.user_id);
-
-  const {
-    data: trainerExperienceTypes,
-    isLoading: isTrainerExperienceTypesLoading,
-  } = useGetTrainerExperienceTypesQuery({});
 
   const [isTrainersModalOpen, setIsTrainersModalOpen] = useState(false);
   const openTrainersModal = () => {
@@ -51,7 +45,7 @@ const ExploreClubsTrainersSection = (
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
-  if (isTrainerExperienceTypesLoading || isClubStaffLoading) {
+  if (isClubStaffLoading) {
     return <PageLoading />;
   }
   return (

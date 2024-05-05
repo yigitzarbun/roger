@@ -94,13 +94,14 @@ export interface AuthState {
   user: User | null;
   token: string | null;
   language: string | null;
+  theme: string | null;
 }
 
 export function getUserFromLs() {
   const userString = localStorage.getItem(LocalStorageKeys.user);
   if (userString) {
-    const { user, token, language } = JSON.parse(userString);
-    return { user, token, language };
+    const { user, token, language, theme } = JSON.parse(userString);
+    return { user, token, language, theme };
   }
   return null;
 }
@@ -115,17 +116,24 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; token: string; language: string }>
+      action: PayloadAction<{
+        user: User;
+        token: string;
+        language: string;
+        theme: string;
+      }>
     ) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.language = action.payload.language;
+      state.theme = action.payload.theme;
       localStorage.setItem(
         LocalStorageKeys.user,
         JSON.stringify({
           user: action.payload.user,
           token: action.payload.token,
           language: action.payload.language,
+          theme: action.payload.theme,
         })
       );
     },

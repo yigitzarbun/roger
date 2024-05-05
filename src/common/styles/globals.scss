@@ -12,8 +12,8 @@ body {
   display: flex;
   flex-direction: column;
   margin: auto;
-  color: $roger-text-color;
-  background-color: $roger-bg-color;
+  color: var(--text-color);
+  background-color: var(--background-color);
   padding: 40px 0;
   width: 90%;
 }
@@ -35,4 +35,16 @@ body {
   object-fit: cover;
   object-position: bottom;
   border-radius: $roger-border-radius;
+}
+
+// Dark Theme
+:root {
+  --background-color: black; // dark gray
+  --text-color: white; // white
+}
+
+// Light Theme
+[data-theme="light"] {
+  --background-color: #ffffff; // white
+  --text-color: #333333; // dark gray
 }

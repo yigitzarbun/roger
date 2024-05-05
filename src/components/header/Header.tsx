@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 
-import { FaCircle } from "react-icons/fa";
 import { IoMdSunny } from "react-icons/io";
 
 import { useAppSelector } from "../../store/hooks";
@@ -30,6 +29,7 @@ import { useGetTrainerByUserIdQuery } from "../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../api/endpoints/ClubsApi";
 import { useGetClubNewStaffRequestsQuery } from "../../api/endpoints/ClubStaffApi";
 import { useGetTrainerNewStudentRequestsListQuery } from "../../api/endpoints/StudentsApi";
+import { LocalStorageKeys } from "../../common/constants/lsConstants";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -38,6 +38,15 @@ const Header = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const handleOpenProfileModal = () => {
     setIsProfileModalOpen(true);
+  };
+
+  const [currentTheme, setCurrentTheme] = useState(
+    localStorage.getItem(LocalStorageKeys.theme) ?? "dark"
+  );
+  const updateTheme = () => {
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    setCurrentTheme(newTheme);
+    localStorage.setItem(LocalStorageKeys.theme, newTheme);
   };
 
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -149,6 +158,10 @@ const Header = () => {
 
   const isLoggedIn = user?.token ? true : false;
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", currentTheme);
+  }, [currentTheme]);
+
   if (
     isPlayerDetailsLoading ||
     isIncomingRequestsLoading ||
@@ -179,7 +192,7 @@ const Header = () => {
         </NavLink>
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
-            <IoMdSunny className={styles.theme} />
+            <IoMdSunny className={styles.theme} onClick={updateTheme} />
             <IoIosNotificationsOutline
               onClick={handleOpenNotificationsModal}
               className={
@@ -204,9 +217,9 @@ const Header = () => {
                   isUserPlayer && playerDetails?.image
                     ? `${localUrl}/${playerDetails?.image}`
                     : isUserTrainer && trainerDetails?.[0]?.image
-                    ? trainerDetails?.[0]?.image
+                    ? `${localUrl}/${trainerDetails?.[0]?.image}`
                     : isUserClub && clubDetails?.[0]?.image
-                    ? clubDetails?.[0]?.image
+                    ? `${localUrl}/${clubDetails?.[0]?.image}`
                     : "/images/icons/avatar.jpg"
                 }
                 alt="avatar"

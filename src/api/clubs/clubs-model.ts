@@ -42,12 +42,16 @@ const clubsModel = {
         );
       })
       .leftJoin("users", "users.user_id", "=", "clubs.user_id")
-      .leftJoin(
-        "club_subscriptions",
-        "club_subscriptions.club_id",
-        "=",
-        "clubs.user_id"
-      )
+      .leftJoin("club_subscriptions", function () {
+        this.on("club_subscriptions.club_id", "=", "clubs.user_id")
+          .andOn("club_subscriptions.is_active", "=", db.raw("'true'"))
+          .andOnExists(function () {
+            this.select("*")
+              .from("users")
+              .whereRaw("users.user_id = club_subscriptions.player_id")
+              .andWhere("users.user_status_type_id", 1);
+          });
+      })
       .where((builder) => {
         if (filter.locationId > 0) {
           builder.where("clubs.location_id", filter.locationId);
@@ -124,12 +128,16 @@ const clubsModel = {
       })
 
       .leftJoin("users", "users.user_id", "=", "clubs.user_id")
-      .leftJoin(
-        "club_subscriptions",
-        "club_subscriptions.club_id",
-        "=",
-        "clubs.user_id"
-      )
+      .leftJoin("club_subscriptions", function () {
+        this.on("club_subscriptions.club_id", "=", "clubs.user_id")
+          .andOn("club_subscriptions.is_active", "=", db.raw("'true'"))
+          .andOnExists(function () {
+            this.select("*")
+              .from("users")
+              .whereRaw("users.user_id = club_subscriptions.player_id")
+              .andWhere("users.user_status_type_id", 1);
+          });
+      })
       .where((builder) => {
         if (filter.locationId > 0) {
           builder.where("clubs.location_id", filter.locationId);
@@ -307,11 +315,14 @@ const clubsModel = {
           );
         })
         .leftJoin("club_subscriptions", function () {
-          this.on("club_subscriptions.club_id", "=", userId).andOn(
-            "club_subscriptions.is_active",
-            "=",
-            db.raw("'true'")
-          );
+          this.on("club_subscriptions.club_id", "=", "clubs.user_id")
+            .andOn("club_subscriptions.is_active", "=", db.raw("'true'"))
+            .andOnExists(function () {
+              this.select("*")
+                .from("users")
+                .whereRaw("users.user_id = club_subscriptions.player_id")
+                .andWhere("users.user_status_type_id", 1);
+            });
         })
         .leftJoin("club_staff", function () {
           this.on("club_staff.club_id", "=", "clubs.club_id")

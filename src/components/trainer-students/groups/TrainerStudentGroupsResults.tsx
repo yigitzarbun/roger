@@ -7,6 +7,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
+import { ImBlocked } from "react-icons/im";
 
 import paths from "../../../routing/Paths";
 
@@ -125,19 +126,27 @@ const TrainerStudentGroupsResults = (
                   {group.student1_user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.student1_user_id}`}
-                      className={styles.name}
+                      className={
+                        group.student1_status_type_id === 1
+                          ? styles["active-name"]
+                          : styles["inactive-name"]
+                      }
                     >
-                      {`${group.student1_fname} ${group.student1_lname}`}
+                      {`${group.student1_fname} ${group.student1_lname} `}
                     </Link>
                   ) : (
-                    `${group.student1_fname} ${group.student1_lname}`
+                    <>{`${group.student1_fname} ${group.student1_lname}`}</>
                   )}
                 </td>
                 <td>
                   {group.student2_user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.student2_user_id}`}
-                      className={styles.name}
+                      className={
+                        group.student2_status_type_id === 1
+                          ? styles["active-name"]
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.student2_fname} ${group.student2_lname}`}
                     </Link>
@@ -149,7 +158,11 @@ const TrainerStudentGroupsResults = (
                   {group.student3_user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.student3_user_id}`}
-                      className={styles.name}
+                      className={
+                        group.student3_status_type_id === 1
+                          ? styles["active-name"]
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.student3_fname} ${group.student3_lname}`}
                     </Link>
@@ -163,7 +176,11 @@ const TrainerStudentGroupsResults = (
                   {group.student4_user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.student4_user_id}`}
-                      className={styles.name}
+                      className={
+                        group.student4_status_type_id === 1
+                          ? styles["active-name"]
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.student4_fname} ${group.student4_lname}`}
                     </Link>

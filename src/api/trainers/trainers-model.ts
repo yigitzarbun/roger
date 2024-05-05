@@ -224,62 +224,58 @@ const trainersModel = {
           "trainer_experience_types.*",
           "clubs.club_name",
           "club_staff.*",
+          "users.user_status_type_id",
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
-          db.raw("COUNT(DISTINCT students.student_id) as studentCount"),
           db.raw(
             "AVG(CASE WHEN event_reviews.is_active = true THEN event_reviews.review_score ELSE NULL END) as averageReviewScore"
           ),
           db.raw(
             "COUNT(DISTINCT CASE WHEN event_reviews.is_active = true THEN event_reviews.event_review_id ELSE NULL END) as reviewScoreCount"
+          ),
+          db.raw(
+            "COUNT(DISTINCT CASE WHEN students.student_status = 'accepted' AND student_users.user_status_type_id = 1 THEN students.student_id ELSE NULL END) as studentCount"
           )
         )
         .from("trainers")
-        .leftJoin("users", function () {
-          this.on("users.user_id", "=", "trainers.user_id");
-        })
-        .leftJoin("locations", function () {
-          this.on("locations.location_id", "=", "trainers.location_id");
-        })
-        .leftJoin("trainer_experience_types", function () {
-          this.on(
-            "trainer_experience_types.trainer_experience_type_id",
-            "=",
-            "trainers.trainer_experience_type_id"
-          );
-        })
         .leftJoin("bookings", function () {
-          this.on("bookings.inviter_id", "=", userId)
-            .orOn("bookings.invitee_id", "=", userId)
+          this.on("bookings.inviter_id", "=", "trainers.user_id")
+            .orOn("bookings.invitee_id", "=", "trainers.user_id")
             .andOn(function () {
-              this.on(function () {
-                this.on("bookings.event_type_id", "=", 3)
-                  .orOn("bookings.event_type_id", "=", 5)
-                  .orOn("bookings.event_type_id", "=", 6);
-              });
+              this.on("bookings.event_type_id", "=", 3)
+                .orOn("bookings.event_type_id", "=", 5)
+                .orOn("bookings.event_type_id", "=", 6);
             })
             .andOn("bookings.booking_status_type_id", "=", 5);
         })
-        .leftJoin("club_staff", function () {
-          this.on("club_staff.user_id", "=", userId).andOn(
-            "club_staff.employment_status",
-            "=",
-            db.raw("'accepted'")
-          );
-        })
-        .leftJoin("clubs", function () {
-          this.on("clubs.club_id", "=", "trainers.club_id");
-        })
-
-        .leftJoin("event_reviews", function () {
-          this.on("event_reviews.reviewee_id", "=", userId);
-        })
-        .leftJoin("students", function () {
-          this.on("students.trainer_id", "=", userId).andOn(
-            "students.student_status",
-            "=",
-            db.raw("'accepted'")
-          );
-        })
+        .leftJoin("users", "users.user_id", "=", "trainers.user_id")
+        .leftJoin(
+          "locations",
+          "locations.location_id",
+          "=",
+          "trainers.location_id"
+        )
+        .leftJoin(
+          "trainer_experience_types",
+          "trainer_experience_types.trainer_experience_type_id",
+          "=",
+          "trainers.trainer_experience_type_id"
+        )
+        .leftJoin("club_staff", "club_staff.user_id", "=", "trainers.user_id")
+        .leftJoin("clubs", "clubs.club_id", "=", "trainers.club_id")
+        .leftJoin(
+          "event_reviews",
+          "event_reviews.reviewee_id",
+          "=",
+          "trainers.user_id"
+        )
+        .leftJoin("students", "students.trainer_id", "=", "trainers.user_id")
+        .leftJoin(
+          "users as student_users",
+          "students.player_id",
+          "=",
+          "student_users.user_id"
+        )
+        .where("users.user_status_type_id", 1)
         .where("trainers.user_id", userId)
         .groupBy(
           "trainers.trainer_id",

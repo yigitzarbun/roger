@@ -103,6 +103,11 @@
         vertical-align: middle;
         padding: 10px;
         height: 12vh;
+
+        .blocked {
+          color: $roger-red;
+          font-size: 0.8rem;
+        }
       }
 
       .player-image {
@@ -114,9 +119,13 @@
         display: block;
       }
 
-      .name {
+      .active-name {
         color: white;
         text-decoration: none;
+      }
+      .inactive-name {
+        color: gray;
+        text-decoration: line-through;
       }
       .blocked {
         color: $roger-red;

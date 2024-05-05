@@ -1284,6 +1284,7 @@ const bookingsModel = {
           "players.birth_year",
           "player_levels.player_level_name",
           "locations.location_name",
+          "users.user_status_type_id",
           db.raw("COUNT(match_scores.match_score_id) as totalMatches"),
           db.raw(
             "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
@@ -1302,6 +1303,7 @@ const bookingsModel = {
           "=",
           "players.player_level_id"
         )
+        .leftJoin("users", "users.user_id", "players.user_id")
         .leftJoin(
           "locations",
           "locations.location_id",
@@ -1339,6 +1341,7 @@ const bookingsModel = {
           }
         })
         .andWhere("bookings.event_type_id", 2)
+        .andWhere("users.user_status_type_id", 1)
         .andWhere("match_scores.match_score_status_type_id", 3)
         .andWhere("players.gender", filter.gender)
         .groupBy(
@@ -1350,7 +1353,8 @@ const bookingsModel = {
           "players.gender",
           "players.birth_year",
           "player_levels.player_level_id",
-          "locations.location_id"
+          "locations.location_id",
+          "users.user_status_type_id"
         )
         .orderByRaw(
           "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) DESC"
@@ -1368,6 +1372,7 @@ const bookingsModel = {
           "players.birth_year",
           "player_levels.player_level_name",
           "locations.location_name",
+          "users.user_status_type_id",
           db.raw("COUNT(match_scores.match_score_id) as totalMatches"),
           db.raw(
             "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
@@ -1386,6 +1391,7 @@ const bookingsModel = {
           "=",
           "players.player_level_id"
         )
+        .leftJoin("users", "users.user_id", "players.user_id")
         .leftJoin(
           "locations",
           "locations.location_id",
@@ -1424,6 +1430,7 @@ const bookingsModel = {
         })
         .andWhere("bookings.event_type_id", 2)
         .andWhere("match_scores.match_score_status_type_id", 3)
+        .andWhere("users.user_status_type_id", 1)
         .andWhere("players.gender", filter.gender)
         .groupBy(
           "players.user_id",
@@ -1434,7 +1441,8 @@ const bookingsModel = {
           "players.gender",
           "players.birth_year",
           "player_levels.player_level_id",
-          "locations.location_id"
+          "locations.location_id",
+          "users.user_status_type_id"
         )
         .orderByRaw(
           "SUM(CASE WHEN match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) DESC"

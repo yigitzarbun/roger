@@ -5,7 +5,6 @@ const favouritesModel = {
     const favourites = await db("favourites");
     return favourites;
   },
-
   async getByFilter(filter) {
     const favourites = await db("favourites").where((builder) => {
       if (filter.favourite_id) {
@@ -28,7 +27,6 @@ const favouritesModel = {
     });
     return favourites;
   },
-
   async getPlayerFavouritesByUserId(userId: number) {
     try {
       const favourites = await db
@@ -93,7 +91,6 @@ const favouritesModel = {
       throw new Error("Unable to fetch player favourites.");
     }
   },
-
   async getPaginatedFavourites(filter) {
     try {
       const favouritesPerPage = 4;
@@ -265,14 +262,12 @@ const favouritesModel = {
     );
     return favourite;
   },
-
   async add(favourite) {
     const [newFavourite] = await db("favourites")
       .insert(favourite)
       .returning("*");
     return newFavourite;
   },
-
   async update(updates) {
     return await db("favourites")
       .where("favourite_id", updates.favourite_id)
