@@ -43,6 +43,12 @@ export const courtsSlice = createApi({
     getCourtsByFilter: builder.query({
       query: (filter) => `/courts/filter?${new URLSearchParams(filter)}`,
     }),
+    deactivateDeletedClubCourts: builder.mutation({
+      query: (clubId) => ({
+        url: `/courts/deactivate-club-courts/${clubId}`,
+        method: "POST",
+      }),
+    }),
     addCourt: builder.mutation({
       query: (court) => {
         const formData = new FormData();
@@ -129,5 +135,6 @@ export const {
   useGetCourtDetailsQuery,
   useGetCourtsByFilterQuery,
   useAddCourtMutation,
+  useDeactivateDeletedClubCourtsMutation,
   useUpdateCourtMutation,
 } = courtsSlice;

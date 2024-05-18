@@ -2,6 +2,11 @@ import { Request, Response, NextFunction, Router } from "express";
 
 import bookingsModel from "./bookings-model";
 
+import {
+  essentialRequirementsMet,
+  trainingAndMatchConditionsMet,
+} from "./bookings-middleware";
+
 const bookingsRouter = Router();
 
 bookingsRouter.get(
@@ -15,7 +20,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/filter",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +32,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/get-booked-hours/filter",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -41,7 +44,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/players-leaderboard/filter",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -97,7 +99,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/player-incoming-requests/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -111,7 +112,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/trainer-outgoing-requests/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -125,7 +125,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/trainer-incoming-requests/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -139,7 +138,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/user-profile-events/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -153,7 +151,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/past-events/filter",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -166,7 +163,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/trainer-past-events/filter",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -181,7 +177,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/paginated-club-calendar-bookings",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -195,7 +190,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/club-calendar-booked-hours",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -210,7 +204,6 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.get(
   "/:booking_id",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -224,9 +217,10 @@ bookingsRouter.get(
     }
   }
 );
-
 bookingsRouter.post(
   "/",
+  essentialRequirementsMet,
+  trainingAndMatchConditionsMet,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newBooking = await bookingsModel.add(req.body);
@@ -236,7 +230,6 @@ bookingsRouter.post(
     }
   }
 );
-
 bookingsRouter.put(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

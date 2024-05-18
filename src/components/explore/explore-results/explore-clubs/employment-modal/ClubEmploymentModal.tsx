@@ -69,7 +69,6 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
       closeEmploymentModal();
       return;
     }
-
     if (isUserTrainer && !isPastApplicationExist) {
       const newClubStaffData = {
         fname: currentTrainer?.[0]?.fname,

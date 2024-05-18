@@ -7,9 +7,11 @@ import paths from "../../routing/Paths";
 import { IoMdSunny } from "react-icons/io";
 
 import { useAppSelector } from "../../store/hooks";
-import { IoIosNotificationsOutline } from "react-icons/io";
+import { MdOutlineNotifications } from "react-icons/md";
 import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
 import { MdOutlineLanguage } from "react-icons/md";
+import { FiMoon } from "react-icons/fi";
+
 import { localUrl } from "../../common/constants/apiConstants";
 import {
   useGetPlayerIncomingRequestsQuery,
@@ -192,8 +194,12 @@ const Header = () => {
         </NavLink>
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
-            <IoMdSunny className={styles.theme} onClick={updateTheme} />
-            <IoIosNotificationsOutline
+            {currentTheme === "dark" ? (
+              <IoMdSunny className={styles.theme} onClick={updateTheme} />
+            ) : (
+              <FiMoon className={styles.theme} onClick={updateTheme} />
+            )}
+            <MdOutlineNotifications
               onClick={handleOpenNotificationsModal}
               className={
                 !hasBankDetails ||
@@ -252,8 +258,13 @@ const Header = () => {
             >
               Kayıt
             </NavLink>
+            {currentTheme === "dark" ? (
+              <IoMdSunny className={styles.theme} onClick={updateTheme} />
+            ) : (
+              <FiMoon className={styles.theme} onClick={updateTheme} />
+            )}
             <MdOutlineLanguage
-              className={styles.notification}
+              className={styles.language}
               onClick={handleOpenLanguageModal}
             />
           </div>

@@ -11,7 +11,6 @@
     display: flex;
     width: 15%;
     align-items: center;
-    background-color: $roger-black-dark;
     padding: 2px;
     border-radius: $roger-border-radius;
     justify-content: center;
@@ -21,10 +20,13 @@
     input {
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
-      border: 1px solid $roger-border-color;
+      border: 1px solid;
+      border-color: var(--box-border-color);
+      color: var(--text-color);
       width: 100%;
-      background-color: $roger-box-bg-color;
+      background-color: var(--navigation-box-background-color);
       cursor: pointer;
+      font-weight: bold;
     }
   }
 
@@ -32,7 +34,6 @@
     display: flex;
     width: 40%;
     align-items: center;
-    background-color: $roger-black-dark;
     padding: 2px;
     border-radius: $roger-border-radius;
     justify-content: center;
@@ -46,9 +47,14 @@
     input {
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
-      border: 1px solid $roger-border-color;
+      border: 1px solid;
+      border-color: var(--box-border-color);
       width: 100%;
-      background-color: $roger-box-bg-color;
+      background-color: var(--navigation-box-background-color);
+      color: var(--text-color);
+      &::placeholder {
+        color: var(--text-color);
+      }
     }
   }
   .passive-clear-button {

@@ -309,7 +309,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                 <td>{booking?.club_name}</td>
                 <td>
                   {booking?.event_type_id !== 6
-                    ? `${booking?.price_hour} TL}`
+                    ? `${booking?.price_hour} TL`
                     : "-"}
                 </td>
                 <td>

@@ -80,7 +80,9 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
           <p className={styles["player-name"]}>
             {bookingData?.event_type_id === 6
               ? bookingData?.student_group_name
-              : bookingData?.event_type_id === 3 && isUserTrainer
+              : (bookingData?.event_type_id === 3 ||
+                  bookingData?.event_type_id === 5) &&
+                isUserTrainer
               ? `${bookingData?.playerFname} ${bookingData?.playerLname}`
               : `${bookingData?.fname} ${bookingData?.lname}`}
           </p>

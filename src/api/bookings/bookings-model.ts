@@ -214,11 +214,15 @@ const bookingsModel = {
           "bookings.booking_status_type_id",
           "bookings.event_type_id",
           "players.image as playerImage",
-          "players.fname as playerFName",
-          "players.lname as playerLName",
+          "players.fname as playerFname",
+          "players.lname as playerLname",
           "players.user_id as playerUserId",
           "players.gender as playerGender",
           "players.birth_year as playerBirthYear",
+          "club_external_members.fname as playerFname",
+          "club_external_members.lname as playerLname",
+          "club_external_members.user_id as playerUserId",
+          "club_external_members.gender as playerGender",
           "trainers.image as trainerImage",
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
@@ -240,6 +244,13 @@ const bookingsModel = {
             "=",
             "bookings.inviter_id"
           );
+        })
+        .leftJoin("club_external_members", function () {
+          this.on(
+            "club_external_members.user_id",
+            "=",
+            "bookings.invitee_id"
+          ).orOn("club_external_members.user_id", "=", "bookings.inviter_id");
         })
         .leftJoin("trainers", function () {
           this.on("trainers.user_id", "=", "bookings.invitee_id").orOn(
@@ -272,6 +283,10 @@ const bookingsModel = {
             "player_levels.player_level_id",
             "=",
             "players.player_level_id"
+          ).orOn(
+            "player_levels.player_level_id",
+            "=",
+            "club_external_members.player_level_id"
           );
         })
 
@@ -307,11 +322,18 @@ const bookingsModel = {
           }
           if (filter.textSearch && filter.textSearch !== "") {
             this.where(function () {
-              this.where(
-                "players.fname",
-                "ilike",
-                `%${filter.textSearch}%`
-              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+              this.where("players.fname", "ilike", `%${filter.textSearch}%`)
+                .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere(
+                  "club_external_members.fname",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                )
+                .orWhere(
+                  "club_external_members.lname",
+                  "ilike",
+                  `%${filter.textSearch}%`
+                );
             });
           }
         });

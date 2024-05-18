@@ -4,7 +4,8 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
+  color: var(--text-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -43,13 +44,13 @@
         height: 12vh;
       }
       .win-count {
-        color: $roger-green;
+        color: var(--text-color);
       }
       .lost-count {
-        color: $roger-red;
+        color: var(--text-color);
       }
       .draw-count {
-        color: $roger-yellow;
+        color: var(--text-color);
       }
       .player-image {
         width: 40px;
@@ -61,7 +62,7 @@
       }
 
       .player-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
     }

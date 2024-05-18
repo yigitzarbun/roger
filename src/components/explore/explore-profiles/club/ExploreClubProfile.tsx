@@ -28,8 +28,6 @@ const ExploreClubProfile = (props: ExploreClubProfileProps) => {
   const { data: selectedClub, isLoading: isSelectedClubLoading } =
     useGetClubProfileDetailsQuery(user_id);
 
-  // subscriptions
-
   if (isSelectedClubLoading) {
     return <PageLoading />;
   }

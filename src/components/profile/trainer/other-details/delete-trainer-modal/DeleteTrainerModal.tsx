@@ -31,7 +31,6 @@ const DeleteTrainerModal = (props) => {
   const handleDeleteConfirmation = (e) => {
     setDeleteConfirmation(e.target.value);
   };
-
   const handleDelete = () => {
     if (
       email === trainerDetails?.email &&

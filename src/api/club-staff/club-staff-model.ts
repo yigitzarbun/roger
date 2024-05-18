@@ -72,9 +72,7 @@ const clubStaffModel = {
           "trainers.price_hour",
           "trainer_experience_types.trainer_experience_type_name",
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
-          db.raw(
-            "COUNT(DISTINCT CASE WHEN users.user_status_type_id = 1 THEN students.student_id END) as studentCount"
-          )
+          db.raw("COUNT(DISTINCT students.student_id) as studentCount")
         )
         .from("club_staff")
         .leftJoin("trainers", function () {
@@ -93,14 +91,17 @@ const clubStaffModel = {
             .andOn("bookings.booking_status_type_id", 5);
         })
         .leftJoin("students", function () {
-          this.on("students.trainer_id", "=", "trainers.user_id").andOn(
-            "students.student_status",
-            "=",
-            db.raw("'accepted'")
-          );
+          this.on("students.trainer_id", "=", "trainers.user_id")
+            .andOn("students.student_status", "=", db.raw("'accepted'"))
+            .andOnExists(function () {
+              this.select("*")
+                .from("users")
+                .whereRaw("users.user_id = students.player_id")
+                .andWhere("users.user_status_type_id", 1);
+            });
         })
         .leftJoin("users", function () {
-          this.on("users.user_id", "=", "students.player_id");
+          this.on("users.user_id", "=", "club_staff.user_id");
         })
         .leftJoin("trainer_experience_types", function () {
           this.on(
@@ -110,7 +111,8 @@ const clubStaffModel = {
           );
         })
         .where("clubs.user_id", userId)
-        .where("club_staff.employment_status", "accepted")
+        .andWhere("club_staff.employment_status", "accepted")
+        .andWhere("users.user_status_type_id", 1)
         .groupBy(
           "club_staff.club_staff_id",
           "trainers.trainer_id",
@@ -164,8 +166,12 @@ const clubStaffModel = {
       .leftJoin("clubs", function () {
         this.on("clubs.club_id", "=", "club_staff.club_id");
       })
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "club_staff.user_id");
+      })
       .where("clubs.club_id", clubId)
-      .andWhere("club_staff.employment_status", "pending");
+      .andWhere("club_staff.employment_status", "pending")
+      .andWhere("users.user_status_type_id", 1);
 
     return newStaffRequests;
   },
@@ -202,6 +208,9 @@ const clubStaffModel = {
           "club_staff.club_staff_role_type_id"
         );
       })
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "club_staff.user_id");
+      })
       .where((builder) => {
         if (filter.locationId > 0) {
           builder.where("locations.location_id", filter.locationId);
@@ -224,6 +233,7 @@ const clubStaffModel = {
       })
       .andWhere("club_staff.club_id", filter.clubId)
       .andWhere("club_staff.employment_status", "accepted")
+      .andWhere("users.user_status_type_id", 1)
       .limit(staffPerPage)
       .offset(offset);
 
@@ -256,6 +266,9 @@ const clubStaffModel = {
           "club_staff.club_staff_role_type_id"
         );
       })
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "club_staff.user_id");
+      })
       .where((builder) => {
         if (filter.locationId > 0) {
           builder.where("locations.location_id", filter.locationId);
@@ -277,7 +290,8 @@ const clubStaffModel = {
         }
       })
       .andWhere("club_staff.club_id", filter.clubId)
-      .andWhere("club_staff.employment_status", "accepted");
+      .andWhere("club_staff.employment_status", "accepted")
+      .andWhere("users.user_status_type_id", 1);
 
     const data = {
       staff: paginatedStaff,

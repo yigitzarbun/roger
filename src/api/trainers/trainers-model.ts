@@ -22,7 +22,9 @@ const trainersModel = {
         "trainers.lname",
         "locations.*",
         "trainer_experience_types.*",
-        "clubs.club_name",
+        db.raw(
+          "CASE WHEN club_users.user_status_type_id = 1 THEN clubs.club_name ELSE 'Bağımsız' END as club_name"
+        ),
         "club_staff.employment_status"
       )
       .from("trainers")
@@ -41,6 +43,12 @@ const trainersModel = {
       .leftJoin("clubs", "clubs.club_id", "=", "trainers.club_id")
       .leftJoin("club_staff", "club_staff.user_id", "=", "trainers.user_id")
       .leftJoin("users", "users.user_id", "=", "trainers.user_id")
+      .leftJoin(
+        "users as club_users",
+        "club_users.user_id",
+        "=",
+        "clubs.user_id"
+      )
       .where((builder) => {
         if (filter.trainerExperienceTypeId > 0) {
           builder.where(
@@ -82,7 +90,8 @@ const trainersModel = {
         "trainer_experience_types.trainer_experience_type_id",
         "clubs.club_name",
         "club_staff.employment_status",
-        "trainers.user_id"
+        "trainers.user_id",
+        "club_users.user_status_type_id"
       )
       .orderBy("trainers.trainer_id", "asc")
       .limit(trainersPerPage)
@@ -222,9 +231,12 @@ const trainersModel = {
           "trainers.name_on_bank_account as trainerBankAccountName",
           "locations.*",
           "trainer_experience_types.*",
-          "clubs.club_name",
           "club_staff.*",
           "users.user_status_type_id",
+          "users.email as email",
+          db.raw(
+            "CASE WHEN club_user.user_status_type_id = 1 THEN clubs.club_name ELSE 'Bağımsız' END club_name"
+          ),
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
           db.raw(
             "AVG(CASE WHEN event_reviews.is_active = true THEN event_reviews.review_score ELSE NULL END) as averageReviewScore"
@@ -263,6 +275,12 @@ const trainersModel = {
         .leftJoin("club_staff", "club_staff.user_id", "=", "trainers.user_id")
         .leftJoin("clubs", "clubs.club_id", "=", "trainers.club_id")
         .leftJoin(
+          "users as club_user",
+          "club_user.user_id",
+          "=",
+          "clubs.user_id"
+        )
+        .leftJoin(
           "event_reviews",
           "event_reviews.reviewee_id",
           "=",
@@ -284,7 +302,8 @@ const trainersModel = {
           "trainer_experience_types.trainer_experience_type_id",
           "clubs.club_id",
           "club_staff.club_staff_id",
-          "club_staff.club_staff_role_type_id"
+          "club_staff.club_staff_role_type_id",
+          "club_user.user_status_type_id"
         );
 
       return trainerDetails.length > 0 ? trainerDetails : null;
@@ -304,6 +323,21 @@ const trainersModel = {
     return await db("trainers")
       .where("trainer_id", updates.trainer_id)
       .update(updates);
+  },
+  async trainerPaymentDetailsExist(userId) {
+    try {
+      const trainerPaymentDetails = await db("trainers")
+        .where("user_id", userId)
+        .whereNotNull("iban")
+        .whereNotNull("name_on_bank_account")
+        .whereNotNull("bank_id")
+        .first();
+
+      return !!trainerPaymentDetails;
+    } catch (error) {
+      console.log("Error fetching trainer payment details: ", error);
+      return false;
+    }
   },
 };
 

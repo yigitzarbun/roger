@@ -5,7 +5,6 @@ const playersModel = {
     const players = await db("players");
     return players;
   },
-
   async getPaginated(filter) {
     const playersPerPage = 4;
     const offset = (filter.currentPage - 1) * playersPerPage;
@@ -240,6 +239,22 @@ const playersModel = {
     return await db("players")
       .where("player_id", updates.player_id)
       .update(updates);
+  },
+  async playerPaymentDetailsExist(userId) {
+    try {
+      const playerPaymentDetails = await db("players")
+        .where("user_id", userId)
+        .whereNotNull("name_on_card")
+        .whereNotNull("card_number")
+        .whereNotNull("cvc")
+        .whereNotNull("card_expiry")
+        .first();
+
+      return !!playerPaymentDetails;
+    } catch (error) {
+      console.log("Error fetching club payment details: ", error);
+      return false;
+    }
   },
 };
 

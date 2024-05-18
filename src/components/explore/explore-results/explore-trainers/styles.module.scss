@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -115,7 +115,7 @@
       }
 
       .trainer-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
       .remove-fav-icon {
@@ -135,7 +135,7 @@
     }
 
     .lesson-button {
-      background-color: $roger-black-dark;
+      background-color: var(--primary-button-background-color);
       border: none;
       width: 150px;
       padding: $roger-button-padding;
@@ -151,7 +151,7 @@
       background-color: $roger-black-light;
     }
     .add-student-button {
-      background-color: $roger-black-dark;
+      background-color: var(--secondary-button-background-color);
       border: none;
       width: 150px;
       padding: $roger-button-padding;

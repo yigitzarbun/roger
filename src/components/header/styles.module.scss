@@ -13,9 +13,10 @@
   width: 100%;
   padding: 10px 55px;
   z-index: $header-z-index;
-  background-color: $roger-box-bg-color;
+  background-color: var(--header-background-color);
+  color: var(--text-color);
   border-bottom: 1px solid $roger-border-color;
-  height: 20vh;
+  height: 18vh;
 
   .top-container {
     display: flex;
@@ -23,7 +24,7 @@
 
     .logo-title {
       font-size: 1.7rem;
-      color: $roger-text-color;
+      color: var(--text-color);
       text-decoration: none;
       font-weight: bolder;
       border-bottom: 1px solid inherit;
@@ -74,7 +75,7 @@
       }
 
       .nav-link {
-        color: $roger-text-color;
+        color: var(--text-color);
         text-decoration: none;
         font-weight: bold;
         font-size: 1rem;
@@ -88,7 +89,7 @@
       }
 
       .active-nav-link {
-        color: $roger-blue;
+        color: var(--text-color);
         text-decoration: none;
         font-weight: bold;
         font-size: 1rem;

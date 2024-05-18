@@ -63,14 +63,14 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
   const handleCancelBooking = () => {
     const cancelledBookingData = {
       booking_id: bookingData?.booking_id,
       registered_at: bookingData?.registered_at,
       event_date: bookingData?.event_date,
       event_time: bookingData?.event_time,
-      court_price: bookingData?.court_price,
+      court_price:
+        bookingData?.event_type_id === 3 ? bookingData?.court_price : 0,
       lesson_price: bookingData?.lesson_price,
       invitation_note: bookingData?.invitation_note,
       payment_id: bookingData?.payment_id,
@@ -181,7 +181,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                   >
                     {booking.student_group_name
                       ? booking.student_group_name
-                      : `${booking?.playerFName} ${booking?.playerLName}`}
+                      : `${booking?.playerFname} ${booking?.playerLname}`}
                   </Link>
                 </td>
                 <td>
@@ -200,7 +200,9 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
                 <td>{booking?.club_name}</td>
-                <td>{booking?.lesson_price}</td>
+                <td>
+                  {booking?.event_type_id === 3 ? booking?.lesson_price : "-"}
+                </td>
                 <td>
                   <button
                     onClick={() => handleOpenModal(booking)}

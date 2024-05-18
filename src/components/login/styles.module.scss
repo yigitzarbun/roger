@@ -7,7 +7,7 @@
   margin-top: 100px;
 
   .hero {
-    width: 60%;
+    width: 50%;
     height: auto;
     object-fit: cover;
     object-position: center;
@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     row-gap: 4vh;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
     width: 35%;
@@ -41,6 +41,7 @@
     flex-direction: column;
     row-gap: 2vh;
     width: 100%;
+
     .error-field {
       font-size: 0.8rem;
       color: $roger-red;
@@ -55,7 +56,26 @@
       width: 100%;
       background-color: inherit;
       height: 50px;
+      color: var(--text-color);
+
+      &:focus {
+        outline: none;
+        background-color: inherit;
+      }
     }
+
+    /* Target autofilled input fields */
+    input:-webkit-autofill {
+      -webkit-text-fill-color: var(--text-color); /* Text color */
+      background-color: transparent; /* Background color */
+    }
+
+    /* Target autofilled input fields when focused */
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--text-color); /* Text color */
+      background-color: transparent; /* Background color */
+    }
+
     .court-picture-container {
       display: flex;
     }
@@ -67,7 +87,7 @@
     margin: 1vh 0;
 
     .passive-submit-button {
-      background-color: $roger-black-dark;
+      background-color: var(--passive-login-button-color);
       color: white;
       border: none;
       padding: $roger-button-padding;
@@ -81,8 +101,8 @@
       cursor: pointer;
     }
     .active-submit-button {
-      background-color: white;
-      color: black;
+      background-color: var(--active-login-button-color);
+      color: white;
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -92,8 +112,8 @@
       width: 100%;
     }
     .active-submit-button:hover {
-      background-color: $roger-white;
-      color: black;
+      background-color: var(--primary-button-background-color);
+      color: white;
     }
   }
 
@@ -103,7 +123,7 @@
   }
   .register-nav {
     text-decoration: none;
-    color: $roger-text-color;
+    color: var(--text-color);
   }
   .register-span {
     color: $roger-blue;

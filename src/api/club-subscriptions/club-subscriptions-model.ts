@@ -12,7 +12,6 @@ const clubSubscriptionsModel = {
 
     return clubSubscriptions;
   },
-
   async getByFilter(filter) {
     const clubSubscriptions = await db("club_subscriptions").where(
       (builder) => {
@@ -36,7 +35,6 @@ const clubSubscriptionsModel = {
     );
     return clubSubscriptions;
   },
-
   async getPlayerActiveClubSubscriptionsByUserId(userId: number) {
     try {
       const subscriptions = await db
@@ -49,7 +47,6 @@ const clubSubscriptionsModel = {
           "clubs.image as clubImage",
           "clubs.club_name",
           "locations.location_name",
-          //"club_subscription_packages.",
           "club_subscription_types.club_subscription_type_name"
         )
         .from("club_subscriptions")
@@ -70,10 +67,12 @@ const clubSubscriptionsModel = {
             "club_subscription_types.club_subscription_type_id"
           );
         })
+        .leftJoin("users", "users.user_id", "=", "clubs.user_id")
         .leftJoin("locations", function () {
           this.on("clubs.location_id", "=", "locations.location_id");
         })
         .where("club_subscriptions.is_active", true)
+        .andWhere("users.user_status_type_id", 1)
         .andWhere((builder) => {
           builder.where("club_subscriptions.player_id", userId);
         });
@@ -85,7 +84,6 @@ const clubSubscriptionsModel = {
       throw new Error("Unable to fetch player active club subscriptions.");
     }
   },
-
   async getById(club_subscription_id) {
     const clubSubscription = await db("club_subscriptions").where(
       "club_subscription_id",
@@ -93,7 +91,6 @@ const clubSubscriptionsModel = {
     );
     return clubSubscription;
   },
-
   async getPlayersTrainingSubscriptionStatus(filter) {
     try {
       const inviterSubscriptionStatus = await db("club_subscriptions")
@@ -126,7 +123,6 @@ const clubSubscriptionsModel = {
       throw error;
     }
   },
-
   async getClubSubscribersByUserId(userId: number) {
     try {
       const clubSubscribers = await db
@@ -342,6 +338,7 @@ const clubSubscriptionsModel = {
         })
         .andWhere("club_subscriptions.club_id", filter.userId)
         .andWhere("club_subscriptions.is_active", true)
+        .andWhere("users.user_status_type_id", 1)
         .offset(offset)
         .limit(subscribersPerPage);
 
@@ -434,7 +431,8 @@ const clubSubscriptionsModel = {
           }
         })
         .andWhere("club_subscriptions.club_id", filter.userId)
-        .andWhere("club_subscriptions.is_active", true);
+        .andWhere("club_subscriptions.is_active", true)
+        .andWhere("users.user_status_type_id", 1);
 
       const total = count[0].total;
       const totalPages = Math.ceil(total / subscribersPerPage);
@@ -455,7 +453,6 @@ const clubSubscriptionsModel = {
       .returning("*");
     return newClubSubscription;
   },
-
   async update(updates) {
     return await db("club_subscriptions")
       .where("club_subscription_id", updates.club_subscription_id)

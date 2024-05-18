@@ -15,7 +15,6 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 
 import { User } from "../../../../store/slices/authSlice";
-import { PaginatedClubs } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
 import { Court } from "../../../../api/endpoints/CourtsApi";

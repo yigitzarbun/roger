@@ -4,7 +4,9 @@ const clubsModel = {
   async getAll() {
     const clubs = await db
       .select("clubs.club_id", "clubs.club_name", "clubs.user_id")
-      .from("clubs");
+      .from("clubs")
+      .leftJoin("users", "users.user_id", "clubs.user_id")
+      .where("users.user_status_type_id", 1);
     return clubs;
   },
   async getPaginated(filter) {
@@ -35,11 +37,14 @@ const clubsModel = {
       .leftJoin("locations", "locations.location_id", "=", "clubs.location_id")
       .leftJoin("courts", "courts.club_id", "=", "clubs.club_id")
       .leftJoin("club_staff", function () {
-        this.on("club_staff.club_id", "=", "clubs.club_id").andOn(
-          "club_staff.employment_status",
-          "=",
-          db.raw("?", ["accepted"])
-        );
+        this.on("club_staff.club_id", "=", "clubs.club_id")
+          .andOn("club_staff.employment_status", "=", db.raw("?", ["accepted"]))
+          .andOnExists(function () {
+            this.select("*")
+              .from("users")
+              .whereRaw("users.user_id = club_staff.user_id")
+              .andWhere("users.user_status_type_id", 1);
+          });
       })
       .leftJoin("users", "users.user_id", "=", "clubs.user_id")
       .leftJoin("club_subscriptions", function () {
@@ -220,12 +225,10 @@ const clubsModel = {
 
     return data;
   },
-
   async getByFilter(filter) {
     const club = await db("clubs").where(filter).first();
     return club;
   },
-
   async getByClubId(club_id: number) {
     try {
       const club = await db
@@ -245,7 +248,6 @@ const clubsModel = {
       console.log(error);
     }
   },
-
   async getByUserId(user_id) {
     const club = await db
       .select(
@@ -271,7 +273,6 @@ const clubsModel = {
       .where("user_id", user_id);
     return club;
   },
-
   async getClubProfileDetails(userId: number) {
     try {
       const clubDetails = await db
@@ -327,7 +328,17 @@ const clubsModel = {
         .leftJoin("club_staff", function () {
           this.on("club_staff.club_id", "=", "clubs.club_id")
             .andOn("club_staff.club_staff_role_type_id", "=", 2)
-            .andOn("club_staff.employment_status", "=", db.raw("'accepted'"));
+            .andOn(
+              "club_staff.employment_status",
+              "=",
+              db.raw("?", ["accepted"])
+            )
+            .andOnExists(function () {
+              this.select("*")
+                .from("users")
+                .whereRaw("users.user_id = club_staff.user_id")
+                .andWhere("users.user_status_type_id", 1);
+            });
         })
         .where("clubs.user_id", userId)
         .groupBy(
@@ -345,9 +356,24 @@ const clubsModel = {
     const [newClub] = await db("clubs").insert(club).returning("*");
     return newClub;
   },
-
   async update(updates) {
     return await db("clubs").where("club_id", updates.club_id).update(updates);
+  },
+
+  async clubPaymentDetailsExist(userId) {
+    try {
+      const clubPaymentDetails = await db("clubs")
+        .where("user_id", userId)
+        .whereNotNull("iban")
+        .whereNotNull("name_on_bank_account")
+        .whereNotNull("bank_id")
+        .first();
+
+      return !!clubPaymentDetails;
+    } catch (error) {
+      console.log("Error fetching club payment details: ", error);
+      return false;
+    }
   },
 };
 

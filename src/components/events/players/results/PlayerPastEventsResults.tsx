@@ -62,6 +62,8 @@ interface PlayerPastEventsResultsProps {
 }
 const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+  const isUserPlayer = user?.user?.user_type_id === 1;
+  const isUserTrainer = user?.user?.user_type_id === 2;
   const {
     display,
     clubId,
@@ -313,10 +315,18 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                           event.booking_id,
                           event.fname,
                           event.lname,
-                          event.playerImage
+                          (event.event_type_id === 1 ||
+                            event.event_type_id === 2) &&
+                            event.playerImage
                             ? event.playerImage
-                            : event.trainerImage
+                            : event.event_type_id === 3 &&
+                              isUserPlayer &&
+                              event.trainerImage
                             ? event.trainerImage
+                            : event.event_type_id === 3 &&
+                              isUserTrainer &&
+                              event.playerImage
+                            ? event.playerImage
                             : null
                         )
                       }

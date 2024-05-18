@@ -140,6 +140,11 @@
         color: white;
         text-decoration: none;
       }
+
+      .inactive-name {
+        color: grey;
+        text-decoration: line-through;
+      }
     }
 
     .view-button {

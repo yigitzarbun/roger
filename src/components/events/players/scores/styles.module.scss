@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -63,7 +63,7 @@
       }
 
       .player-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
       .done {
@@ -75,7 +75,7 @@
         font-size: 0.9rem;
       }
       .add-score-button {
-        background-color: $roger-black-dark;
+        background-color: var(--primary-button-background-color);
         border: none;
         width: 150px;
         padding: $roger-button-padding;
@@ -91,7 +91,7 @@
         background-color: $roger-black-light;
       }
       .edit-score-button {
-        background-color: white;
+        background-color: var(--secondary-button-background-color);
         border: none;
         width: 150px;
         padding: $roger-button-padding;
@@ -104,7 +104,7 @@
       }
 
       .edit-score-button:hover {
-        background-color: $roger-white;
+        background-color: $roger-black-light;
       }
     }
 

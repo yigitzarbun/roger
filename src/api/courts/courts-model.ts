@@ -5,7 +5,6 @@ const courtsModel = {
     const courts = await db("courts");
     return courts;
   },
-
   async getPaginated(filter) {
     const courtsPerPage = 4;
     const offset = (filter.page - 1) * courtsPerPage;
@@ -30,6 +29,9 @@ const courtsModel = {
       .leftJoin("clubs", function () {
         this.on("clubs.club_id", "=", "courts.club_id");
       })
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "clubs.user_id");
+      })
       .leftJoin("court_structure_types", function () {
         this.on(
           "court_structure_types.court_structure_type_id",
@@ -73,6 +75,7 @@ const courtsModel = {
           builder.where("courts.is_active", filter.isActive);
         }
       })
+      .andWhere("users.user_status_type_id", 1)
       .orderBy("court_id", "asc")
       .limit(courtsPerPage)
       .offset(offset);
@@ -96,6 +99,9 @@ const courtsModel = {
       .leftJoin("clubs", function () {
         this.on("clubs.club_id", "=", "courts.club_id");
       })
+      .leftJoin("users", function () {
+        this.on("users.user_id", "=", "clubs.user_id");
+      })
       .leftJoin("court_structure_types", function () {
         this.on(
           "court_structure_types.court_structure_type_id",
@@ -138,14 +144,14 @@ const courtsModel = {
         if (filter.isActive !== "null") {
           builder.where("courts.is_active", filter.isActive);
         }
-      });
+      })
+      .andWhere("users.user_status_type_id", 1);
     const data = {
       courts: paginatedCourts,
       totalPages: Math.ceil(pageCount.length / courtsPerPage),
     };
     return data;
   },
-
   async getClubCourtsByClubId(clubId: number) {
     const clubCourts = await db
       .select(
@@ -209,12 +215,10 @@ const courtsModel = {
     });
     return courts;
   },
-
   async getById(court_id) {
     const court = await db("courts").where("court_id", court_id);
     return court;
   },
-
   async getCourtDetails(courtId: number) {
     try {
       const courtDetails = await db
@@ -266,16 +270,29 @@ const courtsModel = {
       console.log("Error fetching selected court details: ", error);
     }
   },
-
   async add(court) {
     const [newCourt] = await db("courts").insert(court).returning("*");
     return newCourt;
   },
-
   async update(updates) {
     return await db("courts")
       .where("court_id", updates.court_id)
       .update(updates);
+  },
+  async deactivateClubCourts(clubId) {
+    try {
+      await db("courts")
+        .whereExists(function () {
+          this.select("*")
+            .from("clubs")
+            .whereRaw("clubs.club_id = courts.club_id")
+            .andWhere("clubs.club_id", clubId);
+        })
+        .update({ is_active: false });
+      return true;
+    } catch (error) {
+      console.log("Error updating deleted club courts: ", error);
+    }
   },
 };
 

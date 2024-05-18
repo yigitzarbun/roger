@@ -45,9 +45,12 @@ const studentGroupsModel = {
           ),
           "trainers.fname",
           "trainers.lname",
+          "trainers.user_id as trainerUserId", // Alias trainer's user_id
+          "users.user_status_type_id as trainerUserStatusTypeId", // Fetch trainer's user_type_id
           "clubs.user_id as clubUserId",
           "clubs.image as clubImage",
-          "clubs.club_name"
+          "clubs.club_name",
+          db.raw("COUNT(active_students.user_id) as studentCount")
         )
         .from("student_groups")
         .leftJoin(
@@ -56,12 +59,43 @@ const studentGroupsModel = {
           "=",
           "student_groups.trainer_id"
         )
+        .leftJoin("users", "users.user_id", "=", "trainers.user_id") // Join to fetch user_type_id
         .leftJoin("clubs", "clubs.user_id", "=", "student_groups.club_id")
+        .leftJoin("users as clubUser", "clubUser.user_id", "=", "clubs.user_id")
         .leftJoin(
           "bookings",
           "bookings.invitee_id",
           "=",
           "student_groups.user_id"
+        )
+        .leftJoin(
+          db
+            .select("user_id")
+            .from("users")
+            .where("user_status_type_id", 1)
+            .as("active_students"),
+          function () {
+            this.on(
+              "active_students.user_id",
+              "=",
+              "student_groups.first_student_id"
+            )
+              .orOn(
+                "active_students.user_id",
+                "=",
+                "student_groups.second_student_id"
+              )
+              .orOn(
+                "active_students.user_id",
+                "=",
+                "student_groups.third_student_id"
+              )
+              .orOn(
+                "active_students.user_id",
+                "=",
+                "student_groups.fourth_student_id"
+              );
+          }
         )
         .where("student_groups.is_active", true)
         .andWhere((builder) => {
@@ -71,10 +105,12 @@ const studentGroupsModel = {
             .orWhere("student_groups.third_student_id", userId)
             .orWhere("student_groups.fourth_student_id", userId);
         })
+        .andWhere("clubUser.user_status_type_id", 1)
         .groupBy(
           "student_groups.student_group_id",
           "trainers.trainer_id",
           "trainers.user_id",
+          "users.user_status_type_id", // Use original column name
           "clubs.user_id",
           "clubs.club_id",
           "clubs.image"
@@ -98,7 +134,6 @@ const studentGroupsModel = {
     const offset = (filter.page - 1) * groupsPerPage;
 
     try {
-      // Combine the player and external member tables for easier joins
       const studentsSubquery = db
         .select("user_id", "fname", "lname")
         .from("players")
@@ -116,20 +151,29 @@ const studentGroupsModel = {
           "trainers.user_id as trainer_user_id",
           "trainers.fname as trainer_fname",
           "trainers.lname as trainer_lname",
+          "users.user_status_type_id as trainerUserStatusTypeId",
           db.raw(
-            "json_agg(json_build_object('user_id', students.user_id, 'name', students.fname || ' ' || students.lname)) as students_info"
+            "json_agg(json_build_object('user_id', students.user_id, 'name', students.fname || ' ' || students.lname, 'playerUserStatusTypeId', u.user_status_type_id)) as students_info"
           )
         )
         .from({ sg: "student_groups" })
         .leftJoin("trainers", "trainers.user_id", "sg.trainer_id")
+        .leftJoin(
+          "users as trainers_users",
+          "trainers_users.user_id",
+          "=",
+          "trainers.user_id"
+        )
+        .leftJoin("users", "users.user_id", "=", "trainers.user_id")
         .leftJoin(studentsSubquery, function () {
           this.on("students.user_id", "=", "sg.first_student_id")
             .orOn("students.user_id", "=", "sg.second_student_id")
             .orOn("students.user_id", "=", "sg.third_student_id")
             .orOn("students.user_id", "=", "sg.fourth_student_id");
         })
-        .where("sg.club_id", filter.clubUserId)
-        .andWhere("sg.is_active", true)
+        .leftJoin("users as u", "u.user_id", "=", "students.user_id")
+        .where("sg.is_active", true)
+        .andWhere("sg.club_id", filter.clubUserId)
         .groupBy(
           "sg.student_group_id",
           "sg.student_group_name",
@@ -137,7 +181,8 @@ const studentGroupsModel = {
           "sg.registered_at",
           "trainers.user_id",
           "trainers.fname",
-          "trainers.lname"
+          "trainers.lname",
+          "users.user_status_type_id"
         )
         .limit(groupsPerPage)
         .offset(offset);
@@ -164,7 +209,7 @@ const studentGroupsModel = {
       return { studentGroups: groups, totalPages };
     } catch (error) {
       console.error("Error fetching student groups: ", error);
-      throw error; // Rethrow the error to ensure it's caught by the caller
+      throw error;
     }
   },
   async getPaginatedTrainerStudentGroups(filter) {
@@ -201,6 +246,7 @@ const studentGroupsModel = {
         )
         .from({ sg: "student_groups" })
         .leftJoin("clubs", "clubs.user_id", "sg.club_id")
+        .leftJoin("users as clubUser", "clubUser.user_id", "sg.club_id")
         .leftJoin({ p1: "players" }, "sg.first_student_id", "p1.user_id")
         .leftJoin(
           { cem1: "club_external_members" },
@@ -231,6 +277,7 @@ const studentGroupsModel = {
         .leftJoin({ u4: "users" }, "sg.fourth_student_id", "u4.user_id")
         .andWhere("sg.trainer_id", filter.trainerUserId)
         .andWhere("sg.is_active", true)
+        .andWhere("clubUser.user_status_type_id", 1)
         .limit(groupsPerPage)
         .offset(offset);
 
@@ -288,6 +335,7 @@ const studentGroupsModel = {
         .count("* as total")
         .from({ sg: "student_groups" })
         .leftJoin("clubs", "clubs.user_id", "sg.club_id")
+        .leftJoin("users as clubUser", "clubUser.user_id", "sg.club_id")
         .leftJoin({ p1: "players" }, "sg.first_student_id", "p1.user_id")
         .leftJoin(
           { cem1: "club_external_members" },
@@ -313,7 +361,8 @@ const studentGroupsModel = {
           "cem4.user_id"
         )
         .andWhere("sg.trainer_id", filter.trainerUserId)
-        .andWhere("sg.is_active", true);
+        .andWhere("sg.is_active", true)
+        .andWhere("clubUser.user_status_type_id", 1);
 
       const totalPage = Math.ceil(count[0].total / groupsPerPage);
 

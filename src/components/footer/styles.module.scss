@@ -6,7 +6,8 @@
   width: 100%;
   margin: 10vh 0 5vh 0;
   row-gap: 20px;
-  border-top: 1px solid white;
+  border-top: 1px solid;
+  border-top-color: var(--text-color);
   padding-top: 5vh;
   .top-container {
     display: flex;
@@ -31,7 +32,7 @@
           flex-direction: column;
         }
         a {
-          color: white;
+          color: var(--text-color);
           text-decoration: none;
         }
         a:hover {
@@ -49,7 +50,7 @@
       flex-direction: column;
 
       a {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
       a:hover {

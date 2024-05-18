@@ -6,6 +6,7 @@
   justify-content: space-between;
   column-gap: 80px;
   $header-z-index: 10;
+
   .header-nav-sub-container {
     display: flex;
     justify-content: space-between;
@@ -14,7 +15,7 @@
   }
 
   .nav-link-player {
-    color: $roger-text-color;
+    color: var(--text-color);
     text-decoration: none;
     border: none;
     background-color: inherit;
@@ -46,7 +47,7 @@
     padding-bottom: 1vh;
     font-size: 1rem;
     .notification {
-      color: white;
+      color: $roger-blue;
       font-size: 0.5rem;
     }
   }

@@ -19,7 +19,7 @@ const PlayerGroupResults = () => {
 
   const { data: myGroups, isLoading: isGroupsLoading } =
     useGetPlayerActiveStudentGroupsByUserIdQuery(user?.user?.user_id);
-
+  console.log(myGroups);
   const handlePlayerPage = (e) => {
     setCurrentPage(e.target.value);
   };
@@ -95,16 +95,16 @@ const PlayerGroupResults = () => {
                   </Link>
                 </td>
                 <td>{group.student_group_name}</td>
+                <td>{group.studentcount}</td>
                 <td>
-                  {group.fourth_student_id
-                    ? 4
-                    : group.third_student_id
-                    ? 3
-                    : group.second_student_id
-                    ? 2
-                    : 1}
+                  <p
+                    className={
+                      group.trainerUserStatusTypeId !== 1
+                        ? styles["inactive-trainer-name"]
+                        : styles["active-trainer-name"]
+                    }
+                  >{`${group?.fname} ${group?.lname}`}</p>
                 </td>
-                <td>{`${group?.fname} ${group?.lname}`}</td>
                 <td>
                   {group.latest_event_date?.slice(0, 10)
                     ? group.latest_event_date?.slice(0, 10)

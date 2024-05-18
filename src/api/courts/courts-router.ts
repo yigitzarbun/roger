@@ -93,7 +93,17 @@ courtsRouter.post(
     }
   }
 );
-
+courtsRouter.post(
+  "/deactivate-club-courts/:clubId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const deactivateCourts = await courtsModel.deactivateClubCourts(
+        Number(req.params.clubId)
+      );
+      res.status(200).json(deactivateCourts);
+    } catch (error) {}
+  }
+);
 courtsRouter.put(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

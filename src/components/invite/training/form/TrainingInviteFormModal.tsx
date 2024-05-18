@@ -316,7 +316,7 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
     if (
       inviterPlayer?.length > 0 &&
       inviteePlayer?.length > 0 &&
-      selectedClub?.length > 0
+      selectedClub > 0
     ) {
       setSkipPlayersSubscribed(false);
     } else {

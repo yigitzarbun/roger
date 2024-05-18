@@ -7,7 +7,6 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
-import { ImBlocked } from "react-icons/im";
 
 import paths from "../../../routing/Paths";
 

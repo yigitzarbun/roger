@@ -9,7 +9,7 @@
   position: relative;
   h4 {
     font-size: 0.9;
-    color: $roger-text-color;
+    color: var(--text-color);
     font-weight: lighter;
     cursor: pointer;
     width: 90%;
@@ -21,7 +21,7 @@
     background-color: $roger-border-color;
   }
   .active-page {
-    color: $roger-white;
+    color: $roger-blue;
     font-weight: bold;
   }
 }

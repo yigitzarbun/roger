@@ -39,6 +39,7 @@ const AddPlayerCardDetails = (props) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       name_on_card: playerDetails?.name_on_card,
@@ -70,6 +71,7 @@ const AddPlayerCardDetails = (props) => {
       refetchPlayerDetails();
       toast.success("Başarıyla güncellendi");
       handleCloseModal();
+      reset();
     }
   }, [isSuccess]);
 

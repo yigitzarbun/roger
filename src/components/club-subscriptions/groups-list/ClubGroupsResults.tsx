@@ -152,7 +152,11 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}2/${group.trainer_user_id}`}
-                    className={styles.name}
+                    className={
+                      group.trainerUserStatusTypeId === 1
+                        ? styles.name
+                        : styles["inactive-name"]
+                    }
                   >
                     {`
                     ${group?.trainer_fname} ${group?.trainer_lname}`}
@@ -162,7 +166,11 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                   {group?.students_info?.[0]?.user_id && (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[0]?.user_id}`}
-                      className={styles.name}
+                      className={
+                        group?.students_info?.[0]?.playerUserStatusTypeId === 1
+                          ? styles.name
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.students_info?.[0]?.name}`}
                     </Link>
@@ -172,7 +180,11 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                   {group?.students_info?.[1]?.user_id && (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[1]?.user_id}`}
-                      className={styles.name}
+                      className={
+                        group?.students_info?.[1]?.playerUserStatusTypeId === 1
+                          ? styles.name
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.students_info?.[1]?.name}`}
                     </Link>
@@ -182,24 +194,32 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                   {group?.students_info?.[2]?.user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[2]?.user_id}`}
-                      className={styles.name}
+                      className={
+                        group?.students_info?.[2]?.playerUserStatusTypeId === 1
+                          ? styles.name
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.students_info?.[2]?.name}`}
                     </Link>
                   ) : (
-                    ""
+                    "-"
                   )}
                 </td>
                 <td>
                   {group?.students_info?.[3]?.user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[3]?.user_id}`}
-                      className={styles.name}
+                      className={
+                        group?.students_info?.[3]?.playerUserStatusTypeId === 1
+                          ? styles.name
+                          : styles["inactive-name"]
+                      }
                     >
                       {`${group.students_info?.[3]?.name}`}
                     </Link>
                   ) : (
-                    ""
+                    "-"
                   )}
                 </td>
                 <td>

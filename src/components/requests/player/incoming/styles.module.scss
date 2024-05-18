@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -55,19 +55,19 @@
       }
 
       .player-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
     }
 
     .accept-button {
-      background-color: white;
+      background-color: var(--green-text);
+      color: black;
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
       cursor: pointer;
-      color: black;
       text-decoration: none;
       text-align: center;
     }
