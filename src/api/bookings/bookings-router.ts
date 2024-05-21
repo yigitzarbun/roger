@@ -5,6 +5,7 @@ import bookingsModel from "./bookings-model";
 import {
   essentialRequirementsMet,
   trainingAndMatchConditionsMet,
+  lessonConditionsMet,
 } from "./bookings-middleware";
 
 const bookingsRouter = Router();
@@ -221,6 +222,7 @@ bookingsRouter.post(
   "/",
   essentialRequirementsMet,
   trainingAndMatchConditionsMet,
+  lessonConditionsMet,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newBooking = await bookingsModel.add(req.body);

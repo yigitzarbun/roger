@@ -117,7 +117,11 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
     }
   }, [isAddClubStaffSuccess, isUpdateStaffSuccess]);
 
-  if (isCurrentTrainerLoading) {
+  if (
+    isCurrentTrainerLoading ||
+    isTrainerStaffLoading ||
+    isClubStaffDetailsLoading
+  ) {
     return <PageLoading />;
   }
 
@@ -135,8 +139,8 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
         <div className={styles["opponent-container"]}>
           <img
             src={
-              selectedClub?.image
-                ? `${localUrl}/${selectedClub?.image}`
+              selectedClub?.clubImage
+                ? `${localUrl}/${selectedClub?.clubImage}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

@@ -2,6 +2,8 @@ import { Request, Response, NextFunction, Router } from "express";
 
 import studentsModel from "./students-model";
 
+import { studentRequirementsMet } from "./students-middleware";
+
 const studentsRouter = Router();
 
 studentsRouter.get(
@@ -82,6 +84,7 @@ studentsRouter.get(
 );
 studentsRouter.post(
   "/",
+  studentRequirementsMet,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const newStudent = await studentsModel.add(req.body);

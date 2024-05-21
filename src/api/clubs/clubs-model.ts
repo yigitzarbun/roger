@@ -359,7 +359,6 @@ const clubsModel = {
   async update(updates) {
     return await db("clubs").where("club_id", updates.club_id).update(updates);
   },
-
   async clubPaymentDetailsExist(userId) {
     try {
       const clubPaymentDetails = await db("clubs")

@@ -2,6 +2,8 @@ import { Request, Response, NextFunction, Router } from "express";
 
 import clubStaffModel from "./club-staff-model";
 
+import { essentialRequirementsMet } from "./club-staff-middleware";
+
 const clubStaffRouter = Router();
 
 clubStaffRouter.get(
@@ -90,6 +92,7 @@ clubStaffRouter.get(
 );
 clubStaffRouter.post(
   "/",
+  essentialRequirementsMet,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const clubStaffData = req.body;

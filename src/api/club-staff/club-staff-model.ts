@@ -310,11 +310,26 @@ const clubStaffModel = {
   async isTrainerClubStaff(filter) {
     try {
       const staff = await db("club_staff")
-        .where("club_staff.club_id", filter.clubId)
-        .andWhere("club_staff.user_id", filter.trainerUserId);
+        .where("club_staff.club_id", Number(filter.clubId))
+        .andWhere("club_staff.user_id", Number(filter.trainerUserId));
       return staff;
     } catch (error) {
       console.log("Error fetching isTrainerClubStaff: ", error);
+    }
+  },
+  async isTrainerAnyClubStaff(clubStaffUserId: number) {
+    try {
+      const staff = await db("club_staff")
+        .where("club_staff.user_id", clubStaffUserId)
+        .andWhere((builder) => {
+          builder
+            .where("club_staff.employment_status", "pending")
+            .orWhere("club_staff.employment_status", "accepted");
+        });
+      const isTrainerStaffAtAnyClub = staff.length > 0;
+      return isTrainerStaffAtAnyClub;
+    } catch (error) {
+      console.log("Error fetching isTrainerAnyClubStaff: ", error);
     }
   },
   async add(clubStaff) {
