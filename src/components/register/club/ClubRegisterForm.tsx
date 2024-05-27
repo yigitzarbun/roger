@@ -129,6 +129,33 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
       console.error("Error while adding new user:", error);
     }
   };
+
+  const [page, setPage] = useState(1);
+  const firstPageFields = [
+    "club_name",
+    "club_type_id",
+    "location_id",
+    "club_address",
+  ];
+  const secondPageFields = ["email", "password", "repeat_password"];
+
+  const handlePage = (direction: string) => {
+    if (direction === "next" && page === 1) {
+      const hasErrors = firstPageFields.some((field) => errors[field]);
+
+      if (!hasErrors) {
+        setPage(page + 1);
+      }
+    } else if (direction === "next" && page === 2) {
+      const hasErrors = secondPageFields.some((field) => errors[field]);
+      if (!hasErrors) {
+        setPage(page + 1);
+      }
+    } else if (direction === "prev" && page !== 1) {
+      setPage(page - 1);
+    }
+  };
+
   useEffect(() => {
     if (isSuccess) {
       refetchUsers();
@@ -145,7 +172,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
   }
   return (
     <div className={styles["register-page-container"]}>
-      <img className={styles["hero"]} src="/images/hero/court3.jpeg" />
+      <img className={styles["hero"]} src="/images/hero/club_hero.jpeg" />
       <div className={styles["register-form-content"]}>
         <h1 className={styles["register-title"]}>Kulüp Kayıt</h1>
         <form
@@ -153,140 +180,168 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
           className={styles["form-container"]}
           encType="multipart/form-data"
         >
-          <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <label>Kulüp Adı</label>
-              <input
-                {...register("club_name", { required: true })}
-                type="text"
-                placeholder="örn. Wimbledon Tennis Club"
-              />
-              {errors.club_name && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
+          {page === 1 && (
+            <div className={styles["page-container"]}>
+              {" "}
+              <div className={styles["input-outer-container"]}>
+                <div className={styles["input-container"]}>
+                  <label>Kulüp Adı</label>
+                  <input
+                    {...register("club_name", { required: true })}
+                    type="text"
+                    placeholder="örn. Wimbledon Tennis Club"
+                  />
+                  {errors.club_name && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+                <div className={styles["input-container"]}>
+                  <label>Kulüp Tipi</label>
+                  <select {...register("club_type_id", { required: true })}>
+                    <option value="">-- Seçim yapın --</option>
+                    {clubTypes?.map((club_type) => (
+                      <option
+                        key={club_type.club_type_id}
+                        value={club_type.club_type_id}
+                      >
+                        {club_type.club_type_name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.club_type_id && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className={styles["input-outer-container"]}>
+                <div className={styles["input-container"]}>
+                  <label>Konum</label>
+                  <select {...register("location_id", { required: true })}>
+                    <option value="">-- Seçim yapın --</option>
+                    {locations?.map((location) => (
+                      <option
+                        key={location.location_id}
+                        value={location.location_id}
+                      >
+                        {location.location_name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.location_id && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+                <div className={styles["input-container"]}>
+                  <label>Adres</label>
+                  <input
+                    {...register("club_address", { required: true })}
+                    type="text"
+                  />
+                  {errors.club_address && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className={styles["input-container"]}>
-              <label>Kulüp Tipi</label>
-              <select {...register("club_type_id", { required: true })}>
-                <option value="">-- Seçim yapın --</option>
-                {clubTypes?.map((club_type) => (
-                  <option
-                    key={club_type.club_type_id}
-                    value={club_type.club_type_id}
-                  >
-                    {club_type.club_type_name}
-                  </option>
-                ))}
-              </select>
-              {errors.club_type_id && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
+          )}
+          {page === 2 && (
+            <div className={styles["page-container"]}>
+              <div className={styles["input-outer-container"]}>
+                <div className={styles["input-container"]}>
+                  <label>E-posta</label>
+                  <input
+                    {...register("email", { required: true })}
+                    type="email"
+                    placeholder={t("registerEmailInputPlaceholder")}
+                  />
+                  {errors.email && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+                <div className={styles["input-container"]}>
+                  <label>Şifre</label>
+                  <input
+                    {...register("password", { required: true })}
+                    type="password"
+                  />
+                  {errors.password && (
+                    <span className={styles["error-field"]}>
+                      Bu alan zorunludur.
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className={styles["input-outer-container"]}>
+                <div className={styles["input-container"]}>
+                  <label>Şifre Tekrar</label>
+                  <input
+                    {...register("repeat_password", {
+                      required: true,
+                      validate: {
+                        passEqual: (value) =>
+                          value === getValues().password ||
+                          "Passwords don't match",
+                      },
+                    })}
+                    type="password"
+                  />
+                  {errors.repeat_password && (
+                    <span className={styles["error-field"]}>
+                      Şifreyi doğru girdiğinizden emin olun
+                    </span>
+                  )}
+                </div>
+                <div className={styles["input-container"]}>
+                  <label>Profil Resmi</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    name="image"
+                    onChange={handleImageChange}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <label>Konum</label>
-              <select {...register("location_id", { required: true })}>
-                <option value="">-- Seçim yapın --</option>
-                {locations?.map((location) => (
-                  <option
-                    key={location.location_id}
-                    value={location.location_id}
-                  >
-                    {location.location_name}
-                  </option>
-                ))}
-              </select>
-              {errors.location_id && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
-            <div className={styles["input-container"]}>
-              <label>Adres</label>
-              <input
-                {...register("club_address", { required: true })}
-                type="text"
-              />
-              {errors.club_address && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
-          </div>
-          <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <label>E-posta</label>
-              <input
-                {...register("email", { required: true })}
-                type="email"
-                placeholder={t("registerEmailInputPlaceholder")}
-              />
-              {errors.email && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
-            <div className={styles["input-container"]}>
-              <label>Şifre</label>
-              <input
-                {...register("password", { required: true })}
-                type="password"
-              />
-              {errors.password && (
-                <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
-                </span>
-              )}
-            </div>
-          </div>
-          <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <label>Şifre Tekrar</label>
-              <input
-                {...register("repeat_password", {
-                  required: true,
-                  validate: {
-                    passEqual: (value) =>
-                      value === getValues().password || "Passwords don't match",
-                  },
-                })}
-                type="password"
-              />
-              {errors.repeat_password && (
-                <span className={styles["error-field"]}>
-                  Şifreyi doğru girdiğinizden emin olun
-                </span>
-              )}
-            </div>
-            <div className={styles["input-container"]}>
-              <label>Profil Resmi</label>
-              <input
-                type="file"
-                accept="image/*"
-                name="image"
-                onChange={handleImageChange}
-              />
-            </div>
-          </div>
           <div className={styles["buttons-container"]}>
-            <button
-              onClick={() => setUserType("")}
-              className={styles["discard-button"]}
-            >
-              İptal
-            </button>
-            <button type="submit" className={styles["submit-button"]}>
-              {t("registerButtonText")}
-            </button>
+            {page === 1 ? (
+              <button
+                onClick={() => setUserType("")}
+                className={styles["discard-button"]}
+              >
+                İptal
+              </button>
+            ) : (
+              <button
+                onClick={() => handlePage("prev")}
+                className={styles["discard-button"]}
+              >
+                Geri
+              </button>
+            )}
+            {page === 3 ? (
+              <button type="submit" className={styles["submit-button"]}>
+                {t("registerButtonText")}
+              </button>
+            ) : (
+              <button
+                onClick={() => handlePage("next")}
+                className={styles["submit-button"]}
+              >
+                İleri
+              </button>
+            )}
           </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>

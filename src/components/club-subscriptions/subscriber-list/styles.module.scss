@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -158,7 +158,7 @@
       }
 
       .subscription-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
     }
@@ -181,8 +181,8 @@
     }
 
     .edit-button {
-      background-color: white;
-      color: black;
+      background-color: var(--secondary-button-background-color);
+      color: white;
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -191,8 +191,7 @@
       width: 150px;
     }
     .edit-button:hover {
-      background-color: $roger-white;
-      color: black;
+      background-color: var(--primary-button-background-color);
     }
   }
   .pages-container {

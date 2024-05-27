@@ -45,12 +45,34 @@
       display: flex;
       column-gap: 15px;
       align-items: center;
-      .language {
+
+      .messages {
         height: 23px;
         cursor: pointer;
         font-size: 1.6rem;
       }
+      .not-logged-icons {
+        column-gap: 1vw;
+        align-items: center;
+        display: flex;
+        margin-right: 2vw;
+        .language {
+          height: 23px;
+          cursor: pointer;
+          font-size: 1.6rem;
+        }
+        .theme {
+          height: 23px;
+          cursor: pointer;
+          font-size: 1.6rem;
+        }
+      }
       .theme {
+        height: 23px;
+        cursor: pointer;
+        font-size: 1.6rem;
+      }
+      .language {
         height: 23px;
         cursor: pointer;
         font-size: 1.6rem;
@@ -86,6 +108,24 @@
 
       .nav-link:hover {
         color: $roger-blue;
+      }
+
+      .register {
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1rem;
+        border: 1px solid;
+        border-color: var(--text-color);
+        padding: $roger-button-padding;
+        border-radius: $roger-border-radius;
+        background-color: inherit;
+        cursor: pointer;
+      }
+
+      .register:hover {
+        background-color: var(--header-register-button-background);
+        color: var(--header-register-button-text);
       }
 
       .active-nav-link {

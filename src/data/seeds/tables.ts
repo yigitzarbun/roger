@@ -3,6 +3,7 @@ import { Knex } from "knex";
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
   await knex("favourites").del();
+  await knex("messages").del();
   await knex("club_subscriptions").del();
   await knex("club_subscription_packages").del();
   await knex("club_subscription_types").del();

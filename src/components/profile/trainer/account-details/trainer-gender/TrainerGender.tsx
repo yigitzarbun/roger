@@ -84,7 +84,7 @@ const TrainerGender = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Eğitmen Adı</h4>
+        <h4>Cinsiyet</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}

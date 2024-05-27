@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -18,14 +18,14 @@
     }
     .nav-container {
       display: flex;
-      column-gap: 10px;
+      column-gap: 1vw;
 
       .nav-arrow {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         cursor: pointer;
       }
       .nav-arrow:hover {
-        color: $roger-blue;
+        color: $roger-text-color-hover;
       }
     }
   }

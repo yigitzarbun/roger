@@ -2,7 +2,7 @@
 @import "/src/common/styles/common.scss";
 
 .club-image-container {
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
@@ -52,6 +52,7 @@
 
     .disabled-button {
       background-color: $roger-black-dark;
+      color: white;
       border: none;
       width: 200px;
       height: 40px;

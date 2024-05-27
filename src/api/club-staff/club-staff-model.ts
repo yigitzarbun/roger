@@ -1,5 +1,3 @@
-import { fi } from "date-fns/locale";
-
 const db = require("../../data/dbconfig");
 
 const clubStaffModel = {

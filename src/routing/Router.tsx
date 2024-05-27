@@ -11,6 +11,9 @@ const Home = lazy(() => import("../modules/home/Home"));
 const NotFound = lazy(() => import("../modules/not-found/NotFound"));
 const Login = lazy(() => import("../modules/login/Login"));
 const Register = lazy(() => import("../modules/register/Register"));
+const RegisterForm = lazy(
+  () => import("../modules/register/register-form/RegisterForm")
+);
 const Profile = lazy(() => import("../modules/profile/Profile"));
 const Train = lazy(() => import("../modules/training/Training"));
 const Match = lazy(() => import("../modules/match/Match"));
@@ -44,7 +47,7 @@ const PlayerGroups = lazy(
   () => import("../modules/player-groups/PlayerGroups")
 );
 const Favourites = lazy(() => import("../modules/favourites/Favourites"));
-
+const Messages = lazy(() => import("../modules/messages/Messages"));
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -73,6 +76,7 @@ const routes: Route[] = [
   { path: paths.NOT_FOUND, element: getRouteElement(NotFound) },
   { path: paths.LOGIN, element: getRouteElement(Login) },
   { path: paths.REGISTER, element: getRouteElement(Register) },
+  { path: paths.REGISTER_FORM, element: getRouteElement(RegisterForm) },
   { path: paths.PROFILE, element: getRouteElement(Profile) },
   { path: paths.TRAIN, element: getRouteElement(Train) },
   { path: paths.MATCH, element: getRouteElement(Match) },
@@ -105,6 +109,7 @@ const routes: Route[] = [
   },
   { path: paths.PLAYER_GROUPS, element: getRouteElement(PlayerGroups) },
   { path: paths.FAVOURITES, element: getRouteElement(Favourites) },
+  { path: paths.MESSAGES, element: getRouteElement(Messages) },
 ];
 
 export default createBrowserRouter(routes);

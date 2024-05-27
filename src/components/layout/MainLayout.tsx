@@ -17,7 +17,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     if (!token) {
       if (
         location.pathname !== Paths.LOGIN &&
-        location.pathname !== Paths.REGISTER
+        location.pathname !== Paths.REGISTER &&
+        location.pathname !== Paths.REGISTER_FORM
       ) {
         navigate(Paths.LOGIN);
       }

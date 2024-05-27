@@ -89,16 +89,18 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Ödemeler</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+        {myPayments?.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {myPayments?.payments?.length > 0 ? (
         <>

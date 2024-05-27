@@ -5,11 +5,12 @@ import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
 
 import { IoMdSunny } from "react-icons/io";
+import { FiMessageSquare } from "react-icons/fi";
 
 import { useAppSelector } from "../../store/hooks";
 import { MdOutlineNotifications } from "react-icons/md";
 import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
-import { MdOutlineLanguage } from "react-icons/md";
+import { IoLanguageSharp } from "react-icons/io5";
 import { FiMoon } from "react-icons/fi";
 
 import { localUrl } from "../../common/constants/apiConstants";
@@ -194,6 +195,11 @@ const Header = () => {
         </NavLink>
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>
+            <FiMessageSquare
+              className={styles.messages}
+              onClick={() => navigateUser("MESSAGES")}
+            />
+
             {currentTheme === "dark" ? (
               <IoMdSunny className={styles.theme} onClick={updateTheme} />
             ) : (
@@ -213,7 +219,7 @@ const Header = () => {
                   : styles["passive-notification"]
               }
             />
-            <MdOutlineLanguage
+            <IoLanguageSharp
               className={styles.language}
               onClick={handleOpenLanguageModal}
             />
@@ -236,6 +242,17 @@ const Header = () => {
           </div>
         ) : (
           <div className={styles["user-nav"]}>
+            <div className={styles["not-logged-icons"]}>
+              {currentTheme === "dark" ? (
+                <IoMdSunny className={styles.theme} onClick={updateTheme} />
+              ) : (
+                <FiMoon className={styles.theme} onClick={updateTheme} />
+              )}
+              <IoLanguageSharp
+                className={styles.language}
+                onClick={handleOpenLanguageModal}
+              />
+            </div>
             <NavLink
               to={paths.LOGIN}
               onClick={() => navigateUser("LOGIN")}
@@ -250,23 +267,10 @@ const Header = () => {
             <NavLink
               to={paths.REGISTER}
               onClick={() => navigateUser("REGISTER")}
-              className={({ isActive }) =>
-                isActive
-                  ? `${styles["active-nav-link"]}`
-                  : `${styles["nav-link"]}`
-              }
+              className={styles.register}
             >
               Kayıt
             </NavLink>
-            {currentTheme === "dark" ? (
-              <IoMdSunny className={styles.theme} onClick={updateTheme} />
-            ) : (
-              <FiMoon className={styles.theme} onClick={updateTheme} />
-            )}
-            <MdOutlineLanguage
-              className={styles.language}
-              onClick={handleOpenLanguageModal}
-            />
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@
 @import "/src/common/styles/common.scss";
 
 .club-rules-container {
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
@@ -10,7 +10,9 @@
   flex-direction: column;
   justify-content: space-between;
   row-gap: 2vh;
-
+  border: 1px solid $roger-border-color;
+  border-radius: $roger-border-radius;
+  padding: $roger-box-padding;
   h2 {
     font-weight: bold;
     font-size: 2rem;

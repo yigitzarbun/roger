@@ -56,12 +56,20 @@ body {
   --modal-menu-item-hover: #181818;
   --passive-login-button-color: rgb(79, 79, 79);
   --active-login-button-color: #242424;
+  --landing-player-background: #080909;
+  --landing-trainer-background: #0e0d0d;
+  --landing-club-background: #090808;
+  --header-register-button-background: #ffffff;
+  --header-register-button-text: rgb(0, 0, 0);
+  --message-hover-color: #242424;
+  --chat-other-user-background: #312f2f;
+  --chat-current-user-background: #357750;
 }
 
 // Light Theme
 [data-theme="light"] {
   --background-color: #fafafa;
-  --box-background-color: #ffffff;
+  --box-background-color: #f6f3f3;
   --text-color: black;
   --header-background-color: white;
   --active-text-color: $roger-blue;
@@ -77,4 +85,12 @@ body {
   --modal-menu-item-hover: rgb(223, 223, 223);
   --passive-login-button-color: rgb(79, 79, 79);
   --active-login-button-color: black;
+  --landing-player-background: #c2cbce;
+  --landing-trainer-background: rgb(240, 244, 244);
+  --landing-club-background: #dce7da;
+  --header-register-button-background: #090808;
+  --header-register-button-text: rgb(255, 255, 255);
+  --message-hover-color: rgb(229, 227, 227);
+  --chat-other-user-background: #e8e8e8;
+  --chat-current-user-background: #87caa3;
 }

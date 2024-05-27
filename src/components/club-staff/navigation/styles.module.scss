@@ -8,40 +8,36 @@
   display: flex;
   justify-content: center;
   margin: 0 auto;
+  column-gap: 1vw;
 
   .active-button {
     padding: $roger-button-padding;
     border-radius: $roger-border-radius;
-    border: 1px solid $roger-border-color;
+    border: 1px solid;
+    border-color: $roger-blue;
     width: 25%;
     background-color: $roger-blue;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: 1vw;
+    color: white;
+    font-weight: bold;
     .notification {
-      font-size: 0.7rem;
-      font-weight: bold;
-      color: black;
+      margin-left: 1vw;
     }
   }
   .inactive-button {
     padding: $roger-button-padding;
     border-radius: $roger-border-radius;
-    border: 1px solid $roger-border-color;
+    border: 1px solid;
+    border-color: var(--box-border-color);
     width: 25%;
-    background-color: $roger-box-bg-color;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: 1vw;
+    background-color: var(--navigation-box-background-color);
     cursor: pointer;
+    color: var(--text-color);
+    font-weight: bold;
     .notification {
-      font-size: 0.7rem;
-      color: $roger-yellow;
+      margin-left: 1vw;
     }
   }
   .inactive-button:hover {
-    background-color: $roger-black-light;
+    border-color: $roger-blue;
   }
 }

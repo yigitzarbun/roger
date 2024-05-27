@@ -31,7 +31,9 @@ const ClubStaffNavigation = (props: ClubStaffNavigationProps) => {
       >
         Başvurular
         {myStaffRequests?.length > 0 && (
-          <span className={styles.notification}>{myStaffRequests?.length}</span>
+          <span
+            className={styles.notification}
+          >{`(${myStaffRequests?.length})`}</span>
         )}
       </button>
     </div>

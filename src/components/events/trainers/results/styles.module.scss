@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -63,7 +63,7 @@
       }
 
       .player-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
       .done {
@@ -74,7 +74,7 @@
         color: $roger-red;
       }
       .view-button {
-        background-color: $roger-black-dark;
+        background-color: var(--primary-button-background-color);
         border: none;
         padding: $roger-button-padding;
         border-radius: $roger-border-radius;
@@ -88,7 +88,7 @@
         background-color: $roger-box-bg-color-hover;
       }
       .comment-button {
-        background-color: $roger-black-dark;
+        background-color: var(--secondary-button-background-color);
         border: none;
         padding: $roger-button-padding;
         border-radius: $roger-border-radius;

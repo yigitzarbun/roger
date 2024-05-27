@@ -89,7 +89,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     userTypeId: userTypeId,
     userId: user?.user?.user_id,
   });
-  console.log(mySubscriptions);
+
   const [isAddSubscriberModalOpen, setIsAddSubscriberModalOpen] =
     useState(false);
 

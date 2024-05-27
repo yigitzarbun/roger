@@ -5,6 +5,7 @@ export default {
   HOME: "/",
   LOGIN: "/giris-yap",
   REGISTER: "/kayit-ol",
+  REGISTER_FORM: "/kayit-formu",
   PROFILE: "/profil",
   TRAIN: "/antreman",
   MATCH: "/mac",
@@ -29,4 +30,5 @@ export default {
   PLAYER_SUBSCRIPTIONS: "/oyuncu-uyelikler",
   PLAYER_GROUPS: "/oyuncu-gruplar",
   FAVOURITES: "/favoriler",
+  MESSAGES: "/mesajlar",
 } as Paths;

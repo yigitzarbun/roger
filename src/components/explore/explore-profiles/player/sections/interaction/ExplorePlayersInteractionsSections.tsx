@@ -19,6 +19,7 @@ import { getAge } from "../../../../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
+import MessageModal from "../../../../../../components/messages/message-modal/MessageModal";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: any;
@@ -128,6 +129,13 @@ const ExplorePlayersInteractionsSections = (
     }
   };
 
+  const [messageModal, setMessageModal] = useState(false);
+  const handleOpenMessageModal = () => {
+    setMessageModal(true);
+  };
+  const closeMessageModal = () => {
+    setMessageModal(false);
+  };
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavourites();
@@ -238,6 +246,12 @@ const ExplorePlayersInteractionsSections = (
                     Derse davet et
                   </button>
                 )}
+                <button
+                  onClick={handleOpenMessageModal}
+                  className={styles["interaction-button"]}
+                >
+                  Mesaj
+                </button>
               </div>
             )}
           </div>
@@ -267,6 +281,13 @@ const ExplorePlayersInteractionsSections = (
           handleCloseInviteModal={handleCloseLessonModal}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
+        />
+      )}
+      {messageModal && (
+        <MessageModal
+          messageModal={messageModal}
+          closeMessageModal={closeMessageModal}
+          recipient_id={selectedPlayer?.user_id}
         />
       )}
     </div>

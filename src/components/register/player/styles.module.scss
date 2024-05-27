@@ -4,11 +4,11 @@
 .register-page-container {
   display: flex;
   align-items: stretch;
-  margin-top: 100px;
+  margin-top: 50px;
 
   .hero {
     width: 50%;
-    height: auto;
+    height: 60vh;
     object-fit: cover;
     object-position: center;
     border-radius: $roger-border-radius;
@@ -18,23 +18,35 @@
     display: flex;
     flex-direction: column;
     row-gap: 4vh;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
     width: 45%;
     margin: 0 auto;
   }
 
-  .register-title {
-    font-size: 2rem;
-    font-weight: bold;
-  }
+  .title-container {
+    display: flex;
+    justify-content: space-between;
 
+    .register-title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .nav-button {
+      font-size: 1.3rem;
+    }
+  }
   .form-container {
     display: flex;
     flex-direction: column;
     row-gap: 2vh;
 
+    .page-container {
+      display: flex;
+      flex-direction: column;
+      row-gap: 4vh;
+    }
     .input-outer-container {
       display: flex;
       justify-content: space-between;
@@ -59,6 +71,7 @@
           width: 100%;
           background-color: inherit;
           height: 50px;
+          color: var(--text-color);
         }
         .court-picture-container {
           display: flex;
@@ -71,7 +84,8 @@
     justify-content: space-between;
     margin: 4vh 0;
     .discard-button {
-      background-color: $roger-black-dark;
+      background-color: rgb(96, 95, 95);
+
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -80,15 +94,13 @@
       height: 40px;
       width: 150px;
     }
+
     .discard-button:hover {
-      background-color: $roger-black-dark;
-    }
-    .discard-button:hover {
-      background-color: $roger-box-bg-color-hover;
+      background-color: grey;
     }
     .submit-button {
-      background-color: white;
-      color: black;
+      background-color: $roger-blue;
+      color: white;
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -98,8 +110,7 @@
       width: 150px;
     }
     .submit-button:hover {
-      background-color: $roger-white;
-      color: black;
+      background-color: $roger-blue-hover;
     }
   }
 
@@ -110,7 +121,7 @@
 
   .login-nav {
     text-decoration: none;
-    color: $roger-text-color;
+    color: var(--text-color);
   }
 
   .login-span {

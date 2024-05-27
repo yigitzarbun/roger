@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -120,7 +120,7 @@
       }
 
       .active-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
       .inactive-name {
@@ -147,14 +147,13 @@
     }
 
     .invite-button {
-      background-color: $roger-black-dark;
+      background-color: var(--green-text);
+      color: black;
       border: none;
-      width: 150px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
       cursor: pointer;
-      color: white;
       text-decoration: none;
       text-align: center;
     }

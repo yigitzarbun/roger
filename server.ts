@@ -37,6 +37,8 @@ import studentGroupsRouter from "./src/api/student-groups/student-groups-router"
 import clubExternalMembersRouter from "./src/api/external-members/club-external-members-router";
 import eventReviewsRouter from "./src/api/event-reviews/event-reviews-router";
 import languagesRouter from "./src/api/languages/languages-router";
+import messagesRouter from "./src/api/messages/messages-router";
+
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -207,6 +209,7 @@ server.use("/api/student-groups", studentGroupsRouter);
 server.use("/api/club-external-members", clubExternalMembersRouter);
 server.use("/api/event-reviews", eventReviewsRouter);
 server.use("/api/languages", languagesRouter);
+server.use("/api/messages", messagesRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

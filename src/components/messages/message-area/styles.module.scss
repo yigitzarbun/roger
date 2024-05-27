@@ -1,0 +1,55 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.message-area-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4vh;
+  position: relative;
+  background-color: var(--box-background-color);
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .current-user-message-container {
+    display: flex;
+    width: 60%;
+    margin-left: auto;
+
+    .texts-container {
+      display: flex;
+      flex-direction: column;
+      width: 85%;
+      background-color: var(--chat-current-user-background);
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      border-top-right-radius: 0;
+    }
+  }
+
+  .other-user-message-container {
+    display: flex;
+    align-self: flex-start;
+
+    width: 60%;
+    justify-content: space-between;
+
+    .texts-container {
+      display: flex;
+      flex-direction: column;
+      width: 85%;
+      background-color: var(--chat-other-user-background);
+      padding: $roger-box-padding;
+      border-radius: $roger-border-radius;
+      border-top-left-radius: 0;
+    }
+  }
+}

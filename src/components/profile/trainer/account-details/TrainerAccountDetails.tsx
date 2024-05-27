@@ -17,7 +17,7 @@ const TrainerAccountDetails = (props: TrainerAccountDetailsProps) => {
   const { trainerDetails, refetchTrainerDetails } = props;
 
   return (
-    <div className={styles["trainer-account-details-container"]}>
+    <div className={styles["trainer-account-details"]}>
       <TrainerImage
         trainerDetails={trainerDetails}
         refetchTrainerDetails={refetchTrainerDetails}
@@ -34,11 +34,11 @@ const TrainerAccountDetails = (props: TrainerAccountDetailsProps) => {
         trainerDetails={trainerDetails}
         refetchTrainerDetails={refetchTrainerDetails}
       />
-      <TrainerGender
+      <TrainerExperience
         trainerDetails={trainerDetails}
         refetchTrainerDetails={refetchTrainerDetails}
       />
-      <TrainerExperience
+      <TrainerGender
         trainerDetails={trainerDetails}
         refetchTrainerDetails={refetchTrainerDetails}
       />

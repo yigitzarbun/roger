@@ -1,0 +1,16 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.messages-container {
+  display: flex;
+  justify-content: space-between;
+  column-gap: 4vw;
+
+  .navigation {
+    width: 30%;
+  }
+
+  .message-area {
+    width: 70%;
+  }
+}

@@ -4,7 +4,7 @@
 .result-container {
   display: flex;
   flex-direction: column;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
   row-gap: 20px;
@@ -142,7 +142,7 @@
       }
 
       .name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
       .done {

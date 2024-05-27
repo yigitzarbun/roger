@@ -1,22 +1,6 @@
-@import "/src/common/styles/colors.scss";
-
 .register-container {
   display: flex;
   flex-direction: column;
-  .change-user-type-button {
-    margin-top: 2vh;
-    border: none;
-    background-color: inherit;
-    font-size: 0.9rem;
-    color: $roger-text-color;
-    cursor: pointer;
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 30px;
-    color: $roger-yellow;
-  }
-
-  .change-user-type-button:hover {
-    color: $roger-blue;
-  }
+  row-gap: 20px;
+  margin-top: 80px;
 }

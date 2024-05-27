@@ -2,7 +2,7 @@
 @import "/src/common/styles/common.scss";
 
 .trainer-bank-details-container {
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
@@ -46,8 +46,8 @@
       }
     }
     .button {
-      background-color: $roger-white;
-      color: black;
+      background-color: var(--primary-button-background-color);
+      color: white;
       border: none;
       width: 200px;
       padding: $roger-button-padding;

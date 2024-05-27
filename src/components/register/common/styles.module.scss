@@ -2,28 +2,15 @@
 @import "/src/common/styles/common.scss";
 
 .common-register-container {
-  display: flex;
+  display: flex-end;
   justify-content: space-between;
-  margin-top: 100px;
-
-  .hero {
-    width: 50%;
-    height: auto;
-    object-fit: cover;
-    object-position: center;
-    border-radius: $roger-border-radius;
-  }
-
-  .user-type-outer-container {
-    display: flex;
-    flex-direction: column;
-    width: 45%;
-    row-gap: 8vh;
-  }
+  margin: 70px auto 0 auto;
+  width: 50%;
 
   .user-type-options-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    column-gap: 2vw;
   }
 
   .user-type-container {
@@ -31,13 +18,24 @@
     border: 1px solid;
     border-color: var(--navigation-box-border-color);
     border-radius: $roger-border-radius;
-    padding: $roger-box-padding;
+    padding: $roger-button-padding;
     font-size: 0.9rem;
     cursor: pointer;
     width: 30%;
   }
   .user-type-container:hover {
-    border-color: var(--box-border-color-hover);
+    border-color: $roger-blue;
+  }
+  .active-container {
+    background-color: $roger-blue;
+    border: 1px solid;
+    border-color: $roger-blue;
+    border-radius: $roger-border-radius;
+    padding: $roger-button-padding;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: 30%;
+    color: white;
   }
   .user-type-title {
     font-size: 1rem;

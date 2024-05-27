@@ -2,7 +2,7 @@
 @import "/src/common/styles/common.scss";
 
 .trainer-account-details-container {
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   width: 100%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
@@ -46,6 +46,7 @@
         border: 1px solid $roger-border-color;
         width: 100%;
         background-color: inherit;
+        color: var(--text-color);
       }
     }
 
@@ -64,13 +65,14 @@
     }
     .disabled-button {
       background-color: $roger-black-dark;
+      color: white;
       border: none;
       width: 200px;
+      height: 40px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 1rem;
       cursor: not-allowed;
-      height: 40px;
     }
   }
 }

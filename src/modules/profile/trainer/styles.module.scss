@@ -8,12 +8,11 @@
   row-gap: 20px;
   margin-top: 80px;
   width: 100%;
-  background-color: $roger-box-bg-color;
+  background-color: var(--box-background-color);
   padding: $roger-box-padding;
   .title-container {
     height: 15vh;
     border-bottom: 1px solid $roger-border-color;
-
     h2 {
       font-size: 2rem;
     }

@@ -2,8 +2,10 @@
 @import "/src/common/styles/common.scss";
 
 .club-equip-container {
-  background-color: $roger-box-bg-color;
-  border: 1px $roger-border-color solid;
+  background-color: var(--$roger-box-bg-color);
+  color: var(--text-color);
+  border: 1px solid;
+  border-color: var(--box-border-color);
   width: 25%;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
@@ -11,9 +13,9 @@
   flex-direction: column;
   justify-content: space-between;
   row-gap: 25px;
-  color: white;
   text-decoration: none;
   transition: 1s ease;
+
   h2 {
     font-weight: bold;
     font-size: 2rem;
@@ -37,5 +39,5 @@
   }
 }
 .club-equip-container:hover {
-  border-color: white;
+  border-color: var(--box-border-color-hover);
 }

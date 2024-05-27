@@ -739,6 +739,29 @@ export async function up(knex: Knex): Promise<void> {
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
     })
+
+    .createTable("messages", (table) => {
+      table.increments("message_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.boolean("is_active").notNullable();
+      table.string("message_content");
+      table
+        .integer("sender_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("recipient_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
     .createTable("favourites", (table) => {
       table.increments("favourite_id");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
@@ -765,6 +788,7 @@ export async function up(knex: Knex): Promise<void> {
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
     .dropTableIfExists("favourites")
+    .dropTableIfExists("messages")
     .dropTableIfExists("club_subscriptions")
     .dropTableIfExists("club_subscription_packages")
     .dropTableIfExists("club_subscription_types")

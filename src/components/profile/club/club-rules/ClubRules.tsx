@@ -61,7 +61,7 @@ const ClubRules = () => {
 
   return (
     <div className={styles["club-rules-container"]}>
-      <h2>Kulüp Kuralları</h2>
+      <h4>Kulüp Kuralları</h4>
       <div className={styles["tables-container"]}>
         <table
           className={styles["player-rules-table"]}
