@@ -39,7 +39,6 @@ messagesRouter.get(
     }
   }
 );
-
 messagesRouter.get(
   "/chat-messages/filter",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -52,7 +51,19 @@ messagesRouter.get(
     }
   }
 );
-
+messagesRouter.get(
+  "/paginated-recipients-list/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const paginatedRecipientsList =
+        await messagesModel.getPaginatedMessageRecipientsListByFilter(filter);
+      res.status(200).json(paginatedRecipientsList);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 messagesRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

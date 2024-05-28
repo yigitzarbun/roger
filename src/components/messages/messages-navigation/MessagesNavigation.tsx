@@ -1,7 +1,8 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../common/constants/apiConstants";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import NewMessageModal from "../modals/new-message-modal/NewMessageModal";
 
 interface MessagesNavigationProps {
   userChats: any[];
@@ -27,17 +28,31 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
     return result;
   };
 
+  const [newMessageModal, setNewMessageModal] = useState(false);
+  const handleOpenNewMessageModal = () => {
+    setNewMessageModal(true);
+  };
+
+  const closeNewMessageModal = () => {
+    setNewMessageModal(false);
+  };
+
   return (
     <div className={styles.nav}>
       <h2>Mesajlar</h2>
-      <div className={styles["search-container"]}>
-        <input
-          type="text"
-          onChange={handleTextSearch}
-          value={textSearch}
-          placeholder="Oyuncu, eğitmen veya kulüp adı"
-        />
-      </div>
+      {((userChats?.length > 0 && textSearch === "") ||
+        (userChats?.length === 0 && textSearch !== "") ||
+        userChats?.length > 0) && (
+        <div className={styles["search-container"]}>
+          <input
+            type="text"
+            onChange={handleTextSearch}
+            value={textSearch}
+            placeholder="Oyuncu, eğitmen veya kulüp adı"
+          />
+        </div>
+      )}
+
       {userChats?.length > 0 ? (
         userChats.map((chat) => (
           <div
@@ -82,14 +97,19 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
           </div>
         ))
       ) : userChats?.length === 0 && textSearch === "" ? (
-        <div>
-          <h4>Henüz mesajınız yok</h4> <button>Yeni Mesaj</button>
+        <div className={styles["no-messages-container"]}>
+          <h4>Henüz mesajınız yok</h4>{" "}
+          <button onClick={handleOpenNewMessageModal}>Yeni Mesaj</button>
         </div>
       ) : (
         <p className={styles["no-user"]}>
           Aradığınız kritere göre kullanıcı bulunamadı
         </p>
       )}
+      <NewMessageModal
+        newMessageModal={newMessageModal}
+        closeNewMessageModal={closeNewMessageModal}
+      />
     </div>
   );
 };

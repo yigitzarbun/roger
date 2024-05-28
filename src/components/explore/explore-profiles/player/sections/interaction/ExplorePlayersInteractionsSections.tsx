@@ -19,7 +19,7 @@ import { getAge } from "../../../../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
-import MessageModal from "../../../../../../components/messages/message-modal/MessageModal";
+import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: any;

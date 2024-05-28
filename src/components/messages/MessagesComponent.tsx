@@ -31,13 +31,14 @@ const MessagesComponent = () => {
   };
   const [skipChatMessages, setSkipChatMessages] = useState(true);
 
-  const { data: chatMessages } = useGetChatMessagesByFilterQuery(
-    {
-      userId: user?.user_id,
-      otherUserId: otherUserId,
-    },
-    { skip: skipChatMessages }
-  );
+  const { data: chatMessages, refetch: refetchChatMessages } =
+    useGetChatMessagesByFilterQuery(
+      {
+        userId: user?.user_id,
+        otherUserId: otherUserId,
+      },
+      { skip: skipChatMessages }
+    );
 
   useEffect(() => {
     refetchChats();
@@ -63,7 +64,11 @@ const MessagesComponent = () => {
         />
       </div>
       <div className={styles["message-area"]}>
-        <MessageArea chatMessages={chatMessages} user={user} />
+        <MessageArea
+          chatMessages={chatMessages}
+          user={user}
+          refetchChatMessages={refetchChatMessages}
+        />
       </div>
     </div>
   );

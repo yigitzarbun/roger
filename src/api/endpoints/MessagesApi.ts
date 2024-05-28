@@ -19,6 +19,12 @@ export const messagesSlice = createApi({
       query: (filter) =>
         `/messages/chat-messages/filter?${new URLSearchParams(filter)}`,
     }),
+    getPaginatedMessageRecipientsListByFilter: builder.query({
+      query: (filter) =>
+        `/messages/paginated-recipients-list/filter?${new URLSearchParams(
+          filter
+        )}`,
+    }),
     addMessage: builder.mutation({
       query: (message) => ({
         url: "/messages",
@@ -34,5 +40,6 @@ export const {
   useGetMessageByUserIdQuery,
   useGetChatsByFilterQuery,
   useGetChatMessagesByFilterQuery,
+  useGetPaginatedMessageRecipientsListByFilterQuery,
   useAddMessageMutation,
 } = messagesSlice;

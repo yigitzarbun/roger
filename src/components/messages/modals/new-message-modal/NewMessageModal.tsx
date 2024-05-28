@@ -2,32 +2,33 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 
 import ReactModal from "react-modal";
 
-import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
 
-import paths from "../../../routing/Paths";
-
-import { localUrl } from "../../../common/constants/apiConstants";
-
-import { IoIosCheckmarkCircle } from "react-icons/io";
-import { ImBlocked } from "react-icons/im";
 import {
   useAddMessageMutation,
   useGetMessageByUserIdQuery,
-} from "../../../api/endpoints/MessagesApi";
+  useGetPaginatedMessageRecipientsListByFilterQuery,
+} from "../../../../api/endpoints/MessagesApi";
 import { toast } from "react-toastify";
-import { useAppSelector } from "../../../store/hooks";
+import { useAppSelector } from "../../../../store/hooks";
 
-interface MessageModalProps {
-  messageModal: boolean;
-  closeMessageModal: () => void;
-  recipient_id: number;
+interface NewMessageModalProps {
+  newMessageModal: boolean;
+  closeNewMessageModal: () => void;
 }
 
-const MessageModal = (props: MessageModalProps) => {
-  const { messageModal, closeMessageModal, recipient_id } = props;
+const NewMessageModal = (props: NewMessageModalProps) => {
+  const { newMessageModal, closeNewMessageModal } = props;
   const user = useAppSelector((store) => store.user?.user?.user);
+  const {
+    data: potentialRecipientsList,
+    isLoading: isPotentialRecipientsListLoading,
+  } = useGetPaginatedMessageRecipientsListByFilterQuery({
+    currentPage: 1,
+    textSearch: "",
+    userTypeId: null,
+  });
+  console.log(potentialRecipientsList);
   const [message, setMessage] = useState("");
   const handleMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -45,7 +46,7 @@ const MessageModal = (props: MessageModalProps) => {
       is_active: true,
       message_content: message,
       sender_id: user?.user_id,
-      recipient_id: recipient_id,
+      recipient_id: 0,
     };
     addMessage(messageObject);
   };
@@ -55,27 +56,28 @@ const MessageModal = (props: MessageModalProps) => {
       toast.success("Mesaj gönderildi");
       refetch();
       setMessage("");
-      closeMessageModal();
+      closeNewMessageModal();
     }
   }, [isAddMessageSuccess]);
 
   return (
     <ReactModal
-      isOpen={messageModal}
-      onRequestClose={closeMessageModal}
+      isOpen={newMessageModal}
+      onRequestClose={closeNewMessageModal}
       shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
       overlayClassName={styles["modal-overlay"]}
     >
-      <div className={styles["overlay"]} onClick={closeMessageModal} />
+      <div className={styles["overlay"]} onClick={closeNewMessageModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
           <h1>Yeni Mesaj</h1>
         </div>
-        <textarea onChange={handleMessage} />
+        <input type="text" placeholder="Kime mesaj atmak istersin?" />
+        <textarea onChange={handleMessage} placeholder="Mesajın" />
         <div className={styles["buttons-container"]}>
           <button
-            onClick={closeMessageModal}
+            onClick={closeNewMessageModal}
             className={styles["discard-button"]}
           >
             İptal
@@ -93,4 +95,4 @@ const MessageModal = (props: MessageModalProps) => {
   );
 };
 
-export default MessageModal;
+export default NewMessageModal;

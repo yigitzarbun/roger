@@ -26,10 +26,35 @@
       color: var(--text-color);
     }
   }
+  .no-messages-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2vh;
+
+    h4 {
+      font-weight: lighter;
+    }
+    button {
+      background-color: var(--active-login-button-color);
+      border: none;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    button:hover {
+      background-color: $roger-black-light;
+    }
+  }
   .chat-container {
     display: flex;
     padding: $roger-button-padding;
     border-radius: $roger-border-radius;
+    column-gap: 1vw;
     img {
       width: 40px;
       height: 40px;

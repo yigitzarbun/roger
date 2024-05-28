@@ -431,6 +431,136 @@ const messagesModel = {
       console.log("Error fetching chat messages: ", error);
     }
   },
+  async getPaginatedMessageRecipientsListByFilter(filter) {
+    try {
+      const usersPerPage = 5;
+      const offset = (filter.currentPage - 1) * usersPerPage;
+
+      // Players query
+      const players = await db
+        .select(
+          "players.player_id as playerId",
+          "players.user_id as playerUserId",
+          "players.image as playerImage",
+          "players.fname as playerFname",
+          "players.lname as playerLname",
+          "players.gender as playerGender",
+          "players.birth_year as playerBirthYear",
+          "users.user_type_id",
+          "player_levels.player_level_name",
+          "locations.location_name"
+        )
+        .from("players")
+        .leftJoin("users", "users.user_id", "players.user_id")
+        .leftJoin(
+          "player_levels",
+          "player_levels.player_level_id",
+          "players.player_level_id"
+        )
+        .leftJoin("locations", "locations.location_id", "players.location_id")
+        .where((builder) => {
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where(
+                "players.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+        })
+        .andWhere("users.user_status_type_id", 1);
+
+      // Trainers query
+      const trainers = await db
+        .select(
+          "trainers.trainer_id as trainerId",
+          "trainers.user_id as trainerUserId",
+          "trainers.image as trainerImage",
+          "trainers.fname as trainerFname",
+          "trainers.lname as trainerLname",
+          "trainers.gender as trainerGender",
+          "trainers.birth_year as trainerBirthYear",
+          "trainer_experience_types.trainer_experience_type_name",
+          "locations.location_name"
+        )
+        .from("trainers")
+        .leftJoin("users", "users.user_id", "trainers.user_id")
+        .leftJoin(
+          "trainer_experience_types",
+          "trainer_experience_types.trainer_experience_type_id",
+          "trainers.trainer_experience_type_id"
+        )
+        .leftJoin("locations", "locations.location_id", "trainers.location_id")
+        .where((builder) => {
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where(
+                "trainers.fname",
+                "ilike",
+                `%${filter.textSearch}%`
+              ).orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+        })
+        .andWhere("users.user_status_type_id", 1);
+
+      // Clubs query
+      const clubs = await db
+        .select(
+          "clubs.club_id as clubId",
+          "clubs.user_id as clubUserId",
+          "clubs.image as clubImage",
+          "clubs.club_name as clubName",
+          "locations.location_name"
+        )
+        .from("clubs")
+        .leftJoin("users", "users.user_id", "clubs.user_id")
+        .leftJoin("locations", "locations.location_id", "clubs.location_id")
+        .where((builder) => {
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder.where(function () {
+              this.where("clubs.club_name", "ilike", `%${filter.textSearch}%`);
+            });
+          }
+        })
+        .andWhere("users.user_status_type_id", 1);
+
+      // Combine results
+      const allRecipients = [...players, ...trainers, ...clubs];
+
+      let filteredRecipients;
+
+      switch (filter.userTypeId) {
+        case "1":
+          filteredRecipients = players;
+          break;
+        case "2":
+          filteredRecipients = trainers;
+          break;
+        case "3":
+          filteredRecipients = clubs;
+          break;
+        default:
+          filteredRecipients = allRecipients;
+      }
+
+      // Apply pagination to the combined filtered results
+      const paginatedRecipients = filteredRecipients.slice(
+        offset,
+        offset + usersPerPage
+      );
+
+      console.log("Paginated recipients:", paginatedRecipients.length);
+
+      return paginatedRecipients;
+    } catch (error) {
+      console.log(
+        "Error fetching list of potential message recipients: ",
+        error
+      );
+    }
+  },
   async add(message) {
     const [newMessage] = await db("messages").insert(message).returning("*");
     console.log("message: model: ", message);
