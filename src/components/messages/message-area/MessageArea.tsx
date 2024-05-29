@@ -67,8 +67,10 @@ const MessageArea = (props: MessageAreaProps) => {
       sender_id: user?.user_id,
       recipient_id:
         chatMessages?.[0]?.message_sender_user_id === user?.user_id
-          ? chatMessages?.[0]?.message_recipient_id
-          : chatMessages?.[0]?.message_sender_user_id,
+          ? chatMessages?.[0]?.message_recipient_user_id
+          : chatMessages?.[0]?.message_recipient_user_id === user?.user_id
+          ? chatMessages?.[0]?.message_sender_user_id
+          : null,
     };
     addMessage(messageObject);
   };
@@ -167,7 +169,7 @@ const MessageArea = (props: MessageAreaProps) => {
             onChange={handleMessage}
             placeholder="Mesajınızı buraya yazın"
             value={message}
-          ></textarea>
+          />
           <button onClick={handleSend}>Gönder</button>
         </div>
       )}

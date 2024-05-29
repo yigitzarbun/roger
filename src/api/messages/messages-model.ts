@@ -433,7 +433,7 @@ const messagesModel = {
   },
   async getPaginatedMessageRecipientsListByFilter(filter) {
     try {
-      const usersPerPage = 5;
+      const usersPerPage = 4;
       const offset = (filter.currentPage - 1) * usersPerPage;
 
       // Players query
@@ -545,15 +545,16 @@ const messagesModel = {
           filteredRecipients = allRecipients;
       }
 
-      // Apply pagination to the combined filtered results
       const paginatedRecipients = filteredRecipients.slice(
         offset,
         offset + usersPerPage
       );
 
-      console.log("Paginated recipients:", paginatedRecipients.length);
-
-      return paginatedRecipients;
+      const data = {
+        paginatedRecipients: paginatedRecipients,
+        totalPages: Math.ceil(filteredRecipients.length / usersPerPage),
+      };
+      return data;
     } catch (error) {
       console.log(
         "Error fetching list of potential message recipients: ",
@@ -562,6 +563,7 @@ const messagesModel = {
     }
   },
   async add(message) {
+    console.log("message: ", message);
     const [newMessage] = await db("messages").insert(message).returning("*");
     console.log("message: model: ", message);
     return newMessage;

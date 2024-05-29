@@ -99,11 +99,11 @@
     align-items: end;
     border-radius: $roger-border-radius;
     padding: $roger-button-padding;
-    background-color: var(--chat-other-user-background);
+    background-color: var(--message-area-background);
     column-gap: 1vw;
 
     textArea {
-      background-color: var(--chat-other-user-background);
+      background-color: var(--message-area-background);
       width: 90%;
       height: 10vh;
       border: none;
