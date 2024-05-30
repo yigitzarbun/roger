@@ -27,6 +27,10 @@ const NewMessageModal = (props: NewMessageModalProps) => {
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+  const handleClear = () => {
+    setTextSearch("");
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const [userTypeId, setUserTypeId] = useState(null);
@@ -40,6 +44,10 @@ const NewMessageModal = (props: NewMessageModalProps) => {
     textSearch: textSearch,
     userTypeId: userTypeId,
   });
+
+  const handleUserTypeId = (userTypeId) => {
+    setUserTypeId(userTypeId);
+  };
 
   const pageNumbers = [];
   for (let i = 1; i <= potentialRecipientsList?.totalPages; i++) {
@@ -62,10 +70,10 @@ const NewMessageModal = (props: NewMessageModalProps) => {
     setCurrentPage(prevPage);
   };
 
-  const [selectedRecipientUserId, setSelectedRecipientUserId] = useState(null);
+  const [selectedRecipient, setSelectedRecipient] = useState(null);
 
-  const handleSelectedRecipientId = (userId: number) => {
-    setSelectedRecipientUserId(userId);
+  const handleSelectedRecipient = (recipient) => {
+    setSelectedRecipient(recipient);
   };
   const [message, setMessage] = useState("");
 
@@ -86,7 +94,13 @@ const NewMessageModal = (props: NewMessageModalProps) => {
       is_active: true,
       message_content: message,
       sender_id: user?.user_id,
-      recipient_id: selectedRecipientUserId,
+      recipient_id: selectedRecipient?.playerUserId
+        ? selectedRecipient?.playerUserId
+        : selectedRecipient?.trainerUserId
+        ? selectedRecipient?.trainerUserId
+        : selectedRecipient?.clubUserId
+        ? selectedRecipient?.clubUserId
+        : null,
     };
     addMessage(messageObject);
   };
@@ -96,6 +110,10 @@ const NewMessageModal = (props: NewMessageModalProps) => {
     textSearch: "",
   });
 
+  const handleCancel = () => {
+    closeNewMessageModal();
+    setSelectedRecipient(null);
+  };
   useEffect(() => {
     if (isAddMessageSuccess) {
       toast.success("Mesaj gönderildi");
@@ -122,51 +140,97 @@ const NewMessageModal = (props: NewMessageModalProps) => {
         <div className={styles["top-container"]}>
           <h1>Yeni Mesaj</h1>
         </div>
-        {selectedRecipientUserId === null ? (
+        {selectedRecipient === null ? (
           <>
-            <input
-              type="text"
-              placeholder="Kime mesaj atmak istersin?"
-              onChange={handleTextSearch}
-            />
-            {potentialRecipientsList?.totalPages > 1 && (
-              <div className={styles["navigation-container"]}>
-                <FaAngleLeft
-                  onClick={handlePrevPage}
-                  className={styles["nav-arrow"]}
-                />
-
-                <FaAngleRight
-                  onClick={handleNextPage}
-                  className={styles["nav-arrow"]}
-                />
+            <div className={styles["search-container"]}>
+              <input
+                type="text"
+                placeholder="Kime mesaj atmak istersin?"
+                onChange={handleTextSearch}
+                value={textSearch}
+              />
+              <button
+                className={
+                  textSearch !== ""
+                    ? styles["active-clear-button"]
+                    : styles["passive-clear-button"]
+                }
+                onClick={handleClear}
+              >
+                Temizle
+              </button>
+            </div>
+            <div className={styles["user-type-filter"]}>
+              <div className={styles["user-type-buttons"]}>
+                <button
+                  onClick={() => handleUserTypeId(null)}
+                  className={
+                    userTypeId === null
+                      ? styles["active-button"]
+                      : styles["passive-button"]
+                  }
+                >
+                  Tüm
+                </button>
+                <button
+                  onClick={() => handleUserTypeId(1)}
+                  className={
+                    userTypeId === 1
+                      ? styles["active-button"]
+                      : styles["passive-button"]
+                  }
+                >
+                  Oyuncular
+                </button>
+                <button
+                  onClick={() => handleUserTypeId(2)}
+                  className={
+                    userTypeId === 2
+                      ? styles["active-button"]
+                      : styles["passive-button"]
+                  }
+                >
+                  Eğitmenler
+                </button>
+                <button
+                  onClick={() => handleUserTypeId(3)}
+                  className={
+                    userTypeId === 3
+                      ? styles["active-button"]
+                      : styles["passive-button"]
+                  }
+                >
+                  Kulüpler
+                </button>
               </div>
-            )}
+              {potentialRecipientsList?.totalPages > 1 && (
+                <div className={styles["navigation-container"]}>
+                  <FaAngleLeft
+                    onClick={handlePrevPage}
+                    className={styles["nav-arrow"]}
+                  />
 
-            <table>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>İsim</th>
-                  <th>Konum</th>
-                </tr>
-              </thead>
-              <tbody>
-                {potentialRecipientsList?.paginatedRecipients?.map(
-                  (recipient) => (
-                    <tr
-                      key={
-                        recipient?.playerUserId
-                          ? recipient?.playerUserId
-                          : recipient.trainerUserId
-                          ? recipient.TrainerUserId
-                          : recipient?.clubUserId
-                          ? recipient?.clubUserId
-                          : null
-                      }
-                      className={styles["user-row"]}
-                      onClick={() =>
-                        handleSelectedRecipientId(
+                  <FaAngleRight
+                    onClick={handleNextPage}
+                    className={styles["nav-arrow"]}
+                  />
+                </div>
+              )}
+            </div>
+            {potentialRecipientsList?.paginatedRecipients?.length > 0 ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>İsim</th>
+                    <th>Konum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {potentialRecipientsList?.paginatedRecipients?.map(
+                    (recipient) => (
+                      <tr
+                        key={
                           recipient?.playerUserId
                             ? recipient?.playerUserId
                             : recipient.trainerUserId
@@ -174,38 +238,42 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                             : recipient?.clubUserId
                             ? recipient?.clubUserId
                             : null
-                        )
-                      }
-                    >
-                      <td>
-                        <img
-                          src={
-                            recipient?.playerUserId && recipient?.playerImage
-                              ? `${localUrl}/${recipient?.playerImage}`
-                              : recipient.trainerUserId &&
-                                recipient?.trainerImage
-                              ? `${localUrl}/${recipient?.trainerImage}`
-                              : recipient?.clubUserId && recipient?.clubImage
-                              ? `${localUrl}/${recipient?.clubImage}`
-                              : "/images/icons/avatar.jpg"
-                          }
-                        />
-                      </td>
-                      <td>
-                        {recipient?.playerUserId
-                          ? `${recipient?.playerFname} ${recipient?.playerLname}`
-                          : recipient.trainerUserId
-                          ? `${recipient?.trainerFname} ${recipient?.trainerLname}`
-                          : recipient?.clubUserId
-                          ? recipient?.clubName
-                          : null}
-                      </td>
-                      <td>{recipient?.location_name}</td>
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
+                        }
+                        className={styles["user-row"]}
+                        onClick={() => handleSelectedRecipient(recipient)}
+                      >
+                        <td>
+                          <img
+                            src={
+                              recipient?.playerUserId && recipient?.playerImage
+                                ? `${localUrl}/${recipient?.playerImage}`
+                                : recipient.trainerUserId &&
+                                  recipient?.trainerImage
+                                ? `${localUrl}/${recipient?.trainerImage}`
+                                : recipient?.clubUserId && recipient?.clubImage
+                                ? `${localUrl}/${recipient?.clubImage}`
+                                : "/images/icons/avatar.jpg"
+                            }
+                          />
+                        </td>
+                        <td>
+                          {recipient?.playerUserId
+                            ? `${recipient?.playerFname} ${recipient?.playerLname}`
+                            : recipient.trainerUserId
+                            ? `${recipient?.trainerFname} ${recipient?.trainerLname}`
+                            : recipient?.clubUserId
+                            ? recipient?.clubName
+                            : null}
+                        </td>
+                        <td>{recipient?.location_name}</td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            ) : (
+              <p>Aradığınız kullanıcı bulunamadı</p>
+            )}
             <div className={styles["pages-container"]}>
               {pageNumbers?.map((pageNumber) => (
                 <button
@@ -225,10 +293,35 @@ const NewMessageModal = (props: NewMessageModalProps) => {
           </>
         ) : (
           <>
+            <div className={styles["selected-user-container"]}>
+              <img
+                src={
+                  selectedRecipient?.playerUserId &&
+                  selectedRecipient?.playerImage
+                    ? `${localUrl}/${selectedRecipient?.playerImage}`
+                    : selectedRecipient.trainerUserId &&
+                      selectedRecipient?.trainerImage
+                    ? `${localUrl}/${selectedRecipient?.trainerImage}`
+                    : selectedRecipient?.clubUserId &&
+                      selectedRecipient?.clubImage
+                    ? `${localUrl}/${selectedRecipient?.clubImage}`
+                    : "/images/icons/avatar.jpg"
+                }
+              />
+              <p>
+                {selectedRecipient?.playerUserId
+                  ? `${selectedRecipient?.playerFname} ${selectedRecipient?.playerLname}`
+                  : selectedRecipient.trainerUserId
+                  ? `${selectedRecipient?.trainerFname} ${selectedRecipient?.trainerLname}`
+                  : selectedRecipient?.clubUserId
+                  ? selectedRecipient?.clubName
+                  : null}
+              </p>
+            </div>
             <textarea onChange={handleMessage} placeholder="Mesajın" />
             <div className={styles["buttons-container"]}>
               <button
-                onClick={closeNewMessageModal}
+                onClick={handleCancel}
                 className={styles["discard-button"]}
               >
                 İptal

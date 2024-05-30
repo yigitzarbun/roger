@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { FiMessageSquare } from "react-icons/fi";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 import { SlOptions } from "react-icons/sl";
@@ -213,45 +215,54 @@ const ExplorePlayersInteractionsSections = (
             </table>
             {user_id !== user?.user?.user_id && (
               <div className={styles["buttons-container"]}>
-                <button
-                  onClick={() => handleToggleFavourite(selectedPlayer?.user_id)}
-                  className={styles["interaction-button"]}
-                >
+                <div className={styles.icons}>
                   {isPlayerInMyFavourites(selectedPlayer?.user_id)
-                    ?.is_active === true
-                    ? "Favorilerden çıkar"
-                    : "Favorilere ekle"}
-                </button>
-                {isUserPlayer && (
-                  <button
-                    onClick={handleOpenTrainingModal}
-                    className={styles["interaction-button"]}
-                  >
-                    Antreman yap
-                  </button>
-                )}
-                {isUserPlayer && selectedPlayer?.gender === userGender && (
-                  <button
-                    onClick={handleOpenMatchModal}
-                    className={styles["interaction-button"]}
-                  >
-                    Maç yap
-                  </button>
-                )}
-                {isUserTrainer && (
-                  <button
-                    onClick={handleOpenLessonModal}
-                    className={styles["interaction-button"]}
-                  >
-                    Derse davet et
-                  </button>
-                )}
-                <button
-                  onClick={handleOpenMessageModal}
-                  className={styles["interaction-button"]}
-                >
-                  Mesaj
-                </button>
+                    ?.is_active === true ? (
+                    <AiFillStar
+                      className={styles["remove-fav-icon"]}
+                      onClick={() =>
+                        handleToggleFavourite(selectedPlayer?.user_id)
+                      }
+                    />
+                  ) : (
+                    <AiOutlineStar
+                      className={styles["add-fav-icon"]}
+                      onClick={() =>
+                        handleToggleFavourite(selectedPlayer?.user_id)
+                      }
+                    />
+                  )}
+                  <FiMessageSquare
+                    className={styles.message}
+                    onClick={handleOpenMessageModal}
+                  />
+                </div>
+                <div className={styles["interaction-buttons"]}>
+                  {isUserPlayer && (
+                    <button
+                      onClick={handleOpenTrainingModal}
+                      className={styles["interaction-button"]}
+                    >
+                      Antreman yap
+                    </button>
+                  )}
+                  {isUserPlayer && selectedPlayer?.gender === userGender && (
+                    <button
+                      onClick={handleOpenMatchModal}
+                      className={styles["interaction-button"]}
+                    >
+                      Maç yap
+                    </button>
+                  )}
+                  {isUserTrainer && (
+                    <button
+                      onClick={handleOpenLessonModal}
+                      className={styles["interaction-button"]}
+                    >
+                      Derse davet et
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>

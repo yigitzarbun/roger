@@ -30,6 +30,10 @@
       }
       h3 {
         font-weight: normal;
+        .blue-span {
+          color: $roger-blue;
+          font-weight: bold;
+        }
       }
       .buttons-container {
         display: flex;
@@ -126,7 +130,7 @@
     padding: $roger-box-padding;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
-    height: 80vh;
+    height: 100vh;
     align-items: center;
     line-height: 30px;
     column-gap: 4vw;
@@ -160,7 +164,7 @@
     justify-content: space-between;
     background-color: var(--landing-trainer-background);
     padding: $roger-box-padding;
-    height: 80vh;
+    height: 100vh;
     column-gap: 4vw;
 
     .text-container {
@@ -195,7 +199,7 @@
     padding: $roger-box-padding;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-    height: 80vh;
+    height: 100vh;
     column-gap: 4vw;
 
     .text-container {

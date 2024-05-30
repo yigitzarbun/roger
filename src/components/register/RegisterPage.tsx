@@ -20,8 +20,11 @@ const RegisterPage = () => {
         <div className={styles["intro-container"]}>
           <h1>Raket</h1>
           <h3>
-            Benzersiz bir tenis deneyimi: Maçlar, eğitimler, kort
-            rezervasyonları ve daha fazlası, hepsi bir arada.
+            <span className={styles["blue-span"]}>
+              Benzersiz bir tenis deneyimi:
+            </span>{" "}
+            Maçlar, eğitimler, kort rezervasyonları ve daha fazlası, hepsi bir
+            arada.
           </h3>
           <div className={styles["buttons-container"]}>
             <button onClick={() => handleNavigate("login")}>Giriş Yap</button>

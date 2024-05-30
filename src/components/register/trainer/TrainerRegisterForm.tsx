@@ -120,6 +120,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
     reset,
     setValue,
     getValues,
+    trigger,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -201,16 +202,15 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
     "trainer_employment_type_id",
   ];
 
-  const handlePage = (direction: string) => {
+  const handlePage = async (direction: string) => {
     if (direction === "next" && page === 1) {
-      const hasErrors = firstPageFields.some((field) => errors[field]);
-
-      if (!hasErrors) {
+      const result = await trigger();
+      if (result) {
         setPage(page + 1);
       }
     } else if (direction === "next" && page === 2) {
-      const hasErrors = secondPageFields.some((field) => errors[field]);
-      if (!hasErrors) {
+      const result = await trigger();
+      if (result) {
         setPage(page + 1);
       }
     } else if (direction === "prev" && page !== 1) {
@@ -241,6 +241,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
   ) {
     return <div>Loading...</div>;
   }
+  console.log(errors);
   return (
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/coach_hero.jpeg" />
@@ -251,6 +252,20 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
           className={styles["form-container"]}
           encType="multipart/form-data"
         >
+          {(errors.fname ||
+            errors.lname ||
+            errors.gender ||
+            errors.birth_year ||
+            errors.trainer_experience_type_id ||
+            errors.location_id ||
+            errors.email ||
+            errors.password ||
+            errors.trainer_employment_type_id ||
+            errors.repeat_password) && (
+            <span className={styles["error-field"]}>
+              Tüm alanları doldurduğunuzdan emin olun
+            </span>
+          )}
           {page === 1 && (
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
@@ -261,11 +276,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     type="text"
                     placeholder={t("registerFNamelInputPlaceholder")}
                   />
-                  {errors.fname && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Soyisim</label>
@@ -274,11 +284,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     type="text"
                     placeholder={t("registerLNamelInputPlaceholder")}
                   />
-                  {errors.lname && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
               </div>
               <div className={styles["input-outer-container"]}>
@@ -289,11 +294,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     <option value="female">Kadın</option>
                     <option value="male">Erkek</option>
                   </select>
-                  {errors.gender && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Doğum Yılı</label>
@@ -312,11 +312,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     type="number"
                     placeholder={t("registerBirthYearlInputPlaceholder")}
                   />
-                  {errors.birth_year && (
-                    <span className={styles["error-field"]}>
-                      {errors.birth_year.message}
-                    </span>
-                  )}
                 </div>
               </div>
             </div>
@@ -343,11 +338,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                       </option>
                     ))}
                   </select>
-                  {errors.trainer_experience_type_id && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Konum</label>
@@ -362,11 +352,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                       </option>
                     ))}
                   </select>
-                  {errors.location_id && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
               </div>
               <div className={styles["input-outer-container"]}>
@@ -390,11 +375,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                       </option>
                     ))}
                   </select>
-                  {errors.trainer_employment_type_id && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Ücret (TL / saat)</label>
@@ -402,40 +382,30 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     {...register("price_hour", { required: true })}
                     type="number"
                   />
-                  {errors.price_hour && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
-                {(employmentType ==
-                  trainerEmploymentTypes?.find(
-                    (t) => t.trainer_employment_type_name === "private_club"
-                  ).trainer_employment_type_id ||
-                  employmentType ==
-                    trainerEmploymentTypes?.find(
-                      (t) => t.trainer_employment_type_name === "public_club"
-                    ).trainer_employment_type_id) && (
-                  <div className={styles["input-outer-container"]}>
-                    <div className={styles["input-container"]}>
-                      <label>Kulüp</label>
-                      <select {...register("club_id", { required: true })}>
-                        <option value="">-- Seçim yapın --</option>
-                        {clubs?.map((club) => (
-                          <option key={club.club_id} value={club.club_id}>
-                            {club.club_name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.club_id && (
-                        <span className={styles["error-field"]}>
-                          Bu alan zorunludur.
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
+              {(employmentType ==
+                trainerEmploymentTypes?.find(
+                  (t) => t.trainer_employment_type_name === "private_club"
+                ).trainer_employment_type_id ||
+                employmentType ==
+                  trainerEmploymentTypes?.find(
+                    (t) => t.trainer_employment_type_name === "public_club"
+                  ).trainer_employment_type_id) && (
+                <div className={styles["input-outer-container"]}>
+                  <div className={styles["input-container"]}>
+                    <label>Kulüp</label>
+                    <select {...register("club_id", { required: true })}>
+                      <option value="">-- Seçim yapın --</option>
+                      {clubs?.map((club) => (
+                        <option key={club.club_id} value={club.club_id}>
+                          {club.club_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
           )}
           {page === 3 && (
@@ -448,11 +418,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     type="email"
                     placeholder={t("registerEmailInputPlaceholder")}
                   />
-                  {errors.email && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Şifre</label>
@@ -460,11 +425,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     {...register("password", { required: true })}
                     type="password"
                   />
-                  {errors.password && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
               </div>
               <div className={styles["input-outer-container"]}>
@@ -481,11 +441,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                     })}
                     type="password"
                   />
-                  {errors.repeat_password && (
-                    <span className={styles["error-field"]}>
-                      Şifreyi doğru girdiğinizden emin olun
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Profil Resmi</label>
@@ -504,6 +459,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
               <button
                 onClick={() => setUserType("")}
                 className={styles["discard-button"]}
+                type="button"
               >
                 İptal
               </button>
@@ -511,11 +467,12 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
               <button
                 onClick={() => handlePage("prev")}
                 className={styles["discard-button"]}
+                type="button"
               >
                 Geri
               </button>
             )}
-            {page === 3 ? (
+            {page === 3 && Object.keys(errors)?.length === 0 ? (
               <button type="submit" className={styles["submit-button"]}>
                 {t("registerButtonText")}
               </button>
@@ -523,6 +480,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
               <button
                 onClick={() => handlePage("next")}
                 className={styles["submit-button"]}
+                type="button"
               >
                 İleri
               </button>

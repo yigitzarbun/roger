@@ -196,11 +196,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
               Tüm alanları doldurduğunuzdan emin olun
             </span>
           )}
-          {errors.repeat_password && (
-            <span className={styles["error-field"]}>
-              Şifreyi doğru girdiğinizden emin olun
-            </span>
-          )}
+
           {page === 1 && (
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>

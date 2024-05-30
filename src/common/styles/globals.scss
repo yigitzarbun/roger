@@ -63,14 +63,14 @@ body {
   --header-register-button-text: rgb(0, 0, 0);
   --message-hover-color: #242424;
   --chat-other-user-background: #312f2f;
-  --chat-current-user-background: #357750;
+  --chat-current-user-background: #28583c;
   --message-area-background: #121212;
 }
 
 // Light Theme
 [data-theme="light"] {
   --background-color: #fafafa;
-  --box-background-color: #f6f3f3;
+  --box-background-color: #f2f1f1;
   --text-color: black;
   --header-background-color: white;
   --active-text-color: $roger-blue;
