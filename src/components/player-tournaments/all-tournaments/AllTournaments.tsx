@@ -8,8 +8,15 @@ import PageLoading from "../../../components/loading/PageLoading";
 import { AllTournamentsFilterModal } from "./all-tournaments-filter/AllTournamentsFilterModal";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import { AddTournamentParticipantModal } from "../modals/add-tournament-participant-modal/AddTournamentParticipantModal";
 
-const AllTournaments = () => {
+interface AllTournamentsProps {
+  myTournaments: any[];
+  refetchMyTournaments: () => void;
+}
+
+const AllTournaments = (props: AllTournamentsProps) => {
+  const { myTournaments, refetchMyTournaments } = props;
   const [currentPage, setCurrentPage] = useState(1);
   const [textSearch, setTextSearch] = useState("");
   const [locationId, setLocationId] = useState(null);
@@ -95,6 +102,23 @@ const AllTournaments = () => {
     setCurrentPage(prevPage);
   };
 
+  const [participateModal, setParticipateModal] = useState(false);
+  const [selectedTournament, setSelectedTournament] = useState(null);
+  const [selectedClubUserId, setSelectedClubUserId] = useState(null);
+
+  const handleOpenAddTournamentParticipantModal = (
+    tournament: any,
+    clubUserId: number
+  ) => {
+    setSelectedTournament(tournament);
+    setSelectedClubUserId(clubUserId);
+    setParticipateModal(true);
+  };
+
+  const closeAddTournamentParticipantModal = () => {
+    setParticipateModal(false);
+  };
+
   useEffect(() => {
     refetchPaginatedTournaments();
   }, [
@@ -171,7 +195,17 @@ const AllTournaments = () => {
                 <td>{tournament.participant_count}</td>
                 <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
                 <td>
-                  <button className={styles["book-button"]}>Katıl</button>
+                  <button
+                    onClick={() =>
+                      handleOpenAddTournamentParticipantModal(
+                        tournament,
+                        tournament.clubUserId
+                      )
+                    }
+                    className={styles["book-button"]}
+                  >
+                    Katıl
+                  </button>
                 </td>
               </tr>
             ))}
@@ -197,6 +231,17 @@ const AllTournaments = () => {
           locations={locations}
           handleClub={handleClub}
           clubs={clubs}
+        />
+      )}
+      {participateModal && (
+        <AddTournamentParticipantModal
+          participateModal={participateModal}
+          closeAddTournamentParticipantModal={
+            closeAddTournamentParticipantModal
+          }
+          selectedTournament={selectedTournament}
+          selectedClubUserId={selectedClubUserId}
+          refetchMyTournaments={refetchMyTournaments}
         />
       )}
     </div>

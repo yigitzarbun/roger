@@ -39,13 +39,13 @@ const tournamentsModel = {
   async getPaginatedTournaments(filter) {
     const tournamentsPerPage = 4;
     const offset = (filter.currentPage - 1) * tournamentsPerPage;
-    const today = new Date(); // Get today's date
-
+    const today = new Date();
     try {
       const paginatedTournaments = await db
         .select(
           "tournaments.*",
           "clubs.club_name",
+          "clubs.user_id as clubUserId",
           "locations.location_name",
           db.raw(
             "COUNT(DISTINCT tournament_participants.tournament_participant_id) as participant_count"
@@ -90,7 +90,8 @@ const tournamentsModel = {
         .groupBy(
           "tournaments.tournament_id",
           "clubs.club_name",
-          "locations.location_name"
+          "locations.location_name",
+          "clubs.user_id"
         )
         .offset(offset)
         .limit(tournamentsPerPage);

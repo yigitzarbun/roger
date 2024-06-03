@@ -81,6 +81,7 @@ export async function seed(knex: Knex): Promise<void> {
       payment_type_id: 5,
       payment_type_name: "subscription",
     },
+    { payment_type_id: 6, payment_type_name: "tournament_admission_fee" },
   ]);
 
   await knex("match_score_status_types").insert([

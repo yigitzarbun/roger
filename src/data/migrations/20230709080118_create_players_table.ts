@@ -500,6 +500,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("lesson_price");
       table.integer("court_price");
       table.integer("subscription_price");
+      table.integer("tournament_admission_fee");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table.string("payment_status").notNullable();
       table
@@ -541,6 +542,13 @@ export async function up(knex: Knex): Promise<void> {
         .onDelete("CASCADE");
       table
         .integer("recipient_trainer_id")
+        .unsigned()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("sender_tournament_participant_id")
         .unsigned()
         .references("user_id")
         .inTable("users")
@@ -816,6 +824,14 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("tournament_participant_id");
       table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
       table.boolean("is_active").notNullable();
+      table
+        .integer("payment_id")
+        .unsigned()
+        .notNullable()
+        .references("payment_id")
+        .inTable("payments")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
       table
         .integer("tournament_id")
         .unsigned()

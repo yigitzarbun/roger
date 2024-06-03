@@ -39,6 +39,7 @@ import eventReviewsRouter from "./src/api/event-reviews/event-reviews-router";
 import languagesRouter from "./src/api/languages/languages-router";
 import messagesRouter from "./src/api/messages/messages-router";
 import tournamentsRouter from "./src/api/tournaments/tournaments-router";
+import tournamentParticipantsRouter from "./src/api/tournament-participants/tournament-participants-router";
 
 import multer from "multer";
 
@@ -212,6 +213,7 @@ server.use("/api/event-reviews", eventReviewsRouter);
 server.use("/api/languages", languagesRouter);
 server.use("/api/messages", messagesRouter);
 server.use("/api/tournaments", tournamentsRouter);
+server.use("/api/tournament-participants", tournamentParticipantsRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");
