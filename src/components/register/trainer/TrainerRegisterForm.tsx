@@ -193,14 +193,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
   };
 
   const [page, setPage] = useState(1);
-  const firstPageFields = ["fname", "lname", "gender", "birth_year"];
-  const secondPageFields = [
-    "trainer_experience_type_id",
-    "location_id",
-    "email",
-    "password",
-    "trainer_employment_type_id",
-  ];
 
   const handlePage = async (direction: string) => {
     if (direction === "next" && page === 1) {
@@ -241,7 +233,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
   ) {
     return <div>Loading...</div>;
   }
-  console.log(errors);
   return (
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/coach_hero.jpeg" />

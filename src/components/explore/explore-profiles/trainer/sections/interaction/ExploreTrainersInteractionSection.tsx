@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import styles from "./styles.module.scss";
 
@@ -10,6 +10,7 @@ import PageLoading from "../../../../../../components/loading/PageLoading";
 import { useAppSelector } from "../../../../../../store/hooks";
 import { IoStar } from "react-icons/io5";
 import { SlOptions } from "react-icons/sl";
+import { FiMessageSquare } from "react-icons/fi";
 
 import {
   useAddFavouriteMutation,
@@ -25,6 +26,7 @@ import {
 import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
+import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
 
 interface ExploreTrainersInteractionSectionProps {
   user_id: number;
@@ -196,6 +198,14 @@ export const ExploreTrainersInteractionSection = (
     return student ? student : false;
   };
 
+  const [messageModal, setMessageModal] = useState(false);
+  const handleOpenMessageModal = () => {
+    setMessageModal(true);
+  };
+  const closeMessageModal = () => {
+    setMessageModal(false);
+  };
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavouriteTrainers();
@@ -283,52 +293,66 @@ export const ExploreTrainersInteractionSection = (
               </tbody>
             </table>
             <div className={styles["buttons-container"]}>
-              <button
-                onClick={() =>
-                  handleToggleFavourite(selectedTrainer?.[0]?.user_id)
-                }
-                className={styles["interaction-button"]}
-              >
+              <div className={styles.icons}>
                 {isTrainerInMyFavourites(selectedTrainer?.[0]?.user_id)
-                  ?.is_active === true
-                  ? "Favorilerden çıkar"
-                  : "Favorilere ekle"}
-              </button>
-              {isUserPlayer && (
-                <button
-                  onClick={() =>
-                    handleOpenLessonModal(selectedTrainer?.[0]?.user_id)
-                  }
-                  className={styles["interaction-button"]}
-                >
-                  Ders al
-                </button>
-              )}
-              {isUserPlayer && (
-                <p>
-                  {isStudentPending() ? (
-                    ""
-                  ) : isStudentAccepted() ? (
-                    <button
-                      onClick={() =>
-                        handleDeclineStudent(selectedTrainer?.[0]?.user_id)
-                      }
-                      className={styles["cancel-student-button"]}
-                    >
-                      Öğrenciliği sil
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() =>
-                        handleAddStudent(selectedTrainer?.[0]?.user_id)
-                      }
-                      className={styles["interaction-button"]}
-                    >
-                      Öğrenci Ol
-                    </button>
-                  )}
-                </p>
-              )}
+                  ?.is_active === true ? (
+                  <AiFillStar
+                    className={styles["remove-fav-icon"]}
+                    onClick={() =>
+                      handleToggleFavourite(selectedTrainer?.[0]?.user_id)
+                    }
+                  />
+                ) : (
+                  <AiOutlineStar
+                    className={styles["add-fav-icon"]}
+                    onClick={() =>
+                      handleToggleFavourite(selectedTrainer?.[0]?.user_id)
+                    }
+                  />
+                )}
+                <FiMessageSquare
+                  className={styles.message}
+                  onClick={handleOpenMessageModal}
+                />
+              </div>
+              <div className={styles["interaction-buttons"]}>
+                {isUserPlayer && (
+                  <button
+                    onClick={() =>
+                      handleOpenLessonModal(selectedTrainer?.[0]?.user_id)
+                    }
+                    className={styles["interaction-button"]}
+                  >
+                    Ders al
+                  </button>
+                )}
+
+                {isUserPlayer && (
+                  <p>
+                    {isStudentPending() ? (
+                      ""
+                    ) : isStudentAccepted() ? (
+                      <button
+                        onClick={() =>
+                          handleDeclineStudent(selectedTrainer?.[0]?.user_id)
+                        }
+                        className={styles["interaction-button"]}
+                      >
+                        Öğrenciliği sil
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          handleAddStudent(selectedTrainer?.[0]?.user_id)
+                        }
+                        className={styles["interaction-button"]}
+                      >
+                        Öğrenci Ol
+                      </button>
+                    )}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -346,6 +370,13 @@ export const ExploreTrainersInteractionSection = (
           handleCloseInviteModal={handleCloseLessonModal}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
+        />
+      )}
+      {messageModal && (
+        <MessageModal
+          messageModal={messageModal}
+          closeMessageModal={closeMessageModal}
+          recipient_id={selectedTrainer?.[0]?.user_id}
         />
       )}
     </div>

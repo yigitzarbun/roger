@@ -8,7 +8,7 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
@@ -26,17 +26,20 @@ import {
 } from "../../../../api/endpoints/FavouritesApi";
 
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
-import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../api/endpoints/PlayersApi";
 import { useGetPaginatedClubsQuery } from "../../../../api/endpoints/ClubsApi";
 
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ClubEmploymentModal from "./employment-modal/ClubEmploymentModal";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
-import Paths from "../../../../routing/Paths";
 import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import ExploreClubsFilterModal from "./explore-clubs-filter/ExploreClubsFilterModal";
+import AddPlayerCardDetails from "../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExploreClubsProps {
   user: User;
@@ -96,11 +99,22 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     subscribedClubs,
   } = props;
 
-  const navigate = useNavigate();
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
 
-  const navigatePaymentDetails = () => {
-    navigate(Paths.PROFILE);
+  const [paymentModal, setPaymentModal] = useState(false);
+
+  const handleOpenPaymentModal = () => {
+    setPaymentModal(true);
   };
+
+  const handleClosePaymentModal = () => {
+    setPaymentModal(false);
+  };
+
   let isUserPlayer = false;
   let isUserTrainer = false;
 
@@ -108,7 +122,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     isUserPlayer = user.user.user_type_id === 1;
     isUserTrainer = user.user.user_type_id === 2;
   }
-
   const [isClubFilterModalOpen, setIsClubFilterModalOpen] = useState(false);
   const handleOpenClubFilterModal = () => {
     setIsClubFilterModalOpen(true);
@@ -153,8 +166,11 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     setCurrentPage(prevPage);
   };
 
-  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
-    useGetPlayerByUserIdQuery(user?.user?.user_id);
+  const {
+    data: currentPlayer,
+    isLoading: isCurrentPlayerLoading,
+    refetch: refetchCurrentPlayer,
+  } = useGetPlayerByUserIdQuery(user?.user?.user_id);
 
   // player payment details
   let playerPaymentDetailsExist = false;
@@ -223,6 +239,10 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       refetchFavourites();
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
+
+  useEffect(() => {
+    refetchCurrentPlayer();
+  }, [paymentModal]);
 
   useEffect(() => {
     refetchMyFavourites();
@@ -379,7 +399,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     ) : club?.clubHasSubscriptionPackages &&
                       !playerPaymentDetailsExist ? (
                       <button
-                        onClick={navigatePaymentDetails}
+                        onClick={handleOpenPaymentModal}
                         className={styles["payment-button"]}
                       >
                         Ödeme bilgilerini ekle
@@ -471,6 +491,15 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           courtStructureType={courtStructureType}
           clubTrainers={clubTrainers}
           subscribedClubs={subscribedClubs}
+        />
+      )}
+      {paymentModal && (
+        <AddPlayerCardDetails
+          isModalOpen={paymentModal}
+          handleCloseModal={handleClosePaymentModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

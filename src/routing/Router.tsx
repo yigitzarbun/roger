@@ -48,6 +48,13 @@ const PlayerGroups = lazy(
 );
 const Favourites = lazy(() => import("../modules/favourites/Favourites"));
 const Messages = lazy(() => import("../modules/messages/Messages"));
+const ClubTournaments = lazy(
+  () => import("../modules/club-tournaments/ClubTournaments")
+);
+const PlayerTournaments = lazy(
+  () => import("../modules/tournaments/Tournaments")
+);
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -110,6 +117,11 @@ const routes: Route[] = [
   { path: paths.PLAYER_GROUPS, element: getRouteElement(PlayerGroups) },
   { path: paths.FAVOURITES, element: getRouteElement(Favourites) },
   { path: paths.MESSAGES, element: getRouteElement(Messages) },
+  { path: paths.CLUB_TOURNAMENTS, element: getRouteElement(ClubTournaments) },
+  {
+    path: paths.PLAYER_TOURNAMENTS,
+    element: getRouteElement(PlayerTournaments),
+  },
 ];
 
 export default createBrowserRouter(routes);

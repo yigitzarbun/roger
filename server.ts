@@ -38,6 +38,7 @@ import clubExternalMembersRouter from "./src/api/external-members/club-external-
 import eventReviewsRouter from "./src/api/event-reviews/event-reviews-router";
 import languagesRouter from "./src/api/languages/languages-router";
 import messagesRouter from "./src/api/messages/messages-router";
+import tournamentsRouter from "./src/api/tournaments/tournaments-router";
 
 import multer from "multer";
 
@@ -210,6 +211,7 @@ server.use("/api/club-external-members", clubExternalMembersRouter);
 server.use("/api/event-reviews", eventReviewsRouter);
 server.use("/api/languages", languagesRouter);
 server.use("/api/messages", messagesRouter);
+server.use("/api/tournaments", tournamentsRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

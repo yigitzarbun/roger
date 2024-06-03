@@ -17,6 +17,7 @@ import {
   useAddPlayerMutation,
   useGetPlayersQuery,
 } from "../../../api/endpoints/PlayersApi";
+import { toast } from "react-toastify";
 
 export type FormValues = {
   user_type_id: number;
@@ -86,6 +87,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
     reset,
     setValue,
     getValues,
+    trigger,
     formState: { errors },
   } = useForm<FormValues>();
 
@@ -145,16 +147,15 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
     "password",
   ];
 
-  const handlePage = (direction: string) => {
+  const handlePage = async (direction: string) => {
     if (direction === "next" && page === 1) {
-      const hasErrors = firstPageFields.some((field) => errors[field]);
-
-      if (!hasErrors) {
+      const result = await trigger();
+      if (result) {
         setPage(page + 1);
       }
     } else if (direction === "next" && page === 2) {
-      const hasErrors = secondPageFields.some((field) => errors[field]);
-      if (!hasErrors) {
+      const result = await trigger();
+      if (result) {
         setPage(page + 1);
       }
     } else if (direction === "prev" && page !== 1) {
@@ -166,6 +167,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
     if (isSuccess) {
       refetchUsers();
       refetchPlayers();
+      toast.success("Kayıt başarılı");
     }
   }, [isSuccess]);
 
@@ -191,7 +193,12 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
           {(errors.fname ||
             errors.lname ||
             errors.gender ||
-            errors.birth_year) && (
+            errors.birth_year ||
+            errors.player_level_id ||
+            errors.location_id ||
+            errors.email ||
+            errors.password ||
+            errors.repeat_password) && (
             <span className={styles["error-field"]}>
               Tüm alanları doldurduğunuzdan emin olun
             </span>
@@ -334,6 +341,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
               <button
                 onClick={() => setUserType("")}
                 className={styles["discard-button"]}
+                type="button"
               >
                 İptal
               </button>
@@ -341,11 +349,12 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
               <button
                 onClick={() => handlePage("prev")}
                 className={styles["discard-button"]}
+                type="button"
               >
                 Geri
               </button>
             )}
-            {page === 3 ? (
+            {page === 3 && Object.keys(errors)?.length === 0 ? (
               <button type="submit" className={styles["submit-button"]}>
                 {t("registerButtonText")}
               </button>
@@ -353,6 +362,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
               <button
                 onClick={() => handlePage("next")}
                 className={styles["submit-button"]}
+                type="button"
               >
                 İleri
               </button>

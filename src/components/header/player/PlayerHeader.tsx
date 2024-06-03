@@ -119,6 +119,17 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
         >
           {t("headerPerformanceTitle")}
         </NavLink>
+        <NavLink
+          to={paths.PLAYER_TOURNAMENTS}
+          onClick={() => navigateUser("PLAYER_TOURNAMENTS")}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-player"]}`
+              : `${styles["nav-link-player"]}`
+          }
+        >
+          Turnuvalar
+        </NavLink>
       </div>
     </nav>
   );

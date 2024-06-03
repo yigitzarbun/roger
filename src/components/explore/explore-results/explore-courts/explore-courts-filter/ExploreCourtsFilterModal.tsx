@@ -36,7 +36,6 @@ const ExploreCourtsFilterModal = (props) => {
       />
       <div className={styles["modal-content"]}>
         <h3>Kortları Filtrele</h3>
-
         <div className={styles["form-container"]}>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>

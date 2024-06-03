@@ -17,6 +17,7 @@ import { useGetClubTypesQuery } from "../../../api/endpoints/ClubTypesApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
 import { useGetUserStatusTypesQuery } from "../../../api/endpoints/UserStatusTypesApi";
+import { toast } from "react-toastify";
 
 export type FormValues = {
   user_type_id: number;
@@ -84,6 +85,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
     handleSubmit,
     reset,
     setValue,
+    trigger,
     getValues,
     formState: { errors },
   } = useForm<FormValues>();
@@ -131,24 +133,16 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
   };
 
   const [page, setPage] = useState(1);
-  const firstPageFields = [
-    "club_name",
-    "club_type_id",
-    "location_id",
-    "club_address",
-  ];
-  const secondPageFields = ["email", "password", "repeat_password"];
 
-  const handlePage = (direction: string) => {
+  const handlePage = async (direction: string) => {
     if (direction === "next" && page === 1) {
-      const hasErrors = firstPageFields.some((field) => errors[field]);
-
-      if (!hasErrors) {
+      const result = await trigger();
+      if (result) {
         setPage(page + 1);
       }
     } else if (direction === "next" && page === 2) {
-      const hasErrors = secondPageFields.some((field) => errors[field]);
-      if (!hasErrors) {
+      const result = await trigger();
+      if (result) {
         setPage(page + 1);
       }
     } else if (direction === "prev" && page !== 1) {
@@ -160,8 +154,10 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
     if (isSuccess) {
       refetchUsers();
       refetchClubs();
+      toast.success("Kayıt başarılı");
     }
   }, [isSuccess]);
+
   if (
     isLocationsLoading ||
     isClubTypesLoading ||
@@ -180,6 +176,17 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
           className={styles["form-container"]}
           encType="multipart/form-data"
         >
+          {(errors.club_name ||
+            errors.club_type_id ||
+            errors.location_id ||
+            errors.club_address ||
+            errors.email ||
+            errors.password ||
+            errors.repeat_password) && (
+            <span className={styles["error-field"]}>
+              Tüm alanları doldurduğunuzdan emin olun
+            </span>
+          )}
           {page === 1 && (
             <div className={styles["page-container"]}>
               {" "}
@@ -191,11 +198,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                     type="text"
                     placeholder="örn. Wimbledon Tennis Club"
                   />
-                  {errors.club_name && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Kulüp Tipi</label>
@@ -210,11 +212,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                       </option>
                     ))}
                   </select>
-                  {errors.club_type_id && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
               </div>
               <div className={styles["input-outer-container"]}>
@@ -231,11 +228,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                       </option>
                     ))}
                   </select>
-                  {errors.location_id && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Adres</label>
@@ -243,11 +235,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                     {...register("club_address", { required: true })}
                     type="text"
                   />
-                  {errors.club_address && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
               </div>
             </div>
@@ -262,11 +249,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                     type="email"
                     placeholder={t("registerEmailInputPlaceholder")}
                   />
-                  {errors.email && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Şifre</label>
@@ -274,11 +256,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                     {...register("password", { required: true })}
                     type="password"
                   />
-                  {errors.password && (
-                    <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
-                    </span>
-                  )}
                 </div>
               </div>
               <div className={styles["input-outer-container"]}>
@@ -295,11 +272,6 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                     })}
                     type="password"
                   />
-                  {errors.repeat_password && (
-                    <span className={styles["error-field"]}>
-                      Şifreyi doğru girdiğinizden emin olun
-                    </span>
-                  )}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>Profil Resmi</label>
@@ -330,17 +302,24 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                 Geri
               </button>
             )}
-            {page === 3 ? (
-              <button type="submit" className={styles["submit-button"]}>
-                {t("registerButtonText")}
-              </button>
-            ) : (
+
+            {page === 1 ? (
               <button
                 onClick={() => handlePage("next")}
                 className={styles["submit-button"]}
               >
                 İleri
               </button>
+            ) : page === 2 ? (
+              <button
+                type="submit"
+                className={styles["submit-button"]}
+                disabled={Object.keys(errors)?.length > 0}
+              >
+                {t("registerButtonText")}
+              </button>
+            ) : (
+              ""
             )}
           </div>
         </form>

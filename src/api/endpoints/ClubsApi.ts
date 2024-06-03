@@ -42,6 +42,9 @@ export const clubsSlice = createApi({
     getClubByUserId: builder.query({
       query: (user_id) => `/clubs/user/${user_id}`,
     }),
+    getClubPaymentDetailsExist: builder.query({
+      query: (user_id) => `/clubs/club-payment-details-exist/${user_id}`,
+    }),
     getClubProfileDetails: builder.query({
       query: (userId) => `/clubs/club-profile-details/${userId}`,
     }),
@@ -161,6 +164,7 @@ export const {
   useGetClubByClubIdQuery,
   useGetClubByUserIdQuery,
   useGetClubProfileDetailsQuery,
+  useGetClubPaymentDetailsExistQuery,
   useAddClubMutation,
   useUpdateClubMutation,
 } = clubsSlice;

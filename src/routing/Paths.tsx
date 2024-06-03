@@ -31,4 +31,6 @@ export default {
   PLAYER_GROUPS: "/oyuncu-gruplar",
   FAVOURITES: "/favoriler",
   MESSAGES: "/mesajlar",
+  CLUB_TOURNAMENTS: "/kulup-turnuvalar",
+  PLAYER_TOURNAMENTS: "/oyuncu-turnuvalar",
 } as Paths;

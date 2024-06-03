@@ -138,6 +138,7 @@ const ExplorePlayersInteractionsSections = (
   const closeMessageModal = () => {
     setMessageModal(false);
   };
+
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavourites();

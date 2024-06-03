@@ -2,6 +2,9 @@ import { Knex } from "knex";
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
+  await knex("tournament_matches").del();
+  await knex("tournament_participants").del();
+  await knex("tournaments").del();
   await knex("favourites").del();
   await knex("messages").del();
   await knex("club_subscriptions").del();
@@ -22,6 +25,7 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("clubs").del();
   await knex("players").del();
   await knex("users").del();
+  await knex("tournament_match_rounds").del();
   await knex("languages").del();
   await knex("booking_status_types").del();
   await knex("permission_types").del();
@@ -303,6 +307,40 @@ export async function seed(knex: Knex): Promise<void> {
     { booking_status_type_id: 5, booking_status_type_name: "completed" },
   ]);
 
+  await knex("tournament_match_rounds").insert([
+    {
+      tournament_match_round_id: 1,
+      tournament_match_round_name: "Round of 128",
+    },
+    {
+      tournament_match_round_id: 2,
+      tournament_match_round_name: "Round of 64",
+    },
+    {
+      tournament_match_round_id: 3,
+      tournament_match_round_name: "Round of 32",
+    },
+    {
+      tournament_match_round_id: 4,
+      tournament_match_round_name: "Round of 16",
+    },
+    {
+      tournament_match_round_id: 5,
+      tournament_match_round_name: "Quarter Final",
+    },
+    {
+      tournament_match_round_id: 6,
+      tournament_match_round_name: "Semi Final",
+    },
+    {
+      tournament_match_round_id: 7,
+      tournament_match_round_name: "Final",
+    },
+    {
+      tournament_match_round_id: 8,
+      tournament_match_round_name: "Third Place",
+    },
+  ]);
   await knex("languages").insert([
     { language_id: 1, language_name: "tr" },
     { language_id: 2, language_name: "en" },

@@ -70,6 +70,10 @@ export async function up(knex: Knex): Promise<void> {
       table.increments("language_id");
       table.string("language_name").unique().notNullable();
     })
+    .createTable("tournament_match_rounds", (table) => {
+      table.increments("tournament_match_round_id");
+      table.string("tournament_match_round_name").unique().notNullable();
+    })
     .createTable("users", (table) => {
       table.increments("user_id");
       table.string("email").unique().notNullable();
@@ -137,7 +141,8 @@ export async function up(knex: Knex): Promise<void> {
         .references("user_id")
         .inTable("users")
         .onUpdate("CASCADE")
-        .onDelete("CASCADE");
+        .onDelete("CASCADE")
+        .unique();
     })
     .createTable("clubs", (table) => {
       table.increments("club_id");
@@ -782,11 +787,80 @@ export async function up(knex: Knex): Promise<void> {
         .inTable("users")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
+    })
+    .createTable("tournaments", (table) => {
+      table.increments("tournament_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.boolean("is_active").notNullable();
+      table.string("tournament_name").notNullable();
+      table.date("start_date").notNullable();
+      table.date("end_date").notNullable();
+      table.date("application_deadline").notNullable();
+      table.string("min_birth_year").notNullable();
+      table.string("max_birth_year").notNullable();
+      table.string("tournament_gender").notNullable();
+      table.integer("application_fee").notNullable();
+      table.boolean("club_subscription_required").notNullable();
+      table.integer("max_players").notNullable();
+      table
+        .integer("club_user_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("users")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+
+    .createTable("tournament_participants", (table) => {
+      table.increments("tournament_participant_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table.boolean("is_active").notNullable();
+      table
+        .integer("tournament_id")
+        .unsigned()
+        .notNullable()
+        .references("tournament_id")
+        .inTable("tournaments")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("player_user_id")
+        .unsigned()
+        .notNullable()
+        .references("user_id")
+        .inTable("players")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+    })
+
+    .createTable("tournament_matches", (table) => {
+      table.increments("tournament_match_id");
+      table.dateTime("registered_at").defaultTo(knex.fn.now()).notNullable();
+      table
+        .integer("booking_id")
+        .unsigned()
+        .notNullable()
+        .references("booking_id")
+        .inTable("bookings")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
+      table
+        .integer("tournament_match_round_id")
+        .unsigned()
+        .notNullable()
+        .references("tournament_match_round_id")
+        .inTable("tournament_match_rounds")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
     });
 }
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema
+    .dropTableIfExists("tournament_matches")
+    .dropTableIfExists("tournament_participants")
+    .dropTableIfExists("tournaments")
     .dropTableIfExists("favourites")
     .dropTableIfExists("messages")
     .dropTableIfExists("club_subscriptions")
@@ -807,6 +881,7 @@ export async function down(knex: Knex): Promise<void> {
     .dropTableIfExists("clubs")
     .dropTableIfExists("players")
     .dropTableIfExists("users")
+    .dropTableIfExists("tournament_match_rounds")
     .dropTableIfExists("languages")
     .dropTableIfExists("booking_status_types")
     .dropTableIfExists("permission_types")

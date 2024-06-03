@@ -22,7 +22,8 @@ const RegisterPage = () => {
           <h3>
             <span className={styles["blue-span"]}>
               Benzersiz bir tenis deneyimi:
-            </span>{" "}
+            </span>
+            <br />
             Maçlar, eğitimler, kort rezervasyonları ve daha fazlası, hepsi bir
             arada.
           </h3>

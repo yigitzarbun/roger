@@ -51,6 +51,19 @@ clubsRouter.get(
   }
 );
 clubsRouter.get(
+  "/club-payment-details-exist/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const club = await clubsModel.clubPaymentDetailsExist(
+        Number(req.params.user_id)
+      );
+      res.status(200).json(club);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+clubsRouter.get(
   "/club-profile-details/:userId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

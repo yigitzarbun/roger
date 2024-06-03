@@ -15,7 +15,6 @@ interface ClubHeaderProps {
 }
 const ClubHeader = (props: ClubHeaderProps) => {
   const { myStaffRequests } = props;
-  const user = useAppSelector((store) => store?.user?.user);
 
   return (
     <nav className={styles["header-club-container"]}>
@@ -72,6 +71,16 @@ const ClubHeader = (props: ClubHeaderProps) => {
           }
         >
           Üyelikler
+        </NavLink>
+        <NavLink
+          to={paths.CLUB_TOURNAMENTS}
+          className={({ isActive }) =>
+            isActive
+              ? `${styles["active-nav-link-club"]}`
+              : `${styles["nav-link-club"]}`
+          }
+        >
+          Turnuvalar
         </NavLink>
       </div>
     </nav>
