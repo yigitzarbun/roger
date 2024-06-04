@@ -36,6 +36,7 @@ const paymentsModel = {
           "payments.subscription_price",
           "payments.payment_amount",
           "payments.payment_type_id",
+          "payments.tournament_admission_fee",
           "bookings.event_date",
           "bookings.event_time",
           "clubs.club_name",
@@ -101,7 +102,11 @@ const paymentsModel = {
           queryBuilder.andWhere(function () {
             this.where("payments.sender_inviter_id", filter.userId)
               .orWhere("payments.sender_invitee_id", filter.userId)
-              .orWhere("payments.sender_subscriber_id", filter.userId);
+              .orWhere("payments.sender_subscriber_id", filter.userId)
+              .orWhere(
+                "payments.sender_tournament_participant_id",
+                filter.userId
+              );
           });
         })
         .orderBy("payments.registered_at", "desc")
@@ -116,6 +121,7 @@ const paymentsModel = {
           "payments.subscription_price",
           "payments.payment_amount",
           "payments.payment_type_id",
+          "payments.tournament_admission_fee",
           "bookings.event_date", // Include event_date in GROUP BY
           "bookings.event_time",
           "clubs.club_name",
@@ -133,6 +139,7 @@ const paymentsModel = {
           "payments.subscription_price",
           "payments.payment_amount",
           "payments.payment_type_id",
+          "payments.payment_id",
           "bookings.event_date",
           "bookings.event_time",
           "clubs.club_name",
@@ -180,7 +187,11 @@ const paymentsModel = {
               qb.where("players.fname", "ilike", `%${filter.textSearch}%`)
                 .orWhere("players.lname", "ilike", `%${filter.textSearch}%`)
                 .orWhere("trainers.fname", "ilike", `%${filter.textSearch}%`)
-                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
+                .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`)
+                .orWhere(
+                  "payments.sender_tournament_participant_id",
+                  filter.userId
+                );
             });
           }
           if (filter.clubId > 0) {
@@ -211,6 +222,7 @@ const paymentsModel = {
           "payments.subscription_price",
           "payments.payment_amount",
           "payments.payment_type_id",
+          "payments.tournament_admission_fee",
           "bookings.event_date", // Include event_date in GROUP BY
           "bookings.event_time",
           "clubs.club_name",

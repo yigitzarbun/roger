@@ -75,6 +75,21 @@ playersRouter.get(
     }
   }
 );
+
+playersRouter.get(
+  "/player-payment-details-exist/:user_id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const player = await playersModel.playerPaymentDetailsExist(
+        Number(req.params.user_id)
+      );
+      res.status(200).json(player);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 playersRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

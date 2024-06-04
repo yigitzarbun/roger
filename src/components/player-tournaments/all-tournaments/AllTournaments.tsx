@@ -5,18 +5,17 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { useGetPaginatedTournamentsQuery } from "../../../api/endpoints/TournamentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
-import { AllTournamentsFilterModal } from "./all-tournaments-filter/AllTournamentsFilterModal";
-import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
+import AllTournamentsFilterModal from "./all-tournaments-filter/AllTournamentsFilterModal";
 import { AddTournamentParticipantModal } from "../modals/add-tournament-participant-modal/AddTournamentParticipantModal";
 
 interface AllTournamentsProps {
-  myTournaments: any[];
   refetchMyTournaments: () => void;
+  locations: any[];
+  clubs: any[];
 }
 
 const AllTournaments = (props: AllTournamentsProps) => {
-  const { myTournaments, refetchMyTournaments } = props;
+  const { refetchMyTournaments, locations, clubs } = props;
   const [currentPage, setCurrentPage] = useState(1);
   const [textSearch, setTextSearch] = useState("");
   const [locationId, setLocationId] = useState(null);
@@ -63,10 +62,6 @@ const AllTournaments = (props: AllTournamentsProps) => {
     setSubscriptionRequired(null);
   };
 
-  const { data: locations, isLoading: isLocationsLoading } =
-    useGetLocationsQuery({});
-
-  const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
   const {
     data: paginatedTournaments,
     isLoading: isPaginatedTournamentsLoading,
@@ -101,6 +96,8 @@ const AllTournaments = (props: AllTournamentsProps) => {
       1;
     setCurrentPage(prevPage);
   };
+  const date = new Date();
+  const currentYear = date.getFullYear();
 
   const [participateModal, setParticipateModal] = useState(false);
   const [selectedTournament, setSelectedTournament] = useState(null);
@@ -176,6 +173,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
               <th>Cinsiyet</th>
               <th>Katılımcı</th>
               <th>Üyelik Şartı</th>
+              <th>Yaş Aralığı</th>
             </tr>
           </thead>
           <tbody>
@@ -194,6 +192,9 @@ const AllTournaments = (props: AllTournamentsProps) => {
                 <td>{tournament.tournament_gender}</td>
                 <td>{tournament.participant_count}</td>
                 <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
+                <td>{`${currentYear - tournament?.min_birth_year} - ${
+                  currentYear - tournament?.max_birth_year
+                }`}</td>
                 <td>
                   <button
                     onClick={() =>

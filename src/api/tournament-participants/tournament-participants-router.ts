@@ -31,7 +31,20 @@ tournamentParticipantsRouter.get(
     }
   }
 );
-
+tournamentParticipantsRouter.get(
+  "/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const filteredPlayers = await tournamentParticipantsModel.getByFilter(
+        filter
+      );
+      res.status(200).json(filteredPlayers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 tournamentParticipantsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -50,7 +63,7 @@ tournamentParticipantsRouter.put(
     try {
       await tournamentParticipantsModel.update(req.body);
       const updatedTournament = await tournamentParticipantsModel.getById(
-        req.body.tournamentParticipantId
+        req.body.tournament_participant_id
       );
       res.status(200).json(updatedTournament);
     } catch (error) {

@@ -87,6 +87,7 @@ const tournamentsModel = {
         })
         .andWhere("tournaments.is_active", true)
         .andWhere("tournaments.end_date", ">", today) // Compare end_date with today's date
+        .andWhere("tournament_participants.is_active", true)
         .groupBy(
           "tournaments.tournament_id",
           "clubs.club_name",
@@ -132,6 +133,7 @@ const tournamentsModel = {
           }
         })
         .andWhere("tournaments.is_active", true)
+        .andWhere("tournament_participants.is_active", true)
         .andWhere("tournaments.end_date", ">", today);
 
       const total = parseInt(countResult[0].total, 10);

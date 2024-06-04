@@ -37,6 +37,9 @@ export const playersSlice = createApi({
     getPlayerByUserId: builder.query({
       query: (user_id) => `/players/user/${user_id}`,
     }),
+    getPlayerPaymentDetailsExist: builder.query({
+      query: (user_id) => `/players/player-payment-details-exist/${user_id}`,
+    }),
     getPlayerProfileDetails: builder.query({
       query: (user_id) => `/players/player-profile-details/${user_id}`,
     }),
@@ -127,6 +130,7 @@ export const {
   useGetPlayerByPlayerIdQuery,
   useGetPlayerByUserIdQuery,
   useGetPlayerProfileDetailsQuery,
+  useGetPlayerPaymentDetailsExistQuery,
   useGetPlayersByFilterQuery,
   useAddPlayerMutation,
   useUpdatePlayerMutation,

@@ -3,10 +3,19 @@ import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import { useGetClubByUserIdQuery } from "../../../../api/endpoints/ClubsApi";
 import { localUrl } from "../../../../common/constants/apiConstants";
-import { useAddTournamentParticipantMutation } from "../../../../api/endpoints/TournamentParticipantsApi";
+import {
+  useAddTournamentParticipantMutation,
+  useGetTournamentParticipantsByFilterQuery,
+} from "../../../../api/endpoints/TournamentParticipantsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { useAddPaymentMutation } from "../../../../api/endpoints/PaymentsApi";
 import { toast } from "react-toastify";
+import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayerPaymentDetailsExistQuery,
+} from "../../../../api/endpoints/PlayersApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface AddTournamentParticipantModalProps {
   participateModal: boolean;
@@ -25,7 +34,11 @@ export const AddTournamentParticipantModal = (
     selectedClubUserId,
     refetchMyTournaments,
   } = props;
+
   const user = useAppSelector((store) => store?.user?.user);
+
+  const date = new Date();
+  const currentYear = date.getFullYear();
 
   const [addTournamentParticipant, { isSuccess: isAddParticipantSuccess }] =
     useAddTournamentParticipantMutation({});
@@ -36,26 +49,78 @@ export const AddTournamentParticipantModal = (
   const { data: selectedClub, isLoading: isSelectedClubLoading } =
     useGetClubByUserIdQuery(selectedClubUserId);
 
-  console.log(selectedClub);
+  const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
+    useGetPlayerByUserIdQuery(user?.user?.user_id);
+
+  const isSubscriptionRequired = selectedTournament?.club_subscription_required;
+
+  const { data: isPlayerSubscribed, isLoading: isPlayerSubscribedLoading } =
+    useGetClubSubscriptionsByFilterQuery({
+      club_id: selectedClubUserId,
+      player_id: user?.user?.user_id,
+      is_active: true,
+    });
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: isPlayerAlreadyParticipant,
+    isLoading: isPlayerAlreadyParticipantLoading,
+  } = useGetTournamentParticipantsByFilterQuery({
+    tournament_id: selectedTournament?.tournament_id,
+    player_user_id: user?.user?.user_id,
+    is_active: true,
+  });
 
   const handleAddParticipant = () => {
-    // validations
-    // club subscription required?
-    // player payment details exist
-    // gender suitable
-    // age suitable
-    // max katılımcı sayısı
+    if (isSubscriptionRequired && isPlayerSubscribed?.length === 0) {
+      toast.error("Katılım için kulübe üye olmanız gerekmektedir");
+      return false;
+    } else if (!playerPaymentDetailsExist) {
+      toast.error("Ödeme bilgileriniz eksik");
 
-    // if validations pass, add payment
-    const paymentData = {
-      payment_amount: selectedTournament?.application_fee,
-      payment_status: "success",
-      payment_type_id: 6,
-      recipient_club_id: selectedClubUserId,
-      sender_tournament_participant_id: user?.user?.user_id,
-    };
+      return false;
+    } else if (
+      currentPlayer?.[0]?.gender !== selectedTournament?.tournament_gender
+    ) {
+      toast.error("Turnuva cinsiyeti uygun değil");
 
-    addPayment(paymentData);
+      return false;
+    } else if (
+      Number(currentPlayer?.[0]?.birth_year) >
+        Number(selectedTournament?.min_birth_year) ||
+      Number(currentPlayer?.[0]?.birth_year) <
+        Number(selectedTournament?.max_birth_year)
+    ) {
+      toast.error("Yaşınız turnuva için uygun değil");
+
+      return false;
+    } else if (
+      Number(selectedTournament?.maxPlayers) -
+        Number(selectedTournament?.participant_count) ===
+      0
+    ) {
+      toast.error("Kontenjan yetersiz");
+
+      return false;
+    } else if (isPlayerAlreadyParticipant?.length > 0) {
+      toast.error("Turnuvada zaten katılımcısınız");
+
+      return false;
+    } else {
+      const paymentData = {
+        payment_amount: selectedTournament?.application_fee,
+        payment_status: "success",
+        payment_type_id: 6,
+        recipient_club_id: selectedClubUserId,
+        sender_tournament_participant_id: user?.user?.user_id,
+      };
+
+      addPayment(paymentData);
+    }
   };
 
   useEffect(() => {
@@ -78,6 +143,15 @@ export const AddTournamentParticipantModal = (
     }
   }, [isAddParticipantSuccess]);
 
+  if (
+    isSelectedClubLoading ||
+    isCurrentPlayerLoading ||
+    isPlayerSubscribedLoading ||
+    isPlayerPaymentDetailsExistLoading ||
+    isPlayerAlreadyParticipantLoading
+  ) {
+    return <PageLoading />;
+  }
   return (
     <ReactModal
       isOpen={participateModal}
@@ -123,7 +197,9 @@ export const AddTournamentParticipantModal = (
               <td>{selectedTournament?.end_date?.slice(0, 10)}</td>
               <td>{`${selectedTournament?.application_fee} TL`}</td>
               <td>{selectedTournament?.tournament_gender}</td>
-              <td>{`${selectedTournament?.min_birth_year} - ${selectedTournament?.max_birth_year}`}</td>
+              <td>{`${currentYear - selectedTournament?.min_birth_year} - ${
+                currentYear - selectedTournament?.max_birth_year
+              }`}</td>
             </tr>
           </tbody>
         </table>

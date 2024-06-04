@@ -2,37 +2,29 @@ import React, { ChangeEvent } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 
-interface AllTournamentsFilterModalProps {
+interface MyTournamentsFilterModalProps {
   textSearch: string;
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClear: () => void;
-  allTournamentsFilterModal: boolean;
-  handleCloseAllTournamentsModal: () => void;
+  myTournamentsFilterModal: boolean;
+  handleCloseMyTournamentsModal: () => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
-  handleSubscriptionRequired: (event: ChangeEvent<HTMLSelectElement>) => void;
   locationId: number;
-  gender: string;
   clubId: number;
-  subscriptionRequired: boolean | null;
   locations: any[];
   handleClub: (event: ChangeEvent<HTMLSelectElement>) => void;
   clubs: any[];
 }
-const AllTournamentsFilterModal = (props: AllTournamentsFilterModalProps) => {
+const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
   const {
     textSearch,
     handleTextSearch,
     handleClear,
-    allTournamentsFilterModal,
-    handleCloseAllTournamentsModal,
+    myTournamentsFilterModal,
+    handleCloseMyTournamentsModal,
     handleLocation,
-    handleGender,
-    handleSubscriptionRequired,
-    gender,
     locationId,
     clubId,
-    subscriptionRequired,
     locations,
     handleClub,
     clubs,
@@ -40,15 +32,15 @@ const AllTournamentsFilterModal = (props: AllTournamentsFilterModalProps) => {
 
   return (
     <ReactModal
-      isOpen={allTournamentsFilterModal}
-      onRequestClose={handleCloseAllTournamentsModal}
+      isOpen={myTournamentsFilterModal}
+      onRequestClose={handleCloseMyTournamentsModal}
       shouldCloseOnOverlayClick={false}
       className={styles["modal-container"]}
       overlayClassName={styles["modal-overlay"]}
     >
       <div
         className={styles["overlay"]}
-        onClick={handleCloseAllTournamentsModal}
+        onClick={handleCloseMyTournamentsModal}
       />
       <div className={styles["modal-content"]}>
         <h3>Turnuvaları Filtrele</h3>
@@ -96,54 +88,12 @@ const AllTournamentsFilterModal = (props: AllTournamentsFilterModalProps) => {
               </select>
             </div>
           </div>
-          <div className={styles["input-outer-container"]}>
-            <div className={styles["input-container"]}>
-              <select
-                onChange={handleGender}
-                value={gender ?? ""}
-                className="input-element"
-              >
-                <option key={1} value="">
-                  -- Cinsiyet --
-                </option>
-                <option key={2} value={"female"}>
-                  Kadın
-                </option>
-                <option key={3} value={"male"}>
-                  Erkek
-                </option>
-              </select>
-            </div>
-            <div className={styles["input-container"]}>
-              <select
-                onChange={handleSubscriptionRequired}
-                value={
-                  subscriptionRequired === true
-                    ? "true"
-                    : subscriptionRequired === false
-                    ? "false"
-                    : null
-                }
-                className="input-element"
-              >
-                <option key={1} value={"null"}>
-                  -- Tüm Turnuvalar --
-                </option>
-                <option key={2} value={"true"}>
-                  Üyelik Şartı Var
-                </option>
-                <option key={3} value={"false"}>
-                  Üyelik Şartı Yok
-                </option>
-              </select>
-            </div>
-          </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
               Temizle
             </button>
             <button
-              onClick={handleCloseAllTournamentsModal}
+              onClick={handleCloseMyTournamentsModal}
               className={styles["submit-button"]}
             >
               Uygula
@@ -154,4 +104,5 @@ const AllTournamentsFilterModal = (props: AllTournamentsFilterModalProps) => {
     </ReactModal>
   );
 };
-export default AllTournamentsFilterModal;
+
+export default MyTournamentsFilterModal;
