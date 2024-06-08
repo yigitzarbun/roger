@@ -94,7 +94,8 @@
     width: 100%;
     text-align: left;
     border-collapse: collapse;
-    .tournament-row {
+
+    .player-row {
       border-bottom: 1px solid $roger-border-color;
 
       td {
@@ -102,36 +103,40 @@
         vertical-align: middle;
         padding: 10px;
         height: 12vh;
+
+        .remove-fav-icon {
+          color: $roger-blue;
+          cursor: pointer;
+          font-size: 1.5rem;
+          vertical-align: middle;
+        }
+        .add-fav-icon {
+          cursor: pointer;
+          font-size: 1.5rem;
+          vertical-align: middle;
+        }
+        .add-fav-icon:hover {
+          color: $roger-blue;
+        }
       }
 
-      .tournament-name {
+      .player-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .player-name {
         color: var(--text-color);
         text-decoration: none;
       }
-      .done {
-        color: $roger-green;
-        font-size: 1.2rem;
-      }
-      .blocked {
-        color: $roger-red;
-      }
     }
 
-    .book-button {
-      background-color: $roger-black-dark;
-      border: none;
-      width: 100px;
-      padding: $roger-button-padding;
-      border-radius: $roger-border-radius;
-      font-size: 0.9rem;
+    .icon {
       cursor: pointer;
-      color: white;
-      text-decoration: none;
-      text-align: center;
-    }
-
-    .book-button:hover {
-      background-color: $roger-black-light;
     }
   }
 

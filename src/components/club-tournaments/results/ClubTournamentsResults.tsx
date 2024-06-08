@@ -129,15 +129,15 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 className={styles["tournament-row"]}
               >
                 <td>{tournament.tournament_name}</td>
-                <td>{tournament.start_date.slice(0, 9)}</td>
-                <td>{tournament.end_date.slice(0, 9)}</td>
+                <td>{tournament.start_date.slice(0, 10)}</td>
+                <td>{tournament.end_date.slice(0, 10)}</td>
                 <td>{getAge(Number(tournament.min_birth_year))}</td>
                 <td>{getAge(Number(tournament.max_birth_year))}</td>
                 <td>{tournament.tournament_gender}</td>
                 <td>{`${tournament.application_fee} TL`}</td>
                 <td>{tournament.participant_count}</td>
                 <td>{tournament.max_players}</td>
-                <td>{tournament.application_deadline.slice(0, 9)}</td>
+                <td>{tournament.application_deadline.slice(0, 10)}</td>
                 <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
                 <td>
                   <button className={styles["edit-button"]}>Düzenle</button>

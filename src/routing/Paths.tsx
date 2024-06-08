@@ -33,4 +33,5 @@ export default {
   MESSAGES: "/mesajlar",
   CLUB_TOURNAMENTS: "/kulup-turnuvalar",
   PLAYER_TOURNAMENTS: "/oyuncu-turnuvalar",
+  TOURNAMENT: "/turnuva/",
 } as Paths;

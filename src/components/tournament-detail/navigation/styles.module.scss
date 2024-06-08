@@ -1,0 +1,37 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.nav-container {
+  display: flex;
+  border-radius: $roger-border-radius;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  column-gap: 1vw;
+
+  .active-button {
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    border: 1px solid;
+    border-color: $roger-blue;
+    width: 25%;
+    background-color: $roger-blue;
+    color: white;
+    font-weight: bold;
+  }
+  .inactive-button {
+    padding: $roger-button-padding;
+    border-radius: $roger-border-radius;
+    border: 1px solid;
+    border-color: var(--box-border-color);
+    width: 25%;
+    background-color: var(--navigation-box-background-color);
+    cursor: pointer;
+    color: var(--text-color);
+    font-weight: bold;
+  }
+  .inactive-button:hover {
+    border-color: $roger-blue;
+  }
+}

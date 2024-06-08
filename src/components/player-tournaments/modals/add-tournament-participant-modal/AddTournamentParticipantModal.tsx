@@ -34,11 +34,27 @@ export const AddTournamentParticipantModal = (
     selectedClubUserId,
     refetchMyTournaments,
   } = props;
-
   const user = useAppSelector((store) => store?.user?.user);
 
   const date = new Date();
   const currentYear = date.getFullYear();
+
+  const applicationDeadline = new Date(
+    selectedTournament?.application_deadline
+  );
+
+  function isSameOrBefore(date1, date2) {
+    return (
+      date1.getFullYear() < date2.getFullYear() ||
+      (date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() < date2.getMonth()) ||
+      (date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() <= date2.getDate())
+    );
+  }
+
+  const canStillApply = isSameOrBefore(date, applicationDeadline);
 
   const [addTournamentParticipant, { isSuccess: isAddParticipantSuccess }] =
     useAddTournamentParticipantMutation({});
@@ -109,6 +125,9 @@ export const AddTournamentParticipantModal = (
     } else if (isPlayerAlreadyParticipant?.length > 0) {
       toast.error("Turnuvada zaten katılımcısınız");
 
+      return false;
+    } else if (!canStillApply) {
+      toast.error("Başvuru tarihi geçti");
       return false;
     } else {
       const paymentData = {

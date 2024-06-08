@@ -4,6 +4,8 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
 import MyTournamentsFilterModal from "./my-tournaments-filter/MyTournamentsFilterModal";
 import LeaveTournamentModal from "../modals/leave-tournament-modal/LeaveTournamentModal";
+import Paths from "../../../routing/Paths";
+import { Link } from "react-router-dom";
 
 interface PlayerActiveTournamentsProps {
   myTournaments: any;
@@ -69,7 +71,7 @@ const PlayerActiveTournaments = (props: PlayerActiveTournamentsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Turnuvalar</h2>
+          <h2 className={styles["result-title"]}>Aktif Turnuvalarım</h2>
           {myTournaments?.tournaments?.length > 0 && (
             <FaFilter
               onClick={handleOpenMyTournamentsModal}
@@ -116,7 +118,14 @@ const PlayerActiveTournaments = (props: PlayerActiveTournamentsProps) => {
                 key={tournament.tournament_id}
                 className={styles["tournament-row"]}
               >
-                <td>{tournament.tournament_name}</td>
+                <td>
+                  <Link
+                    to={`${Paths.TOURNAMENT}${tournament.tournament_id}`}
+                    className={styles["tournament-name"]}
+                  >
+                    {tournament.tournament_name}
+                  </Link>
+                </td>
                 <td>{tournament.club_name}</td>
                 <td>{tournament.location_name}</td>
                 <td>{tournament.start_date?.slice(0, 10)}</td>

@@ -12,13 +12,144 @@ const tournamentsModel = {
     );
     return tournament;
   },
-  async getByClubUserId(clubUserId: number) {
+  async getTournamentDetails(filter) {
+    const playersPerPage = 4;
+    const offset = (filter.currentPage - 1) * playersPerPage;
+    try {
+      // Fetching tournament details along with participant count
+      const tournamentDetails = await db
+        .select(
+          "tournaments.tournament_id",
+          "tournaments.is_active as tournament_is_active",
+          "tournaments.tournament_name",
+          "tournaments.start_date",
+          "tournaments.end_date",
+          "tournaments.application_deadline",
+          "tournaments.min_birth_year",
+          "tournaments.max_birth_year",
+          "tournaments.tournament_gender",
+          "tournaments.application_fee",
+          "tournaments.club_subscription_required",
+          "tournaments.max_players",
+          "clubs.user_id as club_user_id",
+          "clubs.club_name as club_name",
+          "clubs.club_address",
+          "clubs.club_id as club_club_id",
+          "locations.location_name",
+          db.raw(
+            "COUNT(DISTINCT CASE WHEN tournament_participants.is_active = true THEN tournament_participants.tournament_participant_id END) as participant_count"
+          )
+        )
+        .from("tournaments")
+        .leftJoin(
+          "tournament_participants",
+          "tournament_participants.tournament_id",
+          "tournaments.tournament_id"
+        )
+        .leftJoin("clubs", "clubs.user_id", "tournaments.club_user_id")
+        .leftJoin("locations", "locations.location_id", "clubs.location_id")
+        .leftJoin("users", "users.user_id", "tournaments.club_user_id")
+        .where("tournaments.tournament_id", filter.tournamentId)
+        .andWhere("tournaments.is_active", true)
+        .andWhere("users.user_status_type_id", 1)
+        .groupBy(
+          "tournaments.tournament_id",
+          "tournaments.is_active",
+          "tournaments.tournament_name",
+          "tournaments.start_date",
+          "tournaments.end_date",
+          "tournaments.application_deadline",
+          "tournaments.min_birth_year",
+          "tournaments.max_birth_year",
+          "tournaments.tournament_gender",
+          "tournaments.application_fee",
+          "tournaments.club_subscription_required",
+          "tournaments.max_players",
+          "clubs.user_id",
+          "clubs.club_name",
+          "clubs.club_address",
+          "clubs.club_id",
+          "locations.location_name"
+        )
+        .first(); // Use first() to get a single tournament detail
+
+      // Fetching paginated players for the tournament
+      const players = await db
+        .select(
+          "players.user_id as player_user_id",
+          "players.fname",
+          "players.lname",
+          "players.birth_year",
+          "players.gender",
+          "player_levels.player_level_name",
+          "players.image"
+        )
+        .from("tournament_participants")
+        .leftJoin(
+          "players",
+          "players.user_id",
+          "tournament_participants.player_user_id"
+        )
+        .leftJoin(
+          "player_levels",
+          "player_levels.player_level_id",
+          "players.player_level_id"
+        )
+        .leftJoin("users", "users.user_id", "players.user_id")
+        .where("tournament_participants.tournament_id", filter.tournamentId)
+        .andWhere("users.user_status_type_id", 1)
+        .andWhere("tournament_participants.is_active", true)
+        .andWhere((builder) => {
+          if (filter.textSearch && filter.textSearch !== "") {
+            builder
+              .where("players.fname", "ilike", `%${filter.textSearch}%`)
+              .orWhere("players.lname", "ilike", `%${filter.textSearch}%`);
+          }
+          if (filter.playerLevelId && filter.playerLevelId !== "null") {
+            builder.where("players.player_level_id", filter.playerLevelId);
+          }
+        })
+        .offset(offset)
+        .limit(playersPerPage);
+
+      // Fetching the total count of players for pagination
+      const totalPlayersResult = await db("tournament_participants")
+        .countDistinct("players.user_id as total")
+        .leftJoin(
+          "players",
+          "players.user_id",
+          "tournament_participants.player_user_id"
+        )
+        .leftJoin("users", "users.user_id", "players.user_id")
+        .where("tournament_participants.tournament_id", filter.tournamentId)
+        .andWhere("users.user_status_type_id", 1)
+        .andWhere("tournament_participants.is_active", true)
+        .first();
+
+      const totalPlayers = parseInt(totalPlayersResult.total, 10);
+      const totalPages = Math.ceil(totalPlayers / playersPerPage);
+
+      const data = {
+        tournament: tournamentDetails,
+        players: players,
+        totalPages: totalPages,
+      };
+
+      return data;
+    } catch (error) {
+      console.log("Error fetching tournament details: ", error);
+      throw error; // Rethrow the error for further handling if needed
+    }
+  },
+  async getByClubUserId(clubUserId) {
+    const today = new Date();
+
     try {
       const tournaments = await db
         .select(
           "tournaments.*",
           db.raw(
-            "COUNT(DISTINCT tournament_participants.tournament_participant_id) as participant_count"
+            "COUNT(DISTINCT CASE WHEN tournament_participants.is_active = true THEN tournament_participants.tournament_participant_id END) as participant_count"
           )
         )
         .from("tournaments")
@@ -29,7 +160,9 @@ const tournamentsModel = {
             "tournaments.tournament_id"
           );
         })
-        .where("club_user_id", clubUserId)
+        .where("tournaments.club_user_id", clubUserId)
+        .andWhere("tournaments.is_active", true)
+        .andWhere("tournaments.end_date", ">=", today)
         .groupBy("tournaments.tournament_id");
       return tournaments;
     } catch (error) {
@@ -48,7 +181,7 @@ const tournamentsModel = {
           "clubs.user_id as clubUserId",
           "locations.location_name",
           db.raw(
-            "COUNT(DISTINCT tournament_participants.tournament_participant_id) as participant_count"
+            "COUNT(DISTINCT CASE WHEN tournament_participants.is_active = true THEN tournament_participants.tournament_participant_id END) as participant_count"
           )
         )
         .from("tournaments")
@@ -86,8 +219,7 @@ const tournamentsModel = {
           }
         })
         .andWhere("tournaments.is_active", true)
-        .andWhere("tournaments.end_date", ">", today) // Compare end_date with today's date
-        .andWhere("tournament_participants.is_active", true)
+        .andWhere("tournaments.end_date", ">=", today) // Compare end_date with today's date
         .groupBy(
           "tournaments.tournament_id",
           "clubs.club_name",
@@ -133,8 +265,7 @@ const tournamentsModel = {
           }
         })
         .andWhere("tournaments.is_active", true)
-        .andWhere("tournament_participants.is_active", true)
-        .andWhere("tournaments.end_date", ">", today);
+        .andWhere("tournaments.end_date", ">=", today);
 
       const total = parseInt(countResult[0].total, 10);
       const totalPages = Math.ceil(total / tournamentsPerPage);

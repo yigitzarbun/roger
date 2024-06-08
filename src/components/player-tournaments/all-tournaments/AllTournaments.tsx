@@ -7,6 +7,8 @@ import { useGetPaginatedTournamentsQuery } from "../../../api/endpoints/Tourname
 import PageLoading from "../../../components/loading/PageLoading";
 import AllTournamentsFilterModal from "./all-tournaments-filter/AllTournamentsFilterModal";
 import { AddTournamentParticipantModal } from "../modals/add-tournament-participant-modal/AddTournamentParticipantModal";
+import { Link } from "react-router-dom";
+import Paths from "../../../routing/Paths";
 
 interface AllTournamentsProps {
   refetchMyTournaments: () => void;
@@ -182,7 +184,14 @@ const AllTournaments = (props: AllTournamentsProps) => {
                 key={tournament.tournament_id}
                 className={styles["tournament-row"]}
               >
-                <td>{tournament.tournament_name}</td>
+                <td>
+                  <Link
+                    to={`${Paths.TOURNAMENT}${tournament.tournament_id}`}
+                    className={styles["tournament-name"]}
+                  >
+                    {tournament.tournament_name}
+                  </Link>
+                </td>
                 <td>{tournament.club_name}</td>
                 <td>{tournament.location_name}</td>
                 <td>{tournament.start_date?.slice(0, 10)}</td>

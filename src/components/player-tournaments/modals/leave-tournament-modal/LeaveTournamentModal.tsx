@@ -23,9 +23,7 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
     refetchMyTournaments,
   } = props;
 
-  console.log(selectedTournament);
   const user = useAppSelector((store) => store?.user?.user);
-  console.log(user?.user?.user_id);
 
   const date = new Date();
   const currentYear = date.getFullYear();

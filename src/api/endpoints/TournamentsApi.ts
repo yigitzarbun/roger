@@ -32,6 +32,10 @@ export const tournamentsSlice = createApi({
       query: (filter) =>
         `/tournaments/paginated?${new URLSearchParams(filter)}`,
     }),
+    getTournamentDetails: builder.query({
+      query: (filter) =>
+        `/tournaments/tournament-details?${new URLSearchParams(filter)}`,
+    }),
     addTournament: builder.mutation({
       query: (tournament) => ({
         url: "/tournaments",
@@ -53,6 +57,7 @@ export const {
   useGetTournamentsQuery,
   useGetTournamentByClubUserIdQuery,
   useGetPaginatedTournamentsQuery,
+  useGetTournamentDetailsQuery,
   useAddTournamentMutation,
   useUpdateTournamentMutation,
 } = tournamentsSlice;

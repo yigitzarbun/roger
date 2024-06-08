@@ -157,6 +157,9 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
                       } TL`}
                     </td>
                   )}
+                  {payment.payment_type_id === 6 && (
+                    <td>{`${payment.payment_amount} TL`}</td>
+                  )}
                 </tr>
               ))}
             </tbody>

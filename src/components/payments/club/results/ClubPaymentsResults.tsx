@@ -128,10 +128,13 @@ const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
                 <td>
                   {payment.payment_type_id === 5
                     ? payment.subscription_price
-                    : (payment.payment_type_id === 1 ||
-                        payment.payment_type_id === 2 ||
-                        payment.payment_type_id === 3) &&
-                      payment.court_price}{" "}
+                    : payment.payment_type_id === 1 ||
+                      payment.payment_type_id === 2 ||
+                      payment.payment_type_id === 3
+                    ? payment.court_price
+                    : payment.payment_type_id === 6
+                    ? payment.payment_amount
+                    : "-"}{" "}
                   TL
                 </td>
                 <td>

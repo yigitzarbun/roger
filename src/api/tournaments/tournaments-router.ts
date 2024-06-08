@@ -45,6 +45,19 @@ tournamentsRouter.get(
   }
 );
 
+tournamentsRouter.get(
+  "/tournament-details",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const tournament = await tournamentsModel.getTournamentDetails(filter);
+      res.status(200).json(tournament);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 tournamentsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {

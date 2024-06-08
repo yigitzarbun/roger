@@ -52,7 +52,10 @@ const ClubTournaments = lazy(
   () => import("../modules/club-tournaments/ClubTournaments")
 );
 const PlayerTournaments = lazy(
-  () => import("../modules/tournaments/Tournaments")
+  () => import("../modules/player-tournaments/Tournaments")
+);
+const TournamentDetails = lazy(
+  () => import("../modules/tournament/TournamentDetails")
 );
 
 const ScrollToTop = () => {
@@ -121,6 +124,10 @@ const routes: Route[] = [
   {
     path: paths.PLAYER_TOURNAMENTS,
     element: getRouteElement(PlayerTournaments),
+  },
+  {
+    path: `${paths.TOURNAMENT}:tournament_id`,
+    element: getRouteElement(TournamentDetails),
   },
 ];
 
