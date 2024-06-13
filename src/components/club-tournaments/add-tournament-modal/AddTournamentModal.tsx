@@ -5,10 +5,7 @@ import ReactModal from "react-modal";
 import { toast } from "react-toastify";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
-import {
-  useAddTournamentMutation,
-  useGetTournamentByClubUserIdQuery,
-} from "../../../api/endpoints/TournamentsApi";
+import { useAddTournamentMutation } from "../../../api/endpoints/TournamentsApi";
 
 interface AddTournamentModalProps {
   addTournamentModal: boolean;

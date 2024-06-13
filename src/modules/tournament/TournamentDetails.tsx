@@ -3,7 +3,6 @@ import styles from "./styles.module.scss";
 import { useParams } from "react-router-dom";
 import { useGetTournamentDetailsQuery } from "../../api/endpoints/TournamentsApi";
 import TournamentDetail from "../../components/tournament-detail/results/TournamentDetail";
-import { useAppSelector } from "../../store/hooks";
 import { useGetPlayerLevelsQuery } from "../../api/endpoints/PlayerLevelsApi";
 import TournamentDetailsNavigation from "../../components/tournament-detail/navigation/TournamentDetailsNavigation";
 import TournamentDetailsInfo from "../../components/tournament-detail/details/TournamentDetailsInfo";
@@ -11,8 +10,7 @@ import PageLoading from "../../components/loading/PageLoading";
 
 const TournamentDetails = () => {
   const params = useParams();
-  const tournamentId = params?.tournament_id;
-  const user = useAppSelector((store) => store?.user?.user);
+  const tournamentId = Number(params?.tournament_id);
   const [currentPage, setCurrentPage] = useState(1);
   const [textSearch, setTextSearch] = useState("");
   const [playerLevelId, setPlayerLevelId] = useState(null);
@@ -32,15 +30,16 @@ const TournamentDetails = () => {
 
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
+
   const {
     data: tournamentDetails,
     isLoading: isTournamentDetailsLoading,
     refetch: refetchTournamentDetails,
   } = useGetTournamentDetailsQuery({
-    currentPage: 1,
+    currentPage: currentPage,
     textSearch: textSearch,
     playerLevelId: playerLevelId,
-    tournamentId: tournamentId,
+    tournamentId: Number(tournamentId),
   });
 
   const handleTournamentPage = (e) => {
@@ -81,7 +80,6 @@ const TournamentDetails = () => {
       {display === "players" && (
         <TournamentDetail
           tournamentDetails={tournamentDetails}
-          user={user}
           textSearch={textSearch}
           playerLevelId={playerLevelId}
           currentPage={currentPage}
@@ -91,6 +89,7 @@ const TournamentDetails = () => {
           handleNextPage={handleNextPage}
           handlePrevPage={handlePrevPage}
           playerLevels={playerLevels}
+          handleClear={handleClear}
         />
       )}
       {display === "details" && (

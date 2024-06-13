@@ -1,0 +1,29 @@
+@import "/src/common/styles/colors.scss";
+@import "/src/common/styles/common.scss";
+
+.rounds-container {
+  display: flex;
+  column-gap: 2vw;
+  .active-round {
+    background-color: $roger-blue;
+    padding: 5px;
+    width: 14%;
+    height: 30px;
+    border-radius: $roger-border-radius;
+    border: none;
+    cursor: pointer;
+    color: white;
+    text-align: center;
+  }
+  .passive-round {
+    background-color: $roger-black-dark;
+    padding: 5px;
+    width: 14%;
+    height: 30px;
+    border-radius: $roger-border-radius;
+    border: none;
+    cursor: pointer;
+    color: white;
+    text-align: center;
+  }
+}

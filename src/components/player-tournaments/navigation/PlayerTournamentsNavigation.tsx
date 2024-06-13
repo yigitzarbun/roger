@@ -7,11 +7,13 @@ import { useAppSelector } from "../../../store/hooks";
 interface PlayerTournamentsNavigationProps {
   display: string;
   handleDisplay: (value: string) => void;
+  myTournaments: any;
 }
 
 const PlayerTournamentsNavigation = ({
   display,
   handleDisplay,
+  myTournaments,
 }: PlayerTournamentsNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -36,7 +38,10 @@ const PlayerTournamentsNavigation = ({
         }
       >
         <span>Katıldığım Turnuvalar</span>
-        <span className={styles.notification}> (2)</span>
+        {"  "}
+        <span className={styles.notification}>
+          ({myTournaments?.tournaments?.length})
+        </span>
       </button>
     </div>
   );

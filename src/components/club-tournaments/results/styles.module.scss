@@ -176,21 +176,19 @@
       }
     }
 
-    .edit-button {
-      background-color: $roger-black-dark;
+    .submit-button {
+      background-color: var(--primary-button-background-color);
+      color: white;
       border: none;
-      width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
       cursor: pointer;
-      color: white;
-      text-decoration: none;
-      text-align: center;
+      height: 40px;
+      width: 100px;
     }
-
-    .edit-button:hover {
-      background-color: $roger-black-light;
+    .submit-button:hover {
+      background-color: $roger-blue;
     }
   }
 

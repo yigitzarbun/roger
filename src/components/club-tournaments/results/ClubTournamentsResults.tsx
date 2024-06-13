@@ -6,7 +6,7 @@ import { User } from "../../../store/slices/authSlice";
 import { useGetClubPaymentDetailsExistQuery } from "../../../api/endpoints/ClubsApi";
 import { useGetClubCourtsQuery } from "../../../api/endpoints/CourtsApi";
 import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Paths from "../../../routing/Paths";
 import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../api/endpoints/BanksApi";
@@ -128,7 +128,11 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 key={tournament.tournament_id}
                 className={styles["tournament-row"]}
               >
-                <td>{tournament.tournament_name}</td>
+                <Link
+                  to={`${Paths.CLUB_TOURNAMENT_FIXTURE}${tournament.tournament_id}`}
+                >
+                  <td>{tournament.tournament_name}</td>
+                </Link>
                 <td>{tournament.start_date.slice(0, 10)}</td>
                 <td>{tournament.end_date.slice(0, 10)}</td>
                 <td>{getAge(Number(tournament.min_birth_year))}</td>
@@ -140,7 +144,10 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 <td>{tournament.application_deadline.slice(0, 10)}</td>
                 <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
                 <td>
-                  <button className={styles["edit-button"]}>Düzenle</button>
+                  <button className={styles["submit-button"]}>Düzenle</button>
+                </td>
+                <td>
+                  <button className={styles["submit-button"]}>Fikstür</button>
                 </td>
               </tr>
             ))}

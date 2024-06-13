@@ -87,6 +87,7 @@ const Tournaments = () => {
       <PlayerTournamentsNavigation
         display={display}
         handleDisplay={handleDisplay}
+        myTournaments={myTournaments}
       />
       {display === "all-tournaments" && (
         <AllTournaments

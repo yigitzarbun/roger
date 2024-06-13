@@ -40,6 +40,8 @@ import languagesRouter from "./src/api/languages/languages-router";
 import messagesRouter from "./src/api/messages/messages-router";
 import tournamentsRouter from "./src/api/tournaments/tournaments-router";
 import tournamentParticipantsRouter from "./src/api/tournament-participants/tournament-participants-router";
+import tournamentMatchesRouter from "./src/api/tournament-matches/tournament-matches-router";
+import tournamentMatchRoundsRouter from "./src/api/tournament-match-rounds/tournament-match-rounds-router";
 
 import multer from "multer";
 
@@ -214,6 +216,8 @@ server.use("/api/languages", languagesRouter);
 server.use("/api/messages", messagesRouter);
 server.use("/api/tournaments", tournamentsRouter);
 server.use("/api/tournament-participants", tournamentParticipantsRouter);
+server.use("/api/tournament-matches", tournamentMatchesRouter);
+server.use("/api/tournament-match-rounds", tournamentMatchRoundsRouter);
 
 server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");

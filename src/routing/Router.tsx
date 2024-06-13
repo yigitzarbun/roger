@@ -57,6 +57,9 @@ const PlayerTournaments = lazy(
 const TournamentDetails = lazy(
   () => import("../modules/tournament/TournamentDetails")
 );
+const ClubTournamentFixture = lazy(
+  () => import("../modules/club-tournament-fixture/ClubTournamentFixture")
+);
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -128,6 +131,10 @@ const routes: Route[] = [
   {
     path: `${paths.TOURNAMENT}:tournament_id`,
     element: getRouteElement(TournamentDetails),
+  },
+  {
+    path: `${paths.CLUB_TOURNAMENT_FIXTURE}:tournament_id`,
+    element: getRouteElement(ClubTournamentFixture),
   },
 ];
 

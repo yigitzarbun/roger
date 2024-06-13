@@ -30,7 +30,7 @@
     justify-content: space-between;
     width: 300px;
     border-radius: $roger-border-radius;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     top: 10vh;
     right: 2vw;
@@ -42,6 +42,8 @@
       cursor: pointer;
       padding: $roger-button-padding;
       column-gap: 1vw;
+      border-radius: $roger-border-radius;
+
       a {
         font-size: 0.9rem;
         font-weight: normal;
@@ -50,23 +52,10 @@
       }
     }
     .menu-item:hover {
-      background-color: $roger-box-bg-color-hover;
+      background-color: var(--modal-menu-item-hover);
     }
     p {
       font-size: 0.9rem;
-    }
-    .logout {
-      background-color: $roger-black-dark;
-      border: none;
-      width: 200px;
-      padding: $roger-button-padding;
-      border-radius: $roger-border-radius;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 4vh;
-    }
-    .logout:hover {
-      background-color: $roger-red;
     }
   }
 }

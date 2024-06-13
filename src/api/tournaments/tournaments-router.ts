@@ -17,6 +17,35 @@ tournamentsRouter.get(
 );
 
 tournamentsRouter.get(
+  "/:tournamentId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const tournaments = await tournamentsModel.getById(
+        Number(req.params.tournamentId)
+      );
+      res.status(200).json(tournaments);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+tournamentsRouter.get(
+  "/tournament-participants-count/:tournamentId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const participantCount =
+        await tournamentsModel.getParticipantCountByTournamentId(
+          Number(req.params.tournamentId)
+        );
+      res.status(200).json(participantCount);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+tournamentsRouter.get(
   "/club-tournaments/:clubUserId",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -46,7 +75,7 @@ tournamentsRouter.get(
 );
 
 tournamentsRouter.get(
-  "/tournament-details",
+  "/tournament-details/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const filter = req.query;

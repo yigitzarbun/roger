@@ -25,8 +25,15 @@ export const tournamentsSlice = createApi({
     getTournaments: builder.query({
       query: () => "/tournaments",
     }),
+    getTournamentsById: builder.query({
+      query: (tournamentId) => `/tournaments/${tournamentId}`,
+    }),
     getTournamentByClubUserId: builder.query({
       query: (clubUserId) => `/tournaments/club-tournaments/${clubUserId}`,
+    }),
+    getTournamentParticipantsCount: builder.query({
+      query: (tournamentId) =>
+        `/tournaments/tournament-participants-count/${Number(tournamentId)}`,
     }),
     getPaginatedTournaments: builder.query({
       query: (filter) =>
@@ -34,7 +41,7 @@ export const tournamentsSlice = createApi({
     }),
     getTournamentDetails: builder.query({
       query: (filter) =>
-        `/tournaments/tournament-details?${new URLSearchParams(filter)}`,
+        `/tournaments/tournament-details/filter?${new URLSearchParams(filter)}`,
     }),
     addTournament: builder.mutation({
       query: (tournament) => ({
@@ -55,6 +62,8 @@ export const tournamentsSlice = createApi({
 
 export const {
   useGetTournamentsQuery,
+  useGetTournamentsByIdQuery,
+  useGetTournamentParticipantsCountQuery,
   useGetTournamentByClubUserIdQuery,
   useGetPaginatedTournamentsQuery,
   useGetTournamentDetailsQuery,

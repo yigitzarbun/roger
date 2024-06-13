@@ -40,7 +40,7 @@ const TournamentDetailsNavigation = ({
       <button
         onClick={() => handleDisplay("fixture")}
         className={
-          display === "details"
+          display === "fixture"
             ? styles["active-button"]
             : styles["inactive-button"]
         }

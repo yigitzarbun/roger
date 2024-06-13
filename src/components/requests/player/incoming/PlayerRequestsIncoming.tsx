@@ -191,7 +191,6 @@ const PlayerRequestsIncoming = () => {
           <table>
             <thead>
               <tr>
-                <th>Durum</th>
                 <th>Oyuncu</th>
                 <th>İsim</th>
                 <th>Seviye</th>
@@ -210,9 +209,6 @@ const PlayerRequestsIncoming = () => {
             <tbody>
               {incomingBookings?.map((booking) => (
                 <tr key={booking.booking_id} className={styles["player-row"]}>
-                  <td className={styles["pending-confirmation-text"]}>
-                    {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
-                  </td>
                   <td>
                     <Link
                       to={`${paths.EXPLORE_PROFILE}${

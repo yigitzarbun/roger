@@ -14,7 +14,9 @@ const TournamentDetailsInfo = (props: TournamentDetailsInfo) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Turnuva Bilgileri</h2>
+          <h2 className={styles["result-title"]}>
+            {`${tournamentInfo?.tournament_name} Bilgileri`}
+          </h2>
         </div>
       </div>
       <table>

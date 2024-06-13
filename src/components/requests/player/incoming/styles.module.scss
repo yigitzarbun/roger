@@ -70,10 +70,12 @@
       cursor: pointer;
       text-decoration: none;
       text-align: center;
+      width: 100px;
     }
 
     .accept-button:hover {
-      background-color: $roger-white;
+      background-color: $roger-blue;
+      color: white;
     }
     .decline-button {
       background-color: $roger-black-dark;
@@ -85,6 +87,7 @@
       color: white;
       text-decoration: none;
       text-align: center;
+      width: 100px;
     }
 
     .decline-button:hover {

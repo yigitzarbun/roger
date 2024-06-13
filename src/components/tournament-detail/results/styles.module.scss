@@ -139,7 +139,14 @@
       cursor: pointer;
     }
   }
+  .info-container {
+    display: flex;
+    column-gap: 1vw;
 
+    p {
+      font-size: 0.9rem;
+    }
+  }
   .pages-container {
     display: flex;
     column-gap: 20px;

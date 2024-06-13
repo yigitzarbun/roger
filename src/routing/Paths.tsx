@@ -34,4 +34,5 @@ export default {
   CLUB_TOURNAMENTS: "/kulup-turnuvalar",
   PLAYER_TOURNAMENTS: "/oyuncu-turnuvalar",
   TOURNAMENT: "/turnuva/",
+  CLUB_TOURNAMENT_FIXTURE: "/kulup-turnuva-fikstur/",
 } as Paths;

@@ -30,7 +30,7 @@
     justify-content: space-between;
     width: 250px;
     border-radius: $roger-border-radius;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     top: 10vh;
     right: 2vw;
@@ -40,6 +40,8 @@
       cursor: pointer;
       padding: $roger-button-padding;
       background-color: $roger-border-color;
+      border-radius: $roger-border-radius;
+      background-color: $roger-blue;
       h4 {
         font-size: 0.9rem;
         font-weight: normal;
@@ -48,13 +50,15 @@
     .menu-item {
       cursor: pointer;
       padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+
       h4 {
         font-size: 0.9rem;
         font-weight: normal;
       }
     }
     .menu-item:hover {
-      background-color: $roger-box-bg-color-hover;
+      background-color: var(--modal-menu-item-hover);
     }
     p {
       font-size: 0.9rem;

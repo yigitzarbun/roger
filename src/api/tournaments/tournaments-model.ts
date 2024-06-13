@@ -12,9 +12,31 @@ const tournamentsModel = {
     );
     return tournament;
   },
+  async getParticipantCountByTournamentId(tournamentId: number) {
+    try {
+      const participants = await db
+        .select(
+          db.raw(
+            "COUNT(DISTINCT CASE WHEN tournament_participants.is_active = true THEN tournament_participants.tournament_participant_id END) as participant_count"
+          )
+        )
+        .from("tournaments")
+        .leftJoin(
+          "tournament_participants",
+          "tournament_participants.tournament_id",
+          "tournaments.tournament_id"
+        )
+        .where("tournaments.tournament_id", tournamentId);
+
+      return participants;
+    } catch (error) {
+      console.log("Error fetching getParticipantCountByTournamentId: ", error);
+    }
+  },
   async getTournamentDetails(filter) {
     const playersPerPage = 4;
     const offset = (filter.currentPage - 1) * playersPerPage;
+
     try {
       // Fetching tournament details along with participant count
       const tournamentDetails = await db
@@ -49,7 +71,7 @@ const tournamentsModel = {
         .leftJoin("clubs", "clubs.user_id", "tournaments.club_user_id")
         .leftJoin("locations", "locations.location_id", "clubs.location_id")
         .leftJoin("users", "users.user_id", "tournaments.club_user_id")
-        .where("tournaments.tournament_id", filter.tournamentId)
+        .where("tournaments.tournament_id", Number(filter.tournamentId))
         .andWhere("tournaments.is_active", true)
         .andWhere("users.user_status_type_id", 1)
         .groupBy(
@@ -82,7 +104,19 @@ const tournamentsModel = {
           "players.birth_year",
           "players.gender",
           "player_levels.player_level_name",
-          "players.image"
+          "players.image",
+          db.raw(
+            "COUNT(CASE WHEN bookings.event_type_id = 2 AND bookings.booking_status_type_id = 5 AND match_scores.match_score_status_type_id = 3 THEN match_scores.match_score_id ELSE NULL END) as totalMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id != players.user_id THEN 1 ELSE 0 END) as lostMatches"
+          ),
+          db.raw(
+            "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 3 ELSE 0 END) as playerPoints"
+          )
         )
         .from("tournament_participants")
         .leftJoin(
@@ -96,10 +130,18 @@ const tournamentsModel = {
           "players.player_level_id"
         )
         .leftJoin("users", "users.user_id", "players.user_id")
-        .where("tournament_participants.tournament_id", filter.tournamentId)
-        .andWhere("users.user_status_type_id", 1)
-        .andWhere("tournament_participants.is_active", true)
-        .andWhere((builder) => {
+        .leftJoin("bookings", function () {
+          this.on("players.user_id", "=", "bookings.inviter_id")
+            .orOn("players.user_id", "=", "bookings.invitee_id")
+            .andOn("bookings.event_type_id", 2);
+        })
+        .leftJoin(
+          "match_scores",
+          "match_scores.booking_id",
+          "=",
+          "bookings.booking_id"
+        )
+        .where((builder) => {
           if (filter.textSearch && filter.textSearch !== "") {
             builder
               .where("players.fname", "ilike", `%${filter.textSearch}%`)
@@ -109,6 +151,25 @@ const tournamentsModel = {
             builder.where("players.player_level_id", filter.playerLevelId);
           }
         })
+        .andWhere(
+          "tournament_participants.tournament_id",
+          Number(filter.tournamentId)
+        )
+        .andWhere("users.user_status_type_id", 1)
+        .andWhere("tournament_participants.is_active", true)
+        .groupBy(
+          "players.user_id",
+          "players.fname",
+          "players.lname",
+          "players.birth_year",
+          "players.gender",
+          "player_levels.player_level_name",
+          "players.image"
+        )
+        .as("player_data")
+        .orderByRaw(
+          "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 3 ELSE 0 END) DESC"
+        )
         .offset(offset)
         .limit(playersPerPage);
 
