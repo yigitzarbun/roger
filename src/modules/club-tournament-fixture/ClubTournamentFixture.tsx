@@ -13,10 +13,53 @@ import { useGetPlayerLevelsQuery } from "../../api/endpoints/PlayerLevelsApi";
 import { useGetTournamentDetailsQuery } from "../../api/endpoints/TournamentsApi";
 import PageLoading from "../../components/loading/PageLoading";
 import { useGetTournamentMatchRoundsQuery } from "../../api/endpoints/TournamentMatchRoundsApi";
+import { useAppSelector } from "../../store/hooks";
+import { useGetClubCourtsQuery } from "../../api/endpoints/CourtsApi";
+import { useGetTournamentParticipantsByTournamentIdQuery } from "../../api/endpoints/TournamentParticipantsApi";
 
 const ClubTournamentFixture = () => {
   const params = useParams();
   const tournamentId = params?.tournament_id;
+
+  const {
+    data: participantsCount,
+    isLoading: isTournamentParticipantsCountLoading,
+  } = useGetTournamentParticipantsCountQuery(tournamentId);
+
+  const numberOfParticipants = Number(
+    participantsCount?.[0]?.participant_count
+  );
+
+  const initialRoundId =
+    numberOfParticipants > 64
+      ? 1
+      : numberOfParticipants > 32
+      ? 2
+      : numberOfParticipants > 16
+      ? 3
+      : numberOfParticipants > 8
+      ? 4
+      : numberOfParticipants > 4
+      ? 5
+      : numberOfParticipants > 2
+      ? 6
+      : numberOfParticipants === 2
+      ? 7
+      : numberOfParticipants === 1
+      ? 7
+      : null;
+
+  const [matchRound, setMatchRound] = useState(initialRoundId);
+
+  const handleMatchRound = (id: number) => {
+    setMatchRound(id);
+  };
+
+  const user = useAppSelector((store) => store?.user?.user);
+
+  const { data: courts, isLoading: isCourtsLoading } = useGetClubCourtsQuery(
+    user?.clubDetails?.club_id
+  );
 
   const [currentPage, setCurrentPage] = useState(1);
   const [textSearch, setTextSearch] = useState("");
@@ -51,6 +94,11 @@ const ClubTournamentFixture = () => {
     tournamentId: tournamentId,
   });
 
+  const {
+    data: tournamentParticipants,
+    isLoading: isTournamentParticipantsLoading,
+  } = useGetTournamentParticipantsByTournamentIdQuery(tournamentId);
+
   const handleTournamentPage = (e) => {
     setCurrentPage(e.target.value);
   };
@@ -77,37 +125,9 @@ const ClubTournamentFixture = () => {
     setDisplay(value);
   };
 
-  const {
-    data: participantsCount,
-    isLoading: isTournamentParticipantsCountLoading,
-  } = useGetTournamentParticipantsCountQuery(tournamentId);
-
-  const numberOfParticipants = Number(
-    participantsCount?.[0]?.participant_count
-  );
-
-  const initialRoundId =
-    numberOfParticipants > 64
-      ? 1
-      : numberOfParticipants > 32
-      ? 2
-      : numberOfParticipants > 16
-      ? 3
-      : numberOfParticipants > 8
-      ? 4
-      : numberOfParticipants > 4
-      ? 5
-      : numberOfParticipants > 2
-      ? 6
-      : numberOfParticipants === 2
-      ? 7
-      : numberOfParticipants === 1
-      ? 7
-      : null;
-
   const { data: tournamentMatches, isLoading: isTournamentMatchesLoading } =
     useGetTournamentMatchesByTournamentIdQuery({
-      matchRoundId: initialRoundId,
+      matchRoundId: matchRound,
       tournamentId: tournamentId,
     });
 
@@ -145,6 +165,12 @@ const ClubTournamentFixture = () => {
           numberOfParticipants={numberOfParticipants}
           tournamentMatches={tournamentMatches}
           filteredTournamentMatchRounds={filteredTournamentMatchRounds}
+          courts={courts}
+          tournamentParticipants={tournamentParticipants}
+          user={user}
+          tournamentId={Number(tournamentId)}
+          matchRound={matchRound}
+          handleMatchRound={handleMatchRound}
         />
       )}
 

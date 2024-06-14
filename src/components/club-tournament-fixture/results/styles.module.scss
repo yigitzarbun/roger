@@ -1,29 +1,120 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
 
-.rounds-container {
+.result-container {
   display: flex;
-  column-gap: 2vw;
-  .active-round {
-    background-color: $roger-blue;
-    padding: 5px;
-    width: 14%;
-    height: 30px;
-    border-radius: $roger-border-radius;
-    border: none;
-    cursor: pointer;
-    color: white;
-    text-align: center;
+  flex-direction: column;
+  background-color: var(--box-background-color);
+  padding: $roger-box-padding;
+  border-radius: $roger-border-radius;
+  row-gap: 20px;
+  border: 1px $roger-border-color solid;
+
+  .rounds-container {
+    display: flex;
+    column-gap: 2vw;
+    .active-round {
+      background-color: $roger-blue;
+      padding: 5px;
+      width: 14%;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+      color: white;
+      text-align: center;
+    }
+    .passive-round {
+      background-color: $roger-black-dark;
+      padding: 5px;
+      width: 14%;
+      height: 30px;
+      border-radius: $roger-border-radius;
+      border: none;
+      cursor: pointer;
+      color: white;
+      text-align: center;
+    }
   }
-  .passive-round {
-    background-color: $roger-black-dark;
-    padding: 5px;
-    width: 14%;
-    height: 30px;
-    border-radius: $roger-border-radius;
-    border: none;
-    cursor: pointer;
-    color: white;
-    text-align: center;
+  table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+
+    .player-row {
+      border-bottom: 1px solid $roger-border-color;
+
+      td {
+        border-top: 1px solid $roger-border-color;
+        vertical-align: middle;
+        padding: 10px;
+        height: 12vh;
+      }
+
+      .player-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+
+      .player-name {
+        color: var(--text-color);
+        text-decoration: none;
+      }
+      .blocked {
+        color: $roger-red;
+      }
+      .remove-fav-icon {
+        color: $roger-blue;
+        cursor: pointer;
+        font-size: 1.5rem;
+        vertical-align: middle;
+      }
+      .add-fav-icon {
+        cursor: pointer;
+        font-size: 1.5rem;
+        vertical-align: middle;
+      }
+      .add-fav-icon:hover {
+        color: $roger-blue;
+      }
+    }
+
+    .training-button {
+      background-color: var(--primary-button-background-color);
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .training-button:hover {
+      background-color: $roger-black-light;
+    }
+
+    .match-button {
+      background-color: var(--secondary-button-background-color);
+      border: none;
+      width: 150px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .match-button:hover {
+      background-color: $roger-black-light;
+    }
   }
 }

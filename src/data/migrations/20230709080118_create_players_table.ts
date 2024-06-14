@@ -869,6 +869,14 @@ export async function up(knex: Knex): Promise<void> {
         .inTable("tournament_match_rounds")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
+      table
+        .integer("tournament_id")
+        .unsigned()
+        .notNullable()
+        .references("tournament_id")
+        .inTable("tournaments")
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE");
     });
 }
 

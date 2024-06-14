@@ -26,10 +26,16 @@ const tournamentMatchesModel = {
             "COUNT(DISTINCT CASE WHEN tournament_participants.is_active = true THEN tournament_participants.tournament_participant_id END) as participant_count"
           ),
           db.raw(
-            "(SELECT CONCAT(COALESCE(inviter.fname), ' ', COALESCE(inviter.lname)) FROM (VALUES (bookings.inviter_id)) AS t(user_id) LEFT JOIN players AS inviter ON inviter.user_id = t.user_id LIMIT 1) AS inviterName"
+            "(SELECT CONCAT(COALESCE(inviter.fname, ''), ' ', COALESCE(inviter.lname, '')) FROM players AS inviter WHERE inviter.user_id = bookings.inviter_id LIMIT 1) AS inviterName"
           ),
           db.raw(
-            "(SELECT CONCAT(COALESCE(invitee.fname), ' ', COALESCE(invitee.lname)) FROM (VALUES (bookings.invitee_id)) AS t(user_id) LEFT JOIN players AS invitee ON invitee.user_id = t.user_id LIMIT 1) AS inviteeName"
+            "(SELECT COALESCE(inviter.image, '') FROM players AS inviter WHERE inviter.user_id = bookings.inviter_id LIMIT 1) AS inviterImage"
+          ),
+          db.raw(
+            "(SELECT CONCAT(COALESCE(invitee.fname, ''), ' ', COALESCE(invitee.lname, '')) FROM players AS invitee WHERE invitee.user_id = bookings.invitee_id LIMIT 1) AS inviteeName"
+          ),
+          db.raw(
+            "(SELECT COALESCE(invitee.image, '') FROM players AS invitee WHERE invitee.user_id = bookings.invitee_id LIMIT 1) AS inviteeImage"
           ),
           "match_scores.*"
         )
@@ -66,12 +72,23 @@ const tournamentMatchesModel = {
           "match_scores.booking_id",
           "bookings.booking_id"
         )
+        .leftJoin("courts", "courts.court_id", "bookings.court_id")
         .where(
           "tournament_match_rounds.tournament_match_round_id",
           filter.matchRoundId
         )
         .andWhere("tournaments.tournament_id", filter.tournamentId)
-        .groupBy("tournament_matches.tournament_match_id");
+        .groupBy(
+          "tournament_matches.tournament_match_id",
+          "tournament_match_rounds.tournament_match_round_name",
+          "bookings.event_date",
+          "bookings.event_time",
+          "courts.court_name",
+          "tournaments.max_players",
+          "match_scores.match_score_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id"
+        );
       return tournamentMatches;
     } catch (error) {
       console.log("Error fetching getMatchesByTournamentId: ", error);

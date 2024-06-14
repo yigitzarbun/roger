@@ -42,7 +42,7 @@ const PlayerActiveTournaments = (props: PlayerActiveTournamentsProps) => {
     clubs,
     refetchMyTournaments,
   } = props;
-
+  console.log(myTournaments);
   const [myTournamentsFilterModal, setMyTournamentsFilterModal] =
     useState(false);
 

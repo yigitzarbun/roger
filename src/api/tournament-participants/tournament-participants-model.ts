@@ -185,6 +185,36 @@ const tournamentParticipantsModel = {
       throw error;
     }
   },
+  async getTournamentParticipantsByTournamentId(tournamentId) {
+    try {
+      const participants = await db
+        .select(
+          "tournament_participants.tournament_participant_id",
+          "tournament_participants.is_active",
+          "players.fname",
+          "players.lname",
+          "players.gender",
+          "players.image",
+          "players.birth_year",
+          "players.user_id",
+          "players.player_id"
+        )
+        .from("tournament_participants")
+        .leftJoin(
+          "players",
+          "players.user_id",
+          "tournament_participants.player_user_id"
+        )
+        .where("tournament_participants.is_active", true)
+        .andWhere("tournament_participants.tournament_id", tournamentId);
+      return participants;
+    } catch (error) {
+      console.log(
+        "Error fetching getTournamentParticipantsByTournamentId: ",
+        error
+      );
+    }
+  },
   async add(participant) {
     const [newParticipant] = await db("tournament_participants")
       .insert(participant)

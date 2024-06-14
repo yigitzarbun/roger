@@ -56,7 +56,7 @@ const Tournaments = () => {
     clubUserId: clubId,
     playerUserId: user?.user?.user_id,
   });
-
+  console.log(isMyTournamentsLoading);
   const handleTournamentPage = (e) => {
     setCurrentPage(e.target.value);
   };

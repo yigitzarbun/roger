@@ -17,7 +17,22 @@ tournamentParticipantsRouter.get(
 );
 
 tournamentParticipantsRouter.get(
-  "/paginated",
+  "/:tournamentId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const participants =
+        await tournamentParticipantsModel.getTournamentParticipantsByTournamentId(
+          req.params.tournamentId
+        );
+      res.status(200).json(participants);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+tournamentParticipantsRouter.get(
+  "/paginated/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const filter = req.query;

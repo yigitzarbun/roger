@@ -37,7 +37,7 @@ export const tournamentsSlice = createApi({
     }),
     getPaginatedTournaments: builder.query({
       query: (filter) =>
-        `/tournaments/paginated?${new URLSearchParams(filter)}`,
+        `/tournaments/paginated/filter?${new URLSearchParams(filter)}`,
     }),
     getTournamentDetails: builder.query({
       query: (filter) =>

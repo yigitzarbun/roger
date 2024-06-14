@@ -76,7 +76,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
     clubUserId: clubId,
     subscriptionRequired: subscriptionRequired,
   });
-
+  console.log(paginatedTournaments);
   const pageNumbers = [];
   for (let i = 1; i <= paginatedTournaments?.totalPages; i++) {
     pageNumbers.push(i);

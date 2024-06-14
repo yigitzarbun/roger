@@ -60,7 +60,7 @@ tournamentsRouter.get(
 );
 
 tournamentsRouter.get(
-  "/paginated",
+  "/paginated/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const filter = req.query;

@@ -19,11 +19,17 @@ export const tournamentParticipantsSlice = createApi({
     }),
     getPaginatedPlayerActiveTournaments: builder.query({
       query: (filter) =>
-        `/tournament-participants/paginated?${new URLSearchParams(filter)}`,
+        `/tournament-participants/paginated/filter?${new URLSearchParams(
+          filter
+        )}`,
     }),
     getTournamentParticipantsByFilter: builder.query({
       query: (filter) =>
         `/tournament-participants/filter?${new URLSearchParams(filter)}`,
+    }),
+    getTournamentParticipantsByTournamentId: builder.query({
+      query: (tournamentId) =>
+        `/tournament-participants/${Number(tournamentId)}`,
     }),
     addTournamentParticipant: builder.mutation({
       query: (participant) => ({
@@ -45,6 +51,7 @@ export const tournamentParticipantsSlice = createApi({
 export const {
   useGetTournamentParticipantsQuery,
   useGetPaginatedPlayerActiveTournamentsQuery,
+  useGetTournamentParticipantsByTournamentIdQuery,
   useGetTournamentParticipantsByFilterQuery,
   useAddTournamentParticipantMutation,
   useUpdateTournamentParticipantMutation,
