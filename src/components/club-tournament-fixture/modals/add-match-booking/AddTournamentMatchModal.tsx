@@ -97,7 +97,7 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
       event_time: formData.event_time,
       court_price: 0,
       booking_status_type_id: 2,
-      event_type_id: 2,
+      event_type_id: 7,
       club_id: Number(user?.clubDetails?.club_id),
       court_id: Number(formData.court_id),
       inviter_id: Number(formData.inviter_id),

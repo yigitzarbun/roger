@@ -275,6 +275,7 @@ export async function seed(knex: Knex): Promise<void> {
     { event_type_id: 4, event_type_name: "external_training" },
     { event_type_id: 5, event_type_name: "external_lesson" },
     { event_type_id: 6, event_type_name: "club_group_lesson" },
+    { event_type_id: 7, event_type_name: "tournament_match" },
   ]);
 
   await knex("club_staff_role_types").insert([
@@ -312,34 +313,42 @@ export async function seed(knex: Knex): Promise<void> {
     {
       tournament_match_round_id: 1,
       tournament_match_round_name: "Round of 128",
+      number_of_matches: 64,
     },
     {
       tournament_match_round_id: 2,
       tournament_match_round_name: "Round of 64",
+      number_of_matches: 32,
     },
     {
       tournament_match_round_id: 3,
       tournament_match_round_name: "Round of 32",
+      number_of_matches: 16,
     },
     {
       tournament_match_round_id: 4,
       tournament_match_round_name: "Round of 16",
+      number_of_matches: 8,
     },
     {
       tournament_match_round_id: 5,
       tournament_match_round_name: "Quarter Final",
+      number_of_matches: 4,
     },
     {
       tournament_match_round_id: 6,
       tournament_match_round_name: "Semi Final",
+      number_of_matches: 2,
     },
     {
       tournament_match_round_id: 7,
       tournament_match_round_name: "Final",
+      number_of_matches: 1,
     },
     {
       tournament_match_round_id: 8,
       tournament_match_round_name: "Third Place",
+      number_of_matches: 1,
     },
   ]);
   await knex("languages").insert([
