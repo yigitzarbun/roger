@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, useEffect } from "react";
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import { useGetPaginatedTournamentsQuery } from "../../../api/endpoints/TournamentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
@@ -9,6 +10,7 @@ import AllTournamentsFilterModal from "./all-tournaments-filter/AllTournamentsFi
 import { AddTournamentParticipantModal } from "../modals/add-tournament-participant-modal/AddTournamentParticipantModal";
 import { Link } from "react-router-dom";
 import Paths from "../../../routing/Paths";
+import { useAppSelector } from "../../../store/hooks";
 
 interface AllTournamentsProps {
   refetchMyTournaments: () => void;
@@ -24,6 +26,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
   const [gender, setGender] = useState("");
   const [clubId, setClubId] = useState(null);
   const [subscriptionRequired, setSubscriptionRequired] = useState(null);
+  const user = useAppSelector((store) => store?.user?.user);
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
@@ -75,8 +78,9 @@ const AllTournaments = (props: AllTournamentsProps) => {
     gender: gender,
     clubUserId: clubId,
     subscriptionRequired: subscriptionRequired,
+    player_user_id: user?.user?.user_id,
   });
-  console.log(paginatedTournaments);
+
   const pageNumbers = [];
   for (let i = 1; i <= paginatedTournaments?.totalPages; i++) {
     pageNumbers.push(i);
@@ -176,6 +180,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
               <th>Katılımcı</th>
               <th>Üyelik Şartı</th>
               <th>Yaş Aralığı</th>
+              <th>Katılım Durumu</th>
             </tr>
           </thead>
           <tbody>
@@ -205,17 +210,22 @@ const AllTournaments = (props: AllTournamentsProps) => {
                   currentYear - tournament?.max_birth_year
                 }`}</td>
                 <td>
-                  <button
-                    onClick={() =>
-                      handleOpenAddTournamentParticipantModal(
-                        tournament,
-                        tournament.clubUserId
-                      )
-                    }
-                    className={styles["book-button"]}
-                  >
-                    Katıl
-                  </button>
+                  {tournament?.player_participation_status ===
+                  "playerParticipantTrue" ? (
+                    <IoIosCheckmarkCircle className={styles.done} />
+                  ) : (
+                    <button
+                      onClick={() =>
+                        handleOpenAddTournamentParticipantModal(
+                          tournament,
+                          tournament.clubUserId
+                        )
+                      }
+                      className={styles["book-button"]}
+                    >
+                      Katıl
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -245,6 +255,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
       )}
       {participateModal && (
         <AddTournamentParticipantModal
+          refetchPaginatedTournaments={refetchPaginatedTournaments}
           participateModal={participateModal}
           closeAddTournamentParticipantModal={
             closeAddTournamentParticipantModal

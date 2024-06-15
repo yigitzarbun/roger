@@ -59,9 +59,12 @@ const TournamentDetail = (props: TournamentDetailProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>
-            {`${tournamentDetails?.tournament?.tournament_name} Katılımcıları`}
-          </h2>
+          {tournamentDetails?.players?.length > 0 && (
+            <h2 className={styles["result-title"]}>
+              {`${tournamentDetails?.tournament?.tournament_name} Katılımcıları`}
+            </h2>
+          )}
+
           {tournamentDetails?.players?.length > 0 && (
             <FaFilter
               onClick={handleOpenTournamentFilter}
@@ -137,7 +140,7 @@ const TournamentDetail = (props: TournamentDetailProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Güncel turnuva bulunmamaktadır</p>
+        <p>Henüz turnuva katılımcısı bulunmamaktadır</p>
       )}
 
       {openTournamentPlayersFilter && (

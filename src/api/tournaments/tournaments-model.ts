@@ -242,7 +242,11 @@ const tournamentsModel = {
           "clubs.user_id as clubUserId",
           "locations.location_name",
           db.raw(
-            "COUNT(DISTINCT CASE WHEN tournament_participants.is_active = true THEN tournament_participants.tournament_participant_id END) as participant_count"
+            "COUNT(DISTINCT tournament_participants.tournament_participant_id) as participant_count"
+          ),
+          db.raw(
+            `MAX(CASE WHEN tournament_participants.is_active = true AND tournament_participants.player_user_id = ? THEN 'playerParticipantTrue' ELSE 'playerParticipantFalse' END) as player_participation_status`,
+            [filter.player_user_id]
           )
         )
         .from("tournaments")

@@ -30,24 +30,25 @@ const ClubTournamentFixture = () => {
     participantsCount?.[0]?.participant_count
   );
 
-  const initialRoundId =
-    numberOfParticipants > 64
+  const calculateInitialRoundId = (participants) => {
+    return participants > 64
       ? 1
-      : numberOfParticipants > 32
+      : participants > 32
       ? 2
-      : numberOfParticipants > 16
+      : participants > 16
       ? 3
-      : numberOfParticipants > 8
+      : participants > 8
       ? 4
-      : numberOfParticipants > 4
+      : participants > 4
       ? 5
-      : numberOfParticipants > 2
+      : participants > 2
       ? 6
-      : numberOfParticipants === 2
-      ? 7
-      : numberOfParticipants === 1
+      : participants === 2 || participants === 1
       ? 7
       : null;
+  };
+
+  const initialRoundId = calculateInitialRoundId(numberOfParticipants);
 
   const [matchRound, setMatchRound] = useState(initialRoundId);
 
@@ -134,6 +135,7 @@ const ClubTournamentFixture = () => {
   const {
     data: tournamentMatchRounds,
     isLoading: isTournamentMatchRoundsLoading,
+    refetch: refetchTournamentMatches,
   } = useGetTournamentMatchRoundsQuery({});
 
   const filteredTournamentMatchRounds = tournamentMatchRounds?.filter(
@@ -141,6 +143,10 @@ const ClubTournamentFixture = () => {
       round.tournament_match_round_id >= initialRoundId &&
       round.tournament_match_round_id !== 8
   );
+
+  useEffect(() => {
+    setMatchRound(initialRoundId);
+  }, [initialRoundId]);
 
   if (
     isTournamentMatchesLoading ||
@@ -171,6 +177,7 @@ const ClubTournamentFixture = () => {
           tournamentId={Number(tournamentId)}
           matchRound={matchRound}
           handleMatchRound={handleMatchRound}
+          refetchTournamentMatches={refetchTournamentMatches}
         />
       )}
 

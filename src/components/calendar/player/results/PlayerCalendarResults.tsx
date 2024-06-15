@@ -44,7 +44,7 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
     userId: user?.user_id,
     textSearch: textSearch,
   });
-
+  console.log(filteredBookings);
   const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
@@ -129,7 +129,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td className={styles["vertical-center"]}>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
-                      booking.event_type_id === 1 || booking.event_type_id === 2
+                      booking.event_type_id === 1 ||
+                      booking.event_type_id === 2 ||
+                      booking.event_type_id === 7
                         ? 1
                         : booking.event_type_id === 3
                         ? 2
@@ -147,7 +149,8 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                         booking.event_type_id === 6 && booking?.clubImage
                           ? booking?.clubImage
                           : (booking.event_type_id === 1 ||
-                              booking.event_type_id === 2) &&
+                              booking.event_type_id === 2 ||
+                              booking.event_type_id === 7) &&
                             booking.playerImage
                           ? booking.playerImage
                           : booking.event_type_id === 3 && booking.trainerImage
@@ -161,7 +164,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
-                      booking.event_type_id === 1 || booking.event_type_id === 2
+                      booking.event_type_id === 1 ||
+                      booking.event_type_id === 2 ||
+                      booking.event_type_id === 7
                         ? 1
                         : booking.event_type_id === 3
                         ? 2
@@ -177,7 +182,8 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   >
                     {booking.event_type_id === 1 ||
                     booking.event_type_id === 2 ||
-                    booking.event_type_id === 3
+                    booking.event_type_id === 3 ||
+                    booking.event_type_id === 7
                       ? `${booking.fname} ${booking.lname}`
                       : booking.event_type_id === 6
                       ? booking?.student_group_name
@@ -185,7 +191,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   </Link>
                 </td>
                 <td>
-                  {booking.event_type_id === 1 || booking.event_type_id === 2
+                  {booking.event_type_id === 1 ||
+                  booking.event_type_id === 2 ||
+                  booking.event_type_id === 7
                     ? booking?.player_level_name
                     : booking.event_type_id === 3
                     ? booking?.trainer_experience_type_name
@@ -194,14 +202,16 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td>
                   {booking.event_type_id === 1 ||
                   booking.event_type_id === 2 ||
-                  booking.event_type_id === 3
+                  booking.event_type_id === 3 ||
+                  booking.event_type_id === 7
                     ? booking?.gender
                     : "-"}
                 </td>
                 <td>
                   {booking.event_type_id === 1 ||
                   booking.event_type_id === 2 ||
-                  booking.event_type_id === 3
+                  booking.event_type_id === 3 ||
+                  booking.event_type_id === 7
                     ? getAge(booking?.birth_year)
                     : "-"}
                 </td>

@@ -23,6 +23,7 @@ interface AddTournamentParticipantModalProps {
   selectedTournament: any;
   selectedClubUserId: number;
   refetchMyTournaments: () => void;
+  refetchPaginatedTournaments: () => void;
 }
 export const AddTournamentParticipantModal = (
   props: AddTournamentParticipantModalProps
@@ -33,6 +34,7 @@ export const AddTournamentParticipantModal = (
     selectedTournament,
     selectedClubUserId,
     refetchMyTournaments,
+    refetchPaginatedTournaments,
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -158,6 +160,7 @@ export const AddTournamentParticipantModal = (
     if (isAddParticipantSuccess) {
       toast.success("Katılım başarılı");
       refetchMyTournaments();
+      refetchPaginatedTournaments();
       closeAddTournamentParticipantModal();
     }
   }, [isAddParticipantSuccess]);
