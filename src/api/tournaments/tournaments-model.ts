@@ -106,16 +106,16 @@ const tournamentsModel = {
           "player_levels.player_level_name",
           "players.image",
           db.raw(
-            "COUNT(CASE WHEN bookings.event_type_id = 2 AND bookings.booking_status_type_id = 5 AND match_scores.match_score_status_type_id = 3 THEN match_scores.match_score_id ELSE NULL END) as totalMatches"
+            "COUNT(CASE WHEN (bookings.event_type_id = 2 OR bookings.event_type_id = 7) AND bookings.booking_status_type_id = 5 AND match_scores.match_score_status_type_id = 3 THEN match_scores.match_score_id ELSE NULL END) as totalMatches"
           ),
           db.raw(
-            "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
+            "SUM(CASE WHEN (bookings.event_type_id = 2 OR bookings.event_type_id = 7) AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 1 ELSE 0 END) as wonMatches"
           ),
           db.raw(
-            "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id != players.user_id THEN 1 ELSE 0 END) as lostMatches"
+            "SUM(CASE WHEN (bookings.event_type_id = 2 OR bookings.event_type_id = 7) AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id != players.user_id THEN 1 ELSE 0 END) as lostMatches"
           ),
           db.raw(
-            "SUM(CASE WHEN bookings.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 3 ELSE 0 END) as playerPoints"
+            "SUM(CASE WHEN (bookings.event_type_id = 2 OR bookings.event_type_id = 7) AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN 3 ELSE 0 END) as playerPoints"
           )
         )
         .from("tournament_participants")

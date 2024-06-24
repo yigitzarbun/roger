@@ -20,6 +20,8 @@ const tournamentMatchesModel = {
           "tournament_match_rounds.tournament_match_round_name",
           "bookings.event_date",
           "bookings.event_time",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
           "courts.court_name",
           "tournaments.max_players",
           db.raw(

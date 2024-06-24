@@ -24,7 +24,7 @@ interface AddTournamentMatchModalProps {
   user: any;
   matchRound: number;
   tournamentId: number;
-  refetchTournamentMatches: () => void;
+  refetchTournamentMatchRounds: () => void;
 }
 
 export type FormValues = {
@@ -51,7 +51,7 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
     user,
     matchRound,
     tournamentId,
-    refetchTournamentMatches,
+    refetchTournamentMatchRounds,
   } = props;
 
   const [addBooking, { data: bookingData, isSuccess: isBookingSuccess }] =
@@ -179,7 +179,7 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
 
   useEffect(() => {
     if (isAddMatchScoreSuccess) {
-      refetchTournamentMatches();
+      refetchTournamentMatchRounds();
       toast.success("Maç eklendi");
       reset();
       closeAddTournamentMatchModal();

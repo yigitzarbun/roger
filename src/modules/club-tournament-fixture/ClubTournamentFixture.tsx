@@ -126,16 +126,19 @@ const ClubTournamentFixture = () => {
     setDisplay(value);
   };
 
-  const { data: tournamentMatches, isLoading: isTournamentMatchesLoading } =
-    useGetTournamentMatchesByTournamentIdQuery({
-      matchRoundId: matchRound,
-      tournamentId: tournamentId,
-    });
+  const {
+    data: tournamentMatches,
+    isLoading: isTournamentMatchesLoading,
+    refetch: refetchTournamentMatches,
+  } = useGetTournamentMatchesByTournamentIdQuery({
+    matchRoundId: matchRound,
+    tournamentId: tournamentId,
+  });
 
   const {
     data: tournamentMatchRounds,
     isLoading: isTournamentMatchRoundsLoading,
-    refetch: refetchTournamentMatches,
+    refetch: refetchTournamentMatchRounds,
   } = useGetTournamentMatchRoundsQuery({});
 
   const filteredTournamentMatchRounds = tournamentMatchRounds?.filter(
@@ -178,6 +181,7 @@ const ClubTournamentFixture = () => {
           matchRound={matchRound}
           handleMatchRound={handleMatchRound}
           refetchTournamentMatches={refetchTournamentMatches}
+          refetchTournamentMatchRounds={refetchTournamentMatchRounds}
         />
       )}
 

@@ -1362,7 +1362,11 @@ const bookingsModel = {
             builder.where("players.location_id", filter.locationId);
           }
         })
-        .andWhere("bookings.event_type_id", 2)
+        .andWhere((builder) =>
+          builder
+            .where("bookings.event_type_id", 2)
+            .orWhere("bookings.event_type_id", 7)
+        )
         .andWhere("users.user_status_type_id", 1)
         .andWhere("match_scores.match_score_status_type_id", 3)
         .andWhere("players.gender", filter.gender)

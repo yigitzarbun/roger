@@ -162,16 +162,15 @@ const playersModel = {
           db.raw(
             "COUNT(DISTINCT CASE WHEN event_reviews.is_active = true THEN event_reviews.event_review_id ELSE NULL END) as reviewScoreCount"
           ),
-
           db.raw("COUNT(DISTINCT match_scores.match_score_id) as totalMatches"),
           db.raw(
-            "SUM(CASE WHEN match_scores.winner_id = players.user_id AND match_scores.match_score_status_type_id = 3 THEN 1 ELSE 0 END) as wonMatches"
+            "SUM(CASE WHEN match_scores.winner_id = players.user_id AND (match_scores.match_score_status_type_id = 3 OR match_scores.match_score_status_type_id = 7) THEN 1 ELSE 0 END) as wonMatches"
           ),
           db.raw(
-            "SUM(CASE WHEN match_scores.winner_id != players.user_id AND match_scores.match_score_status_type_id = 3 THEN 1 ELSE 0 END) as lostMatches"
+            "SUM(CASE WHEN match_scores.winner_id != players.user_id AND (match_scores.match_score_status_type_id = 3 OR match_scores.match_score_status_type_id = 7) THEN 1 ELSE 0 END) as lostMatches"
           ),
           db.raw(
-            "SUM(CASE WHEN match_scores.winner_id = players.user_id AND match_scores.match_score_status_type_id = 3 THEN 3 ELSE 0 END) as playerPoints"
+            "SUM(CASE WHEN match_scores.winner_id = players.user_id AND (match_scores.match_score_status_type_id = 3 OR match_scores.match_score_status_type_id = 7) THEN 3 ELSE 0 END) as playerPoints"
           )
         )
         .from("players")
@@ -201,7 +200,7 @@ const playersModel = {
               "=",
               "players.user_id"
             );
-          }).andOn("bookings.event_type_id", "=", 2);
+          });
         })
         .leftJoin(
           "match_scores",
@@ -210,6 +209,11 @@ const playersModel = {
           "bookings.booking_id"
         )
         .where("players.user_id", userId)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.event_type_id", "=", 2)
+            .orWhere("bookings.event_type_id", "=", 7);
+        })
         .groupBy(
           "players.player_id",
           "users.user_id",

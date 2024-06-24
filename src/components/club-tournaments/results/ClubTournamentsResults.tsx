@@ -130,6 +130,7 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
               >
                 <Link
                   to={`${Paths.CLUB_TOURNAMENT_FIXTURE}${tournament.tournament_id}`}
+                  className={styles["tournament-name"]}
                 >
                   <td>{tournament.tournament_name}</td>
                 </Link>

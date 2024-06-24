@@ -83,7 +83,7 @@
       }
     }
 
-    .training-button {
+    .add-match-button {
       background-color: var(--primary-button-background-color);
       border: none;
       width: 150px;
@@ -96,11 +96,11 @@
       text-align: center;
     }
 
-    .training-button:hover {
+    .add-match-button:hover {
       background-color: $roger-black-light;
     }
 
-    .match-button {
+    .add-score-button {
       background-color: var(--secondary-button-background-color);
       border: none;
       width: 150px;
@@ -113,7 +113,7 @@
       text-align: center;
     }
 
-    .match-button:hover {
+    .add-score-button:hover {
       background-color: $roger-black-light;
     }
   }

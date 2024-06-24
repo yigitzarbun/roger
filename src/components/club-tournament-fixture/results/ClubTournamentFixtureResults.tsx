@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import { TournamentMatchRounds } from "../../../api/endpoints/TournamentMatchRoundsApi";
 import AddTournamentMatchModal from "../modals/add-match-booking/AddTournamentMatchModal";
 import { localUrl } from "../../../common/constants/apiConstants";
+import AddTournamentMatchScoreModal from "../modals/add-match-score/AddTournamentMatchScoreModal";
 
 interface ClubTournamentFixtureResultsProps {
   initialRoundId: number;
@@ -16,6 +17,7 @@ interface ClubTournamentFixtureResultsProps {
   matchRound: number;
   handleMatchRound: (e: number) => void;
   refetchTournamentMatches: () => void;
+  refetchTournamentMatchRounds: () => void;
 }
 const ClubTournamentFixtureResults = (
   props: ClubTournamentFixtureResultsProps
@@ -32,7 +34,23 @@ const ClubTournamentFixtureResults = (
     matchRound,
     handleMatchRound,
     refetchTournamentMatches,
+    refetchTournamentMatchRounds,
   } = props;
+
+  const [
+    addTournamentMatchScoreModalOpen,
+    setAddTournamentMatchScoreModalOpen,
+  ] = useState(false);
+  const [selectedMatchScore, setSelectedMatchScore] = useState(null);
+
+  const handleOpenAddTournamentMatchScoreModal = (matchScore: any) => {
+    setSelectedMatchScore(matchScore);
+    setAddTournamentMatchScoreModalOpen(true);
+  };
+
+  const closeAddTournamentMatchScoreModal = () => {
+    setAddTournamentMatchScoreModalOpen(false);
+  };
 
   const [addTournamentMatchModalOpen, setAddTournamentMatchModalOpen] =
     useState(false);
@@ -59,7 +77,7 @@ const ClubTournamentFixtureResults = (
 
   let totalMatches = tournamentMatches?.length;
   let emptyMatches = requiredMatches - totalMatches;
-
+  console.log(tournamentMatches);
   return (
     <div className={styles["result-container"]}>
       <div className={styles["rounds-container"]}>
@@ -91,6 +109,7 @@ const ClubTournamentFixtureResults = (
                 <th>Saat</th>
                 <th>Kort</th>
                 <th>Skor</th>
+                <th>Kazanan</th>
               </tr>
             </thead>
             <tbody>
@@ -126,12 +145,30 @@ const ClubTournamentFixtureResults = (
                   <td>{match.court_name}</td>
                   <td>
                     {match.match_score_status_type_id === 1 ? (
-                      <button>Skor Ekle</button>
-                    ) : match.match_score_status_type_id === 3 ? (
-                      "6-1 6-2"
+                      <button
+                        onClick={() =>
+                          handleOpenAddTournamentMatchScoreModal(match)
+                        }
+                        className={styles["add-score-button"]}
+                      >
+                        Skor Ekle
+                      </button>
+                    ) : match.match_score_status_type_id === 3 &&
+                      match?.inviter_third_set_games_won ? (
+                      `${match?.inviter_first_set_games_won}-${match?.invitee_first_set_games_won} ${match?.inviter_second_set_games_won}-${match?.invitee_second_set_games_won} ${match?.inviter_third_set_games_won}-${match?.invitee_third_set_games_won}`
+                    ) : match.match_score_status_type_id === 3 &&
+                      !match?.inviter_third_set_games_won ? (
+                      `${match?.inviter_first_set_games_won}-${match?.invitee_first_set_games_won} ${match?.inviter_second_set_games_won}-${match?.invitee_second_set_games_won}`
                     ) : (
                       "-"
                     )}
+                  </td>
+                  <td>
+                    {match.winner_id === match.inviter_id
+                      ? match.invitername
+                      : match.winner_id === match.invitee_id
+                      ? match.inviteename
+                      : "-"}
                   </td>
                 </tr>
               ))}
@@ -145,7 +182,10 @@ const ClubTournamentFixtureResults = (
                   <td>-</td>
                   <td>-</td>
                   <td>
-                    <button onClick={handleOpenAddTournamentMatchModal}>
+                    <button
+                      onClick={handleOpenAddTournamentMatchModal}
+                      className={styles["add-match-button"]}
+                    >
                       Maç Ekle
                     </button>
                   </td>
@@ -166,6 +206,14 @@ const ClubTournamentFixtureResults = (
           user={user}
           matchRound={matchRound}
           tournamentId={tournamentId}
+          refetchTournamentMatchRounds={refetchTournamentMatchRounds}
+        />
+      )}
+      {addTournamentMatchScoreModalOpen && (
+        <AddTournamentMatchScoreModal
+          addTournamentMatchScoreModalOpen={addTournamentMatchScoreModalOpen}
+          closeAddTournamentMatchScoreModal={closeAddTournamentMatchScoreModal}
+          selectedMatchScore={selectedMatchScore}
           refetchTournamentMatches={refetchTournamentMatches}
         />
       )}

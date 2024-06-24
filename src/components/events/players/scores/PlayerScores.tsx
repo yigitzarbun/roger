@@ -261,7 +261,11 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                     : "-"}
                 </td>
                 <td>
-                  {event?.match_score_status_type_id === 1 ? (
+                  {event?.event_type_id === 7 &&
+                  event?.match_score_status_type_id === 1 ? (
+                    "-"
+                  ) : event?.match_score_status_type_id === 1 &&
+                    event?.event_type_id === 2 ? (
                     <button
                       onClick={() => openAddScoreModal(event)}
                       className={styles["add-score-button"]}

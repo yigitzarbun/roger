@@ -127,7 +127,9 @@ const matchScoresModel = {
             .orWhere("bookings.inviter_id", filter.userId);
         })
         .andWhere((builder) => {
-          builder.where("bookings.event_type_id", 2);
+          builder
+            .where("bookings.event_type_id", 2)
+            .orWhere("bookings.event_type_id", 7);
         })
         .andWhere(function () {
           this.whereNot("players.user_id", filter.userId);
