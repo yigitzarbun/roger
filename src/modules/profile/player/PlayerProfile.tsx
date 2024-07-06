@@ -12,12 +12,13 @@ import PlayerOtherDetails from "../../../components/profile/player/other-details
 
 const PlayerProfile = () => {
   const user = useAppSelector((store) => store?.user?.user);
+
   const {
     data: playerDetails,
     isLoading: isPlayerDetailsLoading,
     refetch: refetchPlayerDetails,
   } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
-
+  console.log(playerDetails);
   const [page, setPage] = useState("account");
 
   const handlePage = (page: string) => {

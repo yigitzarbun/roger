@@ -50,7 +50,6 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
@@ -58,10 +57,14 @@
         color: var(--text-color);
         text-decoration: none;
       }
+
+      .pending-confirmation-text {
+        color: var(--yellow-text);
+      }
     }
 
     .cancel-button {
-      background-color: $roger-black-dark;
+      background-color: $roger-red;
       border: none;
       width: 100px;
       padding: $roger-button-padding;
@@ -74,10 +77,14 @@
     }
 
     .cancel-button:hover {
-      background-color: $roger-black-light;
+      //background-color: $roger-black-light;
     }
     .icon {
       cursor: pointer;
     }
+  }
+  .fee-text {
+    color: var(--text-color);
+    font-size: 0.9rem;
   }
 }

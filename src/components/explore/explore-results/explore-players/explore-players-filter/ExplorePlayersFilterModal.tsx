@@ -31,7 +31,7 @@ const ExplorePlayersFilterModal = (props) => {
         onClick={handleClosePlayerFilterModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Kortları Filtrele</h3>
+        <h3>Oyuncuları Filtrele</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input

@@ -3,10 +3,7 @@ import styles from "./styles.module.scss";
 import ClubTournamentFixtureResults from "../../components/club-tournament-fixture/results/ClubTournamentFixtureResults";
 import { useGetTournamentMatchesByTournamentIdQuery } from "../../api/endpoints/TournamentMatchesApi";
 import { useParams } from "react-router-dom";
-import {
-  useGetTournamentParticipantsCountQuery,
-  useGetTournamentsByIdQuery,
-} from "../../api/endpoints/TournamentsApi";
+import { useGetTournamentParticipantsCountQuery } from "../../api/endpoints/TournamentsApi";
 import ClubTournamentFixtureNavigation from "../../components/club-tournament-fixture/navigation/ClubTournamentFixtureNavigations";
 import TournamentDetail from "../../components/tournament-detail/results/TournamentDetail";
 import { useGetPlayerLevelsQuery } from "../../api/endpoints/PlayerLevelsApi";
@@ -117,9 +114,6 @@ const ClubTournamentFixture = () => {
     setCurrentPage(prevPage);
   };
 
-  const { data: selectedTournament, isLoading: isSelectedTournamentLoading } =
-    useGetTournamentsByIdQuery(tournamentId);
-
   const [display, setDisplay] = useState("fixture");
 
   const handleDisplay = (value: string) => {
@@ -153,11 +147,11 @@ const ClubTournamentFixture = () => {
 
   if (
     isTournamentMatchesLoading ||
-    isSelectedTournamentLoading ||
     isTournamentParticipantsCountLoading ||
     isTournamentDetailsLoading ||
     isPlayerLevelsLoading ||
-    isTournamentMatchRoundsLoading
+    isTournamentMatchRoundsLoading ||
+    isTournamentParticipantsLoading
   ) {
     return <PageLoading />;
   }

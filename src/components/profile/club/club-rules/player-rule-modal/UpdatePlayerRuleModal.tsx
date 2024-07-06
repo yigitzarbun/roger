@@ -131,7 +131,7 @@ const UpdatePlayerRuleModal = (props: UpdatePlayerRuleModallProps) => {
             >
               İptal
             </button>
-            <button type="submit" className={styles["delete-button"]}>
+            <button type="submit" className={styles["submit-button"]}>
               Onayla
             </button>
           </div>

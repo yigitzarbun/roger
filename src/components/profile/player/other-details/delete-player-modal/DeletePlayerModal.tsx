@@ -21,10 +21,11 @@ const DeletePlayerModal = (props) => {
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
+
   const handleDeleteConfirmation = (e) => {
     setDeleteConfirmation(e.target.value);
   };
-  console.log(playerDetails);
+
   const handleDelete = () => {
     if (
       email === playerDetails?.email &&
@@ -79,7 +80,7 @@ const DeletePlayerModal = (props) => {
           >
             İptal
           </button>
-          <button className={styles["delete-button"]} onClick={handleDelete}>
+          <button className={styles["submit-button"]} onClick={handleDelete}>
             Hesabı Sil
           </button>
         </div>

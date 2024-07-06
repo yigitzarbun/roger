@@ -8,6 +8,7 @@ import { FaBuildingUser } from "react-icons/fa6";
 import { GiTennisCourt } from "react-icons/gi";
 import { IoPeople } from "react-icons/io5";
 import { CgTennis } from "react-icons/cg";
+import { PiTennisBallBold } from "react-icons/pi";
 
 import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +84,15 @@ const ProfileModal = (props: ProfileModalProps) => {
           >
             <h4>Gruplar</h4>
             <RiGroupLine className={styles.icon} />
+          </div>
+        )}
+        {isUserPlayer && (
+          <div
+            onClick={() => navigateUser("PLAYER_TRAINERS")}
+            className={styles["menu-item"]}
+          >
+            <h4>Eğitmenlerim</h4>
+            <PiTennisBallBold className={styles.icon} />
           </div>
         )}
         {isUserClub && (

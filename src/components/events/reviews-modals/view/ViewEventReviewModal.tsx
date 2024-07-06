@@ -2,8 +2,6 @@ import React from "react";
 
 import Modal from "react-modal";
 
-import { FaWindowClose } from "react-icons/fa";
-
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
@@ -34,8 +32,7 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
       userId: user?.user?.user_id,
       bookingId: selectedBookingId,
     });
-  console.log(selectedBookingId);
-  console.log(selectedEventReview);
+
   if (isSelectedEventReviewLoading) {
     return <PageLoading />;
   }

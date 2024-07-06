@@ -10,6 +10,8 @@
   flex-direction: column;
   justify-content: space-between;
   row-gap: 30px;
+  border: 1px solid $roger-border-color;
+
   button {
     padding: 10px;
     border-radius: $roger-border-radius;
@@ -48,12 +50,11 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
       .opponent-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
     }

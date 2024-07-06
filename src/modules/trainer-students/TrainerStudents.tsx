@@ -6,8 +6,12 @@ import TrainerStudentsResults from "../../components/trainer-students/results/Tr
 import TrainerStudentsNavigation from "../../components/trainer-students/navigation/TrainerStudentsNavigation";
 import TrainerStudentRequests from "../../components/trainer-students/new-student-requests/TrainerStudentRequests";
 import TrainerStudentGroupsResults from "../../components/trainer-students/groups/TrainerStudentGroupsResults";
+import { useGetPaginatedTrainerStudentsQuery } from "../../api/endpoints/StudentsApi";
+import { useAppSelector } from "../../store/hooks";
 
 const TrainerStudents = () => {
+  const user = useAppSelector((store) => store?.user?.user);
+
   const [display, setDisplay] = useState("students");
   const handleDisplay = (value: string) => {
     setDisplay(value);
@@ -39,6 +43,41 @@ const TrainerStudents = () => {
     setGender("");
     setLocationId(null);
   };
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const {
+    data: paginatedTrainerStudents,
+    isLoading: isStudentsLoading,
+    refetch: refetchStudents,
+  } = useGetPaginatedTrainerStudentsQuery({
+    perPage: 4,
+    currentPage: currentPage,
+    playerLevelId: playerLevelId,
+    textSearch: textSearch,
+    locationId: locationId,
+    gender: gender,
+    trainerUserId: user?.user?.user_id,
+    studentStatus: "accepted",
+  });
+
+  const handlePlayerPage = (e) => {
+    setCurrentPage(e.target.value);
+  };
+
+  const handleNextPage = () => {
+    const nextPage = (currentPage % paginatedTrainerStudents?.totalPages) + 1;
+    setCurrentPage(nextPage);
+  };
+
+  const handlePrevPage = () => {
+    const prevPage =
+      ((currentPage - 2 + paginatedTrainerStudents?.totalPages) %
+        paginatedTrainerStudents?.totalPages) +
+      1;
+    setCurrentPage(prevPage);
+  };
+
   return (
     <div className={styles["students-container"]}>
       <TrainerStudentsNavigation
@@ -47,15 +86,21 @@ const TrainerStudents = () => {
       />
       {display === "students" && (
         <TrainerStudentsResults
-          textSearch={textSearch}
           playerLevelId={playerLevelId}
+          textSearch={textSearch}
           locationId={locationId}
           gender={gender}
+          handleLevel={handleLevel}
+          handleTextSearch={handleTextSearch}
+          handleGender={handleGender}
           handleLocation={handleLocation}
           handleClear={handleClear}
-          handleTextSearch={handleTextSearch}
-          handleLevel={handleLevel}
-          handleGender={handleGender}
+          paginatedTrainerStudents={paginatedTrainerStudents}
+          handlePlayerPage={handlePlayerPage}
+          handleNextPage={handleNextPage}
+          handlePrevPage={handlePrevPage}
+          user={user}
+          refetchStudents={refetchStudents}
         />
       )}
       {display === "groups" && (
@@ -65,7 +110,9 @@ const TrainerStudents = () => {
           handleClear={handleClear}
         />
       )}
-      {display === "requests" && <TrainerStudentRequests />}
+      {display === "requests" && (
+        <TrainerStudentRequests refetchStudents={refetchStudents} />
+      )}
     </div>
   );
 };

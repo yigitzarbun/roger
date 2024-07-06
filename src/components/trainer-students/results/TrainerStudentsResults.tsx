@@ -6,10 +6,8 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
-import { useAppSelector } from "../../../store/hooks";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
-import { useGetPaginatedTrainerStudentsQuery } from "../../../api/endpoints/StudentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import DeleteTrainerStudentModal from "./delete-student-modal/DeleteTrainerStudentModal";
 import { getAge } from "../../../common/util/TimeFunctions";
@@ -26,6 +24,12 @@ interface TrainerStudentsProps {
   handleGender: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleLocation: (event: ChangeEvent<HTMLSelectElement>) => void;
   handleClear: () => void;
+  paginatedTrainerStudents: any;
+  handlePlayerPage: (e) => void;
+  handleNextPage: () => void;
+  handlePrevPage: () => void;
+  user: any;
+  refetchStudents: () => void;
 }
 const TrainerStudentsResults = (props: TrainerStudentsProps) => {
   const {
@@ -38,48 +42,21 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
     handleGender,
     handleLocation,
     handleClear,
+    paginatedTrainerStudents,
+    handlePlayerPage,
+    handleNextPage,
+    handlePrevPage,
+    user,
+    refetchStudents,
   } = props;
-  const user = useAppSelector((store) => store?.user?.user);
+
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const {
-    data: paginatedTrainerStudents,
-    isLoading: isStudentsLoading,
-    refetch: refetchStudents,
-  } = useGetPaginatedTrainerStudentsQuery({
-    perPage: 4,
-    currentPage: currentPage,
-    playerLevelId: playerLevelId,
-    textSearch: textSearch,
-    locationId: locationId,
-    gender: gender,
-    trainerUserId: user?.user?.user_id,
-    studentStatus: "accepted",
-  });
 
   const pageNumbers = [];
   for (let i = 1; i <= paginatedTrainerStudents?.totalPages; i++) {
     pageNumbers.push(i);
   }
-
-  const handlePlayerPage = (e) => {
-    setCurrentPage(e.target.value);
-  };
-
-  const handleNextPage = () => {
-    const nextPage = (currentPage % paginatedTrainerStudents?.totalPages) + 1;
-    setCurrentPage(nextPage);
-  };
-
-  const handlePrevPage = () => {
-    const prevPage =
-      ((currentPage - 2 + paginatedTrainerStudents?.totalPages) %
-        paginatedTrainerStudents?.totalPages) +
-      1;
-    setCurrentPage(prevPage);
-  };
 
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   const [opponentUserId, setOpponentUserId] = useState(null);
@@ -116,7 +93,7 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
     setDeleteModalOpen(false);
   };
 
-  if (isPlayerLevelsLoading || isLocationsLoading || isStudentsLoading) {
+  if (isPlayerLevelsLoading || isLocationsLoading) {
     return <PageLoading />;
   }
 

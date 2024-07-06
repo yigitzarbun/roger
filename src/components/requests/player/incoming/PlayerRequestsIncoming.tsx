@@ -191,7 +191,7 @@ const PlayerRequestsIncoming = () => {
           <table>
             <thead>
               <tr>
-                <th>Oyuncu</th>
+                <th>Üye</th>
                 <th>İsim</th>
                 <th>Seviye</th>
                 <th>Cinsiyet</th>

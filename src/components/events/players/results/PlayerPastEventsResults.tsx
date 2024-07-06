@@ -171,7 +171,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   if (isBookingsLoading || isEventReviewsLoading) {
     return <PageLoading />;
   }
-
+  console.log(myEvents);
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -221,7 +221,9 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
-                      event.event_type_id === 1 || event.event_type_id === 2
+                      event.event_type_id === 1 ||
+                      event.event_type_id === 2 ||
+                      event.event_type_id === 7
                         ? 1
                         : event.event_type_id === 3
                         ? 2
@@ -231,12 +233,14 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                     }/${
                       (event.event_type_id === 1 ||
                         event.event_type_id === 2 ||
-                        event.event_type_id === 3) &&
+                        event.event_type_id === 3 ||
+                        event.event_type_id === 7) &&
                       event.inviter_id === user?.user?.user_id
                         ? event.invitee_id
                         : (event.event_type_id === 1 ||
                             event.event_type_id === 2 ||
-                            event.event_type_id === 3) &&
+                            event.event_type_id === 3 ||
+                            event.event_type_id === 7) &&
                           event.invitee_id === user?.user?.user_id
                         ? event.inviter_id
                         : event.event_type_id === 6
@@ -248,7 +252,8 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                       src={
                         event?.playerImage &&
                         (event?.event_type_id === 1 ||
-                          event?.event_type_id === 2)
+                          event?.event_type_id === 2 ||
+                          event.event_type_id === 7)
                           ? event?.playerImage
                           : event?.trainerImage && event?.event_type_id === 3
                           ? event?.trainerImage
@@ -264,7 +269,9 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                 <td>
                   <Link
                     to={`${paths.EXPLORE_PROFILE}${
-                      event.event_type_id === 1 || event.event_type_id === 2
+                      event.event_type_id === 1 ||
+                      event.event_type_id === 2 ||
+                      event.event_type_id === 7
                         ? 1
                         : event.event_type_id === 3
                         ? 2
@@ -274,12 +281,14 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                     }/${
                       (event.event_type_id === 1 ||
                         event.event_type_id === 2 ||
-                        event.event_type_id === 3) &&
+                        event.event_type_id === 3 ||
+                        event.event_type_id === 7) &&
                       event.inviter_id === user?.user?.user_id
                         ? event.invitee_id
                         : (event.event_type_id === 1 ||
                             event.event_type_id === 2 ||
-                            event.event_type_id === 3) &&
+                            event.event_type_id === 3 ||
+                            event.event_type_id === 7) &&
                           event.invitee_id === user?.user?.user_id
                         ? event.inviter_id
                         : event.event_type_id === 6
@@ -290,7 +299,8 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                   >
                     {event.event_type_id === 1 ||
                     event.event_type_id === 2 ||
-                    event.event_type_id === 3
+                    event.event_type_id === 3 ||
+                    event.event_type_id === 7
                       ? `${event?.fname} ${event?.lname}`
                       : event.event_type_id === 6
                       ? event?.student_group_name

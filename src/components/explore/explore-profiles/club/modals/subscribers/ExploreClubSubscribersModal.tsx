@@ -127,7 +127,7 @@ const ExploreClubSubscribersModal = (
                   <th>Yaş</th>
                   <th>Konum</th>
                   <th>Seviye</th>
-                  <th>Yorum</th>
+                  <th>Değerlendirme</th>
                   {isUserPlayer && <th>Antreman</th>}
                   {isUserPlayer && <th>Maç</th>}
                   {isUserTrainer && <td>Ders</td>}

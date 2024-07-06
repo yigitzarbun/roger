@@ -165,8 +165,8 @@
     }
 
     .edit-button {
-      background-color: white;
-      color: black;
+      background-color: var(--primary-button-background-color);
+      color: white;
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -175,8 +175,7 @@
       width: 150px;
     }
     .edit-button:hover {
-      background-color: $roger-white;
-      color: black;
+      background-color: $roger-blue;
     }
   }
   .pages-container {

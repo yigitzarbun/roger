@@ -7,6 +7,10 @@ import { useGetPlayerLevelsQuery } from "../../api/endpoints/PlayerLevelsApi";
 import TournamentDetailsNavigation from "../../components/tournament-detail/navigation/TournamentDetailsNavigation";
 import TournamentDetailsInfo from "../../components/tournament-detail/details/TournamentDetailsInfo";
 import PageLoading from "../../components/loading/PageLoading";
+import PlayerTournamentFixture from "../../components/player-tournaments/player-tournament-fixture/PlayerTournamentFixture";
+import { useGetTournamentParticipantsCountQuery } from "../../api/endpoints/TournamentsApi";
+import { useGetTournamentMatchesByTournamentIdQuery } from "../../api/endpoints/TournamentMatchesApi";
+import { useGetTournamentMatchRoundsQuery } from "../../api/endpoints/TournamentMatchRoundsApi";
 
 const TournamentDetails = () => {
   const params = useParams();
@@ -64,6 +68,66 @@ const TournamentDetails = () => {
     setDisplay(value);
   };
 
+  const {
+    data: participantsCount,
+    isLoading: isTournamentParticipantsCountLoading,
+  } = useGetTournamentParticipantsCountQuery(tournamentId);
+
+  const numberOfParticipants = Number(
+    participantsCount?.[0]?.participant_count
+  );
+
+  const calculateInitialRoundId = (participants) => {
+    return participants > 64
+      ? 1
+      : participants > 32
+      ? 2
+      : participants > 16
+      ? 3
+      : participants > 8
+      ? 4
+      : participants > 4
+      ? 5
+      : participants > 2
+      ? 6
+      : participants === 2 || participants === 1
+      ? 7
+      : null;
+  };
+
+  const initialRoundId = calculateInitialRoundId(numberOfParticipants);
+
+  const [matchRound, setMatchRound] = useState(initialRoundId);
+
+  const handleMatchRound = (id: number) => {
+    setMatchRound(id);
+  };
+
+  const {
+    data: tournamentMatches,
+    isLoading: isTournamentMatchesLoading,
+    refetch: refetchTournamentMatches,
+  } = useGetTournamentMatchesByTournamentIdQuery({
+    matchRoundId: matchRound,
+    tournamentId: tournamentId,
+  });
+
+  const {
+    data: tournamentMatchRounds,
+    isLoading: isTournamentMatchRoundsLoading,
+    refetch: refetchTournamentMatchRounds,
+  } = useGetTournamentMatchRoundsQuery({});
+
+  const filteredTournamentMatchRounds = tournamentMatchRounds?.filter(
+    (round) =>
+      round.tournament_match_round_id >= initialRoundId &&
+      round.tournament_match_round_id !== 8
+  );
+
+  useEffect(() => {
+    setMatchRound(initialRoundId);
+  }, [initialRoundId]);
+
   useEffect(() => {
     refetchTournamentDetails();
   }, [currentPage, textSearch, playerLevelId, tournamentId]);
@@ -94,6 +158,15 @@ const TournamentDetails = () => {
       )}
       {display === "details" && (
         <TournamentDetailsInfo tournamentDetails={tournamentDetails} />
+      )}
+      {display === "fixture" && (
+        <PlayerTournamentFixture
+          numberOfParticipants={numberOfParticipants}
+          tournamentMatches={tournamentMatches}
+          filteredTournamentMatchRounds={filteredTournamentMatchRounds}
+          matchRound={matchRound}
+          handleMatchRound={handleMatchRound}
+        />
       )}
     </div>
   );

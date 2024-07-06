@@ -33,14 +33,13 @@
     justify-content: space-between;
     row-gap: 4vh;
     border-radius: $roger-border-radius;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     row-gap: 4vh;
-    background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border-radius: $roger-border-radius;
     width: 100%;
@@ -99,12 +98,11 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            margin: 0 auto;
             display: block;
           }
 
           .opponent-name {
-            color: white;
+            color: var(--text-color);
             text-decoration: none;
           }
 

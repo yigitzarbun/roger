@@ -9,6 +9,8 @@
   flex-direction: column;
   justify-content: space-between;
   row-gap: 20px;
+  border: 1px solid $roger-border-color;
+
   table {
     width: 100%;
     text-align: left;
@@ -29,12 +31,11 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
       .court-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
 

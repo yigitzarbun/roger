@@ -9,6 +9,7 @@ import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../store/hooks";
 
 import {
+  useGetStudentsByFilterQuery,
   useGetTrainerNewStudentRequestsListQuery,
   useUpdateStudentMutation,
 } from "../../../api/endpoints/StudentsApi";
@@ -17,13 +18,17 @@ import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
 import { toast } from "react-toastify";
 
-const TrainerStudentRequests = () => {
+interface TrainerStudentRequestsProps {
+  refetchStudents: () => void;
+}
+const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
+  const { refetchStudents } = props;
   const user = useAppSelector((store) => store?.user?.user);
 
   const {
     data: newStudentRequestsList,
     isLoading: isNewStudentRequestsListLoading,
-    refetch: refetchStudents,
+    refetch: refetchStudentRequests,
   } = useGetTrainerNewStudentRequestsListQuery(user?.user?.user_id);
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
@@ -54,6 +59,7 @@ const TrainerStudentRequests = () => {
     if (isUpdateStudentSuccess) {
       toast.success("İşlem başarılı");
       refetchStudents();
+      refetchStudentRequests();
     }
   }, [isUpdateStudentSuccess]);
 

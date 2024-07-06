@@ -61,8 +61,6 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   const [addCourt, { isSuccess }] = useAddCourtMutation({});
 
-  const { refetch: refetchAllCourts } = useGetCourtsQuery({});
-
   const { refetch: refetchClubCourts } = useGetCourtsByFilterQuery({
     club_id: user?.clubDetails?.club_id,
   });
@@ -106,7 +104,6 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetchAllCourts();
       refetchClubCourts();
       toast.success("Kort eklendi");
       reset();

@@ -38,10 +38,11 @@ const PlayerTournamentsNavigation = ({
         }
       >
         <span>Katıldığım Turnuvalar</span>
-        {"  "}
-        <span className={styles.notification}>
-          ({myTournaments?.tournaments?.length})
-        </span>
+        {myTournaments?.tournaments?.length > 0 && (
+          <span className={styles.notification}>
+            ({myTournaments?.tournaments?.length})
+          </span>
+        )}
       </button>
     </div>
   );

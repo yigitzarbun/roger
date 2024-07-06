@@ -81,17 +81,19 @@ const PlayersLeaderboardResults = (props: PlayerLeaderBoardResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Liderlik Tablosu</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {leaderboard.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {leaderboard?.leaderboard?.length > 0 ? (
         <table>

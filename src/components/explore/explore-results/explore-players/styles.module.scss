@@ -110,7 +110,6 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
@@ -140,7 +139,7 @@
     .training-button {
       background-color: var(--primary-button-background-color);
       border: none;
-      width: 150px;
+      width: 110px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
@@ -157,7 +156,7 @@
     .match-button {
       background-color: var(--secondary-button-background-color);
       border: none;
-      width: 150px;
+      width: 110px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;

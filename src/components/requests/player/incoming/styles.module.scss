@@ -50,7 +50,6 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
@@ -61,7 +60,7 @@
     }
 
     .accept-button {
-      background-color: var(--green-text);
+      background-color: var(--green-button-color);
       color: black;
       border: none;
       padding: $roger-button-padding;
@@ -74,11 +73,10 @@
     }
 
     .accept-button:hover {
-      background-color: $roger-blue;
-      color: white;
+      background-color: var(--green-button-color-hover);
     }
     .decline-button {
-      background-color: $roger-black-dark;
+      background-color: var(--grey-button-color);
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -91,10 +89,14 @@
     }
 
     .decline-button:hover {
-      background-color: $roger-black-light;
+      background-color: var(--grey-button-color-hover);
     }
     .icon {
       cursor: pointer;
     }
+  }
+  .fee-text {
+    color: var(--text-color);
+    font-size: 0.9rem;
   }
 }

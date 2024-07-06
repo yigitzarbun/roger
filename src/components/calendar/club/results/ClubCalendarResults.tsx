@@ -158,10 +158,6 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     refetchClubDetails();
   }, [isEditBankModalOpen]);
 
-  useEffect(() => {
-    refecthMyCourts();
-  }, [isAddCourtModalOpen]);
-  // data loading check
   if (
     isUsersLoading ||
     isMyGroupsLoading ||
@@ -373,6 +369,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
           courtSurfaceTypes={courtSurfaceTypes}
           currentClub={currentClub}
           user={user}
+          refecthMyCourts={refecthMyCourts}
         />
       )}
       {isEditBankModalOpen && (

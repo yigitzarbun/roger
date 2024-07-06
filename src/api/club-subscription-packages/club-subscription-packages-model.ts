@@ -29,6 +29,8 @@ const clubSubscriptionPackagesModel = {
       .select(
         "club_subscription_packages.*",
         "club_subscription_types.*",
+        "clubs.club_name",
+        "clubs.image",
         db.raw(
           "COALESCE(COUNT(DISTINCT CASE WHEN users.user_status_type_id = 1 THEN club_subscriptions.club_subscription_id END), 0) as subscriberCount"
         )
@@ -63,7 +65,9 @@ const clubSubscriptionPackagesModel = {
       .groupBy(
         "club_subscription_packages.club_subscription_package_id",
         "club_subscription_types.club_subscription_type_id",
-        "clubs.club_id"
+        "clubs.club_id",
+        "clubs.club_name",
+        "clubs.image"
       );
 
     return clubPackageDetails;

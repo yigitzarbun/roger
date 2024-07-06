@@ -10,6 +10,8 @@
   flex-direction: column;
   justify-content: space-between;
   row-gap: 20px;
+  border: 1px solid $roger-border-color;
+
   table {
     width: 100%;
     text-align: left;

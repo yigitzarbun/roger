@@ -62,9 +62,6 @@ const trainersModel = {
         if (filter.locationId > 0) {
           builder.where("trainers.location_id", filter.locationId);
         }
-        if (filter.clubId > 0) {
-          builder.where("trainers.club_id", filter.clubId);
-        }
         if (filter.currentUserId > 0) {
           builder.where("trainers.user_id", "!=", filter.currentUserId);
         }
@@ -141,9 +138,6 @@ const trainersModel = {
         }
         if (filter.locationId > 0) {
           builder.where("trainers.location_id", filter.locationId);
-        }
-        if (filter.clubId > 0) {
-          builder.where("trainers.club_id", filter.clubId);
         }
         if (filter.currentUserId > 0) {
           builder.where("trainers.user_id", "!=", filter.currentUserId);

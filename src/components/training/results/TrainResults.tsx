@@ -92,18 +92,24 @@ const TrainResults = (props: TrainResultsProps) => {
   const levelId = Number(playerLevelId) ?? null;
   const selectedGender = gender ?? "";
   const locationIdValue = Number(locationId) ?? null;
-
+  const playerAge = user?.playerDetails?.birth_year;
+  const playerLocationId = user?.playerDetails?.location_id;
+  const logicLevelId = user?.playerDetails?.player_level_id;
   const {
     data: players,
     isLoading: isPlayersLoading,
     refetch: refetchPaginatedPlayers,
   } = useGetPaginatedPlayersQuery({
     currentPage: currentPage,
-    playerLevelId: levelId,
-    selectedGender: selectedGender,
-    locationId: locationIdValue,
+    playerLevelId: playerLevelId,
+    selectedGender: gender,
+    locationId: locationId,
     currentUserId: user?.user?.user_id,
     textSearch: textSearch,
+    minAgeYear: Number(playerAge) - 5,
+    maxAgeYear: Number(playerAge) + 5,
+    proximityLocationId: playerLocationId,
+    logicLevelId: logicLevelId,
   });
   const pageNumbers = [];
   for (let i = 1; i <= players?.totalPages; i++) {
@@ -159,17 +165,19 @@ const TrainResults = (props: TrainResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Antreman</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {players?.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {isPlayersLoading && <p>Yükleniyor...</p>}
       {players && filteredPlayers.length === 0 && (
@@ -182,7 +190,7 @@ const TrainResults = (props: TrainResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Favori</th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>

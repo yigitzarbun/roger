@@ -8,6 +8,8 @@
   display: flex;
   flex-direction: column;
   row-gap: 30px;
+  border: 1px solid $roger-border-color;
+
   button {
     padding: 10px;
     border-radius: $roger-border-radius;

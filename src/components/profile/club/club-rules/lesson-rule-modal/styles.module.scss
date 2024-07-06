@@ -34,7 +34,7 @@
     width: 500px;
     row-gap: 4vh;
     border-radius: $roger-border-radius;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
 
@@ -68,6 +68,7 @@
             width: 100%;
             background-color: inherit;
             height: 50px;
+            color: var(--text-color);
           }
         }
       }
@@ -77,35 +78,31 @@
         justify-content: space-between;
         margin: 4vh 0;
         .discard-button {
-          background-color: $roger-black-dark;
+          background-color: var(--secondary-button-background-color);
           border: none;
           padding: $roger-button-padding;
           border-radius: $roger-border-radius;
-          font-size: 1rem;
+          font-size: 0.9rem;
           cursor: pointer;
           height: 40px;
           width: 150px;
         }
         .discard-button:hover {
-          background-color: $roger-black-dark;
+          background-color: $roger-red;
         }
-        .discard-button:hover {
-          background-color: $roger-box-bg-color-hover;
-        }
-        .delete-button {
-          background-color: white;
-          color: black;
+        .submit-button {
+          background-color: var(--primary-button-background-color);
+          color: white;
           border: none;
           padding: $roger-button-padding;
           border-radius: $roger-border-radius;
-          font-size: 1rem;
+          font-size: 0.9rem;
           cursor: pointer;
           height: 40px;
           width: 150px;
         }
-        .delete-button:hover {
-          background-color: $roger-white;
-          color: black;
+        .submit-button:hover {
+          background-color: $roger-blue;
         }
       }
     }

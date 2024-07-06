@@ -29,6 +29,12 @@ export const studentsSlice = createApi({
           filter
         )}`,
     }),
+    getPaginatedPlayerTrainers: builder.query({
+      query: (filter) =>
+        `/students/paginated-player-trainers/filter?${new URLSearchParams(
+          filter
+        )}`,
+    }),
     getTrainerNewStudentRequestsList: builder.query({
       query: (trainerUserId) =>
         `/students/trainer-new-student-requests-list/${trainerUserId}`,
@@ -55,6 +61,7 @@ export const {
   useGetStudentsByFilterQuery,
   useGetIsStudentQuery,
   useGetPaginatedTrainerStudentsQuery,
+  useGetPaginatedPlayerTrainersQuery,
   useGetTrainerNewStudentRequestsListQuery,
   useAddStudentMutation,
   useUpdateStudentMutation,

@@ -89,7 +89,6 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
       handleAddFavourite(userId);
     }
   };
-
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
       refetchMyFavourites();
@@ -122,7 +121,6 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                   <th>Ders</th>
                   <th>Öğrenci</th>
                   <th>Fiyat</th>
-                  <th>Kulüp</th>
                   <th>Konum</th>
                   {isUserPlayer && <th>Ders</th>}
                 </tr>
@@ -187,7 +185,6 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                     <td>{trainer.lessoncount}</td>
                     <td>{trainer.studentcount}</td>
                     <td>{trainer.price_hour} TL</td>
-                    <td>{trainer.club_name}</td>
                     <td>{trainer.location_name}</td>
                     {isUserPlayer && (
                       <td>

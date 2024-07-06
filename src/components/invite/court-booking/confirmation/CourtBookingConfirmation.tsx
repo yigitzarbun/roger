@@ -33,8 +33,8 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>{eventType === "Ders" ? "Eğitmen" : "Oyuncu"}</th>
+              <th>İsim</th>
               <th>Tür</th>
               <th>Ücret</th>
             </tr>

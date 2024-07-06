@@ -34,7 +34,7 @@
     width: 50vw;
     row-gap: 4vh;
     border-radius: $roger-border-radius;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
     height: 90vh;
@@ -100,12 +100,17 @@
       .nav-arrow {
         font-size: 1.3rem;
       }
+      .nav-arrow:hover {
+        color: $roger-blue;
+        cursor: pointer;
+      }
     }
     table {
       width: 100%;
       text-align: left;
       border-collapse: collapse;
       margin-bottom: auto;
+
       .user-row {
         border-bottom: 1px solid $roger-border-color;
         cursor: pointer;
@@ -113,7 +118,7 @@
         td {
           border-top: 1px solid $roger-border-color;
           vertical-align: middle;
-          padding: 5px;
+          padding: 5px 10px; // Adjust padding to reduce column gaps
           height: 9vh;
         }
 
@@ -122,7 +127,6 @@
           height: 40px;
           border-radius: 50%;
           object-fit: cover;
-          margin: 0 auto;
           display: block;
         }
       }
@@ -141,6 +145,7 @@
       width: 100%;
       background-color: inherit;
       height: 50px;
+      color: var(--text-color);
     }
 
     textArea {
@@ -150,6 +155,7 @@
       width: 100%;
       background-color: inherit;
       height: 50%;
+      color: var(--text-color);
     }
 
     p {
@@ -170,10 +176,9 @@
   .buttons-container {
     display: flex;
     justify-content: space-between;
-    margin: 1vh 0;
-
+    margin: 4vh 0;
     .discard-button {
-      background-color: $roger-black-dark;
+      background-color: var(--secondary-button-background-color);
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -182,13 +187,12 @@
       height: 40px;
       width: 150px;
     }
-
     .discard-button:hover {
-      background-color: $roger-box-bg-color-hover;
+      background-color: $roger-red;
     }
     .submit-button {
-      background-color: white;
-      color: black;
+      background-color: var(--primary-button-background-color);
+      color: white;
       border: none;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
@@ -198,8 +202,7 @@
       width: 150px;
     }
     .submit-button:hover {
-      background-color: $roger-white;
-      color: black;
+      background-color: $roger-blue;
     }
   }
   .pages-container {

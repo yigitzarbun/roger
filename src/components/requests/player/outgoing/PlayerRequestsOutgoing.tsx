@@ -86,7 +86,7 @@ const PlayerRequestsOutgoing = () => {
             <thead>
               <tr>
                 <th>Durum</th>
-                <th>Oyuncu</th>
+                <th>Üye</th>
                 <th>İsim</th>
                 <th>Seviye</th>
                 <th>Cinsiyet</th>
@@ -94,8 +94,8 @@ const PlayerRequestsOutgoing = () => {
                 <th>Tür</th>
                 <th>Tarih</th>
                 <th>Saat </th>
-                <th>Kort</th>
                 <th>Konum</th>
+                <th>Kort</th>
                 <th>
                   Ücret<span className={styles["fee"]}>*</span>
                 </th>
@@ -165,8 +165,8 @@ const PlayerRequestsOutgoing = () => {
                   <td>{booking?.event_type_name}</td>
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
-                  <td>{booking?.court_name}</td>
                   <td>{booking?.club_name}</td>
+                  <td>{booking?.court_name}</td>
                   <td>
                     {booking.event_type_id === 1 || booking.event_type_id === 2
                       ? booking?.payment_amount / 2

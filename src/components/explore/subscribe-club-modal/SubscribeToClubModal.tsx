@@ -140,10 +140,13 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
     }
   }, [isSubscriptionSuccess]);
 
-  if (isCurrentPlayerLoading || isPaymentsLoading) {
+  if (
+    isCurrentPlayerLoading ||
+    isPaymentsLoading ||
+    isSelectedClubPackageDetailsLoading
+  ) {
     return <PageLoading />;
   }
-  console.log(selectedClubPackageDetails);
   return (
     <ReactModal
       isOpen={openSubscribeModal}

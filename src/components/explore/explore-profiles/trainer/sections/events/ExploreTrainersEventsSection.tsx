@@ -51,8 +51,8 @@ const ExploreTrainersEventsSection = (
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Oyuncu</th>
+              <th>İsim</th>
               <th>Tür</th>
               <th>Tarih</th>
               <th>Saat</th>

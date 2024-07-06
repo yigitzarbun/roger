@@ -237,17 +237,19 @@ const LessonResults = (props: TrainSearchProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Ders</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {trainers?.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {isTrainersLoading && <p>Yükleniyor...</p>}
       {trainers && filteredTrainers.length === 0 && (
@@ -260,7 +262,7 @@ const LessonResults = (props: TrainSearchProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Favori</th>
               <th>Eğitmen</th>
               <th>İsim</th>
               <th>Kulüp</th>

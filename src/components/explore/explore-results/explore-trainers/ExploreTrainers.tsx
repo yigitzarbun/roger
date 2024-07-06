@@ -295,7 +295,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Favori</th>
               <th>Eğitmen</th>
               <th>İsim</th>
               <th>Seviye</th>
@@ -385,7 +385,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                         student.student_status === "pending"
                     ) ? (
                       <p className={styles["pending-confirmation-text"]}>
-                        Onayı bekleniyor
+                        Onay bekleniyor
                       </p>
                     ) : playerStudentships?.find(
                         (student) =>

@@ -11,6 +11,7 @@ import Paths from "../../../routing/Paths";
 import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../api/endpoints/BanksApi";
 import PageLoading from "../../../components/loading/PageLoading";
+import EditTournamentModal from "../edit-tournament-modal/EditTournamentModal";
 
 interface ClubTournamentsResultsProps {
   clubTournaments: any[];
@@ -66,6 +67,23 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
     refetchClubBankDetails();
   };
 
+  const handleNavigateTournamentFixture = (tournamentId: number) => {
+    navigate(`${Paths.CLUB_TOURNAMENT_FIXTURE}${tournamentId}`);
+  };
+
+  const [updateTournamentModal, setUpdateTournamentModal] = useState(false);
+  const [selectedTournament, setSelectedTournament] = useState(null);
+
+  const handleOpenUpdateTournamentModal = (tournament: any) => {
+    setSelectedTournament(tournament);
+    setUpdateTournamentModal(true);
+  };
+
+  const closeUpdateTournamentModal = () => {
+    setUpdateTournamentModal(false);
+  };
+
+  console.log(updateTournamentModal);
   if (
     isBanksLoading ||
     isClubBankDetailsExistLoading ||
@@ -128,12 +146,14 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 key={tournament.tournament_id}
                 className={styles["tournament-row"]}
               >
-                <Link
-                  to={`${Paths.CLUB_TOURNAMENT_FIXTURE}${tournament.tournament_id}`}
-                  className={styles["tournament-name"]}
-                >
-                  <td>{tournament.tournament_name}</td>
-                </Link>
+                <td>
+                  <Link
+                    to={`${Paths.CLUB_TOURNAMENT_FIXTURE}${tournament.tournament_id}`}
+                    className={styles["tournament-name"]}
+                  >
+                    {tournament.tournament_name}
+                  </Link>
+                </td>
                 <td>{tournament.start_date.slice(0, 10)}</td>
                 <td>{tournament.end_date.slice(0, 10)}</td>
                 <td>{getAge(Number(tournament.min_birth_year))}</td>
@@ -145,10 +165,22 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 <td>{tournament.application_deadline.slice(0, 10)}</td>
                 <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
                 <td>
-                  <button className={styles["submit-button"]}>Düzenle</button>
+                  <button
+                    onClick={() => handleOpenUpdateTournamentModal(tournament)}
+                    className={styles["submit-button"]}
+                  >
+                    Düzenle
+                  </button>
                 </td>
                 <td>
-                  <button className={styles["submit-button"]}>Fikstür</button>
+                  <button
+                    onClick={() =>
+                      handleNavigateTournamentFixture(tournament.tournament_id)
+                    }
+                    className={styles["submit-button"]}
+                  >
+                    Fikstür
+                  </button>
                 </td>
               </tr>
             ))}
@@ -180,6 +212,17 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
           refetchClubDetails={refetchClubDetails}
         />
       )}
+      {
+        <EditTournamentModal
+          updateTournamentModal={updateTournamentModal}
+          closeUpdateTournamentModal={closeUpdateTournamentModal}
+          clubUserId={user?.user?.user_id}
+          clubBankDetailsExist={clubBankDetailsExist}
+          clubCourts={clubCourts}
+          refetchClubTournaments={refetchClubTournaments}
+          selectedTournament={selectedTournament}
+        />
+      }
     </div>
   );
 };

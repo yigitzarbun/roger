@@ -45,7 +45,7 @@ const ExplorePlayerProfilesEventsSection = (
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Üye</th>
               <th>İsim</th>
               <th>Konum</th>
               <th>Tür</th>

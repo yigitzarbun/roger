@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Link } from "react-router-dom";
-import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { SlOptions } from "react-icons/sl";
 
 import paths from "../../routing/Paths";
@@ -15,7 +14,6 @@ import { useGetPlayerActiveClubSubscriptionsQuery } from "../../api/endpoints/Cl
 
 const PlayerSubscriptionResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetPlayerActiveClubSubscriptionsQuery(user?.user?.user_id);
@@ -27,11 +25,6 @@ const PlayerSubscriptionResults = () => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Kulüp Üyelikleri</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft className={styles["nav-arrow"]} />
-
-          <FaAngleRight className={styles["nav-arrow"]} />
-        </div>
       </div>
       {clubSubscriptions?.length > 0 ? (
         <table>

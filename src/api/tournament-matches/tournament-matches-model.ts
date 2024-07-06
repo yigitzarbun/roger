@@ -96,6 +96,70 @@ const tournamentMatchesModel = {
       console.log("Error fetching getMatchesByTournamentId: ", error);
     }
   },
+  async getTournamentPendingTournamentMatchesByTournamentId(
+    tournamentId: number
+  ) {
+    try {
+      const pendingTournamentMatches = await db
+        .select("tournament_matches.tournament_match_id")
+        .from("tournament_matches")
+        .leftJoin(
+          "bookings",
+          "bookings.booking_id",
+          "tournament_matches.booking_id"
+        )
+        .where("tournament_matches.tournament_id", tournamentId)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.booking_status_type_id", 1)
+            .orWhere("bookings.booking_status_type_id", 2);
+        });
+      return pendingTournamentMatches;
+    } catch (error) {
+      console.log(
+        "Error fetching getTournamentPendingTournamentMatchesByTournamentId: ",
+        error
+      );
+    }
+  },
+  async updatePendingTournamentMatchesAsCancelled(tournamentId: number) {
+    try {
+      const bookingIdsObjects = await db
+        .select("tournament_matches.booking_id")
+        .from("tournament_matches")
+        .leftJoin(
+          "bookings",
+          "bookings.booking_id",
+          "tournament_matches.booking_id"
+        )
+        .where("tournament_matches.tournament_id", tournamentId)
+        .andWhere((builder) => {
+          builder
+            .where("bookings.booking_status_type_id", 1)
+            .orWhere("bookings.booking_status_type_id", 2);
+        });
+
+      if (bookingIdsObjects.length === 0) {
+        return true;
+      }
+
+      const bookingIds = bookingIdsObjects.map((obj) => obj.booking_id);
+
+      const numberOfUpdatedRows = await db("bookings")
+        .whereIn("booking_id", bookingIds)
+        .whereIn("booking_status_type_id", [1, 2])
+        .update({ booking_status_type_id: 4 });
+
+      if (numberOfUpdatedRows > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+      return false;
+    }
+  },
   async add(tournamentMatch) {
     const [newTournamentMatch] = await db("tournament_matches")
       .insert(tournamentMatch)

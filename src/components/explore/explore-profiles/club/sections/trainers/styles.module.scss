@@ -10,6 +10,8 @@
   flex-direction: column;
   justify-content: space-between;
   row-gap: 20px;
+  border: 1px solid $roger-border-color;
+
   .trainers-section-title-container {
     display: flex;
     justify-content: space-between;
@@ -43,12 +45,11 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
       .trainer-name {
-        color: white;
+        color: var(--text-color);
         text-decoration: none;
       }
 

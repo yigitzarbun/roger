@@ -106,10 +106,12 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
           Aradığınız kritere göre kullanıcı bulunamadı
         </p>
       )}
-      <NewMessageModal
-        newMessageModal={newMessageModal}
-        closeNewMessageModal={closeNewMessageModal}
-      />
+      {newMessageModal && (
+        <NewMessageModal
+          newMessageModal={newMessageModal}
+          closeNewMessageModal={closeNewMessageModal}
+        />
+      )}
     </div>
   );
 };

@@ -36,7 +36,7 @@ const ClubTournamentFixtureResults = (
     refetchTournamentMatches,
     refetchTournamentMatchRounds,
   } = props;
-
+  console.log(tournamentMatches);
   const [
     addTournamentMatchScoreModalOpen,
     setAddTournamentMatchScoreModalOpen,
@@ -77,7 +77,7 @@ const ClubTournamentFixtureResults = (
 
   let totalMatches = tournamentMatches?.length;
   let emptyMatches = requiredMatches - totalMatches;
-  console.log(tournamentMatches);
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["rounds-container"]}>
@@ -207,6 +207,7 @@ const ClubTournamentFixtureResults = (
           matchRound={matchRound}
           tournamentId={tournamentId}
           refetchTournamentMatchRounds={refetchTournamentMatchRounds}
+          refetchTournamentMatches={refetchTournamentMatches}
         />
       )}
       {addTournamentMatchScoreModalOpen && (

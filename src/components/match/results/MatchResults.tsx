@@ -102,6 +102,10 @@ const MatchResults = (props: MatchResultsProps) => {
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
     useGetPlayerByUserIdQuery(user?.user?.user_id);
 
+  const playerAge = user?.playerDetails?.birth_year;
+  const playerLocationId = user?.playerDetails?.location_id;
+  const logicLevelId = user?.playerDetails?.player_level_id;
+
   const {
     data: players,
     isLoading: isPlayersLoading,
@@ -113,6 +117,10 @@ const MatchResults = (props: MatchResultsProps) => {
     locationId: locationIdValue,
     currentUserId: user?.user?.user_id,
     textSearch: textSearch,
+    minAgeYear: Number(playerAge) - 5,
+    maxAgeYear: Number(playerAge) + 5,
+    proximityLocationId: playerLocationId,
+    logicLevelId: logicLevelId,
   });
 
   const pageNumbers = [];
@@ -175,17 +183,19 @@ const MatchResults = (props: MatchResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Maç</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {players?.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {isPlayersLoading && <p>Yükleniyor...</p>}
       {players && filteredPlayers.length === 0 && (
@@ -198,7 +208,7 @@ const MatchResults = (props: MatchResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Favori</th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>

@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import { useTranslation } from "react-i18next";
-import { LocalStorageKeys } from "../../../../common/constants/lsConstants";
 
 interface LanguageModalProps {
   isLanguageModalOpen: boolean;
@@ -12,13 +11,48 @@ const LanguageModal = (props: LanguageModalProps) => {
   const { isLanguageModalOpen, handleCloseLanguageModal } = props;
   const { i18n } = useTranslation();
 
-  const updateLanguage = (language: string) => {
-    localStorage.setItem(LocalStorageKeys.language, language);
-    i18n.changeLanguage(language);
-    handleCloseLanguageModal();
+  const updateLanguage = (language) => {
+    const storedData = localStorage.getItem("tennis_app_user");
+
+    if (storedData) {
+      try {
+        const userData = JSON.parse(storedData);
+
+        userData.language = language;
+
+        const updatedUserData = JSON.stringify(userData);
+
+        localStorage.setItem("tennis_app_user", updatedUserData);
+
+        i18n.changeLanguage(language);
+
+        handleCloseLanguageModal();
+      } catch (error) {
+        console.error("Error parsing JSON data:", error);
+      }
+    } else {
+      console.log('No data found in local storage for key "tennis_app_user"');
+    }
   };
-  const currentLanguage =
-    localStorage.getItem(LocalStorageKeys.language) ?? "tr";
+
+  const [currentLanguage, setCurrentLanguage] = useState("");
+
+  const storedData = localStorage.getItem("tennis_app_user");
+
+  useEffect(() => {
+    if (storedData) {
+      try {
+        const userData = JSON.parse(storedData);
+        const lsLanguage = userData.language;
+        const language = lsLanguage ?? "tr";
+        setCurrentLanguage(language);
+      } catch (error) {
+        console.error("Error parsing JSON data:", error);
+      }
+    } else {
+      console.log('No data found in local storage for key "tennis_app_user"');
+    }
+  }, []);
 
   return (
     <ReactModal

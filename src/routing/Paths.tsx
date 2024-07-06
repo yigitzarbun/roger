@@ -35,4 +35,5 @@ export default {
   PLAYER_TOURNAMENTS: "/oyuncu-turnuvalar",
   TOURNAMENT: "/turnuva/",
   CLUB_TOURNAMENT_FIXTURE: "/kulup-turnuva-fikstur/",
+  PLAYER_TRAINERS: "/oyuncu-egitmenleri",
 } as Paths;

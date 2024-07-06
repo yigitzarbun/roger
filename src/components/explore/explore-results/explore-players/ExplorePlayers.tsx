@@ -70,10 +70,12 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   let isUserPlayer = false;
   let isUserTrainer = false;
+  let isUserClub = false;
 
   if (user) {
     isUserPlayer = user?.user?.user_type_id === 1;
     isUserTrainer = user?.user?.user_type_id === 2;
+    isUserClub = user?.user?.user_type_id === 3;
   }
 
   const [isPlayerFilterModalOpen, setIsPlayerFilterModalOpen] = useState(false);
@@ -86,6 +88,17 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const playerAge = user?.playerDetails?.birth_year;
+  const playerLocationId = isUserPlayer
+    ? user?.playerDetails?.location_id
+    : isUserTrainer
+    ? user?.trainerDetails?.location_id
+    : isUserClub
+    ? user?.clubDetails?.location_id
+    : null;
+
+  const logicLevelId = user?.playerDetails?.player_level_id;
+
   const {
     data: paginatedPlayers,
     isLoading: isPaginatedPlayersLoading,
@@ -97,6 +110,10 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     locationId: locationId,
     currentUserId: user?.user?.user_id,
     textSearch: textSearch,
+    minAgeYear: isUserPlayer ? Number(playerAge) - 5 : null,
+    maxAgeYear: isUserPlayer ? Number(playerAge) + 5 : null,
+    proximityLocationId: playerLocationId,
+    logicLevelId: isUserPlayer ? logicLevelId : null,
   });
 
   const pageNumbers = [];
@@ -231,7 +248,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Favori</th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>

@@ -286,6 +286,29 @@ const matchScoresModel = {
       throw new Error("Unable to fetch player match scores and bookings.");
     }
   },
+  async getTournamnetMissingMatchScoresByTournamentId(tournamentId: number) {
+    try {
+      const missingScores = await db
+        .select("match_scores.match_score_id")
+        .from("match_scores")
+        .leftJoin("bookings", "bookings.booking_id", "match_scores.booking_id")
+        .leftJoin(
+          "tournament_matches",
+          "tournament_matches.booking_id",
+          "bookings.booking_id"
+        )
+        .where("tournament_matches.tournament_id", tournamentId)
+        .andWhere("match_scores.match_score_status_type_id", 1)
+        .andWhere("bookings.booking_status_type_id", 5);
+
+      return missingScores;
+    } catch (error) {
+      console.log(
+        "Error fetching getTournamnetMissingMatchScoresByTournamentId: ",
+        error
+      );
+    }
+  },
   async add(matchScore) {
     const [newMatchScore] = await db("match_scores")
       .insert(matchScore)

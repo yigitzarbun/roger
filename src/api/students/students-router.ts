@@ -47,6 +47,19 @@ studentsRouter.get(
 );
 
 studentsRouter.get(
+  "/paginated-player-trainers/filter",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filter = req.query;
+      const trainers = await studentsModel.getPlayerTrainers(filter);
+      res.status(200).json(trainers);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+studentsRouter.get(
   "/is-student/filter",
   async (req: Request, res: Response, next: NextFunction) => {
     try {

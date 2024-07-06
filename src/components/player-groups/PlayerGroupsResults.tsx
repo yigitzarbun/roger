@@ -19,7 +19,7 @@ const PlayerGroupResults = () => {
 
   const { data: myGroups, isLoading: isGroupsLoading } =
     useGetPlayerActiveStudentGroupsByUserIdQuery(user?.user?.user_id);
-  console.log(myGroups);
+
   const handlePlayerPage = (e) => {
     setCurrentPage(e.target.value);
   };
@@ -43,17 +43,19 @@ const PlayerGroupResults = () => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Gruplar</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
+        {myGroups?.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
 
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {myGroups?.length > 0 ? (
         <table>

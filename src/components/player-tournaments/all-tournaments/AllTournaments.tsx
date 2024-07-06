@@ -265,22 +265,24 @@ const AllTournaments = (props: AllTournamentsProps) => {
           refetchMyTournaments={refetchMyTournaments}
         />
       )}
-      <div className={styles["pages-container"]}>
-        {pageNumbers?.map((pageNumber) => (
-          <button
-            key={pageNumber}
-            value={pageNumber}
-            onClick={handleTournamentPage}
-            className={
-              pageNumber === Number(currentPage)
-                ? styles["active-page"]
-                : styles["passive-page"]
-            }
-          >
-            {pageNumber}
-          </button>
-        ))}
-      </div>
+      {pageNumbers.length > 0 && (
+        <div className={styles["pages-container"]}>
+          {pageNumbers?.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              value={pageNumber}
+              onClick={handleTournamentPage}
+              className={
+                pageNumber === Number(currentPage)
+                  ? styles["active-page"]
+                  : styles["passive-page"]
+              }
+            >
+              {pageNumber}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

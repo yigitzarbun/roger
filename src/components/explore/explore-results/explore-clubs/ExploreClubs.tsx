@@ -321,7 +321,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Favori</th>
               <th>Kulüp</th>
               <th>İsim</th>
               <th>Tür</th>

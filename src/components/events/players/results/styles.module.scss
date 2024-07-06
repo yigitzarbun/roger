@@ -88,14 +88,16 @@
         background-color: $roger-black-light;
       }
       .comment-button {
-        background-color: var(--secondary-button-background-color);
+        background-color: $roger-black-dark;
         border: none;
+        width: 110px;
         padding: $roger-button-padding;
         border-radius: $roger-border-radius;
         font-size: 0.9rem;
         cursor: pointer;
-        height: 40px;
-        width: 150px;
+        color: white;
+        text-decoration: none;
+        text-align: center;
       }
       .comment-button:hover {
         background-color: $roger-black-light;

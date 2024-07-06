@@ -609,8 +609,8 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
           <table>
             <thead>
               <tr>
-                <th></th>
                 <th>Kort</th>
+                <th>İsim</th>
                 <th>Kulüp</th>
                 <th>Tarih</th>
                 <th>Saat</th>

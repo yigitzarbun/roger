@@ -9,6 +9,8 @@
   display: flex;
   justify-content: space-between;
   column-gap: 3vw;
+  border: 1px solid $roger-border-color;
+
   .image-container {
     display: flex;
     column-gap: 1vw;

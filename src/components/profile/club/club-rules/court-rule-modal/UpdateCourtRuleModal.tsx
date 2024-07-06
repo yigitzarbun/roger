@@ -138,7 +138,7 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
             >
               İptal
             </button>
-            <button type="submit" className={styles["delete-button"]}>
+            <button type="submit" className={styles["submit-button"]}>
               Onayla
             </button>
           </div>

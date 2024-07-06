@@ -504,16 +504,20 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
                 Davet Gönder
               </button>
             </div>
-            <p className={styles.invalid}>
-              {(!inviterPlayerPaymentMethodExists ||
-                !inviteePlayerPaymentMethodExists) &&
-                "Kort kiralamak için her iki oyuncunun da ödeme bilgilerinin bulunması gerekmektedir."}
-            </p>
-            <p className={styles.invalid}>
-              {selectedClubDetails?.[0]?.is_player_subscription_required &&
-                !isPlayersSubscribed &&
-                "Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği Gerekmektedir"}
-            </p>
+            {(!inviterPlayerPaymentMethodExists ||
+              !inviteePlayerPaymentMethodExists) && (
+              <p className={styles.invalid}>
+                Kort kiralamak için her iki oyuncunun da ödeme bilgilerinin
+                bulunması gerekmektedir."
+              </p>
+            )}
+            {selectedClubDetails?.[0]?.is_player_subscription_required &&
+              !isPlayersSubscribed && (
+                <p className={styles.invalid}>
+                  Kort Kiralamak İçin Her İki Oyuncunun Da Kulüp Üyeliği
+                  Gerekmektedir
+                </p>
+              )}
           </form>
         )}
       </div>

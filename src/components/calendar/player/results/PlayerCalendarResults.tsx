@@ -7,6 +7,7 @@ import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 
 import { useAppSelector } from "../../../../store/hooks";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
 import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
 
@@ -124,7 +125,13 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
             {filteredBookings?.map((booking) => (
               <tr key={booking?.booking_id} className={styles["player-row"]}>
                 <td>
-                  {booking.booking_status_type_id === 2 ? "Onaylandı" : ""}
+                  <p className={styles["co"]}>
+                    {booking.booking_status_type_id === 2 ? (
+                      <IoIosCheckmarkCircle className={styles.done} />
+                    ) : (
+                      ""
+                    )}
+                  </p>
                 </td>
                 <td className={styles["vertical-center"]}>
                   <Link

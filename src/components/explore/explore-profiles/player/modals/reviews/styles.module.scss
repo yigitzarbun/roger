@@ -33,16 +33,14 @@
     justify-content: space-between;
     row-gap: 4vh;
     border-radius: $roger-border-radius;
-    background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     row-gap: 4vh;
-    background-color: $roger-box-bg-color;
+    background-color: var(--box-background-color);
     padding: $roger-box-padding;
-    border-radius: $roger-border-radius;
     width: 750px;
     min-height: 40vh;
     max-height: 80vh;

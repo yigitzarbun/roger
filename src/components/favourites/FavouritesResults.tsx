@@ -105,7 +105,7 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Favoriler</h2>
-        {myFavourites?.favourites?.length > 0 && (
+        {myFavourites?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
               onClick={handlePrevPage}
