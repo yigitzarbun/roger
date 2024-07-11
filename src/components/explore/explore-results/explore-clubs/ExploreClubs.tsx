@@ -117,11 +117,14 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   let isUserPlayer = false;
   let isUserTrainer = false;
+  let isUserClub = false;
 
   if (user) {
-    isUserPlayer = user.user.user_type_id === 1;
-    isUserTrainer = user.user.user_type_id === 2;
+    isUserPlayer = user?.user.user_type_id === 1;
+    isUserTrainer = user?.user.user_type_id === 2;
+    isUserClub = user?.user?.user_type_id === 3;
   }
+
   const [isClubFilterModalOpen, setIsClubFilterModalOpen] = useState(false);
   const handleOpenClubFilterModal = () => {
     setIsClubFilterModalOpen(true);
@@ -130,6 +133,13 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     setIsClubFilterModalOpen(false);
   };
   const [currentPage, setCurrentPage] = useState(1);
+  const logicLocationId = isUserPlayer
+    ? user?.playerDetails?.location_id
+    : isUserTrainer
+    ? user?.trainerDetails?.location_id
+    : isUserClub
+    ? user?.clubDetails?.location_id
+    : null;
 
   const {
     data: clubs,
@@ -145,6 +155,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     clubTrainers: clubTrainers,
     subscribedClubs: subscribedClubs,
     currentUserId: user?.user?.user_id,
+    proximityLocationId: logicLocationId,
   });
 
   const pageNumbers = [];

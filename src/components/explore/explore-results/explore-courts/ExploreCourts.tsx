@@ -84,6 +84,14 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const logicLocationId = isUserPlayer
+    ? user?.playerDetails?.location_id
+    : isUserTrainer
+    ? user?.trainerDetails?.location_id
+    : isUserClub
+    ? user?.clubDetails?.location_id
+    : null;
+
   const {
     data: courts,
     isLoading: isCourtsLoading,
@@ -96,6 +104,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     courtStructureType: courtStructureType,
     textSearch: "",
     isActive: true,
+    proximityLocationId: logicLocationId,
   });
 
   const pageNumbers = [];

@@ -98,6 +98,23 @@ const playersModel = {
       });
 
       playersWithScores.sort((a, b) => {
+        if (filter.column !== "") {
+          if (filter.column === "lname") {
+            // String comparison for lname
+            if (filter.direction === "desc") {
+              return b.lname.localeCompare(a.lname);
+            } else {
+              return a.lname.localeCompare(b.lname);
+            }
+          } else {
+            // Numeric comparison for other columns
+            if (filter.direction === "desc") {
+              return b[filter.column] - a[filter.column];
+            } else {
+              return a[filter.column] - b[filter.column];
+            }
+          }
+        }
         if (b.relevance_score !== a.relevance_score) {
           return b.relevance_score - a.relevance_score;
         }
@@ -280,23 +297,23 @@ const playersModel = {
 
 function getProximityScore(playerLocationId, filterProximityLocationId) {
   const locationProximityMap = {
-    1: [1, 8, 10, 11, 12],
-    2: [2, 7, 8, 11],
-    3: [3, 4, 6, 9, 17],
-    4: [4, 3, 6, 8, 9],
-    5: [5, 7, 8, 13, 14, 15, 16],
-    6: [6, 3, 4, 9, 13, 14],
-    7: [7, 5, 8, 10],
-    8: [8, 1, 2, 4, 10, 11, 16],
-    9: [9, 4, 6, 13, 14],
-    10: [10, 1, 2, 8, 11, 12],
-    11: [11, 1, 2, 8, 10, 12],
-    12: [12, 1, 2, 8, 10, 11],
-    13: [13, 3, 4, 9, 14, 17],
-    14: [14, 3, 4, 6, 9, 13, 17],
-    15: [15, 5, 7, 8, 10, 11, 12, 16],
-    16: [16, 2, 5, 7, 8, 15],
-    17: [17, 3, 4, 6, 9, 13, 14],
+    1: [8, 10, 11, 12],
+    2: [7, 8, 11],
+    3: [4, 6, 9, 17],
+    4: [3, 6, 8, 9],
+    5: [7, 8, 13, 14, 15, 16],
+    6: [3, 4, 9, 13, 14],
+    7: [5, 8, 10],
+    8: [1, 2, 4, 10, 11, 16],
+    9: [4, 6, 13, 14],
+    10: [1, 2, 8, 11, 12],
+    11: [1, 2, 8, 10, 12],
+    12: [1, 2, 8, 10, 11],
+    13: [3, 4, 9, 14, 17],
+    14: [3, 4, 6, 9, 13, 17],
+    15: [5, 7, 8, 10, 11, 12, 16],
+    16: [2, 5, 7, 8, 15],
+    17: [3, 4, 6, 9, 13, 14],
   };
 
   // Check if playerLocationId and filterProximityLocationId are the same

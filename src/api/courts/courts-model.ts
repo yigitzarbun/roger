@@ -9,7 +9,7 @@ const courtsModel = {
     const courtsPerPage = 4;
     const offset = (filter.page - 1) * courtsPerPage;
 
-    const paginatedCourts = await db
+    const allCourts = await db
       .select(
         "courts.court_id",
         "courts.image as courtImage",
@@ -18,76 +18,7 @@ const courtsModel = {
         "courts.closing_time",
         "courts.price_hour",
         "courts.is_active",
-        "courts.price_hour_non_subscriber",
-        "clubs.higher_price_for_non_subscribers",
-        "clubs.club_name",
-        "court_structure_types.court_structure_type_name",
-        "court_surface_types.court_surface_type_name",
-        "locations.location_name"
-      )
-      .from("courts")
-      .leftJoin("clubs", function () {
-        this.on("clubs.club_id", "=", "courts.club_id");
-      })
-      .leftJoin("users", function () {
-        this.on("users.user_id", "=", "clubs.user_id");
-      })
-      .leftJoin("court_structure_types", function () {
-        this.on(
-          "court_structure_types.court_structure_type_id",
-          "=",
-          "courts.court_structure_type_id"
-        );
-      })
-      .leftJoin("court_surface_types", function () {
-        this.on(
-          "court_surface_types.court_surface_type_id",
-          "=",
-          "courts.court_surface_type_id"
-        );
-      })
-      .leftJoin("locations", function () {
-        this.on("locations.location_id", "=", "clubs.location_id");
-      })
-      .where((builder) => {
-        if (filter.locationId > 0) {
-          builder.where("clubs.location_id", filter.locationId);
-        }
-        if (filter.clubId > 0) {
-          builder.where("courts.club_id", filter.clubId);
-        }
-        if (filter.courtSurfaceType > 0) {
-          builder.where(
-            "courts.court_surface_type_id",
-            filter.courtSurfaceType
-          );
-        }
-        if (filter.courtStructureType > 0) {
-          builder.where(
-            "courts.court_structure_type_id",
-            filter.courtStructureType
-          );
-        }
-        if (filter.textSearch !== "") {
-          builder.where("courts.court_name", "ilike", `%${filter.textSearch}%`);
-        }
-        if (filter.isActive !== "null") {
-          builder.where("courts.is_active", filter.isActive);
-        }
-      })
-      .andWhere("users.user_status_type_id", 1)
-      .orderBy("court_id", "asc")
-      .limit(courtsPerPage)
-      .offset(offset);
-
-    const pageCount = await db
-      .select(
-        "courts.court_id",
-        "courts.image as courtImage",
-        "courts.court_name",
-        "courts.opening_time",
-        "courts.closing_time",
-        "courts.price_hour",
+        "clubs.location_id",
         "courts.price_hour_non_subscriber",
         "clubs.higher_price_for_non_subscribers",
         "clubs.club_name",
@@ -146,9 +77,37 @@ const courtsModel = {
         }
       })
       .andWhere("users.user_status_type_id", 1);
+
+    const courtsWithScores = allCourts.map((court) => {
+      let proximityScore: number = 0;
+      proximityScore = getProximityScore(
+        court.location_id,
+        filter.proximityLocationId
+      );
+
+      return {
+        ...court,
+        relevance_score: proximityScore,
+      };
+    });
+
+    courtsWithScores.sort((a, b) => {
+      if (b.relevance_score !== a.relevance_score) {
+        return b.relevance_score - a.relevance_score;
+      }
+      return a.court_id - b.court_id;
+    });
+
+    const paginatedCourts = courtsWithScores.slice(
+      offset,
+      offset + courtsPerPage
+    );
+
+    const totalPages = Math.ceil(courtsWithScores.length / courtsPerPage);
+
     const data = {
       courts: paginatedCourts,
-      totalPages: Math.ceil(pageCount.length / courtsPerPage),
+      totalPages: totalPages,
     };
     return data;
   },
@@ -296,4 +255,39 @@ const courtsModel = {
   },
 };
 
+function getProximityScore(courtLocationId, filterProximityLocationId) {
+  const locationProximityMap = {
+    1: [1, 8, 10, 11, 12],
+    2: [2, 7, 8, 11],
+    3: [3, 4, 6, 9, 17],
+    4: [4, 3, 6, 8, 9],
+    5: [5, 7, 8, 13, 14, 15, 16],
+    6: [6, 3, 4, 9, 13, 14],
+    7: [7, 5, 8, 10],
+    8: [8, 1, 2, 4, 10, 11, 16],
+    9: [9, 4, 6, 13, 14],
+    10: [10, 1, 2, 8, 11, 12],
+    11: [11, 1, 2, 8, 10, 12],
+    12: [12, 1, 2, 8, 10, 11],
+    13: [13, 3, 4, 9, 14, 17],
+    14: [14, 3, 4, 6, 9, 13, 17],
+    15: [15, 5, 7, 8, 10, 11, 12, 16],
+    16: [16, 2, 5, 7, 8, 15],
+    17: [17, 3, 4, 6, 9, 13, 14],
+  };
+
+  // Check if courtLocationId and filterProximityLocationId are the same
+  if (Number(courtLocationId) === Number(filterProximityLocationId)) {
+    return 3;
+  }
+
+  // Check if there's a proximity match in locationProximityMap
+  const proximityList = locationProximityMap[filterProximityLocationId] || [];
+
+  if (proximityList.includes(courtLocationId)) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 export default courtsModel;

@@ -64,6 +64,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
 
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
+  const isUserClub = user?.user_type_id === 3;
 
   const { data: currentUser, isLoading: isCurrentUserLoading } =
     useGetPlayerByUserIdQuery(user?.user_id);
@@ -90,6 +91,17 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     setSearchedPlayer(event.target.value);
   };
 
+  const playerAge = currentUser?.[0]?.birth_year;
+  const playerLocationId = isUserPlayer
+    ? currentUser?.[0]?.location_id
+    : isUserTrainer
+    ? currentUser?.[0]?.location_id
+    : isUserClub
+    ? currentUser?.[0]?.location_id
+    : null;
+
+  const logicLevelId = currentUser?.[0]?.player_level_id;
+  console.log(currentUser);
   const {
     data: suggestedPlayers,
     isLoading: isSuggestedPlayersLoading,
@@ -102,6 +114,10 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
       locationId: null,
       currentUserId: user?.user_id,
       textSearch: searchedPlayer,
+      minAgeYear: isUserPlayer ? Number(playerAge) - 5 : null,
+      maxAgeYear: isUserPlayer ? Number(playerAge) + 5 : null,
+      proximityLocationId: playerLocationId,
+      logicLevelId: isUserPlayer ? logicLevelId : null,
     },
     { skip: playerSkip }
   );

@@ -87,6 +87,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
 
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
+  const isUserClub = user?.user?.user_type_id === 3;
 
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
@@ -107,6 +108,15 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const logicLoadingId = isUserPlayer
+    ? user?.playerDetails?.location_id
+    : isUserTrainer
+    ? user?.trainerDetails?.location_id
+    : isUserClub
+    ? user?.clubDetails?.location_id
+    : null;
+
+  console.log(isUserClub);
   const {
     data: paginatedTrainers,
     isLoading: isPaginatedTrainersLoading,
@@ -119,6 +129,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     locationId: locationId,
     clubId: clubId,
     currentUserId: user?.user?.user_id,
+    proximityLocationId: logicLoadingId,
   });
 
   const pageNumbers = [];

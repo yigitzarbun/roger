@@ -86,8 +86,8 @@
         }
         .buttons-container {
           display: flex;
-          justify-content: space-evenly;
           align-items: center;
+          column-gap: 3vw;
 
           .icons {
             display: flex;
@@ -118,7 +118,7 @@
           }
           .interaction-buttons {
             display: flex;
-            column-gap: 2vw;
+            column-gap: 3vw;
 
             .interaction-button {
               padding: 10px;

@@ -9,7 +9,7 @@ const trainersModel = {
     const trainersPerPage = 4;
     const offset = (filter.currentPage - 1) * trainersPerPage;
 
-    const paginatedTrainers = await db
+    const allTrainers = await db
       .distinct("trainers.user_id")
       .select(
         "trainers.trainer_id",
@@ -89,86 +89,38 @@ const trainersModel = {
         "club_staff.employment_status",
         "trainers.user_id",
         "club_users.user_status_type_id"
-      )
-      .orderBy("trainers.trainer_id", "asc")
-      .limit(trainersPerPage)
-      .offset(offset);
-
-    const pageCount = await db
-      .distinct("trainers.user_id")
-      .select(
-        "trainers.trainer_id",
-        "trainers.image as trainerImage",
-        "trainers.user_id as trainerUserId",
-        "trainers.price_hour",
-        "trainers.gender",
-        "trainers.birth_year",
-        "trainers.fname",
-        "trainers.lname",
-        "locations.*",
-        "trainer_experience_types.*",
-        "clubs.club_name",
-        "club_staff.employment_status"
-      )
-      .from("trainers")
-      .leftJoin(
-        "locations",
-        "trainers.location_id",
-        "=",
-        "locations.location_id"
-      )
-      .leftJoin(
-        "trainer_experience_types",
-        "trainer_experience_types.trainer_experience_type_id",
-        "=",
-        "trainers.trainer_experience_type_id"
-      )
-      .leftJoin("clubs", "clubs.club_id", "=", "trainers.club_id")
-      .leftJoin("club_staff", "club_staff.user_id", "=", "trainers.user_id")
-      .leftJoin("users", "users.user_id", "=", "trainers.user_id")
-      .where((builder) => {
-        if (filter.trainerExperienceTypeId > 0) {
-          builder.where(
-            "trainers.trainer_experience_type_id",
-            filter.trainerExperienceTypeId
-          );
-        }
-        if (filter.selectedGender !== "") {
-          builder.where("trainers.gender", filter.selectedGender);
-        }
-        if (filter.locationId > 0) {
-          builder.where("trainers.location_id", filter.locationId);
-        }
-        if (filter.currentUserId > 0) {
-          builder.where("trainers.user_id", "!=", filter.currentUserId);
-        }
-        if (filter.textSearch && filter.textSearch !== "") {
-          builder
-            .where("trainers.fname", "ilike", `%${filter.textSearch}%`)
-            .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
-        }
-        if (filter.clubId > 0) {
-          builder.whereExists(function () {
-            this.select("*")
-              .from("club_staff")
-              .join("trainers", "club_staff.user_id", "=", "trainers.user_id")
-              .andWhere("club_staff.club_id", "=", filter.clubId)
-              .andWhere("club_staff.employment_status", "=", "accepted");
-          });
-        }
-      })
-      .andWhere("users.user_status_type_id", 1)
-      .groupBy(
-        "trainers.trainer_id",
-        "locations.location_id",
-        "trainer_experience_types.trainer_experience_type_id",
-        "clubs.club_name",
-        "club_staff.employment_status",
-        "trainers.user_id"
       );
+
+    const trainersWithScores = allTrainers.map((trainer) => {
+      let proximityScore: number = 0;
+      proximityScore = getProximityScore(
+        trainer.location_id,
+        filter.proximityLocationId
+      );
+
+      return {
+        ...trainer,
+        relevance_score: proximityScore,
+      };
+    });
+
+    trainersWithScores.sort((a, b) => {
+      if (b.relevance_score !== a.relevance_score) {
+        return b.relevance_score - a.relevance_score;
+      }
+      return a.user_id - b.user_id;
+    });
+
+    const paginatedTrainers = trainersWithScores.slice(
+      offset,
+      offset + trainersPerPage
+    );
+
+    const totalPages = Math.ceil(trainersWithScores.length / trainersPerPage);
+
     const data = {
       trainers: paginatedTrainers,
-      totalPages: Math.ceil(pageCount.length / trainersPerPage),
+      totalPages: totalPages,
     };
     return data;
   },
@@ -335,4 +287,39 @@ const trainersModel = {
   },
 };
 
+function getProximityScore(trainerLocationId, filterProximityLocationId) {
+  const locationProximityMap = {
+    1: [1, 8, 10, 11, 12],
+    2: [2, 7, 8, 11],
+    3: [3, 4, 6, 9, 17],
+    4: [4, 3, 6, 8, 9],
+    5: [5, 7, 8, 13, 14, 15, 16],
+    6: [6, 3, 4, 9, 13, 14],
+    7: [7, 5, 8, 10],
+    8: [8, 1, 2, 4, 10, 11, 16],
+    9: [9, 4, 6, 13, 14],
+    10: [10, 1, 2, 8, 11, 12],
+    11: [11, 1, 2, 8, 10, 12],
+    12: [12, 1, 2, 8, 10, 11],
+    13: [13, 3, 4, 9, 14, 17],
+    14: [14, 3, 4, 6, 9, 13, 17],
+    15: [15, 5, 7, 8, 10, 11, 12, 16],
+    16: [16, 2, 5, 7, 8, 15],
+    17: [17, 3, 4, 6, 9, 13, 14],
+  };
+
+  // Check if trainerLocationId and filterProximityLocationId are the same
+  if (Number(trainerLocationId) === Number(filterProximityLocationId)) {
+    return 3;
+  }
+
+  // Check if there's a proximity match in locationProximityMap
+  const proximityList = locationProximityMap[filterProximityLocationId] || [];
+
+  if (proximityList.includes(trainerLocationId)) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 export default trainersModel;

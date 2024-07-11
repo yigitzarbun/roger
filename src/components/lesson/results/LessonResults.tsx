@@ -41,6 +41,7 @@ const LessonResults = (props: TrainSearchProps) => {
   const user = useAppSelector((store) => store?.user?.user);
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
+
   const {
     data: playerStudentships,
     isLoading: isPlayerStudentshipsLoading,
@@ -144,6 +145,8 @@ const LessonResults = (props: TrainSearchProps) => {
   const locationIdValue = Number(locationId) ?? null;
   const clubIdValue = Number(clubId) ?? null;
 
+  const logicLoadingId = user?.playerDetails?.location_id;
+
   const {
     data: trainers,
     isLoading: isTrainersLoading,
@@ -156,6 +159,7 @@ const LessonResults = (props: TrainSearchProps) => {
     clubId: clubIdValue,
     currentUserId: user?.user?.user_id,
     textSearch: textSearch,
+    proximityLocationId: logicLoadingId,
   });
 
   const [opponentUserId, setOpponentUserId] = useState(null);

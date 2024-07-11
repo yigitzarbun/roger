@@ -29,7 +29,7 @@ export const courtsSlice = createApi({
     }),
     getPaginatedCourts: builder.query({
       query: (filter) =>
-        `courts/paginated?page=${filter.page}&locationId=${filter.locationId}&clubId=${filter.clubId}&courtSurfaceType=${filter.courtSurfaceType}&courtStructureType=${filter.courtStructureType}&textSearch=${filter.textSearch}&isActive=${filter.isActive}`,
+        `courts/paginated?page=${filter.page}&locationId=${filter.locationId}&clubId=${filter.clubId}&courtSurfaceType=${filter.courtSurfaceType}&courtStructureType=${filter.courtStructureType}&textSearch=${filter.textSearch}&isActive=${filter.isActive}&proximityLocationId=${filter.proximityLocationId}`,
     }),
     getCourtById: builder.query({
       query: (court_id) => `/courts/${court_id}`,

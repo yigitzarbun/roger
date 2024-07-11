@@ -13,13 +13,14 @@ const clubsModel = {
     const clubsPerPage = 4;
     const offset = (filter.page - 1) * clubsPerPage;
 
-    const paginatedClubs = await db
+    const allClubs = await db
       .select(
         "clubs.club_id",
         "clubs.user_id",
         "clubs.club_name",
         "clubs.image as clubImage",
         "club_types.club_type_name",
+        "clubs.location_id",
         "locations.location_name",
         db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),
         db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffQuantity"),
@@ -96,98 +97,31 @@ const clubsModel = {
         "club_types.club_type_id",
         "locations.location_id",
         "users.user_id"
-      )
-      .orderBy("clubs.club_id", "asc")
-      .offset(offset)
-      .limit(clubsPerPage);
-
-    const totalCountQuery = await db
-      .select(
-        "clubs.club_id",
-        "clubs.user_id",
-        "clubs.club_name",
-        "clubs.image as clubImage",
-        "club_types.club_type_name",
-        "locations.location_name",
-        db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),
-        db.raw("COUNT(DISTINCT club_staff.club_staff_id) as staffQuantity"),
-        db.raw(
-          "COUNT(DISTINCT club_subscriptions.club_subscription_id) as memberQuantity"
-        )
-      )
-      .from("clubs")
-      .leftJoin(
-        "club_types",
-        "club_types.club_type_id",
-        "=",
-        "clubs.club_type_id"
-      )
-      .leftJoin("locations", "locations.location_id", "=", "clubs.location_id")
-      .leftJoin("courts", "courts.club_id", "=", "clubs.club_id")
-      .leftJoin("club_staff", function () {
-        this.on("club_staff.club_id", "=", "clubs.club_id").andOn(
-          "club_staff.employment_status",
-          "=",
-          db.raw("?", ["accepted"])
-        );
-      })
-
-      .leftJoin("users", "users.user_id", "=", "clubs.user_id")
-      .leftJoin("club_subscriptions", function () {
-        this.on("club_subscriptions.club_id", "=", "clubs.user_id")
-          .andOn("club_subscriptions.is_active", "=", db.raw("'true'"))
-          .andOnExists(function () {
-            this.select("*")
-              .from("users")
-              .whereRaw("users.user_id = club_subscriptions.player_id")
-              .andWhere("users.user_status_type_id", 1);
-          });
-      })
-      .where((builder) => {
-        if (filter.locationId > 0) {
-          builder.where("clubs.location_id", filter.locationId);
-        }
-        if (filter.clubType > 0) {
-          builder.where("clubs.club_type_id", filter.clubType);
-        }
-        if (filter.courtSurfaceType > 0) {
-          builder.where(
-            "courts.court_surface_type_id",
-            filter.courtSurfaceType
-          );
-        }
-        if (filter.courtStructureType > 0) {
-          builder.where(
-            "courts.court_structure_type_id",
-            filter.courtStructureType
-          );
-        }
-        if (filter.textSearch && filter.textSearch !== "") {
-          builder.where("clubs.club_name", "ilike", `%${filter.textSearch}%`);
-        }
-        if (filter.subscribedClubs === "true") {
-          builder.whereIn("clubs.club_id", function () {
-            this.select("club_subscriptions.club_id")
-              .from("club_subscriptions")
-              .where("club_subscriptions.player_id", "=", filter.currentUserId)
-              .andWhere("club_subscriptions.is_active", true);
-          });
-        }
-        if (filter.clubTrainers === "true") {
-          builder
-            .whereNotNull("club_staff.club_staff_id")
-            .andWhere("club_staff.club_staff_role_type_id", 2);
-        }
-      })
-      .andWhere("users.user_status_type_id", 1)
-      .groupBy(
-        "clubs.club_id",
-        "club_types.club_type_id",
-        "locations.location_id",
-        "users.user_id"
       );
 
-    const totalClubs = totalCountQuery.length;
+    const clubsWithScores = allClubs.map((club) => {
+      let proximityScore: number = 0;
+      proximityScore = getProximityScore(
+        club.location_id,
+        filter.proximityLocationId
+      );
+
+      return {
+        ...club,
+        relevance_score: proximityScore,
+      };
+    });
+
+    clubsWithScores.sort((a, b) => {
+      if (b.relevance_score !== a.relevance_score) {
+        return b.relevance_score - a.relevance_score;
+      }
+      return a.user_id - b.user_id;
+    });
+
+    const paginatedClubs = clubsWithScores.slice(offset, offset + clubsPerPage);
+
+    const totalPages = Math.ceil(clubsWithScores.length / clubsPerPage);
 
     const enhancedClubs = await Promise.all(
       paginatedClubs.map(async (club) => {
@@ -220,7 +154,7 @@ const clubsModel = {
 
     const data = {
       clubs: enhancedClubs,
-      totalPages: Math.ceil(totalClubs / clubsPerPage),
+      totalPages: totalPages,
     };
 
     return data;
@@ -376,4 +310,39 @@ const clubsModel = {
   },
 };
 
+function getProximityScore(clubLocationId, filterProximityLocationId) {
+  const locationProximityMap = {
+    1: [1, 8, 10, 11, 12],
+    2: [2, 7, 8, 11],
+    3: [3, 4, 6, 9, 17],
+    4: [4, 3, 6, 8, 9],
+    5: [5, 7, 8, 13, 14, 15, 16],
+    6: [6, 3, 4, 9, 13, 14],
+    7: [7, 5, 8, 10],
+    8: [8, 1, 2, 4, 10, 11, 16],
+    9: [9, 4, 6, 13, 14],
+    10: [10, 1, 2, 8, 11, 12],
+    11: [11, 1, 2, 8, 10, 12],
+    12: [12, 1, 2, 8, 10, 11],
+    13: [13, 3, 4, 9, 14, 17],
+    14: [14, 3, 4, 6, 9, 13, 17],
+    15: [15, 5, 7, 8, 10, 11, 12, 16],
+    16: [16, 2, 5, 7, 8, 15],
+    17: [17, 3, 4, 6, 9, 13, 14],
+  };
+
+  // Check if clubLocationId and filterProximityLocationId are the same
+  if (Number(clubLocationId) === Number(filterProximityLocationId)) {
+    return 3;
+  }
+
+  // Check if there's a proximity match in locationProximityMap
+  const proximityList = locationProximityMap[filterProximityLocationId] || [];
+
+  if (proximityList.includes(clubLocationId)) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 export default clubsModel;

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { SlOptions } from "react-icons/sl";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { BsSortDown } from "react-icons/bs";
 
 import paths from "../../../routing/Paths";
 
@@ -20,6 +21,7 @@ import {
 
 import { getAge } from "../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../components/invite/training/form/TrainingInviteFormModal";
+import TrainSort from "../sort/TrainSort";
 
 interface TrainResultsProps {
   playerLevelId: number;
@@ -95,6 +97,29 @@ const TrainResults = (props: TrainResultsProps) => {
   const playerAge = user?.playerDetails?.birth_year;
   const playerLocationId = user?.playerDetails?.location_id;
   const logicLevelId = user?.playerDetails?.player_level_id;
+
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [trainSortModalOpen, setTrainSortModalOpen] = useState(false);
+
+  const handleOpenTrainSortModal = () => {
+    setTrainSortModalOpen(true);
+  };
+
+  const handleCloseTrainSortModal = () => {
+    setTrainSortModalOpen(false);
+  };
+
   const {
     data: players,
     isLoading: isPlayersLoading,
@@ -110,7 +135,10 @@ const TrainResults = (props: TrainResultsProps) => {
     maxAgeYear: Number(playerAge) + 5,
     proximityLocationId: playerLocationId,
     logicLevelId: logicLevelId,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
+
   const pageNumbers = [];
   for (let i = 1; i <= players?.totalPages; i++) {
     pageNumbers.push(i);
@@ -149,7 +177,14 @@ const TrainResults = (props: TrainResultsProps) => {
 
   useEffect(() => {
     refetchPaginatedPlayers();
-  }, [levelId, selectedGender, locationIdValue, textSearch]);
+  }, [
+    levelId,
+    selectedGender,
+    locationIdValue,
+    textSearch,
+    orderByDirection,
+    orderByColumn,
+  ]);
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
@@ -164,7 +199,18 @@ const TrainResults = (props: TrainResultsProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Antreman</h2>
+        <div className={styles["title-left"]}>
+          <h2 className={styles.title}>Antreman</h2>
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenTrainSortModal}
+          />
+        </div>
+
         {players?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -286,6 +332,16 @@ const TrainResults = (props: TrainResultsProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isInviteModalOpen}
           handleCloseInviteModal={handleCloseInviteModal}
+        />
+      )}
+      {trainSortModalOpen && (
+        <TrainSort
+          trainSortModalOpen={trainSortModalOpen}
+          handleCloseTrainSortModal={handleCloseTrainSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
         />
       )}
     </div>
