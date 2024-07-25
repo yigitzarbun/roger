@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { BsSortDown } from "react-icons/bs";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
@@ -33,6 +34,7 @@ import TrainingInviteFormModal from "../../../../components/invite/training/form
 import MatchInviteFormModal from "../../../../components/invite/match/form/MatchInviteFormModal";
 import ExplorePlayersFilterModal from "./explore-players-filter/ExplorePlayersFilterModal";
 import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
+import ExplorePlayersSortModal from "./explore-players-sort/ExplorePlayersSortModal";
 
 interface ExplorePlayersProps {
   user: User;
@@ -99,6 +101,28 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   const logicLevelId = user?.playerDetails?.player_level_id;
 
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [sortModalOpen, setSortModalOpen] = useState(false);
+
+  const handleOpenSortModal = () => {
+    setSortModalOpen(true);
+  };
+
+  const handleCloseSortModal = () => {
+    setSortModalOpen(false);
+  };
+
   const {
     data: paginatedPlayers,
     isLoading: isPaginatedPlayersLoading,
@@ -114,6 +138,8 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     maxAgeYear: isUserPlayer ? Number(playerAge) + 5 : null,
     proximityLocationId: playerLocationId,
     logicLevelId: isUserPlayer ? logicLevelId : null,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
 
   const pageNumbers = [];
@@ -198,7 +224,15 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
 
   useEffect(() => {
     refetchPaginatedPlayers();
-  }, [currentPage, textSearch, playerLevelId, gender, locationId]);
+  }, [
+    currentPage,
+    textSearch,
+    playerLevelId,
+    gender,
+    locationId,
+    orderByDirection,
+    orderByColumn,
+  ]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -228,6 +262,14 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                 ? styles["active-filter"]
                 : styles.filter
             }
+          />
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenSortModal}
           />
         </div>
         {paginatedPlayers?.totalPages > 1 && (
@@ -418,6 +460,17 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           playerLevels={playerLevels}
           handleGender={handleGender}
           gender={gender}
+        />
+      )}
+
+      {sortModalOpen && (
+        <ExplorePlayersSortModal
+          sortModalOpen={sortModalOpen}
+          handleCloseSortModal={handleCloseSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
         />
       )}
     </div>

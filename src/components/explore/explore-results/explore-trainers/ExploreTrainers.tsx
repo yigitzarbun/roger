@@ -5,6 +5,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
 import { SlOptions } from "react-icons/sl";
+import { BsSortDown } from "react-icons/bs";
 
 import { Link } from "react-router-dom";
 
@@ -35,6 +36,7 @@ import { Club } from "../../../../api/endpoints/ClubsApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
 import ExploreTrainersFilterModal from "./explore-trainers-filter/ExploreTrainersFilterModal";
+import ExploreTrainersSortModal from "./explore-trainers-sort/ExploreTrainersSortModal";
 
 interface ExploreTrainersProps {
   user: User;
@@ -116,7 +118,28 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     ? user?.clubDetails?.location_id
     : null;
 
-  console.log(isUserClub);
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [sortModalOpen, setSortModalOpen] = useState(false);
+
+  const handleOpenSortModal = () => {
+    setSortModalOpen(true);
+  };
+
+  const handleCloseSortModal = () => {
+    setSortModalOpen(false);
+  };
+
   const {
     data: paginatedTrainers,
     isLoading: isPaginatedTrainersLoading,
@@ -130,6 +153,8 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     clubId: clubId,
     currentUserId: user?.user?.user_id,
     proximityLocationId: logicLoadingId,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
 
   const pageNumbers = [];
@@ -244,6 +269,8 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     gender,
     trainerExperienceTypeId,
     clubId,
+    orderByDirection,
+    orderByColumn,
   ]);
 
   useEffect(() => {
@@ -280,6 +307,14 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
               }
             />
           )}
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenSortModal}
+          />
         </div>
         {paginatedTrainers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -473,6 +508,16 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           handleClubId={handleClubId}
           clubId={clubId}
           clubs={clubs}
+        />
+      )}
+      {sortModalOpen && (
+        <ExploreTrainersSortModal
+          sortModalOpen={sortModalOpen}
+          handleCloseSortModal={handleCloseSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
         />
       )}
     </div>

@@ -4,6 +4,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
+import { BsSortDown } from "react-icons/bs";
 
 import { Link } from "react-router-dom";
 
@@ -20,6 +21,7 @@ import { useGetPaginatedCourtsQuery } from "../../../../api/endpoints/CourtsApi"
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
 import ExploreCourtsFilterModal from "./explore-courts-filter/ExploreCourtsFilterModal";
+import ExploreCourtsSortModal from "./explore-courts-sort/ExploreCourtsSortModal";
 
 interface ExploreCourtsProps {
   user: User;
@@ -92,6 +94,28 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     ? user?.clubDetails?.location_id
     : null;
 
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [sortModalOpen, setSortModalOpen] = useState(false);
+
+  const handleOpenSortModal = () => {
+    setSortModalOpen(true);
+  };
+
+  const handleCloseSortModal = () => {
+    setSortModalOpen(false);
+  };
+
   const {
     data: courts,
     isLoading: isCourtsLoading,
@@ -105,6 +129,8 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     textSearch: "",
     isActive: true,
     proximityLocationId: logicLocationId,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
 
   const pageNumbers = [];
@@ -129,7 +155,15 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
 
   useEffect(() => {
     refetchCourts();
-  }, [locationId, clubId, courtSurfaceType, courtStructureType]);
+  }, [
+    locationId,
+    clubId,
+    courtSurfaceType,
+    courtStructureType,
+    orderByDirection,
+    orderByColumn,
+    currentPage,
+  ]);
 
   if (
     isClubsLoading ||
@@ -159,6 +193,14 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
               }
             />
           )}
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenSortModal}
+          />
         </div>
         {courts?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -278,23 +320,35 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           </button>
         ))}
       </div>
-      <ExploreCourtsFilterModal
-        locations={locations}
-        courtStructureTypes={courtStructureTypes}
-        courtSurfaceTypes={courtSurfaceTypes}
-        handleLocation={handleLocation}
-        handleCourtSurfaceType={handleCourtSurfaceType}
-        handleCourtStructureType={handleCourtStructureType}
-        handleClear={handleClear}
-        locationId={locationId}
-        courtSurfaceType={courtSurfaceType}
-        courtStructureType={courtStructureType}
-        clubId={clubId}
-        handleClubId={handleClubId}
-        clubs={clubs}
-        isCourtFilterModalOpen={isCourtFilterModalOpen}
-        handleCloseCourtFilterModal={handleCloseCourtFilterModal}
-      />
+      {isCourtFilterModalOpen && (
+        <ExploreCourtsFilterModal
+          locations={locations}
+          courtStructureTypes={courtStructureTypes}
+          courtSurfaceTypes={courtSurfaceTypes}
+          handleLocation={handleLocation}
+          handleCourtSurfaceType={handleCourtSurfaceType}
+          handleCourtStructureType={handleCourtStructureType}
+          handleClear={handleClear}
+          locationId={locationId}
+          courtSurfaceType={courtSurfaceType}
+          courtStructureType={courtStructureType}
+          clubId={clubId}
+          handleClubId={handleClubId}
+          clubs={clubs}
+          isCourtFilterModalOpen={isCourtFilterModalOpen}
+          handleCloseCourtFilterModal={handleCloseCourtFilterModal}
+        />
+      )}
+      {sortModalOpen && (
+        <ExploreCourtsSortModal
+          sortModalOpen={sortModalOpen}
+          handleCloseSortModal={handleCloseSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
+        />
+      )}
     </div>
   );
 };

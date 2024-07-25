@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { SlOptions } from "react-icons/sl";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { BsSortDown } from "react-icons/bs";
 
 import paths from "../../../routing/Paths";
 
@@ -23,6 +24,7 @@ import {
 } from "../../../api/endpoints/FavouritesApi";
 import { getAge } from "../../../common/util/TimeFunctions";
 import MatchInviteFormModal from "../../../components/invite/match/form/MatchInviteFormModal";
+import MatchSort from "../sort/MatchSortModal";
 
 interface MatchResultsProps {
   playerLevelId: number;
@@ -106,6 +108,28 @@ const MatchResults = (props: MatchResultsProps) => {
   const playerLocationId = user?.playerDetails?.location_id;
   const logicLevelId = user?.playerDetails?.player_level_id;
 
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [matchSortModalOpen, setMatchSortModalOpen] = useState(false);
+
+  const handleOpenMatchSortModal = () => {
+    setMatchSortModalOpen(true);
+  };
+
+  const handleCloseMatchSortModal = () => {
+    setMatchSortModalOpen(false);
+  };
+
   const {
     data: players,
     isLoading: isPlayersLoading,
@@ -121,6 +145,8 @@ const MatchResults = (props: MatchResultsProps) => {
     maxAgeYear: Number(playerAge) + 5,
     proximityLocationId: playerLocationId,
     logicLevelId: logicLevelId,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
 
   const pageNumbers = [];
@@ -161,7 +187,14 @@ const MatchResults = (props: MatchResultsProps) => {
 
   useEffect(() => {
     refetchPaginatedPlayers();
-  }, [levelId, locationIdValue, currentPage, textSearch]);
+  }, [
+    levelId,
+    locationIdValue,
+    currentPage,
+    textSearch,
+    orderByDirection,
+    orderByColumn,
+  ]);
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
@@ -182,7 +215,17 @@ const MatchResults = (props: MatchResultsProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Maç</h2>
+        <div className={styles["title-left"]}>
+          <h2 className={styles.title}>Maç</h2>
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenMatchSortModal}
+          />
+        </div>
         {players?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -318,6 +361,16 @@ const MatchResults = (props: MatchResultsProps) => {
           opponentUserId={opponentUserId}
           isInviteModalOpen={isInviteModalOpen}
           handleCloseInviteModal={handleCloseInviteModal}
+        />
+      )}
+      {matchSortModalOpen && (
+        <MatchSort
+          matchSortModalOpen={matchSortModalOpen}
+          handleCloseMatchSortModal={handleCloseMatchSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
         />
       )}
     </div>

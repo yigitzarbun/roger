@@ -5,6 +5,7 @@ import { SlOptions } from "react-icons/sl";
 import { FaFilter } from "react-icons/fa6";
 import { ImBlocked } from "react-icons/im";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import { BsSortDown } from "react-icons/bs";
 
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
@@ -40,6 +41,7 @@ import { CourtStructureType } from "../../../../api/endpoints/CourtStructureType
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import ExploreClubsFilterModal from "./explore-clubs-filter/ExploreClubsFilterModal";
 import AddPlayerCardDetails from "../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import ExploreClubsSortModal from "./explore-clubs-sort/ExploreClubsSortModal";
 
 interface ExploreClubsProps {
   user: User;
@@ -141,6 +143,28 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     ? user?.clubDetails?.location_id
     : null;
 
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [sortModalOpen, setSortModalOpen] = useState(false);
+
+  const handleOpenSortModal = () => {
+    setSortModalOpen(true);
+  };
+
+  const handleCloseSortModal = () => {
+    setSortModalOpen(false);
+  };
+
   const {
     data: clubs,
     isLoading: isClubsLoading,
@@ -156,6 +180,8 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     subscribedClubs: subscribedClubs,
     currentUserId: user?.user?.user_id,
     proximityLocationId: logicLocationId,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
 
   const pageNumbers = [];
@@ -274,7 +300,10 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     clubTrainers,
     subscribedClubs,
     employmentModalOpen,
+    orderByDirection,
+    orderByColumn,
   ]);
+
   if (
     isClubsLoading ||
     isLocationsLoading ||
@@ -286,6 +315,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -307,6 +337,14 @@ const ExploreClubs = (props: ExploreClubsProps) => {
               }
             />
           )}
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenSortModal}
+          />
         </div>
         {clubs?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -511,6 +549,16 @@ const ExploreClubs = (props: ExploreClubsProps) => {
           playerDetails={playerDetails}
           refetchPlayerDetails={refetchPlayerDetails}
           cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+      {sortModalOpen && (
+        <ExploreClubsSortModal
+          sortModalOpen={sortModalOpen}
+          handleCloseSortModal={handleCloseSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
         />
       )}
     </div>

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { SlOptions } from "react-icons/sl";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { BsSortDown } from "react-icons/bs";
 
 import paths from "../../../routing/Paths";
 
@@ -25,6 +26,7 @@ import {
 import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../components/invite/lesson/form/LessonInviteFormModal";
+import LessonSortModal from "../lesson-sort/LessonSortModal";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -147,6 +149,28 @@ const LessonResults = (props: TrainSearchProps) => {
 
   const logicLoadingId = user?.playerDetails?.location_id;
 
+  const [orderByDirection, setOrderByDirection] = useState("desc");
+  const [orderByColumn, setOrderByColumn] = useState("");
+
+  const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
+    setOrderByColumn(orderByColumn);
+    setOrderByDirection(orderByDirection);
+  };
+
+  const handleClearOrderBy = () => {
+    setOrderByColumn("");
+  };
+
+  const [sortModalOpen, setSortModalOpen] = useState(false);
+
+  const handleOpenSortModal = () => {
+    setSortModalOpen(true);
+  };
+
+  const handleCloseSortModal = () => {
+    setSortModalOpen(false);
+  };
+
   const {
     data: trainers,
     isLoading: isTrainersLoading,
@@ -160,6 +184,8 @@ const LessonResults = (props: TrainSearchProps) => {
     currentUserId: user?.user?.user_id,
     textSearch: textSearch,
     proximityLocationId: logicLoadingId,
+    column: orderByColumn,
+    direction: orderByDirection,
   });
 
   const [opponentUserId, setOpponentUserId] = useState(null);
@@ -240,7 +266,17 @@ const LessonResults = (props: TrainSearchProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Ders</h2>
+        <div className={styles["title-left"]}>
+          <h2 className={styles.title}>Ders</h2>
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenSortModal}
+          />
+        </div>
         {trainers?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -413,6 +449,16 @@ const LessonResults = (props: TrainSearchProps) => {
           handleCloseInviteModal={handleCloseInviteModal}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
+        />
+      )}
+      {sortModalOpen && (
+        <LessonSortModal
+          sortModalOpen={sortModalOpen}
+          handleCloseSortModal={handleCloseSortModal}
+          handleOrderBy={handleOrderBy}
+          handleClearOrderBy={handleClearOrderBy}
+          orderByDirection={orderByDirection}
+          orderByColumn={orderByColumn}
         />
       )}
     </div>

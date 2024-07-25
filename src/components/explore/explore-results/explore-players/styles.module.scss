@@ -27,6 +27,16 @@
         color: $roger-blue;
         cursor: pointer;
       }
+      .passive-sort {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      .active-sort {
+        color: $roger-blue;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
     }
     .navigation-container {
       display: flex;

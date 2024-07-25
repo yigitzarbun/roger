@@ -13,8 +13,22 @@
   .title-container {
     display: flex;
     justify-content: space-between;
-    .title {
-      font-size: 2rem;
+    .title-left {
+      display: flex;
+      align-items: center;
+      column-gap: 1vw;
+      cursor: pointer;
+      .title {
+        font-size: 2rem;
+      }
+      .passive-sort {
+        color: var(--text-color);
+        font-size: 1.5rem;
+      }
+      .active-sort {
+        color: $roger-blue;
+        font-size: 1.5rem;
+      }
     }
     .nav-container {
       display: flex;

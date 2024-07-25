@@ -105,10 +105,27 @@ const trainersModel = {
     });
 
     trainersWithScores.sort((a, b) => {
+      if (filter.column !== "") {
+        if (filter.column === "lname") {
+          // String comparison for lname
+          if (filter.direction === "desc") {
+            return b.lname.localeCompare(a.lname);
+          } else {
+            return a.lname.localeCompare(b.lname);
+          }
+        } else {
+          // Numeric comparison for other columns
+          if (filter.direction === "desc") {
+            return b[filter.column] - a[filter.column];
+          } else {
+            return a[filter.column] - b[filter.column];
+          }
+        }
+      }
       if (b.relevance_score !== a.relevance_score) {
         return b.relevance_score - a.relevance_score;
       }
-      return a.user_id - b.user_id;
+      return a.player_id - b.player_id;
     });
 
     const paginatedTrainers = trainersWithScores.slice(

@@ -113,10 +113,62 @@ const clubsModel = {
     });
 
     clubsWithScores.sort((a, b) => {
+      if (filter.column !== "") {
+        if (filter.column === "club_name") {
+          // String comparison for club_name
+          if (filter.direction === "desc") {
+            return b.club_name.localeCompare(a.club_name);
+          } else {
+            return a.club_name.localeCompare(b.club_name);
+          }
+        } else {
+          // Numeric comparison for other columns
+          if (filter.column === "location_id" && filter.direction === "desc") {
+            return Number(b[filter.column]) - Number(a[filter.column]);
+          } else if (
+            filter.column === "location_id" &&
+            filter.direction === "asc"
+          ) {
+            return Number(a[filter.column]) - Number(b[filter.column]);
+          } else if (
+            filter.column === "courtQuantity" &&
+            filter.direction === "asc"
+          ) {
+            return Number(a.courtquantity) - Number(b.courtquantity);
+          } else if (
+            filter.column === "courtQuantity" &&
+            filter.direction === "desc"
+          ) {
+            return Number(b.courtquantity) - Number(a.courtquantity);
+          } else if (
+            filter.column === "staffQuantity" &&
+            filter.direction === "asc"
+          ) {
+            return Number(a.staffquantity) - Number(b.staffquantity);
+          } else if (
+            filter.column === "staffQuantity" &&
+            filter.direction === "desc"
+          ) {
+            return Number(b.staffquantity) - Number(a.staffquantity);
+          } else if (
+            filter.column === "memberQuantity" &&
+            filter.direction === "asc"
+          ) {
+            return Number(a.memberquantity) - Number(b.memberquantity);
+          } else if (
+            filter.column === "memberQuantity" &&
+            filter.direction === "desc"
+          ) {
+            return Number(b.memberquantity) - Number(a.memberquantity);
+          } else {
+            return Number(a[filter.column]) - Number(b[filter.column]);
+          }
+        }
+      }
       if (b.relevance_score !== a.relevance_score) {
         return b.relevance_score - a.relevance_score;
       }
-      return a.user_id - b.user_id;
+      return a.player_id - b.player_id;
     });
 
     const paginatedClubs = clubsWithScores.slice(offset, offset + clubsPerPage);

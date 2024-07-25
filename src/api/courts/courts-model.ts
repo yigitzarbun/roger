@@ -92,10 +92,34 @@ const courtsModel = {
     });
 
     courtsWithScores.sort((a, b) => {
+      if (filter.column !== "") {
+        if (filter.column === "court_name") {
+          // String comparison for court_name
+          if (filter.direction === "desc") {
+            return b.court_name.localeCompare(a.court_name);
+          } else {
+            return a.court_name.localeCompare(b.court_name);
+          }
+        } else if (filter.column === "club_name") {
+          // String comparison for club_name
+          if (filter.direction === "desc") {
+            return b.club_name.localeCompare(a.club_name);
+          } else {
+            return a.club_name.localeCompare(b.club_name);
+          }
+        } else {
+          // Numeric comparison for other columns
+          if (filter.direction === "desc") {
+            return b[filter.column] - a[filter.column];
+          } else {
+            return a[filter.column] - b[filter.column];
+          }
+        }
+      }
       if (b.relevance_score !== a.relevance_score) {
         return b.relevance_score - a.relevance_score;
       }
-      return a.court_id - b.court_id;
+      return a.player_id - b.player_id;
     });
 
     const paginatedCourts = courtsWithScores.slice(
