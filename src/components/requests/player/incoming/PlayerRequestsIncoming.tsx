@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import AcceptInviteModal, {
   AcceptBookingData,
 } from "../../../invite/modals/accept-modal/AcceptInviteModal";
-
 import DeclineInviteModal, {
   DeclineBookingData,
 } from "../../../invite/modals/decline-modal/DeclineInviteModal";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import {
   useGetPlayerIncomingRequestsQuery,
   useUpdateBookingMutation,
 } from "../../../../api/endpoints/BookingsApi";
-
 import {
   useGetPaymentByIdQuery,
   useUpdatePaymentMutation,
@@ -31,7 +22,6 @@ import {
   useAddMatchScoreMutation,
   useGetMatchScoresQuery,
 } from "../../../../api/endpoints/MatchScoresApi";
-
 import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerRequestsIncoming = () => {

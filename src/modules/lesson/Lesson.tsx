@@ -41,6 +41,11 @@ const Lesson = () => {
     setFavourite(value === "true");
   };
 
+  const [filterOpen, setFilterOpen] = useState(false);
+  const handleOpenFilter = () => {
+    filterOpen ? setFilterOpen(false) : setFilterOpen(true);
+  };
+
   const handleClear = () => {
     setTextSearch("");
     setTrainerLevelId(null);
@@ -51,21 +56,24 @@ const Lesson = () => {
   };
   return (
     <div className={styles["lesson-container"]}>
-      <LessonSearch
-        handleLevel={handleLevel}
-        handleGender={handleGender}
-        handleLocation={handleLocation}
-        handleClub={handleClub}
-        handleTextSearch={handleTextSearch}
-        handleFavourite={handleFavourite}
-        handleClear={handleClear}
-        trainerLevelId={trainerLevelId}
-        gender={gender}
-        locationId={locationId}
-        clubId={clubId}
-        textSearch={textSearch}
-        favourite={favourite}
-      />
+      {filterOpen && (
+        <LessonSearch
+          handleLevel={handleLevel}
+          handleGender={handleGender}
+          handleLocation={handleLocation}
+          handleClub={handleClub}
+          handleTextSearch={handleTextSearch}
+          handleFavourite={handleFavourite}
+          handleClear={handleClear}
+          trainerLevelId={trainerLevelId}
+          gender={gender}
+          locationId={locationId}
+          clubId={clubId}
+          textSearch={textSearch}
+          favourite={favourite}
+        />
+      )}
+
       <LessonResults
         trainerLevelId={trainerLevelId}
         gender={gender}
@@ -73,6 +81,7 @@ const Lesson = () => {
         clubId={clubId}
         textSearch={textSearch}
         favourite={favourite}
+        handleOpenFilter={handleOpenFilter}
       />
     </div>
   );

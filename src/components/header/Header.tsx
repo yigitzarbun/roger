@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-
+import { CgMenuGridR } from "react-icons/cg";
 import styles from "./styles.module.scss";
 import paths from "../../routing/Paths";
-
 import { IoMdSunny } from "react-icons/io";
 import { FiMessageSquare } from "react-icons/fi";
-
 import { useAppSelector } from "../../store/hooks";
 import { MdOutlineNotifications } from "react-icons/md";
 import { useGetPlayerProfileDetailsQuery } from "../../api/endpoints/PlayersApi";
 import { IoLanguageSharp } from "react-icons/io5";
 import { FiMoon } from "react-icons/fi";
-
 import { localUrl } from "../../common/constants/apiConstants";
 import {
   useGetPlayerIncomingRequestsQuery,
@@ -20,7 +17,6 @@ import {
 } from "../../api/endpoints/BookingsApi";
 import { useGetMissingMatchScoresNumberQuery } from "../../api/endpoints/MatchScoresApi";
 import { useGetPlayerMissingEventReviewsNumberQuery } from "../../api/endpoints/EventReviewsApi";
-
 import PlayerHeader from "./player/PlayerHeader";
 import TrainerHeader from "./trainer/TrainerHeader";
 import ClubHeader from "./club/ClubHeader";
@@ -33,6 +29,7 @@ import { useGetClubByUserIdQuery } from "../../api/endpoints/ClubsApi";
 import { useGetClubNewStaffRequestsQuery } from "../../api/endpoints/ClubStaffApi";
 import { useGetTrainerNewStudentRequestsListQuery } from "../../api/endpoints/StudentsApi";
 import { LocalStorageKeys } from "../../common/constants/lsConstants";
+import MenuModal from "./menu-modal/MenuModal";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
@@ -161,6 +158,16 @@ const Header = () => {
 
   const isLoggedIn = user?.token ? true : false;
 
+  const [menuModalOpen, setMenuModalOpen] = useState(false);
+
+  const handleOpenMenuModal = () => {
+    setMenuModalOpen(true);
+  };
+
+  const handleCloseMenuModal = () => {
+    setMenuModalOpen(false);
+  };
+
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", currentTheme);
   }, [currentTheme]);
@@ -274,6 +281,7 @@ const Header = () => {
           </div>
         )}
       </div>
+      <CgMenuGridR className={styles.menu} onClick={handleOpenMenuModal} />
       {isUserPlayer && (
         <PlayerHeader
           navigateUser={navigateUser}
@@ -291,6 +299,7 @@ const Header = () => {
         <ProfileModal
           isProfileModalOpen={isProfileModalOpen}
           handleCloseProfileModal={handleCloseProfileModal}
+          handleCloseMenuModal={handleCloseMenuModal}
           email={user?.user?.user?.email}
         />
       )}
@@ -304,6 +313,7 @@ const Header = () => {
         <NotificationsModal
           isNotificationsModalOpen={isNotificationsModalOpen}
           handleCloseNotificationsModal={handleCloseNotificationsModal}
+          handleCloseMenuModal={handleCloseMenuModal}
           user={user}
           hasBankDetails={hasBankDetails}
           playerIncomingRequests={playerIncomingRequests}
@@ -315,6 +325,12 @@ const Header = () => {
           isUserClub={isUserClub}
           myStaffRequests={myStaffRequests}
           newStudentRequests={newStudentRequests}
+        />
+      )}
+      {menuModalOpen && (
+        <MenuModal
+          menuModalOpen={menuModalOpen}
+          handleCloseMenuModal={handleCloseMenuModal}
         />
       )}
     </div>

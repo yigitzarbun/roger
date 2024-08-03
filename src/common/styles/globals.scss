@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 * {
   box-sizing: border-box;
@@ -16,6 +17,9 @@ body {
   background-color: var(--background-color);
   padding: 40px 0;
   width: 90%;
+  @include small-screen {
+    padding: 20px 0;
+  }
 }
 
 th,

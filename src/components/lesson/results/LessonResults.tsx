@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { SlOptions } from "react-icons/sl";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { BsSortDown } from "react-icons/bs";
-
+import { BsClockHistory } from "react-icons/bs";
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import { useGetPaginatedTrainersQuery } from "../../../api/endpoints/TrainersApi";
 import {
   useAddFavouriteMutation,
@@ -27,6 +22,8 @@ import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../components/invite/lesson/form/LessonInviteFormModal";
 import LessonSortModal from "../lesson-sort/LessonSortModal";
+import StudentApplicationModal from "../studentship-modal/StudentApplicationModal";
+import { FaFilter } from "react-icons/fa6";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -35,11 +32,19 @@ interface TrainSearchProps {
   clubId: number;
   favourite: boolean;
   textSearch: string;
+  handleOpenFilter: () => void;
 }
 
 const LessonResults = (props: TrainSearchProps) => {
-  const { trainerLevelId, gender, locationId, clubId, favourite, textSearch } =
-    props;
+  const {
+    trainerLevelId,
+    gender,
+    locationId,
+    clubId,
+    favourite,
+    textSearch,
+    handleOpenFilter,
+  } = props;
   const user = useAppSelector((store) => store?.user?.user);
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;
@@ -58,7 +63,34 @@ const LessonResults = (props: TrainSearchProps) => {
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
-  const handleAddStudent = (selectedTrainerId: number) => {
+  const [selectedTrainerId, setSelectedTrainerId] = useState(null);
+
+  const [trainerName, setTrainerName] = useState("");
+
+  const [selectedTrainerImage, setSelectedTrainerImage] = useState("");
+
+  const [studentApplicationModalOpen, setStudentApplicationModalOpen] =
+    useState(false);
+
+  const handleOpenStudentApplicationModal = (
+    trainerId: number,
+    fname: string,
+    lname: string,
+    image: string
+  ) => {
+    setSelectedTrainerId(trainerId);
+    setTrainerName(`${fname} ${lname}`);
+    setSelectedTrainerImage(image);
+    setStudentApplicationModalOpen(true);
+  };
+
+  const handleCloseStudentApplicationModal = () => {
+    setTrainerName("");
+    setSelectedTrainerId(null);
+    setStudentApplicationModalOpen(false);
+  };
+
+  const handleAddStudent = () => {
     const selectedStudent = playerStudentships?.find(
       (student) =>
         student.trainer_id === selectedTrainerId &&
@@ -66,12 +98,12 @@ const LessonResults = (props: TrainSearchProps) => {
     );
 
     if (!selectedStudent) {
-      const newStudentData = {
+      const newStudent = {
         student_status: "pending",
         trainer_id: selectedTrainerId,
         player_id: user?.user?.user_id,
       };
-      addStudent(newStudentData);
+      addStudent(newStudent);
     } else if (selectedStudent?.student_status === "declined") {
       const updatedStudentData = {
         ...selectedStudent,
@@ -80,6 +112,7 @@ const LessonResults = (props: TrainSearchProps) => {
       updateStudent(updatedStudentData);
     }
   };
+
   const handleDeclineStudent = (selectedTrainerId: number) => {
     const selectedStudent = playerStudentships?.find(
       (student) =>
@@ -238,6 +271,7 @@ const LessonResults = (props: TrainSearchProps) => {
 
   useEffect(() => {
     if (isAddStudentSuccess || isUpdateStudentSuccess) {
+      handleCloseStudentApplicationModal();
       refetchStudents();
     }
   }, [isAddStudentSuccess, isUpdateStudentSuccess]);
@@ -275,6 +309,19 @@ const LessonResults = (props: TrainSearchProps) => {
                 : styles["active-sort"]
             }
             onClick={handleOpenSortModal}
+          />
+          <FaFilter
+            onClick={handleOpenFilter}
+            className={
+              locationId > 0 ||
+              trainerLevelId > 0 ||
+              textSearch !== "" ||
+              clubId > 0 ||
+              gender !== "" ||
+              favourite
+                ? styles["active-filter"]
+                : styles.filter
+            }
           />
         </div>
         {trainers?.totalPages > 1 && (
@@ -393,9 +440,9 @@ const LessonResults = (props: TrainSearchProps) => {
                       student.trainer_id === trainer.trainerUserId &&
                       student.student_status === "pending"
                   ) ? (
-                    <p className={styles["pending-confirmation-text"]}>
-                      Onayı bekleniyor
-                    </p>
+                    <BsClockHistory
+                      className={styles["pending-confirmation-text"]}
+                    />
                   ) : playerStudentships?.find(
                       (student) =>
                         student.trainer_id === trainer.trainerUserId &&
@@ -411,15 +458,19 @@ const LessonResults = (props: TrainSearchProps) => {
                     </button>
                   ) : (
                     <button
-                      onClick={() => handleAddStudent(trainer.trainerUserId)}
+                      onClick={() =>
+                        handleOpenStudentApplicationModal(
+                          trainer.trainerUserId,
+                          trainer.fname,
+                          trainer.lname,
+                          trainer.image
+                        )
+                      }
                       className={styles["add-student-button"]}
                     >
                       Öğrenci Ol
                     </button>
                   )}
-                </td>
-                <td>
-                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}
@@ -459,6 +510,17 @@ const LessonResults = (props: TrainSearchProps) => {
           handleClearOrderBy={handleClearOrderBy}
           orderByDirection={orderByDirection}
           orderByColumn={orderByColumn}
+        />
+      )}
+      {studentApplicationModalOpen && (
+        <StudentApplicationModal
+          studentApplicationModalOpen={studentApplicationModalOpen}
+          handleCloseStudentApplicationModal={
+            handleCloseStudentApplicationModal
+          }
+          trainerName={trainerName}
+          handleAddStudent={handleAddStudent}
+          trainerImage={selectedTrainerImage}
         />
       )}
     </div>

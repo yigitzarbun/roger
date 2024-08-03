@@ -38,7 +38,7 @@ const TrainingInviteConfirmation = (props: TrainingInviteConfirmationProps) => {
             <td>{selectedTime}</td>
             <td>{selectedClubName}</td>
             <td>{selectedCourtName}</td>
-            <td>{selectedCourtPrice / 2}</td>
+            <td>{selectedCourtPrice / 2} TL</td>
           </tr>
         </tbody>
       </table>

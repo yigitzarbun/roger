@@ -1,19 +1,13 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
 import { BsSortDown } from "react-icons/bs";
-
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../routing/Paths";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { User } from "../../../../store/slices/authSlice";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { Location } from "../../../../api/endpoints/LocationsApi";
@@ -180,27 +174,29 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
-          {courts?.courts?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenCourtFilterModal}
+          <div className={styles.icons}>
+            {courts?.courts?.length > 0 && (
+              <FaFilter
+                onClick={handleOpenCourtFilterModal}
+                className={
+                  locationId > 0 ||
+                  clubId > 0 ||
+                  courtSurfaceType > 0 ||
+                  courtStructureType > 0
+                    ? styles["active-filter"]
+                    : styles.filter
+                }
+              />
+            )}
+            <BsSortDown
               className={
-                locationId > 0 ||
-                clubId > 0 ||
-                courtSurfaceType > 0 ||
-                courtStructureType > 0
-                  ? styles["active-filter"]
-                  : styles.filter
+                orderByColumn === ""
+                  ? styles["passive-sort"]
+                  : styles["active-sort"]
               }
+              onClick={handleOpenSortModal}
             />
-          )}
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenSortModal}
-          />
+          </div>
         </div>
         {courts?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>

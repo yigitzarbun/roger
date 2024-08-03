@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
-
 import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { useGetPlayerCalendarBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
@@ -31,7 +23,6 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
 
   const user = useAppSelector((store) => store?.user?.user?.user);
 
-  // Convert to "YYYY-MM-DD" format
   const formattedDate = date ? date.split("/").reverse().join("-") : "";
 
   const {

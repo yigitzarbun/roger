@@ -44,7 +44,7 @@ const PlayerRequestsNavigation = ({
       >
         <span>Gelen Davetler</span>
         <span className={styles.notification}>
-          {incomingBookings?.length > 0 && `(${incomingBookings?.length})`}
+          {incomingBookings?.length > 0 && ` (${incomingBookings?.length})`}
         </span>
       </button>
     </div>

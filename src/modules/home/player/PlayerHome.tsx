@@ -19,7 +19,6 @@ const PlayerHome = () => {
         <PlayerLesson />
         <PlayerEquip />
       </div>
-      <div className={styles["mid-container"]}></div>
       <PlayerHomeLeaderboard />
     </div>
   );

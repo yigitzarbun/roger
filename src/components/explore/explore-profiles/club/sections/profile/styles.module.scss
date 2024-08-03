@@ -7,8 +7,8 @@
   border-radius: $roger-border-radius;
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  column-gap: 3vw;
+  //  justify-content: space-between;
+  column-gap: 5vw;
   border: 1px solid $roger-border-color;
 
   .image-container {
@@ -78,6 +78,7 @@
         .buttons-container {
           display: flex;
           align-items: center;
+          column-gap: 3vw;
           .icons {
             display: flex;
             align-items: center;

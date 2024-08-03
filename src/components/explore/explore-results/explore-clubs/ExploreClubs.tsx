@@ -1,20 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { SlOptions } from "react-icons/sl";
 import { FaFilter } from "react-icons/fa6";
 import { ImBlocked } from "react-icons/im";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { BsSortDown } from "react-icons/bs";
-
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../routing/Paths";
-
 import { User } from "../../../../store/slices/authSlice";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { ClubType } from "../../../../api/endpoints/ClubTypesApi";
@@ -25,14 +18,12 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../api/endpoints/FavouritesApi";
-
 import { ClubStaff } from "../../../../api/endpoints/ClubStaffApi";
 import {
   useGetPlayerByUserIdQuery,
   useGetPlayerProfileDetailsQuery,
 } from "../../../../api/endpoints/PlayersApi";
 import { useGetPaginatedClubsQuery } from "../../../../api/endpoints/ClubsApi";
-
 import SubscribeToClubModal from "../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ClubEmploymentModal from "./employment-modal/ClubEmploymentModal";
@@ -321,30 +312,32 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
-          {clubs?.clubs && clubs?.clubs.length > 0 && (
-            <FaFilter
-              onClick={handleOpenClubFilterModal}
+          <div className={styles.icons}>
+            {clubs?.clubs && clubs?.clubs.length > 0 && (
+              <FaFilter
+                onClick={handleOpenClubFilterModal}
+                className={
+                  textSearch !== "" ||
+                  locationId > 0 ||
+                  clubType > 0 ||
+                  courtSurfaceType > 0 ||
+                  courtStructureType > 0 ||
+                  clubTrainers === true ||
+                  subscribedClubs === true
+                    ? styles["active-filter"]
+                    : styles.filter
+                }
+              />
+            )}
+            <BsSortDown
               className={
-                textSearch !== "" ||
-                locationId > 0 ||
-                clubType > 0 ||
-                courtSurfaceType > 0 ||
-                courtStructureType > 0 ||
-                clubTrainers === true ||
-                subscribedClubs === true
-                  ? styles["active-filter"]
-                  : styles.filter
+                orderByColumn === ""
+                  ? styles["passive-sort"]
+                  : styles["active-sort"]
               }
+              onClick={handleOpenSortModal}
             />
-          )}
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenSortModal}
-          />
+          </div>
         </div>
         {clubs?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -479,9 +472,6 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     )}
                   </td>
                 )}
-                <td>
-                  <SlOptions className={styles.icon} />
-                </td>
               </tr>
             ))}
           </tbody>

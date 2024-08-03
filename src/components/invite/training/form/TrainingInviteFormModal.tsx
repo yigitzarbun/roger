@@ -508,7 +508,7 @@ const TrainingInviteFormModal = (props: TrainingInviteModalProps) => {
               !inviteePlayerPaymentMethodExists) && (
               <p className={styles.invalid}>
                 Kort kiralamak için her iki oyuncunun da ödeme bilgilerinin
-                bulunması gerekmektedir."
+                bulunması gerekmektedir.
               </p>
             )}
             {selectedClubDetails?.[0]?.is_player_subscription_required &&

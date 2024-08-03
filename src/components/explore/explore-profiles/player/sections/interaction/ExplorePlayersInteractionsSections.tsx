@@ -3,7 +3,6 @@ import { FiMessageSquare } from "react-icons/fi";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-import { SlOptions } from "react-icons/sl";
 import { IoStar } from "react-icons/io5";
 
 import styles from "./styles.module.scss";
@@ -269,9 +268,6 @@ const ExplorePlayersInteractionsSections = (
           </div>
         </div>
       </div>
-
-      <SlOptions className={styles.icon} />
-
       {isTrainingModalOpen && (
         <TrainingInviteFormModal
           opponentUserId={user_id}

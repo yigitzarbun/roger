@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { SlOptions } from "react-icons/sl";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { BsSortDown } from "react-icons/bs";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import { useGetPaginatedPlayersQuery } from "../../../api/endpoints/PlayersApi";
-
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../api/endpoints/FavouritesApi";
-
 import { getAge } from "../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../components/invite/training/form/TrainingInviteFormModal";
 import TrainSort from "../sort/TrainSort";
+import { FaFilter } from "react-icons/fa6";
 
 interface TrainResultsProps {
   playerLevelId: number;
@@ -29,10 +23,18 @@ interface TrainResultsProps {
   gender: string;
   locationId: number;
   favourite: boolean | null;
+  handleOpenFilter: () => void;
 }
 
 const TrainResults = (props: TrainResultsProps) => {
-  const { playerLevelId, textSearch, gender, locationId, favourite } = props;
+  const {
+    playerLevelId,
+    textSearch,
+    gender,
+    locationId,
+    favourite,
+    handleOpenFilter,
+  } = props;
 
   const { user } = useAppSelector((store) => store.user);
   const [opponentUserId, setOpponentUserId] = useState(null);
@@ -209,6 +211,17 @@ const TrainResults = (props: TrainResultsProps) => {
             }
             onClick={handleOpenTrainSortModal}
           />
+          <FaFilter
+            onClick={handleOpenFilter}
+            className={
+              locationId > 0 ||
+              selectedGender !== "" ||
+              levelId > 0 ||
+              textSearch !== ""
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
         </div>
 
         {players?.totalPages > 1 && (
@@ -302,9 +315,6 @@ const TrainResults = (props: TrainResultsProps) => {
                   >
                     Antreman yap
                   </button>
-                </td>
-                <td>
-                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

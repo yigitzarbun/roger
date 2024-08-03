@@ -57,7 +57,7 @@ const TrainerStudentsNavigation = ({
       >
         Yeni Öğrenci Talepleri{" "}
         <span className={styles.notification}>
-          {newStudentRequests?.length > 0 && newStudentRequests.length}
+          ({newStudentRequests?.length > 0 && newStudentRequests.length})
         </span>
       </button>
     </div>

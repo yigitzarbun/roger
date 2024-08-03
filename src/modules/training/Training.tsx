@@ -35,6 +35,12 @@ const Training = () => {
     setFavourite(value === "true");
   };
 
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const handleOpenFilter = () => {
+    filterOpen ? setFilterOpen(false) : setFilterOpen(true);
+  };
+
   const handleClear = () => {
     setTextSearch("");
     setPlayerLevelId(null);
@@ -45,25 +51,29 @@ const Training = () => {
 
   return (
     <div className={styles["training-container"]}>
-      <TrainSearch
-        handleLevel={handleLevel}
-        handleTextSearch={handleTextSearch}
-        handleGender={handleGender}
-        handleLocation={handleLocation}
-        handleFavourite={handleFavourite}
-        playerLevelId={playerLevelId}
-        textSearch={textSearch}
-        gender={gender}
-        locationId={locationId}
-        favourite={favourite}
-        handleClear={handleClear}
-      />
+      {filterOpen && (
+        <TrainSearch
+          handleLevel={handleLevel}
+          handleTextSearch={handleTextSearch}
+          handleGender={handleGender}
+          handleLocation={handleLocation}
+          handleFavourite={handleFavourite}
+          playerLevelId={playerLevelId}
+          textSearch={textSearch}
+          gender={gender}
+          locationId={locationId}
+          favourite={favourite}
+          handleClear={handleClear}
+        />
+      )}
+
       <TrainResults
         playerLevelId={playerLevelId}
         textSearch={textSearch}
         gender={gender}
         locationId={locationId}
         favourite={favourite}
+        handleOpenFilter={handleOpenFilter}
       />
     </div>
   );

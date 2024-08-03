@@ -198,7 +198,8 @@ const bookingsModel = {
                 .orWhere("trainers.lname", "ilike", `%${filter.textSearch}%`);
             });
           }
-        });
+        })
+        .orderBy("bookings.event_date", "desc");
 
       return bookings;
     } catch (error) {
@@ -651,6 +652,7 @@ const bookingsModel = {
           //.orWhere("student_groups.first_student_id", filter.userId);
         })
         .andWhere("event_reviews.reviewer_id", "=", filter.userId)
+        .orderBy("bookings.event_date", "desc")
         .limit(eventsPerPage)
         .offset(offset);
 

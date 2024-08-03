@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-import { SlOptions } from "react-icons/sl";
 
 interface ExploreCourtBioSectionProps {
   selectedCourt: any;
@@ -71,7 +70,6 @@ const ExploreCourtBioSection = (props: ExploreCourtBioSectionProps) => {
           </div>
         </div>
       </div>
-      <SlOptions className={styles.icon} />
     </div>
   );
 };

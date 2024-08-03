@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../../../../store/hooks";
 import { IoStar } from "react-icons/io5";
-import { SlOptions } from "react-icons/sl";
 import { FiMessageSquare } from "react-icons/fi";
-
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
-
 import {
   useAddStudentMutation,
   useGetStudentsByFilterQuery,
@@ -27,6 +20,7 @@ import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
+import StudentApplicationModal from "../../../../../../components/lesson/studentship-modal/StudentApplicationModal";
 
 interface ExploreTrainersInteractionSectionProps {
   user_id: number;
@@ -86,7 +80,33 @@ export const ExploreTrainersInteractionSection = (
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
-  const handleAddStudent = (selectedTrainerId: number) => {
+  const [selectedTrainerId, setSelectedTrainerId] = useState(null);
+
+  const [trainerName, setTrainerName] = useState("");
+
+  const [selectedTrainerImage, setSelectedTrainerImage] = useState("");
+  const [studentApplicationModalOpen, setStudentApplicationModalOpen] =
+    useState(false);
+
+  const handleOpenStudentApplicationModal = (
+    trainerId: number,
+    fname: string,
+    lname: string,
+    image: string
+  ) => {
+    setSelectedTrainerId(trainerId);
+    setTrainerName(`${fname} ${lname}`);
+    setSelectedTrainerImage(image);
+    setStudentApplicationModalOpen(true);
+  };
+
+  const handleCloseStudentApplicationModal = () => {
+    setTrainerName("");
+    setSelectedTrainerId(null);
+    setStudentApplicationModalOpen(false);
+  };
+
+  const handleAddStudent = () => {
     const selectedStudent = students?.find(
       (student) =>
         student.trainer_id === selectedTrainerId &&
@@ -214,6 +234,7 @@ export const ExploreTrainersInteractionSection = (
 
   useEffect(() => {
     if (isAddStudentSuccess || isUpdateStudentSuccess) {
+      handleCloseStudentApplicationModal();
       refetchTrainerStudents();
       refetchStudents();
     }
@@ -343,7 +364,12 @@ export const ExploreTrainersInteractionSection = (
                     ) : (
                       <button
                         onClick={() =>
-                          handleAddStudent(selectedTrainer?.[0]?.user_id)
+                          handleOpenStudentApplicationModal(
+                            selectedTrainer?.[0]?.user_id,
+                            selectedTrainer?.[0]?.fname,
+                            selectedTrainer?.[0]?.lname,
+                            selectedTrainer?.[0]?.image
+                          )
                         }
                         className={styles["interaction-button"]}
                       >
@@ -362,7 +388,6 @@ export const ExploreTrainersInteractionSection = (
           </p>
         )}
       </div>
-      <SlOptions className={styles.icon} />
       {isLessonModalOpen && (
         <LessonInviteFormModal
           opponentUserId={user_id}
@@ -377,6 +402,17 @@ export const ExploreTrainersInteractionSection = (
           messageModal={messageModal}
           closeMessageModal={closeMessageModal}
           recipient_id={selectedTrainer?.[0]?.user_id}
+        />
+      )}
+      {studentApplicationModalOpen && (
+        <StudentApplicationModal
+          studentApplicationModalOpen={studentApplicationModalOpen}
+          handleCloseStudentApplicationModal={
+            handleCloseStudentApplicationModal
+          }
+          trainerName={trainerName}
+          handleAddStudent={handleAddStudent}
+          trainerImage={selectedTrainerImage}
         />
       )}
     </div>

@@ -11,12 +11,12 @@
   border: 1px solid $roger-border-color;
 
   button {
-    padding: 10px;
+    padding: $roger-button-padding;
     border-radius: $roger-border-radius;
     border: none;
     width: 150px;
     background-color: $roger-black-dark;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     cursor: pointer;
     text-decoration: none;
     color: white;

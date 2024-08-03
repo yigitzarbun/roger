@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { SlOptions } from "react-icons/sl";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { BsSortDown } from "react-icons/bs";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import {
   useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
@@ -25,15 +20,18 @@ import {
 import { getAge } from "../../../common/util/TimeFunctions";
 import MatchInviteFormModal from "../../../components/invite/match/form/MatchInviteFormModal";
 import MatchSort from "../sort/MatchSortModal";
+import { FaFilter } from "react-icons/fa6";
 
 interface MatchResultsProps {
   playerLevelId: number;
   locationId: number;
   favourite: boolean | null;
   textSearch: string;
+  handleOpenFilter: () => void;
 }
 const MatchResults = (props: MatchResultsProps) => {
-  const { playerLevelId, locationId, favourite, textSearch } = props;
+  const { playerLevelId, locationId, favourite, textSearch, handleOpenFilter } =
+    props;
 
   const { user } = useAppSelector((store) => store.user);
   const [opponentUserId, setOpponentUserId] = useState(null);
@@ -225,6 +223,14 @@ const MatchResults = (props: MatchResultsProps) => {
             }
             onClick={handleOpenMatchSortModal}
           />
+          <FaFilter
+            onClick={handleOpenFilter}
+            className={
+              locationId > 0 || levelId > 0 || textSearch !== ""
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
         </div>
         {players?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
@@ -331,9 +337,6 @@ const MatchResults = (props: MatchResultsProps) => {
                   >
                     Maç yap
                   </button>
-                </td>
-                <td>
-                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

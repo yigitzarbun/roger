@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .result-container {
   display: flex;
@@ -9,7 +10,8 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  width: 100%;
+  overflow-x: auto;
   .top-container {
     display: flex;
     justify-content: space-between;
@@ -17,25 +19,38 @@
       display: flex;
       align-items: center;
       column-gap: 2vw;
+      @include small-screen {
+        flex-direction: column;
+      }
       .result-title {
         font-size: 2rem;
       }
-      .filter {
-        cursor: pointer;
-      }
-      .active-filter {
-        color: $roger-blue;
-        cursor: pointer;
-      }
-      .passive-sort {
-        color: var(--text-color);
-        font-size: 1.5rem;
-        cursor: pointer;
-      }
-      .active-sort {
-        color: $roger-blue;
-        font-size: 1.5rem;
-        cursor: pointer;
+      .icons {
+        display: flex;
+        align-items: center;
+        column-gap: 1vw;
+        @include small-screen {
+          margin-right: auto;
+          column-gap: 3vw;
+          margin-top: 2vh;
+        }
+        .filter {
+          cursor: pointer;
+        }
+        .active-filter {
+          color: $roger-blue;
+          cursor: pointer;
+        }
+        .passive-sort {
+          color: var(--text-color);
+          font-size: 1.5rem;
+          cursor: pointer;
+        }
+        .active-sort {
+          color: $roger-blue;
+          font-size: 1.5rem;
+          cursor: pointer;
+        }
       }
     }
     .navigation-container {
@@ -122,24 +137,36 @@
         object-fit: cover;
         display: block;
       }
-
       .court-name {
         color: var(--text-color);
         text-decoration: none;
       }
       .done {
         color: $roger-green;
-        font-size: 1.2rem;
       }
       .blocked {
         color: $roger-red;
       }
+      .remove-fav-icon {
+        color: $roger-blue;
+        cursor: pointer;
+        font-size: 1.5rem;
+        vertical-align: middle;
+      }
+      .add-fav-icon {
+        cursor: pointer;
+        font-size: 1.5rem;
+        vertical-align: middle;
+      }
+      .add-fav-icon:hover {
+        color: $roger-blue;
+      }
     }
 
     .book-button {
-      background-color: $roger-black-dark;
+      background-color: var(--primary-button-background-color);
       border: none;
-      width: 150px;
+      width: 110px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;

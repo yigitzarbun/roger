@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .header-player-container {
   display: flex;
@@ -12,8 +13,23 @@
     justify-content: space-between;
     column-gap: 15px;
     align-items: center;
-  }
 
+    @include medium-screen {
+      width: 100%;
+      justify-content: start;
+    }
+    @include small-screen {
+      display: none;
+    }
+  }
+  .menu {
+    display: none;
+    @include small-screen {
+      display: flex;
+      margin-left: auto;
+      font-size: 1.5rem;
+    }
+  }
   .nav-link-player {
     color: var(--text-color);
     text-decoration: none;

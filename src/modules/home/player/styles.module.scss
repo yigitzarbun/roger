@@ -1,3 +1,5 @@
+@import "/src/common/styles/z-index.scss";
+
 .player-home-container {
   display: flex;
   flex-direction: column;
@@ -7,10 +9,14 @@
   .top-container {
     display: flex;
     justify-content: space-between;
-    column-gap: 1vw;
-  }
-  .mid-container {
-    display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+
+    @include medium-screen {
+      row-gap: 2vh;
+    }
+    @include small-screen {
+      flex-direction: column;
+      row-gap: 2vh;
+    }
   }
 }

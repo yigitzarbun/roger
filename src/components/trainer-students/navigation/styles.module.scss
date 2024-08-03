@@ -19,6 +19,7 @@
     background-color: $roger-blue;
     color: white;
     font-weight: bold;
+
     .notification {
       font-size: 0.7rem;
       font-weight: bold;
@@ -37,7 +38,6 @@
     font-weight: bold;
     .notification {
       font-size: 0.7rem;
-      color: $roger-yellow;
     }
   }
   .inactive-button:hover {

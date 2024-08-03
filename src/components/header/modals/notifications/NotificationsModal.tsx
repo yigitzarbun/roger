@@ -12,6 +12,7 @@ import Paths from "../../../../routing/Paths";
 interface NotificationsModalProps {
   isNotificationsModalOpen: boolean;
   handleCloseNotificationsModal: () => void;
+  handleCloseMenuModal: () => void;
   user: any;
   hasBankDetails: boolean;
   playerIncomingRequests: any;
@@ -28,6 +29,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
   const {
     isNotificationsModalOpen,
     handleCloseNotificationsModal,
+    handleCloseMenuModal,
     user,
     hasBankDetails,
     playerIncomingRequests,
@@ -45,6 +47,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
 
   const handleNavigate = (path: string) => {
     navigate(Paths[path]);
+    handleCloseMenuModal();
     handleCloseNotificationsModal();
   };
   // TO do

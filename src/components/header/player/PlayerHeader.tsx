@@ -1,16 +1,10 @@
 import React, { useEffect } from "react";
-
 import { FaCircle } from "react-icons/fa";
-
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../store/hooks";
 import { useGetPlayerIncomingRequestsQuery } from "../../../api/endpoints/BookingsApi";
 

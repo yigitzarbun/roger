@@ -1,10 +1,8 @@
 import React, { ChangeEvent } from "react";
-
+import { FaFilter } from "react-icons/fa6";
 import styles from "./styles.module.scss";
-
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
-
 import PageLoading from "../../../components/loading/PageLoading";
 
 interface TrainSearchProps {

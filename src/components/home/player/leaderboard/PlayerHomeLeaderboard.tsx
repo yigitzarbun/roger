@@ -59,16 +59,18 @@ const PlayerHomeLeaderboard = () => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <h2 className={styles.title}>Lidrelik Tablosu</h2>
-        <div className={styles["nav-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+        {leaderboard?.totalPages > 1 && (
+          <div className={styles["nav-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {leaderboard?.leaderboard?.length > 0 ? (
         <table>

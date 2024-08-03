@@ -30,6 +30,11 @@ const Match = () => {
     setFavourite(value === "true");
   };
 
+  const [filterOpen, setFilterOpen] = useState(false);
+  const handleOpenFilter = () => {
+    filterOpen ? setFilterOpen(false) : setFilterOpen(true);
+  };
+
   const handleClear = () => {
     setTextSearch("");
     setPlayerLevelId(null);
@@ -38,22 +43,25 @@ const Match = () => {
   };
   return (
     <div className={styles["match-container"]}>
-      <MatchSearch
-        handleLevel={handleLevel}
-        handleTextSearch={handleTextSearch}
-        handleLocation={handleLocation}
-        handleFavourite={handleFavourite}
-        handleClear={handleClear}
-        playerLevelId={playerLevelId}
-        textSearch={textSearch}
-        locationId={locationId}
-        favourite={favourite}
-      />
+      {filterOpen && (
+        <MatchSearch
+          handleLevel={handleLevel}
+          handleTextSearch={handleTextSearch}
+          handleLocation={handleLocation}
+          handleFavourite={handleFavourite}
+          handleClear={handleClear}
+          playerLevelId={playerLevelId}
+          textSearch={textSearch}
+          locationId={locationId}
+          favourite={favourite}
+        />
+      )}
       <MatchResults
         playerLevelId={playerLevelId}
         textSearch={textSearch}
         locationId={locationId}
         favourite={favourite}
+        handleOpenFilter={handleOpenFilter}
       />
     </div>
   );

@@ -171,7 +171,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   if (isBookingsLoading || isEventReviewsLoading) {
     return <PageLoading />;
   }
-  console.log(myEvents);
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>

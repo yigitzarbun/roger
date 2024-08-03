@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .result-container {
   display: flex;
@@ -9,15 +10,21 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
+  overflow-x: auto;
 
   .title-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
     .title-left {
       display: flex;
       align-items: center;
-      column-gap: 1vw;
+      column-gap: 1.5vw;
       cursor: pointer;
+      @include small-screen {
+        column-gap: 3vw;
+      }
       .title {
         font-size: 2rem;
       }
@@ -28,6 +35,13 @@
       .active-sort {
         color: $roger-blue;
         font-size: 1.5rem;
+      }
+      .filter {
+        cursor: pointer;
+      }
+      .active-filter {
+        color: $roger-blue;
+        cursor: pointer;
       }
     }
     .nav-container {

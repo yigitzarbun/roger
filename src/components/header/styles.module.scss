@@ -17,7 +17,13 @@
   color: var(--text-color);
   border-bottom: 1px solid $roger-border-color;
   height: 18vh;
-
+  @include small-screen {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 12vh;
+  }
   .top-container {
     display: flex;
     justify-content: space-between;
@@ -45,7 +51,9 @@
       display: flex;
       column-gap: 15px;
       align-items: center;
-
+      @include small-screen {
+        display: none;
+      }
       .messages {
         height: 23px;
         cursor: pointer;
@@ -137,6 +145,15 @@
         background-color: inherit;
         cursor: pointer;
       }
+    }
+  }
+  .menu {
+    display: none;
+    @include small-screen {
+      display: flex;
+      margin-left: auto;
+      font-size: 2rem;
+      cursor: pointer;
     }
   }
 }

@@ -4,8 +4,8 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
-import { SlOptions } from "react-icons/sl";
 import { BsSortDown } from "react-icons/bs";
+import { BsClockHistory } from "react-icons/bs";
 
 import { Link } from "react-router-dom";
 
@@ -37,6 +37,7 @@ import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions
 import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
 import ExploreTrainersFilterModal from "./explore-trainers-filter/ExploreTrainersFilterModal";
 import ExploreTrainersSortModal from "./explore-trainers-sort/ExploreTrainersSortModal";
+import StudentApplicationModal from "../../../../components/lesson/studentship-modal/StudentApplicationModal";
 
 interface ExploreTrainersProps {
   user: User;
@@ -211,7 +212,34 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
-  const handleAddStudent = (selectedTrainerId: number) => {
+  const [selectedTrainerId, setSelectedTrainerId] = useState(null);
+
+  const [trainerName, setTrainerName] = useState("");
+
+  const [selectedTrainerImage, setSelectedTrainerImage] = useState("");
+
+  const [studentApplicationModalOpen, setStudentApplicationModalOpen] =
+    useState(false);
+
+  const handleOpenStudentApplicationModal = (
+    trainerId: number,
+    fname: string,
+    lname: string,
+    image: string
+  ) => {
+    setSelectedTrainerId(trainerId);
+    setTrainerName(`${fname} ${lname}`);
+    setSelectedTrainerImage(image);
+    setStudentApplicationModalOpen(true);
+  };
+
+  const handleCloseStudentApplicationModal = () => {
+    setTrainerName("");
+    setSelectedTrainerId(null);
+    setStudentApplicationModalOpen(false);
+  };
+
+  const handleAddStudent = () => {
     const selectedStudent = playerStudentships?.find(
       (student) =>
         student.trainer_id === selectedTrainerId &&
@@ -250,6 +278,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
   };
   useEffect(() => {
     if (isAddStudentSuccess || isUpdateStudentSuccess) {
+      handleCloseStudentApplicationModal();
       refetchStudents();
     }
   }, [isAddStudentSuccess, isUpdateStudentSuccess]);
@@ -293,28 +322,30 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
-          {paginatedTrainers?.trainers?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenTrainerFilterModal}
+          <div className={styles.icons}>
+            {paginatedTrainers?.trainers?.length > 0 && (
+              <FaFilter
+                onClick={handleOpenTrainerFilterModal}
+                className={
+                  trainerExperienceTypeId > 0 ||
+                  textSearch !== "" ||
+                  gender !== "" ||
+                  locationId > 0 ||
+                  clubId > 0
+                    ? styles["active-filter"]
+                    : styles.filter
+                }
+              />
+            )}
+            <BsSortDown
               className={
-                trainerExperienceTypeId > 0 ||
-                textSearch !== "" ||
-                gender !== "" ||
-                locationId > 0 ||
-                clubId > 0
-                  ? styles["active-filter"]
-                  : styles.filter
+                orderByColumn === ""
+                  ? styles["passive-sort"]
+                  : styles["active-sort"]
               }
+              onClick={handleOpenSortModal}
             />
-          )}
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenSortModal}
-          />
+          </div>
         </div>
         {paginatedTrainers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -430,9 +461,9 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                         student.trainer_id === trainer.trainerUserId &&
                         student.student_status === "pending"
                     ) ? (
-                      <p className={styles["pending-confirmation-text"]}>
-                        Onay bekleniyor
-                      </p>
+                      <BsClockHistory
+                        className={styles["pending-confirmation-text"]}
+                      />
                     ) : playerStudentships?.find(
                         (student) =>
                           student.trainer_id === trainer.trainerUserId &&
@@ -448,7 +479,14 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                       </button>
                     ) : (
                       <button
-                        onClick={() => handleAddStudent(trainer.trainerUserId)}
+                        onClick={() =>
+                          handleOpenStudentApplicationModal(
+                            trainer.trainerUserId,
+                            trainer.fname,
+                            trainer.lname,
+                            trainer.image
+                          )
+                        }
                         className={styles["add-student-button"]}
                       >
                         Öğrenci Ol
@@ -456,10 +494,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     )}
                   </td>
                 )}
-
-                <td>
-                  <SlOptions className={styles.icon} />
-                </td>
               </tr>
             ))}
           </tbody>
@@ -518,6 +552,17 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           handleClearOrderBy={handleClearOrderBy}
           orderByDirection={orderByDirection}
           orderByColumn={orderByColumn}
+        />
+      )}
+      {studentApplicationModalOpen && (
+        <StudentApplicationModal
+          studentApplicationModalOpen={studentApplicationModalOpen}
+          handleCloseStudentApplicationModal={
+            handleCloseStudentApplicationModal
+          }
+          trainerName={trainerName}
+          handleAddStudent={handleAddStudent}
+          trainerImage={selectedTrainerImage}
         />
       )}
     </div>

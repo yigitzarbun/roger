@@ -2,3 +2,34 @@ $header-z-index: 10;
 $profile-modal-z-index-overlay: 11;
 $profile-modal-z-index: 999;
 //$toast-z-index: 999;
+
+$small-screen-breakpoint: 320px;
+$medium-screen-breakpoint: 768px;
+$large-screen-breakpoint: 1024px;
+
+$small-screen-max-width: $medium-screen-breakpoint - 1;
+$large-screen-min-width: $large-screen-breakpoint;
+$medium-screen-min-width: $small-screen-max-width + 1;
+$medium-screen-max-width: $large-screen-min-width - 1;
+
+$small-screen: "(max-width: #{$small-screen-max-width})";
+$medium-screen: "(min-width: #{$medium-screen-min-width}) and (max-width: #{$medium-screen-max-width})";
+$large-screen: "(min-width: #{$large-screen-min-width})";
+
+@mixin small-screen {
+  @media #{$small-screen} {
+    @content;
+  }
+}
+
+@mixin medium-screen {
+  @media #{$medium-screen} {
+    @content;
+  }
+}
+
+@mixin large-screen {
+  @media #{$large-screen} {
+    @content;
+  }
+}

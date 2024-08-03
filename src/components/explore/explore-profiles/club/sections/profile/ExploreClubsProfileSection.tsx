@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-
 import styles from "./styles.module.scss";
 import { FiMessageSquare } from "react-icons/fi";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import PageLoading from "../../../../../../components/loading/PageLoading";
-import { SlOptions } from "react-icons/sl";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 import {
   useAddFavouriteMutation,
@@ -14,7 +11,6 @@ import {
   useGetFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../../../../../api/endpoints/FavouritesApi";
-
 import { useAppSelector } from "../../../../../../store/hooks";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 import {
@@ -319,7 +315,6 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
           </div>
         </div>
       </div>
-      <SlOptions className={styles.icon} />
       {openSubscribeModal && (
         <SubscribeToClubModal
           openSubscribeModal={openSubscribeModal}

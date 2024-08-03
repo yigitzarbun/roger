@@ -9,7 +9,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .title-container {
     display: flex;
     justify-content: space-between;
@@ -60,6 +60,7 @@
 
       .pending-confirmation-text {
         color: var(--yellow-text);
+        font-size: 1.5rem;
       }
     }
 
@@ -76,9 +77,6 @@
       text-align: center;
     }
 
-    .cancel-button:hover {
-      //background-color: $roger-black-light;
-    }
     .icon {
       cursor: pointer;
     }

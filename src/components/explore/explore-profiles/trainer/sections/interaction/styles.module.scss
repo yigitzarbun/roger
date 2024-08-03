@@ -7,8 +7,7 @@
   border-radius: $roger-border-radius;
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  column-gap: 3vw;
+  column-gap: 5vw;
   border: 1px solid $roger-border-color;
 
   .image-container {
@@ -58,7 +57,7 @@
         flex-direction: column;
         row-gap: 4vh;
         table {
-          width: 50%;
+          width: 100%;
           text-align: left;
           border-collapse: collapse;
 
@@ -133,7 +132,7 @@
       }
     }
     .pending-confirmation-text {
-      color: $roger-yellow;
+      color: var(--yellow-text);
       font-size: 0.9rem;
     }
   }

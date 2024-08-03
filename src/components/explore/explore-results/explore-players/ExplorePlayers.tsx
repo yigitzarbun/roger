@@ -6,7 +6,6 @@ import { BsSortDown } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
 import { ImBlocked } from "react-icons/im";
-import { SlOptions } from "react-icons/sl";
 
 import { Link } from "react-router-dom";
 
@@ -252,25 +251,27 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
-          <FaFilter
-            onClick={handleOpenPlayerFilterModal}
-            className={
-              playerLevelId > 0 ||
-              gender !== "" ||
-              locationId > 0 ||
-              textSearch !== ""
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenSortModal}
-          />
+          <div className={styles.icons}>
+            <FaFilter
+              onClick={handleOpenPlayerFilterModal}
+              className={
+                playerLevelId > 0 ||
+                gender !== "" ||
+                locationId > 0 ||
+                textSearch !== ""
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+            <BsSortDown
+              className={
+                orderByColumn === ""
+                  ? styles["passive-sort"]
+                  : styles["active-sort"]
+              }
+              onClick={handleOpenSortModal}
+            />
+          </div>
         </div>
         {paginatedPlayers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -391,10 +392,6 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       <ImBlocked className={styles.blocked} />
                     )
                   )}
-                </td>
-
-                <td>
-                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

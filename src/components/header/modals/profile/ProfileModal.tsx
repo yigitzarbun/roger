@@ -19,9 +19,16 @@ import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 interface ProfileModalProps {
   isProfileModalOpen: boolean;
   handleCloseProfileModal: () => void;
+  handleCloseMenuModal: () => void;
   email: string;
 }
 const ProfileModal = (props: ProfileModalProps) => {
+  const {
+    isProfileModalOpen,
+    handleCloseProfileModal,
+    email,
+    handleCloseMenuModal,
+  } = props;
   const user = useAppSelector((store) => store.user?.user?.user);
   const isUserPlayer = user?.user_type_id === 1;
   const isUserTrainer = user?.user_type_id === 2;
@@ -29,10 +36,10 @@ const ProfileModal = (props: ProfileModalProps) => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { isProfileModalOpen, handleCloseProfileModal, email } = props;
 
   const navigateUser = (path: string) => {
     navigate(paths[path]);
+    handleCloseMenuModal();
     handleCloseProfileModal();
   };
 
@@ -40,6 +47,7 @@ const ProfileModal = (props: ProfileModalProps) => {
     dispatch(logOut());
     handleCloseProfileModal();
     navigate(paths.LOGIN);
+    handleCloseMenuModal();
   };
 
   return (

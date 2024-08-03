@@ -134,6 +134,7 @@ const matchScoresModel = {
         .andWhere(function () {
           this.whereNot("players.user_id", filter.userId);
         })
+        .orderBy("bookings.event_date", "desc")
         .limit(scoresPerPage)
         .offset(offset);
 
