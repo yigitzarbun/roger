@@ -10,16 +10,18 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import { useGetPlayerCalendarBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
+import { FaFilter } from "react-icons/fa6";
 
 interface PlayerCalendarResultsProps {
   date: string;
   eventTypeId: number;
   clubId: number;
   textSearch: string;
+  handleOpenFilter: () => void;
 }
 
 const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
-  const { date, eventTypeId, clubId, textSearch } = props;
+  const { date, eventTypeId, clubId, textSearch, handleOpenFilter } = props;
 
   const user = useAppSelector((store) => store?.user?.user?.user);
 
@@ -90,7 +92,21 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Takvim</h2>
+        <div className={styles["title-left"]}>
+          <h2 className={styles.title}>Takvim</h2>
+          <FaFilter
+            onClick={handleOpenFilter}
+            className={
+              clubId > 0 ||
+              eventTypeId > 0 ||
+              textSearch !== "" ||
+              clubId > 0 ||
+              date !== ""
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
+        </div>
       </div>
       {filteredBookings?.length === 0 ? (
         <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>

@@ -1,16 +1,11 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
-
 import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import styles from "./styles.module.scss";
-
 import { useGetPlayerMatchScoresWithBookingDetailsQuery } from "../../../../api/endpoints/MatchScoresApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
@@ -19,6 +14,7 @@ import AddMatchScoreModal from "../modals/add/AddMatchScoreModal";
 import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
+import { BsClockHistory } from "react-icons/bs";
 
 interface PlayerMatchScoressProps {
   display: string;
@@ -178,7 +174,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>
               <th>Tarih</th>
@@ -274,9 +270,9 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                     </button>
                   ) : event.reporter_id === user?.user?.user_id &&
                     event?.match_score_status_type_id === 2 ? (
-                    <p className={styles["waiting-confirmation-text"]}>
-                      Onay Bekleniyor
-                    </p>
+                    <BsClockHistory
+                      className={styles["waiting-confirmation-text"]}
+                    />
                   ) : event.reporter_id !== user?.user?.user_id &&
                     event?.match_score_status_type_id === 2 ? (
                     <button

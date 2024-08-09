@@ -1,12 +1,17 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .calendar-page-container {
   display: flex;
   column-gap: 4vh;
   border-radius: $roger-border-radius;
   width: 100%;
-
+  @include small-screen {
+    flex-wrap: wrap;
+    row-gap: 1vh;
+    column-gap: 2vh;
+  }
   .input-container {
     display: flex;
     width: 20%;
@@ -15,7 +20,9 @@
     border-radius: $roger-border-radius;
     justify-content: center;
     column-gap: 14px;
-
+    @include small-screen {
+      width: 33%;
+    }
     select,
     input {
       padding: $roger-button-padding;
@@ -37,7 +44,9 @@
     border-radius: $roger-border-radius;
     justify-content: center;
     column-gap: 14px;
-
+    @include small-screen {
+      width: 33%;
+    }
     label {
       font-weight: bold;
     }

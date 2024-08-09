@@ -18,7 +18,7 @@ const PlayerProfile = () => {
     isLoading: isPlayerDetailsLoading,
     refetch: refetchPlayerDetails,
   } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
-  console.log(playerDetails);
+
   const [page, setPage] = useState("account");
 
   const handlePage = (page: string) => {

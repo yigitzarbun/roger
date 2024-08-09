@@ -37,7 +37,9 @@
     background-color: $roger-box-bg-color;
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
-
+    @include small-screen {
+      width: 400px;
+    }
     h3 {
       font-size: 1.7rem;
     }
@@ -74,6 +76,9 @@
         .top-row {
           display: flex;
           justify-content: space-between;
+          @include small-screen {
+            flex-direction: column;
+          }
           .set-container {
             width: 46%;
             display: flex;
@@ -81,15 +86,20 @@
             padding: $roger-box-padding;
             background-color: $roger-bg-color;
             border-radius: $roger-border-radius;
+            @include small-screen {
+              width: 98%;
+            }
             .input-outer-container {
               display: flex;
               column-gap: 1vw;
+              @include small-screen {
+                column-gap: 4vw;
+              }
               .input-container {
                 display: flex;
                 flex-direction: column;
                 row-gap: 1vh;
                 width: 100%;
-
                 label {
                   font-size: 0.9rem;
                 }
@@ -128,7 +138,7 @@
         background-color: $roger-box-bg-color-hover;
       }
       .submit-button {
-        background-color: white;
+        background-color: var(--green-button-color);
         color: black;
         border: none;
         padding: $roger-button-padding;
@@ -139,8 +149,7 @@
         width: 150px;
       }
       .submit-button:hover {
-        background-color: $roger-white;
-        color: black;
+        background-color: var(--green-button-color-hover);
       }
     }
   }

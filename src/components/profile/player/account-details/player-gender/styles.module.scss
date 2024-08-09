@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .player-account-details-container {
   background-color: var(--box-background-color);
@@ -24,6 +25,9 @@
     }
     p {
       width: 500px;
+      @include small-screen {
+        width: 100%;
+      }
     }
     .email {
       color: $roger-blue;
@@ -38,5 +42,8 @@
     background-color: inherit;
     font-size: 0.9rem;
     cursor: not-allowed;
+    @include small-screen {
+      width: 100%;
+    }
   }
 }

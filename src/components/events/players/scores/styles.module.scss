@@ -9,7 +9,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .top-container {
     display: flex;
     justify-content: space-between;
@@ -72,7 +72,7 @@
       }
       .waiting-confirmation-text {
         color: $roger-yellow;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
       }
       .add-score-button {
         background-color: var(--primary-button-background-color);
@@ -91,7 +91,7 @@
         background-color: $roger-black-light;
       }
       .edit-score-button {
-        background-color: var(--secondary-button-background-color);
+        background-color: var(--green-button-color);
         border: none;
         width: 150px;
         padding: $roger-button-padding;
@@ -104,7 +104,7 @@
       }
 
       .edit-score-button:hover {
-        background-color: $roger-black-light;
+        background-color: var(--green-button-color-hover);
       }
     }
 

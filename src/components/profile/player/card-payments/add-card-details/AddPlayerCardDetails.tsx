@@ -48,7 +48,7 @@ const AddPlayerCardDetails = (props) => {
       card_expiry: playerDetails?.card_expiry,
     },
   });
-  console.log(playerDetails);
+
   const onSubmit: SubmitHandler<Player> = (formData) => {
     const playerCardDetails = {
       player_id: playerDetails?.player_id,

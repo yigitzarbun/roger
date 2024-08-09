@@ -1,12 +1,15 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .training-page-container {
   display: flex;
-  column-gap: 4vh;
+  column-gap: 4vw;
   border-radius: $roger-border-radius;
   width: 100%;
-
+  @include small-screen {
+    column-gap: 1vw;
+  }
   .input-container {
     display: flex;
     width: 15%;
@@ -15,7 +18,9 @@
     border-radius: $roger-border-radius;
     justify-content: center;
     column-gap: 14px;
-
+    @include small-screen {
+      width: 25%;
+    }
     select,
     input {
       padding: $roger-button-padding;
@@ -37,7 +42,9 @@
     border-radius: $roger-border-radius;
     justify-content: center;
     column-gap: 14px;
-
+    @include small-screen {
+      width: 25%;
+    }
     label {
       font-weight: bold;
     }

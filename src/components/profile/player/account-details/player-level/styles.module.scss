@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .player-account-details-container {
   background-color: var(--box-background-color);
@@ -24,6 +25,10 @@
     }
     p {
       width: 400px;
+
+      @include small-screen {
+        display: none;
+      }
     }
   }
 
@@ -32,7 +37,11 @@
     column-gap: 2vh;
     justify-content: space-between;
     align-items: end;
-
+    @include small-screen {
+      flex-direction: column;
+      row-gap: 4vh;
+      align-items: start;
+    }
     label {
       font-size: 0.9rem;
     }
@@ -42,7 +51,9 @@
       flex-direction: column;
       row-gap: 1vh;
       width: 250px;
-
+      @include small-screen {
+        width: 100%;
+      }
       select {
         padding: $roger-button-padding;
         border-radius: $roger-border-radius;

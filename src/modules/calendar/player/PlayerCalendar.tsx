@@ -27,30 +27,41 @@ const PlayerCalendar = () => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
+
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const handleOpenFilter = () => {
+    filterOpen ? setFilterOpen(false) : setFilterOpen(true);
+  };
+
   const handleClear = () => {
     setDate("");
     setTextSearch("");
     setEventTypeId(null);
     setClubId(null);
   };
+
   return (
     <div className={styles["calendar-container"]}>
-      <PlayerCalendarSearch
-        handleDate={handleDate}
-        handleEventType={handleEventType}
-        handleClub={handleClub}
-        handleTextSearch={handleTextSearch}
-        handleClear={handleClear}
-        textSearch={textSearch}
-        date={date}
-        eventTypeId={eventTypeId}
-        clubId={clubId}
-      />
+      {filterOpen && (
+        <PlayerCalendarSearch
+          handleDate={handleDate}
+          handleEventType={handleEventType}
+          handleClub={handleClub}
+          handleTextSearch={handleTextSearch}
+          handleClear={handleClear}
+          textSearch={textSearch}
+          date={date}
+          eventTypeId={eventTypeId}
+          clubId={clubId}
+        />
+      )}
       <PlayerCalendarResults
         date={date}
         eventTypeId={eventTypeId}
         clubId={clubId}
         textSearch={textSearch}
+        handleOpenFilter={handleOpenFilter}
       />
     </div>
   );

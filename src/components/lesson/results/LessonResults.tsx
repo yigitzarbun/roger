@@ -45,6 +45,7 @@ const LessonResults = (props: TrainSearchProps) => {
     textSearch,
     handleOpenFilter,
   } = props;
+
   const user = useAppSelector((store) => store?.user?.user);
   const isUserPlayer = user?.user?.user_type_id === 1;
   const isUserTrainer = user?.user?.user_type_id === 2;

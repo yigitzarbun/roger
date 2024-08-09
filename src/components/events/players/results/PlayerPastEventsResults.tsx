@@ -202,7 +202,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Oyuncu/ Eğitmen</th>
               <th>İsim</th>
               <th>Tarih</th>
               <th>Saat</th>
