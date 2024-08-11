@@ -46,6 +46,9 @@
     max-height: 80vh;
     margin: 150px auto 0 auto;
     margin-top: calc(10vh + 20px);
+    @include small-screen {
+      width: 400px;
+    }
     .top-container {
       display: flex;
       justify-content: space-between;

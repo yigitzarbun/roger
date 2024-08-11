@@ -1,5 +1,7 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
+
 .reviews-section {
   background-color: var(--box-background-color);
   width: 100%;
@@ -33,12 +35,19 @@
     column-gap: 10px;
     row-gap: 10px;
     justify-content: space-between;
-
+    @include small-screen {
+      flex-wrap: nowrap;
+      flex-direction: column;
+    }
     .review-container-wrapper {
       width: 48%;
       row-gap: 20px;
       display: flex;
       flex-direction: column;
+
+      @include small-screen {
+        width: 100%;
+      }
     }
   }
 }

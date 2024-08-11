@@ -39,7 +39,9 @@
     border: 1px solid $roger-border-color;
     height: 90vh;
     overflow-y: auto;
-
+    @include small-screen {
+      width: 400px;
+    }
     h3 {
       font-size: 1.7rem;
     }
@@ -99,10 +101,16 @@
       }
       .nav-arrow {
         font-size: 1.3rem;
+        @include small-screen {
+          display: none;
+        }
       }
       .nav-arrow:hover {
         color: $roger-blue;
         cursor: pointer;
+        @include small-screen {
+          display: none;
+        }
       }
     }
     table {

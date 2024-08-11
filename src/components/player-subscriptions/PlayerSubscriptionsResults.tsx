@@ -1,14 +1,10 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
 import { SlOptions } from "react-icons/sl";
-
 import paths from "../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../components/loading/PageLoading";
-
+import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useAppSelector } from "../../store/hooks";
 import { useGetPlayerActiveClubSubscriptionsQuery } from "../../api/endpoints/ClubSubscriptionsApi";
 
@@ -76,11 +72,10 @@ const PlayerSubscriptionResults = () => {
                     subscription.is_active ? styles.active : styles.inactive
                   }
                 >
-                  {subscription.is_active && "Üyelik Var"}
+                  {subscription.is_active && (
+                    <IoIosCheckmarkCircle className={styles.done} />
+                  )}
                   {!subscription.is_active && "Üyelik Geçersiz"}
-                </td>
-                <td>
-                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

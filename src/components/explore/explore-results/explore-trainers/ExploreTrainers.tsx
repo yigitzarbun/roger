@@ -1,22 +1,14 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
 import { BsSortDown } from "react-icons/bs";
 import { BsClockHistory } from "react-icons/bs";
-
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../routing/Paths";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { getAge } from "../../../../common/util/TimeFunctions";
-
 import { User } from "../../../../store/slices/authSlice";
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { useGetPaginatedTrainersQuery } from "../../../../api/endpoints/TrainersApi";

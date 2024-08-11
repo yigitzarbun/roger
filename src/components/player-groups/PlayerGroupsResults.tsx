@@ -61,8 +61,8 @@ const PlayerGroupResults = () => {
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Kulüp</th>
+              <th>Kulüp Adı</th>
               <th>Grup</th>
               <th>Oyuncu Sayısı</th>
               <th>Eğitmen</th>
@@ -116,9 +116,6 @@ const PlayerGroupResults = () => {
                   {group.latest_event_time?.slice(0, 5)
                     ? group.latest_event_time?.slice(0, 5)
                     : "-"}
-                </td>
-                <td>
-                  <SlOptions className={styles.icon} />
                 </td>
               </tr>
             ))}

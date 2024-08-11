@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .events-section {
   background-color: var(--box-background-color);
@@ -11,7 +12,7 @@
   justify-content: space-between;
   row-gap: 30px;
   border: 1px solid $roger-border-color;
-
+  overflow-x: auto;
   button {
     padding: $roger-button-padding;
     border-radius: $roger-border-radius;

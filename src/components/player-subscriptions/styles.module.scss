@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .result-container {
   display: flex;
@@ -9,6 +10,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
+  overflow-x: auto;
 
   .title-container {
     display: flex;
@@ -59,7 +61,6 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
@@ -85,8 +86,9 @@
     .match-button:hover {
       background-color: $roger-black-light;
     }
-    .icon {
-      cursor: pointer;
+    .done {
+      color: $roger-green;
+      font-size: 1rem;
     }
   }
   .pages-container {

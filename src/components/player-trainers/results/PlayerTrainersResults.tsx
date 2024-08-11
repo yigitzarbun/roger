@@ -94,7 +94,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+          <h2 className={styles["result-title"]}>Eğitmenlerim</h2>
         </div>
         {playerTrainers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -130,6 +130,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
               <th>Cinsiyet</th>
               <th>Yaş</th>
               <th>Konum</th>
+              <th>Öğrencilik</th>
               <th>Ders</th>
             </tr>
           </thead>

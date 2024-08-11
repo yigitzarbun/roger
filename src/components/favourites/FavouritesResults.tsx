@@ -177,9 +177,6 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
                     Favoriden çıkar
                   </button>
                 </td>
-                <td>
-                  <SlOptions className={styles.icon} />
-                </td>
               </tr>
             ))}
           </tbody>
