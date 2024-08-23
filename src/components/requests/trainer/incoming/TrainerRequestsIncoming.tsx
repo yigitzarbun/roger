@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from "react";
-
 import { Link } from "react-router-dom";
-
 import { toast } from "react-toastify";
-
 import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import AcceptInviteModal, {
   AcceptBookingData,
 } from "../../../invite/modals/accept-modal/AcceptInviteModal";
-
 import DeclineInviteModal, {
   DeclineBookingData,
 } from "../../../invite/modals/decline-modal/DeclineInviteModal";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import {
   useGetTrainerIncomingRequestsQuery,
   useUpdateBookingMutation,
 } from "../../../../api/endpoints/BookingsApi";
-
 import {
   useGetPaymentByIdQuery,
   useUpdatePaymentMutation,
 } from "../../../../api/endpoints/PaymentsApi";
-
 import {
   useGetIsStudentQuery,
   useAddStudentMutation,
@@ -218,7 +208,6 @@ const TrainerRequestsIncoming = () => {
         <table>
           <thead>
             <tr>
-              <th>Durum</th>
               <th>Oyuncu</th>
               <th>İsim</th>
               <th>Seviye</th>
@@ -237,15 +226,6 @@ const TrainerRequestsIncoming = () => {
           <tbody>
             {incomingBookings?.map((booking) => (
               <tr key={booking.booking_id} className={styles["player-row"]}>
-                <td>
-                  {booking.booking_status_type_id === 1 ? (
-                    <p className={styles["pending-confirmation-text"]}>
-                      Bekleniyor
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </td>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${booking?.inviter_id}`}>
                     <img

@@ -11,6 +11,7 @@
   justify-content: space-between;
   row-gap: 20px;
   border: 1px solid $roger-border-color;
+  overflow-x: auto;
 
   .trainers-section-title-container {
     display: flex;

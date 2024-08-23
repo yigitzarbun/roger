@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .result-container {
   display: flex;
@@ -9,7 +10,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .top-container {
     display: flex;
     justify-content: space-between;
@@ -17,6 +18,9 @@
       display: flex;
       align-items: center;
       column-gap: 2vw;
+      @include small-screen {
+        column-gap: 3vw;
+      }
       .result-title {
         font-size: 2rem;
       }

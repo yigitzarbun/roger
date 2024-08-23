@@ -87,9 +87,10 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
           className={styles["submit-button"]}
           disabled={isButtonDisabled}
         >
-          {isButtonDisabled ? buttonText : "Davet Gönder"}
+          Davet Gönder
         </button>
       </div>
+      {isButtonDisabled && <p className={styles.validation}>{buttonText}</p>}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .courts-section {
   background-color: var(--box-background-color);
@@ -7,7 +8,7 @@
   border-radius: $roger-border-radius;
   width: 100%;
   border: 1px solid $roger-border-color;
-
+  overflow-x: auto;
   table {
     width: 100%;
     text-align: left;

@@ -1,20 +1,28 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .register-page-container {
   display: flex;
   flex-direction: column;
   row-gap: 20vh;
 
+  @include small-screen {
+    row-gap: 10vh;
+  }
+
   .hero {
     display: flex;
     column-gap: 5vw;
     background-color: var(--box-background-color);
-    border-radius: 20px;
+    border-radius: $roger-border-radius;
     align-items: center;
     img {
       width: 60%;
       border-radius: 10px;
+      @include small-screen {
+        display: none;
+      }
     }
     .intro-container {
       display: flex;
@@ -39,8 +47,21 @@
         display: flex;
         justify-content: space-between;
         margin-top: 8vh;
-        button {
+        .register-button {
           background-color: $roger-black-dark;
+          border: none;
+          width: 150px;
+          margin: 0 auto;
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          font-size: 0.9rem;
+          cursor: pointer;
+          color: white;
+          text-decoration: none;
+          text-align: center;
+        }
+        .login-button {
+          background-color: $roger-blue;
           border: none;
           width: 150px;
           margin: 0 auto;
@@ -62,9 +83,6 @@
           font-size: 2rem;
         }
       }
-      button:hover {
-        background-color: $roger-blue;
-      }
     }
   }
 
@@ -76,7 +94,10 @@
     .user-types {
       display: flex;
       justify-content: space-between;
-
+      @include small-screen {
+        flex-direction: column;
+        row-gap: 2vh;
+      }
       .user-type {
         background-color: var(--box-background-color);
         border: 1px solid;
@@ -92,6 +113,11 @@
         height: 50vh;
         text-align: center;
         justify-content: space-evenly;
+        @include small-screen {
+          width: 100%;
+          row-gap: 2vh;
+          height: 40vh;
+        }
         h4 {
           font-size: 1.3rem;
         }
@@ -111,6 +137,7 @@
           text-decoration: none;
           text-align: center;
           margin: 0 auto;
+          max-width: 200px;
         }
         button:hover {
           background-color: $roger-blue;
@@ -134,13 +161,19 @@
     align-items: center;
     line-height: 30px;
     column-gap: 4vw;
-
+    @include small-screen {
+      flex-direction: column;
+      height: auto;
+    }
     .text-container {
       width: 50%;
       display: flex;
       flex-direction: column;
       row-gap: 4vh;
       padding: $roger-box-padding;
+      @include small-screen {
+        width: 100%;
+      }
       h4 {
         font-size: 1.2rem;
         color: $roger-text-color-hover;
@@ -156,6 +189,9 @@
       border-radius: 20px;
       margin: auto 0;
       border: 3px solid black;
+      @include small-screen {
+        width: 100%;
+      }
     }
   }
 
@@ -166,7 +202,10 @@
     padding: $roger-box-padding;
     height: 100vh;
     column-gap: 4vw;
-
+    @include small-screen {
+      flex-direction: column;
+      height: auto;
+    }
     .text-container {
       width: 50%;
       display: flex;
@@ -174,6 +213,9 @@
       row-gap: 4vh;
       padding: $roger-box-padding;
       line-height: 30px;
+      @include small-screen {
+        width: 100%;
+      }
       h4 {
         font-size: 1.2rem;
         color: $roger-text-color-hover;
@@ -189,6 +231,9 @@
       border-radius: 20px;
       margin: auto 0;
       border: 3px solid black;
+      @include small-screen {
+        width: 100%;
+      }
     }
   }
 
@@ -201,7 +246,10 @@
     border-bottom-right-radius: 20px;
     height: 100vh;
     column-gap: 4vw;
-
+    @include small-screen {
+      flex-direction: column;
+      height: auto;
+    }
     .text-container {
       width: 50%;
       display: flex;
@@ -209,6 +257,9 @@
       row-gap: 4vh;
       padding: $roger-box-padding;
       line-height: 30px;
+      @include small-screen {
+        width: 100%;
+      }
       h4 {
         font-size: 1.2rem;
         color: $roger-text-color-hover;
@@ -224,6 +275,9 @@
       border-radius: 20px;
       margin: auto 0;
       border: 3px solid black;
+      @include small-screen {
+        width: 100%;
+      }
     }
   }
 }

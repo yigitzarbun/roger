@@ -109,7 +109,9 @@ const favouritesModel = {
           "trainers.lname",
           "clubs.club_name",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "trainer_experience_types.trainer_experience_type_name",
+          "trainer_experience_types.trainer_experience_type_id",
           "locations.location_name"
         )
         .from("favourites")

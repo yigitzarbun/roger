@@ -3,7 +3,6 @@ import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import { useGetPaginatedTournamentsQuery } from "../../../api/endpoints/TournamentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import AllTournamentsFilterModal from "./all-tournaments-filter/AllTournamentsFilterModal";
@@ -11,6 +10,7 @@ import { AddTournamentParticipantModal } from "../modals/add-tournament-particip
 import { Link } from "react-router-dom";
 import Paths from "../../../routing/Paths";
 import { useAppSelector } from "../../../store/hooks";
+import { useTranslation } from "react-i18next";
 
 interface AllTournamentsProps {
   refetchMyTournaments: () => void;
@@ -20,25 +20,37 @@ interface AllTournamentsProps {
 
 const AllTournaments = (props: AllTournamentsProps) => {
   const { refetchMyTournaments, locations, clubs } = props;
+
+  const { t } = useTranslation();
+
   const [currentPage, setCurrentPage] = useState(1);
+
   const [textSearch, setTextSearch] = useState("");
+
   const [locationId, setLocationId] = useState(null);
+
   const [gender, setGender] = useState("");
+
   const [clubId, setClubId] = useState(null);
+
   const [subscriptionRequired, setSubscriptionRequired] = useState(null);
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+
   const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setLocationId(isNaN(value) ? null : value);
   };
+
   const handleClub = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
+
   const handleGender = (event: ChangeEvent<HTMLSelectElement>) => {
     setGender(event.target.value);
   };
@@ -55,6 +67,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
   const handleOpenAllTournamentsModal = () => {
     setAllTournamentsFilterModal(true);
   };
+
   const handleCloseAllTournamentsModal = () => {
     setAllTournamentsFilterModal(false);
   };
@@ -103,10 +116,13 @@ const AllTournaments = (props: AllTournamentsProps) => {
     setCurrentPage(prevPage);
   };
   const date = new Date();
+
   const currentYear = date.getFullYear();
 
   const [participateModal, setParticipateModal] = useState(false);
+
   const [selectedTournament, setSelectedTournament] = useState(null);
+
   const [selectedClubUserId, setSelectedClubUserId] = useState(null);
 
   const handleOpenAddTournamentParticipantModal = (
@@ -141,15 +157,13 @@ const AllTournaments = (props: AllTournamentsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Turnuvalar</h2>
-          {paginatedTournaments?.tournaments?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenAllTournamentsModal}
-              className={
-                textSearch !== "" ? styles["active-filter"] : styles.filter
-              }
-            />
-          )}
+          <h2 className={styles["result-title"]}>{t("tournamentsTitle")}</h2>
+          <FaFilter
+            onClick={handleOpenAllTournamentsModal}
+            className={
+              textSearch !== "" ? styles["active-filter"] : styles.filter
+            }
+          />
         </div>
         {paginatedTournaments?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -169,18 +183,18 @@ const AllTournaments = (props: AllTournamentsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Turnuva Adı</th>
-              <th>Kulüp</th>
-              <th>Konum</th>
-              <th>Başlangıç</th>
-              <th>Bitiş</th>
-              <th>Son Başvuru</th>
-              <th>Katılım Ücreti</th>
-              <th>Cinsiyet</th>
-              <th>Katılımcı</th>
-              <th>Üyelik Şartı</th>
-              <th>Yaş Aralığı</th>
-              <th>Katılım Durumu</th>
+              <th>{t("tableTournamentName")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("start")}</th>
+              <th>{t("end")}</th>
+              <th>{t("deadline")}</th>
+              <th>{t("admissionFee")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("participants")}</th>
+              <th>{t("membershipRule")}</th>
+              <th>{t("ageGap")}</th>
+              <th>{t("participationStatus")}</th>
             </tr>
           </thead>
           <tbody>
@@ -203,9 +217,15 @@ const AllTournaments = (props: AllTournamentsProps) => {
                 <td>{tournament.end_date?.slice(0, 10)}</td>
                 <td>{tournament.application_deadline?.slice(0, 10)}</td>
                 <td>{`${tournament.application_fee} TL`}</td>
-                <td>{tournament.tournament_gender}</td>
+                <td>
+                  {tournament.tournament_gender === "female"
+                    ? t("female")
+                    : t("male")}
+                </td>
                 <td>{tournament.participant_count}</td>
-                <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
+                <td>
+                  {tournament.club_subscription_required ? t("yes") : t("no")}
+                </td>
                 <td>{`${currentYear - tournament?.min_birth_year} - ${
                   currentYear - tournament?.max_birth_year
                 }`}</td>
@@ -223,7 +243,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
                       }
                       className={styles["book-button"]}
                     >
-                      Katıl
+                      {t("join")}
                     </button>
                   )}
                 </td>
@@ -232,7 +252,7 @@ const AllTournaments = (props: AllTournamentsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Güncel turnuva bulunmamaktadır</p>
+        <p>{t("playerTournamentEmptyText")}</p>
       )}
       {allTournamentsFilterModal && (
         <AllTournamentsFilterModal

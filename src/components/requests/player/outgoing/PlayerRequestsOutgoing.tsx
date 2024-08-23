@@ -11,9 +11,12 @@ import { useGetPlayerOutgoingRequestsQuery } from "../../../../api/endpoints/Boo
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { BsClockHistory } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 const PlayerRequestsOutgoing = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: outgoingBookings,
@@ -70,28 +73,29 @@ const PlayerRequestsOutgoing = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Gönderilen Davetler</h2>
+        <h2 className={styles.title}>{t("outgoingRequestsTitle")}</h2>
       </div>
       {outgoingBookings?.length === 0 ? (
-        <div>Gönderilen antreman, maç veya ders daveti bulunmamaktadır</div>
+        <div>{t("playerOutgoingRequestsEmptyText")}</div>
       ) : (
         <>
           <table>
             <thead>
               <tr>
-                <th>Durum</th>
-                <th>Üye</th>
-                <th>İsim</th>
-                <th>Seviye</th>
-                <th>Cinsiyet</th>
-                <th>Yaş</th>
-                <th>Tür</th>
-                <th>Tarih</th>
-                <th>Saat </th>
-                <th>Konum</th>
-                <th>Kort</th>
+                <th>{t("tableStatusHeader")}</th>
+                <th>{t("tableOpponentHeader")}</th>
+                <th>{t("tableNameHeader")}</th>
+                <th>{t("tableLevelHeader")}</th>
+                <th>{t("tableGenderHeader")}</th>
+                <th>{t("tableAgeHeader")}</th>
+                <th>{t("tableClubTypeHeader")} </th>
+                <th>{t("tableDateHeader")}</th>
+                <th>{t("tableTimeHeader")} </th>
+                <th>{t("leaderboardTableLocationHeader")}</th>
+                <th>{t("tableCourtHeader")}</th>
                 <th>
-                  Ücret<span className={styles["fee"]}>*</span>
+                  {t("tablePriceHeader")}
+                  <span className={styles["fee"]}>*</span>
                 </th>
               </tr>
             </thead>
@@ -154,15 +158,61 @@ const PlayerRequestsOutgoing = () => {
                     )}
                   </td>
                   <td>
-                    {booking.event_type_id === 1 || booking.event_type_id === 2
-                      ? booking?.player_level_name
-                      : booking.event_type_id === 3
-                      ? booking?.trainer_experience_type_name
+                    {(booking.event_type_id === 1 ||
+                      booking.event_type_id === 2 ||
+                      booking.event_type_id === 7) &&
+                    booking.player_level_id === 1
+                      ? t("playerLevelBeginner")
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2 ||
+                          booking.event_type_id === 7) &&
+                        booking?.player_level_id === 2
+                      ? t("playerLevelIntermediate")
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2 ||
+                          booking.event_type_id === 7) &&
+                        booking?.player_level_id === 3
+                      ? t("playerLevelAdvanced")
+                      : (booking.event_type_id === 1 ||
+                          booking.event_type_id === 2 ||
+                          booking.event_type_id === 7) &&
+                        booking?.player_level_id === 4
+                      ? t("playerLevelProfessinal")
+                      : booking.event_type_id === 3 &&
+                        booking?.trainer_experience_type_id === 1
+                      ? t("trainerLevelBeginner")
+                      : booking.event_type_id === 3 &&
+                        booking?.trainer_experience_type_id === 2
+                      ? t("trainerLevelIntermediate")
+                      : booking.event_type_id === 3 &&
+                        booking?.trainer_experience_type_id === 3
+                      ? t("trainerLevelAdvanced")
+                      : booking.event_type_id === 3 &&
+                        booking?.trainer_experience_type_id === 4
+                      ? t("trainerLevelProfessional")
+                      : "-"}
+                  </td>
+                  <td>
+                    {booking?.gender === "female" ? t("female") : t("male")}
+                  </td>
+                  <td>{getAge(booking?.birth_year)}</td>
+                  <td>
+                    {booking?.event_type_id === 1
+                      ? t("training")
+                      : booking?.event_type_id === 2
+                      ? t("match")
+                      : booking?.event_type_id === 3
+                      ? t("lesson")
+                      : booking?.event_type_id === 4
+                      ? t("externalTraining")
+                      : booking?.event_type_id === 5
+                      ? t("externalLesson")
+                      : booking?.event_type_id === 6
+                      ? t("groupLesson")
+                      : booking?.event_type_id === 7
+                      ? t("tournamentMatch")
                       : ""}
                   </td>
-                  <td>{booking?.gender}</td>
-                  <td>{getAge(booking?.birth_year)}</td>
-                  <td>{booking?.event_type_name}</td>
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
                   <td>{booking?.club_name}</td>
@@ -179,16 +229,14 @@ const PlayerRequestsOutgoing = () => {
                       onClick={() => handleOpenModal(booking)}
                       className={styles["cancel-button"]}
                     >
-                      İptal
+                      {t("cancel")}
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className={styles["fee-text"]}>
-            (*) Kort ücreti ve diğer tüm masraflar dahil ödeyeceğin tutar.
-          </p>
+          <p className={styles["fee-text"]}>(*) {t("playerFeeText")}</p>
         </>
       )}
       <CancelInviteModal

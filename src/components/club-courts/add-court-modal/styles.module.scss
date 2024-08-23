@@ -37,6 +37,9 @@
     background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
+    @include small-screen {
+      width: 400px;
+    }
     img {
       height: 40px;
       width: 40px;

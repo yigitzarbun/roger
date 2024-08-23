@@ -9,7 +9,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .top-container {
     display: flex;
     justify-content: space-between;
@@ -165,10 +165,6 @@
       color: white;
       text-decoration: none;
       text-align: center;
-    }
-
-    .decline-button:hover {
-      background-color: $roger-black-light;
     }
   }
 

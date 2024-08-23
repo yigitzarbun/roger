@@ -1,6 +1,6 @@
 import React from "react";
 import ReactModal from "react-modal";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 interface MatchSorttProps {
@@ -21,6 +21,8 @@ const MatchSort = (props: MatchSorttProps) => {
     orderByDirection,
     orderByColumn,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={matchSortModalOpen}
@@ -31,7 +33,7 @@ const MatchSort = (props: MatchSorttProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseMatchSortModal} />
       <div className={styles["modal-content"]}>
-        <h3>Oyuncuları Sırala</h3>
+        <h3>{t("sortPlayersTitle")}</h3>
         <p
           onClick={() => handleOrderBy("lname", "asc")}
           className={
@@ -40,7 +42,7 @@ const MatchSort = (props: MatchSorttProps) => {
               : styles.item
           }
         >
-          İsim A'dan Z'ye
+          {t("nameAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("lname", "desc")}
@@ -50,7 +52,7 @@ const MatchSort = (props: MatchSorttProps) => {
               : styles.item
           }
         >
-          İsim Z'den A'ya
+          {t("nameDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "asc")}
@@ -60,7 +62,7 @@ const MatchSort = (props: MatchSorttProps) => {
               : styles.item
           }
         >
-          Konum A'dan Z'ye
+          {t("locationAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "desc")}
@@ -70,7 +72,7 @@ const MatchSort = (props: MatchSorttProps) => {
               : styles.item
           }
         >
-          Konum Z'den A'ya
+          {t("locationDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("player_level_id", "asc")}
@@ -80,7 +82,7 @@ const MatchSort = (props: MatchSorttProps) => {
               : styles.item
           }
         >
-          Oyuncu Seviyesi Yükselen
+          {t("playerLevelAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("player_level_id", "desc")}
@@ -90,20 +92,20 @@ const MatchSort = (props: MatchSorttProps) => {
               : styles.item
           }
         >
-          Oyuncu Seviyesi Azalan
+          {t("playerLevelDesc")}
         </p>
         <div className={styles["buttons-container"]}>
           <button
             onClick={handleClearOrderBy}
             className={styles["discard-button"]}
           >
-            Temizle
+            {t("clearButtonText")}
           </button>
           <button
             onClick={handleCloseMatchSortModal}
             className={styles["submit-button"]}
           >
-            Uygula
+            {t("applyButtonText")}
           </button>
         </div>
       </div>

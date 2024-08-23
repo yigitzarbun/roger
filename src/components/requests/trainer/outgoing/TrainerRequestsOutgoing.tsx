@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from "react";
-
 import { toast } from "react-toastify";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import { useGetTrainerOutgoingRequestsQuery } from "../../../../api/endpoints/BookingsApi";
-
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-
 import CancelInviteModal, {
   BookingData,
 } from "../../../invite/modals/cancel-modal/CancelInviteModal";
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { getAge } from "../../../../common/util/TimeFunctions";
+import { BsClockHistory } from "react-icons/bs";
 
 const TrainerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
@@ -105,7 +98,13 @@ const TrainerRequestsOutgoing = () => {
             {outgoingBookings?.map((booking) => (
               <tr key={booking.booking_id} className={styles["player-row"]}>
                 <td className={styles["pending-text"]}>
-                  {booking.booking_status_type_id === 1 ? "Bekleniyor" : ""}
+                  {booking.booking_status_type_id === 1 ? (
+                    <BsClockHistory
+                      className={styles["pending-confirmation-text"]}
+                    />
+                  ) : (
+                    ""
+                  )}
                 </td>
                 <td>
                   <Link to={`${paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}>

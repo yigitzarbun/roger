@@ -21,6 +21,7 @@ import { getAge } from "../../../common/util/TimeFunctions";
 import MatchInviteFormModal from "../../../components/invite/match/form/MatchInviteFormModal";
 import MatchSort from "../sort/MatchSortModal";
 import { FaFilter } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 interface MatchResultsProps {
   playerLevelId: number;
@@ -30,16 +31,22 @@ interface MatchResultsProps {
   handleOpenFilter: () => void;
 }
 const MatchResults = (props: MatchResultsProps) => {
+  const { t } = useTranslation();
+
   const { playerLevelId, locationId, favourite, textSearch, handleOpenFilter } =
     props;
 
   const { user } = useAppSelector((store) => store.user);
+
   const [opponentUserId, setOpponentUserId] = useState(null);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
   const handleOpenInviteModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsInviteModalOpen(true);
   };
+
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
@@ -90,7 +97,9 @@ const MatchResults = (props: MatchResultsProps) => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
+
   const levelId = Number(playerLevelId) ?? null;
+
   const locationIdValue = Number(locationId) ?? null;
 
   const { data: locations, isLoading: isLocationsLoading } =
@@ -103,10 +112,13 @@ const MatchResults = (props: MatchResultsProps) => {
     useGetPlayerByUserIdQuery(user?.user?.user_id);
 
   const playerAge = user?.playerDetails?.birth_year;
+
   const playerLocationId = user?.playerDetails?.location_id;
+
   const logicLevelId = user?.playerDetails?.player_level_id;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -214,15 +226,7 @@ const MatchResults = (props: MatchResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <div className={styles["title-left"]}>
-          <h2 className={styles.title}>Maç</h2>
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenMatchSortModal}
-          />
+          <h2 className={styles.title}>{t("matchTitle")}</h2>
           <FaFilter
             onClick={handleOpenFilter}
             className={
@@ -230,6 +234,14 @@ const MatchResults = (props: MatchResultsProps) => {
                 ? styles["active-filter"]
                 : styles.filter
             }
+          />
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenMatchSortModal}
           />
         </div>
         {players?.totalPages > 1 && (
@@ -248,23 +260,20 @@ const MatchResults = (props: MatchResultsProps) => {
       </div>
       {isPlayersLoading && <p>Yükleniyor...</p>}
       {players && filteredPlayers.length === 0 && (
-        <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("playersEmptyText")}</p>
       )}
       {players && filteredPlayers.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Maç</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableMatchHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -314,14 +323,15 @@ const MatchResults = (props: MatchResultsProps) => {
                   </Link>
                 </td>
                 <td>
-                  {
-                    playerLevels?.find(
-                      (player_level) =>
-                        player_level.player_level_id === player.player_level_id
-                    ).player_level_name
-                  }
+                  {player.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : player?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : player?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
                 </td>
-                <td>{player.gender}</td>
+                <td>{player.gender === "male" ? t("male") : t("female")}</td>
                 <td>{getAge(Number(player.birth_year))}</td>
                 <td>
                   {
@@ -335,7 +345,7 @@ const MatchResults = (props: MatchResultsProps) => {
                     onClick={() => handleOpenInviteModal(player?.user_id)}
                     className={styles["match-button"]}
                   >
-                    Maç yap
+                    {t("tableMatchButtonText")}
                   </button>
                 </td>
               </tr>

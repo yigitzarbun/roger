@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { SlOptions } from "react-icons/sl";
-
 import paths from "../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../store/hooks";
 import { useGetPlayerActiveStudentGroupsByUserIdQuery } from "../../api/endpoints/StudentGroupsApi";
+import { useTranslation } from "react-i18next";
 
 const PlayerGroupResults = () => {
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: myGroups, isLoading: isGroupsLoading } =
@@ -42,7 +40,7 @@ const PlayerGroupResults = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Gruplar</h2>
+        <h2 className={styles.title}>{t("groupsTitle")}</h2>
         {myGroups?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -61,13 +59,13 @@ const PlayerGroupResults = () => {
         <table>
           <thead>
             <tr>
-              <th>Kulüp</th>
-              <th>Kulüp Adı</th>
-              <th>Grup</th>
-              <th>Oyuncu Sayısı</th>
-              <th>Eğitmen</th>
-              <th>Sıradaki Ders Tarihi</th>
-              <th>Sıradaki Ders Saati</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("clubNameHeader")}</th>
+              <th>{t("groupHeader")}</th>
+              <th>{t("studentCountHeader")}</th>
+              <th>{t("tableTrainerHeader")}</th>
+              <th>{t("nextLessonDateHeader")}</th>
+              <th>{t("nextLessonTimeHeader")}</th>
             </tr>
           </thead>
           <tbody>

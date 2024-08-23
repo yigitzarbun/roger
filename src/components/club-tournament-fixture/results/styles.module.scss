@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .result-container {
   display: flex;
@@ -9,7 +10,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .rounds-container {
     display: flex;
     column-gap: 2vw;
@@ -23,6 +24,9 @@
       cursor: pointer;
       color: white;
       text-align: center;
+      @include small-screen {
+        width: auto;
+      }
     }
     .passive-round {
       background-color: $roger-black-dark;
@@ -34,6 +38,9 @@
       cursor: pointer;
       color: white;
       text-align: center;
+      @include small-screen {
+        width: auto;
+      }
     }
   }
   table {

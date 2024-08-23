@@ -45,7 +45,7 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
           value={paymentTypeId ?? ""}
           className="input-element"
         >
-          <option value="">-- Ödeme Türü --</option>
+          <option value="">-- Tür --</option>
           {paymentTypes?.map((type) => (
             <option key={type.payment_type_id} value={type.payment_type_id}>
               {type.payment_type_name}
@@ -59,7 +59,7 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
           value={status ?? ""}
           className="input-element"
         >
-          <option value="">-- Ödeme Durumu --</option>
+          <option value="">-- Durum --</option>
           <option value="success">Başarılı</option>
           <option value="declined">Başarısız</option>
         </select>

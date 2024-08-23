@@ -33,6 +33,8 @@ import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi
 import ExploreClubsFilterModal from "./explore-clubs-filter/ExploreClubsFilterModal";
 import AddPlayerCardDetails from "../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 import ExploreClubsSortModal from "./explore-clubs-sort/ExploreClubsSortModal";
+import { BsClockHistory } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 interface ExploreClubsProps {
   user: User;
@@ -91,6 +93,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     clubTrainers,
     subscribedClubs,
   } = props;
+  const { t } = useTranslation();
 
   const {
     data: playerDetails,
@@ -306,12 +309,11 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   ) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Kulüpleri Keşfet</h2>
+          <h2 className={styles["result-title"]}>{t("exploreClubsTitle")}</h2>
           <div className={styles.icons}>
             {clubs?.clubs && clubs?.clubs.length > 0 && (
               <FaFilter
@@ -354,25 +356,26 @@ const ExploreClubs = (props: ExploreClubsProps) => {
         )}
       </div>
       {clubs?.clubs && clubs?.clubs.length === 0 && (
-        <p>
-          Aradığınız kritere göre kulüp bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("clubsEmptyText")}</p>
       )}
       {clubs?.clubs && clubs?.clubs.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Kulüp</th>
-              <th>İsim</th>
-              <th>Tür</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              <th>Eğitmen</th>
-              <th>Üye Sayısı</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableTrainerHeader")}</th>
+              <th>{t("tableSubscribersHeader")}</th>
               <th>
-                {isUserPlayer ? "Üyelik" : isUserTrainer ? "Antrenörlük" : ""}
+                {isUserPlayer
+                  ? t("tableSubscriptionHeader")
+                  : isUserTrainer
+                  ? t("tableTrainerEmploymentHeader")
+                  : ""}
               </th>
             </tr>
           </thead>
@@ -419,7 +422,13 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     {`${club.club_name}`}
                   </Link>
                 </td>
-                <td>{club?.club_type_name}</td>
+                <td>
+                  {club?.club_type_id === 1
+                    ? t("clubTypePrivate")
+                    : club?.club_type_id === 2
+                    ? t("clubTypePublic")
+                    : t("clubTypeResidential")}
+                </td>
                 <td>{club?.location_name}</td>
                 <td>{club?.courtquantity}</td>
                 <td>{club?.staffquantity}</td>
@@ -454,20 +463,18 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                 {isUserTrainer && (
                   <td className={styles.status}>
                     {club?.isTrainerStaff?.employment_status === "accepted" ? (
-                      <p className={styles["employment-confirmed-text"]}>
-                        Bu kulüpte çalışıyorsun
-                      </p>
+                      <IoIosCheckmarkCircle className={styles.done} />
                     ) : club?.isTrainerStaff?.employment_status ===
                       "pending" ? (
-                      <p className={styles["employment-pending-text"]}>
-                        Başvurun henüz yanıtlanmadı
-                      </p>
+                      <BsClockHistory
+                        className={styles["employment-pending-icon"]}
+                      />
                     ) : (
                       <button
                         onClick={() => openEmploymentModal(club)}
                         className={styles["subscribe-button"]}
                       >
-                        Kulübe başvur
+                        Başvur
                       </button>
                     )}
                   </td>

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface ExploreCourtsSortModalProps {
   sortModalOpen: boolean;
@@ -21,6 +21,8 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
     orderByDirection,
     orderByColumn,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={sortModalOpen}
@@ -31,7 +33,7 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseSortModal} />
       <div className={styles["modal-content"]}>
-        <h3>Kortları Sırala</h3>
+        <h3>{t("sortCourtsTile")}</h3>
         <p
           onClick={() => handleOrderBy("court_name", "asc")}
           className={
@@ -40,7 +42,7 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
               : styles.item
           }
         >
-          Kort Adı A'dan Z'ye
+          {t("nameAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("court_name", "desc")}
@@ -50,7 +52,7 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
               : styles.item
           }
         >
-          Kort Adı Z'den A'ya
+          {t("nameDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("club_name", "asc")}
@@ -60,7 +62,7 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
               : styles.item
           }
         >
-          Kulüp Adı A'dan Z'ye
+          {t("sortClubNameAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("club_name", "desc")}
@@ -70,7 +72,7 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
               : styles.item
           }
         >
-          Kulüp Adı Z'den A'ya
+          {t("sortClubNameDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "asc")}
@@ -80,7 +82,7 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
               : styles.item
           }
         >
-          Konum A'dan Z'ye
+          {t("locationAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "desc")}
@@ -90,20 +92,20 @@ const ExploreCourtsSortModal = (props: ExploreCourtsSortModalProps) => {
               : styles.item
           }
         >
-          Konum Z'den A'ya
+          {t("locationDesc")}
         </p>
         <div className={styles["buttons-container"]}>
           <button
             onClick={handleClearOrderBy}
             className={styles["discard-button"]}
           >
-            Temizle
+            {t("clearButtonText")}
           </button>
           <button
             onClick={handleCloseSortModal}
             className={styles["submit-button"]}
           >
-            Uygula
+            {t("applyButtonText")}
           </button>
         </div>
       </div>

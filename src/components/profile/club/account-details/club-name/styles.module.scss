@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .club-account-details-container {
   background-color: var(--box-background-color);
@@ -29,7 +30,11 @@
     column-gap: 2vh;
     justify-content: space-between;
     align-items: end;
-
+    @include small-screen {
+      flex-direction: column;
+      row-gap: 4vh;
+      align-items: start;
+    }
     label {
       font-size: 0.9rem;
     }
@@ -37,7 +42,11 @@
       display: flex;
       column-gap: 1vw;
       width: 500px;
-
+      @include small-screen {
+        flex-direction: column;
+        row-gap: 4vh;
+        width: 100%;
+      }
       .input-container {
         display: flex;
         flex-direction: column;
@@ -63,6 +72,9 @@
       border-radius: $roger-border-radius;
       font-size: 1rem;
       cursor: pointer;
+      @include small-screen {
+        margin-right: auto;
+      }
     }
     .active-button:hover {
       background-color: $roger-black-dark;

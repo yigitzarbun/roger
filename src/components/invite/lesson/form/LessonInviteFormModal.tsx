@@ -1,30 +1,21 @@
 import React, { useEffect } from "react";
 import ReactModal from "react-modal";
-
 import { useNavigate } from "react-router-dom";
-
 import { toast } from "react-toastify";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../routing/Paths";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { useState } from "react";
 import { localUrl } from "../../../../common/constants/apiConstants";
 import {
   useGetClubByClubIdQuery,
   useGetClubsQuery,
 } from "../../../../api/endpoints/ClubsApi";
-
 import {
   useGetCourtByIdQuery,
   useGetCourtsQuery,
 } from "../../../../api/endpoints/CourtsApi";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import {
   useAddBookingMutation,
   useGetBookedCourtHoursQuery,
@@ -45,6 +36,7 @@ import {
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
 import LessonInviteConfirmation from "../confirmation/LessonInviteConfirmation";
+import { useTranslation } from "react-i18next";
 
 interface LessonInviteModalProps {
   opponentUserId: number;
@@ -78,11 +70,14 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     isUserTrainer,
   } = props;
 
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const navigate = useNavigate();
 
   const [confirmation, setConfirmation] = useState(false);
+
   const handleCloseConfirmation = () => {
     setConfirmation(false);
   };
@@ -91,10 +86,12 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     useGetTrainerByUserIdQuery(
       isUserPlayer ? opponentUserId : isUserTrainer ? user?.user?.user_id : null
     );
+
   const { data: selectedPlayer, isLoading: isSelectedPlayerLoading } =
     useGetPlayerByUserIdQuery(
       isUserPlayer ? user?.user?.user_id : isUserTrainer ? opponentUserId : null
     );
+
   const [addBooking, { isSuccess: isBookingSuccess }] = useAddBookingMutation(
     {}
   );
@@ -115,35 +112,45 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
   const { data: courts, isLoading: isCourtsLoading } = useGetCourtsQuery({});
 
   const today = new Date();
+
   let day = String(today.getDate());
+
   let month = String(today.getMonth() + 1);
+
   const year = today.getFullYear();
 
   day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
+
   month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
 
   const currentDay = `${year}-${month}-${day}`;
 
   const [selectedDate, setSelectedDate] = useState("");
+
   const handleSelectedDate = (event) => {
     setSelectedDate(event.target.value);
   };
 
   const [selectedTime, setSelectedTime] = useState("");
+
   const handleSelectedTime = (event) => {
     setSelectedTime(event.target.value);
   };
+
   const [selectedClub, setSelectedClub] = useState(null);
+
   const handleSelectedClub = (event) => {
     setSelectedClub(Number(event.target.value));
   };
 
   const [selectedCourt, setSelectedCourt] = useState(null);
+
   const handleSelectedCourt = (event) => {
     setSelectedCourt(Number(event.target.value));
   };
 
   let trainerBankDetailsExist = false;
+
   let playerPaymentDetailsExist = false;
 
   if (
@@ -164,6 +171,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
   }
 
   const [skipClubDetails, setSkipClubDetails] = useState(true);
+
   const { data: selectedClubDetails, isLoading: isSelectedClubDetailsLoading } =
     useGetClubByClubIdQuery(selectedClub, { skip: skipClubDetails });
 
@@ -180,11 +188,16 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     useGetClubSubscriptionsByFilterQuery(
       {
         club_id: selectedClubDetails?.[0]?.user_id,
-        player_id: user?.user?.user_id,
+        player_id: isUserPlayer
+          ? user?.user?.user_id
+          : isUserTrainer
+          ? opponentUserId
+          : null,
         is_active: true,
       },
       { skip: skipPlayerSubscribed }
     );
+
   const [skipTrainerStaff, setSkipTrainerStaff] = useState(true);
 
   const { data: isTrainerStaff, isLoading: isTrainerStaffLoading } =
@@ -206,6 +219,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
     []
   );
   const [skipBookedHours, setSkipBookedHours] = useState(true);
+
   const {
     data: bookedHours,
     isLoading: isBookedHoursLoading,
@@ -374,7 +388,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
       <div className={styles["overlay"]} onClick={handleCloseInviteModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h3>Ders Davet</h3>
+          <h3>{t("lessonInviteTitle")}</h3>
         </div>
         <div className={styles["opponent-container"]}>
           <img
@@ -415,7 +429,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
           >
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Tarih</label>
+                <label>{t("tableDateHeader")}</label>
                 <input
                   {...register("event_date", {
                     required: "Bu alan zorunludur",
@@ -426,17 +440,17 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                 />
                 {errors.event_date && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Kulüp</label>
+                <label>{t("tableClubHeader")}</label>
                 <select
                   {...register("club_id", { required: true })}
                   onChange={handleSelectedClub}
                 >
-                  <option value="">--Seçim yapın--</option>
+                  <option value="">-- {t("allClubs")} --</option>
                   {clubs?.map((club) => (
                     <option key={club.user_id} value={club.club_id}>
                       {club.club_name}
@@ -445,20 +459,20 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                 </select>
                 {errors.club_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Kort</label>
+                <label>{t("tableCourtHeader")}</label>
                 <select
                   {...register("court_id", { required: true })}
                   onChange={handleSelectedCourt}
                   disabled={!selectedClub || !selectedDate}
                 >
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">-- {t("allCourts")} --</option>
                   {selectedClub &&
                     courts
                       ?.filter(
@@ -474,12 +488,12 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                 </select>
                 {errors.court_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Saat</label>
+                <label>{t("tableTimeHeader")}</label>
                 <select
                   {...register("event_time", {
                     required: "Bu alan zorunludur",
@@ -488,7 +502,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                   value={selectedTime}
                   disabled={!selectedClub || !selectedDate}
                 >
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">-- {t("tableTimeHeader")} --</option>
                   {availableTimeSlots.map((timeSlot) => (
                     <option key={timeSlot.start} value={timeSlot.start}>
                       {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
@@ -497,18 +511,15 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                 </select>
                 {errors.event_time && (
                   <span className={styles["error-field"]}>
-                    {errors.event_time.message}
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["message-container"]}>
-                <label>Not</label>
-                <textarea
-                  {...register("invitation_note")}
-                  placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
-                />
+                <label>{t("note")}</label>
+                <textarea {...register("invitation_note")} />
               </div>
             </div>
             <div className={styles["buttons-container"]}>
@@ -516,7 +527,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                 onClick={handleCloseInviteModal}
                 className={styles["discard-button"]}
               >
-                İptal
+                {t("discardButtonText")}
               </button>
               <button
                 type="submit"
@@ -535,7 +546,7 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
                   !selectedDate
                 }
               >
-                Davet Gönder
+                {t("sendRequestButtonText")}
               </button>
             </div>
             {isUserPlayer &&

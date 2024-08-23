@@ -10,6 +10,7 @@ import { useGetPlayerIncomingRequestsQuery } from "../../../api/endpoints/Bookin
 
 const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
   const user = useAppSelector((store) => store?.user?.user);
+
   const { t } = useTranslation();
 
   const {
@@ -122,7 +123,7 @@ const PlayerHeader = ({ navigateUser, handleCloseProfileModal }) => {
               : `${styles["nav-link-player"]}`
           }
         >
-          Turnuvalar
+          {t("headerTournamentsTitle")}
         </NavLink>
       </div>
     </nav>

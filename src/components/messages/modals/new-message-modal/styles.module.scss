@@ -101,6 +101,9 @@
       }
       .nav-arrow {
         font-size: 1.3rem;
+        @include medium-screen {
+          display: none;
+        }
         @include small-screen {
           display: none;
         }
@@ -108,6 +111,9 @@
       .nav-arrow:hover {
         color: $roger-blue;
         cursor: pointer;
+        @include medium-screen {
+          display: none;
+        }
         @include small-screen {
           display: none;
         }

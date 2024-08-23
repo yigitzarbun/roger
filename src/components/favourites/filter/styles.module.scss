@@ -4,10 +4,12 @@
 
 .lesson-page-container {
   display: flex;
-  column-gap: 4vh;
+  column-gap: 4vw;
   border-radius: $roger-border-radius;
   width: 100%;
-
+  @include small-screen {
+    column-gap: 1vw;
+  }
   .input-container {
     display: flex;
     width: 15%;

@@ -30,12 +30,17 @@ import { useGetClubNewStaffRequestsQuery } from "../../api/endpoints/ClubStaffAp
 import { useGetTrainerNewStudentRequestsListQuery } from "../../api/endpoints/StudentsApi";
 import { LocalStorageKeys } from "../../common/constants/lsConstants";
 import MenuModal from "./menu-modal/MenuModal";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const user = useAppSelector((store) => store?.user);
+
   const navigate = useNavigate();
 
+  const { t, i18n } = useTranslation();
+
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
   const handleOpenProfileModal = () => {
     setIsProfileModalOpen(true);
   };
@@ -43,6 +48,7 @@ const Header = () => {
   const [currentTheme, setCurrentTheme] = useState(
     localStorage.getItem(LocalStorageKeys.theme) ?? "dark"
   );
+
   const updateTheme = () => {
     const newTheme = currentTheme === "dark" ? "light" : "dark";
     setCurrentTheme(newTheme);
@@ -74,9 +80,11 @@ const Header = () => {
       setIsNotificationsModalOpen(true);
     }
   };
+
   const handleCloseNotificationsModal = () => {
     setIsNotificationsModalOpen(false);
   };
+
   const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
     useGetPlayerProfileDetailsQuery(user?.user?.user?.user_id);
 
@@ -89,13 +97,16 @@ const Header = () => {
   const handleCloseProfileModal = () => {
     setIsProfileModalOpen(false);
   };
+
   const navigateUser = (path: string) => {
     navigate(paths[path]);
     handleCloseProfileModal();
   };
 
   let isUserPlayer = false;
+
   let isUserTrainer = false;
+
   let isUserClub = false;
 
   if (user && user.user && user.user.user) {
@@ -269,14 +280,14 @@ const Header = () => {
                   : `${styles["nav-link"]}`
               }
             >
-              Giriş
+              {t("headerLoginTitle")}
             </NavLink>
             <NavLink
               to={paths.REGISTER}
               onClick={() => navigateUser("REGISTER")}
               className={styles.register}
             >
-              Kayıt
+              {t("headerSignupTitle")}
             </NavLink>
           </div>
         )}
@@ -331,6 +342,7 @@ const Header = () => {
         <MenuModal
           menuModalOpen={menuModalOpen}
           handleCloseMenuModal={handleCloseMenuModal}
+          isLoggedIn={isLoggedIn}
         />
       )}
     </div>

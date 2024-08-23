@@ -9,7 +9,12 @@
   background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
-
+  .back {
+    display: flex;
+    align-items: center;
+    column-gap: 0.5vw;
+    cursor: pointer;
+  }
   img {
     width: 40px;
     height: 40px;

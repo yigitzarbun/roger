@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .club-rules-container {
   background-color: var(--box-background-color);
@@ -13,6 +14,7 @@
   border: 1px solid $roger-border-color;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
+  overflow-x: auto;
   h2 {
     font-weight: bold;
     font-size: 2rem;
@@ -25,6 +27,10 @@
   .tables-container {
     display: flex;
     column-gap: 15px;
+    @include small-screen {
+      flex-direction: column;
+      row-gap: 3vh;
+    }
     .player-rules-table,
     .lesson-rules-table,
     .court-rules-table {

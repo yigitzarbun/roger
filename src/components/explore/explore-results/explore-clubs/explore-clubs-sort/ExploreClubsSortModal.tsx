@@ -1,6 +1,6 @@
 import React from "react";
 import ReactModal from "react-modal";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 interface ExploreClubsSortModalProps {
@@ -21,6 +21,8 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
     orderByDirection,
     orderByColumn,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={sortModalOpen}
@@ -41,7 +43,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            İsim A'dan Z'ye
+            {t("nameAsc")}
           </p>
           <p
             onClick={() => handleOrderBy("club_name", "desc")}
@@ -51,7 +53,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            İsim Z'den A'ya
+            {t("nameDesc")}
           </p>
         </div>
         <div className={styles["outer-container"]}>
@@ -63,7 +65,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Konum A'dan Z'ye
+            {t("locationAsc")}
           </p>
           <p
             onClick={() => handleOrderBy("location_id", "desc")}
@@ -73,7 +75,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Konum Z'den A'ya
+            {t("locationDesc")}
           </p>
         </div>
         <div className={styles["outer-container"]}>
@@ -85,7 +87,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Kort Sayısı Yükselen
+            {t("courtNumberAsc")}
           </p>
           <p
             onClick={() => handleOrderBy("courtQuantity", "desc")}
@@ -95,7 +97,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Kort Sayısı Azalan
+            {t("courtNumberDesc")}
           </p>
         </div>
         <div className={styles["outer-container"]}>
@@ -107,7 +109,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Eğitmen Sayısı Yükselen
+            {t("trainerNumberAsc")}
           </p>
           <p
             onClick={() => handleOrderBy("staffQuantity", "desc")}
@@ -117,7 +119,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Eğitmen Sayısı Azalan
+            {t("trainerNumberDesc")}
           </p>
         </div>
         <div className={styles["outer-container"]}>
@@ -129,7 +131,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Üye Sayısı Yükselen
+            {t("subscriberNumberAsc")}
           </p>
           <p
             onClick={() => handleOrderBy("memberQuantity", "desc")}
@@ -139,7 +141,7 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
                 : styles.item
             }
           >
-            Üye Sayısı Azalan
+            {t("subscriberNumberDesc")}
           </p>
         </div>
         <div className={styles["buttons-container"]}>
@@ -147,13 +149,13 @@ const ExploreClubsSortModal = (props: ExploreClubsSortModalProps) => {
             onClick={handleClearOrderBy}
             className={styles["discard-button"]}
           >
-            Temizle
+            {t("clearButtonText")}
           </button>
           <button
             onClick={handleCloseSortModal}
             className={styles["submit-button"]}
           >
-            Uygula
+            {t("applyButtonText")}
           </button>
         </div>
       </div>

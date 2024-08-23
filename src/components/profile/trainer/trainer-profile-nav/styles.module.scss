@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .nav {
   width: 20%;
@@ -7,6 +8,11 @@
   flex-direction: column;
   row-gap: 2vh;
   position: relative;
+  @include small-screen {
+    flex-direction: row;
+    padding-bottom: 4vh;
+    width: 100%;
+  }
   h4 {
     font-size: 0.9;
     color: var(--text-color);
@@ -15,6 +21,9 @@
     width: 90%;
     padding: $roger-button-padding;
     border-radius: $roger-border-radius;
+    @include small-screen {
+      width: auto;
+    }
   }
   h4:hover {
     color: white;

@@ -311,7 +311,7 @@ const AddClubSubscriberModal = (props: AddClubSubscriberModalProps) => {
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Oyuncu Seviyesi</label>
+              <label>Seviye</label>
               <select {...register("player_level_id", { required: true })}>
                 <option value="">-- Seviye --</option>
                 {playerLevels?.map((level) => (

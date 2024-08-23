@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .nav-container {
   display: flex;
@@ -19,7 +20,12 @@
     background-color: $roger-blue;
     color: white;
     font-weight: bold;
-
+    @include medium-screen {
+      width: 35%;
+    }
+    @include small-screen {
+      width: 33%;
+    }
     .notification {
       font-size: 0.7rem;
       font-weight: bold;
@@ -36,6 +42,12 @@
     cursor: pointer;
     color: var(--text-color);
     font-weight: bold;
+    @include medium-screen {
+      width: 35%;
+    }
+    @include small-screen {
+      width: 33%;
+    }
     .notification {
       font-size: 0.7rem;
     }

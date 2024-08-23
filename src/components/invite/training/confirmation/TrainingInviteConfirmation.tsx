@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface TrainingInviteConfirmationProps {
   handleCloseConfirmation: () => void;
@@ -20,16 +21,19 @@ const TrainingInviteConfirmation = (props: TrainingInviteConfirmationProps) => {
     selectedDate,
     selectedTime,
   } = props;
+
+  const { t } = useTranslation();
+
   return (
     <div className={styles["confirmation-container"]}>
       <table>
         <thead>
           <tr>
-            <th>Tarih</th>
-            <th>Saat</th>
-            <th>Kulüp</th>
-            <th>Kort</th>
-            <th>Ücret</th>
+            <th>{t("tableDateHeader")}</th>
+            <th>{t("tableTimeHeader")}</th>
+            <th>{t("tableClubHeader")}</th>
+            <th>{t("tableCourtHeader")}</th>
+            <th>{t("tablePriceHeader")}</th>
           </tr>
         </thead>
         <tbody>
@@ -38,23 +42,20 @@ const TrainingInviteConfirmation = (props: TrainingInviteConfirmationProps) => {
             <td>{selectedTime}</td>
             <td>{selectedClubName}</td>
             <td>{selectedCourtName}</td>
-            <td>{selectedCourtPrice / 2} TL</td>
+            <td>{selectedCourtPrice / 2} TL*</td>
           </tr>
         </tbody>
       </table>
-      <p>
-        Toplam kort ücreti <span>{selectedCourtPrice}</span> TL'dir. Bu tutar
-        oyuncular arasında eşit bölünerek tahsil edilecektir.
-      </p>
+      <p>*{t("playerFeeText")}</p>
       <div className={styles["buttons-container"]}>
         <button
           onClick={handleCloseConfirmation}
           className={styles["discard-button"]}
         >
-          İptal
+          {t("discardButtonText")}
         </button>
         <button onClick={handleModalSubmit} className={styles["submit-button"]}>
-          Onayla
+          {t("sendRequestButtonText")}
         </button>
       </div>
     </div>

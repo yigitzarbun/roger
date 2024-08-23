@@ -24,6 +24,8 @@ const courtsModel = {
         "clubs.club_name",
         "court_structure_types.court_structure_type_name",
         "court_surface_types.court_surface_type_name",
+        "court_structure_types.court_structure_type_id",
+        "court_surface_types.court_surface_type_id",
         "locations.location_name"
       )
       .from("courts")

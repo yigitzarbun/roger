@@ -176,22 +176,25 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
             className={styles.filter}
           />
         </div>
-        <div className={styles["navigation-container"]}>
-          <FaAngleLeft
-            onClick={handlePrevPage}
-            className={styles["nav-arrow"]}
-          />
-          <FaAngleRight
-            onClick={handleNextPage}
-            className={styles["nav-arrow"]}
-          />
-        </div>
+        {trainerPastEvents?.totalPages > 1 && (
+          <div className={styles["navigation-container"]}>
+            <FaAngleLeft
+              onClick={handlePrevPage}
+              className={styles["nav-arrow"]}
+            />
+
+            <FaAngleRight
+              onClick={handleNextPage}
+              className={styles["nav-arrow"]}
+            />
+          </div>
+        )}
       </div>
       {trainerPastEvents?.pastEvents?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th></th>
+              <th>Oyunncu</th>
               <th>İsim</th>
               <th>Tarih</th>
               <th>Saat</th>

@@ -19,13 +19,22 @@ const TrainerCalendar = () => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
+
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+
   const handleEventType = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setEventTypeId(isNaN(value) ? null : value);
   };
+
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const handleOpenFilter = () => {
+    filterOpen ? setFilterOpen(false) : setFilterOpen(true);
+  };
+
   const handleClear = () => {
     setDate("");
     setClubId(null);
@@ -34,22 +43,26 @@ const TrainerCalendar = () => {
   };
   return (
     <div className={styles["calendar-container"]}>
-      <TrainerCalendarSearch
-        handleDate={handleDate}
-        handleClub={handleClub}
-        handleClear={handleClear}
-        handleTextSearch={handleTextSearch}
-        handleEventType={handleEventType}
-        date={date}
-        clubId={clubId}
-        textSearch={textSearch}
-        eventTypeId={eventTypeId}
-      />
+      {filterOpen && (
+        <TrainerCalendarSearch
+          handleDate={handleDate}
+          handleClub={handleClub}
+          handleClear={handleClear}
+          handleTextSearch={handleTextSearch}
+          handleEventType={handleEventType}
+          date={date}
+          clubId={clubId}
+          textSearch={textSearch}
+          eventTypeId={eventTypeId}
+        />
+      )}
+
       <TrainerCalendarResults
         date={date}
         clubId={clubId}
         eventTypeId={eventTypeId}
         textSearch={textSearch}
+        handleOpenFilter={handleOpenFilter}
       />
     </div>
   );

@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../routing/Paths";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi";
-
 import { useGetPlayersLeaderboardQuery } from "../../../../api/endpoints/BookingsApi";
-
 import PageLoading from "../../../../components/loading/PageLoading";
 import { getAge } from "../../../../common/util/TimeFunctions";
 
 const PlayerHomeLeaderboard = () => {
   const user = useAppSelector((store) => store.user?.user?.user);
+
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { t } = useTranslation();
 
   const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
     useGetPlayerByUserIdQuery(user?.user_id);
@@ -58,7 +55,7 @@ const PlayerHomeLeaderboard = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Lidrelik Tablosu</h2>
+        <h2 className={styles.title}>{t("leaderboardTitle")}</h2>
         {leaderboard?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -76,15 +73,15 @@ const PlayerHomeLeaderboard = () => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
-              <th>Sıralama</th>
-              <th>Puan</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Konum</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Maç</th>
+              <th>{t("leaderboardTablePlayerHeader")}</th>
+              <th>{t("leaderboardTableRankingHeader")}</th>
+              <th>{t("leaderboardTablePointsHeader")}</th>
+              <th>{t("leaderboardTablePlayerNameHeader")}</th>
+              <th>{t("leaderboardTableLevelHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("leaderboardTableGenderHeader")}</th>
+              <th>{t("leaderboardTableAgeHeader")}</th>
+              <th>{t("leaderboardTableMatchesHeader")}</th>
               <th>W</th>
               <th>L</th>
             </tr>
@@ -118,9 +115,17 @@ const PlayerHomeLeaderboard = () => {
                       {`${player.fname} ${player.lname}`}
                     </Link>
                   </td>
-                  <td>{player.player_level_name}</td>
+                  <td>
+                    {player.player_level_id === 1
+                      ? t("playerLevelBeginner")
+                      : player?.player_level_id === 2
+                      ? t("playerLevelIntermediate")
+                      : player?.player_level_id === 3
+                      ? t("playerLevelAdvanced")
+                      : t("playerLevelProfessinal")}
+                  </td>
                   <td>{player.location_name}</td>
-                  <td>{player.gender}</td>
+                  <td>{player.gender === "male" ? t("male") : t("female")}</td>
                   <td>{getAge(player.birth_year)}</td>
                   <td>{player.totalmatches}</td>
                   <td className={styles["win-count"]}>{player.wonmatches}</td>
@@ -131,14 +136,14 @@ const PlayerHomeLeaderboard = () => {
           )}
         </table>
       ) : (
-        <p>Liderlik tablosunda puanı bulunan oyuncu henüz bulunmamaktadır</p>
+        <p>{t("leaderboardTableEmptyText")}</p>
       )}
       {leaderboard?.leaderboard?.length > 0 && (
         <Link
           to={paths.PLAYERS_LEADERBOARD}
           className={styles["view-all-button"]}
         >
-          Tümünü Görüntüle
+          {t("leaderBoardViewAllButtonText")}{" "}
         </Link>
       )}
     </div>

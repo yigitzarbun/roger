@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
-
 import Modal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import {
   currentDay,
   formatTime,
   generateAvailableTimeSlots,
 } from "../../../../common/util/TimeFunctions";
-
 import { useGetClubExternalMembersByFilterQuery } from "../../../../api/endpoints/ClubExternalMembersApi";
 import {
   Booking,
@@ -67,26 +59,31 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
     useAddBookingMutation({});
 
   const [selectedDate, setSelectedDate] = useState("");
+
   const handleSelectedDate = (event) => {
     setSelectedDate(event.target.value);
   };
 
   const [selectedTime, setSelectedTime] = useState("");
+
   const handleSelectedTime = (event) => {
     setSelectedTime(event.target.value);
   };
 
   const [selectedCourt, setSelectedCourt] = useState(null);
+
   const handleSelectedCourt = (event) => {
     setSelectedCourt(Number(event.target.value));
   };
 
   const [selectedEventType, setSelectedEventType] = useState(null);
+
   const handleSelectedEventType = (event) => {
     setSelectedEventType(Number(event.target.value));
   };
 
   const [selectedGroup, setSelectedGroup] = useState(null);
+
   const handleSelectedGroup = (event) => {
     setSelectedGroup(Number(event.target.value));
   };
@@ -100,6 +97,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
+
   useEffect(() => {
     if (selectedCourt && selectedDate && myBookings) {
       const filteredBookings = myBookings.filter(

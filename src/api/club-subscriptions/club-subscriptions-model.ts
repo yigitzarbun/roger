@@ -47,7 +47,8 @@ const clubSubscriptionsModel = {
           "clubs.image as clubImage",
           "clubs.club_name",
           "locations.location_name",
-          "club_subscription_types.club_subscription_type_name"
+          "club_subscription_types.club_subscription_type_name",
+          "club_subscription_types.club_subscription_type_id"
         )
         .from("club_subscriptions")
         .leftJoin("clubs", function () {

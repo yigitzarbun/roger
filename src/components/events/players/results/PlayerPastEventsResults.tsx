@@ -1,21 +1,16 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
-
 import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { ImBlocked } from "react-icons/im";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import styles from "./styles.module.scss";
-
 import AddEventReviewModal from "../../reviews-modals/add/AddEventReviewModal";
 import ViewEventReviewModal from "../../reviews-modals/view/ViewEventReviewModal";
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { useGetPlayerPastEventsQuery } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventReviewsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
 import { Club } from "../../../../api/endpoints/ClubsApi";
@@ -62,8 +57,11 @@ interface PlayerPastEventsResultsProps {
 }
 const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
+
   const {
     display,
     clubId,
@@ -99,6 +97,8 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { t } = useTranslation();
+
   const {
     data: myEvents,
     isLoading: isBookingsLoading,
@@ -123,9 +123,11 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   });
 
   const [isPastEventsModalOpen, setIsPastEventsModalOpen] = useState(false);
+
   const handleOpenPastEventsModal = () => {
     setIsPastEventsModalOpen(true);
   };
+
   const handleClosePastEventsModal = () => {
     setIsPastEventsModalOpen(false);
   };
@@ -134,6 +136,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   for (let i = 1; i <= myEvents?.totalPages; i++) {
     pageNumbers.push(i);
   }
+
   const handleEventPage = (e) => {
     setCurrentPage(Number(e.target.value));
   };
@@ -176,13 +179,11 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
-          {myEvents?.pastEvents?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenPastEventsModal}
-              className={styles.filter}
-            />
-          )}
+          <h2 className={styles.title}>{t("pastEventsTitle")}</h2>
+          <FaFilter
+            onClick={handleOpenPastEventsModal}
+            className={styles.filter}
+          />
         </div>
         {myEvents?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -202,17 +203,17 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu/ Eğitmen</th>
-              <th>İsim</th>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Tür</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              <th>Yüzey</th>
-              <th>Mekan</th>
-              <th>Yorum Yap</th>
-              <th>Yorum Görüntüle</th>
+              <th>{t("tablePlayerTrainer")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableSurfaceHeader")}</th>
+              <th>{t("tableStructureHeader")}</th>
+              <th>{t("tableReviewHeader")}</th>
+              <th>{t("tableViewReviewHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -309,11 +310,41 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                 </td>
                 <td>{event.event_date.slice(0, 10)}</td>
                 <td>{event.event_time.slice(0, 5)}</td>
-                <td>{event?.event_type_name}</td>
+                <td>
+                  {event?.event_type_id === 1
+                    ? t("training")
+                    : event?.event_type_id === 2
+                    ? t("match")
+                    : event?.event_type_id === 3
+                    ? t("lesson")
+                    : event?.event_type_id === 4
+                    ? t("externalTraining")
+                    : event?.event_type_id === 5
+                    ? t("externalLesson")
+                    : event?.event_type_id === 6
+                    ? t("groupLesson")
+                    : event?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{event?.club_name}</td>
                 <td>{event?.court_name}</td>
-                <td>{event?.court_surface_type_name}</td>
-                <td>{event?.court_structure_type_name}</td>
+                <td>
+                  {event?.court_surface_type_id === 1
+                    ? t("courtSurfaceHard")
+                    : event?.court_surface_type_id === 2
+                    ? t("courtSurfaceClay")
+                    : event?.court_surface_type_id === 3
+                    ? t("courtSurfaceGrass")
+                    : t("courtSurfaceCarpet")}
+                </td>
+                <td>
+                  {event?.court_structure_type_id === 1
+                    ? t("courtStructureOpen")
+                    : event?.court_structure_type_id === 2
+                    ? t("courtStructureClosed")
+                    : t("courtStructureHybrid")}
+                </td>
                 <td>
                   {event?.isEventReviewActive ? (
                     <IoIosCheckmarkCircle className={styles.done} />
@@ -341,7 +372,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                         )
                       }
                     >
-                      Yorum Yap
+                      {t("tableReviewHeader")}
                     </button>
                   )}
                   {event.event_type_id === 6 && (
@@ -362,7 +393,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                       className={styles["view-button"]}
                       onClick={() => openViewReviewModal(event.booking_id)}
                     >
-                      Yorum Görüntüle
+                      {t("tableViewReviewHeader")}
                     </button>
                   ) : (
                     <ImBlocked className={styles.blocked} />
@@ -373,7 +404,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Tamamlanmış etkinlik bulunmamaktadır</p>
+        <p>{t("playerPastEventsEmptyText")}</p>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

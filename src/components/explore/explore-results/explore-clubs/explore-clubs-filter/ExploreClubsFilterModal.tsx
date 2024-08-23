@@ -1,6 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 const ExploreClubsFilterModal = (props) => {
   const {
@@ -26,6 +27,8 @@ const ExploreClubsFilterModal = (props) => {
     clubTrainers,
     subscribedClubs,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isClubFilterModalOpen}
@@ -36,14 +39,14 @@ const ExploreClubsFilterModal = (props) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseclubFilterModal} />
       <div className={styles["modal-content"]}>
-        <h3>Kulüpleri Filtrele</h3>
+        <h3>{t("exploreClubsFilterTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input
               type="text"
               onChange={handleTextSearch}
               value={textSearch}
-              placeholder="Kulüp adı"
+              placeholder={t("exploreClubsFilterSearchPlaceholder")}
             />
           </div>
           <div className={styles["input-outer-container"]}>
@@ -53,7 +56,7 @@ const ExploreClubsFilterModal = (props) => {
                 value={locationId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Konum --</option>
+                <option value="">-- {t("allLocations")} --</option>
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -70,10 +73,14 @@ const ExploreClubsFilterModal = (props) => {
                 value={clubType ?? ""}
                 className="input-element"
               >
-                <option value="">-- Kulüp Tipi --</option>
+                <option value="">-- {t("tableClubTypeHeader")} --</option>
                 {clubTypes?.map((type) => (
                   <option key={type.club_type_id} value={type.club_type_id}>
-                    {type.club_type_name}
+                    {type?.club_type_id === 1
+                      ? t("clubTypePrivate")
+                      : type?.club_type_id === 2
+                      ? t("clubTypePublic")
+                      : t("clubTypeResidential")}
                   </option>
                 ))}
               </select>
@@ -86,13 +93,17 @@ const ExploreClubsFilterModal = (props) => {
                 value={courtStructureType ?? ""}
                 className="input-element"
               >
-                <option value="">-- Mekan --</option>
+                <option value="">-- {t("structure")} --</option>
                 {courtStructureTypes?.map((type) => (
                   <option
                     key={type.court_structure_type_id}
                     value={type.court_structure_type_id}
                   >
-                    {type.court_structure_type_name}
+                    {type?.court_structure_type_id === 1
+                      ? t("courtStructureOpen")
+                      : type?.court_structure_type_id === 2
+                      ? t("courtStructureClosed")
+                      : t("courtStructureHybrid")}
                   </option>
                 ))}
               </select>
@@ -103,13 +114,19 @@ const ExploreClubsFilterModal = (props) => {
                 value={courtSurfaceType ?? ""}
                 className="input-element"
               >
-                <option value="">-- Zemin --</option>
+                <option value="">-- {t("surface")} --</option>
                 {courtSurfaceTypes?.map((type) => (
                   <option
                     key={type.court_surface_type_id}
                     value={type.court_surface_type_id}
                   >
-                    {type.court_surface_type_name}
+                    {type?.court_surface_type_id === 1
+                      ? t("courtSurfaceHard")
+                      : type?.court_surface_type_id === 2
+                      ? t("courtSurfaceClay")
+                      : type?.court_surface_type_id === 3
+                      ? t("courtSurfaceGrass")
+                      : t("courtSurfaceCarpet")}
                   </option>
                 ))}
               </select>
@@ -123,10 +140,10 @@ const ExploreClubsFilterModal = (props) => {
                 className="input-element"
               >
                 <option key={1} value={"false"}>
-                  Tüm Kulüpler
+                  {t("allClubs")}
                 </option>
                 <option key={2} value={"true"}>
-                  Yalnızca eğitmeni olan kulüpler
+                  {t("clubsWithTrainers")}
                 </option>
               </select>
             </div>
@@ -137,23 +154,23 @@ const ExploreClubsFilterModal = (props) => {
                 className="input-element"
               >
                 <option key={1} value={"false"}>
-                  -- Tüm Kulüpler --
+                  -- {t("allClubs")} --
                 </option>
                 <option key={2} value={"true"}>
-                  Yalnızca üyeliğim olan kulüpler
+                  {t("clubsSubscribed")}
                 </option>
               </select>
             </div>
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleCloseclubFilterModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

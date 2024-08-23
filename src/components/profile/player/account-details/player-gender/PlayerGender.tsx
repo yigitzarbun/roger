@@ -1,22 +1,20 @@
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 const PlayerGender = (props) => {
   const { playerDetails } = props;
 
+  const { t } = useTranslation();
+
   return (
     <div className={styles["player-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Cinsiyet</h4>
+        <h4>{t("tableGenderHeader")}</h4>
+        <p>{t("genderText")}</p>
         <p>
-          Bu bilgi liderlik tablosundaki veri bütünlüğünü korumak amacıyla
-          değiştirilememektedir.
-        </p>
-        <p>
-          Değişiklik yapmak için lütfen{" "}
-          <span className={styles.email}>merhaba@raket.com</span> e-posta adresi
-          üzerinden iletişime geçin.
+          {t("genderText2")}{" "}
+          <span className={styles.email}>merhaba@raket.com</span>
         </p>
       </div>
       <p className={styles.gender}>{playerDetails?.gender}</p>

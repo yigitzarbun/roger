@@ -16,6 +16,7 @@ import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
 import ExploreCourtsFilterModal from "./explore-courts-filter/ExploreCourtsFilterModal";
 import ExploreCourtsSortModal from "./explore-courts-sort/ExploreCourtsSortModal";
+import { useTranslation } from "react-i18next";
 
 interface ExploreCourtsProps {
   user: User;
@@ -60,6 +61,8 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     handleClear,
   } = props;
 
+  const { t } = useTranslation();
+
   let isUserPlayer = false;
   let isUserTrainer = false;
   let isUserClub = false;
@@ -71,9 +74,11 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
   }
 
   const [isCourtFilterModalOpen, setIsCourtFilterModalOpen] = useState(false);
+
   const handleOpenCourtFilterModal = () => {
     setIsCourtFilterModalOpen(true);
   };
+
   const handleCloseCourtFilterModal = () => {
     setIsCourtFilterModalOpen(false);
   };
@@ -89,6 +94,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     : null;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -173,7 +179,7 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Kortları Keşfet</h2>
+          <h2 className={styles["result-title"]}>{t("exploreCourtsTitle")}</h2>
           <div className={styles.icons}>
             {courts?.courts?.length > 0 && (
               <FaFilter
@@ -213,31 +219,26 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
         )}
       </div>
 
-      {courts && courts?.courts?.length === 0 && (
-        <p>
-          Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
-      )}
+      {courts && courts?.courts?.length === 0 && <p>{t("courtsEmptyText")}</p>}
       {courts && courts?.courts?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Kort</th>
-              <th>İsim</th>
-              <th>Açılış</th>
-              <th>Kapanış</th>
-              <th>Yüzey</th>
-              <th>Mekan</th>
-              <th>Fiyat</th>
-              <th>Fiyat (misafir)</th>
-              <th>Kulüp</th>
-              <th>Konum</th>
-              <th>Statü</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableOpeningTimeHeader")}</th>
+              <th>{t("tableClosingTimeHeader")}</th>
+              <th>{t("tableSurfaceHeader")}</th>
+              <th>{t("tableStructureHeader")}</th>
+              <th>{t("tableCourtPriceHeader")}</th>
+              <th>{t("tablePriceGuestHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableStatusHeader")}</th>
               <th>
                 {isUserPlayer || isUserTrainer
-                  ? "Rezervasyon"
-                  : isUserClub && "Görüntüle"}
+                  ? t("tableBookingHeader")
+                  : isUserClub && t("tableViewHeader")}
               </th>
             </tr>
           </thead>
@@ -265,8 +266,22 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                 </td>
                 <td>{court.opening_time.slice(0, 5)}</td>
                 <td>{court.closing_time.slice(0, 5)}</td>
-                <td>{court?.court_surface_type_name}</td>
-                <td>{court?.court_structure_type_name}</td>
+                <td>
+                  {court?.court_surface_type_id === 1
+                    ? t("courtSurfaceHard")
+                    : court?.court_surface_type_id === 2
+                    ? t("courtSurfaceClay")
+                    : court?.court_surface_type_id === 3
+                    ? t("courtSurfaceGrass")
+                    : t("courtSurfaceCarpet")}
+                </td>
+                <td>
+                  {court?.court_structure_type_id === 1
+                    ? t("courtStructureOpen")
+                    : court?.court_structure_type_id === 2
+                    ? t("courtStructureClosed")
+                    : t("courtStructureHybrid")}
+                </td>
                 <td>{court?.price_hour}</td>
                 <td>
                   {court.higher_price_for_non_subscribers &&
@@ -289,9 +304,9 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
                     className={styles["book-button"]}
                   >
                     {isUserPlayer || isUserTrainer
-                      ? " Rezerve et"
+                      ? t("tableBookCourtButton")
                       : isUserClub
-                      ? "Görüntüle"
+                      ? t("tableViewHeader")
                       : ""}
                   </Link>
                 </td>

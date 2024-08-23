@@ -229,6 +229,7 @@ const studentsModel = {
           "trainers.image",
           "locations.location_name",
           "trainer_experience_types.trainer_experience_type_name",
+          "trainer_experience_types.trainer_experience_type_id",
           db.raw(
             "CASE WHEN club_users.user_status_type_id = 1 THEN clubs.club_name ELSE 'Bağımsız' END as club_name"
           ),

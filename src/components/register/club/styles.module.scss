@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .register-page-container {
   display: flex;
@@ -12,6 +13,9 @@
     object-fit: cover;
     object-position: center;
     border-radius: $roger-border-radius;
+    @include small-screen {
+      display: none;
+    }
   }
 
   .register-form-content {
@@ -23,6 +27,9 @@
     border-radius: $roger-border-radius;
     width: 45%;
     margin: 0 auto;
+    @include small-screen {
+      width: 100%;
+    }
   }
 
   .title-container {

@@ -1,34 +1,22 @@
 import React, { useEffect, useState } from "react";
-
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import {
   useUpdateClubExternalMemberMutation,
   useGetClubExternalMembersQuery,
   useGetClubExternalMembersByFilterQuery,
 } from "../../../../api/endpoints/ClubExternalMembersApi";
-
 import { ClubSubscriptionPackage } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
-
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
-
 import { Location } from "../../../../api/endpoints/LocationsApi";
-
 import {
   useGetClubSubscriptionsQuery,
   useUpdateClubSubscriptionMutation,
 } from "../../../../api/endpoints/ClubSubscriptionsApi";
-
 import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
-
 import PageLoading from "../../../../components/loading/PageLoading";
 
 interface EditClubSubscriberModalProps {
@@ -223,7 +211,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
         payment_id: selectedSubscriptionDetails?.payment_id,
         club_id: user?.user?.user_id,
         player_id: selectedSubscriptionDetails?.playerUserId
-          ? playerUserId
+          ? selectedSubscriptionDetails?.playerUserId
           : selectedSubscriptionDetails?.clubExternalMemberUserId
           ? selectedSubscriptionDetails?.clubExternalMemberUserId
           : null,
@@ -369,7 +357,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Oyuncu Seviyesi</label>
+              <label>Seviye</label>
               <select {...register("player_level_id", { required: true })}>
                 <option value="">-- Seviye --</option>
                 {playerLevels?.map((level) => (

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-
 import PlayerCardPayments from "../../../components/profile/player/card-payments/PlayerCardPayments";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 import PlayerProfileNavigation from "../../../components/profile/player/player-profile-nav/PlayerProfileNavigation";
 import { useAppSelector } from "../../../store/hooks";
@@ -12,6 +11,8 @@ import PlayerOtherDetails from "../../../components/profile/player/other-details
 
 const PlayerProfile = () => {
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: playerDetails,
@@ -28,10 +29,11 @@ const PlayerProfile = () => {
   if (isPlayerDetailsLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["player-profile-container"]}>
       <div className={styles["title-container"]}>
-        <h2>Hesap Ayarları</h2>
+        <h2>{t("settingsTitle")}</h2>
       </div>
       <div className={styles.main}>
         <PlayerProfileNavigation handlePage={handlePage} page={page} />

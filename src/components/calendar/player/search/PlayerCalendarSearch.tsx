@@ -7,6 +7,7 @@ import {
   currentDayLocale,
   currentDayObject,
 } from "../../../../common/util/TimeFunctions";
+import { useTranslation } from "react-i18next";
 
 interface PlayerCalendarSearchProps {
   handleDate: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -32,7 +33,10 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
     clubId,
   } = props;
 
+  const { t } = useTranslation();
+
   const tomorrow = new Date(currentDayObject);
+
   tomorrow.setDate(currentDayObject.getDate() + 1);
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
@@ -51,14 +55,14 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu / Eğitmen adı"
+          placeholder={t("explorePlayerCalendarSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleDate} value={date} className="input-element">
-          <option value="">-- Tarih --</option>
-          <option value={currentDayLocale}>Bugün</option>
-          <option value={tomorrow.toLocaleDateString()}>Yarın</option>
+          <option value="">-- {t("tableDateHeader")} --</option>
+          <option value={currentDayLocale}>{t("today")}</option>
+          <option value={tomorrow.toLocaleDateString()}>{t("tomorrow")}</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
@@ -67,18 +71,33 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
           value={eventTypeId ?? ""}
           className="input-element"
         >
-          <option value="">-- Tür --</option>
+          <option value="">-- {t("tableClubTypeHeader")} --</option>
           {eventTypes
             ?.filter(
               (type) =>
                 type.event_type_id === 1 ||
                 type.event_type_id === 2 ||
                 type.event_type_id === 3 ||
-                type.event_type_id === 6
+                type.event_type_id === 6 ||
+                type.event_type_id === 7
             )
             .map((type) => (
               <option key={type.event_type_id} value={type.event_type_id}>
-                {type.event_type_name}
+                {type?.event_type_id === 1
+                  ? t("training")
+                  : type?.event_type_id === 2
+                  ? t("match")
+                  : type?.event_type_id === 3
+                  ? t("lesson")
+                  : type?.event_type_id === 4
+                  ? t("externalTraining")
+                  : type?.event_type_id === 5
+                  ? t("externalLesson")
+                  : type?.event_type_id === 6
+                  ? t("groupLesson")
+                  : type?.event_type_id === 7
+                  ? t("tournamentMatch")
+                  : ""}
               </option>
             ))}
         </select>
@@ -89,7 +108,7 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
           value={clubId ?? ""}
           className="input-element"
         >
-          <option value="">-- Konum --</option>
+          <option value="">-- {t("tableLocationHeader")} --</option>
           {clubs?.map((club) => (
             <option key={club.club_id} value={club.club_id}>
               {club.club_name}
@@ -105,7 +124,7 @@ const PlayerCalendarSearch = (props: PlayerCalendarSearchProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

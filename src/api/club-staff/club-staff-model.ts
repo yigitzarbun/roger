@@ -129,6 +129,7 @@ const clubStaffModel = {
       .select(
         "club_staff.club_staff_id",
         "club_staff.user_id as clubStaffUserId",
+        "club_staff.employment_status",
         "trainers.image as trainerImage",
         "trainers.fname",
         "trainers.lname",

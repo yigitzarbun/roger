@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Player } from "../../../../../api/endpoints/PlayersApi";
@@ -11,9 +10,13 @@ import { useAppDispatch } from "../../../../../store/hooks";
 
 const PlayerImage = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
 
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
   const existingImage = playerDetails?.image ? playerDetails?.image : null;
@@ -71,8 +74,8 @@ const PlayerImage = (props) => {
   return (
     <div className={styles["player-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Profil Resmi</h4>
-        <p>Diğer kullanıcıların gördüğü profil resmidir.</p>
+        <h4>{t("profilePicture")}</h4>
+        <p>{t("profilePictureText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -91,7 +94,6 @@ const PlayerImage = (props) => {
             id="preview-image"
           />
         </label>
-
         <input
           type="file"
           id="fileInput"
@@ -109,7 +111,7 @@ const PlayerImage = (props) => {
           }
           disabled={selectedImage === null}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

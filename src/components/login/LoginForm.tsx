@@ -1,15 +1,9 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { useNavigate, Link } from "react-router-dom";
-
 import { useTranslation } from "react-i18next";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../routing/Paths";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useLoginUserMutation } from "../../store/auth/apiSlice";
 import { useAppDispatch } from "../../store/hooks";
@@ -39,14 +33,19 @@ const LoginForm = () => {
       : navigator.language === "tr-TR"
       ? "tr"
       : "tr";
+
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
+
   const handleEmail = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
+
   const handlePassword = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
+
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const loginData = {
@@ -82,13 +81,13 @@ const LoginForm = () => {
     <div className={styles["login-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/court5.jpeg" />
       <div className={styles["login-form-content"]}>
-        <h1 className={styles["login-title"]}>Giriş</h1>
+        <h1 className={styles["login-title"]}>{t("loginTitle")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
         >
           <div className={styles["input-container"]}>
-            <label>E-posta</label>
+            <label>{t("loginEmailLabel")}</label>
             <input
               {...register("email", { required: true })}
               type="email"
@@ -100,7 +99,7 @@ const LoginForm = () => {
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>Şifre</label>
+            <label>{t("loginPasswordLabel")}</label>
             <input
               {...register("password", { required: true })}
               type="password"
@@ -124,8 +123,10 @@ const LoginForm = () => {
           </div>
         </form>
         <Link to={paths.REGISTER} className={styles["register-nav"]}>
-          Hesabın yok mu?{" "}
-          <span className={styles["register-span"]}>Kayıt ol</span>
+          {t("loginNoAccountText")}{" "}
+          <span className={styles["register-span"]}>
+            {t("loginRegisterText")}
+          </span>
         </Link>
       </div>
     </div>

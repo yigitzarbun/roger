@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .bio-section {
   background-color: var(--box-background-color);
@@ -9,7 +10,9 @@
   display: flex;
   column-gap: 5vw;
   border: 1px solid $roger-border-color;
-
+  @include small-screen {
+    flex-direction: column;
+  }
   .image-container {
     display: flex;
     column-gap: 1vw;
@@ -40,6 +43,8 @@
         display: flex;
         flex-direction: column;
         row-gap: 4vh;
+        overflow-x: auto;
+
         table {
           width: 100%;
           text-align: left;

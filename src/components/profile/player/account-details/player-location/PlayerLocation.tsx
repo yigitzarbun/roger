@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Player } from "../../../../../api/endpoints/PlayersApi";
@@ -12,11 +11,19 @@ import { useGetLocationsQuery } from "../../../../../api/endpoints/LocationsApi"
 
 const PlayerLocation = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: locations } = useGetLocationsQuery({});
+
   const dispatch = useAppDispatch();
+
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newLocation, setNewLocation] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleLocationChange = (e) => {
@@ -84,11 +91,8 @@ const PlayerLocation = (props) => {
   return (
     <div className={styles["player-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Konum</h4>
-        <p>
-          Diğer kullanıcılar sizi antreman, maç veya derse davet ederken bu
-          bilgiyi dikkate alabilir.
-        </p>
+        <h4>{t("tableLocationHeader")}</h4>
+        <p>{t("locationText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -96,7 +100,7 @@ const PlayerLocation = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Konum</label>
+          <label>{t("locationText")}</label>
           <select
             {...register("location_id", { required: true })}
             onChange={handleLocationChange}
@@ -108,7 +112,7 @@ const PlayerLocation = (props) => {
             ))}
           </select>
           {errors.location_id && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            <span className={styles["error-field"]}>{t("mandatoryField")}</span>
           )}
         </div>
         <button
@@ -118,7 +122,7 @@ const PlayerLocation = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

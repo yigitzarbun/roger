@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .rules-section {
   background-color: var(--box-background-color);
@@ -16,9 +17,16 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-
+    @include small-screen {
+      flex-direction: column;
+      flex-wrap: nowrap;
+      row-gap: 4vh;
+    }
     .rule-container {
       width: 25%;
+      @include small-screen {
+        width: 100%;
+      }
     }
   }
 }

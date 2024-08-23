@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .login-page-container {
   display: flex;
@@ -12,6 +13,12 @@
     object-fit: cover;
     object-position: center;
     border-radius: $roger-border-radius;
+    @include medium-screen {
+      width: 45%;
+    }
+    @include small-screen {
+      display: none;
+    }
   }
 
   .login-form-content {
@@ -23,6 +30,13 @@
     border-radius: $roger-border-radius;
     width: 35%;
     margin: 0 auto;
+    @include medium-screen {
+      width: 45%;
+    }
+    @include small-screen {
+      width: 100%;
+      max-width: 400px;
+    }
   }
 
   .login-title {

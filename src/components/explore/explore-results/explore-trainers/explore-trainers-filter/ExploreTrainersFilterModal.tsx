@@ -1,6 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 const ExploreTrainersFilterModal = (props) => {
   const {
@@ -21,6 +22,8 @@ const ExploreTrainersFilterModal = (props) => {
     clubId,
     clubs,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isTrainerFilterModalOpen}
@@ -34,14 +37,14 @@ const ExploreTrainersFilterModal = (props) => {
         onClick={handleCloseTrainerFilterModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Eğitmenleri Filtrele</h3>
+        <h3>{t("exploreTrainersFilterTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input
               type="text"
               onChange={handleTextSearch}
               value={textSearch}
-              placeholder="Eğitmen adı"
+              placeholder={t("exploreTrainersFilterSearchPlaceholder")}
             />
           </div>
           <div className={styles["input-outer-container"]}>
@@ -51,13 +54,19 @@ const ExploreTrainersFilterModal = (props) => {
                 value={trainerExperienceTypeId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Seviye --</option>
-                {trainerExperienceTypes?.map((player_level) => (
+                <option value="">-- {t("tableLevelHeader")} --</option>
+                {trainerExperienceTypes?.map((trainer_level) => (
                   <option
-                    key={player_level.trainer_experience_type_id}
-                    value={player_level.trainer_experience_type_id}
+                    key={trainer_level.trainer_experience_type_id}
+                    value={trainer_level.trainer_experience_type_id}
                   >
-                    {player_level.trainer_experience_type_name}
+                    {trainer_level?.trainer_experience_type_id === 1
+                      ? t("trainerLevelBeginner")
+                      : trainer_level?.trainer_experience_type_id === 2
+                      ? t("trainerLevelIntermediate")
+                      : trainer_level?.trainer_experience_type_id === 3
+                      ? t("trainerLevelAdvanced")
+                      : t("trainerLevelProfessional")}
                   </option>
                 ))}
               </select>
@@ -68,9 +77,9 @@ const ExploreTrainersFilterModal = (props) => {
                 value={gender}
                 className="input-element"
               >
-                <option value="">-- Cinsiyet --</option>
-                <option value="female">Kadın</option>
-                <option value="male">Erkek</option>
+                <option value="">-- {t("gender")} --</option>
+                <option value="female">{t("female")}</option>
+                <option value="male">{t("male")}</option>
               </select>
             </div>
           </div>
@@ -81,7 +90,7 @@ const ExploreTrainersFilterModal = (props) => {
                 value={locationId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Tüm Konumlar --</option>
+                <option value="">-- {t("allLocations")} --</option>
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -98,7 +107,7 @@ const ExploreTrainersFilterModal = (props) => {
                 value={clubId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Tüm Kulüpler --</option>
+                <option value="">-- {t("allClubs")} --</option>
                 {clubs?.map((club) => (
                   <option key={club.club_id} value={club.club_id}>
                     {club.club_name}
@@ -109,13 +118,13 @@ const ExploreTrainersFilterModal = (props) => {
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleCloseTrainerFilterModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

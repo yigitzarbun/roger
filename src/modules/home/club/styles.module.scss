@@ -1,3 +1,5 @@
+@import "/src/common/styles/z-index.scss";
+
 .club-home-container {
   display: flex;
   flex-direction: column;
@@ -8,5 +10,12 @@
     display: flex;
     justify-content: space-between;
     column-gap: 1vw;
+    @include medium-screen {
+      row-gap: 2vh;
+    }
+    @include small-screen {
+      flex-direction: column;
+      row-gap: 2vh;
+    }
   }
 }

@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-
 import { Link } from "react-router-dom";
 import { ImBlocked } from "react-icons/im";
-
 import styles from "./styles.module.scss";
-
 import ExploreClubSubscribersModal from "../../modals/subscribers/ExploreClubSubscribersModal";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-
 import { useGetClubSubscribersByIdQuery } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
 import Paths from "../../../../../../routing/Paths";
@@ -28,42 +24,52 @@ const ExploreClubsSubscribersSection = (
 
   const { data: clubSubscribers, isLoading: isClubsubscribersLoading } =
     useGetClubSubscribersByIdQuery(selectedClub?.[0]?.user_id);
-  console.log(clubSubscribers);
+
   const [isSubscribersModalOpen, setIsSubscribersModalOpen] = useState(false);
+
   const openSubscribersModal = () => {
     setIsSubscribersModalOpen(true);
   };
+
   const closeSubscribersModal = () => {
     setIsSubscribersModalOpen(false);
   };
 
   const [opponentUserId, setOpponentUserId] = useState(null);
+
   const [isTrainInviteModalOpen, setIsTrainInviteModalOpen] = useState(false);
+
   const handleOpenTrainInviteModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsTrainInviteModalOpen(true);
   };
+
   const handleCloseTrainInviteModal = () => {
     setIsTrainInviteModalOpen(false);
   };
 
   const [isMatchInviteModalOpen, setIsMatchInviteModalOpen] = useState(false);
+
   const handleOpenMatchInviteModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsMatchInviteModalOpen(true);
   };
+
   const handleCloseMatchInviteModal = () => {
     setIsMatchInviteModalOpen(false);
   };
+
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
+
   return (
     <div className={styles["subscribers-section"]}>
       <h2>Üyeler</h2>
@@ -80,7 +86,7 @@ const ExploreClubsSubscribersSection = (
               <th>Yorum</th>
               {isUserPlayer && <th>Antreman</th>}
               {isUserPlayer && <th>Maç</th>}
-              {isUserTrainer && <td>Ders</td>}
+              {isUserTrainer && <th>Ders</th>}
             </tr>
           </thead>
           <tbody>
@@ -192,7 +198,8 @@ const ExploreClubsSubscribersSection = (
                             handleOpenMatchInviteModal(player.playerUserId)
                           }
                           disabled={
-                            user?.playerDetails?.gender !== player.gender
+                            user?.playerDetails?.gender !==
+                            player.playerGenderName
                           }
                         >
                           Maç Yap

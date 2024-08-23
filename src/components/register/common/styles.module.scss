@@ -1,12 +1,15 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .common-register-container {
   display: flex-end;
   justify-content: space-between;
   margin: 70px auto 0 auto;
   width: 50%;
-
+  @include small-screen {
+    width: 100%;
+  }
   .user-type-options-container {
     display: flex;
     justify-content: center;

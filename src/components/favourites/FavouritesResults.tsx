@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { SlOptions } from "react-icons/sl";
-
-import { AiFillStar } from "react-icons/ai";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../loading/PageLoading";
-
 import { useAppSelector } from "../../store/hooks";
-
 import {
   Favourite,
   useGetPaginatedFavouritesQuery,
   useUpdateFavouriteMutation,
 } from "../../api/endpoints/FavouritesApi";
+import { useTranslation } from "react-i18next";
 
 interface FavouritesSearchProps {
   locationId: number;
@@ -33,7 +24,10 @@ interface FavouritesSearchProps {
 const FavouritesResults = (props: FavouritesSearchProps) => {
   const { locationId, textSearch, userTypeId, currentPage, setCurrentPage } =
     props;
+
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: myFavourites,
@@ -104,7 +98,7 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Favoriler</h2>
+        <h2 className={styles.title}>{t("favourites")}</h2>
         {myFavourites?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -123,12 +117,12 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Konum</th>
-              <th>Tür</th>
-              <th>Favoriden Çıkar</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("removeFavourite")}</th>
             </tr>
           </thead>
           <tbody>
@@ -159,14 +153,42 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
                   </Link>
                 </td>
                 <td>
-                  {favourite?.player_level_name
-                    ? favourite?.player_level_name
-                    : favourite?.trainer_experience_type_name
-                    ? favourite?.trainer_experience_type_name
+                  {favourite?.user_type_id === 1 &&
+                  favourite.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : favourite?.user_type_id === 1 &&
+                      favourite.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : favourite?.user_type_id === 1 &&
+                      favourite.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : favourite?.user_type_id === 1 &&
+                      favourite.player_level_id === 4
+                    ? "playerLevelProfessinal"
+                    : favourite?.user_type_id === 2 &&
+                      favourite.trainer_experience_type_id === 1
+                    ? t("trainerLevelBeginner")
+                    : favourite?.user_type_id === 2 &&
+                      favourite.trainer_experience_type_id === 2
+                    ? t("trainerLevelIntermediate")
+                    : favourite?.user_type_id === 2 &&
+                      favourite.trainer_experience_type_id === 3
+                    ? t("trainerLevelAdvanced")
+                    : favourite?.user_type_id === 2 &&
+                      favourite.trainer_experience_type_id === 4
+                    ? t("trainerLevelProfessional")
                     : "-"}
                 </td>
                 <td>{favourite?.location_name}</td>
-                <td>{favourite?.user_type_name}</td>
+                <td>
+                  {favourite?.user_type_id === 1
+                    ? t("userTypePlayer")
+                    : favourite?.user_type_id === 2
+                    ? t("userTypeTrainer")
+                    : favourite?.user_type_id === 3
+                    ? t("userTypeClub")
+                    : ""}
+                </td>
                 <td>
                   <button
                     onClick={() =>
@@ -174,7 +196,7 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
                     }
                     className={styles["favourite-button"]}
                   >
-                    Favoriden çıkar
+                    {t("remove")}
                   </button>
                 </td>
               </tr>

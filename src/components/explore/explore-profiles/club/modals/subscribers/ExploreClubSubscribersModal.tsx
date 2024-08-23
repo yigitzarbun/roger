@@ -242,7 +242,8 @@ const ExploreClubSubscribersModal = (
                               handleOpenMatchInviteModal(player.playerUserId)
                             }
                             disabled={
-                              user?.playerDetails?.gender !== player.gender
+                              user?.playerDetails?.gender !==
+                              player.playerGenderName
                             }
                           >
                             Maç Yap

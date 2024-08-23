@@ -1,20 +1,14 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-
 import { Link } from "react-router-dom";
-
 import { useAppSelector } from "../../../store/hooks";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import AddClubSubscriberModal from "./add-subscriber-modal/AddClubSubscriberModal";
 import EditClubSubscriberModal from "./edit-subscriber-modal/EditClubSubscriberModal";
 import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
-
 import { useGetPaginatedClubSubscribersQuery } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
@@ -294,7 +288,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
+              <th>Üye</th>
               <th>İsim</th>
               <th>Üye Tipi</th>
               <th>Seviye</th>

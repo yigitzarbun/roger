@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .result-container {
   display: flex;
@@ -9,12 +10,36 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .title-container {
     display: flex;
     justify-content: space-between;
-    .title {
-      font-size: 2rem;
+    .title-left {
+      display: flex;
+      align-items: center;
+      column-gap: 1vw;
+      cursor: pointer;
+      @include small-screen {
+        column-gap: 3vw;
+      }
+      .title {
+        font-size: 2rem;
+      }
+      .passive-sort {
+        color: var(--text-color);
+        font-size: 1.5rem;
+      }
+      .active-sort {
+        color: $roger-blue;
+        font-size: 1.5rem;
+      }
+      .filter {
+        cursor: pointer;
+      }
+      .active-filter {
+        color: $roger-blue;
+        cursor: pointer;
+      }
     }
   }
 
@@ -32,16 +57,12 @@
         padding: 10px;
         height: 12vh;
       }
-      .done {
-        color: $roger-green;
-        font-size: 1.2rem;
-      }
+
       .trainer-image {
         width: 40px;
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
@@ -49,12 +70,17 @@
         color: var(--text-color);
         text-decoration: none;
       }
+
+      .done {
+        color: $roger-green;
+        font-size: 1.5rem;
+      }
     }
 
     .cancel-button {
-      background-color: $roger-black-dark;
+      background-color: $roger-red;
       border: none;
-      width: 150px;
+      width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
@@ -64,9 +90,6 @@
       text-align: center;
     }
 
-    .cancel-button:hover {
-      background-color: $roger-black-light;
-    }
     .icon {
       cursor: pointer;
     }

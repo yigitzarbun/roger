@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetPlayerMissingEventReviewsNumberQuery } from "../../../../api/endpoints/EventReviewsApi";
 import { useGetMissingMatchScoresNumberQuery } from "../../../../api/endpoints/MatchScoresApi";
+import { useTranslation } from "react-i18next";
 
 interface PlayerEventsNavigationProps {
   display: string;
@@ -24,6 +22,8 @@ const PlayerEventsNavigation = ({
   handleDisplay,
 }: PlayerEventsNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: missingScores,
@@ -58,7 +58,7 @@ const PlayerEventsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        <span>Geçmiş Etkinlikler</span>
+        <span>{t("pastEventsTitle")}</span>
         <span className={styles.notification}>
           {missingReviews > 0 && `(${missingReviews})`}
         </span>
@@ -71,7 +71,7 @@ const PlayerEventsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Skorlar{" "}
+        {t("matchScoresTitle")}{" "}
         <span className={styles.notification}>
           {missingScoresLength > 0 && `(${missingScoresLength})`}
         </span>

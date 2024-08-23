@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .nav-container {
   display: flex;
@@ -19,10 +20,11 @@
     background-color: $roger-blue;
     color: white;
     font-weight: bold;
-    .notification {
-      font-size: 0.7rem;
-      font-weight: bold;
-      color: black;
+    @include medium-screen {
+      width: 35%;
+    }
+    @include small-screen {
+      width: 49%;
     }
   }
   .inactive-button {
@@ -35,9 +37,11 @@
     cursor: pointer;
     color: var(--text-color);
     font-weight: bold;
-    .notification {
-      font-size: 0.7rem;
-      color: $roger-yellow;
+    @include medium-screen {
+      width: 35%;
+    }
+    @include small-screen {
+      width: 49%;
     }
   }
   .inactive-button:hover {

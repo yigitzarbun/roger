@@ -30,6 +30,7 @@ import LessonInviteFormModal from "../../../../components/invite/lesson/form/Les
 import ExploreTrainersFilterModal from "./explore-trainers-filter/ExploreTrainersFilterModal";
 import ExploreTrainersSortModal from "./explore-trainers-sort/ExploreTrainersSortModal";
 import StudentApplicationModal from "../../../../components/lesson/studentship-modal/StudentApplicationModal";
+import { useTranslation } from "react-i18next";
 
 interface ExploreTrainersProps {
   user: User;
@@ -75,28 +76,34 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     trainerExperienceTypeId,
     clubId,
   } = props;
+  const { t } = useTranslation();
 
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
+
   const isUserClub = user?.user?.user_type_id === 3;
 
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
 
   const [isTrainerFilterModalOpen, setIsTrainerFilterModalOpen] =
     useState(false);
+
   const handleOpenTrainerFilterModal = () => {
     setIsTrainerFilterModalOpen(true);
   };
+
   const handleCloseTrainerFilterModal = () => {
     setIsTrainerFilterModalOpen(false);
   };
@@ -112,6 +119,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     : null;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -313,7 +321,9 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+          <h2 className={styles["result-title"]}>
+            {t("exploreTrainersTitle")}
+          </h2>
           <div className={styles.icons}>
             {paginatedTrainers?.trainers?.length > 0 && (
               <FaFilter
@@ -354,27 +364,24 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       </div>
 
       {paginatedTrainers?.trainers?.length === 0 && (
-        <p>
-          Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("trainersEmptyText")}</p>
       )}
 
       {paginatedTrainers?.trainers?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Eğitmen</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Kulüp</th>
-              <th>Ücret</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>{isUserPlayer ? "Ders" : ""}</th>
-              <th>{isUserPlayer ? "Öğrencilik" : ""}</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tableTrainerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{isUserPlayer ? t("tableLessonHeader") : ""}</th>
+              <th>{isUserPlayer ? t("tableStudentshipHeader") : ""}</th>
             </tr>
           </thead>
           <tbody>
@@ -422,18 +429,25 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     <p> {`${trainer.fname} ${trainer.lname}`}</p>
                   </Link>
                 </td>
-                <td>{trainer?.trainer_experience_type_name}</td>
+                <td>
+                  {trainer?.trainer_experience_type_id === 1
+                    ? t("trainerLevelBeginner")
+                    : trainer?.trainer_experience_type_id === 2
+                    ? t("trainerLevelIntermediate")
+                    : trainer?.trainer_experience_type_id === 3
+                    ? t("trainerLevelAdvanced")
+                    : t("trainerLevelProfessional")}
+                </td>
                 <td>
                   {trainer?.employment_status === "accepted" &&
                   trainer?.club_name
                     ? trainer?.club_name
-                    : "Bağımsız"}
+                    : t("trainerIndependent")}
                 </td>
                 <td>{trainer?.price_hour} TL</td>
-                <td>{trainer.gender}</td>
+                <td>{trainer.gender === "female" ? t("female") : t("male")}</td>
                 <td>{getAge(trainer.birth_year)}</td>
                 <td>{trainer?.location_name}</td>
-
                 <td>
                   {isUserPlayer && (
                     <button
@@ -442,7 +456,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                       }
                       className={styles["lesson-button"]}
                     >
-                      Ders al
+                      {t("tableLessonInviteButtonText")}
                     </button>
                   )}
                 </td>
@@ -467,7 +481,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                         }
                         className={styles["cancel-student-button"]}
                       >
-                        Öğrenciliği sil
+                        {t("tableDeleteStudentshipButtonText")}
                       </button>
                     ) : (
                       <button
@@ -481,7 +495,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                         }
                         className={styles["add-student-button"]}
                       >
-                        Öğrenci Ol
+                        {t("tableStudentshipButtonText")}
                       </button>
                     )}
                   </td>

@@ -3,6 +3,7 @@ import styles from "./styles.module.scss";
 import { localUrl } from "../../../common/constants/apiConstants";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import NewMessageModal from "../modals/new-message-modal/NewMessageModal";
+import { FaPlus } from "react-icons/fa6";
 
 interface MessagesNavigationProps {
   userChats: any[];
@@ -39,7 +40,14 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
 
   return (
     <div className={styles.nav}>
-      <h2>Mesajlar</h2>
+      <div className={styles["title-container"]}>
+        <h2>Mesajlar</h2>
+        <FaPlus
+          className={styles["new-message-icon"]}
+          onClick={handleOpenNewMessageModal}
+        />
+      </div>
+
       {((userChats?.length > 0 && textSearch === "") ||
         (userChats?.length === 0 && textSearch !== "") ||
         userChats?.length > 0) && (

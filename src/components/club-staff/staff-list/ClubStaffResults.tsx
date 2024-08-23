@@ -1,20 +1,13 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../components/loading/PageLoading";
 import DeleteClubStaffModal from "./delete-staff-modal/DeleteClubStaffModal";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import { currentYear } from "../../../common/util/TimeFunctions";
-
 import { useGetPaginatedClubStaffQuery } from "../../../api/endpoints/ClubStaffApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../api/endpoints/ClubStaffRoleTypesApi";
 import ClubStaffFilterModal from "./filter/ClubStaffFilterModal";
@@ -88,24 +81,29 @@ const ClubStaffResults = () => {
   };
 
   const [selectedStaffUser, setSelectedStaffUser] = useState(null);
+
   const [isDeleteStaffModalOpen, setIsDeleteStaffModalOpen] = useState(false);
 
   const openDeleteStaffModal = (staff) => {
     setSelectedStaffUser(staff);
     setIsDeleteStaffModalOpen(true);
   };
+
   const closeDeleteStaffModal = () => {
     setSelectedStaffUser(null);
     setIsDeleteStaffModalOpen(false);
   };
 
   const [isStaffFilterModalOpen, setIsStaffFilterModalOpen] = useState(false);
+
   const handleOpenStaffFilterModal = () => {
     setIsStaffFilterModalOpen(true);
   };
+
   const closeStaffFilterModal = () => {
     setIsStaffFilterModalOpen(false);
   };
+
   useEffect(() => {
     refetchMyStaff();
   }, [
@@ -158,8 +156,8 @@ const ClubStaffResults = () => {
         <table>
           <thead>
             <tr>
-              <th></th>
-              <th>Personel Adı</th>
+              <th>Personel</th>
+              <th>İsim</th>
               <th>Yaş</th>
               <th>Cinsiyet</th>
               <th>Konum</th>

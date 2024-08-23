@@ -10,6 +10,7 @@
   justify-content: space-between;
   row-gap: 20px;
   border: 1px solid $roger-border-color;
+  overflow-x: auto;
 
   table {
     width: 100%;

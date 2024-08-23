@@ -7,29 +7,43 @@ import { toast } from "react-toastify";
 import { useGetPlayerByUserIdQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetTrainerByUserIdQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../../api/endpoints/ClubsApi";
+import { IoArrowBackCircleOutline } from "react-icons/io5";
 
 interface MessageAreaProps {
   chatMessages: any[];
   user: any;
   refetchChatMessages: () => void;
+  setOtherUserId: (e: any) => void;
+  shouldShowChatAreaCloseIcon: boolean;
 }
 
 const MessageArea = (props: MessageAreaProps) => {
-  const { chatMessages, user, refetchChatMessages } = props;
+  const {
+    chatMessages,
+    user,
+    refetchChatMessages,
+    setOtherUserId,
+    shouldShowChatAreaCloseIcon,
+  } = props;
 
   const isUserPlayer = user?.user_type_id === 1;
+
   const isUserTrainer = user?.user_type_id === 2;
+
   const isUserClub = user?.user_type_id === 3;
 
   const [skipPlayerDetails, setSkipPlayerDetails] = useState(true);
+
   const { data: playerDetails, isLoading: isPlayerDetailsLoading } =
     useGetPlayerByUserIdQuery(user?.user_id, { skip: skipPlayerDetails });
 
   const [skipTrainerDetails, setSkipTrainerDetails] = useState(true);
+
   const { data: trainerDetails, isLoading: isTrainerDetailsLoading } =
     useGetTrainerByUserIdQuery(user?.user_id, { skip: skipTrainerDetails });
 
   const [skipClubDetails, setSkipClubDetails] = useState(true);
+
   const { data: clubDetails, isLoading: isClubDetailsLoading } =
     useGetClubByUserIdQuery(user?.user_id, { skip: skipClubDetails });
 
@@ -50,9 +64,11 @@ const MessageArea = (props: MessageAreaProps) => {
   };
 
   const [message, setMessage] = useState("");
+
   const handleMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
+
   const [addMessage, { isSuccess: isAddMessageSuccess }] =
     useAddMessageMutation({});
 
@@ -98,6 +114,13 @@ const MessageArea = (props: MessageAreaProps) => {
 
   return (
     <div className={styles["message-area-container"]}>
+      {shouldShowChatAreaCloseIcon && (
+        <div onClick={() => setOtherUserId(null)} className={styles.back}>
+          <IoArrowBackCircleOutline />
+          <p>Mesajlar</p>
+        </div>
+      )}
+
       <div className={styles["messages-container"]} ref={messagesContainerRef}>
         {chatMessages?.length > 0
           ? chatMessages?.map((message) => (

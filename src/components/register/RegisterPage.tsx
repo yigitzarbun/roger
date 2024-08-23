@@ -28,8 +28,18 @@ const RegisterPage = () => {
             arada.
           </h3>
           <div className={styles["buttons-container"]}>
-            <button onClick={() => handleNavigate("login")}>Giriş Yap</button>
-            <button onClick={() => handleNavigate("register")}>Kayıt Ol</button>
+            <button
+              onClick={() => handleNavigate("register")}
+              className={styles["register-button"]}
+            >
+              Kayıt Ol
+            </button>
+            <button
+              onClick={() => handleNavigate("login")}
+              className={styles["login-button"]}
+            >
+              Giriş Yap
+            </button>
           </div>
           <div className={styles["mobile-container"]}>
             <SiGoogleplay className={styles.mobile} />
@@ -41,35 +51,38 @@ const RegisterPage = () => {
 
       <div className={styles["register-container"]}>
         <div className={styles["user-types"]}>
-          <div className={styles["user-type"]}>
+          <div
+            className={styles["user-type"]}
+            onClick={() => handleNavigate("register")}
+          >
             <h4>Oyuncu</h4>
             <p>
               Antreman ve maç yap, kulüplere üye ol, liderlik tablosunda yüksel
             </p>
-            <button onClick={() => handleNavigate("register")}>
-              Oyuncu Olarak Katıl
-            </button>
+            <button>Oyuncu Olarak Katıl</button>
           </div>
 
-          <div className={styles["user-type"]}>
+          <div
+            className={styles["user-type"]}
+            onClick={() => handleNavigate("register")}
+          >
             <h4>Eğitmen</h4>
             <p>
               Bireysel ve grup dersleri ver, kolayca ödeme al, kariyerinde
               ilerle
             </p>
-            <button onClick={() => handleNavigate("register")}>
-              Eğitmen Olarak Katıl
-            </button>
+            <button>Eğitmen Olarak Katıl</button>
           </div>
 
-          <div className={styles["user-type"]}>
+          <div
+            className={styles["user-type"]}
+            onClick={() => handleNavigate("register")}
+          >
             <h4>Kulüp</h4>
             <p>
               Kortlarını, üyeliklerini ve çalışanlarını tek platformdan yönet
             </p>
-            <button onClick={() => handleNavigate("register")}>
-              Kulüp Olarak Katıl
-            </button>
+            <button>Kulüp Olarak Katıl</button>
           </div>
         </div>
       </div>

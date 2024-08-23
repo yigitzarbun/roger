@@ -160,7 +160,8 @@
         color: $roger-blue;
       }
       .pending-confirmation-text {
-        color: $roger-yellow;
+        color: var(--yellow-text);
+        font-size: 1.5rem;
       }
     }
 

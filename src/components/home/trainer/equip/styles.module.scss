@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .trainer-equip-container {
   background-color: var(--$roger-box-bg-color);
@@ -15,6 +16,12 @@
   row-gap: 25px;
   text-decoration: none;
   transition: 1s ease;
+  @include medium-screen {
+    width: 49%;
+  }
+  @include small-screen {
+    width: 100%;
+  }
   h2 {
     font-weight: bold;
     font-size: 2rem;
@@ -32,6 +39,9 @@
     border-radius: $roger-border-radius;
     font-size: 1rem;
     cursor: pointer;
+    @include large-screen {
+      width: 90%;
+    }
   }
   button:hover {
     background-color: $roger-black-light;

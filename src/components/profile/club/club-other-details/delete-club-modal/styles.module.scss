@@ -37,7 +37,9 @@
     background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
-
+    @include small-screen {
+      width: 400px;
+    }
     h3 {
       font-size: 1.7rem;
     }
@@ -65,7 +67,7 @@
       justify-content: space-between;
       margin: 4vh 0;
       .discard-button {
-        background-color: var(--secondary-button-background-color);
+        background-color: $roger-blue;
         border: none;
         padding: $roger-button-padding;
         border-radius: $roger-border-radius;
@@ -75,10 +77,10 @@
         width: 150px;
       }
       .discard-button:hover {
-        background-color: $roger-red;
+        background-color: var(--secondary-button-background-color);
       }
       .submit-button {
-        background-color: var(--primary-button-background-color);
+        background-color: $roger-red;
         color: white;
         border: none;
         padding: $roger-button-padding;
@@ -87,9 +89,6 @@
         cursor: pointer;
         height: 40px;
         width: 150px;
-      }
-      .submit-button:hover {
-        background-color: $roger-blue;
       }
     }
   }

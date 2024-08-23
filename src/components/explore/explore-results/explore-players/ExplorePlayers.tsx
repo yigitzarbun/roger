@@ -1,22 +1,15 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { BsSortDown } from "react-icons/bs";
-
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
 import { ImBlocked } from "react-icons/im";
-
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../routing/Paths";
-
 import { User } from "../../../../store/slices/authSlice";
 import PageLoading from "../../../../components/loading/PageLoading";
 import { getAge } from "../../../../common/util/TimeFunctions";
-
 import { Location } from "../../../../api/endpoints/LocationsApi";
 import { PlayerLevel } from "../../../../api/endpoints/PlayerLevelsApi";
 import {
@@ -34,6 +27,7 @@ import MatchInviteFormModal from "../../../../components/invite/match/form/Match
 import ExplorePlayersFilterModal from "./explore-players-filter/ExplorePlayersFilterModal";
 import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
 import ExplorePlayersSortModal from "./explore-players-sort/ExplorePlayersSortModal";
+import { useTranslation } from "react-i18next";
 
 interface ExplorePlayersProps {
   user: User;
@@ -69,8 +63,12 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     locationId,
   } = props;
 
+  const { t } = useTranslation();
+
   let isUserPlayer = false;
+
   let isUserTrainer = false;
+
   let isUserClub = false;
 
   if (user) {
@@ -80,6 +78,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   }
 
   const [isPlayerFilterModalOpen, setIsPlayerFilterModalOpen] = useState(false);
+
   const handleOpenPlayerFilterModal = () => {
     setIsPlayerFilterModalOpen(true);
   };
@@ -90,6 +89,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const playerAge = user?.playerDetails?.birth_year;
+
   const playerLocationId = isUserPlayer
     ? user?.playerDetails?.location_id
     : isUserTrainer
@@ -101,6 +101,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const logicLevelId = user?.playerDetails?.player_level_id;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -165,13 +166,16 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
+
   const handleOpenTrainingModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsTrainingModalOpen(true);
   };
+
   const handleCloseTrainingModal = () => {
     setIsTrainingModalOpen(false);
   };
+
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
 
   const handleOpenMatchModal = (userId: number) => {
@@ -188,6 +192,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     setOpponentUserId(userId);
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
@@ -250,7 +255,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Oyuncuları Keşfet</h2>
+          <h2 className={styles["result-title"]}>{t("explorePlayersTitle")}</h2>
           <div className={styles.icons}>
             <FaFilter
               onClick={handleOpenPlayerFilterModal}
@@ -291,15 +296,21 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>{isUserPlayer ? "Antreman" : isUserTrainer ? "Ders" : ""}</th>
-              <th>{isUserPlayer && "Maç"}</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>
+                {isUserPlayer
+                  ? t("tableTrainHeader")
+                  : isUserTrainer
+                  ? t("tableLessonHeader")
+                  : ""}
+              </th>
+              <th>{isUserPlayer && t("tableMatchHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -355,8 +366,16 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                     <p>{`${player.fname} ${player.lname}`}</p>
                   </Link>
                 </td>
-                <td>{player?.player_level_name}</td>
-                <td>{player.gender}</td>
+                <td>
+                  {player.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : player?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : player?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
+                </td>
+                <td>{player.gender === "male" ? t("male") : t("female")}</td>
                 <td>{getAge(player.birth_year)}</td>
                 <td>{player?.location_name}</td>
                 <td>
@@ -365,14 +384,14 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       onClick={() => handleOpenTrainingModal(player?.user_id)}
                       className={styles["training-button"]}
                     >
-                      Anterman yap
+                      {t("tableTrainButtonText")}
                     </button>
                   ) : isUserTrainer ? (
                     <button
                       onClick={() => handleOpenLessonModal(player.user_id)}
                       className={styles["match-button"]}
                     >
-                      Derse davet et
+                      {t("tableLessonButtonText")}
                     </button>
                   ) : (
                     ""
@@ -384,7 +403,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
                       onClick={() => handleOpenMatchModal(player?.user_id)}
                       className={styles["match-button"]}
                     >
-                      Maç yap
+                      {t("tableMatchButtonText")}
                     </button>
                   ) : (
                     isUserPlayer &&
@@ -398,10 +417,7 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           </tbody>
         </table>
       ) : (
-        <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("playersEmptyText")}</p>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

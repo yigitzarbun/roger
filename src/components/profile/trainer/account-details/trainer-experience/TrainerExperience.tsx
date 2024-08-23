@@ -89,6 +89,7 @@ const TrainerExperience = (props) => {
   useEffect(() => {
     handleButtonDisabled();
   }, [newType]);
+
   useEffect(() => {
     if (trainerExperienceTypes && trainerExperienceTypes.length > 0) {
       setValue(

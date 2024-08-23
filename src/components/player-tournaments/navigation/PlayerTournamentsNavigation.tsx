@@ -1,8 +1,6 @@
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
-import { useAppSelector } from "../../../store/hooks";
 
 interface PlayerTournamentsNavigationProps {
   display: string;
@@ -15,7 +13,7 @@ const PlayerTournamentsNavigation = ({
   handleDisplay,
   myTournaments,
 }: PlayerTournamentsNavigationProps) => {
-  const user = useAppSelector((store) => store?.user?.user);
+  const { t } = useTranslation();
 
   return (
     <div className={styles["nav-container"]}>
@@ -27,7 +25,7 @@ const PlayerTournamentsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        <span>Tüm Turnuvalar</span>
+        <span>{t("tournamentsTitle")}</span>
       </button>
       <button
         onClick={() => handleDisplay("my-tournaments")}
@@ -37,9 +35,10 @@ const PlayerTournamentsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        <span>Katıldığım Turnuvalar</span>
+        <span>{t("myTournamentsTitle")}</span>
         {myTournaments?.tournaments?.length > 0 && (
           <span className={styles.notification}>
+            {" "}
             ({myTournaments?.tournaments?.length})
           </span>
         )}

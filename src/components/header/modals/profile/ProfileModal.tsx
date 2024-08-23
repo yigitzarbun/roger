@@ -9,7 +9,7 @@ import { GiTennisCourt } from "react-icons/gi";
 import { IoPeople } from "react-icons/io5";
 import { CgTennis } from "react-icons/cg";
 import { PiTennisBallBold } from "react-icons/pi";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 import { useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
@@ -29,12 +29,18 @@ const ProfileModal = (props: ProfileModalProps) => {
     email,
     handleCloseMenuModal,
   } = props;
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store.user?.user?.user);
+
   const isUserPlayer = user?.user_type_id === 1;
+
   const isUserTrainer = user?.user_type_id === 2;
+
   const isUserClub = user?.user_type_id === 3;
 
   const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
 
   const navigateUser = (path: string) => {
@@ -59,21 +65,20 @@ const ProfileModal = (props: ProfileModalProps) => {
       overlayClassName={styles["modal-overlay"]}
     >
       <div className={styles["overlay"]} onClick={handleCloseProfileModal} />
-
       <div className={styles["modal-content"]}>
         <p>{email}</p>
         <div
           onClick={() => navigateUser("PROFILE")}
           className={styles["menu-item"]}
         >
-          <h4>Ayarlar</h4>
+          <h4>{t("settings")}</h4>
           <IoIosSettings className={styles.icon} />
         </div>
         <div
           onClick={() => navigateUser("PAYMENTS")}
           className={styles["menu-item"]}
         >
-          <h4>Ödemeler</h4>
+          <h4>{t("payments")}</h4>
           <FaRegCreditCard className={styles.icon} />
         </div>
         {isUserPlayer && (
@@ -81,7 +86,7 @@ const ProfileModal = (props: ProfileModalProps) => {
             onClick={() => navigateUser("PLAYER_SUBSCRIPTIONS")}
             className={styles["menu-item"]}
           >
-            <h4>Üyelikler</h4>
+            <h4>{t("subscriptions")}</h4>
             <FaBuildingUser className={styles.icon} />
           </div>
         )}
@@ -90,7 +95,7 @@ const ProfileModal = (props: ProfileModalProps) => {
             onClick={() => navigateUser("PLAYER_GROUPS")}
             className={styles["menu-item"]}
           >
-            <h4>Gruplar</h4>
+            <h4>{t("groups")}</h4>
             <RiGroupLine className={styles.icon} />
           </div>
         )}
@@ -99,7 +104,7 @@ const ProfileModal = (props: ProfileModalProps) => {
             onClick={() => navigateUser("PLAYER_TRAINERS")}
             className={styles["menu-item"]}
           >
-            <h4>Eğitmenlerim</h4>
+            <h4>{t("myTrainers")}</h4>
             <PiTennisBallBold className={styles.icon} />
           </div>
         )}
@@ -108,7 +113,7 @@ const ProfileModal = (props: ProfileModalProps) => {
             onClick={() => navigateUser("CLUB_COURTS")}
             className={styles["menu-item"]}
           >
-            <h4>Kortlar</h4>
+            <h4>{t("courts")}</h4>
             <GiTennisCourt className={styles.icon} />
           </div>
         )}
@@ -117,7 +122,7 @@ const ProfileModal = (props: ProfileModalProps) => {
             onClick={() => navigateUser("CLUB_STAFF")}
             className={styles["menu-item"]}
           >
-            <h4>Personel</h4>
+            <h4>{t("staff")}</h4>
             <IoPeople className={styles.icon} />
           </div>
         )}
@@ -126,7 +131,7 @@ const ProfileModal = (props: ProfileModalProps) => {
             onClick={() => navigateUser("CLUB_SUBSCRIPTIONS")}
             className={styles["menu-item"]}
           >
-            <h4>Üyelikler</h4>
+            <h4>{t("subscriptions")}</h4>
             <CgTennis className={styles.icon} />
           </div>
         )}
@@ -134,11 +139,11 @@ const ProfileModal = (props: ProfileModalProps) => {
           onClick={() => navigateUser("FAVOURITES")}
           className={styles["menu-item"]}
         >
-          <h4>Favoriler</h4>
+          <h4>{t("favourites")}</h4>
           <IoStar className={styles.icon} />
         </div>
         <button onClick={handleLogout} className={styles.logout}>
-          Çıkış
+          {t("logout")}
         </button>
       </div>
     </ReactModal>

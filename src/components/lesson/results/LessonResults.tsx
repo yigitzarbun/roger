@@ -24,6 +24,7 @@ import LessonInviteFormModal from "../../../components/invite/lesson/form/Lesson
 import LessonSortModal from "../lesson-sort/LessonSortModal";
 import StudentApplicationModal from "../studentship-modal/StudentApplicationModal";
 import { FaFilter } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -45,9 +46,12 @@ const LessonResults = (props: TrainSearchProps) => {
     textSearch,
     handleOpenFilter,
   } = props;
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
+
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const {
@@ -176,14 +180,19 @@ const LessonResults = (props: TrainSearchProps) => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
+
   const trainerLevelValue = Number(trainerLevelId) ?? null;
+
   const selectedGenderValue = gender ?? "";
+
   const locationIdValue = Number(locationId) ?? null;
+
   const clubIdValue = Number(clubId) ?? null;
 
   const logicLoadingId = user?.playerDetails?.location_id;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -223,7 +232,9 @@ const LessonResults = (props: TrainSearchProps) => {
   });
 
   const [opponentUserId, setOpponentUserId] = useState(null);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
   const handleOpenInviteModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsInviteModalOpen(true);
@@ -302,15 +313,7 @@ const LessonResults = (props: TrainSearchProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <div className={styles["title-left"]}>
-          <h2 className={styles.title}>Ders</h2>
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenSortModal}
-          />
+          <h2 className={styles.title}>{t("headerLessonTitle")}</h2>
           <FaFilter
             onClick={handleOpenFilter}
             className={
@@ -323,6 +326,14 @@ const LessonResults = (props: TrainSearchProps) => {
                 ? styles["active-filter"]
                 : styles.filter
             }
+          />
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenSortModal}
           />
         </div>
         {trainers?.totalPages > 1 && (
@@ -341,26 +352,23 @@ const LessonResults = (props: TrainSearchProps) => {
       </div>
       {isTrainersLoading && <p>Yükleniyor...</p>}
       {trainers && filteredTrainers.length === 0 && (
-        <p>
-          Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("trainersEmptyText")}</p>
       )}
       {trainers && filteredTrainers.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Eğitmen</th>
-              <th>İsim</th>
-              <th>Kulüp</th>
-              <th>Tecrübe</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Fiyat (saat)</th>
-              <th>Ders</th>
-              <th>Öğrencilik</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tableTrainerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
+              <th>{t("tableLessonHeader")}</th>
+              <th>{t("tableStudentshipHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -418,10 +426,18 @@ const LessonResults = (props: TrainSearchProps) => {
                 <td>
                   {trainer?.employment_status === "accepted"
                     ? trainer?.club_name
-                    : "Bağımsız"}
+                    : t("trainerIndependent")}
                 </td>
-                <td>{trainer?.trainer_experience_type_name}</td>
-                <td>{trainer.gender}</td>
+                <td>
+                  {trainer?.trainer_experience_type_id === 1
+                    ? t("trainerLevelBeginner")
+                    : trainer?.trainer_experience_type_id === 2
+                    ? t("trainerLevelIntermediate")
+                    : trainer?.trainer_experience_type_id === 3
+                    ? t("trainerLevelAdvanced")
+                    : t("trainerLevelProfessional")}
+                </td>
+                <td>{trainer.gender === "female" ? t("female") : t("male")}</td>
                 <td>{getAge(trainer.birth_year)}</td>
                 <td>{trainer?.location_name}</td>
                 <td>{parseFloat(trainer.price_hour).toFixed(2)} TL</td>
@@ -432,7 +448,7 @@ const LessonResults = (props: TrainSearchProps) => {
                     }
                     className={styles["lesson-button"]}
                   >
-                    Ders al
+                    {t("tableLessonInviteButtonText")}
                   </button>
                 </td>
                 <td>
@@ -455,7 +471,7 @@ const LessonResults = (props: TrainSearchProps) => {
                       }
                       className={styles["cancel-student-button"]}
                     >
-                      Öğrenciliği sil
+                      {t("tableDeleteStudentshipButtonText")}
                     </button>
                   ) : (
                     <button
@@ -469,7 +485,7 @@ const LessonResults = (props: TrainSearchProps) => {
                       }
                       className={styles["add-student-button"]}
                     >
-                      Öğrenci Ol
+                      {t("tableStudentshipButtonText")}
                     </button>
                   )}
                 </td>

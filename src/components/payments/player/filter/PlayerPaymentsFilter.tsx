@@ -3,6 +3,7 @@ import styles from "./styles.module.scss";
 import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
 import { useGetPaymentTypesQuery } from "../../../../api/endpoints/PaymentTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface PlayerPaymentsFilterProps {
   clubId: number;
@@ -28,7 +29,10 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
     handleClear,
   } = props;
 
+  const { t } = useTranslation();
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: paymentTypes, isLoading: isPaymentTypesLoading } =
     useGetPaymentTypesQuery({});
 
@@ -42,7 +46,7 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu / Eğitmen adı"
+          placeholder={t("exploreEventsFilterSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
@@ -51,7 +55,7 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
           value={clubId ?? ""}
           className="input-element"
         >
-          <option value="">-- Kulüp --</option>
+          <option value="">-- {t("allClubs")} --</option>
           {clubs?.map((club) => (
             <option key={club.user_id} value={club.user_id}>
               {club.club_name}
@@ -65,7 +69,7 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
           value={paymentTypeId ?? ""}
           className="input-element"
         >
-          <option value="">-- Ödeme Türü --</option>
+          <option value="">-- {t("paymentType")} --</option>
           {paymentTypes?.map((type) => (
             <option key={type.payment_type_id} value={type.payment_type_id}>
               {type.payment_type_name}
@@ -79,9 +83,9 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
           value={status ?? ""}
           className="input-element"
         >
-          <option value="">-- Ödeme Durumu --</option>
-          <option value="success">Başarılı</option>
-          <option value="declined">Başarısız</option>
+          <option value="">-- {t("paymentStatus")} --</option>
+          <option value="success">{t("success")}</option>
+          <option value="declined">{t("declined")}</option>
         </select>
       </div>
       <button
@@ -92,7 +96,7 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

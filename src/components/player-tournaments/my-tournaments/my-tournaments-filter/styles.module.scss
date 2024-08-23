@@ -37,7 +37,11 @@
     background-color: var(--box-background-color);
     padding: $roger-box-padding;
     border: 1px solid $roger-border-color;
+    overflow-x: auto;
 
+    @include small-screen {
+      width: 400px;
+    }
     h3 {
       font-size: 1.7rem;
     }

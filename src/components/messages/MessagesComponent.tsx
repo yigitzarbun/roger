@@ -11,7 +11,13 @@ import styles from "./styles.module.scss";
 
 const MessagesComponent = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
+
   const [textSearch, setTextSearch] = useState<string>("");
+
+  const [isDesktop, setIsDesktop] = useState<boolean>(
+    window.innerWidth >= 1024
+  );
+
   const {
     data: userChats,
     isLoading: isUserChatsLoading,
@@ -26,6 +32,7 @@ const MessagesComponent = () => {
   };
 
   const [otherUserId, setOtherUserId] = useState(null);
+
   const handleOtherUserId = (id: number) => {
     setOtherUserId(id);
   };
@@ -48,12 +55,29 @@ const MessagesComponent = () => {
     setSkipChatMessages(false);
   }, [otherUserId]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const shouldShowNavigation = isDesktop || !otherUserId;
+  const shouldShowChatAreaCloseIcon = !isDesktop && otherUserId;
+
   if (isUserChatsLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["messages-container"]}>
-      <div className={styles.navigation}>
+      <div
+        className={`${styles.navigation} ${
+          !shouldShowNavigation ? styles["hidden-on-mobile"] : ""
+        }`}
+      >
         <MessagesNavigation
           userChats={userChats}
           handleTextSearch={handleTextSearch}
@@ -64,11 +88,15 @@ const MessagesComponent = () => {
         />
       </div>
       <div className={styles["message-area"]}>
-        <MessageArea
-          chatMessages={chatMessages}
-          user={user}
-          refetchChatMessages={refetchChatMessages}
-        />
+        {otherUserId > 0 && (
+          <MessageArea
+            chatMessages={chatMessages}
+            user={user}
+            refetchChatMessages={refetchChatMessages}
+            setOtherUserId={setOtherUserId}
+            shouldShowChatAreaCloseIcon={shouldShowChatAreaCloseIcon}
+          />
+        )}
       </div>
     </div>
   );

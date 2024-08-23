@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .nav {
   width: 100%;
@@ -10,6 +11,16 @@
   background-color: var(--box-background-color);
   padding: $roger-box-padding;
   border-radius: $roger-border-radius;
+
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .new-message-icon {
+      cursor: pointer;
+    }
+  }
   .search-container {
     display: flex;
     flex-direction: column;
@@ -44,6 +55,7 @@
       color: white;
       text-decoration: none;
       text-align: center;
+      width: 150px;
     }
 
     button:hover {
@@ -54,13 +66,12 @@
     display: flex;
     padding: $roger-button-padding;
     border-radius: $roger-border-radius;
-    column-gap: 1vw;
+    column-gap: 2vw;
     img {
       width: 40px;
       height: 40px;
       border-radius: 50%;
       object-fit: cover;
-      margin: 0 auto;
       display: block;
     }
     .user-container {
@@ -76,6 +87,9 @@
     }
     .date {
       font-size: 0.8rem;
+      @include small-screen {
+        display: none;
+      }
     }
   }
   .chat-container:hover {

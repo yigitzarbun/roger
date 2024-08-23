@@ -15,6 +15,7 @@ import EditMatchScoreModal from "../modals/edit/EditMatchScoreModal";
 import PageLoading from "../../../../components/loading/PageLoading";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 import { BsClockHistory } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 interface PlayerMatchScoressProps {
   display: string;
@@ -79,6 +80,8 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
   } = props;
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { t } = useTranslation();
+
   const {
     data: matchScores,
     isLoading: isMatchScoresLoading,
@@ -95,6 +98,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
   });
 
   const pageNumbers = [];
+
   for (let i = 1; i <= matchScores?.totalPages; i++) {
     pageNumbers.push(i);
   }
@@ -116,6 +120,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
 
   const [isMatchScoresFilterModalOpen, setIsMatchScoresFilterModalOpen] =
     useState(false);
+
   const handleOpenMatchScoresFilterModal = () => {
     setIsMatchScoresFilterModalOpen(true);
   };
@@ -148,13 +153,11 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles.title}>Maç Skorları</h2>
-          {matchScores?.matchScores?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenMatchScoresFilterModal}
-              className={styles.filter}
-            />
-          )}
+          <h2 className={styles.title}>{t("matchScoresTitle")}</h2>
+          <FaFilter
+            onClick={handleOpenMatchScoresFilterModal}
+            className={styles.filter}
+          />
         </div>
         {matchScores?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -174,19 +177,19 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Tür</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              <th>Yüzey</th>
-              <th>Mekan</th>
-              <th>Skor</th>
-              <th>Kazanan</th>
-              <th>Skor Onay</th>
+              <th>{t("tablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableSurfaceHeader")}</th>
+              <th>{t("tableStructureHeader")}</th>
+              <th>{t("tableScoreHeader")}</th>
+              <th>{t("tableWinnerHeader")}</th>
+              <th>{t("tableScoreApproveHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -223,14 +226,42 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                     {`${event?.fname} ${event?.lname}`}
                   </Link>
                 </td>
-                <td>{event?.player_level_name}</td>
+                <td>
+                  {event.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : event?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : event?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
+                </td>
                 <td>{event.event_date.slice(0, 10)}</td>
                 <td>{event.event_time.slice(0, 5)}</td>
-                <td>{event?.event_type_name}</td>
+                <td>
+                  {event?.event_type_id === 2
+                    ? t("match")
+                    : event?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{event?.club_name}</td>
                 <td>{event?.court_name}</td>
-                <td>{event?.court_surface_type_name}</td>
-                <td>{event?.court_structure_type_name}</td>
+                <td>
+                  {event?.court_surface_type_id === 1
+                    ? t("courtSurfaceHard")
+                    : event?.court_surface_type_id === 2
+                    ? t("courtSurfaceClay")
+                    : event?.court_surface_type_id === 3
+                    ? t("courtSurfaceGrass")
+                    : t("courtSurfaceCarpet")}
+                </td>
+                <td>
+                  {event?.court_structure_type_id === 1
+                    ? t("courtStructureOpen")
+                    : event?.court_structure_type_id === 2
+                    ? t("courtStructureClosed")
+                    : t("courtStructureHybrid")}
+                </td>
                 <td>
                   {matchScores?.matchScores?.find(
                     (match) =>
@@ -266,7 +297,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                       onClick={() => openAddScoreModal(event)}
                       className={styles["add-score-button"]}
                     >
-                      Skor Paylaş
+                      {t("tableAddScore")}{" "}
                     </button>
                   ) : event.reporter_id === user?.user?.user_id &&
                     event?.match_score_status_type_id === 2 ? (
@@ -279,7 +310,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                       onClick={() => openEditScoreModal(event)}
                       className={styles["edit-score-button"]}
                     >
-                      Onayla / Düzelt
+                      {t("reviewScore")}
                     </button>
                   ) : event?.match_score_status_type_id === 3 ? (
                     <IoIosCheckmarkCircle className={styles.done} />
@@ -292,7 +323,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Tamamlanan etkinlik bulunmamaktadır</p>
+        <p>{t("playerPastEventsEmptyText")}</p>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

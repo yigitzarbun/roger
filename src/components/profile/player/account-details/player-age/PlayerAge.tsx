@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Player } from "../../../../../api/endpoints/PlayersApi";
@@ -11,11 +10,17 @@ import { useAppDispatch } from "../../../../../store/hooks";
 
 const PlayerAge = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
+
   const dispatch = useAppDispatch();
 
+  const { t } = useTranslation();
+
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newBirthYear, setNewBirthYear] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleBirthYearChange = (e) => {
@@ -78,7 +83,7 @@ const PlayerAge = (props) => {
   return (
     <div className={styles["player-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Doğum Yılı</h4>
+        <h4>{t("birthYear")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -86,7 +91,7 @@ const PlayerAge = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Doğum Yılı</label>
+          <label>{t("birthYear")}</label>
           <input
             {...register("birth_year", {
               required: "Bu alan zorunludur",
@@ -103,7 +108,7 @@ const PlayerAge = (props) => {
             onChange={handleBirthYearChange}
           />
           {errors.birth_year && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            <span className={styles["error-field"]}>{t("mandatoryField")}</span>
           )}
         </div>
         <button
@@ -113,7 +118,7 @@ const PlayerAge = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

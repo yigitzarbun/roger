@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { FaFilter } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
@@ -32,6 +32,8 @@ const TrainSearch = (props: TrainSearchProps) => {
     locationId,
     favourite,
   } = props;
+  const { t } = useTranslation();
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -49,7 +51,7 @@ const TrainSearch = (props: TrainSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu adı"
+          placeholder={t("explorePlayersFilterSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
@@ -58,13 +60,19 @@ const TrainSearch = (props: TrainSearchProps) => {
           value={playerLevelId ?? ""}
           className="input-element"
         >
-          <option value="">-- Seviye --</option>
+          <option value="">-- {t("playerLevel")} --</option>
           {playerLevels?.map((player_level) => (
             <option
               key={player_level.player_level_id}
               value={player_level.player_level_id}
             >
-              {player_level.player_level_name}
+              {player_level.player_level_id === 1
+                ? t("playerLevelBeginner")
+                : player_level?.player_level_id === 2
+                ? t("playerLevelIntermediate")
+                : player_level?.player_level_id === 3
+                ? t("playerLevelAdvanced")
+                : t("playerLevelProfessinal")}
             </option>
           ))}
         </select>
@@ -75,9 +83,9 @@ const TrainSearch = (props: TrainSearchProps) => {
           value={gender}
           className="input-element"
         >
-          <option value="">-- Cinsiyet --</option>
-          <option value="female">Kadın</option>
-          <option value="male">Erkek</option>
+          <option value="">-- {t("gender")} --</option>
+          <option value="female">{t("female")}</option>
+          <option value="male">{t("male")}</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
@@ -86,7 +94,7 @@ const TrainSearch = (props: TrainSearchProps) => {
           value={locationId ?? ""}
           className="input-element"
         >
-          <option value="">-- Tüm Konumlar --</option>
+          <option value="">-- {t("allLocations")} --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
               {location.location_name}
@@ -101,10 +109,10 @@ const TrainSearch = (props: TrainSearchProps) => {
           className="input-element"
         >
           <option key={1} value={"false"}>
-            -- Tüm Oyuncular --
+            -- {t("players")} --
           </option>
           <option key={2} value={"true"}>
-            Favoriler
+            {t("onlyFavourites")}
           </option>
         </select>
       </div>
@@ -120,7 +128,7 @@ const TrainSearch = (props: TrainSearchProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

@@ -153,7 +153,12 @@ const AddSubscriptionPackageModal = (
             </div>
           </div>
           <div className={styles["buttons-container"]}>
-            <button className={styles["discard-button"]}>İptal</button>
+            <button
+              onClick={closeAddClubSubscriptionPackageModal}
+              className={styles["discard-button"]}
+            >
+              İptal
+            </button>
             <button
               type="submit"
               className={styles["submit-button"]}

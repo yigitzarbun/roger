@@ -9,7 +9,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
-
+  overflow-x: auto;
   .title-container {
     display: flex;
     justify-content: space-between;
@@ -50,7 +50,6 @@
         height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto;
         display: block;
       }
 
@@ -58,10 +57,15 @@
         color: var(--text-color);
         text-decoration: none;
       }
+
+      .pending-confirmation-text {
+        color: var(--yellow-text);
+        font-size: 1.5rem;
+      }
     }
 
     .cancel-button {
-      background-color: $roger-black-dark;
+      background-color: $roger-red;
       border: none;
       width: 100px;
       padding: $roger-button-padding;
@@ -73,11 +77,12 @@
       text-align: center;
     }
 
-    .cancel-button:hover {
-      background-color: $roger-black-light;
-    }
     .icon {
       cursor: pointer;
     }
+  }
+  .fee-text {
+    color: var(--text-color);
+    font-size: 0.9rem;
   }
 }

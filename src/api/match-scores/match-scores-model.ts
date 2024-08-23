@@ -32,11 +32,14 @@ const matchScoresModel = {
           "players.fname",
           "players.lname",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "event_types.*",
           "clubs.club_name",
           "courts.court_name",
           "court_surface_types.court_surface_type_name",
-          "court_structure_types.court_structure_type_name"
+          "court_surface_types.court_surface_type_id",
+          "court_structure_types.court_structure_type_name",
+          "court_structure_types.court_structure_type_id"
         )
         .from("bookings")
         .leftJoin("players", function () {

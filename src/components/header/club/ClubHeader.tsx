@@ -1,14 +1,8 @@
-import React, { useEffect } from "react";
-
+import React from "react";
 import { NavLink } from "react-router-dom";
-
 import { FaCircle } from "react-icons/fa";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
-import { useAppSelector } from "../../../store/hooks";
 
 interface ClubHeaderProps {
   myStaffRequests: any;

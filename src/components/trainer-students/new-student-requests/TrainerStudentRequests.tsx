@@ -1,35 +1,23 @@
 import React, { useEffect } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../store/hooks";
-
-import {
-  useGetStudentsByFilterQuery,
-  useGetTrainerNewStudentRequestsListQuery,
-  useUpdateStudentMutation,
-} from "../../../api/endpoints/StudentsApi";
-
-import PageLoading from "../../../components/loading/PageLoading";
+import { useUpdateStudentMutation } from "../../../api/endpoints/StudentsApi";
 import { getAge } from "../../../common/util/TimeFunctions";
 import { toast } from "react-toastify";
 
 interface TrainerStudentRequestsProps {
   refetchStudents: () => void;
+  newStudentRequestsList: any[];
+  refetchStudentRequests: () => void;
 }
 const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
-  const { refetchStudents } = props;
+  const { refetchStudents, newStudentRequestsList, refetchStudentRequests } =
+    props;
+
   const user = useAppSelector((store) => store?.user?.user);
 
-  const {
-    data: newStudentRequestsList,
-    isLoading: isNewStudentRequestsListLoading,
-    refetch: refetchStudentRequests,
-  } = useGetTrainerNewStudentRequestsListQuery(user?.user?.user_id);
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
@@ -63,9 +51,6 @@ const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
     }
   }, [isUpdateStudentSuccess]);
 
-  if (isNewStudentRequestsListLoading) {
-    return <PageLoading />;
-  }
   return (
     <div className={styles["result-container"]}>
       <h2 className={styles["result-title"]}>Öğrenciler</h2>

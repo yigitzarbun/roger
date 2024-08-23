@@ -20,6 +20,7 @@ const clubsModel = {
         "clubs.club_name",
         "clubs.image as clubImage",
         "club_types.club_type_name",
+        "club_types.club_type_id",
         "clubs.location_id",
         "locations.location_name",
         db.raw("COUNT(DISTINCT courts.court_id) as courtQuantity"),

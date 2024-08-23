@@ -39,6 +39,10 @@
     border: 1px solid $roger-border-color;
     overflow-y: auto;
     height: 550px;
+    @include small-screen {
+      width: 400px;
+      overflow-x: auto;
+    }
     h3 {
       font-size: 1.7rem;
     }
@@ -199,7 +203,7 @@
           background-color: var(--grey-button-color-hover);
         }
       }
-      .validation-text {
+      .validation {
         color: $roger-red;
         font-size: 0.9rem;
       }

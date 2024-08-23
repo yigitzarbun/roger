@@ -35,7 +35,7 @@
   .pricing {
     margin-top: 1vh;
     font-size: 0.9rem;
-    color: $roger-yellow;
+    color: var(--yellow-text);
   }
   .buttons-container {
     display: flex;
@@ -73,5 +73,9 @@
     .discard-button:hover {
       background-color: var(--grey-button-color-hover);
     }
+  }
+  .validation {
+    color: $roger-red;
+    font-size: 0.9rem;
   }
 }

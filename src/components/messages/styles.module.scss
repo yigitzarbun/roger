@@ -1,16 +1,34 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .messages-container {
   display: flex;
   justify-content: space-between;
   column-gap: 4vw;
+  @include small-screen {
+    flex-direction: column;
+    row-gap: 2vh;
+  }
 
   .navigation {
     width: 30%;
+    @include small-screen {
+      width: 100%;
+    }
+    // Hide navigation when `otherUserId` is not 0 on mobile
+    &.hidden-on-mobile {
+      display: none;
+    }
   }
 
   .message-area {
     width: 70%;
+    @include medium-screen {
+      width: 100%;
+    }
+    @include small-screen {
+      width: 100%;
+    }
   }
 }

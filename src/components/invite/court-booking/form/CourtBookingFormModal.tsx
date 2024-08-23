@@ -864,11 +864,12 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 className={styles["submit-button"]}
                 disabled={isButtonDisabled}
               >
-                {(selectedPlayer || selectedTrainer) && isButtonDisabled
-                  ? buttonText
-                  : "Davet Gönder"}
+                Davet Gönder
               </button>
             </div>
+            {isButtonDisabled && (selectedPlayer || selectedTrainer) && (
+              <p className={styles.validation}>{buttonText}</p>
+            )}
           </form>
         ) : (
           <CourtBookingConfirmation

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactModal from "react-modal";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 interface ExplorePlayersSortModalProps {
@@ -21,6 +21,9 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
     orderByDirection,
     orderByColumn,
   } = props;
+
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={sortModalOpen}
@@ -31,7 +34,7 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseSortModal} />
       <div className={styles["modal-content"]}>
-        <h3>Oyuncuları Sırala</h3>
+        <h3>{t("sortPlayersTitle")}</h3>
         <p
           onClick={() => handleOrderBy("lname", "asc")}
           className={
@@ -40,7 +43,7 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
               : styles.item
           }
         >
-          İsim A'dan Z'ye
+          {t("nameAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("lname", "desc")}
@@ -50,7 +53,7 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
               : styles.item
           }
         >
-          İsim Z'den A'ya
+          {t("nameDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "asc")}
@@ -60,7 +63,7 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
               : styles.item
           }
         >
-          Konum A'dan Z'ye
+          {t("locationAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "desc")}
@@ -70,7 +73,7 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
               : styles.item
           }
         >
-          Konum Z'den A'ya
+          {t("locationDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("player_level_id", "asc")}
@@ -80,7 +83,7 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
               : styles.item
           }
         >
-          Oyuncu Seviyesi Yükselen
+          {t("playerLevelAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("player_level_id", "desc")}
@@ -90,20 +93,20 @@ const ExplorePlayersSortModal = (props: ExplorePlayersSortModalProps) => {
               : styles.item
           }
         >
-          Oyuncu Seviyesi Azalan
+          {t("playerLevelDesc")}
         </p>
         <div className={styles["buttons-container"]}>
           <button
             onClick={handleClearOrderBy}
             className={styles["discard-button"]}
           >
-            Temizle
+            {t("clearButtonText")}
           </button>
           <button
             onClick={handleCloseSortModal}
             className={styles["submit-button"]}
           >
-            Uygula
+            {t("applyButtonText")}
           </button>
         </div>
       </div>

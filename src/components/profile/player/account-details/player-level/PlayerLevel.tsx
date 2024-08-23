@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Player } from "../../../../../api/endpoints/PlayersApi";
@@ -12,11 +11,19 @@ import { useGetPlayerLevelsQuery } from "../../../../../api/endpoints/PlayerLeve
 
 const PlayerLevel = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: playerLevels } = useGetPlayerLevelsQuery({});
+
   const dispatch = useAppDispatch();
+
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newLevel, setNewLevel] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleLevelChange = (e) => {
@@ -83,11 +90,8 @@ const PlayerLevel = (props) => {
   return (
     <div className={styles["player-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Seviye</h4>
-        <p>
-          Güncel seviyeniz diğer kullanıcılara oyununuz hakkında fikir
-          verecektir.
-        </p>
+        <h4>{t("tableLevelHeader")}</h4>
+        <p>{t("levelText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -95,14 +99,20 @@ const PlayerLevel = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Seviye</label>
+          <label>{t("tableLevelHeader")}</label>
           <select
             {...register("player_level_id", { required: true })}
             onChange={handleLevelChange}
           >
             {playerLevels?.map((level) => (
               <option key={level.player_level_id} value={level.player_level_id}>
-                {level.player_level_name}
+                {level.player_level_id === 1
+                  ? t("playerLevelBeginner")
+                  : level?.player_level_id === 2
+                  ? t("playerLevelIntermediate")
+                  : level?.player_level_id === 3
+                  ? t("playerLevelAdvanced")
+                  : t("playerLevelProfessinal")}
               </option>
             ))}
           </select>
@@ -117,7 +127,7 @@ const PlayerLevel = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

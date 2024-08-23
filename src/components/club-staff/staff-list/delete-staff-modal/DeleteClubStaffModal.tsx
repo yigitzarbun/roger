@@ -70,7 +70,7 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
             }
             className={styles["trainer-image"]}
           />
-          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</p>
+          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalışıyor. Bu personeli silmek istediğinize emin misiniz?`}</p>
         </div>
         <div className={styles["buttons-container"]}>
           <button
@@ -83,7 +83,7 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
             onClick={handleDeleteStaff}
             className={styles["submit-button"]}
           >
-            Onayla
+            Personel Sil
           </button>
         </div>
       </div>

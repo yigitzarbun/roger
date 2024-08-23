@@ -9,6 +9,7 @@
   border-radius: $roger-border-radius;
   row-gap: 20px;
   border: 1px $roger-border-color solid;
+  overflow-x: auto;
 
   .title-container {
     display: flex;

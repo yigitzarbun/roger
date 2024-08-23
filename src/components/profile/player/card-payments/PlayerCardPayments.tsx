@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import styles from "./styles.module.scss";
-
 import AddPlayerCardDetails from "./add-card-details/AddPlayerCardDetails";
 
 const PlayerCardPayments = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
+
+  const { t } = useTranslation();
 
   const cardDetailsExist =
     playerDetails?.name_on_card &&
@@ -28,13 +28,9 @@ const PlayerCardPayments = (props) => {
   return (
     <div className={styles["player-payment-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Kart Bilgileri</h4>
-        <p>
-          Antreman, maç ve özel ders etkinlikleri ile kulüp üyeliği işlemleri
-          için kart bilgisi eklemek zorunludur.
-        </p>
+        <h4>{t("cardInformation")}</h4>
+        <p>{t("cardInformationText")}</p>
       </div>
-
       <div className={styles.section}>
         {cardDetailsExist ? (
           <div className={styles.section}>
@@ -44,18 +40,18 @@ const PlayerCardPayments = (props) => {
                 {`${(playerDetails?.card_number).slice(
                   (playerDetails?.card_number).length - 4
                 )}
-            ile biten kartınız aktiftir`}
+            ${t("cardIsActive")}`}
               </p>
             </div>
             <button onClick={handleOpenAddCardModal} className={styles.button}>
-              Kart Bilgilerini Düzenle
+              {t("updateCardInformation")}
             </button>
           </div>
         ) : (
           <div className={styles.section}>
-            <h4>Kayıtlı kart bulunmamaktadır</h4>
+            <h4>{t("noCardInformation")}</h4>
             <button onClick={handleOpenAddCardModal} className={styles.button}>
-              Kart Ekle
+              {t("addCard")}
             </button>
           </div>
         )}

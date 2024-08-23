@@ -187,6 +187,7 @@ const trainersModel = {
       const trainerDetails = await db
         .select(
           "trainers.*",
+          "trainers.gender as trainerGender",
           "trainers.image as trainerImage",
           "trainers.user_id as trainerUserId",
           "trainers.iban as trainerIban",

@@ -1,41 +1,32 @@
 import React, { useEffect, useState } from "react";
-
 import { toast } from "react-toastify";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
-
 import styles from "./styles.module.scss";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import CancelInviteModal from "../../../invite/modals/cancel-modal/CancelInviteModal";
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import { BookingData } from "../../../invite/modals/cancel-modal/CancelInviteModal";
-
 import { useGetTrainerCalendarBookingsByFilterQuery } from "../../../../api/endpoints/BookingsApi";
-
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
-
 import { getAge } from "../../../../common/util/TimeFunctions";
+import { FaFilter } from "react-icons/fa6";
 
 interface TrainerCalendarResultsProps {
   date: string;
   clubId: number;
   eventTypeId: number;
   textSearch: string;
+  handleOpenFilter: () => void;
 }
 const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
-  const { date, clubId, eventTypeId, textSearch } = props;
+  const { date, clubId, eventTypeId, textSearch, handleOpenFilter } = props;
 
-  // fetch data
   const user = useAppSelector((store) => store.user.user.user);
-  const formattedDate = date
-    ? date.split("/").reverse().join("-") // Convert to "YYYY-MM-DD" format
-    : "";
+
+  const formattedDate = date ? date.split("/").reverse().join("-") : "";
+
   const {
     data: trainerBookings,
     isLoading: isTrainerBookingsLoading,
@@ -48,7 +39,6 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     textSearch: textSearch,
   });
 
-  // update booking
   const [updateBooking, { isSuccess }] = useUpdateBookingMutation({});
 
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
@@ -63,6 +53,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
   const handleCancelBooking = () => {
     const cancelledBookingData = {
       booking_id: bookingData?.booking_id,
@@ -97,8 +88,22 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   }
   return (
     <div className={styles["result-container"]}>
-      <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Takvim</h2>
+      <div className={styles["title-container"]}>
+        <div className={styles["title-left"]}>
+          <h2 className={styles.title}>Takvim</h2>
+          <FaFilter
+            onClick={handleOpenFilter}
+            className={
+              clubId > 0 ||
+              eventTypeId > 0 ||
+              textSearch !== "" ||
+              clubId > 0 ||
+              date !== ""
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
+        </div>
       </div>
       {trainerBookings?.length === 0 ? (
         <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>

@@ -24,21 +24,21 @@ const TrainerGender = (props) => {
   const handleButtonDisabled = () => {
     const isGenderEmpty = !newGender.trim();
 
-    if (isGenderEmpty || newGender === trainerDetails?.gender) {
+    if (isGenderEmpty || newGender === trainerDetails?.trainerGender) {
       setButtonDisabled(true);
     } else {
       setButtonDisabled(false);
     }
   };
-
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      gender: trainerDetails?.gender,
+      gender: trainerDetails?.trainerGender,
     },
   });
 
@@ -74,12 +74,19 @@ const TrainerGender = (props) => {
       toast.success("Profil güncellendi");
       refetchTrainerDetails();
       reset(updatedProfile);
+      setButtonDisabled(true);
     }
   }, [isSuccess]);
 
   useEffect(() => {
     handleButtonDisabled();
   }, [newGender]);
+
+  useEffect(() => {
+    if (trainerDetails) {
+      setValue("gender", trainerDetails.trainerGender || "");
+    }
+  }, [trainerDetails, setValue]);
 
   return (
     <div className={styles["trainer-account-details-container"]}>

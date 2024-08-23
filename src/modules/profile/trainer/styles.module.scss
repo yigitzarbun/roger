@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/globals.scss";
+@import "/src/common/styles/z-index.scss";
 
 .trainer-profile-container {
   display: flex;
@@ -20,11 +21,16 @@
   .main {
     display: flex;
     justify-content: space-between;
-
+    @include small-screen {
+      flex-direction: column;
+    }
     .sections {
       display: flex;
       flex-direction: column;
       width: 80%;
+      @include small-screen {
+        width: 100%;
+      }
     }
   }
 }

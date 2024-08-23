@@ -73,7 +73,7 @@ const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
             onClick={handleDeleteStudent}
             className={styles["submit-button"]}
           >
-            Sil
+            Öğrenciyi Sil
           </button>
         </div>
       </div>

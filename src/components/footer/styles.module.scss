@@ -1,4 +1,5 @@
 @import "/src/common/styles/colors.scss";
+@import "/src/common/styles/z-index.scss";
 
 .footer {
   display: flex;
@@ -12,10 +13,17 @@
   .top-container {
     display: flex;
     justify-content: space-between;
+    @include small-screen {
+      flex-direction: column;
+      row-gap: 6vh;
+    }
     .intro-container {
       display: flex;
       flex-direction: column;
       width: 30%;
+      @include small-screen {
+        width: 100%;
+      }
     }
 
     .navigation-container {
@@ -23,6 +31,7 @@
         display: flex;
         width: 30%;
         column-gap: 15px;
+
         .left-nav {
           display: flex;
           flex-direction: column;
@@ -39,6 +48,9 @@
           color: $roger-blue;
         }
       }
+      @include small-screen {
+        display: none;
+      }
     }
 
     .social-container {
@@ -48,7 +60,12 @@
     .corporate-container {
       display: flex;
       flex-direction: column;
-
+      @include small-screen {
+        flex-wrap: wrap;
+        flex-direction: row;
+        column-gap: 4vw;
+        row-gap: 2vh;
+      }
       a {
         color: var(--text-color);
         text-decoration: none;
@@ -62,6 +79,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    @include small-screen {
+      flex-direction: column;
+      align-items: start;
+      row-gap: 4vh;
+      margin-top: 2vh;
+    }
     .copyright-container {
       display: flex;
       align-items: center;

@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .trainer-account-details-container {
   background-color: var(--box-background-color);
@@ -11,7 +12,10 @@
   border: 1px solid $roger-border-color;
   border-radius: $roger-border-radius;
   padding: $roger-box-padding;
-
+  @include small-screen {
+    flex-direction: column;
+    row-gap: 4vh;
+  }
   .title-container {
     display: flex;
     flex-direction: column;
@@ -20,6 +24,11 @@
     h4 {
       font-size: 1.2rem;
     }
+    @include small-screen {
+      p {
+        display: none;
+      }
+    }
   }
 
   .form-container {
@@ -27,6 +36,9 @@
     flex-direction: column;
     align-items: center;
     row-gap: 2vh;
+    @include small-screen {
+      align-items: start;
+    }
     .profile-image {
       border-radius: 50%;
       width: 150px;
@@ -45,6 +57,9 @@
       border-radius: $roger-border-radius;
       font-size: 1rem;
       cursor: pointer;
+      @include small-screen {
+        margin-right: auto;
+      }
     }
     .active-button:hover {
       background-color: $roger-black-dark;

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 const ExploreCourtsFilterModal = (props) => {
   const {
@@ -22,6 +23,8 @@ const ExploreCourtsFilterModal = (props) => {
     subscribedClubs,
     clubs,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isCourtFilterModalOpen}
@@ -35,7 +38,7 @@ const ExploreCourtsFilterModal = (props) => {
         onClick={handleCloseCourtFilterModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Kortları Filtrele</h3>
+        <h3>{t("exploreCourtsFilterTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
@@ -44,7 +47,7 @@ const ExploreCourtsFilterModal = (props) => {
                 value={locationId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Konum --</option>
+                <option value="">-- {t("allLocations")} --</option>
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -61,13 +64,17 @@ const ExploreCourtsFilterModal = (props) => {
                 value={courtStructureType ?? ""}
                 className="input-element"
               >
-                <option value="">-- Mekan --</option>
+                <option value="">-- {t("structure")} --</option>
                 {courtStructureTypes?.map((type) => (
                   <option
                     key={type.court_structure_type_id}
                     value={type.court_structure_type_id}
                   >
-                    {type.court_structure_type_name}
+                    {type?.court_structure_type_id === 1
+                      ? t("courtStructureOpen")
+                      : type?.court_structure_type_id === 2
+                      ? t("courtStructureClosed")
+                      : t("courtStructureHybrid")}
                   </option>
                 ))}
               </select>
@@ -80,13 +87,19 @@ const ExploreCourtsFilterModal = (props) => {
                 value={courtSurfaceType ?? ""}
                 className="input-element"
               >
-                <option value="">-- Zemin --</option>
+                <option value="">-- {t("surface")} --</option>
                 {courtSurfaceTypes?.map((type) => (
                   <option
                     key={type.court_surface_type_id}
                     value={type.court_surface_type_id}
                   >
-                    {type.court_surface_type_name}
+                    {type?.court_surface_type_id === 1
+                      ? t("courtSurfaceHard")
+                      : type?.court_surface_type_id === 2
+                      ? t("courtSurfaceClay")
+                      : type?.court_surface_type_id === 3
+                      ? t("courtSurfaceGrass")
+                      : t("courtSurfaceCarpet")}
                   </option>
                 ))}
               </select>
@@ -97,7 +110,7 @@ const ExploreCourtsFilterModal = (props) => {
                 value={clubId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Kulüp --</option>
+                <option value="">-- {t("clubs")} --</option>
                 {clubs?.map((club) => (
                   <option key={club.club_id} value={club.club_id}>
                     {club.club_name}
@@ -114,23 +127,23 @@ const ExploreCourtsFilterModal = (props) => {
                 className="input-element"
               >
                 <option key={1} value={"false"}>
-                  -- Tüm Kulüpler --
+                  -- {t("clubs")} --
                 </option>
                 <option key={2} value={"true"}>
-                  Yalnızca üyeliğim olan kulüpler
+                  {t("clubsSubscribed")}
                 </option>
               </select>
             </div>
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleCloseCourtFilterModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

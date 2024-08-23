@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import { useGetUserTypesQuery } from "../../../api/endpoints/UserTypesApi";
@@ -27,6 +26,8 @@ const FavouritesFilter = (props: TrainSearchProps) => {
     textSearch,
   } = props;
 
+  const { t } = useTranslation();
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -44,7 +45,7 @@ const FavouritesFilter = (props: TrainSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Eğitmen adı"
+          placeholder={t("tableNameHeader")}
         />
       </div>
 
@@ -54,7 +55,7 @@ const FavouritesFilter = (props: TrainSearchProps) => {
           value={locationId ?? ""}
           className="input-element"
         >
-          <option value="">-- Konum --</option>
+          <option value="">-- {t("tableLocationHeader")} --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
               {location.location_name}
@@ -68,12 +69,20 @@ const FavouritesFilter = (props: TrainSearchProps) => {
           value={userTypeId ?? ""}
           className="input-element"
         >
-          <option value="">-- Tür --</option>
-          {userTypes?.map((userType) => (
-            <option key={userType.user_type_id} value={userType.user_type_id}>
-              {userType.user_type_name}
-            </option>
-          ))}
+          <option value="">-- {t("tableClubTypeHeader")} --</option>
+          {userTypes
+            ?.filter((type) => type.user_type_id <= 3)
+            .map((userType) => (
+              <option key={userType.user_type_id} value={userType.user_type_id}>
+                {userType?.user_type_id === 1
+                  ? t("userTypePlayer")
+                  : userType?.user_type_id === 2
+                  ? t("userTypeTrainer")
+                  : userType?.user_type_id === 3
+                  ? t("userTypeClub")
+                  : ""}
+              </option>
+            ))}
         </select>
       </div>
       <button
@@ -84,7 +93,7 @@ const FavouritesFilter = (props: TrainSearchProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

@@ -13,6 +13,7 @@ import paths from "../../../routing/Paths";
 import { getAge } from "../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../components/invite/lesson/form/LessonInviteFormModal";
 import { useUpdateStudentMutation } from "../../../api/endpoints/StudentsApi";
+import { useTranslation } from "react-i18next";
 
 interface PlayerTrainersResultsProps {
   playerTrainers: any;
@@ -33,7 +34,8 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
     currentPage,
     refetchPlayerTrainers,
   } = props;
-
+  const { t } = useTranslation();
+  console.log(playerTrainers);
   const {
     data: myFavouriteTrainers,
     isLoading: isMyFavouritesLoading,
@@ -47,22 +49,29 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
   };
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
+
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
+
   const pageNumbers = [];
+
   for (let i = 1; i <= playerTrainers?.totalPages; i++) {
     pageNumbers.push(i);
   }
+
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
+
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
@@ -94,7 +103,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Eğitmenlerim</h2>
+          <h2 className={styles["result-title"]}>{t("myTrainersTitle")}</h2>
         </div>
         {playerTrainers?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -121,17 +130,17 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Eğitmen</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Kulüp</th>
-              <th>Ücret</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Öğrencilik</th>
-              <th>Ders</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tableTrainerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableStudentshipHeader")}</th>
+              <th>{t("tableLessonHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -182,7 +191,15 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
                     <p>{`${trainer.trainer_fname} ${trainer.trainer_lname}`}</p>
                   </Link>
                 </td>
-                <td>{trainer?.trainer_experience_type_name}</td>
+                <td>
+                  {trainer?.trainer_experience_type_id === 1
+                    ? t("trainerLevelBeginner")
+                    : trainer?.trainer_experience_type_id === 2
+                    ? t("trainerLevelIntermediate")
+                    : trainer?.trainer_experience_type_id === 3
+                    ? t("trainerLevelAdvanced")
+                    : t("trainerLevelProfessional")}
+                </td>
                 <td>
                   {trainer?.employment_status === "accepted" &&
                   trainer?.club_name
@@ -190,7 +207,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
                     : "Bağımsız"}
                 </td>
                 <td>{trainer?.price_hour} TL</td>
-                <td>{trainer?.gender}</td>
+                <td>{trainer.gender === "female" ? t("female") : t("male")}</td>
                 <td>{getAge(trainer.trainer_birth_year)}</td>
                 <td>{trainer?.location_name}</td>
                 <td>
@@ -203,7 +220,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
                     }
                     className={styles["cancel-student-button"]}
                   >
-                    Öğrenciliği sil
+                    {t("tableDeleteStudentshipButtonText")}
                   </button>
                 </td>
                 <td>
@@ -213,7 +230,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
                     }
                     className={styles["lesson-button"]}
                   >
-                    Ders al
+                    {t("tableLessonInviteButtonText")}
                   </button>
                 </td>
               </tr>

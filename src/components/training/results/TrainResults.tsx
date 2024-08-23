@@ -16,6 +16,7 @@ import { getAge } from "../../../common/util/TimeFunctions";
 import TrainingInviteFormModal from "../../../components/invite/training/form/TrainingInviteFormModal";
 import TrainSort from "../sort/TrainSort";
 import { FaFilter } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 interface TrainResultsProps {
   playerLevelId: number;
@@ -35,14 +36,19 @@ const TrainResults = (props: TrainResultsProps) => {
     favourite,
     handleOpenFilter,
   } = props;
+  const { t } = useTranslation();
 
   const { user } = useAppSelector((store) => store.user);
+
   const [opponentUserId, setOpponentUserId] = useState(null);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
   const handleOpenInviteModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsInviteModalOpen(true);
   };
+
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
@@ -93,14 +99,21 @@ const TrainResults = (props: TrainResultsProps) => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
+
   const levelId = Number(playerLevelId) ?? null;
+
   const selectedGender = gender ?? "";
+
   const locationIdValue = Number(locationId) ?? null;
+
   const playerAge = user?.playerDetails?.birth_year;
+
   const playerLocationId = user?.playerDetails?.location_id;
+
   const logicLevelId = user?.playerDetails?.player_level_id;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -202,15 +215,7 @@ const TrainResults = (props: TrainResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <div className={styles["title-left"]}>
-          <h2 className={styles.title}>Antreman</h2>
-          <BsSortDown
-            className={
-              orderByColumn === ""
-                ? styles["passive-sort"]
-                : styles["active-sort"]
-            }
-            onClick={handleOpenTrainSortModal}
-          />
+          <h2 className={styles.title}>{t("trainTitle")}</h2>
           <FaFilter
             onClick={handleOpenFilter}
             className={
@@ -221,6 +226,14 @@ const TrainResults = (props: TrainResultsProps) => {
                 ? styles["active-filter"]
                 : styles.filter
             }
+          />
+          <BsSortDown
+            className={
+              orderByColumn === ""
+                ? styles["passive-sort"]
+                : styles["active-sort"]
+            }
+            onClick={handleOpenTrainSortModal}
           />
         </div>
 
@@ -240,23 +253,20 @@ const TrainResults = (props: TrainResultsProps) => {
       </div>
       {isPlayersLoading && <p>Yükleniyor...</p>}
       {players && filteredPlayers.length === 0 && (
-        <p>
-          Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("playersEmptyText")}</p>
       )}
       {players && filteredPlayers.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Favori</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Antreman</th>
+              <th>{t("tableFavouriteHeader")}</th>
+              <th>{t("tablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableTrainHeader")}</th>
               <th></th>
             </tr>
           </thead>
@@ -304,8 +314,16 @@ const TrainResults = (props: TrainResultsProps) => {
                     className={styles["player-name"]}
                   >{`${player.fname} ${player.lname}`}</Link>
                 </td>
-                <td>{player?.player_level_name}</td>
-                <td>{player.gender}</td>
+                <td>
+                  {player.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : player?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : player?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
+                </td>
+                <td>{player.gender === "male" ? t("male") : t("female")}</td>
                 <td>{getAge(Number(player.birth_year))}</td>
                 <td>{player?.location_name}</td>
                 <td>
@@ -313,7 +331,7 @@ const TrainResults = (props: TrainResultsProps) => {
                     onClick={() => handleOpenInviteModal(player?.user_id)}
                     className={styles["training-button"]}
                   >
-                    Antreman yap
+                    {t("tableTrainButtonText")}
                   </button>
                 </td>
               </tr>

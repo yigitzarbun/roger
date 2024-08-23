@@ -195,6 +195,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["profile-section"]}>
       <div className={styles["image-container"]}>
@@ -285,10 +286,12 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                       Üye olmak için kart bilgilerini ekle
                     </button>
                   )}
-                {isUserTrainer &&
-                (!isTrainerStaff ||
-                  isTrainerStaff?.length === 0 ||
-                  isTrainerStaff?.[0]?.employment_status === "declined") ? (
+                {(isUserTrainer &&
+                  (!isTrainerStaff ||
+                    isTrainerStaff?.length === 0 ||
+                    isTrainerStaff?.[0]?.employment_status === "declined")) ||
+                isTrainerStaff?.[0]?.employment_status ===
+                  "terminated_by_club" ? (
                   <button
                     onClick={openEmploymentModal}
                     className={styles["interaction-button"]}

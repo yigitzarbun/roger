@@ -1,6 +1,6 @@
 import React from "react";
-
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface ExploreNavigationProps {
   display: string;
@@ -11,6 +11,8 @@ const ExploreNavigation = ({
   display,
   handleDisplay,
 }: ExploreNavigationProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles["nav-container"]}>
       <button
@@ -21,7 +23,7 @@ const ExploreNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Oyuncular
+        {t("explorePlayersTabTitle")}
       </button>
       <button
         onClick={() => handleDisplay("trainers")}
@@ -31,7 +33,7 @@ const ExploreNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Eğitmenler
+        {t("exploreTrainersTabTitle")}
       </button>
       <button
         onClick={() => handleDisplay("clubs")}
@@ -41,7 +43,7 @@ const ExploreNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Kulüpler
+        {t("exploreClubsTabTitle")}
       </button>
       <button
         onClick={() => handleDisplay("courts")}
@@ -51,7 +53,7 @@ const ExploreNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Kortlar
+        {t("exploreCourtsTabTitle")}
       </button>
     </div>
   );

@@ -42,7 +42,7 @@ const TrainerRequestsNavigation = ({
       >
         Gelen Davetler
         <span className={styles.notification}>
-          {incomingBookings?.length > 0 && incomingBookings?.length}
+          {incomingBookings?.length > 0 && ` (${incomingBookings?.length})`}{" "}
         </span>
       </button>
     </div>

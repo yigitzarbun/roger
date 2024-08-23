@@ -1,13 +1,8 @@
 import React, { useEffect } from "react";
-
 import ReactModal from "react-modal";
-
 import { localUrl } from "../../../../../common/constants/apiConstants";
-
 import PageLoading from "../../../../../components/loading/PageLoading";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../../store/hooks";
 import { useGetTrainerByUserIdQuery } from "../../../../../api/endpoints/TrainersApi";
 import {

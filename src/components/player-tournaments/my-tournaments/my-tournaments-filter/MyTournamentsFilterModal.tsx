@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface MyTournamentsFilterModalProps {
   textSearch: string;
@@ -30,6 +31,8 @@ const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
     clubs,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={myTournamentsFilterModal}
@@ -43,7 +46,7 @@ const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
         onClick={handleCloseMyTournamentsModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Turnuvaları Filtrele</h3>
+        <h3>{t("filterTournamentsTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["input-outer-container"]}>
             <div className={styles["search-container"]}>
@@ -51,7 +54,7 @@ const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
                 onChange={handleTextSearch}
                 value={textSearch}
                 type="text"
-                placeholder="Kulüp ve turnuvalarda ara"
+                placeholder={t("filterTournamentsSearchPlaceHolder")}
               />
             </div>
           </div>
@@ -62,7 +65,7 @@ const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
                 value={locationId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Konum --</option>
+                <option value="">-- {t("allLocations")} --</option>
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -79,7 +82,7 @@ const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
                 value={clubId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Kulüp --</option>
+                <option value="">-- {t("allClubs")} --</option>
                 {clubs?.map((club) => (
                   <option key={club.user_id} value={club.user_id}>
                     {club.club_name}
@@ -90,13 +93,13 @@ const MyTournamentsFilterModal = (props: MyTournamentsFilterModalProps) => {
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleCloseMyTournamentsModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

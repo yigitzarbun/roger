@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
-
+import { useTranslation } from "react-i18next";
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
 import { useGetClubsQuery } from "../../../api/endpoints/ClubsApi";
@@ -34,6 +34,7 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
     clubId,
     textSearch,
   } = props;
+  const { t } = useTranslation();
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
@@ -44,6 +45,7 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
   } = useGetTrainerExperienceTypesQuery({});
 
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   if (isLocationsLoading || istrainerExperienceTypesLoading || isClubsLoading) {
     return <PageLoading />;
   }
@@ -54,7 +56,7 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Eğitmen adı"
+          placeholder={t("exploreTrainersFilterSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
@@ -63,13 +65,19 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
           value={trainerLevelId ?? ""}
           className="input-element"
         >
-          <option value="">-- Seviye --</option>
+          <option value="">-- {t("tableLevelHeader")} --</option>
           {trainerExperienceTypes?.map((trainer_experience_type) => (
             <option
               key={trainer_experience_type.trainer_experience_type_id}
               value={trainer_experience_type.trainer_experience_type_id}
             >
-              {trainer_experience_type.trainer_experience_type_name}
+              {trainer_experience_type?.trainer_experience_type_id === 1
+                ? t("trainerLevelBeginner")
+                : trainer_experience_type?.trainer_experience_type_id === 2
+                ? t("trainerLevelIntermediate")
+                : trainer_experience_type?.trainer_experience_type_id === 3
+                ? t("trainerLevelAdvanced")
+                : t("trainerLevelProfessional")}
             </option>
           ))}
         </select>
@@ -80,9 +88,9 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
           value={gender}
           className="input-element"
         >
-          <option value="">-- Cinsiyet --</option>
-          <option value="female">Kadın</option>
-          <option value="male">Erkek</option>
+          <option value="">-- {t("gender")} --</option>
+          <option value="female">{t("female")}</option>
+          <option value="male">{t("male")}</option>
         </select>
       </div>
       <div className={styles["input-container"]}>
@@ -91,7 +99,7 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
           value={locationId ?? ""}
           className="input-element"
         >
-          <option value="">-- Konum --</option>
+          <option value="">-- {t("allLocations")} --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
               {location.location_name}
@@ -105,7 +113,7 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
           value={clubId ?? ""}
           className="input-element"
         >
-          <option value="">-- Kulüp --</option>
+          <option value="">-- {t("allClubs")} --</option>
           {clubs?.map((club) => (
             <option key={club.club_id} value={club.club_id}>
               {club.club_name}
@@ -126,7 +134,7 @@ const PlayerTrainersSearch = (props: PlayerTrainersSearchProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

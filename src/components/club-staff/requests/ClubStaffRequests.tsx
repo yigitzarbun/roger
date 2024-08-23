@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import AcceptClubStaffModal from "./accept-staff-modal/AcceptClubStaffModal";
 import DeclineClubStaffModal from "./decline-staff-moda/DeclineClubStaffModal";
 import { currentYear } from "../../../common/util/TimeFunctions";
@@ -14,6 +10,7 @@ interface ClubStaffRequestsProps {
   myStaffRequests: any;
   refetchMyStaffRequests: any;
 }
+
 const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
   const { myStaffRequests, refetchMyStaffRequests } = props;
 
@@ -26,6 +23,7 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
     setSelectedClubStaffUser(request);
     setIsAcceptClubStaffModalOpen(true);
   };
+
   const closeAcceptClubStaffModal = () => {
     setSelectedClubStaffUser(null);
     setIsAcceptClubStaffModalOpen(false);
@@ -47,7 +45,7 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
   useEffect(() => {
     refetchMyStaffRequests();
   }, [isAcceptClubStaffModalOpen, isDeclineClubStaffModalOpen]);
-
+  console.log(myStaffRequests);
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -61,14 +59,13 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Personel</th>
+              <th>İsim</th>
               <th>Yaş</th>
               <th>Cinsiyet</th>
               <th>Tecrübe</th>
               <th>Konum</th>
               <th>Rol</th>
-              <th>Onay Durumu</th>
             </tr>
           </thead>
           <tbody>
@@ -101,13 +98,6 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                 <td>{request?.trainer_experience_type_name}</td>
                 <td>{request?.location_name}</td>
                 <td>{request?.club_staff_role_type_name}</td>
-                <td>
-                  {request.employment_status === "pending" ? (
-                    <p className={styles["pending-text"]}>Onay Bekliyor</p>
-                  ) : (
-                    <p className={styles["confirmed-text"]}>Onaylandı</p>
-                  )}
-                </td>
                 <td>
                   <button
                     onClick={() => openDeclineClubStaffModal(request)}

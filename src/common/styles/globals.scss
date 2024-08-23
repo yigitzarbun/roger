@@ -39,6 +39,9 @@ body {
   object-fit: cover;
   object-position: bottom;
   border-radius: $roger-border-radius;
+  @include small-screen {
+    display: none;
+  }
 }
 
 // Dark Theme

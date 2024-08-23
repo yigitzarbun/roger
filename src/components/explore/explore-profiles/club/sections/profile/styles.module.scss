@@ -1,5 +1,6 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .profile-section {
   background-color: var(--box-background-color);
@@ -7,13 +8,18 @@
   border-radius: $roger-border-radius;
   width: 100%;
   display: flex;
-  //  justify-content: space-between;
   column-gap: 5vw;
   border: 1px solid $roger-border-color;
-
+  overflow-x: auto;
+  @include small-screen {
+    flex-direction: column;
+  }
   .image-container {
     display: flex;
     column-gap: 1vw;
+    @include small-screen {
+      column-gap: 2vw;
+    }
     .profile-image {
       width: 200px;
       height: 200px;
@@ -48,6 +54,8 @@
         flex-direction: column;
         row-gap: 4vh;
         width: 100%;
+        overflow-x: auto;
+
         table {
           width: 100%;
           text-align: left;
@@ -79,6 +87,9 @@
           display: flex;
           align-items: center;
           column-gap: 3vw;
+          @include small-screen {
+            margin-bottom: 4vh;
+          }
           .icons {
             display: flex;
             align-items: center;
@@ -125,6 +136,14 @@
             .interaction-button:hover {
               background-color: $roger-black-light;
               cursor: pointer;
+            }
+            .pending {
+              color: var(--yellow-text);
+              font-size: 0.9rem;
+            }
+            .accepted {
+              color: var(--green-text);
+              font-size: 0.9rem;
             }
           }
         }

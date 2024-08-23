@@ -10,6 +10,8 @@
   display: flex;
   column-gap: 5vw;
   border: 1px solid $roger-border-color;
+  overflow-x: auto;
+
   @include small-screen {
     flex-direction: column;
   }

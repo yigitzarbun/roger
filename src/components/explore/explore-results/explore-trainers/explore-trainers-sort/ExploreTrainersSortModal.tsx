@@ -1,6 +1,6 @@
 import React from "react";
 import ReactModal from "react-modal";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 interface ExploreTrainersSortModalProps {
@@ -21,6 +21,8 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
     orderByDirection,
     orderByColumn,
   } = props;
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={sortModalOpen}
@@ -31,7 +33,7 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseSortModal} />
       <div className={styles["modal-content"]}>
-        <h3>Eğitmenleri Sırala</h3>
+        <h3>{t("sortTrainersTitle")}</h3>
         <p
           onClick={() => handleOrderBy("lname", "asc")}
           className={
@@ -40,7 +42,7 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
               : styles.item
           }
         >
-          İsim A'dan Z'ye
+          {t("nameAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("lname", "desc")}
@@ -50,7 +52,7 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
               : styles.item
           }
         >
-          İsim Z'den A'ya
+          {t("nameDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "asc")}
@@ -60,7 +62,7 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
               : styles.item
           }
         >
-          Konum A'dan Z'ye
+          {t("locationAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("location_id", "desc")}
@@ -70,7 +72,7 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
               : styles.item
           }
         >
-          Konum Z'den A'ya
+          {t("locationDesc")}
         </p>
         <p
           onClick={() => handleOrderBy("trainer_experience_type_id", "asc")}
@@ -81,7 +83,7 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
               : styles.item
           }
         >
-          Eğitmen Deneyim Seviyesi Yükselen
+          {t("trainerLevelAsc")}
         </p>
         <p
           onClick={() => handleOrderBy("trainer_experience_type_id", "desc")}
@@ -92,20 +94,20 @@ const ExploreTrainersSortModal = (props: ExploreTrainersSortModalProps) => {
               : styles.item
           }
         >
-          Eğitmen Deneyim Seviyesi Azalan
+          {t("trainerLevelDesc")}
         </p>
         <div className={styles["buttons-container"]}>
           <button
             onClick={handleClearOrderBy}
             className={styles["discard-button"]}
           >
-            Temizle
+            {t("clearButtonText")}
           </button>
           <button
             onClick={handleCloseSortModal}
             className={styles["submit-button"]}
           >
-            Uygula
+            {t("applyButtonText")}
           </button>
         </div>
       </div>

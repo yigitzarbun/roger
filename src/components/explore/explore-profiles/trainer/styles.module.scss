@@ -1,11 +1,14 @@
 @import "/src/common/styles/colors.scss";
 @import "/src/common/styles/common.scss";
+@import "/src/common/styles/z-index.scss";
 
 .profile {
   display: flex;
   flex-direction: column;
   row-gap: 10vh;
-
+  @include small-screen {
+    row-gap: 5vh;
+  }
   .top-sections-container {
     display: flex;
     justify-content: space-between;
