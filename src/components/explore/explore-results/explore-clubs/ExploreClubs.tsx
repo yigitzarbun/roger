@@ -445,7 +445,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                         disabled={!playerPaymentDetailsExist}
                         className={styles["subscribe-button"]}
                       >
-                        Üye Ol
+                        {t("subscribe")}
                       </button>
                     ) : club?.clubHasSubscriptionPackages &&
                       !playerPaymentDetailsExist ? (
@@ -453,7 +453,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                         onClick={handleOpenPaymentModal}
                         className={styles["payment-button"]}
                       >
-                        Ödeme bilgilerini ekle
+                        {t("addPaymentDetails")}
                       </button>
                     ) : (
                       <ImBlocked className={styles.blocked} />

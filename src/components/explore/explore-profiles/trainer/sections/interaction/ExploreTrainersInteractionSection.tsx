@@ -21,6 +21,7 @@ import { getAge } from "../../../../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
 import StudentApplicationModal from "../../../../../../components/lesson/studentship-modal/StudentApplicationModal";
+import { useTranslation } from "react-i18next";
 
 interface ExploreTrainersInteractionSectionProps {
   user_id: number;
@@ -31,17 +32,22 @@ export const ExploreTrainersInteractionSection = (
 ) => {
   const { user_id, selectedTrainer } = props;
 
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const profileImage = selectedTrainer?.[0]?.trainerImage;
 
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
   const handleOpenLessonModal = (userId: number) => {
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
@@ -85,6 +91,7 @@ export const ExploreTrainersInteractionSection = (
   const [trainerName, setTrainerName] = useState("");
 
   const [selectedTrainerImage, setSelectedTrainerImage] = useState("");
+
   const [studentApplicationModalOpen, setStudentApplicationModalOpen] =
     useState(false);
 
@@ -219,9 +226,11 @@ export const ExploreTrainersInteractionSection = (
   };
 
   const [messageModal, setMessageModal] = useState(false);
+
   const handleOpenMessageModal = () => {
     setMessageModal(true);
   };
+
   const closeMessageModal = () => {
     setMessageModal(false);
   };
@@ -262,7 +271,7 @@ export const ExploreTrainersInteractionSection = (
         />
         <div className={styles["name-container"]}>
           <h2>{`${selectedTrainer?.[0]?.fname} ${selectedTrainer?.[0]?.lname}`}</h2>
-          <h4>Eğitmen</h4>
+          <h4>{t("userTypeTrainer")}</h4>
           <div className={styles.reviews}>
             {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 &&
               generateStars(selectedTrainer?.[0]?.averagereviewscore).map(
@@ -270,7 +279,7 @@ export const ExploreTrainersInteractionSection = (
               )}
             {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 && (
               <p className={styles["reviews-text"]}>
-                {selectedTrainer?.[0]?.reviewscorecount} değerlendirme
+                {selectedTrainer?.[0]?.reviewscorecount} {t("reviews")}
               </p>
             )}
           </div>
@@ -282,14 +291,14 @@ export const ExploreTrainersInteractionSection = (
             <table>
               <thead>
                 <tr>
-                  <th>Yaş</th>
-                  <th>Cinsiyet</th>
-                  <th>Konum</th>
-                  <th>Kulüp</th>
-                  <th>Seviye</th>
-                  <th>Ders</th>
-                  <th>Öğrenci</th>
-                  <th>Ücret</th>
+                  <th>{t("tableAgeHeader")}</th>
+                  <th>{t("tableGenderHeader")}</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableClubHeader")}</th>
+                  <th>{t("tableLevelHeader")}</th>
+                  <th>{t("tableLessonHeader")}</th>
+                  <th>{t("students")}</th>
+                  <th>{t("tablePriceHeader")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -300,9 +309,17 @@ export const ExploreTrainersInteractionSection = (
                   <td>
                     {selectedTrainer?.[0]?.employment_status === "accepted"
                       ? selectedTrainer?.[0]?.club_name
-                      : "Bağımsız"}
+                      : t("trainerIndependent")}
                   </td>
-                  <td>{selectedTrainer?.[0]?.trainer_experience_type_name}</td>
+                  <td>
+                    {selectedTrainer?.[0]?.trainer_experience_type_id === 1
+                      ? t("trainerLevelBeginner")
+                      : selectedTrainer?.[0]?.trainer_experience_type_id === 2
+                      ? t("trainerLevelIntermediate")
+                      : selectedTrainer?.[0]?.trainer_experience_type_id === 3
+                      ? t("trainerLevelAdvanced")
+                      : t("trainerLevelProfessional")}
+                  </td>
                   <td>{selectedTrainer?.[0]?.lessoncount}</td>
                   <td>{selectedTrainer?.[0]?.studentcount}</td>
                   <td>
@@ -344,7 +361,7 @@ export const ExploreTrainersInteractionSection = (
                     }
                     className={styles["interaction-button"]}
                   >
-                    Ders al
+                    {t("tableLessonInviteButtonText")}
                   </button>
                 )}
 
@@ -359,7 +376,7 @@ export const ExploreTrainersInteractionSection = (
                         }
                         className={styles["interaction-button"]}
                       >
-                        Öğrenciliği sil
+                        {t("tableDeleteStudentshipButtonText")}
                       </button>
                     ) : (
                       <button
@@ -373,7 +390,7 @@ export const ExploreTrainersInteractionSection = (
                         }
                         className={styles["interaction-button"]}
                       >
-                        Öğrenci Ol
+                        {t("studentshipApply")}
                       </button>
                     )}
                   </p>
@@ -384,7 +401,7 @@ export const ExploreTrainersInteractionSection = (
         </div>
         {isStudentPending() && (
           <p className={styles["pending-confirmation-text"]}>
-            Öğrencilik için eğitmen onayı bekleniyor
+            {t("studentshipApprovalAwaiting")}
           </p>
         )}
       </div>

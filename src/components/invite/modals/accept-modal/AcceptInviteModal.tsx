@@ -1,8 +1,7 @@
 import React from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 export type AcceptBookingData = {
   booking_id: number;
@@ -38,10 +37,17 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   } = props;
 
   const isUserPlayer = user?.user_type_id === 1;
+
   const isUserTrainer = user?.user_type_id === 2;
+
   const isEventTraining = acceptBookingData?.event_type_id === 1;
+
   const isEventMatch = acceptBookingData?.event_type_id === 2;
+
   const isEventLesson = acceptBookingData?.event_type_id === 3;
+
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isAcceptModalOpen}
@@ -52,7 +58,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseAcceptModal} />
       <div className={styles["modal-content"]}>
-        <h1>Daveti Onayla</h1>
+        <h1>{t("acceptBooking")}</h1>
         <div className={styles["opponent-container"]}>
           <img
             src={
@@ -80,14 +86,14 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
         <table>
           <thead>
             <tr>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              <th>Tür</th>
-              {isUserPlayer && isEventLesson && <th>Kort Ücreti</th>}
-              {isEventLesson && <th>Ders Ücreti</th>}
-              {isUserPlayer && <th>Toplam Tutar</th>}
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              {isUserPlayer && isEventLesson && <th>{t("courtFee")}</th>}
+              {isEventLesson && <th>{t("lessonFee")}</th>}
+              {isUserPlayer && <th>{t("total")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -98,7 +104,23 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
               <td>{acceptBookingData?.event_time.slice(0, 5)}</td>
               <td>{acceptBookingData?.club_name}</td>
               <td>{acceptBookingData?.court_name}</td>
-              <td>{acceptBookingData?.event_type_name}</td>
+              <td>
+                {acceptBookingData?.event_type_id === 1
+                  ? t("training")
+                  : acceptBookingData?.event_type_id === 2
+                  ? t("match")
+                  : acceptBookingData?.event_type_id === 3
+                  ? t("lesson")
+                  : acceptBookingData?.event_type_id === 4
+                  ? t("externalTraining")
+                  : acceptBookingData?.event_type_id === 5
+                  ? t("externalLesson")
+                  : acceptBookingData?.event_type_id === 6
+                  ? t("groupLesson")
+                  : acceptBookingData?.event_type_id === 7
+                  ? t("tournamentMatch")
+                  : ""}
+              </td>
               {isUserPlayer && isEventLesson && (
                 <td>{acceptBookingData?.court_price} TL</td>
               )}
@@ -129,13 +151,13 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
             onClick={handleCloseAcceptModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleAcceptBooking}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("confirm")}
           </button>
         </div>
       </div>

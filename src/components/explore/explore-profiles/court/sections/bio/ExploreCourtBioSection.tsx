@@ -1,13 +1,17 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { useTranslation } from "react-i18next";
 
 interface ExploreCourtBioSectionProps {
   selectedCourt: any;
 }
 const ExploreCourtBioSection = (props: ExploreCourtBioSectionProps) => {
   const { selectedCourt } = props;
+
   const profileImage = selectedCourt?.[0]?.courtImage;
+
+  const { t } = useTranslation();
 
   return (
     <div className={styles["bio-section"]}>
@@ -24,7 +28,7 @@ const ExploreCourtBioSection = (props: ExploreCourtBioSectionProps) => {
 
         <div className={styles["name-container"]}>
           <h2>{`${selectedCourt?.[0]?.court_name}`}</h2>
-          <h4>Kort</h4>
+          <h4>{t("tableCourtHeader")}</h4>
         </div>
       </div>
       <div className={styles["bio-container"]}>
@@ -33,33 +37,47 @@ const ExploreCourtBioSection = (props: ExploreCourtBioSectionProps) => {
             <table>
               <thead>
                 <tr>
-                  <th>Mekan</th>
-                  <th>Zemin</th>
-                  <th>Kulüp</th>
-                  <th>Konum</th>
-                  <th>Açılış</th>
-                  <th>Kapanış</th>
+                  <th>{t("tableStructureHeader")}</th>
+                  <th>{t("tableSurfaceHeader")}</th>
+                  <th>{t("tableClubHeader")}</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableOpeningTimeHeader")}</th>
+                  <th>{t("tableClosingTimeHeader")}</th>
                   <th>
                     {selectedCourt?.[0]?.higher_price_for_non_subscribers &&
                     selectedCourt?.[0]?.price_hour_non_subscriber
-                      ? "Üye Ücret"
-                      : "Ücret"}
+                      ? t("tableMemberPrice")
+                      : t("tablePriceHeader")}
                   </th>
                   {selectedCourt?.[0]?.higher_price_for_non_subscribers &&
                     selectedCourt?.[0]?.price_hour_non_subscriber && (
-                      <th>Misafir Ücret</th>
+                      <th>{t("tablePriceHeader")}</th>
                     )}
                 </tr>
               </thead>
               <tbody>
                 <tr className={styles["court-row"]}>
-                  <td>{selectedCourt?.[0]?.court_structure_type_name}</td>
-                  <td>{selectedCourt?.[0]?.court_surface_type_name}</td>
+                  <td>
+                    {selectedCourt?.[0]?.court_structure_type_id === 1
+                      ? t("courtStructureOpen")
+                      : selectedCourt?.[0]?.court_structure_type_id === 2
+                      ? t("courtStructureClosed")
+                      : t("courtStructureHybrid")}
+                  </td>
+                  <td>
+                    {selectedCourt?.[0]?.court_surface_type_id === 1
+                      ? t("courtSurfaceHard")
+                      : selectedCourt?.[0]?.court_surface_type_id === 2
+                      ? t("courtSurfaceClay")
+                      : selectedCourt?.[0]?.court_surface_type_id === 3
+                      ? t("courtSurfaceGrass")
+                      : t("courtSurfaceCarpet")}
+                  </td>
                   <td>{selectedCourt?.[0]?.club_name}</td>
                   <td>{selectedCourt?.[0]?.location_name}</td>
                   <td>{selectedCourt?.[0]?.opening_time.slice(0, 5)}</td>
                   <td>{selectedCourt?.[0]?.closing_time.slice(0, 5)}</td>
-                  <td>{`${selectedCourt?.[0]?.price_hour} TL / Saat`}</td>
+                  <td>{`${selectedCourt?.[0]?.price_hour} TL`}</td>
                   {selectedCourt?.[0]?.higher_price_for_non_subscribers &&
                     selectedCourt?.[0]?.price_hour_non_subscriber && (
                       <td>{`${selectedCourt?.[0]?.price_hour_non_subscriber} TL / Saat`}</td>

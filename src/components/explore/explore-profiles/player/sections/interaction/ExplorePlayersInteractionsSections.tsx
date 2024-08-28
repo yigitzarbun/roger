@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
 import { IoStar } from "react-icons/io5";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../../../../components/loading/PageLoading";
-
 import { useGetPlayerByUserIdQuery } from "../../../../../../api/endpoints/PlayersApi";
 import {
   useAddFavouriteMutation,
@@ -21,6 +17,7 @@ import TrainingInviteFormModal from "../../../../../../components/invite/trainin
 import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
+import { useTranslation } from "react-i18next";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: any;
@@ -31,6 +28,8 @@ const ExplorePlayersInteractionsSections = (
   props: ExplorePlayersInteractionsSectionsProps
 ) => {
   const { selectedPlayer, user_id } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -47,7 +46,9 @@ const ExplorePlayersInteractionsSections = (
   };
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
+
   const profileImage = selectedPlayer?.image;
 
   const { data: currentPlayer, isLoading: isCurrentPlayerLoading } =
@@ -56,25 +57,31 @@ const ExplorePlayersInteractionsSections = (
   const userGender = currentPlayer?.[0]?.gender;
 
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
+
   const handleOpenTrainingModal = () => {
     setIsTrainingModalOpen(true);
   };
+
   const handleCloseTrainingModal = () => {
     setIsTrainingModalOpen(false);
   };
+
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
 
   const handleOpenMatchModal = () => {
     setIsMatchModalOpen(true);
   };
+
   const handleCloseMatchModal = () => {
     setIsMatchModalOpen(false);
   };
+
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const handleOpenLessonModal = () => {
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
@@ -131,9 +138,11 @@ const ExplorePlayersInteractionsSections = (
   };
 
   const [messageModal, setMessageModal] = useState(false);
+
   const handleOpenMessageModal = () => {
     setMessageModal(true);
   };
+
   const closeMessageModal = () => {
     setMessageModal(false);
   };
@@ -163,7 +172,7 @@ const ExplorePlayersInteractionsSections = (
 
         <div className={styles["name-container"]}>
           <h2>{`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}</h2>
-          <h4>Oyuncu</h4>
+          <h4>{t("userTypePlayer")}</h4>
           <div className={styles.reviews}>
             {selectedPlayer?.averagereviewscore?.length > 0 &&
               generateStars(selectedPlayer?.averagereviewscore).map(
@@ -171,7 +180,7 @@ const ExplorePlayersInteractionsSections = (
               )}
             {selectedPlayer?.averagereviewscore?.length > 0 && (
               <p className={styles["reviews-text"]}>
-                {selectedPlayer?.reviewscorecount} değerlendirme
+                {selectedPlayer?.reviewscorecount} {t("reviews")}
               </p>
             )}
           </div>
@@ -184,14 +193,14 @@ const ExplorePlayersInteractionsSections = (
             <table>
               <thead>
                 <tr>
-                  <th>Yaş</th>
-                  <th>Cinsiyet</th>
-                  <th>Konum</th>
-                  <th>Seviye</th>
-                  <th>Maç</th>
+                  <th>{t("tableAgeHeader")}</th>
+                  <th>{t("tableGenderHeader")}</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableLevelHeader")}</th>
+                  <th>{t("tableMatchHeader")}</th>
                   <th>W</th>
                   <th>L</th>
-                  <th>Puan</th>
+                  <th>{t("leaderboardTablePointsHeader")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -243,7 +252,7 @@ const ExplorePlayersInteractionsSections = (
                       onClick={handleOpenTrainingModal}
                       className={styles["interaction-button"]}
                     >
-                      Antreman yap
+                      {t("tableTrainButtonText")}
                     </button>
                   )}
                   {isUserPlayer && selectedPlayer?.gender === userGender && (
@@ -251,7 +260,7 @@ const ExplorePlayersInteractionsSections = (
                       onClick={handleOpenMatchModal}
                       className={styles["interaction-button"]}
                     >
-                      Maç yap
+                      {t("tableMatchButtonText")}
                     </button>
                   )}
                   {isUserTrainer && (
@@ -259,7 +268,7 @@ const ExplorePlayersInteractionsSections = (
                       onClick={handleOpenLessonModal}
                       className={styles["interaction-button"]}
                     >
-                      Derse davet et
+                      {t("tableLessonButtonText")}
                     </button>
                   )}
                 </div>

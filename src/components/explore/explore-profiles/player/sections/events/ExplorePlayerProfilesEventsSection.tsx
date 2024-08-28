@@ -1,20 +1,14 @@
 import React, { useState } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../../../routing/Paths";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-
 import styles from "./styles.module.scss";
-
 import ExplorePlayerEventsModal from "../../modals/events/ExplorePlayerEventsModal";
-
 import { useGetUserProfileEventsQuery } from "../../../../../../api/endpoints/BookingsApi";
 import { Player } from "../../../../../../api/endpoints/PlayersApi";
-
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import Paths from "../../../../../../routing/Paths";
+import { useTranslation } from "react-i18next";
 
 interface ExplorePlayerProfilesEventsSectionProps {
   selectedPlayer: Player;
@@ -24,13 +18,17 @@ const ExplorePlayerProfilesEventsSection = (
 ) => {
   const { selectedPlayer } = props;
 
+  const { t } = useTranslation();
+
   const { data: playerBookings, isLoading: isPlayerBookingsLoading } =
     useGetUserProfileEventsQuery(selectedPlayer?.user_id);
 
   const [isEventsModalOpen, setIsEventModalOpen] = useState(false);
+
   const openEventsModal = () => {
     setIsEventModalOpen(true);
   };
+
   const closeEventsModal = () => {
     setIsEventModalOpen(false);
   };
@@ -38,21 +36,22 @@ const ExplorePlayerProfilesEventsSection = (
   if (isPlayerBookingsLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["events-section"]}>
-      <h2>Geçmiş Etkinlikler</h2>
+      <h2>{t("pastEventsTitle")}</h2>
       {playerBookings?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Üye</th>
-              <th>İsim</th>
-              <th>Konum</th>
-              <th>Tür</th>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Skor</th>
-              <th>Kazanan</th>
+              <th>{t("user")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableScoreHeader")}</th>
+              <th>{t("tableWinnerHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -116,7 +115,23 @@ const ExplorePlayerProfilesEventsSection = (
                     </Link>
                   </td>
                   <td>{booking.club_name}</td>
-                  <td>{booking?.event_type_name}</td>
+                  <td>
+                    {booking?.event_type_id === 1
+                      ? t("training")
+                      : booking?.event_type_id === 2
+                      ? t("match")
+                      : booking?.event_type_id === 3
+                      ? t("lesson")
+                      : booking?.event_type_id === 4
+                      ? t("externalTraining")
+                      : booking?.event_type_id === 5
+                      ? t("externalLesson")
+                      : booking?.event_type_id === 6
+                      ? t("groupLesson")
+                      : booking?.event_type_id === 7
+                      ? t("tournamentMatch")
+                      : ""}
+                  </td>
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
                   <td>
@@ -165,10 +180,12 @@ const ExplorePlayerProfilesEventsSection = (
           </tbody>
         </table>
       ) : (
-        <p>Henüz tamamlanan etkinlik bulunmamaktadır.</p>
+        <p>{t("calendarEmptyText")}</p>
       )}
       {playerBookings?.length > 0 && (
-        <button onClick={openEventsModal}>Tümünü Görüntüle</button>
+        <button onClick={openEventsModal}>
+          {t("leaderBoardViewAllButtonText")}
+        </button>
       )}
 
       {isEventsModalOpen && (

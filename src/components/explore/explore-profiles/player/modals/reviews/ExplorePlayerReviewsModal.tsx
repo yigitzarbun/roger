@@ -1,12 +1,9 @@
 import React from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
-
 import ReviewCard from "../../../../../../components/common/reviews/ReviewCard";
-
 import { EventReview } from "../../../../../../api/endpoints/EventReviewsApi";
+import { useTranslation } from "react-i18next";
 
 interface ExplorePlayerReviewsModalProps {
   isReviewsModalOpen: boolean;
@@ -17,6 +14,8 @@ interface ExplorePlayerReviewsModalProps {
 const ExplorePlayerReviewsModal = (props: ExplorePlayerReviewsModalProps) => {
   const { isReviewsModalOpen, closeReviewsModal, playerReviewsReceived } =
     props;
+
+  const { t } = useTranslation();
 
   return (
     <ReactModal
@@ -29,7 +28,7 @@ const ExplorePlayerReviewsModal = (props: ExplorePlayerReviewsModalProps) => {
       <div className={styles["overlay"]} onClick={closeReviewsModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Değerlendirmeler</h1>
+          <h1>{t("reviewsTitle")}</h1>
         </div>
         <div className={styles["reviews-container"]}>
           {playerReviewsReceived?.length > 0 ? (
@@ -37,7 +36,7 @@ const ExplorePlayerReviewsModal = (props: ExplorePlayerReviewsModalProps) => {
               <ReviewCard key={review.event_review_id} review={review} />
             ))
           ) : (
-            <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
+            <p>{t("noReviewsText")}</p>
           )}
         </div>
       </div>

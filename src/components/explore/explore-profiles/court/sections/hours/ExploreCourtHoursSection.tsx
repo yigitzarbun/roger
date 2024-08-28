@@ -7,6 +7,7 @@ import {
 } from "../../../../../../common/util/TimeFunctions";
 import { useAppSelector } from "../../../../../../store/hooks";
 import CourtBookingFormModal from "../../../../../../components/invite/court-booking/form/CourtBookingFormModal";
+import { useTranslation } from "react-i18next";
 
 interface ExploreCourtHoursSectionProps {
   bookings: any[];
@@ -14,28 +15,34 @@ interface ExploreCourtHoursSectionProps {
 }
 const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
   const { bookings, selectedCourt } = props;
+
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
-  const isUserPlayer = user?.user?.user_type_id === 1;
-  const isUserTrainer = user?.user?.user_type_id === 2;
   const isUserClub = user?.user?.user_type_id === 3;
 
   const [isCourtBookingModalOpen, setIsCourtBookingModalOpen] = useState(false);
+
   const [eventDate, setEventDate] = useState("");
+
   const [eventTime, setEventTime] = useState("");
+
   const openCourtBookingInviteModal = (date: string, time: string) => {
     setEventDate(date);
     setEventTime(time);
     setIsCourtBookingModalOpen(true);
   };
+
   const closeCourtBookingInviteModal = () => {
     setEventDate("");
     setEventTime("");
     setIsCourtBookingModalOpen(false);
   };
+
   return (
     <div className={styles["courts-section"]}>
-      <h2>Takvim</h2>
+      <h2>{t("calendarTitle")}</h2>
       <table>
         <thead>
           <tr>
@@ -63,10 +70,10 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
                       className={styles.available}
                       disabled={isUserClub}
                     >
-                      Uygun
+                      {t("available")}
                     </button>
                   ) : (
-                    <button className={styles.reserved}>Rezerve</button>
+                    <button className={styles.reserved}>{t("reserved")}</button>
                   )}
                 </td>
               ))}

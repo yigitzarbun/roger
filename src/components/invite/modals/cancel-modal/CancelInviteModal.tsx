@@ -1,8 +1,7 @@
 import React from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 export type BookingData = {
   booking_id: number;
@@ -38,14 +37,19 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
   } = props;
 
   const isUserPlayer = user?.user_type_id === 1;
+
   const isUserTrainer = user?.user_type_id === 2;
 
   const isEventTraining = bookingData?.event_type_id === 1;
+
   const isEventMatch = bookingData?.event_type_id === 2;
+
   const isEventLesson =
     bookingData?.event_type_id === 3 ||
     bookingData?.event_type_id === 5 ||
     bookingData?.event_type_id === 6;
+
+  const { t } = useTranslation();
 
   return (
     <ReactModal
@@ -59,10 +63,10 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
       <div className={styles["modal-content"]}>
         <h1>
           {isEventLesson
-            ? "Ders İptal"
+            ? t("cancelLessonTitle")
             : isEventMatch
-            ? "Maç İptal"
-            : "Antreman İptal"}
+            ? t("cancelMatchTitle")
+            : t("cancelTrainingTitle")}
         </h1>
         <div className={styles["opponent-container"]}>
           <img
@@ -90,12 +94,12 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
         <table>
           <thead>
             <tr>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              {isEventLesson && isUserTrainer && <th>Ders Ücreti</th>}
-              {isUserPlayer && <th>Tutar</th>}
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              {isEventLesson && isUserTrainer && <th>{t("lessonFee")}</th>}
+              {isUserPlayer && <th>{t("paymentAmount")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -130,13 +134,13 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             onClick={handleCloseModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleCancelBooking}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("confirm")}
           </button>
         </div>
       </div>

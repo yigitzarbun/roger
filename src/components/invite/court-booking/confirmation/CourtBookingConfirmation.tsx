@@ -1,11 +1,12 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../../common/constants/apiConstants";
+import { useTranslation } from "react-i18next";
 
 interface CourtBookingConfirmationProps {
   handleCloseConfirmation: () => void;
   handleModalSubmit: () => void;
-  eventType: string;
+  eventTypeId: number;
   selectedCourtPrice: number;
   lessonPrice: number;
   invitee: any;
@@ -18,7 +19,7 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
   const {
     handleCloseConfirmation,
     handleModalSubmit,
-    eventType,
+    eventTypeId,
     selectedCourtPrice,
     invitee,
     lessonPrice,
@@ -27,16 +28,21 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
     isButtonDisabled,
     buttonText,
   } = props;
+
+  const { t } = useTranslation();
+
   return (
     <div className={styles["confirmation-container"]}>
       <div className={styles["table-container"]}>
         <table>
           <thead>
             <tr>
-              <th>{eventType === "Ders" ? "Eğitmen" : "Oyuncu"}</th>
-              <th>İsim</th>
-              <th>Tür</th>
-              <th>Ücret</th>
+              <th>
+                {eventTypeId === 3 ? t("userTypeTrainer") : t("userTypePlayer")}
+              </th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -52,14 +58,29 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
                 />
               </td>
               <td>{`${invitee?.[0]?.fname} ${invitee?.[0]?.lname}`}</td>
-              <td>{eventType}</td>
               <td>
-                {isUserPlayer &&
-                (eventType === "Maç" || eventType === "Antreman")
+                {eventTypeId === 1
+                  ? t("training")
+                  : eventTypeId === 2
+                  ? t("match")
+                  : eventTypeId === 3
+                  ? t("lesson")
+                  : eventTypeId === 4
+                  ? t("externalTraining")
+                  : eventTypeId === 5
+                  ? t("externalLesson")
+                  : eventTypeId === 6
+                  ? t("groupLesson")
+                  : eventTypeId === 7
+                  ? t("tournamentMatch")
+                  : ""}
+              </td>
+              <td>
+                {isUserPlayer && (eventTypeId === 2 || eventTypeId === 1)
                   ? selectedCourtPrice / 2
-                  : isUserPlayer && eventType === "Ders"
+                  : isUserPlayer && eventTypeId === 3
                   ? selectedCourtPrice + lessonPrice
-                  : isUserTrainer && eventType === "Ders"
+                  : isUserTrainer && eventTypeId === 3
                   ? lessonPrice
                   : ""}{" "}
                 TL
@@ -68,26 +89,22 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
           </tbody>
         </table>
       </div>
-      {isUserPlayer && (eventType === "Maç" || eventType === "Antreman") && (
-        <p className={styles.pricing}>
-          Toplam kort ücreti <span>{selectedCourtPrice}</span> TL'dir. Bu tutar
-          oyuncular arasında eşit bölünerek tahsil edilecektir.
-        </p>
+      {isUserPlayer && (eventTypeId === 2 || eventTypeId === 1) && (
+        <p className={styles.pricing}>{t("playerFeeText")}</p>
       )}
-
       <div className={styles["buttons-container"]}>
         <button
           onClick={handleCloseConfirmation}
           className={styles["discard-button"]}
         >
-          İptal
+          {t("cancel")}
         </button>
         <button
           onClick={handleModalSubmit}
           className={styles["submit-button"]}
           disabled={isButtonDisabled}
         >
-          Davet Gönder
+          {t("sendRequestButtonText")}
         </button>
       </div>
       {isButtonDisabled && <p className={styles.validation}>{buttonText}</p>}

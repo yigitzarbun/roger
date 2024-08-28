@@ -92,6 +92,7 @@
   "tableLessonButtonText": "Ders Daveti",
   "tableClubHeader": "Kulüp",
   "tablePriceHeader": "Ücret",
+  "tableMemberPrice": "Üye Ücret",
   "tableStudentshipHeader": "Öğrencilik",
   "tableLessonInviteButtonText": "Ders Al",
   "tableStudentshipButtonText": "Öğrenci Ol",
@@ -357,5 +358,55 @@
 
   "matchInviteTitle": "Maç Davet",
 
-  "lessonInviteTitle": "Ders Davet"
+  "lessonInviteTitle": "Ders Davet",
+
+  "subscribe": "Üye Ol",
+
+  "addPaymentDetails": "Kart Ekle",
+
+  "subscribeToClubTitle": "Kulüp Üyeliği",
+
+  "subscriptionType": "Üyelik Türü",
+
+  "submit": "Tamamla",
+
+  "reviews": "Değerlendirme",
+
+  "reviewsTitle": "Değerlendirmeler",
+
+  "noReviewsText": "Henüz değerlendirme yapılmamıştır",
+
+  "user": "Üye",
+
+  "students": "Öğrenciler",
+
+  "studentshipApprovalAwaiting": "Öğrencilik için eğitmen onayı bekleniyor",
+
+  "studentshipApply": "Öğrenci Ol",
+
+  "available": "Uygun",
+  "reserved": "Rezerve",
+  "courtBookingTitle": "Kort Rezervasyon",
+
+  "noResult": "Sonuç bulunamadı",
+
+  "select": "Seç",
+
+  "playerSubscriptionTrainerStaffRequired": "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir",
+  "clubStaffRequired": "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir",
+  "playerSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
+
+  "cancelLessonTitle": "Ders İptal",
+  "cancelMatchTitle": "Maç İptal",
+  "cancelTrainingTitle": "Antreman İptal",
+
+  "lessonFee": "Ders Ücreti",
+
+  "declineInvitation": "Daveti Reddet",
+
+  "total": "Toplam",
+
+  "courtFee": "Kort Ücreti",
+
+  "acceptBooking": "Daveti Onayla"
 }

@@ -1,27 +1,19 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import ReactModal from "react-modal";
 import { localUrl } from "../../../../common/constants/apiConstants";
-
 import { toast } from "react-toastify";
 import { IoIosSearch } from "react-icons/io";
 import { IoListOutline } from "react-icons/io5";
-
 import { useNavigate } from "react-router-dom";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import paths from "../../../../routing/Paths";
-
 import styles from "./styles.module.scss";
-
 import { FormValues } from "../../modals/invite-modal/InviteModal";
-
 import {
   useAddBookingMutation,
   useGetBookingsQuery,
 } from "../../../../api/endpoints/BookingsApi";
 import { useGetEventTypesQuery } from "../../../../api/endpoints/EventTypesApi";
-
 import {
   useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
@@ -33,7 +25,6 @@ import {
 } from "../../../../api/endpoints/TrainersApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubStaffByFilterQuery } from "../../../../api/endpoints/ClubStaffApi";
-
 import { useAppSelector } from "../../../../store/hooks";
 import {
   useAddPaymentMutation,
@@ -41,6 +32,7 @@ import {
 } from "../../../../api/endpoints/PaymentsApi";
 import PageLoading from "../../../loading/PageLoading";
 import CourtBookingConfirmation from "../confirmation/CourtBookingConfirmation";
+import { useTranslation } from "react-i18next";
 
 interface CourtBookingFormModalProps {
   isCourtBookingModalOpen: boolean;
@@ -58,12 +50,17 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     selectedCourt,
   } = props;
 
+  console.log("event_date: ", event_date);
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const isUserPlayer = user?.user_type_id === 1;
+
   const isUserTrainer = user?.user_type_id === 2;
+
   const isUserClub = user?.user_type_id === 3;
 
   const { data: currentUser, isLoading: isCurrentUserLoading } =
@@ -85,6 +82,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   const { data: players, isLoading: isPlayersLoading } = useGetPlayersQuery({});
 
   const [searchedPlayer, setSearchedPlayer] = useState("");
+
   const [playerSkip, setPlayerSkip] = useState(true);
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -92,6 +90,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   };
 
   const playerAge = currentUser?.[0]?.birth_year;
+
   const playerLocationId = isUserPlayer
     ? currentUser?.[0]?.location_id
     : isUserTrainer
@@ -101,7 +100,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     : null;
 
   const logicLevelId = currentUser?.[0]?.player_level_id;
-  console.log(currentUser);
+
   const {
     data: suggestedPlayers,
     isLoading: isSuggestedPlayersLoading,
@@ -139,16 +138,19 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   } = useForm<FormValues>();
 
   const [selectedEventType, setSelectedEventType] = useState(null);
+
   const handleSelectedEvent = (event) => {
     setSelectedEventType(Number(event.target.value));
   };
 
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+
   const handleSelectedPlayer = (id: number) => {
     setSelectedPlayer(id);
   };
 
   const [selectedTrainer, setSelectedTrainer] = useState(null);
+
   const handleSelectedTrainer = (event) => {
     setSelectedTrainer(Number(event.target.value));
   };
@@ -165,19 +167,25 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     selectedCourt?.[0]?.is_trainer_subscription_required;
 
   let isTrainerStaff = false;
+
   let isPlayerSubscribed = false;
 
   let isButtonDisabled = false;
+
   let buttonText = "";
 
   let playerPaymentDetailsExist = false;
+
   let trainerPaymentDetailsExist = false;
 
   let inviterPlayerSubscribed = false;
+
   let inviteePlayerSubscribed = false;
 
   const [trainingMatchSkip, setTrainingMatchSkip] = useState(true);
+
   const [lessonSkipPlayer, setLessonSkipPlayer] = useState(true);
+
   const [lessonSkipTrainer, setLessonSkipTrainer] = useState(true);
 
   // TRAINING AND MATCH
@@ -241,7 +249,9 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     ) {
       inviterPlayerPaymentDetailsExist = true;
     }
+
     let inviteePlayerPaymentDetailsExist = false;
+
     if (
       inviteePlayer?.[0]?.name_on_card &&
       inviteePlayer?.[0]?.card_number &&
@@ -279,7 +289,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     useGetClubStaffByFilterQuery(
       {
         user_id: selectedTrainer,
-        club_id: selectedCourt?.[0]?.clubUserId,
+        club_id: selectedCourt?.[0]?.club_id,
         employment_status: "accepted",
       },
       { skip: lessonSkipPlayer }
@@ -304,7 +314,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
     useGetClubStaffByFilterQuery(
       {
         user_id: user?.user_id,
-        club_id: selectedCourt?.[0]?.clubUserId,
+        club_id: selectedCourt?.[0]?.club_id,
         employment_status: "accepted",
       },
       { skip: lessonSkipTrainer }
@@ -386,28 +396,26 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
       (isPlayerSubscribed === false || isTrainerStaff === false)
     ) {
       isButtonDisabled = true;
-      buttonText =
-        "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir";
+      buttonText = t("playerSubscriptionTrainerStaffRequired");
     } else if (
       playerLessonSubscriptionRequired === false &&
       trainerStaffRequired === true &&
       isTrainerStaff === false
     ) {
       isButtonDisabled = true;
-      buttonText =
-        "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir";
+      buttonText = t("clubStaffRequired");
     } else if (
       playerLessonSubscriptionRequired === true &&
       trainerStaffRequired === false &&
       isPlayerSubscribed === false
     ) {
       isButtonDisabled = true;
-      buttonText =
-        "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir";
+      buttonText = t("playerSubscriptionRequired");
     }
   }
 
   const [confirmation, setConfirmation] = useState(false);
+
   const handleCloseConfirmation = () => {
     setConfirmation(false);
   };
@@ -416,11 +424,16 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   );
 
   const onSubmit: SubmitHandler<FormValues> = (formData) => {
+    // Create a Date object using the provided event_date
     const eventDate = new Date(event_date);
+    console.log("event date new: ", eventDate);
+
+    // Parse event_time
     const eventTime = event_time;
     const hours = Math.floor(Number(event_time) / 100);
     const minutes = Number(event_time) % 100;
 
+    // Combine eventDate with eventTime
     const parsedEventDate = new Date(
       eventDate.getFullYear(),
       eventDate.getMonth(),
@@ -429,11 +442,24 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
       minutes
     );
 
+    console.log("parsedEventDate: ", parsedEventDate);
+
+    // Get the time zone offset in minutes
     const timeZoneOffset = parsedEventDate.getTimezoneOffset();
-    parsedEventDate.setMinutes(parsedEventDate.getMinutes() + timeZoneOffset);
+
+    // Adjust the parsedEventDate to UTC by subtracting the offset
+    parsedEventDate.setMinutes(parsedEventDate.getMinutes() - timeZoneOffset);
+
+    // Ensure parsedEventDate is in local time by adjusting the offset properly
+    const localDateString = parsedEventDate.toLocaleString();
+    console.log("Local Date String: ", localDateString);
+
+    // Format the date in ISO format, ensuring it's correct for the local time
+    const isoDateString = parsedEventDate.toISOString();
+    console.log("ISO Date String: ", isoDateString);
 
     const bookingData = {
-      event_date: parsedEventDate.toISOString(),
+      event_date: isoDateString,
       event_time: `${String(eventTime).slice(0, 2)}:${String(eventTime).slice(
         2
       )}`,
@@ -475,6 +501,8 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
         ? formData?.invitation_note
         : "",
     };
+
+    console.log("bookingData: ", bookingData);
     setBookingFormData(bookingData);
     setConfirmation(true);
   };
@@ -546,6 +574,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   };
 
   const [searchOption, setSearchOption] = useState("list");
+
   const toggleSearchOption = (option: string) => {
     setSearchOption(option);
   };
@@ -562,6 +591,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
   useEffect(() => {
     if (playerSkip === false) refetchSuggestedPlayers();
   }, [setPlayerSkip]);
+
   useEffect(() => {
     if (isPaymentSuccess) {
       refetchPayments();
@@ -618,18 +648,17 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
       />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1 className={styles["invite-title"]}>Kort Rezervasyon</h1>
+          <h1 className={styles["invite-title"]}>{t("courtBookingTitle")}</h1>
         </div>
-
         <div className={styles["table-container"]}>
           <table>
             <thead>
               <tr>
-                <th>Kort</th>
-                <th>İsim</th>
-                <th>Kulüp</th>
-                <th>Tarih</th>
-                <th>Saat</th>
+                <th>{t("tableCourtHeader")}</th>
+                <th>{t("tableNameHeader")}</th>
+                <th>{t("tableClubHeader")}</th>
+                <th>{t("tableDateHeader")}</th>
+                <th>{t("tableTimeHeader")}</th>
               </tr>
             </thead>
             <tbody>
@@ -660,12 +689,12 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
             <div className={styles["input-outer-container"]}>
               {
                 <div className={styles["input-container"]}>
-                  <label>Etkinlik Türü</label>
+                  <label>{t("tableClubTypeHeader")}</label>
                   <select
                     {...register("event_type_id", { required: true })}
                     onChange={handleSelectedEvent}
                   >
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableClubTypeHeader")} --</option>
                     {isUserPlayer &&
                       eventTypes
                         ?.filter(
@@ -679,7 +708,13 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                             key={type.event_type_id}
                             value={type.event_type_id}
                           >
-                            {type.event_type_name}
+                            {type?.event_type_id === 1
+                              ? t("training")
+                              : type?.event_type_id === 2
+                              ? t("match")
+                              : type?.event_type_id === 3
+                              ? t("lesson")
+                              : "-"}
                           </option>
                         ))}
                     {isUserTrainer &&
@@ -696,7 +731,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                   </select>
                   {errors.event_type_id && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
@@ -704,7 +739,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
               {isUserPlayer && selectedEventType === 1 && (
                 <div className={styles["input-container"]}>
                   <div className={styles["search-option-container"]}>
-                    <label>Oyuncu Seçimi</label>
+                    <label>{t("userTypePlayer")}</label>
                     <div className={styles.options}>
                       <IoListOutline
                         className={
@@ -731,20 +766,19 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                         handleSelectedPlayer(Number(e.target.value))
                       }
                     >
-                      <option value="">-- Seçim yapın --</option>
+                      <option value="">-- {t("userTypePlayer")} --</option>
                       {players
                         ?.filter((player) => player.user_id !== user?.user_id)
                         .map((player) => (
                           <option key={player.user_id} value={player.user_id}>
-                            {`${player.fname} ${player.lname} - ${player.gender}`}
+                            {`${player.fname} ${player.lname} - ${
+                              player.gender === "male" ? t("male") : t("female")
+                            }`}
                           </option>
                         ))}
                     </select>
                   ) : (
-                    <input
-                      onChange={handleTextSearch}
-                      placeholder="Oyuncu adı ile arama"
-                    />
+                    <input onChange={handleTextSearch} />
                   )}
                   {searchOption === "textSearch" &&
                   searchedPlayer !== "" &&
@@ -758,7 +792,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                               handleSelectedPlayer(Number(player.user_id))
                             }
                           >
-                            Seç
+                            {t("select")}
                           </button>
                         </div>
                       ))}
@@ -767,21 +801,21 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                     searchOption === "textSearch" &&
                     searchedPlayer !== "" &&
                     suggestedPlayers?.players?.length === 0 && (
-                      <p>Oyuncu bulunamadı</p>
+                      <p>{t("noResult")}</p>
                     )
                   )}
                 </div>
               )}
               {isUserPlayer && selectedEventType === 2 && (
                 <div className={styles["input-container"]}>
-                  <label>Oyuncu Seçimi</label>
+                  <label>{t("userTypePlayer")}</label>
                   <select
                     {...register("invitee_id", { required: true })}
                     onChange={(e) =>
                       handleSelectedPlayer(Number(e.target.value))
                     }
                   >
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("userTypePlayer")} --</option>
                     {players
                       ?.filter(
                         (player) =>
@@ -790,13 +824,15 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                       )
                       .map((player) => (
                         <option key={player.user_id} value={player.user_id}>
-                          {`${player.fname} ${player.lname} - ${player.gender}`}
+                          {`${player.fname} ${player.lname} - ${
+                            player.gender === "male" ? t("male") : t("female")
+                          }`}
                         </option>
                       ))}
                   </select>
                   {errors.invitee_id && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
@@ -805,9 +841,9 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 <div className={styles["input-container"]}>
                   <label>
                     {isUserPlayer
-                      ? "Eğitmen Seçimi"
+                      ? t("userTypeTrainer")
                       : isUserTrainer
-                      ? "Oyuncu Seçimi"
+                      ? t("userTypePlayer")
                       : ""}
                   </label>
                   <select
@@ -820,11 +856,19 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                         : null
                     }
                   >
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">
+                      --{" "}
+                      {isUserPlayer
+                        ? t("userTypeTrainer")
+                        : isUserTrainer
+                        ? t("userTypePlayer")
+                        : ""}{" "}
+                      --
+                    </option>
                     {isUserPlayer &&
                       trainers.map((trainer) => (
                         <option key={trainer.user_id} value={trainer.user_id}>
-                          {`${trainer.fname} ${trainer.lname} - ${trainer.price_hour} TL / Saat`}
+                          {`${trainer.fname} ${trainer.lname} - ${trainer.price_hour} TL`}
                         </option>
                       ))}
                     {isUserTrainer &&
@@ -836,7 +880,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                   </select>
                   {errors.invitee_id && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
@@ -844,11 +888,8 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
             </div>
 
             <div className={styles["text-area-container"]}>
-              <label>Not</label>
-              <textarea
-                {...register("invitation_note")}
-                placeholder="Karşı tarafa davetinizle ilgili eklemek istediğiniz not"
-              />
+              <label>{t("note")}</label>
+              <textarea {...register("invitation_note")} />
             </div>
 
             <div className={styles["buttons-container"]}>
@@ -856,7 +897,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 onClick={closeCourtBookingInviteModal}
                 className={styles["discard-button"]}
               >
-                İptal et
+                {t("discardButtonText")}
               </button>
 
               <button
@@ -864,7 +905,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                 className={styles["submit-button"]}
                 disabled={isButtonDisabled}
               >
-                Davet Gönder
+                {t("sendRequestButtonText")}
               </button>
             </div>
             {isButtonDisabled && (selectedPlayer || selectedTrainer) && (
@@ -875,15 +916,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
           <CourtBookingConfirmation
             handleCloseConfirmation={handleCloseConfirmation}
             handleModalSubmit={handleModalSubmit}
-            eventType={
-              bookingFormData?.event_type_id === 1
-                ? "Antreman"
-                : bookingFormData?.event_type_id === 2
-                ? "Maç"
-                : bookingFormData?.event_type_id === 3
-                ? "Ders"
-                : ""
-            }
+            eventTypeId={bookingFormData?.event_type_id}
             selectedCourtPrice={bookingFormData?.court_price}
             lessonPrice={bookingFormData.lesson_price}
             invitee={

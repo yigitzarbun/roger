@@ -1,11 +1,9 @@
 import React from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
 import ReviewCard from "../../../../../../components/common/reviews/ReviewCard";
-
 import { EventReview } from "../../../../../../api/endpoints/EventReviewsApi";
+import { useTranslation } from "react-i18next";
 
 interface ExploreTrainerReviewsModalProps {
   isReviewsModalOpen: boolean;
@@ -16,6 +14,8 @@ interface ExploreTrainerReviewsModalProps {
 const ExploreTrainerReviewsModal = (props: ExploreTrainerReviewsModalProps) => {
   const { isReviewsModalOpen, closeReviewsModal, trainerReviewsReceived } =
     props;
+
+  const { t } = useTranslation();
 
   return (
     <ReactModal
@@ -28,7 +28,7 @@ const ExploreTrainerReviewsModal = (props: ExploreTrainerReviewsModalProps) => {
       <div className={styles["overlay"]} onClick={closeReviewsModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Değerlendirmeler</h1>
+          <h1>{t("reviewsTitle")}</h1>
         </div>
         <div className={styles["reviews-container"]}>
           {trainerReviewsReceived?.length > 0 ? (

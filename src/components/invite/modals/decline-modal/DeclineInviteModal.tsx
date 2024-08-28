@@ -1,8 +1,7 @@
 import React from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 export type DeclineBookingData = {
   booking_id: number;
@@ -37,10 +36,16 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
   } = props;
 
   const isUserPlayer = user?.user_type_id === 1;
+
   const isUserTrainer = user?.user_type_id === 2;
+
   const isEventTraining = declineBookingData?.event_type_id === 1;
+
   const isEventMatch = declineBookingData?.event_type_id === 2;
+
   const isEventLesson = declineBookingData?.event_type_id === 3;
+
+  const { t } = useTranslation();
 
   return (
     <ReactModal
@@ -52,7 +57,7 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseDeclineModal} />
       <div className={styles["modal-content"]}>
-        <h1>Daveti Reddet</h1>
+        <h1>{t("declineInvitation")}</h1>
         <div className={styles["opponent-container"]}>
           <img
             src={
@@ -80,13 +85,13 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
         <table>
           <thead>
             <tr>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              {isUserPlayer && isEventLesson && <th>Kort</th>}
-              {isEventLesson && <th>Ders</th>}
-              {isUserPlayer && <th>Toplam</th>}
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              {isUserPlayer && isEventLesson && <th>{t("courtFee")}</th>}
+              {isEventLesson && <th>{t("headerLessonTitle")}</th>}
+              {isUserPlayer && <th>{t("total")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -130,13 +135,13 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
             onClick={handleCloseDeclineModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleDeclineBooking}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("confirm")}
           </button>
         </div>
       </div>

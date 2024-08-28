@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-
 import styles from "./styles.module.scss";
-
 import ExplorePlayerReviewsModal from "../../modals/reviews/ExplorePlayerReviewsModal";
 import ReviewCard from "../../../../../../components/common/reviews/ReviewCard";
-
 import { useGetUserReceivedEventReviewsNumberQuery } from "../../../../../../api/endpoints/EventReviewsApi";
 import { Player } from "../../../../../../api/endpoints/PlayersApi";
 import PageLoading from "../../../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface ExplorePlayersReviewsSectionProps {
   selectedPlayer: Player;
@@ -17,13 +15,17 @@ const ExplorePlayersReviewsSection = (
 ) => {
   const { selectedPlayer } = props;
 
+  const { t } = useTranslation();
+
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetUserReceivedEventReviewsNumberQuery(selectedPlayer?.user_id);
 
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+
   const openReviewsModal = () => {
     setIsReviewsModalOpen(true);
   };
+
   const closeReviewsModal = () => {
     setIsReviewsModalOpen(false);
   };
@@ -31,9 +33,10 @@ const ExplorePlayersReviewsSection = (
   if (isEventReviewsLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["reviews-section"]}>
-      <h2>Değerlendirmeler</h2>
+      <h2>{t("reviewsTitle")}</h2>
       <div className={styles["reviews-container"]}>
         {eventReviews?.length > 0 ? (
           eventReviews?.slice(eventReviews.length - 2)?.map((review) => (
@@ -45,11 +48,13 @@ const ExplorePlayersReviewsSection = (
             </div>
           ))
         ) : (
-          <p>Henüz oyuncu hakkında değerlendirme yapılmamıştır.</p>
+          <p>{t("noReviewsText")}</p>
         )}
       </div>
       {eventReviews?.length > 0 && (
-        <button onClick={openReviewsModal}>Tümünü Görüntüle</button>
+        <button onClick={openReviewsModal}>
+          {t("leaderBoardViewAllButtonText")}
+        </button>
       )}
 
       {isReviewsModalOpen && (

@@ -64,7 +64,9 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
   const { t } = useTranslation();
 
   let isUserPlayer = false;
+
   let isUserTrainer = false;
+
   let isUserClub = false;
 
   if (user) {
@@ -218,7 +220,6 @@ const ExploreCourts = (props: ExploreCourtsProps) => {
           </div>
         )}
       </div>
-
       {courts && courts?.courts?.length === 0 && <p>{t("courtsEmptyText")}</p>}
       {courts && courts?.courts?.length > 0 && (
         <table>

@@ -12,6 +12,7 @@ const clubStaffModel = {
     return clubStaff;
   },
   async getByFilter(filter) {
+    console.log(filter);
     const club_staff = await db
       .select("club_staff.*")
       .from("club_staff")

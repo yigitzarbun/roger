@@ -1,12 +1,13 @@
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { localUrl } from "../../../common/constants/apiConstants";
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
 
 const ReviewCard = ({ review }) => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles["review-container"]} key={review.event_review_id}>
       <div className={styles["title-container"]}>
@@ -16,13 +17,13 @@ const ReviewCard = ({ review }) => {
       <p className={styles.description}>{review.event_review_description}</p>
       <div className={styles["score-type-container"]}>
         <p>
-          <span className={styles.subtitle}>Skor:</span>{" "}
+          <span className={styles.subtitle}>{t("tableScoreHeader")}:</span>{" "}
           <span
             className={styles["score-text"]}
           >{`${review.review_score}/10`}</span>
         </p>
         <p>
-          <span className={styles.subtitle}>Tür :</span>{" "}
+          <span className={styles.subtitle}>{t("tableClubTypeHeader")}:</span>{" "}
           {`${review?.event_type_name}`}
         </p>
       </div>

@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-
 import styles from "./styles.module.scss";
-
 import ExploreTrainerReviewsModal from "../../modals/reviews/ExploreTrainerReviewsModal";
 import ReviewCard from "../../../../../../components/common/reviews/ReviewCard";
 import PageLoading from "../../../../../../components/loading/PageLoading";
-
 import { useGetUserReceivedEventReviewsNumberQuery } from "../../../../../../api/endpoints/EventReviewsApi";
+import { useTranslation } from "react-i18next";
 
 interface ExploreTrainersReviewsSectionProps {
   user_id: number;
@@ -15,6 +13,8 @@ const ExploreTrainersReviewsSection = (
   props: ExploreTrainersReviewsSectionProps
 ) => {
   const { user_id } = props;
+
+  const { t } = useTranslation();
 
   const { data: eventReviews, isLoading: isEventReviewsLoading } =
     useGetUserReceivedEventReviewsNumberQuery(user_id);
@@ -35,7 +35,7 @@ const ExploreTrainersReviewsSection = (
 
   return (
     <div className={styles["reviews-section"]}>
-      <h2>Eğitmen Hakkında Değerlendirmeler</h2>
+      <h2>{t("reviewsTitle")}</h2>
       <div className={styles["reviews-container"]}>
         {eventReviews?.length > 0 ? (
           eventReviews?.slice(eventReviews?.length - 2)?.map((review) => (
@@ -47,11 +47,14 @@ const ExploreTrainersReviewsSection = (
             </div>
           ))
         ) : (
-          <p>Henüz eğitmen hakkında değerlendirme yapılmamıştır.</p>
+          <p>{t("noReviewsText")}</p>
         )}
       </div>
       {eventReviews?.length > 0 && (
-        <button onClick={openReviewsModal}>Tümünü Görüntüle</button>
+        <button onClick={openReviewsModal}>
+          {" "}
+          {t("leaderBoardViewAllButtonText")}
+        </button>
       )}
 
       <ExploreTrainerReviewsModal

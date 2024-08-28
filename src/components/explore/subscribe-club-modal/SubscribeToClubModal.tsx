@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
-
 import { localUrl } from "../../../common/constants/apiConstants";
-
 import ReactModal from "react-modal";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import { today } from "../../../common/util/TimeFunctions";
-
 import { useAddClubSubscriptionMutation } from "../../../api/endpoints/ClubSubscriptionsApi";
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetPlayerByUserIdQuery } from "../../../api/endpoints/PlayersApi";
@@ -21,6 +14,7 @@ import {
 } from "../../../api/endpoints/PaymentsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 interface SubscribeToClubModalProps {
   openSubscribeModal: boolean;
@@ -40,6 +34,8 @@ type FormValues = {
 const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   const { openSubscribeModal, handleCloseSubscribeModal, selectedClubId } =
     props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -107,14 +103,17 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     if (isPaymentSuccess) {
       const startDate = today.toISOString();
+
       const packageDurationMonths =
         selectedClubPackage?.club_subscription_duration_months;
 
       // Convert to local time zone for endDate calculation
       const endDate = new Date();
+
       endDate.setMonth(endDate.getMonth() + Number(packageDurationMonths));
 
       const newSubscriptionData = {
@@ -127,6 +126,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
         ),
         payment_id: paymentData?.payment_id,
       };
+
       addSubscription(newSubscriptionData);
     }
   }, [isPaymentSuccess]);
@@ -147,6 +147,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
   ) {
     return <PageLoading />;
   }
+
   return (
     <ReactModal
       isOpen={openSubscribeModal}
@@ -157,7 +158,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
       <div className={styles["overlay"]} onClick={handleCloseSubscribeModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1 className={styles.title}>Üye Ol</h1>
+          <h1 className={styles.title}>{t("subscribeToClubTitle")}</h1>
         </div>
         <div className={styles["club-container"]}>
           <img
@@ -178,27 +179,35 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Üyelik Türü</label>
+              <label>{t("subscriptionType")}</label>
               <select
                 {...register("club_subscription_package_id", {
                   required: true,
                 })}
               >
-                <option value="">-- Üyelik Türü --</option>
+                <option value="">-- {t("subscriptionType")} --</option>
                 {selectedClubPackageDetails?.map((clubPackage) => (
                   <option
                     key={clubPackage.club_subscription_package_id}
                     value={clubPackage.club_subscription_package_id}
                   >
                     {`
-                    ${clubPackage?.club_subscription_type_name} - ${clubPackage?.club_subscription_duration_months} ay - ${clubPackage.price} TL
+                    ${
+                      clubPackage?.club_subscription_type_id === 1
+                        ? t("oneMonthSubscription")
+                        : clubPackage?.club_subscription_type_id === 2
+                        ? t("threeMonthSubscription")
+                        : clubPackage?.club_subscription_type_id === 3
+                        ? t("sixMonthSubscription")
+                        : t("twelveMonthSubscription")
+                    } - ${clubPackage.price} TL
                  `}
                   </option>
                 ))}
               </select>
               {errors.club_subscription_package_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -208,14 +217,14 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
               onClick={handleCloseSubscribeModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button
               type="submit"
               className={styles["submit-button"]}
               disabled={!playerPaymentDetailsExist}
             >
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>

@@ -20,7 +20,7 @@ import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 
 export type FormValues = {
   event_type_id: number;
-  event_date: string;
+  event_date: string | Date;
   event_time: string;
   booking_status_type_id: number;
   club_id: number;

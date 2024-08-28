@@ -92,12 +92,13 @@
   "tableLessonButtonText": "Lesson",
   "tableClubHeader": "Club",
   "tablePriceHeader": "Price",
+  "tableMemberPrice": "Member Price",
   "tableStudentshipHeader": "Studenship",
   "tableLessonInviteButtonText": "Lesson Invite",
   "tableStudentshipButtonText": "Apply",
   "tableDeleteStudentshipButtonText": "Cancel",
   "tableClubTypeHeader": "Type",
-  "tableCourtHeader": "Courts",
+  "tableCourtHeader": "Court",
   "tableSubscribersHeader": "Subscribers",
   "tableSubscriptionHeader": "Subscription",
   "tableTrainerEmploymentHeader": "Antrenörlük",
@@ -356,5 +357,57 @@
 
   "matchInviteTitle": "Match Invitation",
 
-  "lessonInviteTitle": "Lesson Invitation"
+  "lessonInviteTitle": "Lesson Invitation",
+
+  "subscribe": "Subscribe",
+
+  "addPaymentDetails": "Add Card",
+
+  "subscribeToClubTitle": "Club Subscription",
+
+  "subscriptionType": "Subscription Type",
+
+  "submit": "Submit",
+
+  "reviews": "Reviews",
+
+  "reviewsTitle": "Reviews",
+
+  "noReviewsText": "No reviews yet",
+
+  "user": "User",
+
+  "students": "Students",
+
+  "studentshipApprovalAwaiting": "Awaiting for trainer's studentship approval",
+
+  "studentshipApply": "Studentship",
+
+  "available": "Available",
+  "reserved": "Reserved",
+  "courtBookingTitle": "Court Reservation",
+
+  "noResult": "No results found",
+
+  "select": "Select",
+
+  "playerSubscriptionTrainerStaffRequired": "Player needs to be a member and the trainer needs to be a staff of this club, in order to book this court",
+  "clubStaffRequired": "Trainer needs to be a staff at this club in order to book this court",
+  "playerSubscriptionRequired": "This club requires player membership to book this court",
+
+  "cancelLessonTitle": "Cancel Lesson",
+  "cancelMatchTitle": "Cancel Match",
+  "cancelTrainingTitle": "Cancel Training",
+
+  "lessonFee": "Lesson Fee",
+
+  "declineInvitation": "Decline Invitation",
+
+  "total": "Total",
+
+  "courtFee": "Court Fee",
+
+  "acceptBooking": "Accept Invitation",
+
+  "confirm": "Confirm"
 }

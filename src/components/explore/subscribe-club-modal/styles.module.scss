@@ -82,6 +82,11 @@
             height: 50px;
             color: var(--text-color);
           }
+
+          .error-field {
+            color: $roger-red;
+            font-size: 0.9rem;
+          }
         }
       }
 
