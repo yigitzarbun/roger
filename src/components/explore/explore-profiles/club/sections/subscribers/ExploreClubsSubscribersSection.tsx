@@ -10,6 +10,7 @@ import Paths from "../../../../../../routing/Paths";
 import TrainingInviteFormModal from "../../../../../../components/invite/training/form/TrainingInviteFormModal";
 import MatchInviteFormModal from "../../../../../../components/invite/match/form/MatchInviteFormModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
+import { useTranslation } from "react-i18next";
 
 interface ExploreClubsSubscribersSectionProps {
   selectedClub: any;
@@ -21,6 +22,8 @@ const ExploreClubsSubscribersSection = (
   props: ExploreClubsSubscribersSectionProps
 ) => {
   const { selectedClub, isUserPlayer, isUserTrainer, user } = props;
+
+  const { t } = useTranslation();
 
   const { data: clubSubscribers, isLoading: isClubsubscribersLoading } =
     useGetClubSubscribersByIdQuery(selectedClub?.[0]?.user_id);
@@ -72,21 +75,21 @@ const ExploreClubsSubscribersSection = (
 
   return (
     <div className={styles["subscribers-section"]}>
-      <h2>Üyeler</h2>
+      <h2>{t("subscribersTitle")}</h2>
       {clubSubscribers?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Üye</th>
-              <th>İsim</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Seviye</th>
-              <th>Yorum</th>
-              {isUserPlayer && <th>Antreman</th>}
-              {isUserPlayer && <th>Maç</th>}
-              {isUserTrainer && <th>Ders</th>}
+              <th>{t("tablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("reviewsTitle")}</th>
+              {isUserPlayer && <th>{t("trainTitle")}</th>}
+              {isUserPlayer && <th>{t("matchTitle")}</th>}
+              {isUserTrainer && <th>{t("lessonTitle")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -136,10 +139,18 @@ const ExploreClubsSubscribersSection = (
                     </Link>
                   </td>
                   <td>
-                    {player.playerGenderName
-                      ? player.playerGenderName
-                      : player.externalGenderName
-                      ? player.externalGenderName
+                    {player.playerGenderName &&
+                    player.playerGenderName === "male"
+                      ? t("male")
+                      : player.playerGenderName &&
+                        player.playerGenderName === "female"
+                      ? t("female")
+                      : player.externalGenderName &&
+                        player.externalGenderName === "male"
+                      ? t("male")
+                      : player.externalGenderName &&
+                        player.externalGenderName === "female"
+                      ? t("female")
                       : ""}
                   </td>
                   <td>
@@ -159,10 +170,25 @@ const ExploreClubsSubscribersSection = (
                       : ""}
                   </td>
                   <td>
-                    {player.playerLevelName
-                      ? player.playerLevelName
-                      : player.externalLevelName
-                      ? player.externalLevelName
+                    {player.playerLevelName && player.playerLevelId === 1
+                      ? t("playerLevelBeginner")
+                      : player.playerLevelName && player?.playerLevelId === 2
+                      ? t("playerLevelIntermediate")
+                      : player.playerLevelName && player?.playerLevelId === 3
+                      ? t("playerLevelAdvanced")
+                      : player.playerLevelName && player?.playerLevelId === 4
+                      ? t("playerLevelProfessinal")
+                      : player.externalLevelName && player.externalLevelId === 1
+                      ? t("playerLevelBeginner")
+                      : player.externalLevelName &&
+                        player?.externalLevelId === 2
+                      ? t("playerLevelIntermediate")
+                      : player.externalLevelName &&
+                        player?.externalLevelId === 3
+                      ? t("playerLevelAdvanced")
+                      : player.externalLevelName &&
+                        player?.externalLevelId === 4
+                      ? t("playerLevelProfessinal")
                       : ""}
                   </td>
                   <td>
@@ -170,65 +196,65 @@ const ExploreClubsSubscribersSection = (
                       ? `${Math.round(Number(player.averagereviewscore))} / 10`
                       : "-"}
                   </td>
-                  {isUserPlayer && (
-                    <td>
-                      {player.playerUserId !== user?.user?.user_id &&
-                      player.user_type_id === 1 ? (
-                        <button
-                          onClick={() =>
-                            handleOpenTrainInviteModal(player.playerUserId)
-                          }
-                        >
-                          Antreman Yap
-                        </button>
-                      ) : (
-                        <ImBlocked className={styles.blocked} />
-                      )}
-                    </td>
-                  )}
-
-                  {isUserPlayer && (
-                    <td>
-                      {user?.playerDetails?.gender ===
-                        player.playerGenderName &&
+                  <td>
+                    {isUserPlayer &&
+                    player.playerUserId !== user?.user?.user_id &&
+                    player.user_type_id === 1 ? (
+                      <button
+                        onClick={() =>
+                          handleOpenTrainInviteModal(player.playerUserId)
+                        }
+                      >
+                        {t("trainInviteTitle")}
+                      </button>
+                    ) : isUserPlayer &&
+                      (player.playerUserId === user?.user?.user_id ||
+                        player.user_type_id !== 1) ? (
+                      <ImBlocked className={styles.blocked} />
+                    ) : isUserPlayer &&
+                      user?.playerDetails?.gender === player.playerGenderName &&
                       player.playerUserId !== user?.user?.user_id &&
                       player.user_type_id === 1 ? (
-                        <button
-                          onClick={() =>
-                            handleOpenMatchInviteModal(player.playerUserId)
-                          }
-                          disabled={
-                            user?.playerDetails?.gender !==
-                            player.playerGenderName
-                          }
-                        >
-                          Maç Yap
-                        </button>
-                      ) : (
-                        <ImBlocked className={styles.blocked} />
-                      )}
-                    </td>
-                  )}
-                  {isUserTrainer && player.user_type_id === 1 && (
-                    <td>
+                      <button
+                        onClick={() =>
+                          handleOpenMatchInviteModal(player.playerUserId)
+                        }
+                        disabled={
+                          user?.playerDetails?.gender !==
+                          player.playerGenderName
+                        }
+                      >
+                        {t("matchInviteTitle")}
+                      </button>
+                    ) : isUserPlayer &&
+                      (user?.playerDetails?.gender !==
+                        player.playerGenderName ||
+                        player.playerUserId === user?.user?.user_id ||
+                        player.user_type_id !== 1) ? (
+                      <ImBlocked className={styles.blocked} />
+                    ) : isUserTrainer && player.user_type_id === 1 ? (
                       <button
                         onClick={() =>
                           handleOpenLessonModal(player.playerUserId)
                         }
                       >
-                        Derse davet et
+                        {t("lessonInviteTitle")}
                       </button>
-                    </td>
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </td>
                 </tr>
               ))}
           </tbody>
         </table>
       ) : (
-        <p>Kulübe üye bulunmamaktadır.</p>
+        <p>{t("clubHasNoSubscribers")}</p>
       )}
       {clubSubscribers?.length > 0 && (
-        <button onClick={openSubscribersModal}>Tümünü Gör</button>
+        <button onClick={openSubscribersModal}>
+          {t("leaderBoardViewAllButtonText")}
+        </button>
       )}
 
       {isSubscribersModalOpen && (

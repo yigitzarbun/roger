@@ -1,15 +1,13 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
-
 import {
   useAddMessageMutation,
   useGetMessageByUserIdQuery,
 } from "../../../../api/endpoints/MessagesApi";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../store/hooks";
+import { useTranslation } from "react-i18next";
 
 interface MessageModalProps {
   messageModal: boolean;
@@ -19,12 +17,19 @@ interface MessageModalProps {
 
 const MessageModal = (props: MessageModalProps) => {
   const { messageModal, closeMessageModal, recipient_id } = props;
+
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store.user?.user?.user);
+
   const [message, setMessage] = useState("");
+
   const handleMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
+
   const { refetch } = useGetMessageByUserIdQuery(user?.user_id);
+
   const [addMessage, { isSuccess: isAddMessageSuccess }] =
     useAddMessageMutation({});
 
@@ -62,7 +67,7 @@ const MessageModal = (props: MessageModalProps) => {
       <div className={styles["overlay"]} onClick={closeMessageModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Yeni Mesaj</h1>
+          <h1>{t("newMessageTitle")}</h1>
         </div>
         <textarea onChange={handleMessage} />
         <div className={styles["buttons-container"]}>
@@ -70,14 +75,14 @@ const MessageModal = (props: MessageModalProps) => {
             onClick={closeMessageModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("cancel")}
           </button>
           <button
             onClick={handleSend}
             className={styles["submit-button"]}
             disabled={message === ""}
           >
-            Gönder
+            {t("send")}
           </button>
         </div>
       </div>

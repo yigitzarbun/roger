@@ -1,24 +1,12 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import ReactModal from "react-modal";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../../../routing/Paths";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-
 import { useAppSelector } from "../../../../../../store/hooks";
-
+import { useTranslation } from "react-i18next";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
-import {
-  useAddFavouriteMutation,
-  useGetFavouritesByFilterQuery,
-  useUpdateFavouriteMutation,
-} from "../../../../../../api/endpoints/FavouritesApi";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 
 interface ExploreClubTrainersModalProps {
@@ -30,70 +18,28 @@ interface ExploreClubTrainersModalProps {
 const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
   const { isTrainersModalOpen, closeTrainersModal, confirmedClubTrainers } =
     props;
+
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const [trainerLessonUserId, setTrainerLessonUserId] = useState(null);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
   const handleOpenLessonModal = (trainerLessonUserId: number) => {
     setTrainerLessonUserId(trainerLessonUserId);
     setIsInviteModalOpen(true);
   };
+
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
 
-  const {
-    data: myFavourites,
-    isLoading: isMyFavouritesLoading,
-    refetch: refetchMyFavourites,
-  } = useGetFavouritesByFilterQuery({
-    favouriter_id: user?.user?.user_id,
-  });
-
-  const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
-    useAddFavouriteMutation();
-
-  const handleAddFavourite = (favouritee_id: number) => {
-    const favouriteData = {
-      is_active: true,
-      favouriter_id: user?.user?.user_id,
-      favouritee_id: favouritee_id,
-    };
-    addFavourite(favouriteData);
-  };
-
-  const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
-    useUpdateFavouriteMutation();
-
-  const handleUpdateFavourite = (userId: number) => {
-    const selectedFavourite = myFavourites?.find(
-      (favourite) => favourite.favouritee_id === userId
-    );
-    const favouriteData = {
-      favourite_id: selectedFavourite.favourite_id,
-      registered_at: selectedFavourite.registered_at,
-      is_active: selectedFavourite.is_active === true ? false : true,
-      favouriter_id: selectedFavourite.favouriter_id,
-      favouritee_id: selectedFavourite.favouritee_id,
-    };
-    updateFavourite(favouriteData);
-  };
-
-  const handleToggleFavourite = (userId: number) => {
-    if (myFavourites?.find((favourite) => favourite.favouritee_id === userId)) {
-      handleUpdateFavourite(userId);
-    } else {
-      handleAddFavourite(userId);
-    }
-  };
-  useEffect(() => {
-    if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
-      refetchMyFavourites();
-    }
-  }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
   return (
     <ReactModal
       isOpen={isTrainersModalOpen}
@@ -105,57 +51,28 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
       <div className={styles["overlay"]} onClick={closeTrainersModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Eğitmenler</h1>
+          <h1>{t("exploreTrainersTabTitle")}</h1>
         </div>
         <div className={styles["table-container"]}>
           {confirmedClubTrainers?.length > 0 ? (
             <table>
               <thead>
                 <tr>
-                  <th></th>
-                  <th>Eğitmen</th>
-                  <th>İsim</th>
-                  <th>Cinsiyet</th>
-                  <th>Yaş</th>
-                  <th>Tecrübe</th>
-                  <th>Ders</th>
-                  <th>Öğrenci</th>
-                  <th>Fiyat</th>
-                  <th>Konum</th>
+                  <th>{t("tableTrainerHeader")}</th>
+                  <th>{t("tableNameHeader")}</th>
+                  <th>{t("tableGenderHeader")}</th>
+                  <th>{t("tableAgeHeader")}</th>
+                  <th>{t("tableLevelHeader")}</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableLessonHeader")}</th>
+                  <th>{t("tableStudentshipHeader")}</th>
+                  <th>{t("tablePriceHeader")}</th>
                   {isUserPlayer && <th>Ders</th>}
                 </tr>
               </thead>
               <tbody>
                 {confirmedClubTrainers?.map((trainer) => (
                   <tr key={trainer.user_id} className={styles["trainer-row"]}>
-                    <td>
-                      {myFavourites?.find(
-                        (favourite) =>
-                          favourite.favouritee_id === trainer.trainerUserId &&
-                          favourite.is_active === true
-                      ) && trainer.trainerUserId !== user?.user?.user_id ? (
-                        <AiFillStar
-                          onClick={() =>
-                            handleToggleFavourite(trainer.trainerUserId)
-                          }
-                          className={styles["remove-fav-icon"]}
-                        />
-                      ) : (
-                        trainer.trainerUserId !== user?.user?.user_id &&
-                        !myFavourites?.find(
-                          (favourite) =>
-                            favourite.favouritee_id === trainer.trainerUserId &&
-                            favourite.is_active === true
-                        ) && (
-                          <AiOutlineStar
-                            onClick={() =>
-                              handleToggleFavourite(trainer.trainerUserId)
-                            }
-                            className={styles["add-fav-icon"]}
-                          />
-                        )
-                      )}
-                    </td>
                     <td>
                       <Link
                         to={`${paths.EXPLORE_PROFILE}2/${trainer.trainerUserId} `}
@@ -179,13 +96,23 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                         {`${trainer.fname} ${trainer.lname}`}
                       </Link>
                     </td>
-                    <td>{trainer.gender}</td>
+                    <td>
+                      {trainer.gender === "female" ? t("female") : t("male")}
+                    </td>
                     <td>{getAge(trainer.birth_year)}</td>
-                    <td>{trainer?.trainer_experience_type_name}</td>
+                    <td>
+                      {trainer?.trainer_experience_type_id === 1
+                        ? t("trainerLevelBeginner")
+                        : trainer?.trainer_experience_type_id === 2
+                        ? t("trainerLevelIntermediate")
+                        : trainer?.trainer_experience_type_id === 3
+                        ? t("trainerLevelAdvanced")
+                        : t("trainerLevelProfessional")}
+                    </td>
+                    <td>{trainer.location_name}</td>
                     <td>{trainer.lessoncount}</td>
                     <td>{trainer.studentcount}</td>
                     <td>{trainer.price_hour} TL</td>
-                    <td>{trainer.location_name}</td>
                     {isUserPlayer && (
                       <td>
                         <button
@@ -194,7 +121,7 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                           }
                           className={styles["lesson-button"]}
                         >
-                          Derse davet et
+                          {t("tableLessonButtonText")}
                         </button>
                       </td>
                     )}

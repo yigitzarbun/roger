@@ -135,6 +135,7 @@ const clubSubscriptionsModel = {
           "players.gender as playerGenderName",
           "players.birth_year as playerBirthYear",
           "player_levels.player_level_name as playerLevelName",
+          "player_levels.player_level_id as playerLevelId",
           "player_locations.*",
           "player_locations.location_name as locationName",
           "club_external_members.fname as externalFname",
@@ -143,6 +144,7 @@ const clubSubscriptionsModel = {
           "club_external_members.gender as externalGenderName",
           "club_external_members.birth_year as externalBirthYear",
           "external_player_levels.player_level_name as externalLevelName",
+          "external_player_levels.player_level_id as externalLevelId",
           "external_locations.location_name as externalLocationName",
           db.raw("AVG(event_reviews.review_score) as averageReviewScore"),
           db.raw(
@@ -211,7 +213,8 @@ const clubSubscriptionsModel = {
           "external_player_levels.player_level_name",
           "external_locations.location_name",
           "club_external_members.birth_year",
-          "users.user_id"
+          "users.user_id",
+          "external_player_levels.player_level_id"
         );
 
       return clubSubscribers.length > 0 ? clubSubscribers : null;

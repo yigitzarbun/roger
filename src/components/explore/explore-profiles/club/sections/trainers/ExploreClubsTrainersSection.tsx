@@ -1,19 +1,13 @@
 import React, { useState } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../../../../routing/Paths";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../../../../components/loading/PageLoading";
-
 import { useGetClubTrainersQuery } from "../../../../../../api/endpoints/ClubStaffApi";
-
 import ExploreClubTrainerModal from "../../modals/trainers/ExploreClubTrainersModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
+import { useTranslation } from "react-i18next";
 
 interface ExploreClubsTrainersSectionProps {
   isUserTrainer: boolean;
@@ -25,46 +19,55 @@ const ExploreClubsTrainersSection = (
 ) => {
   const { isUserTrainer, isUserPlayer, selectedClub } = props;
 
+  const { t } = useTranslation();
+
   const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
     useGetClubTrainersQuery(selectedClub?.[0]?.user_id);
 
   const [isTrainersModalOpen, setIsTrainersModalOpen] = useState(false);
+
   const openTrainersModal = () => {
     setIsTrainersModalOpen(true);
   };
+
   const closeTrainersModal = () => {
     setIsTrainersModalOpen(false);
   };
 
   const [trainerLessonUserId, setTrainerLessonUserId] = useState(null);
+
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
   const handleOpenLessonModal = (trainerLessonUserId: number) => {
     setTrainerLessonUserId(trainerLessonUserId);
     setIsInviteModalOpen(true);
   };
+
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
+
   if (isClubStaffLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["trainers-section"]}>
       <div className={styles["trainers-section-title-container"]}>
-        <h2>Eğitmenler</h2>
+        <h2>{t("exploreTrainersTabTitle")}</h2>
       </div>
       {clubStaffTrainers?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Eğitmen</th>
-              <th>İsim</th>
-              <th>Cinsiyet</th>
-              <th>Tecrübe</th>
-              <th>Konum</th>
-              <th>Ders</th>
-              <th>Öğrenci</th>
-              <th>Fiyat</th>
+              <th>{t("tableTrainerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("tableLessonHeader")}</th>
+              <th>{t("tableStudentshipHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -96,12 +99,22 @@ const ExploreClubsTrainersSection = (
                       className={styles["trainer-name"]}
                     >{`${trainer.fname} ${trainer.lname}`}</Link>
                   </td>
-                  <td>{trainer.gender}</td>
-                  <td>{trainer?.trainer_experience_type_name}</td>
+                  <td>
+                    {trainer.gender === "female" ? t("female") : t("male")}
+                  </td>
+                  <td>
+                    {trainer?.trainer_experience_type_id === 1
+                      ? t("trainerLevelBeginner")
+                      : trainer?.trainer_experience_type_id === 2
+                      ? t("trainerLevelIntermediate")
+                      : trainer?.trainer_experience_type_id === 3
+                      ? t("trainerLevelAdvanced")
+                      : t("trainerLevelProfessional")}
+                  </td>
                   <td>{trainer.location_name}</td>
                   <td>{trainer.lessoncount}</td>
                   <td>{trainer.studentcount}</td>
-                  <td>{trainer.price_hour}</td>
+                  <td>{trainer.price_hour} TL</td>
 
                   {isUserPlayer && (
                     <td>
@@ -111,7 +124,7 @@ const ExploreClubsTrainersSection = (
                         }
                         className={styles["lesson-button"]}
                       >
-                        Derse davet et
+                        {t("tableLessonButtonText")}
                       </button>
                     </td>
                   )}
@@ -120,10 +133,12 @@ const ExploreClubsTrainersSection = (
           </tbody>
         </table>
       ) : (
-        <p>Henüz kulübe bağlı çalışan eğitmen bulunmamaktadır</p>
+        <p>{t("clubHasNoTrainers")}</p>
       )}
       {clubStaffTrainers?.length > 0 && (
-        <button onClick={openTrainersModal}>Tümünü Görüntüle</button>
+        <button onClick={openTrainersModal}>
+          {t("leaderBoardViewAllButtonText")}
+        </button>
       )}
 
       {isTrainersModalOpen && (

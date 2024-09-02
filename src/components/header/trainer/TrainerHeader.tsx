@@ -1,11 +1,8 @@
-import React, { useEffect } from "react";
-
+import React from "react";
+import { useTranslation } from "react-i18next";
 import { FaCircle } from "react-icons/fa";
-
 import { NavLink } from "react-router-dom";
-
 import paths from "../../../routing/Paths";
-
 import styles from "./styles.module.scss";
 
 interface TrainerHeaderProps {
@@ -14,6 +11,8 @@ interface TrainerHeaderProps {
 }
 const TrainerHeader = (props: TrainerHeaderProps) => {
   const { trainerIncomingRequests, newStudentRequests } = props;
+
+  const { t } = useTranslation();
 
   return (
     <nav className={styles["header-trainer-container"]}>
@@ -26,7 +25,7 @@ const TrainerHeader = (props: TrainerHeaderProps) => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Keşfet
+          {t("headerExploreTitle")}
         </NavLink>
         <NavLink
           to={paths.CALENDAR}
@@ -36,7 +35,7 @@ const TrainerHeader = (props: TrainerHeaderProps) => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Takvim
+          {t("headerCalendarTitle")}
         </NavLink>
         <NavLink
           to={paths.REQUESTS}
@@ -46,7 +45,8 @@ const TrainerHeader = (props: TrainerHeaderProps) => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Davetler
+          {t("headerInvitesTitle")}
+
           {trainerIncomingRequests?.length > 0 && (
             <FaCircle className={styles["notification"]} />
           )}
@@ -59,7 +59,7 @@ const TrainerHeader = (props: TrainerHeaderProps) => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Öğrenciler
+          {t("trainerStudentsTitle")}
           {newStudentRequests?.length > 0 && (
             <FaCircle className={styles["notification"]} />
           )}
@@ -72,7 +72,7 @@ const TrainerHeader = (props: TrainerHeaderProps) => {
               : `${styles["nav-link-trainer"]}`
           }
         >
-          Performans
+          {t("headerPerformanceTitle")}
         </NavLink>
       </div>
     </nav>

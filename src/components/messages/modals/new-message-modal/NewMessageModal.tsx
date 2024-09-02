@@ -1,11 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../../common/constants/apiConstants";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import {
   useAddMessageMutation,
   useGetChatsByFilterQuery,
@@ -14,6 +11,7 @@ import {
 } from "../../../../api/endpoints/MessagesApi";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../../../store/hooks";
+import { useTranslation } from "react-i18next";
 
 interface NewMessageModalProps {
   newMessageModal: boolean;
@@ -22,11 +20,15 @@ interface NewMessageModalProps {
 
 const NewMessageModal = (props: NewMessageModalProps) => {
   const { newMessageModal, closeNewMessageModal } = props;
+
   const user = useAppSelector((store) => store.user?.user?.user);
+
   const [textSearch, setTextSearch] = useState("");
+
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+
   const handleClear = () => {
     setTextSearch("");
   };
@@ -53,6 +55,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
   for (let i = 1; i <= potentialRecipientsList?.totalPages; i++) {
     pageNumbers.push(i);
   }
+
   const handleEventPage = (e) => {
     setCurrentPage(Number(e.target.value));
   };
@@ -75,11 +78,13 @@ const NewMessageModal = (props: NewMessageModalProps) => {
   const handleSelectedRecipient = (recipient) => {
     setSelectedRecipient(recipient);
   };
+
   const [message, setMessage] = useState("");
 
   const handleMessage = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
+
   const { refetch } = useGetMessageByUserIdQuery(user?.user_id);
 
   const [addMessage, { isSuccess: isAddMessageSuccess }] =
@@ -123,6 +128,8 @@ const NewMessageModal = (props: NewMessageModalProps) => {
     }
   }, [isAddMessageSuccess]);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     refecthPotentialRecipientsList();
   }, [currentPage, textSearch, userTypeId]);
@@ -138,14 +145,14 @@ const NewMessageModal = (props: NewMessageModalProps) => {
       <div className={styles["overlay"]} onClick={closeNewMessageModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Yeni Mesaj</h1>
+          <h1>{t("newMessageTitle")}</h1>
         </div>
         {selectedRecipient === null ? (
           <>
             <div className={styles["search-container"]}>
               <input
                 type="text"
-                placeholder="Kime mesaj atmak istersin?"
+                placeholder={t("exploreEventsFilterSearchPlaceholder")}
                 onChange={handleTextSearch}
                 value={textSearch}
               />
@@ -157,7 +164,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                 }
                 onClick={handleClear}
               >
-                Temizle
+                {t("clearButtonText")}
               </button>
             </div>
             <div className={styles["user-type-filter"]}>
@@ -170,7 +177,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                       : styles["passive-button"]
                   }
                 >
-                  Tüm
+                  {t("all")}
                 </button>
                 <button
                   onClick={() => handleUserTypeId(1)}
@@ -180,7 +187,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                       : styles["passive-button"]
                   }
                 >
-                  Oyuncular
+                  {t("explorePlayersTabTitle")}
                 </button>
                 <button
                   onClick={() => handleUserTypeId(2)}
@@ -190,7 +197,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                       : styles["passive-button"]
                   }
                 >
-                  Eğitmenler
+                  {t("exploreTrainersTabTitle")}
                 </button>
                 <button
                   onClick={() => handleUserTypeId(3)}
@@ -200,7 +207,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                       : styles["passive-button"]
                   }
                 >
-                  Kulüpler
+                  {t("exploreClubsTabTitle")}
                 </button>
               </div>
               {potentialRecipientsList?.totalPages > 1 && (
@@ -221,9 +228,9 @@ const NewMessageModal = (props: NewMessageModalProps) => {
               <table>
                 <thead>
                   <tr>
-                    <th>Üye</th>
-                    <th>İsim</th>
-                    <th>Konum</th>
+                    <th>{t("user")}</th>
+                    <th>{t("firstName")}</th>
+                    <th>{t("leaderboardTableLocationHeader")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -272,7 +279,7 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                 </tbody>
               </table>
             ) : (
-              <p>Aradığınız kullanıcı bulunamadı</p>
+              <p>{t("noResult")}</p>
             )}
             <div className={styles["pages-container"]}>
               {pageNumbers?.map((pageNumber) => (
@@ -318,20 +325,23 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                   : null}
               </p>
             </div>
-            <textarea onChange={handleMessage} placeholder="Mesajın" />
+            <textarea
+              onChange={handleMessage}
+              placeholder={t("messageAreaPlaceholder")}
+            />
             <div className={styles["buttons-container"]}>
               <button
                 onClick={handleCancel}
                 className={styles["discard-button"]}
               >
-                İptal
+                {t("cancel")}
               </button>
               <button
                 onClick={handleSend}
                 className={styles["submit-button"]}
                 disabled={message === ""}
               >
-                Gönder
+                {t("send")}
               </button>
             </div>
           </>

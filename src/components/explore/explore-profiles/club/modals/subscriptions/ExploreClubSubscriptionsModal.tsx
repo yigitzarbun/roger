@@ -1,19 +1,12 @@
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { ImBlocked } from "react-icons/im";
-
 import styles from "./styles.module.scss";
-
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
-
 import PageLoading from "../../../../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../../../../store/hooks";
-
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { useGetClubSubscriptionTypesQuery } from "../../../../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../../../api/endpoints/ClubSubscriptionsApi";
 
 interface ExploreClubSubscriptionsModalProps {
@@ -38,6 +31,8 @@ const ExploreClubSubscriptionsModal = (
   } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const isUserPlayer = user?.user?.user_type_id === 1;
 
@@ -90,17 +85,17 @@ const ExploreClubSubscriptionsModal = (
       <div className={styles["overlay"]} onClick={closeSubscriptionsModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Üyelik Paketleri</h1>
+          <h1>{t("subscriptions")}</h1>
         </div>
         <div className={styles["table-container"]}>
           <table>
             <thead>
               <tr>
-                <th>Tür</th>
-                <th>Süre</th>
-                <th>Fiyat</th>
-                <th>Üye Sayısı</th>
-                {isUserPlayer && <th>Üyelik</th>}
+                <th>{t("subscriptionType")}</th>
+                <th>{t("subscriptionDuration")}</th>
+                <th>{t("price")}</th>
+                <th>{t("tableSubscribersHeader")}</th>
+                {isUserPlayer && <th>{t("tableSubscriptionHeader")}</th>}
               </tr>
             </thead>
             <tbody>
@@ -109,8 +104,19 @@ const ExploreClubSubscriptionsModal = (
                   key={clubPackage.club_subscription_package_id}
                   className={styles["package-row"]}
                 >
-                  <td>{clubPackage?.club_subscription_type_name}</td>
-                  <td>{clubPackage?.club_subscription_duration_months} ay</td>
+                  <td>
+                    {clubPackage?.club_subscription_type_id === 1
+                      ? t("oneMonthSubscription")
+                      : clubPackage?.club_subscription_type_id === 2
+                      ? t("threeMonthSubscription")
+                      : clubPackage?.club_subscription_type_id === 3
+                      ? t("sixMonthSubscription")
+                      : t("twelveMonthSubscription")}
+                  </td>
+                  <td>
+                    {clubPackage?.club_subscription_duration_months}{" "}
+                    {t("month")}
+                  </td>
                   <td>{clubPackage.price} TL</td>
                   <td>{clubPackage.subscribercount}</td>
                   {isUserPlayer && (
@@ -130,8 +136,8 @@ const ExploreClubSubscriptionsModal = (
                           disabled={!playerPaymentDetailsExist}
                         >
                           {playerPaymentDetailsExist
-                            ? "Üye Ol"
-                            : "Üye olmak için ödeme bilgilerini ekle"}
+                            ? t("subscribe")
+                            : t("subscribeCardDetails")}
                         </button>
                       )}
                     </td>

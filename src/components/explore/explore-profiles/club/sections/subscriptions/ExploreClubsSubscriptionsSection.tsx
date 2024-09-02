@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { ImBlocked } from "react-icons/im";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import styles from "./styles.module.scss";
-
 import ExploreClubSubscriptionsModal from "../../modals/subscriptions/ExploreClubSubscriptionsModal";
 import SubscribeToClubModal from "../../../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../../../components/loading/PageLoading";
-
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetPlayerByUserIdQuery } from "../../../../../../api/endpoints/PlayersApi";
-
 import {
   useGetClubSubscribersByIdQuery,
   useGetClubSubscriptionsByFilterQuery,
@@ -26,6 +22,8 @@ const ExploreClubsSubscriptionsSection = (
   props: ExploreClubsSubscriptionsSectionProps
 ) => {
   const { selectedClub, isUserPlayer, user } = props;
+
+  const { t } = useTranslation();
 
   const {
     data: selectedClubSubscriptionPackages,
@@ -53,6 +51,7 @@ const ExploreClubsSubscriptionsSection = (
       ? true
       : false;
   };
+
   const {
     data: isUserSubscribedToClub,
     isLoading: isUserSubscribedtoClubLoading,
@@ -114,18 +113,19 @@ const ExploreClubsSubscriptionsSection = (
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["subscriptions-section"]}>
-      <h2>Üyelikler</h2>
+      <h2>{t("subscriptions")}</h2>
       {selectedClubSubscriptionPackages?.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Abonelik Türü</th>
-              <th>Abonelik Süresi</th>
-              <th>Fiyat</th>
-              <th>Üye Sayısı</th>
-              {isUserPlayer && <th>Üyelik</th>}
+              <th>{t("subscriptionType")}</th>
+              <th>{t("subscriptionDuration")}</th>
+              <th>{t("price")}</th>
+              <th>{t("tableSubscribersHeader")}</th>
+              {isUserPlayer && <th>{t("tableSubscriptionHeader")}</th>}
             </tr>
           </thead>
           <tbody>
@@ -134,8 +134,18 @@ const ExploreClubsSubscriptionsSection = (
                 key={clubPackage.club_subscription_package_id}
                 className={styles["package-row"]}
               >
-                <td>{clubPackage?.club_subscription_type_name}</td>
-                <td>{clubPackage?.club_subscription_duration_months} ay</td>
+                <td>
+                  {clubPackage?.club_subscription_type_id === 1
+                    ? t("oneMonthSubscription")
+                    : clubPackage?.club_subscription_type_id === 2
+                    ? t("threeMonthSubscription")
+                    : clubPackage?.club_subscription_type_id === 3
+                    ? t("sixMonthSubscription")
+                    : t("twelveMonthSubscription")}
+                </td>
+                <td>
+                  {clubPackage?.club_subscription_duration_months} {t("month")}
+                </td>
                 <td>{clubPackage.price} TL</td>
                 <td>{clubPackage.subscribercount}</td>
                 {isUserPlayer && (
@@ -152,8 +162,8 @@ const ExploreClubsSubscriptionsSection = (
                     ) : (
                       <button onClick={handleOpenSubscribeModal}>
                         {playerPaymentDetailsExist
-                          ? "Üye Ol"
-                          : "Üye olmak için ödeme bilgilerini ekle"}
+                          ? t("subscribe")
+                          : t("subscribeCardDetails")}
                       </button>
                     )}
                   </td>
@@ -163,10 +173,12 @@ const ExploreClubsSubscriptionsSection = (
           </tbody>
         </table>
       ) : (
-        <p>Henüz kulübe ait abonelik paketi bulunmamaktadır</p>
+        <p>{t("clubHasNoSubscriptions")}</p>
       )}
       {selectedClubSubscriptionPackages?.length > 0 && (
-        <button onClick={openSubscriptionsModal}>Tümünü Görüntüle</button>
+        <button onClick={openSubscriptionsModal}>
+          {t("leaderBoardViewAllButtonText")}
+        </button>
       )}
 
       {isSubscriptionsModalOpen && (

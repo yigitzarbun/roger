@@ -21,6 +21,13 @@
   "calendarText": "Kort rezervasyonlarını takip et ve yönet",
   "calendarButtonText": "Takvimi Görüntüle",
 
+  "trainerCalendarText": "Onaylanmış derslerini görüntüle",
+  "trainerStudentsTitle": "Öğrenciler",
+  "trainerStudentsText": "Bireysel öğrenci ve gruplarını yönet",
+  "trainerRequestsText": "Incoming and outgoing lesson invitations",
+  "trainerViewRequestsButtonText": "Davetleri Görüntüle",
+  "trainerViewStudentsButtonText": "Öğrencileri Görüntüle",
+
   "courtsTitle": "Kortlar",
   "courtsText": "Kulübüne ait kortları ekle ve düzenle",
   "courtsButtonText": "Kortları Görüntüle",
@@ -361,12 +368,14 @@
   "lessonInviteTitle": "Ders Davet",
 
   "subscribe": "Üye Ol",
+  "subscribeCardDetails": "Üye olmak için kart bilgilerini ekle",
 
   "addPaymentDetails": "Kart Ekle",
 
   "subscribeToClubTitle": "Kulüp Üyeliği",
 
   "subscriptionType": "Üyelik Türü",
+  "subscriptionDuration": "Üyelik Süresi",
 
   "submit": "Tamamla",
 
@@ -394,7 +403,7 @@
 
   "playerSubscriptionTrainerStaffRequired": "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir",
   "clubStaffRequired": "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir",
-  "playerSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
+  "Not": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
 
   "cancelLessonTitle": "Ders İptal",
   "cancelMatchTitle": "Maç İptal",
@@ -408,5 +417,68 @@
 
   "courtFee": "Kort Ücreti",
 
-  "acceptBooking": "Daveti Onayla"
+  "acceptBooking": "Daveti Onayla",
+
+  "confirm": "Onayla",
+
+  "messagesTitle": "Mesajlar",
+
+  "you": "Siz",
+
+  "send": "Gönder",
+
+  "messageAreaPlaceholder": "Mesajınızı buraya yazın",
+
+  "newMessageTitle": "Yeni Mesaj",
+
+  "all": "Tüm",
+
+  "pleaseAddMessage": "Lütfen mesajınızı yazın",
+
+  "noMessageTitle": "Henüz mesajınız yok",
+
+  "footerText": "Raket, tenis oyuncularının birbirleriyle ve eğitmenlerle eşleştirkleri ve doğrudan kort rezervasyonu yaptıkları Türkiye'nin ilk tenis platformudur.",
+
+  "about": "Hakkında",
+  "contact": "İletişim",
+  "privacyPolicy": "Gizlilik Politikası",
+  "terms": "Kullanım Şartları",
+
+  "copyright": "Tüm hakları saklıdır",
+
+  "staffApplyButtonText": "Başvur",
+
+  "subscriptionPackage": "Üyelik Paketi",
+
+  "staffEmployedText": "Bu kulüpte çalışıyorsun",
+
+  "staffEmploymentAwaiting": "Başvurun henüz yanıtlanmadı",
+  "staffEmploymentApplication": "İş Başvurusu",
+
+  "subscribed": "Üyelik Var",
+
+  "clubHasNoCourts": "Kulübe ait kort bulunmamaktadır",
+  "clubHasNoTrainers": "Kulübe ait eğitmen bulunmamaktadır",
+  "clubHasNoSubscribers": "Kulübe ait üye bulunmamaktadır",
+  "clubHasNoSubscriptions": "Kulübe ait üyelik paketi bulunmamaktadır",
+
+  "subscribersTitle": "Üyeler",
+
+  "price": "Fiyat",
+
+  "month": "Ay",
+
+  "clubRulesTitle": "Kurallar",
+
+  "trainingMatchRuleTitle": "Antreman / Maç",
+
+  "playerSubscriptionNotRequired": "Oyuncuların kort kiralamak için kulübe üye olmalarına gerek yoktur",
+
+  "clubStaffPlayerSubscriptionRequired": "Eğitmenin kulüp çalışanı, oyuncunun kulüp üyesi olması gerekir",
+  "clubStaffRequiredOnly": "Eğitmenin kulüp çalışanı olması yeterlidir",
+  "playerSubscriptionRequiredOnly": "Oyuncunun kulüp üyesi olması yeterlidir",
+  "clubStaffPlayerSubscriptionNotRequired": "Oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur",
+
+  "differentPriceForMembers": "Üyelere farklı fiyat uygulanır",
+  "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz"
 }

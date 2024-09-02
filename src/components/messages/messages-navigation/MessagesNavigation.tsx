@@ -4,6 +4,7 @@ import { localUrl } from "../../../common/constants/apiConstants";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import NewMessageModal from "../modals/new-message-modal/NewMessageModal";
 import { FaPlus } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 interface MessagesNavigationProps {
   userChats: any[];
@@ -22,6 +23,7 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
     handleOtherUserId,
     user,
   } = props;
+
   const convertToMinutesAgo = (dateString: string) => {
     const date = parseISO(dateString);
     let result = formatDistanceToNow(date, { addSuffix: true });
@@ -30,6 +32,7 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
   };
 
   const [newMessageModal, setNewMessageModal] = useState(false);
+
   const handleOpenNewMessageModal = () => {
     setNewMessageModal(true);
   };
@@ -38,10 +41,12 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
     setNewMessageModal(false);
   };
 
+  const { t } = useTranslation();
+
   return (
     <div className={styles.nav}>
       <div className={styles["title-container"]}>
-        <h2>Mesajlar</h2>
+        <h2>{t("messagesTitle")}</h2>
         <FaPlus
           className={styles["new-message-icon"]}
           onClick={handleOpenNewMessageModal}
@@ -56,7 +61,7 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
             type="text"
             onChange={handleTextSearch}
             value={textSearch}
-            placeholder="Oyuncu, eğitmen veya kulüp adı"
+            placeholder={t("headerSearchPlaceholder")}
           />
         </div>
       )}
@@ -106,13 +111,11 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
         ))
       ) : userChats?.length === 0 && textSearch === "" ? (
         <div className={styles["no-messages-container"]}>
-          <h4>Henüz mesajınız yok</h4>{" "}
+          <h4>{t("noMessageTitle")}</h4>{" "}
           <button onClick={handleOpenNewMessageModal}>Yeni Mesaj</button>
         </div>
       ) : (
-        <p className={styles["no-user"]}>
-          Aradığınız kritere göre kullanıcı bulunamadı
-        </p>
+        <p className={styles["no-user"]}>{t("noResult")}</p>
       )}
       {newMessageModal && (
         <NewMessageModal

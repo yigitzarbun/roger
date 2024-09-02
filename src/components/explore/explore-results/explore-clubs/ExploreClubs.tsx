@@ -93,6 +93,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     clubTrainers,
     subscribedClubs,
   } = props;
+
   const { t } = useTranslation();
 
   const {
@@ -122,13 +123,16 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   }
 
   const [isClubFilterModalOpen, setIsClubFilterModalOpen] = useState(false);
+
   const handleOpenClubFilterModal = () => {
     setIsClubFilterModalOpen(true);
   };
   const handleCloseclubFilterModal = () => {
     setIsClubFilterModalOpen(false);
   };
+
   const [currentPage, setCurrentPage] = useState(1);
+
   const logicLocationId = isUserPlayer
     ? user?.playerDetails?.location_id
     : isUserTrainer
@@ -138,6 +142,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     : null;
 
   const [orderByDirection, setOrderByDirection] = useState("desc");
+
   const [orderByColumn, setOrderByColumn] = useState("");
 
   const handleOrderBy = (orderByColumn: string, orderByDirection: string) => {
@@ -282,6 +287,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   useEffect(() => {
     refetchClubs();
   }, [openSubscribeModal]);
+
   useEffect(() => {
     refetchClubs();
   }, [
@@ -474,7 +480,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                         onClick={() => openEmploymentModal(club)}
                         className={styles["subscribe-button"]}
                       >
-                        Başvur
+                        {t("staffApplyButtonText")}
                       </button>
                     )}
                   </td>

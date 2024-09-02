@@ -1,17 +1,12 @@
 import React from "react";
-
 import ReactModal from "react-modal";
-
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
-
 import paths from "../../../../../../routing/Paths";
-
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
+import { useTranslation } from "react-i18next";
 
 interface ExploreClubCourtsModalProps {
   isCourtsModalOpen: boolean;
@@ -32,6 +27,8 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
     isUserTrainer,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isCourtsModalOpen}
@@ -50,19 +47,19 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
             <table>
               <thead>
                 <tr>
-                  <th>Kort</th>
-                  <th>İsim</th>
-                  <th>Yüzey</th>
-                  <th>Mekan</th>
-                  <th>Konum</th>
-                  <th>Fiyat</th>
+                  <th>{t("tableCourtHeader")}</th>
+                  <th>{t("tableNameHeader")}</th>
+                  <th>{t("tableSurfaceHeader")}</th>
+                  <th>{t("tableStructureHeader")}</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableCourtPriceHeader")}</th>
                   {selectedClub?.[0]?.higher_price_for_non_subscribers && (
-                    <th>Fiyat (Üye değil)</th>
+                    <th>{t("tablePriceGuestHeader")}</th>
                   )}
-                  <th>Açılış</th>
-                  <th>Kapanış</th>
-                  <th>Statü</th>
-                  <th>Rezervasyon</th>
+                  <th>{t("tableOpeningTimeHeader")}</th>
+                  <th>{t("tableClosingTimeHeader")}</th>
+                  <th>{t("tableStatusHeader")}</th>
+                  <th>{t("tableBookingHeader")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,8 +90,22 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                         {court.court_name}
                       </Link>
                     </td>
-                    <td>{court?.court_surface_type_name}</td>
-                    <td>{court?.court_structure_type_name}</td>
+                    <td>
+                      {court?.court_surface_type_id === 1
+                        ? t("courtSurfaceHard")
+                        : court?.court_surface_type_id === 2
+                        ? t("courtSurfaceClay")
+                        : court?.court_surface_type_id === 3
+                        ? t("courtSurfaceGrass")
+                        : t("courtSurfaceCarpet")}
+                    </td>
+                    <td>
+                      {court?.court_structure_type_id === 1
+                        ? t("courtStructureOpen")
+                        : court?.court_structure_type_id === 2
+                        ? t("courtStructureClosed")
+                        : t("courtStructureHybrid")}
+                    </td>
                     <td>{court?.location_name}</td>
                     <td>{court?.price_hour}</td>
                     {selectedClub?.[0]?.higher_price_for_non_subscribers && (
@@ -115,8 +126,8 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                       >
                         <button>
                           {isUserPlayer || isUserTrainer
-                            ? "Rezerve et"
-                            : "Görüntüle"}
+                            ? t("tableBookCourtButton")
+                            : t("tableViewHeader")}
                         </button>
                       </Link>
                     </td>

@@ -8,6 +8,7 @@ import { useGetPlayerByUserIdQuery } from "../../../api/endpoints/PlayersApi";
 import { useGetTrainerByUserIdQuery } from "../../../api/endpoints/TrainersApi";
 import { useGetClubByUserIdQuery } from "../../../api/endpoints/ClubsApi";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 interface MessageAreaProps {
   chatMessages: any[];
@@ -25,6 +26,8 @@ const MessageArea = (props: MessageAreaProps) => {
     setOtherUserId,
     shouldShowChatAreaCloseIcon,
   } = props;
+
+  const { t } = useTranslation();
 
   const isUserPlayer = user?.user_type_id === 1;
 
@@ -117,7 +120,7 @@ const MessageArea = (props: MessageAreaProps) => {
       {shouldShowChatAreaCloseIcon && (
         <div onClick={() => setOtherUserId(null)} className={styles.back}>
           <IoArrowBackCircleOutline />
-          <p>Mesajlar</p>
+          <p>{t("messagesTitle")}</p>
         </div>
       )}
 
@@ -190,10 +193,10 @@ const MessageArea = (props: MessageAreaProps) => {
         <div className={styles["message-box"]}>
           <textarea
             onChange={handleMessage}
-            placeholder="Mesajınızı buraya yazın"
+            placeholder={t("messageAreaPlaceholder")}
             value={message}
           />
-          <button onClick={handleSend}>Gönder</button>
+          <button onClick={handleSend}>{t("send")}</button>
         </div>
       )}
     </div>

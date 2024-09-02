@@ -21,6 +21,13 @@
   "calendarText": "Add, update and track court bookings",
   "calendarButtonText": "View Calender",
 
+  "trainerCalendarText": "View and manage upcoming lessons",
+  "trainerStudentsTitle": "Students",
+  "trainerStudentsText": "Manage individual and group students",
+  "trainerRequestsText": "Incoming and outgoing lesson invitations",
+  "trainerViewRequestsButtonText": "View Invitations",
+  "trainerViewStudentsButtonText": "View Students",
+
   "courtsTitle": "Courts",
   "courtsText": "Manage courts from a single dashboard",
   "courtsButtonText": "View Courts",
@@ -101,12 +108,13 @@
   "tableCourtHeader": "Court",
   "tableSubscribersHeader": "Subscribers",
   "tableSubscriptionHeader": "Subscription",
-  "tableTrainerEmploymentHeader": "Antrenörlük",
+  "tableTrainerEmploymentHeader": "Staff",
   "tableOpeningTimeHeader": "Opening",
   "tableClosingTimeHeader": "Closing",
   "tableSurfaceHeader": "Surface",
   "tableStructureHeader": "Structure",
   "tablePriceGuestHeader": "Price (Guest)",
+  "tableCourtPriceHeader": "Price",
   "tableStatusHeader": "Status",
   "tableBookingHeader": "Booking",
   "tableViewHeader": "View",
@@ -360,12 +368,14 @@
   "lessonInviteTitle": "Lesson Invitation",
 
   "subscribe": "Subscribe",
+  "subscribeCardDetails": "Add payment details to subscribe",
 
   "addPaymentDetails": "Add Card",
 
   "subscribeToClubTitle": "Club Subscription",
 
   "subscriptionType": "Subscription Type",
+  "subscriptionDuration": "Duration",
 
   "submit": "Submit",
 
@@ -409,5 +419,66 @@
 
   "acceptBooking": "Accept Invitation",
 
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+
+  "messagesTitle": "Messages",
+
+  "you": "You",
+
+  "send": "Send",
+
+  "messageAreaPlaceholder": "Type your message here",
+
+  "newMessageTitle": "New Message",
+
+  "all": "All Users",
+
+  "pleaseAddMessage": "Please type a message",
+
+  "noMessageTitle": "No messages yet",
+
+  "footerText": "Raket is Turkey's first tennis-tech platform that brings tennis enthusiasts together and enables them to book courts.",
+
+  "about": "About",
+  "contact": "Contact",
+  "privacyPolicy": "Privacy Policy",
+  "terms": "Terms and Conditions",
+
+  "copyright": "All rights reserved",
+
+  "staffApplyButtonText": "Apply",
+
+  "subscriptionPackage": "Subscription Package",
+
+  "staffEmployedText": "You are a member of staff",
+
+  "staffEmploymentAwaiting": "Your application is awaiting for approval",
+  "staffEmploymentApplication": "Staff Application",
+
+  "subscribed": "Subscribed",
+
+  "clubHasNoCourts": "Club has no courts",
+  "clubHasNoTrainers": "Club has no trainers",
+  "clubHasNoSubscribers": "Club has no subscribers",
+  "clubHasNoSubscriptions": "Club has no subscription packages",
+
+  "subscribersTitle": "Subscribers",
+
+  "price": "Price",
+
+  "month": "Month",
+
+  "clubRulesTitle": "Rules",
+
+  "trainingMatchRuleTitle": "Training / Match",
+
+  "playerSubscriptionNotRequired": "Player subscription is not required for booking courts",
+
+  "clubStaffPlayerSubscriptionRequired": "Trainer must be club staff and player must be a club member in order to book courts",
+  "clubStaffRequiredOnly": "Trainer must be club staff to book courts",
+  "playerSubscriptionRequiredOnly": "Player must be a club member to book courts",
+  "clubStaffPlayerSubscriptionNotRequired": "Trainer does not need to be club staff or player does not need to be a club member in order to book courts",
+
+  "differentPriceForMembers": "Different pricing for club members",
+  "samePriceForMembers": "Same pricing for club members and non-members"
 }

@@ -24,15 +24,20 @@ import { useGetIsTrainerClubStaffQuery } from "../../../../../../api/endpoints/C
 import ClubEmploymentModal from "../../../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
 import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import { useTranslation } from "react-i18next";
 
 interface ExploreClubsProfileSectionProps {
   selectedClub: any;
 }
 const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   const { selectedClub } = props;
+
   const navigate = useNavigate();
+
   const user = useAppSelector((store) => store?.user?.user);
+
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const profileImage = selectedClub?.[0]?.clubImage;
@@ -52,6 +57,8 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   const handleClosePaymentModal = () => {
     setPaymentModal(false);
   };
+
+  const { t } = useTranslation();
 
   const {
     data: isTrainerStaff,
@@ -84,9 +91,6 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
     currentPlayer?.[0]?.cvc &&
     currentPlayer?.[0]?.card_expiry;
 
-  const navigateToPayment = () => {
-    navigate(Paths.PROFILE);
-  };
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
 
   const handleOpenSubscribeModal = () => {
@@ -157,9 +161,11 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   };
 
   const [messageModal, setMessageModal] = useState(false);
+
   const handleOpenMessageModal = () => {
     setMessageModal(true);
   };
+
   const closeMessageModal = () => {
     setMessageModal(false);
   };
@@ -191,7 +197,8 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   if (
     isMyFavouriteClubsLoading ||
     isUserSubscribedLoading ||
-    isCurrentPlayerLoading
+    isCurrentPlayerLoading ||
+    isTrainerStaffLoading
   ) {
     return <PageLoading />;
   }
@@ -211,7 +218,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
 
         <div className={styles["name-container"]}>
           <h2>{selectedClub?.[0]?.club_name} </h2>
-          <h4>Kulüp</h4>
+          <h4>{t("userTypeClub")}</h4>
           <address>{selectedClub?.[0]?.club_address}</address>
         </div>
       </div>
@@ -221,12 +228,12 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
             <table>
               <thead>
                 <tr>
-                  <th>Konum</th>
-                  <th>Tür</th>
-                  <th>Kort</th>
-                  <th>Eğitmen</th>
-                  <th>Üye</th>
-                  <th>Üyelik Paketi</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableClubTypeHeader")}</th>
+                  <th>{t("tableCourtHeader")}</th>
+                  <th>{t("tableTrainerHeader")}</th>
+                  <th>{t("tableSubscribersHeader")}</th>
+                  <th>{t("subscriptionPackage")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -272,7 +279,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                       onClick={handleOpenSubscribeModal}
                       className={styles["interaction-button"]}
                     >
-                      Üye Ol
+                      {t("subscribe")}
                     </button>
                   )}
                 {isUserPlayer &&
@@ -283,7 +290,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                       onClick={handleOpenPaymentModal}
                       className={styles["interaction-button"]}
                     >
-                      Üye olmak için kart bilgilerini ekle
+                      {t("subscribeCardDetails")}
                     </button>
                   )}
                 {(isUserTrainer &&
@@ -296,14 +303,16 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                     onClick={openEmploymentModal}
                     className={styles["interaction-button"]}
                   >
-                    İş Başvurusu Yap
+                    {t("staffEmploymentApplication")}
                   </button>
                 ) : isUserTrainer &&
                   isTrainerStaff?.[0]?.employment_status === "accepted" ? (
-                  <p className={styles.accepted}>Bu kulüpte çalışıyorsun</p>
+                  <p className={styles.accepted}>{t("staffEmployedText")}</p>
                 ) : isUserTrainer &&
                   isTrainerStaff?.[0]?.employment_status === "pending" ? (
-                  <p className={styles.pending}>Başvurun henüz yanıtlanmadı</p>
+                  <p className={styles.pending}>
+                    {t("staffEmploymentAwaiting")}
+                  </p>
                 ) : (
                   ""
                 )}
@@ -312,7 +321,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
             {isUserPlayer && isUserSubscribedToClub?.length > 0 && (
               <div className={styles["subscribed-container"]}>
                 <IoIosCheckmarkCircle className={styles.done} />
-                <p className={styles["subscribed-text"]}>Üyelik var</p>
+                <p className={styles["subscribed-text"]}>{t("subscribed")}</p>
               </div>
             )}
           </div>

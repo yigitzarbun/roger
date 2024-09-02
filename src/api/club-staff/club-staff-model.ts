@@ -70,6 +70,7 @@ const clubStaffModel = {
           "club_staff.club_staff_role_type_id",
           "trainers.price_hour",
           "trainer_experience_types.trainer_experience_type_name",
+          "trainer_experience_types.trainer_experience_type_id",
           db.raw("COUNT(DISTINCT bookings.booking_id) as lessonCount"),
           db.raw("COUNT(DISTINCT students.student_id) as studentCount")
         )

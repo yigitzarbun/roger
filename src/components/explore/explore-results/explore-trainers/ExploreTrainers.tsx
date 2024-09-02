@@ -366,7 +366,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       {paginatedTrainers?.trainers?.length === 0 && (
         <p>{t("trainersEmptyText")}</p>
       )}
-
       {paginatedTrainers?.trainers?.length > 0 && (
         <table>
           <thead>
