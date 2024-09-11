@@ -112,7 +112,9 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
       ) : userChats?.length === 0 && textSearch === "" ? (
         <div className={styles["no-messages-container"]}>
           <h4>{t("noMessageTitle")}</h4>{" "}
-          <button onClick={handleOpenNewMessageModal}>Yeni Mesaj</button>
+          <button onClick={handleOpenNewMessageModal}>
+            {t("newMessageTitle")}
+          </button>
         </div>
       ) : (
         <p className={styles["no-user"]}>{t("noResult")}</p>

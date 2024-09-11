@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import { useAppSelector } from "../../../store/hooks";
+import { useTranslation } from "react-i18next";
 
 interface TrainerStudentsNavigationProps {
   display: string;
@@ -13,7 +13,7 @@ const TrainerStudentsNavigation = ({
   handleDisplay,
   newStudentRequestsList,
 }: TrainerStudentsNavigationProps) => {
-  const user = useAppSelector((store) => store?.user?.user?.user);
+  const { t } = useTranslation();
 
   return (
     <div className={styles["nav-container"]}>
@@ -25,7 +25,7 @@ const TrainerStudentsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Öğrenciler
+        {t("trainerStudentsTitle")}
       </button>
       <button
         onClick={() => handleDisplay("groups")}
@@ -35,7 +35,7 @@ const TrainerStudentsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Gruplar
+        {t("groups")}
       </button>
       <button
         onClick={() => handleDisplay("requests")}
@@ -45,7 +45,7 @@ const TrainerStudentsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Yeni Öğrenci Talepleri{" "}
+        {t("newStudentRequestsTitle")}{" "}
         <span className={styles.notification}>
           {newStudentRequestsList?.length > 0 &&
             ` (${newStudentRequestsList?.length})`}

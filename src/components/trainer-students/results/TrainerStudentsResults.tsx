@@ -1,8 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
-
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
@@ -50,39 +49,49 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
     refetchStudents,
   } = props;
 
+  const { t } = useTranslation();
+
   const isUserPlayer = user?.user?.user_type_id === 1;
+
   const isUserTrainer = user?.user?.user_type_id === 2;
 
   const pageNumbers = [];
+
   for (let i = 1; i <= paginatedTrainerStudents?.totalPages; i++) {
     pageNumbers.push(i);
   }
 
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const handleOpenLessonModal = (userId: number) => {
     setOpponentUserId(userId);
     setIsLessonModalOpen(true);
   };
+
   const handleCloseLessonModal = () => {
     setIsLessonModalOpen(false);
   };
 
   const [isPlayerFilterModalOpen, setIsPlayerFilterModalOpen] = useState(false);
+
   const handleOpenPlayerFilterModal = () => {
     setIsPlayerFilterModalOpen(true);
   };
+
   const handleClosePlayerFilterModal = () => {
     setIsPlayerFilterModalOpen(false);
   };
 
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
   const [student, setStudent] = useState(null);
 
   const openDeleteModal = (student) => {
@@ -101,7 +110,9 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Öğrenciler</h2>
+          <h2 className={styles["result-title"]}>
+            {t("trainerStudentsTitle")}
+          </h2>
           {paginatedTrainerStudents?.students?.length > 0 && (
             <FaFilter
               onClick={handleOpenPlayerFilterModal}
@@ -134,13 +145,13 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Öğrenci</th>
-              <th>İsim</th>
-              <th>Yaş</th>
-              <th>Cinsiyet</th>
-              <th>Konum</th>
-              <th>Seviye</th>
-              <th>Antreman Sayısı</th>
+              <th>{t("student")}</th>
+              <th>{t("leaderboardTablePlayerNameHeader")}</th>
+              <th>{t("leaderboardTableAgeHeader")}</th>
+              <th>{t("leaderboardTableGenderHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("leaderboardTableLevelHeader")}</th>
+              <th>{t("lessonCount")}</th>
             </tr>
           </thead>
           <tbody>
@@ -170,16 +181,26 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
                   </Link>
                 </td>
                 <td>{getAge(student?.playerBirthYear)}</td>
-                <td>{student?.gender}</td>
+                <td>
+                  {student?.gender === "female" ? t("female") : t("male")}
+                </td>
                 <td>{student?.location_name}</td>
-                <td>{student?.player_level_name}</td>
+                <td>
+                  {student.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : student?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : student?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
+                </td>
                 <td>{student?.lessoncount}</td>
                 <td>
                   <button
                     onClick={() => openDeleteModal(student)}
                     className={styles["delete-button"]}
                   >
-                    Öğrenciyi Sil
+                    {t("deleteStudent")}
                   </button>
                 </td>
                 <td>
@@ -187,7 +208,7 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
                     onClick={() => handleOpenLessonModal(student.playerUserId)}
                     className={styles["invite-button"]}
                   >
-                    Derse davet et
+                    {t("tableLessonButtonText")}
                   </button>
                 </td>
               </tr>
@@ -195,7 +216,7 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Henüz aktif öğrenci bulunmamaktadır</p>
+        <p>{t("noStudentsText")}</p>
       )}
       {deleteModalOpen && (
         <DeleteTrainerStudentModal

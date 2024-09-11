@@ -1,6 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 const TrainerStudentsFilterModal = (props) => {
   const {
@@ -18,6 +19,9 @@ const TrainerStudentsFilterModal = (props) => {
     handleGender,
     gender,
   } = props;
+
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isPlayerFilterModalOpen}
@@ -31,14 +35,14 @@ const TrainerStudentsFilterModal = (props) => {
         onClick={handleClosePlayerFilterModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Öğrencileri Filtrele</h3>
+        <h3>{t("filterStudentsTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input
               type="text"
               onChange={handleTextSearch}
               value={textSearch}
-              placeholder="Öğrenci adı"
+              placeholder={t("studentName")}
             />
           </div>
           <div className={styles["input-outer-container"]}>
@@ -48,13 +52,19 @@ const TrainerStudentsFilterModal = (props) => {
                 value={playerLevelId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Seviye --</option>
+                <option value="">-- {t("playerLevel")} --</option>
                 {playerLevels?.map((player_level) => (
                   <option
                     key={player_level.player_level_id}
                     value={player_level.player_level_id}
                   >
-                    {player_level.player_level_name}
+                    {player_level.player_level_id === 1
+                      ? t("playerLevelBeginner")
+                      : player_level?.player_level_id === 2
+                      ? t("playerLevelIntermediate")
+                      : player_level?.player_level_id === 3
+                      ? t("playerLevelAdvanced")
+                      : t("playerLevelProfessinal")}
                   </option>
                 ))}
               </select>
@@ -65,9 +75,9 @@ const TrainerStudentsFilterModal = (props) => {
                 value={gender}
                 className="input-element"
               >
-                <option value="">-- Cinsiyet --</option>
-                <option value="female">Kadın</option>
-                <option value="male">Erkek</option>
+                <option value="">-- {t("gender")} --</option>
+                <option value="female">{t("female")}</option>
+                <option value="male">{t("male")}</option>
               </select>
             </div>
           </div>
@@ -78,7 +88,7 @@ const TrainerStudentsFilterModal = (props) => {
                 value={locationId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Tüm Konumlar --</option>
+                <option value="">-- {t("allLocations")} --</option>
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -92,13 +102,13 @@ const TrainerStudentsFilterModal = (props) => {
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleClosePlayerFilterModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

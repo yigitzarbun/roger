@@ -25,12 +25,19 @@ import {
   useGetStudentsByFilterQuery,
 } from "../../../../api/endpoints/StudentsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
+import { useTranslation } from "react-i18next";
 
 const TrainerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
+
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
+
   const [skipSelectedPayment, setSkipSelectedPayment] = useState(true);
+
+  const { t } = useTranslation();
+
   //const [skipStudent, setSkipStudent] = useState(true);
+
   //const [selectedPlayerUserId, setSelectedPlayerUserId] = useState(null);
 
   const {
@@ -200,26 +207,27 @@ const TrainerRequestsIncoming = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Gelen Davetler</h2>
+        <h2 className={styles["result-title"]}>{t("incomingRequestsTitle")}</h2>
       </div>
       {incomingBookings?.length === 0 ? (
-        <div>Gelen ders daveti bulunmamaktadır</div>
+        <div>{t("noLessonInvitationText")}</div>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Tür</th>
-              <th>Tarih</th>
-              <th>Saat </th>
-              <th>Kort</th>
-              <th>Konum</th>
+              <th>{t("tablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableClubTypeHeader")} </th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")} </th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
               <th>
-                Ücret<span className={styles["fee"]}>*</span>
+                {t("tablePriceHeader")}
+                <span className={styles["fee"]}>*</span>
               </th>
             </tr>
           </thead>
@@ -246,10 +254,46 @@ const TrainerRequestsIncoming = () => {
                     {`${booking?.fname} ${booking?.lname}`}
                   </Link>
                 </td>
-                <td>{booking?.player_level_name}</td>
-                <td>{booking?.gender}</td>
+                <td>
+                  {(booking.event_type_id === 3 ||
+                    booking.event_type_id === 5) &&
+                  booking.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 4
+                    ? t("playerLevelProfessinal")
+                    : "-"}
+                </td>
+                <td>
+                  {booking?.gender === "female" ? t("female") : t("male")}
+                </td>
                 <td>{getAge(booking?.birth_year)}</td>
-                <td>{booking?.event_type_name}</td>
+                <td>
+                  {booking?.event_type_id === 1
+                    ? t("training")
+                    : booking?.event_type_id === 2
+                    ? t("match")
+                    : booking?.event_type_id === 3
+                    ? t("lesson")
+                    : booking?.event_type_id === 4
+                    ? t("externalTraining")
+                    : booking?.event_type_id === 5
+                    ? t("externalLesson")
+                    : booking?.event_type_id === 6
+                    ? t("groupLesson")
+                    : booking?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
@@ -260,7 +304,7 @@ const TrainerRequestsIncoming = () => {
                     onClick={() => handleOpenDeclineModal(booking)}
                     className={styles["decline-button"]}
                   >
-                    Reddet
+                    {t("reject")}
                   </button>
                 </td>
                 <td>
@@ -268,7 +312,7 @@ const TrainerRequestsIncoming = () => {
                     onClick={() => handleOpenAcceptModal(booking)}
                     className={styles["accept-button"]}
                   >
-                    Onay
+                    {t("approve")}
                   </button>
                 </td>
               </tr>

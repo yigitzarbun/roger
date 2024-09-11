@@ -480,5 +480,25 @@
   "clubStaffPlayerSubscriptionNotRequired": "Oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur",
 
   "differentPriceForMembers": "Üyelere farklı fiyat uygulanır",
-  "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz"
+  "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz",
+
+  "lessonInviteTrainerFeeText": "Ücret bilgisi ders ücretini ifade eder. Tüm masraflar oyuncuya aittir.",
+
+  "noLessonInvitationText": "Ders daveti bulunmamaktadır",
+
+  "newStudentRequestsTitle": "Yeni Öğrenci Talepleri",
+
+  "student": "Öğrenci",
+
+  "lessonCount": "Ders Sayısı",
+
+  "deleteStudent": "Öğrenciyi Sil",
+
+  "noStudentsText": "Henüz öğrenci bulunmamaktadır",
+
+  "filterStudentsTitle": "Öğrencileri Filtrele",
+
+  "studentName": "Öğrenci Adı",
+
+  "deleteStudentText": "isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?"
 }

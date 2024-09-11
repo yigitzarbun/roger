@@ -12,9 +12,12 @@ import CancelInviteModal, {
 import PageLoading from "../../../../components/loading/PageLoading";
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { BsClockHistory } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 const TrainerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: outgoingBookings,
@@ -72,26 +75,26 @@ const TrainerRequestsOutgoing = () => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Gönderilen Davetler</h2>
+        <h2 className={styles["result-title"]}>{t("outgoingRequestsTitle")}</h2>
       </div>
       {outgoingBookings?.length === 0 ? (
-        <div>Gönderilen ders daveti bulunmamaktadır</div>
+        <div>{t("noLessonInvitationText")}</div>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>Durum</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Tür</th>
-              <th>Tarih</th>
-              <th>Saat </th>
-              <th>Kort</th>
-              <th>Konum</th>
-              <th>Ücret</th>
+              <th>{t("tableStatusHeader")}</th>
+              <th>{t("tableOpponentHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableClubTypeHeader")} </th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")} </th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -126,10 +129,46 @@ const TrainerRequestsOutgoing = () => {
                     {`${booking?.fname} ${booking?.lname}`}
                   </Link>
                 </td>
-                <td>{booking?.player_level_name}</td>
-                <td>{booking?.gender}</td>
+                <td>
+                  {(booking.event_type_id === 3 ||
+                    booking.event_type_id === 5) &&
+                  booking.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 4
+                    ? t("playerLevelProfessinal")
+                    : "-"}
+                </td>
+                <td>
+                  {booking?.gender === "female" ? t("female") : t("male")}
+                </td>
                 <td>{getAge(booking?.birth_year)}</td>
-                <td>{booking?.event_type_name}</td>
+                <td>
+                  {booking?.event_type_id === 1
+                    ? t("training")
+                    : booking?.event_type_id === 2
+                    ? t("match")
+                    : booking?.event_type_id === 3
+                    ? t("lesson")
+                    : booking?.event_type_id === 4
+                    ? t("externalTraining")
+                    : booking?.event_type_id === 5
+                    ? t("externalLesson")
+                    : booking?.event_type_id === 6
+                    ? t("groupLesson")
+                    : booking?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
@@ -140,7 +179,7 @@ const TrainerRequestsOutgoing = () => {
                     onClick={() => handleOpenModal(booking)}
                     className={styles["cancel-button"]}
                   >
-                    İptal
+                    {t("cancel")}
                   </button>
                 </td>
               </tr>

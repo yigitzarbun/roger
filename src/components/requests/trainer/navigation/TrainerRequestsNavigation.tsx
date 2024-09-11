@@ -1,7 +1,6 @@
 import React from "react";
-
 import styles from "./styles.module.scss";
-
+import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetTrainerIncomingRequestsQuery } from "../../../../api/endpoints/BookingsApi";
 
@@ -16,10 +15,13 @@ const TrainerRequestsNavigation = ({
 }: TrainerRequestsNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user?.user);
 
+  const { t } = useTranslation();
+
   const {
     data: incomingBookings,
     isLoading: isTrainerIncomingBookingsLoading,
   } = useGetTrainerIncomingRequestsQuery(user?.user_id);
+
   return (
     <div className={styles["nav-container"]}>
       <button
@@ -30,7 +32,7 @@ const TrainerRequestsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Gönderilen Davetler
+        {t("outgoingRequestsTitle")}
       </button>
       <button
         onClick={() => handleDisplay("incoming")}
@@ -40,7 +42,7 @@ const TrainerRequestsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Gelen Davetler
+        <span>{t("incomingRequestsTitle")}</span>
         <span className={styles.notification}>
           {incomingBookings?.length > 0 && ` (${incomingBookings?.length})`}{" "}
         </span>

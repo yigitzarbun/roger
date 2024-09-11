@@ -66,7 +66,7 @@ const LessonInviteConfirmation = (props: LessonInviteConfirmationProps) => {
       )}
       {isUserTrainer && (
         <p className={styles["information-text"]}>
-          Ücret bilgisi ders ücretini ifade eder. Tüm masraflar oyuncuya aittir.
+          {t("lessonInviteTrainerFeeText")}
         </p>
       )}
       <div className={styles["buttons-container"]}>

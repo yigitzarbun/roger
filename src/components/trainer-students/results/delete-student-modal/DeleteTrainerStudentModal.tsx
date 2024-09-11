@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-
 import ReactModal from "react-modal";
-
 import styles from "./styles.module.scss";
-
 import { useUpdateStudentMutation } from "../../../../api/endpoints/StudentsApi";
 
 interface DeleteTrainerStudentModalProps {
@@ -17,6 +14,9 @@ interface DeleteTrainerStudentModalProps {
 
 const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
   const { deleteModalOpen, closeDeleteModal, student, refetchStudents } = props;
+
+  const { t } = useTranslation();
+
   const [updateStudent, { isSuccess: isUpdateStudentSuccess }] =
     useUpdateStudentMutation({});
 
@@ -49,7 +49,7 @@ const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeDeleteModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Öğrenciyi sil</h1>
+        <h1 className={styles.title}>{t("deleteStudent")}</h1>
         <div className={styles["bottom-container"]}>
           <img
             src={
@@ -60,20 +60,22 @@ const DeleteTrainerStudentModal = (props: DeleteTrainerStudentModalProps) => {
             alt="request"
             className={styles["trainer-image"]}
           />
-          <p>{`${student?.playerFname} ${student?.playerLname} isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?`}</p>
+          <p>{`${student?.playerFname} ${student?.playerLname} ${t(
+            "deleteStudentText"
+          )}`}</p>
         </div>
         <div className={styles["buttons-container"]}>
           <button
             onClick={closeDeleteModal}
             className={styles["discard-button"]}
           >
-            Vazgeç
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleDeleteStudent}
             className={styles["submit-button"]}
           >
-            Öğrenciyi Sil
+            {t("confirm")}
           </button>
         </div>
       </div>

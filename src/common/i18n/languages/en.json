@@ -480,5 +480,25 @@
   "clubStaffPlayerSubscriptionNotRequired": "Trainer does not need to be club staff or player does not need to be a club member in order to book courts",
 
   "differentPriceForMembers": "Different pricing for club members",
-  "samePriceForMembers": "Same pricing for club members and non-members"
+  "samePriceForMembers": "Same pricing for club members and non-members",
+
+  "lessonInviteTrainerFeeText": "Price value is the amount that you will be paid by the player",
+
+  "noLessonInvitationText": "No new lesson requests",
+
+  "newStudentRequestsTitle": "Student Requests",
+
+  "student": "Student",
+
+  "lessonCount": "Lesson Count",
+
+  "deleteStudent": "Delete Student",
+
+  "noStudentsText": "No students yet",
+
+  "filterStudentsTitle": "Filter Students",
+
+  "studentName": "Student Name",
+
+  "deleteStudentText": "will be removed from your students list. Do you want to proceed?"
 }

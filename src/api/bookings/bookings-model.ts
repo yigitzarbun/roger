@@ -232,6 +232,7 @@ const bookingsModel = {
           "clubs.image as clubImage",
           "student_groups.student_group_name",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "event_types.event_type_name",
           "bookings.event_time",
           "bookings.event_date",
@@ -1094,6 +1095,7 @@ const bookingsModel = {
           "players.gender",
           "players.birth_year",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "bookings.event_date",
           "bookings.event_time",
           "courts.court_name",
@@ -1161,6 +1163,7 @@ const bookingsModel = {
           "bookings.invitation_note",
           "bookings.booking_status_type_id",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "users.user_type_id"
         )
         .from("bookings")

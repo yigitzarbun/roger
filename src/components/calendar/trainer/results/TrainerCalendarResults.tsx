@@ -12,6 +12,7 @@ import { useGetTrainerCalendarBookingsByFilterQuery } from "../../../../api/endp
 import { useUpdateBookingMutation } from "../../../../api/endpoints/BookingsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 interface TrainerCalendarResultsProps {
   date: string;
@@ -22,6 +23,8 @@ interface TrainerCalendarResultsProps {
 }
 const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
   const { date, clubId, eventTypeId, textSearch, handleOpenFilter } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store.user.user.user);
 
@@ -90,7 +93,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
         <div className={styles["title-left"]}>
-          <h2 className={styles.title}>Takvim</h2>
+          <h2 className={styles.title}>{t("calendarTitle")}</h2>
           <FaFilter
             onClick={handleOpenFilter}
             className={
@@ -106,23 +109,23 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
         </div>
       </div>
       {trainerBookings?.length === 0 ? (
-        <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
+        <div>{t("calendarEmptyText")}</div>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>Durum</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Tür </th>
-              <th>Tarih</th>
-              <th>Saat </th>
-              <th>Kort</th>
-              <th>Konum</th>
-              <th>Ücret</th>
+              <th>{t("tableStatusHeader")}</th>
+              <th>{t("tableOpponentHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableClubTypeHeader")} </th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")} </th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -190,17 +193,57 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                   </Link>
                 </td>
                 <td>
-                  {booking.student_group_name ? "" : booking.player_level_name}
+                  {booking.student_group_name
+                    ? ""
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : (booking.event_type_id === 3 ||
+                        booking.event_type_id === 5) &&
+                      booking?.player_level_id === 4
+                    ? t("playerLevelProfessinal")
+                    : "-"}
                 </td>
                 <td>
-                  {booking.student_group_name ? "" : booking.playerGender}
+                  {booking.student_group_name
+                    ? ""
+                    : booking?.playerGender === "female"
+                    ? t("female")
+                    : booking?.playerGender === "male"
+                    ? t("male")
+                    : "-"}
                 </td>
                 <td>
                   {booking.student_group_name
                     ? ""
                     : getAge(booking.playerBirthYear)}
                 </td>
-                <td>{booking?.event_type_name}</td>
+                <td>
+                  {booking?.event_type_id === 1
+                    ? t("training")
+                    : booking?.event_type_id === 2
+                    ? t("match")
+                    : booking?.event_type_id === 3
+                    ? t("lesson")
+                    : booking?.event_type_id === 4
+                    ? t("externalTraining")
+                    : booking?.event_type_id === 5
+                    ? t("externalLesson")
+                    : booking?.event_type_id === 6
+                    ? t("groupLesson")
+                    : booking?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
@@ -213,7 +256,7 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                     onClick={() => handleOpenModal(booking)}
                     className={styles["cancel-button"]}
                   >
-                    İptal
+                    {t("tableCancelButtonText")}
                   </button>
                 </td>
               </tr>
