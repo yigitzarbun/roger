@@ -500,5 +500,22 @@
 
   "studentName": "Öğrenci Adı",
 
-  "deleteStudentText": "isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?"
+  "deleteStudentText": "isimli oyuncuyu öğrencilikten çıkarmayı onaylıyor musunuz?",
+
+  "groupName": "Grup Adı",
+
+  "student1": "Oyuncu 1",
+  "student2": "Oyuncu 2",
+  "student3": "Oyuncu 3",
+  "student4": "Oyuncu 4",
+
+  "filterGroupsTitle": "Grupları Filtrele",
+
+  "filterGroupsPlaceholder": "Grup, kulüp veya oyuncu adı",
+
+  "noNewStudentRequests": "Yeni öğrenci başvurusu bulunmamaktadır",
+
+  "studentApplicationTitle": "Öğrencilik Başvurusu",
+
+  "studentApplicationText": "Bu eğitmene öğrencilik başvurusu yapmayı onaylıyor musunuz?"
 }

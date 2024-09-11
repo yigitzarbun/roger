@@ -500,5 +500,22 @@
 
   "studentName": "Student Name",
 
-  "deleteStudentText": "will be removed from your students list. Do you want to proceed?"
+  "deleteStudentText": "will be removed from your students list. Do you want to proceed?",
+
+  "groupName": "Group Name",
+
+  "student1": "Player 1",
+  "student2": "Player 2",
+  "student3": "Player 3",
+  "student4": "Player 4",
+
+  "filterGroupsTitle": "Filter Groups",
+
+  "filterGroupsPlaceholder": "Group, club or player name",
+
+  "noNewStudentRequests": "No new student requests",
+
+  "studentApplicationTitle": "Studentship Application",
+
+  "studentApplicationText": "Do you want to proceed with your studenship application to this trainer?"
 }

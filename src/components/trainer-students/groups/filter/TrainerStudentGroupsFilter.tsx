@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface TrainerStudentGroupsFilterModalProps {
   textSearch: string;
@@ -19,6 +20,9 @@ const TrainerStudentGroupsFilterModal = (
     isTrainerStudentGroupsFilterOpen,
     handleCloseTrainerStudentGroupsFilter,
   } = props;
+
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isTrainerStudentGroupsFilterOpen}
@@ -32,25 +36,25 @@ const TrainerStudentGroupsFilterModal = (
         onClick={handleCloseTrainerStudentGroupsFilter}
       />
       <div className={styles["modal-content"]}>
-        <h3>Grupları Filtrele</h3>
+        <h3>{t("filterGroupsTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input
               type="text"
               onChange={handleTextSearch}
               value={textSearch}
-              placeholder="Grup, kulüp veya oyuncu adı"
+              placeholder={t("filterGroupsPlaceholder")}
             />
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleCloseTrainerStudentGroupsFilter}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

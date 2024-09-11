@@ -6,6 +6,7 @@ import { useAppSelector } from "../../../store/hooks";
 import { useUpdateStudentMutation } from "../../../api/endpoints/StudentsApi";
 import { getAge } from "../../../common/util/TimeFunctions";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 interface TrainerStudentRequestsProps {
   refetchStudents: () => void;
@@ -15,6 +16,8 @@ interface TrainerStudentRequestsProps {
 const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
   const { refetchStudents, newStudentRequestsList, refetchStudentRequests } =
     props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -58,12 +61,12 @@ const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Öğrenci</th>
-              <th>İsim</th>
-              <th>Yaş</th>
-              <th>Cinsiyet</th>
-              <th>Konum</th>
-              <th>Seviye</th>
+              <th>{t("student")}</th>
+              <th>{t("leaderboardTablePlayerNameHeader")}</th>
+              <th>{t("leaderboardTableAgeHeader")}</th>
+              <th>{t("leaderboardTableGenderHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("leaderboardTableLevelHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -91,15 +94,25 @@ const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
                   >{`${student?.playerFname} ${student?.playerLname}`}</Link>
                 </td>
                 <td>{getAge(student?.playerBirthYear)}</td>
-                <td>{student?.playerGender}</td>
+                <td>
+                  {student?.gender === "female" ? t("female") : t("male")}
+                </td>
                 <td>{student?.location_name}</td>
-                <td>{student?.player_level_name}</td>
+                <td>
+                  {student.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : student?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : student?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
+                </td>
                 <td>
                   <button
                     onClick={() => handleDeclineStudent(student)}
                     className={styles["decline-button"]}
                   >
-                    Reddet
+                    {t("reject")}
                   </button>{" "}
                 </td>{" "}
                 <td>
@@ -107,7 +120,7 @@ const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
                     onClick={() => handleAddStudent(student)}
                     className={styles["accept-button"]}
                   >
-                    Kabul Et
+                    {t("approve")}
                   </button>
                 </td>
               </tr>
@@ -115,7 +128,7 @@ const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Yeni öğrenci başvurusu bulunmamaktadır</p>
+        <p>{t("noNewStudentRequests")}</p>
       )}
     </div>
   );

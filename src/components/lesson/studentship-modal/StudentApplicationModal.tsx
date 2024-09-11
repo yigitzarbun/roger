@@ -2,6 +2,7 @@ import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../common/constants/apiConstants";
+import { useTranslation } from "react-i18next";
 
 interface StudentApplicationModalProps {
   studentApplicationModalOpen: boolean;
@@ -19,6 +20,9 @@ const StudentApplicationModal = (props: StudentApplicationModalProps) => {
     handleAddStudent,
     trainerImage,
   } = props;
+
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={studentApplicationModalOpen}
@@ -32,7 +36,7 @@ const StudentApplicationModal = (props: StudentApplicationModalProps) => {
         onClick={handleCloseStudentApplicationModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Öğrencilik Başvurusu</h3>
+        <h3>{t("studentApplicationTitle")}</h3>
         <div className={styles["image-container"]}>
           <img
             src={
@@ -41,7 +45,7 @@ const StudentApplicationModal = (props: StudentApplicationModalProps) => {
                 : "/images/icons/avatar.jpg"
             }
           />
-          <p>{`${trainerName} isimli eğitmene öğrencilik başvurusu yapmayı onaylıyor musunuz?`}</p>
+          <p>{`${t("studentApplicationText")} ${trainerName}`}</p>
         </div>
 
         <div className={styles["buttons-container"]}>
@@ -49,13 +53,13 @@ const StudentApplicationModal = (props: StudentApplicationModalProps) => {
             onClick={handleCloseStudentApplicationModal}
             className={styles["discard-button"]}
           >
-            Vazgeç
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleAddStudent}
             className={styles["submit-button"]}
           >
-            Gönder
+            {t("confirm")}
           </button>
         </div>
       </div>

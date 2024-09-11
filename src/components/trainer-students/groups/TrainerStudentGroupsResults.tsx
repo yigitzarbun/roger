@@ -1,19 +1,14 @@
 import React, { ChangeEvent, useState, useEffect } from "react";
-
 import { Link } from "react-router-dom";
-
 import { useAppSelector } from "../../../store/hooks";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
-
 import paths from "../../../routing/Paths";
-
 import PageLoading from "../../../components/loading/PageLoading";
-
 import { useGetPaginatedTrainerStudentGroupsQuery } from "../../../api/endpoints/StudentGroupsApi";
 import TrainerStudentGroupsFilterModal from "./filter/TrainerStudentGroupsFilter";
+import { useTranslation } from "react-i18next";
 
 interface TrainerStudentGroupsResultsProps {
   textSearch: string;
@@ -24,8 +19,12 @@ interface TrainerStudentGroupsResultsProps {
 const TrainerStudentGroupsResults = (
   props: TrainerStudentGroupsResultsProps
 ) => {
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
+
   const { textSearch, handleTextSearch, handleClear } = props;
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const {
@@ -42,12 +41,15 @@ const TrainerStudentGroupsResults = (
     isTrainerStudentGroupsFilterOpen,
     setIsTrainerStudentGroupsFilterOpen,
   ] = useState(false);
+
   const handleOpenTrainerStudentGroupsFilter = () => {
     setIsTrainerStudentGroupsFilterOpen(true);
   };
+
   const handleCloseTrainerStudentGroupsFilter = () => {
     setIsTrainerStudentGroupsFilterOpen(false);
   };
+
   const handleTrainersPage = (e) => {
     setCurrentPage(e.target.value);
   };
@@ -67,9 +69,11 @@ const TrainerStudentGroupsResults = (
   };
 
   const pageNumbers = [];
+
   for (let i = 1; i <= paginatedTrainerStudentGroups?.totalPages; i++) {
     pageNumbers.push(i);
   }
+
   useEffect(() => {
     refetchStudentGroups();
   }, [currentPage, textSearch]);
@@ -77,11 +81,12 @@ const TrainerStudentGroupsResults = (
   if (isPaginatedTrainerStudentGroupsLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Gruplar</h2>
+          <h2 className={styles["result-title"]}>{t("groups")}</h2>
           {paginatedTrainerStudentGroups?.studentGroups?.length > 0 && (
             <FaFilter
               onClick={handleOpenTrainerStudentGroupsFilter}
@@ -108,12 +113,12 @@ const TrainerStudentGroupsResults = (
         <table>
           <thead>
             <tr>
-              <th>Grup Adı</th>
-              <th>Kulüp</th>
-              <th>Oyuncu 1</th>
-              <th>Oyuncu 2</th>
-              <th>Oyuncu 3</th>
-              <th>Oyuncu 4</th>
+              <th>{t("groupName")}</th>
+              <th>{t("tableClubHeader")}</th>
+              <th>{t("student1")}</th>
+              <th>{t("student2")}</th>
+              <th>{t("student3")}</th>
+              <th>{t("student4")}</th>
             </tr>
           </thead>
           <tbody>
