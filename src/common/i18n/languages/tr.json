@@ -517,5 +517,34 @@
 
   "studentApplicationTitle": "Öğrencilik Başvurusu",
 
-  "studentApplicationText": "Bu eğitmene öğrencilik başvurusu yapmayı onaylıyor musunuz?"
+  "studentApplicationText": "Bu eğitmene öğrencilik başvurusu yapmayı onaylıyor musunuz?",
+
+  "addReviewTitle": "Değerlendirme Ekle",
+  "title": "Başlık",
+  "score": "Puan",
+  "reviewText": "Değerlendirme",
+
+  "trainerNameTitle": "Eğitmen Adı",
+
+  "paymentDetailsTitle": "Ödeme Hesap Bilgileri",
+
+  "paymentDetailsText": "Ders verebilmek için banka bilgisi eklemek zorunludur",
+
+  "bankAccountActiveText": "hesabınız aktiftir",
+
+  "edit": "Düzenle",
+
+  "noBankAccount": "Kayıtlı banka hesabınız bulunmamaktadır",
+
+  "addBankAccount": "Hesap Bilgileri Ekle",
+
+  "editBankAccountDetails": "Banka Bilgilerini Düzenle",
+
+  "accountName": "Banka Hesap İsim Soyisim",
+
+  "bankName": "Banka",
+
+  "writeEmailToContinue": "Devam etmek için kayıtlı e-posta adresinizi yazın",
+
+  "writeDeleteAccount": "Aşağıdaki alana 'hesabımı silmek istiyorum' yazın"
 }

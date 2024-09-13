@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
@@ -13,11 +12,17 @@ import {
 
 const TrainerAge = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
 
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newBirthYear, setNewBirthYear] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleBirthYearChange = (e) => {
@@ -87,7 +92,7 @@ const TrainerAge = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Doğum Yılı</h4>
+        <h4>{t("birthYear")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -95,7 +100,7 @@ const TrainerAge = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Doğum Yılı</label>
+          <label>{t("birthYear")}</label>
           <input
             {...register("birth_year", {
               required: "Bu alan zorunludur",
@@ -122,7 +127,7 @@ const TrainerAge = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

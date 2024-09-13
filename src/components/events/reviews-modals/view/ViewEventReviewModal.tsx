@@ -1,16 +1,8 @@
 import React from "react";
-
-import Modal from "react-modal";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
-import {
-  useGetEventReviewsByFilterQuery,
-  useGetReviewDetailsByFilterQuery,
-} from "../../../../api/endpoints/EventReviewsApi";
-
+import { useGetReviewDetailsByFilterQuery } from "../../../../api/endpoints/EventReviewsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ReviewCard from "../../../../components/common/reviews/ReviewCard";
 import ReactModal from "react-modal";
@@ -24,6 +16,8 @@ interface ViewEventReviewModalProps {
 const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
   const { isViewReviewModalOpen, closeViewReviewModal, selectedBookingId } =
     props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -47,7 +41,7 @@ const ViewEventReviewModal = (props: ViewEventReviewModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeViewReviewModal} />
       <div className={styles["modal-content"]}>
-        <h3 className={styles.title}>Değerlendirme</h3>
+        <h3 className={styles.title}>{t("reviewText")}</h3>
         <ReviewCard review={selectedEventReview?.[0]} />
       </div>
     </ReactModal>

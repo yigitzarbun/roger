@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
@@ -13,11 +12,19 @@ import {
 
 const TrainerName = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
+
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newFname, setNewFname] = useState("");
+
   const [newLname, setNewLname] = useState("");
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleFnameChange = (e) => {
@@ -96,7 +103,7 @@ const TrainerName = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Eğitmen Adı</h4>
+        <h4>{t("trainerNameTitle")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -105,25 +112,31 @@ const TrainerName = (props) => {
       >
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>İsim</label>
+            <label>{t("firstName")}</label>
             <input
               {...register("fname", { required: true })}
               type="text"
               onChange={handleFnameChange}
             />
             {errors.fname && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                {" "}
+                {t("mandatoryField")}
+              </span>
             )}
           </div>
           <div className={styles["input-container"]}>
-            <label>Soyisim</label>
+            <label>{t("lastName")}</label>
             <input
               {...register("lname", { required: true })}
               type="text"
               onChange={handleLnameChange}
             />
             {errors.lname && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                {" "}
+                {t("mandatoryField")}
+              </span>
             )}
           </div>
         </div>
@@ -134,7 +147,7 @@ const TrainerName = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

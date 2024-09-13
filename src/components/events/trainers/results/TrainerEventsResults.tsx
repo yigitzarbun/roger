@@ -1,13 +1,10 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-
 import paths from "../../../../routing/Paths";
-
 import { useAppSelector } from "../../../../store/hooks";
 import { ImBlocked } from "react-icons/im";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
@@ -62,9 +59,14 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
     handleClear,
   } = props;
 
+  const { t } = useTranslation();
+
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+
   const [fname, setFname] = useState("");
+
   const [lname, setLname] = useState("");
+
   const [image, setImage] = useState(null);
 
   const openReviewModal = (
@@ -89,6 +91,7 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
   const handleOpenPastEventsModal = () => {
     setIsPastEventsModalOpen(true);
   };
+
   const handleClosePastEventsModal = () => {
     setIsPastEventsModalOpen(false);
   };
@@ -170,7 +173,7 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles.title}>Geçmiş Etkinlikler</h2>
+          <h2 className={styles.title}>{t("pastEventsTitle")}</h2>
           <FaFilter
             onClick={handleOpenPastEventsModal}
             className={styles.filter}
@@ -194,17 +197,17 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Oyunncu</th>
-              <th>İsim</th>
-              <th>Tarih</th>
-              <th>Saat</th>
-              <th>Tür</th>
-              <th>Konum</th>
-              <th>Kort</th>
-              <th>Yüzey</th>
-              <th>Mekan</th>
-              <th>Yorum Yap</th>
-              <th>Yorum Görüntüle</th>
+              <th>{t("leaderboardTablePlayerHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("leaderboardTableLocationHeader")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableSurfaceHeader")}</th>
+              <th>{t("tableStructureHeader")}</th>
+              <th>{t("tableReviewHeader")}</th>
+              <th>{t("tableViewReviewHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -275,11 +278,41 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
                 </td>
                 <td>{event.event_date.slice(0, 10)}</td>
                 <td>{event.event_time.slice(0, 5)}</td>
-                <td>{event?.event_type_name}</td>
+                <td>
+                  {event?.event_type_id === 1
+                    ? t("training")
+                    : event?.event_type_id === 2
+                    ? t("match")
+                    : event?.event_type_id === 3
+                    ? t("lesson")
+                    : event?.event_type_id === 4
+                    ? t("externalTraining")
+                    : event?.event_type_id === 5
+                    ? t("externalLesson")
+                    : event?.event_type_id === 6
+                    ? t("groupLesson")
+                    : event?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{event?.club_name}</td>
                 <td>{event?.court_name}</td>
-                <td>{event?.court_surface_type_name}</td>
-                <td>{event?.court_structure_type_name}</td>
+                <td>
+                  {event?.court_surface_type_id === 1
+                    ? t("courtSurfaceHard")
+                    : event?.court_surface_type_id === 2
+                    ? t("courtSurfaceClay")
+                    : event?.court_surface_type_id === 3
+                    ? t("courtSurfaceGrass")
+                    : t("courtSurfaceCarpet")}
+                </td>
+                <td>
+                  {event?.court_structure_type_id === 1
+                    ? t("courtStructureOpen")
+                    : event?.court_structure_type_id === 2
+                    ? t("courtStructureClosed")
+                    : t("courtStructureHybrid")}
+                </td>
                 <td>
                   {event?.isEventReviewActive ? (
                     <IoIosCheckmarkCircle className={styles.done} />
@@ -295,7 +328,7 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
                         )
                       }
                     >
-                      Yorum Yap
+                      {t("tableReviewHeader")}
                     </button>
                   )}
                   {event.event_type_id === 6 && (
@@ -316,7 +349,7 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
                       className={styles["view-button"]}
                       onClick={() => openViewReviewModal(event.booking_id)}
                     >
-                      Yorum Görüntüle
+                      {t("tableViewReviewHeader")}
                     </button>
                   ) : (
                     <ImBlocked className={styles.blocked} />

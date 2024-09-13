@@ -517,5 +517,34 @@
 
   "studentApplicationTitle": "Studentship Application",
 
-  "studentApplicationText": "Do you want to proceed with your studenship application to this trainer?"
+  "studentApplicationText": "Do you want to proceed with your studenship application to this trainer?",
+
+  "addReviewTitle": "Add Review",
+  "title": "Ttile",
+  "score": "Score",
+  "reviewText": "Review",
+
+  "trainerNameTitle": "Trainer Name",
+
+  "paymentDetailsTitle": "Payment Details",
+
+  "paymentDetailsText": "Adding a valid bank account is mandatory for giving lessons",
+
+  "bankAccountActiveText": "account is active",
+
+  "edit": "Edit",
+
+  "noBankAccount": "No bank account added yet",
+
+  "addBankAccount": "Add Bank Account",
+
+  "editBankAccountDetails": "Edit Bank Details",
+
+  "accountName": "Full Name on Bank Account",
+
+  "bankName": "Bank",
+
+  "writeEmailToContinue": "Type your registered email address to proceed",
+
+  "writeDeleteAccount": "Type the following text below 'hesabımı silmek istiyorum'"
 }

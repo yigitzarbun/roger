@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
@@ -13,9 +12,13 @@ import {
 
 const TrainerImage = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
 
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
   const existingImage = trainerDetails?.trainerImage
@@ -81,8 +84,8 @@ const TrainerImage = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Profil Resmi</h4>
-        <p>Diğer kullanıcıların gördüğü profil resmidir.</p>
+        <h4>{t("profilePicture")}</h4>
+        <p>{t("profilePictureText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -119,7 +122,7 @@ const TrainerImage = (props) => {
           }
           disabled={selectedImage === null}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

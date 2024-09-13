@@ -100,7 +100,7 @@ const PlayerLocation = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>{t("locationText")}</label>
+          <label>{t("tableLocationHeader")}</label>
           <select
             {...register("location_id", { required: true })}
             onChange={handleLocationChange}

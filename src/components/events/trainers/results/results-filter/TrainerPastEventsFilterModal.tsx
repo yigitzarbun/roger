@@ -4,6 +4,7 @@ import styles from "./styles.module.scss";
 import { Club } from "../../../../../api/endpoints/ClubsApi";
 import { CourtStructureType } from "../../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../../api/endpoints/CourtSurfaceTypesApi";
+import { useTranslation } from "react-i18next";
 
 interface TrainerPastEventsFilterProps {
   isPastEventsModalOpen: boolean;
@@ -49,6 +50,8 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
     handleClear,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={isPastEventsModalOpen}
@@ -59,14 +62,14 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
     >
       <div className={styles["overlay"]} onClick={handleClosePastEventsModal} />
       <div className={styles["modal-content"]}>
-        <h3>Etkinlikleri Filtrele</h3>
+        <h3>{t("pastEventsFilterTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input
               type="text"
               onChange={handleTextSearch}
               value={textSearch}
-              placeholder="Oyuncu / Eğitmen / Kulüp adı"
+              placeholder={t("exploreEventsFilterSearchPlaceholder")}
             />
           </div>
           <div className={styles["input-outer-container"]}>
@@ -76,7 +79,7 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
                 value={clubId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Kulüp --</option>
+                <option value="">-- {t("allClubs")} --</option>
                 {clubs?.map((club) => (
                   <option key={club.user_id} value={club.user_id}>
                     {club.club_name}
@@ -90,13 +93,17 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
                 value={courtStructureTypeId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Mekan --</option>
+                <option value="">-- {t("structure")} --</option>
                 {courtStructureTypes?.map((type) => (
                   <option
                     key={type.court_structure_type_id}
                     value={type.court_structure_type_id}
                   >
-                    {type.court_structure_type_name}
+                    {type?.court_structure_type_id === 1
+                      ? t("courtStructureOpen")
+                      : type?.court_structure_type_id === 2
+                      ? t("courtStructureClosed")
+                      : t("courtStructureHybrid")}
                   </option>
                 ))}
               </select>
@@ -109,13 +116,19 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
                 value={courtSurfaceTypeId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Zemin --</option>
+                <option value="">-- {t("surface")} --</option>
                 {courtSurfaceTypes?.map((type) => (
                   <option
                     key={type.court_surface_type_id}
                     value={type.court_surface_type_id}
                   >
-                    {type.court_surface_type_name}
+                    {type?.court_surface_type_id === 1
+                      ? t("courtSurfaceHard")
+                      : type?.court_surface_type_id === 2
+                      ? t("courtSurfaceClay")
+                      : type?.court_surface_type_id === 3
+                      ? t("courtSurfaceGrass")
+                      : t("courtSurfaceCarpet")}
                   </option>
                 ))}
               </select>
@@ -126,10 +139,24 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
                 value={eventTypeId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Etkinlik --</option>
+                <option value="">-- {t("eventTypes")} --</option>
                 {eventTypes?.map((type) => (
                   <option key={type.event_type_id} value={type.event_type_id}>
-                    {type.event_type_name}
+                    {type?.event_type_id === 1
+                      ? t("training")
+                      : type?.event_type_id === 2
+                      ? t("match")
+                      : type?.event_type_id === 3
+                      ? t("lesson")
+                      : type?.event_type_id === 4
+                      ? t("externalTraining")
+                      : type?.event_type_id === 5
+                      ? t("externalLesson")
+                      : type?.event_type_id === 6
+                      ? t("groupLesson")
+                      : type?.event_type_id === 7
+                      ? t("tournamentMatch")
+                      : ""}
                   </option>
                 ))}
               </select>
@@ -142,18 +169,18 @@ const TrainerPastEventsFilterModal = (props: TrainerPastEventsFilterProps) => {
                 checked={missingReviews === 1 ? true : false}
                 onChange={handleMissingReviews}
               />
-              Yalnızca yorum yapmadıklarım
+              {t("unreviewedOnly")}
             </label>
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={handleClosePastEventsModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

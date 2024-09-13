@@ -9,6 +9,7 @@ import {
 } from "../../../../../store/auth/apiSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const DeleteTrainerModal = (props) => {
   const {
@@ -17,20 +18,28 @@ const DeleteTrainerModal = (props) => {
     handleCloseDeleteTrainerModal,
   } = props;
 
+  const { t } = useTranslation();
+
   const [deleteUser] = useUpdateUserMutation(trainerDetails?.trainerUserId);
+
   const { data: userData, isLoading: isUserDataLoading } = useGetUserByIdQuery(
     trainerDetails?.trainerUserId
   );
 
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
+
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
+
   const handleDeleteConfirmation = (e) => {
     setDeleteConfirmation(e.target.value);
   };
+
   const handleDelete = () => {
     if (
       email === trainerDetails?.email &&
@@ -65,17 +74,14 @@ const DeleteTrainerModal = (props) => {
         onClick={handleCloseDeleteTrainerModal}
       />
       <div className={styles["modal-content"]}>
-        <h3>Hesabı Sil</h3>
-        <p>
-          Hesabınıza ait tüm bilgiler silinecektir ve bu işlemin geri dönüşü
-          olmayacaktır.
-        </p>
+        <h3>{t("deleteAccountTitle")}</h3>
+        <p>{t("deleteAccountText")}</p>
         <div className={styles["input-container"]}>
-          <label>Devam etmek için kayıtlı e-posta adresinizi yazın</label>
+          <label>{t("writeEmailToContinue")}</label>
           <input type="text" onChange={handleEmail} />
         </div>
         <div className={styles["input-container"]}>
-          <label>Aşağıdaki alana hesabımı silmek istiyorum yazın</label>
+          <label>{t("writeDeleteAccount")}</label>
           <input type="text" onChange={handleDeleteConfirmation} />
         </div>
         <div className={styles["buttons-container"]}>
@@ -83,10 +89,10 @@ const DeleteTrainerModal = (props) => {
             className={styles["discard-button"]}
             onClick={handleCloseDeleteTrainerModal}
           >
-            İptal
+            {t("cancel")}
           </button>
           <button className={styles["submit-button"]} onClick={handleDelete}>
-            Hesabı Sil
+            {t("deleteAccountTitle")}
           </button>
         </div>
       </div>

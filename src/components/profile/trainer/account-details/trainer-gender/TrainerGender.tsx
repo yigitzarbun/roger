@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Player } from "../../../../../api/endpoints/PlayersApi";
 import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
@@ -11,10 +10,17 @@ import { useUpdateTrainerMutation } from "../../../../../api/endpoints/TrainersA
 
 const TrainerGender = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
+
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newGender, setNewGender] = useState("");
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleGenderChange = (e) => {
@@ -91,7 +97,7 @@ const TrainerGender = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Cinsiyet</h4>
+        <h4>{t("leaderboardTableGenderHeader")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -100,17 +106,21 @@ const TrainerGender = (props) => {
       >
         <div className={styles["input-outer-container"]}>
           <div className={styles["input-container"]}>
-            <label>Cinsiyet</label>
+            <label>{t("leaderboardTableGenderHeader")}</label>
             <select
               {...register("gender", { required: true })}
               onChange={handleGenderChange}
             >
-              <option value="">-- Seçim yapın --</option>
-              <option value="female">Kadın</option>
-              <option value="male">Erkek</option>
+              <option value="">
+                -- {t("leaderboardTableGenderHeader")} --
+              </option>
+              <option value="female">{t("female")}</option>
+              <option value="male">{t("male")}</option>
             </select>
             {errors.gender && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                {t("mandatoryField")}
+              </span>
             )}
           </div>
         </div>
@@ -121,7 +131,7 @@ const TrainerGender = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

@@ -1,13 +1,9 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { Bank } from "../../../../../api/endpoints/BanksApi";
 import {
   Trainer,
@@ -35,6 +31,8 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
   } = props;
 
   const [updateTrainer, { data, isSuccess }] = useUpdateTrainerMutation({});
+
+  const { t } = useTranslation();
 
   const {
     register,
@@ -73,7 +71,6 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
       name_on_bank_account: formData?.name_on_bank_account,
       bank_id: Number(formData?.bank_id),
     };
-    console.log(trainerBankDetails);
     updateTrainer(trainerBankDetails);
   };
 
@@ -102,9 +99,7 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
       <div className={styles["overlay"]} onClick={handleCloseModal} />
       <div className={styles["modal-content"]}>
         <h1>
-          {bankDetailsExist
-            ? "Banla Bilgilerini Düzenle"
-            : "Banka Bilgilerini Ekle"}
+          {bankDetailsExist ? t("editBankAccountDetails") : t("addBankAccount")}
         </h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -112,7 +107,7 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>IBAN no</label>
+              <label>IBAN</label>
               <input
                 {...register("iban", {
                   required: "Bu alan zorunludur",
@@ -134,21 +129,21 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Banka Hesap Adı</label>
+              <label>{t("accountName")}</label>
               <input
                 {...register("name_on_bank_account", { required: true })}
                 type="text"
               />
               {errors.name_on_bank_account && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Banka</label>
+              <label>{t("bankName")}</label>
               <select {...register("bank_id")}>
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("bankName")} --</option>
                 {banks?.map((bank) => (
                   <option key={bank.bank_id} value={bank.bank_id}>
                     {bank.bank_name}
@@ -157,7 +152,7 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
               </select>
               {errors.bank_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -167,10 +162,10 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
               onClick={handleCloseModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

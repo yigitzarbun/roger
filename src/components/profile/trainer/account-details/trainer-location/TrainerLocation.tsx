@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
@@ -14,11 +13,19 @@ import {
 
 const TrainerLocation = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: locations } = useGetLocationsQuery({});
+
   const dispatch = useAppDispatch();
+
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newLocation, setNewLocation] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleLocationChange = (e) => {
@@ -93,11 +100,8 @@ const TrainerLocation = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Konum</h4>
-        <p>
-          Diğer kullanıcılar sizi derse davet ederken bu bilgiyi dikkate
-          alabilir.
-        </p>
+        <h4>{t("tableLocationHeader")}</h4>
+        <p>{t("locationText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -105,7 +109,7 @@ const TrainerLocation = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Konum</label>
+          <label>{t("tableLocationHeader")}</label>
           <select
             {...register("location_id", { required: true })}
             onChange={handleLocationChange}
@@ -117,7 +121,7 @@ const TrainerLocation = (props) => {
             ))}
           </select>
           {errors.location_id && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            <span className={styles["error-field"]}>{t("mandatoryField")}</span>
           )}
         </div>
         <button
@@ -127,7 +131,7 @@ const TrainerLocation = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

@@ -1,13 +1,9 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import {
   useGetEventReviewsByFilterQuery,
   useGetEventReviewsQuery,
@@ -40,6 +36,9 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
     lname,
     image,
   } = props;
+
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const [updateReview, { isSuccess: isUpdateReviewSuccess }] =
@@ -101,7 +100,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeReviewModal} />
       <div className={styles["modal-content"]}>
-        <h3 className={styles.title}>Değerlendirme Ekle</h3>
+        <h3 className={styles.title}>{t("addReviewTitle")}</h3>
         <div className={styles["opponent-container"]}>
           <img src={image ? image : "/images/icons/avatar.jpg"} />
           <p>{`${fname} ${lname}`}</p>
@@ -112,7 +111,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["title-input-container"]}>
-              <label>Başlık</label>
+              <label>{t("title")}</label>
               <input
                 {...register("event_review_title", {
                   required: true,
@@ -121,12 +120,12 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
               />
               {errors.event_review_title && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Puan</label>
+              <label>{t("score")}</label>
               <input
                 {...register("review_score", {
                   required: true,
@@ -137,20 +136,22 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
               />
               {errors.review_score && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["evaluation-container"]}>
-            <label>Değerlendirme</label>
+            <label>{t("reviewText")}</label>
             <textarea
               {...register("event_review_description", {
                 required: true,
               })}
             />
             {errors.event_review_description && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                {t("mandatoryField")}
+              </span>
             )}
           </div>
           <div className={styles["buttons-container"]}>
@@ -158,10 +159,10 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
               onClick={closeReviewModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("declined")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

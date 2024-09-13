@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { useGetTrainerExperienceTypesQuery } from "../../../../../api/endpoints/TrainerExperienceTypesApi";
@@ -14,13 +13,21 @@ import { updateTrainerDetails } from "../../../../../store/slices/authSlice";
 
 const TrainerExperience = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: trainerExperienceTypes } = useGetTrainerExperienceTypesQuery(
     {}
   );
+
   const dispatch = useAppDispatch();
+
   const [updateTrainer, { isSuccess }] = useUpdateTrainerMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newType, setNewType] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleLevelChange = (e) => {
@@ -101,7 +108,7 @@ const TrainerExperience = (props) => {
   return (
     <div className={styles["trainer-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Seviye</h4>
+        <h4>{t("leaderboardTableLevelHeader")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -109,7 +116,7 @@ const TrainerExperience = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Tecrübe</label>
+          <label>{t("leaderboardTableLevelHeader")}</label>
           <select
             {...register("trainer_experience_type_id", { required: true })}
             onChange={handleLevelChange}
@@ -119,12 +126,18 @@ const TrainerExperience = (props) => {
                 key={experienceType.trainer_experience_type_id}
                 value={experienceType.trainer_experience_type_id}
               >
-                {experienceType.trainer_experience_type_name}
+                {experienceType?.trainer_experience_type_id === 1
+                  ? t("trainerLevelBeginner")
+                  : experienceType?.trainer_experience_type_id === 2
+                  ? t("trainerLevelIntermediate")
+                  : experienceType?.trainer_experience_type_id === 3
+                  ? t("trainerLevelAdvanced")
+                  : t("trainerLevelProfessional")}
               </option>
             ))}
           </select>
           {errors.trainer_experience_type_id && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            <span className={styles["error-field"]}>{t("mandatoryField")}</span>
           )}
         </div>
         <button
@@ -134,7 +147,7 @@ const TrainerExperience = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 import DeleteTrainerModal from "./delete-trainer-modal/DeleteTrainerModal";
 
 const TrainerOtherDetails = (props) => {
   const { trainerDetails } = props;
+
+  const { t } = useTranslation();
 
   const [isDeleteTrainerModalOpen, setIsDeleteTrainerModalOpen] =
     useState(false);
@@ -19,18 +21,15 @@ const TrainerOtherDetails = (props) => {
   return (
     <div className={styles["trainer-payment-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Hesabı Sil</h4>
-        <p>
-          Hesabını Raket platformu üzerinden kalıcı olarak sil. Hesap
-          silindikten sonra tekrar kurtarılamaz.
-        </p>
+        <h4>{t("deleteAccountTitle")}</h4>
+        <p>{t("deleteAccountText")}</p>
       </div>
       <div className={styles["delete-container"]}>
         <button
           onClick={handleOpenDeleteTrainerModal}
           className={styles.button}
         >
-          Hesabı Sil
+          {t("deleteAccountTitle")}
         </button>
       </div>
       {isDeleteTrainerModalOpen && (

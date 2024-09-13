@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-
 import styles from "./styles.module.scss";
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 import EditTrainerBankDetailsModal from "./edit-bank-details/EditTrainerBankDetails";
 
 const TrainerBankAccountDetails = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const bankDetailsExist =
@@ -28,8 +30,8 @@ const TrainerBankAccountDetails = (props) => {
   return (
     <div className={styles["trainer-bank-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Kart Bilgileri</h4>
-        <p>Ders verebilmek için banka bilgisi eklemek zorunludur.</p>
+        <h4>{t("paymentDetailsTitle")}</h4>
+        <p>{t("paymentDetailsText")}</p>
       </div>
       <div className={styles.section}>
         {bankDetailsExist ? (
@@ -44,19 +46,19 @@ const TrainerBankAccountDetails = (props) => {
                 }
               </p>
               <p>
-                {trainerDetails?.trainerBankAccountName} isimli hesabınız
-                aktiftir
+                {trainerDetails?.trainerBankAccountName}{" "}
+                {t("bankAccountActiveText")}
               </p>
             </div>
             <button className={styles.button} onClick={handleOpenEditBankModal}>
-              Düzenle
+              {t("edit")}
             </button>
           </>
         ) : (
           <div className={styles.section}>
-            <h4>Kayıtlı banka hesabınız bulunmamaktadır</h4>
+            <h4>{t("noBankAccount")}</h4>
             <button className={styles.button} onClick={handleOpenEditBankModal}>
-              Hesap Bilgileri Ekle
+              {t("addBankAccount")}
             </button>
           </div>
         )}
