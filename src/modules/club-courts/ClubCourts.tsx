@@ -171,6 +171,7 @@ const ClubCourts = () => {
           courtSurfaceTypes={courtSurfaceTypes}
           currentClub={currentClub}
           user={user}
+          refetchMyCourts={refetchClubCourts}
         />
       )}
 

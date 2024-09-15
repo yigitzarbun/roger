@@ -369,7 +369,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
           courtSurfaceTypes={courtSurfaceTypes}
           currentClub={currentClub}
           user={user}
-          refecthMyCourts={refecthMyCourts}
+          refetchMyCourts={refecthMyCourts}
         />
       )}
       {isEditBankModalOpen && (

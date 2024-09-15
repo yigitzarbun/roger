@@ -39,7 +39,6 @@ const Events = lazy(() => import("../modules/events/Events"));
 const PlayersLeaderboard = lazy(
   () => import("../modules/leaderboard/PlayersLeaderboard")
 );
-const Social = lazy(() => import("../modules/social/Social"));
 const PlayerSubscriptions = lazy(
   () => import("../modules/player-subscriptions/PlayerSubscriptions")
 );
@@ -118,7 +117,6 @@ const routes: Route[] = [
     path: paths.PLAYERS_LEADERBOARD,
     element: getRouteElement(PlayersLeaderboard),
   },
-  { path: paths.SOCIAL, element: getRouteElement(Social) },
   {
     path: paths.PLAYER_SUBSCRIPTIONS,
     element: getRouteElement(PlayerSubscriptions),

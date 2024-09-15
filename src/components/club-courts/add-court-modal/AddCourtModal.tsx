@@ -19,6 +19,7 @@ import { User } from "../../../store/slices/authSlice";
 interface AddCourtModalProps {
   isAddCourtModalOpen: boolean;
   closeAddCourtModal: () => void;
+  refetchMyCourts: () => void;
   courtStructureTypes: CourtStructureType[];
   courtSurfaceTypes: CourtSurfaceType[];
   currentClub: any;
@@ -45,6 +46,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     courtSurfaceTypes,
     currentClub,
     user,
+    refetchMyCourts,
   } = props;
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -104,6 +106,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
 
   useEffect(() => {
     if (isSuccess) {
+      refetchMyCourts();
       refetchClubCourts();
       toast.success("Kort eklendi");
       reset();
