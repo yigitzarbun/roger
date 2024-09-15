@@ -72,7 +72,19 @@ const PlayerPaymentsFilter = (props: PlayerPaymentsFilterProps) => {
           <option value="">-- {t("paymentType")} --</option>
           {paymentTypes?.map((type) => (
             <option key={type.payment_type_id} value={type.payment_type_id}>
-              {type.payment_type_name}
+              {type?.payment_type_id === 1
+                ? t("training")
+                : type?.payment_type_id === 2
+                ? t("match")
+                : type?.payment_type_id === 3
+                ? t("lesson")
+                : type?.payment_type_id === 4
+                ? t("externalEvent")
+                : type?.payment_type_id === 5
+                ? t("subscriptionPayment")
+                : type?.payment_type_id === 6
+                ? t("tournamentAdmissionPayment")
+                : ""}
             </option>
           ))}
         </select>

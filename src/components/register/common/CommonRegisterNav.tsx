@@ -1,6 +1,6 @@
 import React from "react";
 import { Dispatch, SetStateAction } from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 interface CommonRegisterNavProps {
@@ -12,6 +12,8 @@ const CommonRegisterNav = ({
   setUserType,
   userType,
 }: CommonRegisterNavProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles["common-register-container"]}>
       <div className={styles["user-type-options-container"]}>
@@ -23,7 +25,7 @@ const CommonRegisterNav = ({
               : styles["user-type-container"]
           }
         >
-          <h2 className={styles["user-type-title"]}>Oyuncu</h2>
+          <h2 className={styles["user-type-title"]}>{t("userTypePlayer")}</h2>
         </div>
         <div
           onClick={() => setUserType("trainer")}
@@ -33,7 +35,7 @@ const CommonRegisterNav = ({
               : styles["user-type-container"]
           }
         >
-          <h2 className={styles["user-type-title"]}>Eğitmen</h2>
+          <h2 className={styles["user-type-title"]}>{t("userTypeTrainer")}</h2>
         </div>
         <div
           onClick={() => setUserType("club")}
@@ -43,7 +45,7 @@ const CommonRegisterNav = ({
               : styles["user-type-container"]
           }
         >
-          <h2 className={styles["user-type-title"]}>Kulüp</h2>
+          <h2 className={styles["user-type-title"]}>{t("userTypeClub")}</h2>
         </div>
       </div>
     </div>

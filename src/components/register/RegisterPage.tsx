@@ -4,9 +4,13 @@ import { useNavigate } from "react-router-dom";
 import Paths from "../../routing/Paths";
 import { SiGoogleplay } from "react-icons/si";
 import { FaAppStoreIos } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
+
   const handleNavigate = (path: string) => {
     if (path === "register") {
       navigate(Paths.REGISTER_FORM);
@@ -21,24 +25,23 @@ const RegisterPage = () => {
           <h1>Raket</h1>
           <h3>
             <span className={styles["blue-span"]}>
-              Benzersiz bir tenis deneyimi:
+              {t("registerPageHeroText1")}
             </span>
             <br />
-            Maçlar, eğitimler, kort rezervasyonları ve daha fazlası, hepsi bir
-            arada.
+            {t("registerPageHeroText2")}
           </h3>
           <div className={styles["buttons-container"]}>
             <button
               onClick={() => handleNavigate("register")}
               className={styles["register-button"]}
             >
-              Kayıt Ol
+              {t("loginRegisterText")}
             </button>
             <button
               onClick={() => handleNavigate("login")}
               className={styles["login-button"]}
             >
-              Giriş Yap
+              {t("loginTitle")}
             </button>
           </div>
           <div className={styles["mobile-container"]}>
@@ -55,100 +58,52 @@ const RegisterPage = () => {
             className={styles["user-type"]}
             onClick={() => handleNavigate("register")}
           >
-            <h4>Oyuncu</h4>
-            <p>
-              Antreman ve maç yap, kulüplere üye ol, liderlik tablosunda yüksel
-            </p>
-            <button>Oyuncu Olarak Katıl</button>
+            <h4>{t("userTypePlayer")}</h4>
+            <p>{t("registerPlayerText1")}</p>
+            <button>{t("registerPlayer")}</button>
           </div>
 
           <div
             className={styles["user-type"]}
             onClick={() => handleNavigate("register")}
           >
-            <h4>Eğitmen</h4>
-            <p>
-              Bireysel ve grup dersleri ver, kolayca ödeme al, kariyerinde
-              ilerle
-            </p>
-            <button>Eğitmen Olarak Katıl</button>
+            <h4>{t("userTypeTrainer")}</h4>
+            <p>{t("registerTrainerText1")}</p>
+            <button>{t("registerTrainer")}</button>
           </div>
 
           <div
             className={styles["user-type"]}
             onClick={() => handleNavigate("register")}
           >
-            <h4>Kulüp</h4>
-            <p>
-              Kortlarını, üyeliklerini ve çalışanlarını tek platformdan yönet
-            </p>
-            <button>Kulüp Olarak Katıl</button>
+            <h4>{t("userTypeClub")}</h4>
+            <p>{t("registerClubText1")}</p>
+            <button>{t("registerClub")}</button>
           </div>
         </div>
       </div>
       <div>
         <div className={styles["player-container"]}>
           <div className={styles["text-container"]}>
-            <h4>Oyuncu</h4>
-            <h5>Kusursuz Tenis Deneyimi</h5>
-            <p>
-              Raket ile tenis kariyerinizde yeni bir seviyeye çıkın! Antrenman
-              ve maç davetleri gönderin, özel ders taleplerinde bulunun ve
-              kortları kolayca rezerve edin. Kort ücretini arkadaşlarınızla
-              paylaşma imkanını da unutmayın. Ayrıca, kulüplere abone olarak
-              daha fazla avantaja sahip olabilirsiniz.
-            </p>
-            <ul>
-              <li>Diğer oyunculara antrenman ve maç davetleri gönderin</li>
-              <li>Eğitmenlerle özel dersler için taleplerde bulunun</li>
-              <li>Kort rezervasyonu yapın ve ücreti paylaşın</li>
-              <li>Kulüplere üye olun ve özel avantajlardan yararlanın</li>
-              <li>Liderlik tablosunda sıralamanızı takip edin</li>
-            </ul>
+            <h4>{t("userTypePlayer")}</h4>
+            <h5>{t("registerPlayerTitle")}</h5>
+            <p>{t("registerPlayerText2")}</p>
           </div>
           <img src="/images/hero/hero_landing.png" />
         </div>
         <div className={styles["trainer-container"]}>
           <div className={styles["text-container"]}>
-            <h4>Eğitmen</h4>
-            <h5>Eksiksiz Eğitim Yönetimi</h5>
-            <p>
-              Raket Platformu, eğitmenlerin kariyerlerini kolayca
-              yönetebilmeleri için tasarlandı. Kulüplere katılabilir ya da
-              bağımsız çalışabilirsiniz. Özel ve grup dersleri verin, ders
-              davetleri gönderin ve kazançlarınızı anında alın. Takvim, ödemeler
-              ve geçmiş etkinliklerinizi takip ederek daha verimli çalışın.
-            </p>
-            <ul>
-              <li>Kulüplere katılın ya da bağımsız çalışın</li>
-              <li>Özel ve grup dersleri verin</li>
-              <li>Oyunculara ders davetleri gönderin</li>
-              <li>Anında ödeme alın, komisyon yok</li>
-              <li>Takvim, ödemeler ve geçmiş etkinliklerinizi takip edin</li>
-            </ul>
+            <h4>{t("userTypeTrainer")}</h4>
+            <h5>{t("registerTrainerTitle")}</h5>
+            <p>{t("registerTrainerText2")}</p>
           </div>
           <img src="/images/hero/hero_landing2.png" />
         </div>
         <div className={styles["club-container"]}>
           <div className={styles["text-container"]}>
-            <h4>Kulüp</h4>
-            <h5>Kulüpler için Akıllı Çözümler</h5>
-            <p>
-              Raket Platformu ile kulübünüzü dijitalleştirin ve kolayca yönetin.
-              Kortlarınızı sisteme ekleyin, oyuncular ve eğitmenler tarafından
-              rezerve edilmesini sağlayın. Abonelik paketleri oluşturun ve
-              anında ödeme alın. İsterseniz platformu sadece aboneleriniz için
-              kapalı bir ortam olarak kullanın.
-            </p>
-            <ul>
-              <li>
-                Kortlarınızı sisteme ekleyin ve rezerve edilmelerini sağlayın
-              </li>
-              <li>Abonelik paketleri oluşturun ve yönetin</li>
-              <li>Anında ödeme alın, komisyon yok</li>
-              <li>Platformu kapalı bir ortam olarak kullanma imkanı</li>
-              <li>Kulüp kurallarını belirleyin ve yönetimi kolaylaştırın</li>
-            </ul>
+            <h4>{t("userTypeClub")}</h4>
+            <h5>{t("registerClubTitle")}</h5>
+            <p>{t("registerClubText2")}</p>
           </div>
           <img src="/images/hero/hero_landing3.png" />
         </div>

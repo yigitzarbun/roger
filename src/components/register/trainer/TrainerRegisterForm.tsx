@@ -237,7 +237,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/coach_hero.jpeg" />
       <div className={styles["register-form-content"]}>
-        <h1 className={styles["register-title"]}>Eğitmen Kayıt</h1>
+        <h1 className={styles["register-title"]}>{t("registerTrainer")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -261,7 +261,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>İsim</label>
+                  <label>{t("tableNameHeader")}</label>
                   <input
                     {...register("fname", { required: true })}
                     type="text"
@@ -269,7 +269,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Soyisim</label>
+                  <label>{t("lastName")}</label>
                   <input
                     {...register("lname", { required: true })}
                     type="text"
@@ -279,15 +279,15 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Cinsiyet</label>
+                  <label>{t("tableGenderHeader")}</label>
                   <select {...register("gender", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
-                    <option value="female">Kadın</option>
-                    <option value="male">Erkek</option>
+                    <option value="">-- {t("tableGenderHeader")} --</option>
+                    <option value="female">{t("female")}</option>
+                    <option value="male">{t("male")}</option>
                   </select>
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Doğum Yılı</label>
+                  <label>{t("birthYear")}</label>
                   <input
                     {...register("birth_year", {
                       required: "Bu alan zorunludur",
@@ -311,13 +311,13 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Tecrübe</label>
+                  <label>{t("tableLevelHeader")}</label>
                   <select
                     {...register("trainer_experience_type_id", {
                       required: true,
                     })}
                   >
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableLevelHeader")} --</option>
                     {trainerExperienceTypes?.map((trainer_experience_type) => (
                       <option
                         key={trainer_experience_type.trainer_experience_type_id}
@@ -325,15 +325,24 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                           trainer_experience_type.trainer_experience_type_id
                         }
                       >
-                        {trainer_experience_type.trainer_experience_type_name}
+                        {trainer_experience_type?.trainer_experience_type_id ===
+                        1
+                          ? t("trainerLevelBeginner")
+                          : trainer_experience_type?.trainer_experience_type_id ===
+                            2
+                          ? t("trainerLevelIntermediate")
+                          : trainer_experience_type?.trainer_experience_type_id ===
+                            3
+                          ? t("trainerLevelAdvanced")
+                          : t("trainerLevelProfessional")}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Konum</label>
+                  <label>{t("tableLocationHeader")}</label>
                   <select {...register("location_id", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableLocationHeader")} --</option>
                     {locations?.map((location) => (
                       <option
                         key={location.location_id}
@@ -347,7 +356,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Çalışma Şekli</label>
+                  <label>{t("trainerEmploymentType")}</label>
                   <select
                     {...register("trainer_employment_type_id", {
                       required: true,
@@ -362,13 +371,18 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                           trainer_employment_type.trainer_employment_type_id
                         }
                       >
-                        {trainer_employment_type.trainer_employment_type_name}
+                        {trainer_employment_type.trainer_employment_type_id == 1
+                          ? t("independent")
+                          : trainer_employment_type.trainer_employment_type_id ==
+                            2
+                          ? t("privateClub")
+                          : t("publicClub")}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Ücret (TL / saat)</label>
+                  <label>{t("tablePriceHeader")} (TL)</label>
                   <input
                     {...register("price_hour", { required: true })}
                     type="number"
@@ -385,9 +399,9 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                   ).trainer_employment_type_id) && (
                 <div className={styles["input-outer-container"]}>
                   <div className={styles["input-container"]}>
-                    <label>Kulüp</label>
+                    <label>{t("tableClubHeader")}</label>
                     <select {...register("club_id", { required: true })}>
-                      <option value="">-- Seçim yapın --</option>
+                      <option value="">-- {t("tableClubHeader")} --</option>
                       {clubs?.map((club) => (
                         <option key={club.club_id} value={club.club_id}>
                           {club.club_name}
@@ -403,7 +417,9 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>E-posta</label>
+                  <label>
+                    <label>{t("loginEmailLabel")}</label>
+                  </label>
                   <input
                     {...register("email", { required: true })}
                     type="email"
@@ -411,7 +427,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Şifre</label>
+                  <label>{t("loginPasswordLabel")}</label>
                   <input
                     {...register("password", { required: true })}
                     type="password"
@@ -420,7 +436,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Şifre Tekrar</label>
+                  <label>{t("passwordRepeat")}</label>
                   <input
                     {...register("repeat_password", {
                       required: true,
@@ -434,7 +450,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Profil Resmi</label>
+                  <label>{t("profilePicture")}</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -452,7 +468,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                 className={styles["discard-button"]}
                 type="button"
               >
-                İptal
+                {t("discardButtonText")}
               </button>
             ) : (
               <button
@@ -460,7 +476,7 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                 className={styles["discard-button"]}
                 type="button"
               >
-                Geri
+                {t("return")}
               </button>
             )}
             {page === 3 && Object.keys(errors)?.length === 0 ? (
@@ -473,14 +489,14 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                 className={styles["submit-button"]}
                 type="button"
               >
-                İleri
+                {t("proceed")}
               </button>
             )}
           </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>
-          Hesabın var mı?{" "}
-          <span className={styles["login-span"]}>Giriş yap</span>
+          {t("loginHaveAccount")}{" "}
+          <span className={styles["login-span"]}>{t("loginButtonText")}</span>
         </Link>
       </div>
     </div>

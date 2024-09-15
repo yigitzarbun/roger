@@ -40,11 +40,15 @@ interface PlayerRegisterProps {
 }
 const PlayerRegisterForm = (props: PlayerRegisterProps) => {
   const { setUserType } = props;
+
   const navigate = useNavigate();
+
   const { t } = useTranslation();
 
   const userLanguagePreference = localStorage.getItem("tennis_app_language");
+
   const broswerLanguage = navigator.language;
+
   const browserLanguageConverted =
     broswerLanguage === "en-GB"
       ? "en"
@@ -62,23 +66,31 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
     languageString === "tr" ? 1 : languageString === "en" ? 2 : 1;
 
   const [selectedImage, setSelectedImage] = useState(null);
+
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
     setSelectedImage(imageFile);
     setValue("image", imageFile);
   };
+
   const [addUser] = useAddUserMutation();
+
   const [addPlayer, { isSuccess }] = useAddPlayerMutation();
 
   const { refetch: refetchUsers } = useGetUsersQuery({});
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
+
   const { data: playerLevels, isLoading: isPlayerLevelsLoading } =
     useGetPlayerLevelsQuery({});
+
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
+
   const { data: userStatusTypes, isLoading: isUserStatusTypesLoading } =
     useGetUserStatusTypesQuery({});
+
   const { refetch: refetchPlayers } = useGetPlayersQuery({});
 
   const {
@@ -103,6 +115,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
       ).user_status_type_id,
       language_id: languageId,
     };
+
     try {
       // register user
       const response = await addUser(userRegisterData);
@@ -139,7 +152,9 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
   };
 
   const [page, setPage] = useState(1);
+
   const firstPageFields = ["fname", "lname", "gender", "birth_year"];
+
   const secondPageFields = [
     "player_level_id",
     "location_id",
@@ -184,7 +199,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/player_hero.jpg" />
       <div className={styles["register-form-content"]}>
-        <h1 className={styles["register-title"]}>Oyuncu Kayıt</h1>
+        <h1 className={styles["register-title"]}>{t("registerPlayer")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -208,7 +223,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>İsim</label>
+                  <label>{t("tableNameHeader")}</label>
                   <input
                     {...register("fname", { required: true })}
                     type="text"
@@ -216,7 +231,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Soyisim</label>
+                  <label>{t("lastName")}</label>
                   <input
                     {...register("lname", { required: true })}
                     type="text"
@@ -226,15 +241,15 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Cinsiyet</label>
+                  <label>{t("tableGenderHeader")}</label>
                   <select {...register("gender", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
-                    <option value="female">Kadın</option>
-                    <option value="male">Erkek</option>
+                    <option value="">-- {t("tableGenderHeader")} --</option>
+                    <option value="female">{t("female")}</option>
+                    <option value="male">{t("male")}</option>
                   </select>
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Doğum Yılı</label>
+                  <label>{t("birthYear")}</label>
                   <input
                     {...register("birth_year", {
                       required: "Bu alan zorunludur",
@@ -259,23 +274,29 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Seviye</label>
+                  <label>{t("tableLevelHeader")}</label>
                   <select {...register("player_level_id", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableLevelHeader")} --</option>
                     {playerLevels?.map((playerLevel) => (
                       <option
                         key={playerLevel.player_level_id}
                         value={playerLevel.player_level_id}
                       >
-                        {playerLevel.player_level_name}
+                        {playerLevel?.player_level_id === 1
+                          ? t("playerLevelBeginner")
+                          : playerLevel?.player_level_id === 2
+                          ? t("playerLevelIntermediate")
+                          : playerLevel?.player_level_id === 3
+                          ? t("playerLevelAdvanced")
+                          : t("playerLevelProfessinal")}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Konum</label>
+                  <label>{t("tableLocationHeader")}</label>
                   <select {...register("location_id", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableLocationHeader")} --</option>
                     {locations?.map((location) => (
                       <option
                         key={location.location_id}
@@ -289,7 +310,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>E-posta</label>
+                  <label>{t("loginEmailLabel")}</label>
                   <input
                     {...register("email", { required: true })}
                     type="email"
@@ -297,7 +318,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Şifre</label>
+                  <label>{t("loginPasswordLabel")}</label>
                   <input
                     {...register("password", { required: true })}
                     type="password"
@@ -311,7 +332,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Şifre Tekrar</label>
+                  <label>{t("passwordRepeat")}</label>
                   <input
                     {...register("repeat_password", {
                       required: true,
@@ -325,7 +346,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Profil Resmi</label>
+                  <label>{t("profilePicture")}</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -343,7 +364,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                 className={styles["discard-button"]}
                 type="button"
               >
-                İptal
+                {t("discardButtonText")}
               </button>
             ) : (
               <button
@@ -351,7 +372,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                 className={styles["discard-button"]}
                 type="button"
               >
-                Geri
+                {t("return")}
               </button>
             )}
             {page === 3 && Object.keys(errors)?.length === 0 ? (
@@ -364,14 +385,14 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                 className={styles["submit-button"]}
                 type="button"
               >
-                İleri
+                {t("proceed")}
               </button>
             )}
           </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>
-          Hesabın var mı?{" "}
-          <span className={styles["login-span"]}>Giriş yap</span>
+          {t("loginHaveAccount")}{" "}
+          <span className={styles["login-span"]}>{t("loginButtonText")}</span>
         </Link>
       </div>
     </div>

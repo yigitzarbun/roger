@@ -170,7 +170,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
     <div className={styles["register-page-container"]}>
       <img className={styles["hero"]} src="/images/hero/club_hero.jpeg" />
       <div className={styles["register-form-content"]}>
-        <h1 className={styles["register-title"]}>Kulüp Kayıt</h1>
+        <h1 className={styles["register-title"]}>{t("registerClub")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -192,7 +192,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
               {" "}
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Kulüp Adı</label>
+                  <label>{t("clubNameHeader")}</label>
                   <input
                     {...register("club_name", { required: true })}
                     type="text"
@@ -200,15 +200,19 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Kulüp Tipi</label>
+                  <label>{t("tableClubTypeHeader")}</label>
                   <select {...register("club_type_id", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableClubTypeHeader")} --</option>
                     {clubTypes?.map((club_type) => (
                       <option
                         key={club_type.club_type_id}
                         value={club_type.club_type_id}
                       >
-                        {club_type.club_type_name}
+                        {club_type?.club_type_id === 1
+                          ? t("clubTypePrivate")
+                          : club_type?.club_type_id === 2
+                          ? t("clubTypePublic")
+                          : t("clubTypeResidential")}
                       </option>
                     ))}
                   </select>
@@ -216,9 +220,9 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Konum</label>
+                  <label>{t("tableLocationHeader")}</label>
                   <select {...register("location_id", { required: true })}>
-                    <option value="">-- Seçim yapın --</option>
+                    <option value="">-- {t("tableLocationHeader")} --</option>
                     {locations?.map((location) => (
                       <option
                         key={location.location_id}
@@ -230,7 +234,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                   </select>
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Adres</label>
+                  <label>{t("address")}</label>
                   <input
                     {...register("club_address", { required: true })}
                     type="text"
@@ -243,7 +247,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
             <div className={styles["page-container"]}>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>E-posta</label>
+                  <label>{t("loginEmailLabel")}</label>
                   <input
                     {...register("email", { required: true })}
                     type="email"
@@ -251,7 +255,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Şifre</label>
+                  <label>{t("loginPasswordLabel")}</label>
                   <input
                     {...register("password", { required: true })}
                     type="password"
@@ -260,7 +264,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
               </div>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Şifre Tekrar</label>
+                  <label>{t("passwordRepeat")}</label>
                   <input
                     {...register("repeat_password", {
                       required: true,
@@ -274,7 +278,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                   />
                 </div>
                 <div className={styles["input-container"]}>
-                  <label>Profil Resmi</label>
+                  <label>{t("profilePicture")}</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -292,14 +296,14 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                 onClick={() => setUserType("")}
                 className={styles["discard-button"]}
               >
-                İptal
+                {t("discardButtonText")}
               </button>
             ) : (
               <button
                 onClick={() => handlePage("prev")}
                 className={styles["discard-button"]}
               >
-                Geri
+                {t("return")}
               </button>
             )}
 
@@ -308,7 +312,7 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
                 onClick={() => handlePage("next")}
                 className={styles["submit-button"]}
               >
-                İleri
+                {t("proceed")}
               </button>
             ) : page === 2 ? (
               <button
@@ -324,8 +328,8 @@ const ClubRegisterForm = (props: ClubRegisterProps) => {
           </div>
         </form>
         <Link to={paths.LOGIN} className={styles["login-nav"]}>
-          Hesabın var mı?{" "}
-          <span className={styles["login-span"]}>Giriş yap</span>
+          {t("loginHaveAccount")}{" "}
+          <span className={styles["login-span"]}>{t("loginButtonText")}</span>
         </Link>
       </div>
     </div>

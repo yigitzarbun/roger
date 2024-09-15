@@ -26,6 +26,9 @@ const PlayersLeaderBoardSearch = (props: PlayersLeaderBoardSearchProps) => {
     locationId,
     favourite,
   } = props;
+
+  const { t } = useTranslation();
+
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
 
@@ -43,7 +46,7 @@ const PlayersLeaderBoardSearch = (props: PlayersLeaderBoardSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu adı"
+          placeholder={t("explorePlayersFilterSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
@@ -52,13 +55,19 @@ const PlayersLeaderBoardSearch = (props: PlayersLeaderBoardSearchProps) => {
           value={playerLevelId ?? ""}
           className="input-element"
         >
-          <option value="">-- Seviye --</option>
+          <option value="">-- {t("leaderboardTableLevelHeader")} --</option>
           {playerLevels?.map((player_level) => (
             <option
               key={player_level.player_level_id}
               value={player_level.player_level_id}
             >
-              {player_level.player_level_name}
+              {player_level?.player_level_id === 1
+                ? t("playerLevelBeginner")
+                : player_level?.player_level_id === 2
+                ? t("playerLevelIntermediate")
+                : player_level?.player_level_id === 3
+                ? t("playerLevelAdvanced")
+                : t("playerLevelProfessinal")}
             </option>
           ))}
         </select>
@@ -69,7 +78,7 @@ const PlayersLeaderBoardSearch = (props: PlayersLeaderBoardSearchProps) => {
           value={locationId ?? ""}
           className="input-element"
         >
-          <option value="">-- Tüm Konumlar --</option>
+          <option value="">-- {t("allLocations")} --</option>
           {locations?.map((location) => (
             <option key={location.location_id} value={location.location_id}>
               {location.location_name}
@@ -84,10 +93,10 @@ const PlayersLeaderBoardSearch = (props: PlayersLeaderBoardSearchProps) => {
           className="input-element"
         >
           <option key={1} value={"false"}>
-            -- Tüm Oyuncular --
+            -- {t("players")} --
           </option>
           <option key={2} value={"true"}>
-            Favoriler
+            {t("onlyFavourites")}
           </option>
         </select>
       </div>

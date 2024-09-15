@@ -113,7 +113,9 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   };
 
   let isUserPlayer = false;
+
   let isUserTrainer = false;
+
   let isUserClub = false;
 
   if (user) {
@@ -224,6 +226,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
 
   // add club staff
   const [trainerEmploymentClub, setTrainerEmploymentClub] = useState(null);
+
   const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
 
   const openEmploymentModal = (club) => {
@@ -249,6 +252,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
       (favourite) => favourite.favouritee_id === user_id
     );
   };
+
   const [addFavourite, { isSuccess: isAddFavouriteSuccess }] =
     useAddFavouriteMutation();
 
@@ -264,6 +268,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
     setOpenSubscribeModal(true);
     setSelectedClubId(value);
   };
+
   const handleCloseSubscribeModal = () => {
     setOpenSubscribeModal(false);
     setSelectedClubId(null);

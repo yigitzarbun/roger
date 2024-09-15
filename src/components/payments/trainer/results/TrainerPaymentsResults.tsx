@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../../../../store/hooks";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import styles from "./styles.module.scss";
 import Paths from "../../../../routing/Paths";
-
 import PageLoading from "../../../../components/loading/PageLoading";
 import { useGetTrainerPaymentsByUserIdQuery } from "../../../../api/endpoints/PaymentsApi";
 import { useGetTrainerByUserIdQuery } from "../../../../api/endpoints/TrainersApi";
@@ -28,6 +26,8 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
     currentPage,
     setCurrentPage,
   } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -88,7 +88,7 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Ödemeler</h2>
+        <h2 className={styles.title}>{t("paymentsTitle")}</h2>
         {myPayments?.totalPages > 1 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -107,21 +107,25 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
           <table>
             <thead>
               <tr>
-                <th>Durum</th>
-                <th>Ödeme Tarih</th>
-                <th>Etkinlik Tarih</th>
-                <th>Etkinlik Saat</th>
-                <th>Tür</th>
-                <th>Tutar</th>
-                <th>Öğrenci</th>
-                <th>Kulüp</th>
-                <th>Kort</th>
+                <th>{t("paymentStatus")}</th>
+                <th>{t("paymentDateTitle")}</th>
+                <th>{t("eventDate")}</th>
+                <th>{t("eventTime")}</th>
+                <th>{t("tableClubTypeHeader")}</th>
+                <th>{t("paymentAmount")}</th>
+                <th>{t("student")}</th>
+                <th>{t("tableClubHeader")}</th>
+                <th>{t("tableCourtHeader")}</th>
               </tr>
             </thead>
             <tbody>
               {myPayments?.payments?.map((payment) => (
                 <tr key={payment.payment_id} className={styles["payment-row"]}>
-                  <td>{payment.payment_status}</td>
+                  <td>
+                    {payment.payment_status === "success"
+                      ? t("success")
+                      : t("declined")}
+                  </td>
                   <td>{payment.registered_at?.slice(0, 10)}</td>
                   <td>
                     {payment.eventDate ? payment.eventDate.slice(0, 10) : "-"}
@@ -129,7 +133,21 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
                   <td>
                     {payment.eventTime ? payment.eventTime.slice(0, 5) : "-"}
                   </td>
-                  <td>{payment?.payment_type_name}</td>
+                  <td>
+                    {payment?.payment_type_id === 1
+                      ? t("training")
+                      : payment?.payment_type_id === 2
+                      ? t("match")
+                      : payment?.payment_type_id === 3
+                      ? t("lesson")
+                      : payment?.payment_type_id === 4
+                      ? t("externalEvent")
+                      : payment?.payment_type_id === 5
+                      ? t("subscriptionPayment")
+                      : payment?.payment_type_id === 6
+                      ? t("tournamentAdmissionPayment")
+                      : ""}
+                  </td>
                   <td>{`${payment.lesson_price} TL`}</td>
                   <td>{`${payment?.fname} ${payment?.lname}`}</td>
                   <td>{payment?.club_name}</td>

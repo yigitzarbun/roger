@@ -12,7 +12,9 @@ const RegisterForm = () => {
   return (
     <div className={styles["register-container"]}>
       <CommonRegisterNav setUserType={setUserType} userType={userType} />
-      {userType === "player" && <PlayerRegister setUserType={setUserType} />}
+      {(userType === "player" || userType === "") && (
+        <PlayerRegister setUserType={setUserType} />
+      )}
       {userType === "trainer" && <TrainerRegister setUserType={setUserType} />}
       {userType === "club" && <ClubRegister setUserType={setUserType} />}
     </div>

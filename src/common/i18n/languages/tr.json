@@ -55,6 +55,9 @@
   "loginButtonText": "Giriş yap",
   "loginNoAccountText": "Hesabın yok mu?",
   "loginRegisterText": "Kayıt ol",
+  "loginHaveAccount": "Hesabın var mı?",
+
+  "passwordRepeat": "Şifre Tekrar",
 
   "registerFNamelInputPlaceholder": "Roger",
   "registerLNamelInputPlaceholder": "Federer",
@@ -546,5 +549,35 @@
 
   "writeEmailToContinue": "Devam etmek için kayıtlı e-posta adresinizi yazın",
 
-  "writeDeleteAccount": "Aşağıdaki alana 'hesabımı silmek istiyorum' yazın"
+  "writeDeleteAccount": "Aşağıdaki alana 'hesabımı silmek istiyorum' yazın",
+
+  "registerPageHeroText1": "Benzersiz bir tenis deneyimi:",
+  "registerPageHeroText2": "Maçlar, eğitimler, kort rezervasyonları ve daha fazlası, hepsi bir arada.",
+
+  "registerPlayerText1": "Antreman ve maç yap, kulüplere üye ol, liderlik tablosunda yüksel",
+  "registerTrainerText1": "Bireysel ve grup dersleri ver, kolayca ödeme al, kariyerinde ilerle",
+  "registerClubText1": "Kortlarını, üyeliklerini ve çalışanlarını tek platformdan yönet",
+
+  "registerPlayer": "Oyuncu Kayıt",
+  "registerTrainer": "Eğitmen Kayıt",
+  "registerClub": "Kulüp Kayıt",
+
+  "registerPlayerTitle": "Benzersiz Tenis Deneyimi",
+  "registerPlayerText2": "Raket ile tenis kariyerinizde yeni bir seviyeye çıkın! Antrenman ve maç davetleri gönderin, özel ders taleplerinde bulunun ve kortları kolayca rezerve edin. Kort ücretini arkadaşlarınızla paylaşma imkanını da unutmayın. Ayrıca, kulüplere abone olarak daha fazla avantaja sahip olabilirsiniz.",
+
+  "registerTrainerTitle": "Eksiksiz Eğitim Yönetimi",
+  "registerTrainerText2": "Raket Platformu, eğitmenlerin kariyerlerini kolayca yönetebilmeleri için tasarlandı. Kulüplere katılabilir ya da bağımsız çalışabilirsiniz. Özel ve grup dersleri verin, ders davetleri gönderin ve kazançlarınızı anında alın. Takvim, ödemeler ve geçmiş etkinliklerinizi takip ederek daha verimli çalışın.",
+
+  "registerClubTitle": "Kulüpler için Akıllı Çözümler",
+  "registerClubText2": "Raket Platformu ile kulübünüzü dijitalleştirin ve kolayca yönetin. Kortlarınızı sisteme ekleyin, oyuncular ve eğitmenler tarafından rezerve edilmesini sağlayın. Abonelik paketleri oluşturun ve anında ödeme alın. İsterseniz platformu sadece aboneleriniz için kapalı bir ortam olarak kullanın.",
+
+  "proceed": "İleri",
+  "return": "Geri",
+
+  "trainerEmploymentType": "Çalışma Şekli",
+  "privateClub": "Özel Kulüp",
+  "publicClub": "Devlet / Belediye",
+  "independent": "Bağımsız",
+
+  "address": "Adres"
 }

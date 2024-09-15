@@ -200,7 +200,11 @@
     justify-content: space-between;
     background-color: var(--landing-trainer-background);
     padding: $roger-box-padding;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
     height: 100vh;
+    align-items: center;
+    line-height: 30px;
     column-gap: 4vw;
     @include small-screen {
       flex-direction: column;
@@ -242,9 +246,11 @@
     justify-content: space-between;
     background-color: var(--landing-club-background);
     padding: $roger-box-padding;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
     height: 100vh;
+    align-items: center;
+    line-height: 30px;
     column-gap: 4vw;
     @include small-screen {
       flex-direction: column;

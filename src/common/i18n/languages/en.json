@@ -55,6 +55,9 @@
   "loginButtonText": "Log in",
   "loginNoAccountText": "Don't have an account yet?",
   "loginRegisterText": "Register",
+  "loginHaveAccount": "Already have an account?",
+
+  "passwordRepeat": "Confirm Password",
 
   "registerFNamelInputPlaceholder": "John",
   "registerLNamelInputPlaceholder": "Doe",
@@ -546,5 +549,35 @@
 
   "writeEmailToContinue": "Type your registered email address to proceed",
 
-  "writeDeleteAccount": "Type the following text below 'hesabımı silmek istiyorum'"
+  "writeDeleteAccount": "Type the following text below 'hesabımı silmek istiyorum'",
+
+  "registerPageHeroText1": "A unique tennis experience:",
+  "registerPageHeroText2": "Matches, training sessions, court reservations, and more, all in one place.",
+
+  "registerPlayerText1": "Train and play matches, join clubs, rise in the leaderboard.",
+  "registerTrainerText1": "Give individual and group lessons, receive payments easily, and advance in your career.",
+  "registerClubText1": "Manage your courts, memberships, and staff from a single platform.",
+
+  "registerPlayer": "Register as Player",
+  "registerTrainer": "Register as Trainer",
+  "registerClub": "Register as Club",
+
+  "registerPlayerTitle": "A unique tennis experience",
+  "registerPlayerText2": "Take your tennis career to the next level with Raket! Send training and match invitations, request private lessons, and easily reserve courts. Don’t forget the option to split court fees with your friends. Plus, by subscribing to clubs, you can enjoy even more benefits.",
+
+  "registerTrainerTitle": "Comprehensive Training Management",
+  "registerTrainerText2": "The Raket Platform is designed to help trainers easily manage their careers. You can join clubs or work independently. Offer private and group lessons, send lesson invitations, and receive your earnings instantly. Track your schedule, payments, and past events to work more efficiently.",
+
+  "registerClubTitle": "Smart Solutions for Tennis Clubs",
+  "registerClubText2": "Digitize and manage your club effortlessly with the Raket Platform. Add your courts to the system, allow reservations by players and instructors, create subscription packages, and receive payments instantly. Alternatively, you can use the platform as a closed environment exclusively for your subscribers.",
+
+  "proceed": "Proceed",
+  "return": "Return",
+
+  "trainerEmploymentType": "Employment Type",
+  "privateClub": "Private Club",
+  "publicClub": "State / Public",
+  "independent": "Independent",
+
+  "address": "Address"
 }
