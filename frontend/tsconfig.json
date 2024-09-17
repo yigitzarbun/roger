@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "jsx": "react",
+    "paths": {
+      "@/*": ["*"],
+      "@api/*": ["../backend/src/api/*"]
+    },
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.scss",
+    "src/**/*.scss.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}
