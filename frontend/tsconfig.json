@@ -10,7 +10,8 @@
       "@api/*": ["../backend/src/api/*"]
     },
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "typeRoots": ["node_modules/@types"]
   },
   "include": [
     "src/**/*.ts",
