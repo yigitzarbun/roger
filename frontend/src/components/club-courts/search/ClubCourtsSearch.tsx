@@ -5,11 +5,11 @@ import styles from "./styles.module.scss";
 import {
   CourtStructureType,
   useGetCourtStructureTypesQuery,
-} from "../../../api/endpoints/CourtStructureTypesApi";
+} from "../../../../api/endpoints/CourtStructureTypesApi";
 import {
   CourtSurfaceType,
   useGetCourtSurfaceTypesQuery,
-} from "../../../api/endpoints/CourtSurfaceTypesApi";
+} from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import PageLoading from "../../../components/loading/PageLoading";
 
 interface ClubCourtSearchProps {

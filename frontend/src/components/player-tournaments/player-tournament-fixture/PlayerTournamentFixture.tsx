@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import { localUrl } from "../../../common/constants/apiConstants";
-import { TournamentMatchRounds } from "../../../api/endpoints/TournamentMatchRoundsApi";
+import { TournamentMatchRounds } from "../../../../api/endpoints/TournamentMatchRoundsApi";
 
 interface PlayerTournamentFixtureProps {
   numberOfParticipants: number;

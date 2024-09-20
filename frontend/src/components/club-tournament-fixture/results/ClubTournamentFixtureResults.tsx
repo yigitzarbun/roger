@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
-import { TournamentMatchRounds } from "../../../api/endpoints/TournamentMatchRoundsApi";
+import { TournamentMatchRounds } from "../../../../api/endpoints/TournamentMatchRoundsApi";
 import AddTournamentMatchModal from "../modals/add-match-booking/AddTournamentMatchModal";
 import { localUrl } from "../../../common/constants/apiConstants";
 import AddTournamentMatchScoreModal from "../modals/add-match-score/AddTournamentMatchScoreModal";

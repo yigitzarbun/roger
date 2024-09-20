@@ -60,11 +60,11 @@ const cors = require("cors");
 const server = express();
 
 server.use(express.json());
-server.use(cors());
+server.use(cors({ origin: "https://frontend-wispy-log-4260.fly.dev" }));
 
 process.env.TZ = "UTC";
 
-const db = knex(knexConfig.development);
+const db = knex(knexConfig.production);
 
 cron.schedule("* * * * *", async () => {
   await updatePendingBookings();

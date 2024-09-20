@@ -54,7 +54,7 @@ i18n.init({
 const SocketIOComponent: React.FC = () => {
   useEffect(() => {
     // Connect to the Socket.io server
-    const socket = io("http://localhost:5001"); // Replace with your server URL
+    const socket = io("https://backend-divine-darkness-6265.fly.dev"); // Replace with your server URL
 
     // Listen for Socket.io events
     socket.on("bookingUpdated", (data) => {

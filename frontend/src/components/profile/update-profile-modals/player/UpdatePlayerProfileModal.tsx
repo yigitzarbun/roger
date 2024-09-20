@@ -11,10 +11,10 @@ import styles from "./styles.module.scss";
 import {
   Player,
   useGetPlayersQuery,
-} from "../../../../api/endpoints/PlayersApi";
-import { useUpdatePlayerMutation } from "../../../../api/endpoints/PlayersApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetPlayerLevelsQuery } from "../../../../api/endpoints/PlayerLevelsApi";
+} from "../../../../../api/endpoints/PlayersApi";
+import { useUpdatePlayerMutation } from "../../../../../api/endpoints/PlayersApi";
+import { useGetLocationsQuery } from "../../../../../api/endpoints/LocationsApi";
+import { useGetPlayerLevelsQuery } from "../../../../../api/endpoints/PlayerLevelsApi";
 
 import { useAppDispatch } from "../../../../store/hooks";
 import { updatePlayerDetails } from "../../../../store/slices/authSlice";

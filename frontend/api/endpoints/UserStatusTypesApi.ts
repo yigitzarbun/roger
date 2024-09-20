@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseUrl } from "../../../backend/src/common/constants/apiConstants";
+import { baseUrl } from "../../src/common/constants/apiConstants";
 
 export interface UserType {
   user_type_id: number;

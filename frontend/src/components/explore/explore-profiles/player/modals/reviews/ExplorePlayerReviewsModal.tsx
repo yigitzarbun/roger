@@ -2,7 +2,7 @@ import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import ReviewCard from "../../../../../../components/common/reviews/ReviewCard";
-import { EventReview } from "../../../../../../api/endpoints/EventReviewsApi";
+import { EventReview } from "../../../../../../../api/endpoints/EventReviewsApi";
 import { useTranslation } from "react-i18next";
 
 interface ExplorePlayerReviewsModalProps {

@@ -8,11 +8,11 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 import styles from "./styles.module.scss";
 
-import { Club, useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { Club, useGetClubsQuery } from "../../../../../api/endpoints/ClubsApi";
 
-import { useUpdateClubMutation } from "../../../../api/endpoints/ClubsApi";
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetClubTypesQuery } from "../../../../api/endpoints/ClubTypesApi";
+import { useUpdateClubMutation } from "../../../../../api/endpoints/ClubsApi";
+import { useGetLocationsQuery } from "../../../../../api/endpoints/LocationsApi";
+import { useGetClubTypesQuery } from "../../../../../api/endpoints/ClubTypesApi";
 
 import { useAppDispatch } from "../../../../store/hooks";
 

@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { baseUrl } from "../../../backend/src/common/constants/apiConstants";
-
+import { baseUrl } from "../../src/common/constants/apiConstants";
 export interface ClubStaff {
   club_staff_id: number;
   fname: string;

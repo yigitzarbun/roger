@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-import { Player } from "../../../../../../api/endpoints/PlayersApi";
+import { Player } from "../../../../../../../api/endpoints/PlayersApi";
 import { useTranslation } from "react-i18next";
 
 interface ExplorePlayerEventsModalProps {

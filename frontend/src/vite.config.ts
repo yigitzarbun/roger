@@ -4,9 +4,18 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: true, // Listen on all interfaces (equivalent to 0.0.0.0)
+    port: 8080,
+  },
   resolve: {
     alias: {
-      "@api": path.resolve(__dirname, "../backend/src/api"),
+      "@components": path.resolve(__dirname, "src/components"),
+      "@utils": path.resolve(__dirname, "src/utils"),
     },
   },
+  build: {
+    outDir: "dist",
+  },
+  base: "./", // Ensures relative paths are used for assets in production
 });

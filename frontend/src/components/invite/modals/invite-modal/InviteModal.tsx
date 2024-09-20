@@ -6,17 +6,17 @@ import styles from "./styles.module.scss";
 
 import PageLoading from "../../../../components/loading/PageLoading";
 
-import { useGetPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import { useGetPlayersQuery } from "../../../../../api/endpoints/PlayersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
-import { useGetTrainersQuery } from "../../../../api/endpoints/TrainersApi";
-import { useGetClubByClubIdQuery } from "../../../../api/endpoints/ClubsApi";
-import { useGetCourtByIdQuery } from "../../../../api/endpoints/CourtsApi";
+import { useGetTrainersQuery } from "../../../../../api/endpoints/TrainersApi";
+import { useGetClubByClubIdQuery } from "../../../../../api/endpoints/ClubsApi";
+import { useGetCourtByIdQuery } from "../../../../../api/endpoints/CourtsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import {
   useGetClubSubscriptionsByFilterQuery,
   useGetClubSubscriptionsQuery,
-} from "../../../../api/endpoints/ClubSubscriptionsApi";
-import { useGetClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
+} from "../../../../../api/endpoints/ClubSubscriptionsApi";
+import { useGetClubStaffQuery } from "../../../../../api/endpoints/ClubStaffApi";
 
 export type FormValues = {
   event_type_id: number;

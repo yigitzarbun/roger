@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
-import { Club } from "../../../../api/endpoints/ClubsApi";
+import { Club } from "../../../../../api/endpoints/ClubsApi";
 import { CourtStructureType } from "api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "api/endpoints/CourtSurfaceTypesApi";
 import { useTranslation } from "react-i18next";

@@ -4,7 +4,7 @@ import server from "./server";
 
 dotenv.config({ path: ".env.local" });
 
-const port: number = parseInt(process.env.PORT || "5001", 10);
+const port: number = parseInt(process.env.PORT || "3000", 10);
 const httpServer = http.createServer(server);
 
 // Create Socket.io instance
@@ -25,6 +25,6 @@ io.on("connection", (socket: any) => {
   });
 });
 
-httpServer.listen(port, () => {
-  console.log(`TypeScript with Express\nhttp://localhost:${port}/`);
+httpServer.listen(port, "0.0.0.0", () => {
+  console.log(`TypeScript with Express\nhttp://0.0.0.0:${port}/`);
 });

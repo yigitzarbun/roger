@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
 import { localUrl } from "../../../../../../common/constants/apiConstants";
-import { Trainer } from "../../../../../../api/endpoints/TrainersApi";
-import { StudentGroup } from "../../../../../../api/endpoints/StudentGroupsApi";
+import { Trainer } from "../../../../../../../api/endpoints/TrainersApi";
+import { StudentGroup } from "../../../../../../../api/endpoints/StudentGroupsApi";
 import { useTranslation } from "react-i18next";
 
 interface ExploreTrainerEventsModalProps {

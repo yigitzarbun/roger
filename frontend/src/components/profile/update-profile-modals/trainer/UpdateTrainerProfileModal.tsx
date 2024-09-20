@@ -12,12 +12,12 @@ import {
   Trainer,
   useGetTrainersQuery,
   useUpdateTrainerMutation,
-} from "../../../../api/endpoints/TrainersApi";
+} from "../../../../../api/endpoints/TrainersApi";
 
-import { useGetLocationsQuery } from "../../../../api/endpoints/LocationsApi";
-import { useGetTrainerEmploymentTypesQuery } from "../../../../api/endpoints/TrainerEmploymentTypesApi";
-import { useGetTrainerExperienceTypesQuery } from "../../../../api/endpoints/TrainerExperienceTypesApi";
-import { useGetClubsQuery } from "../../../../api/endpoints/ClubsApi";
+import { useGetLocationsQuery } from "../../../../../api/endpoints/LocationsApi";
+import { useGetTrainerEmploymentTypesQuery } from "../../../../../api/endpoints/TrainerEmploymentTypesApi";
+import { useGetTrainerExperienceTypesQuery } from "../../../../../api/endpoints/TrainerExperienceTypesApi";
+import { useGetClubsQuery } from "../../../../../api/endpoints/ClubsApi";
 
 import { useAppDispatch } from "../../../../store/hooks";
 import { updateTrainerDetails } from "../../../../store/slices/authSlice";

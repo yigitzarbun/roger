@@ -5,10 +5,6 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "jsx": "react",
-    "paths": {
-      "@/*": ["*"],
-      "@api/*": ["../backend/src/api/*"]
-    },
     "rootDir": "src",
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"]

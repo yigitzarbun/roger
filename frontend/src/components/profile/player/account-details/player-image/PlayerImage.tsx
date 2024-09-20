@@ -8,6 +8,11 @@ import { Player } from "../../../../../../api/endpoints/PlayersApi";
 import { updatePlayerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
 
+// Define a new type for the form data
+interface PlayerForm {
+  image: File | null; // Change to File | null
+}
+
 const PlayerImage = (props) => {
   const { playerDetails, refetchPlayerDetails } = props;
 
@@ -19,25 +24,25 @@ const PlayerImage = (props) => {
 
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const existingImage = playerDetails?.image ? playerDetails?.image : null;
+  const existingImage = playerDetails?.image ? playerDetails.image : null;
 
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const imageFile = e.target.files[0];
-    setValue("image", imageFile);
+    const imageFile = e.target.files?.[0] || null; // Get the first file or null
+    setValue("image", imageFile); // Set the value in the form
     if (imageFile) {
-      setSelectedImage(imageFile);
+      setSelectedImage(imageFile); // Update state
     }
   };
 
-  const { handleSubmit, reset, setValue } = useForm({
+  const { handleSubmit, reset, setValue } = useForm<PlayerForm>({
     defaultValues: {
-      image: playerDetails?.image,
+      image: null, // Adjust default value to match new type
     },
   });
 
-  const onSubmit: SubmitHandler<Player> = () => {
+  const onSubmit: SubmitHandler<PlayerForm> = () => {
     const updatedProfileData = {
       player_id: playerDetails?.player_id,
       fname: playerDetails?.fname,
