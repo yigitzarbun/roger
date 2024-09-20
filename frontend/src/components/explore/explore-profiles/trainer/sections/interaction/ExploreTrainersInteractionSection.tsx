@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import styles from "./styles.module.scss";
 import PageLoading from "../../../../../../components/loading/PageLoading";
@@ -263,7 +263,7 @@ export const ExploreTrainersInteractionSection = (
         <img
           src={
             profileImage
-              ? `${localUrl}/${profileImage}`
+              ? `${imageUrl}/${profileImage}`
               : "/images/icons/avatar.jpg"
           }
           alt="player picture"

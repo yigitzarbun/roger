@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import { useGetClubByUserIdQuery } from "../../../../../api/endpoints/ClubsApi";
-import { localUrl } from "../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 import { useUpdateTournamentParticipantMutation } from "../../../../../api/endpoints/TournamentParticipantsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { toast } from "react-toastify";
@@ -73,7 +73,7 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
           <img
             src={
               selectedClub?.[0]?.image
-                ? `${localUrl}/${selectedClub?.[0]?.image}`
+                ? `${imageUrl}/${selectedClub?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

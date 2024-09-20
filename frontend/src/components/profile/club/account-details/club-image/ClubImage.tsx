@@ -38,7 +38,7 @@ const ClubImage = (props) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Club> = () => {
+  const onSubmit: SubmitHandler<any> = () => {
     const updatedProfileData = {
       club_id: clubDetails?.[0]?.club_id,
       club_address: clubDetails?.[0]?.club_address,

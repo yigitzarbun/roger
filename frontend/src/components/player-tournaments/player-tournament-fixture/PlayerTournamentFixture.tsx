@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import { TournamentMatchRounds } from "../../../../api/endpoints/TournamentMatchRoundsApi";
 
 interface PlayerTournamentFixtureProps {
@@ -83,7 +83,7 @@ const PlayerTournamentFixture = (props: PlayerTournamentFixtureProps) => {
                     <img
                       src={
                         match.inviterimage
-                          ? `${localUrl}/${match.inviterimage}`
+                          ? `${imageUrl}/${match.inviterimage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
@@ -94,7 +94,7 @@ const PlayerTournamentFixture = (props: PlayerTournamentFixtureProps) => {
                     <img
                       src={
                         match.inviteeimage
-                          ? `${localUrl}/${match.inviteeimage}`
+                          ? `${imageUrl}/${match.inviteeimage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}

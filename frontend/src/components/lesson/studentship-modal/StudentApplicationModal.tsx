@@ -1,7 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import { useTranslation } from "react-i18next";
 
 interface StudentApplicationModalProps {
@@ -41,7 +41,7 @@ const StudentApplicationModal = (props: StudentApplicationModalProps) => {
           <img
             src={
               trainerImage
-                ? `${localUrl}/${trainerImage}`
+                ? `${imageUrl}/${trainerImage}`
                 : "/images/icons/avatar.jpg"
             }
           />

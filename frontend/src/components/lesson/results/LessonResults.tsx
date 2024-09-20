@@ -25,6 +25,7 @@ import LessonSortModal from "../lesson-sort/LessonSortModal";
 import StudentApplicationModal from "../studentship-modal/StudentApplicationModal";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "@/common/constants/apiConstants";
 
 interface TrainSearchProps {
   trainerLevelId: number;
@@ -409,7 +410,7 @@ const LessonResults = (props: TrainSearchProps) => {
                     <img
                       src={
                         trainer.image
-                          ? trainer.image
+                          ? `${imageUrl}/${trainer?.trainerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt={trainer.name}

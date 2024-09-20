@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from "react";
 import { User } from "../../../store/slices/authSlice";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import { BsInfoCircleFill } from "react-icons/bs";
 
 import styles from "./styles.module.scss";
@@ -114,7 +114,7 @@ const TournamentDetail = (props: TournamentDetailProps) => {
                     <img
                       src={
                         player.image
-                          ? `${localUrl}/${player?.image}`
+                          ? `${imageUrl}/${player?.image}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt="player-image"

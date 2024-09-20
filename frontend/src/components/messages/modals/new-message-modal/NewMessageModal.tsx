@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import {
   useAddMessageMutation,
@@ -253,12 +253,12 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                           <img
                             src={
                               recipient?.playerUserId && recipient?.playerImage
-                                ? `${localUrl}/${recipient?.playerImage}`
+                                ? `${imageUrl}/${recipient?.playerImage}`
                                 : recipient.trainerUserId &&
                                   recipient?.trainerImage
-                                ? `${localUrl}/${recipient?.trainerImage}`
+                                ? `${imageUrl}/${recipient?.trainerImage}`
                                 : recipient?.clubUserId && recipient?.clubImage
-                                ? `${localUrl}/${recipient?.clubImage}`
+                                ? `${imageUrl}/${recipient?.clubImage}`
                                 : "/images/icons/avatar.jpg"
                             }
                           />
@@ -305,13 +305,13 @@ const NewMessageModal = (props: NewMessageModalProps) => {
                 src={
                   selectedRecipient?.playerUserId &&
                   selectedRecipient?.playerImage
-                    ? `${localUrl}/${selectedRecipient?.playerImage}`
+                    ? `${imageUrl}/${selectedRecipient?.playerImage}`
                     : selectedRecipient.trainerUserId &&
                       selectedRecipient?.trainerImage
-                    ? `${localUrl}/${selectedRecipient?.trainerImage}`
+                    ? `${imageUrl}/${selectedRecipient?.trainerImage}`
                     : selectedRecipient?.clubUserId &&
                       selectedRecipient?.clubImage
-                    ? `${localUrl}/${selectedRecipient?.clubImage}`
+                    ? `${imageUrl}/${selectedRecipient?.clubImage}`
                     : "/images/icons/avatar.jpg"
                 }
               />

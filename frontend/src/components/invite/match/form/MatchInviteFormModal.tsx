@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import ReactModal from "react-modal";
 import { useNavigate } from "react-router-dom";
-import { localUrl } from "../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 import { toast } from "react-toastify";
 import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
@@ -377,7 +377,7 @@ const MatchInviteFormModal = (props: MatchInviteModalProps) => {
           <img
             src={
               inviteePlayer?.[0]?.image
-                ? `${localUrl}/${inviteePlayer?.[0]?.image}`
+                ? `${imageUrl}/${inviteePlayer?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

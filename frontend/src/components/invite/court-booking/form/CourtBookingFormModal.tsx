@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import ReactModal from "react-modal";
-import { localUrl } from "../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 import { toast } from "react-toastify";
 import { IoIosSearch } from "react-icons/io";
 import { IoListOutline } from "react-icons/io5";
@@ -667,7 +667,7 @@ const CourtBookingFormModal = (props: CourtBookingFormModalProps) => {
                   <img
                     src={
                       selectedCourt?.[0]?.courtImage
-                        ? `${localUrl}/${selectedCourt?.[0]?.courtImage}`
+                        ? `${imageUrl}/${selectedCourt?.[0]?.courtImage}`
                         : "/images/icons/avatar.jpg"
                     }
                     className={styles["court-image"]}

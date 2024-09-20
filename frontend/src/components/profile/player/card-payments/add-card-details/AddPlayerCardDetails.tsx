@@ -49,7 +49,7 @@ const AddPlayerCardDetails = (props) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Player> = (formData) => {
+  const onSubmit: SubmitHandler<any> = (formData) => {
     const playerCardDetails = {
       player_id: playerDetails?.player_id,
       fname: playerDetails?.fname,

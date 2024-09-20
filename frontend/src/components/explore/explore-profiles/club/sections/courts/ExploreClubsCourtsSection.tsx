@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import paths from "../../../../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { IoIosCheckmarkCircle } from "react-icons/io";
@@ -70,7 +70,7 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
                       <img
                         src={
                           court.courtImage
-                            ? `${localUrl}/${court.courtImage}`
+                            ? `${imageUrl}/${court.courtImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         alt="court picture"

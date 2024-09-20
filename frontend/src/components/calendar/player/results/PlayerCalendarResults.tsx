@@ -12,6 +12,7 @@ import { useUpdateBookingMutation } from "../../../../../api/endpoints/BookingsA
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "@/common/constants/apiConstants";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -164,14 +165,14 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                     <img
                       src={
                         booking.event_type_id === 6 && booking?.clubImage
-                          ? booking?.clubImage
+                          ? `${imageUrl}/${booking?.clubImage}`
                           : (booking.event_type_id === 1 ||
                               booking.event_type_id === 2 ||
                               booking.event_type_id === 7) &&
                             booking.playerImage
-                          ? booking.playerImage
+                          ? `${imageUrl}/${booking?.playerImage}`
                           : booking.event_type_id === 3 && booking.trainerImage
-                          ? booking.trainerImage
+                          ? `${imageUrl}/${booking?.trainerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ReactModal from "react-modal";
-import { localUrl } from "../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../common/constants/apiConstants";
 import PageLoading from "../../../../../components/loading/PageLoading";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../../store/hooks";
@@ -135,7 +135,7 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
           <img
             src={
               selectedClub?.clubImage
-                ? `${localUrl}/${selectedClub?.clubImage}`
+                ? `${imageUrl}/${selectedClub?.clubImage}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

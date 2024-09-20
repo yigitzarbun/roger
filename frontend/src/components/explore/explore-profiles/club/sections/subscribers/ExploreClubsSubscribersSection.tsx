@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ImBlocked } from "react-icons/im";
 import styles from "./styles.module.scss";
 import ExploreClubSubscribersModal from "../../modals/subscribers/ExploreClubSubscribersModal";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { useGetClubSubscribersByIdQuery } from "../../../../../../../api/endpoints/ClubSubscriptionsApi";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
 import Paths from "../../../../../../routing/Paths";
@@ -113,7 +113,7 @@ const ExploreClubsSubscribersSection = (
                       <img
                         src={
                           player.playerImage
-                            ? `${localUrl}/${player.playerImage}`
+                            ? `${imageUrl}/${player.playerImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         className={styles["subscriber-image"]}

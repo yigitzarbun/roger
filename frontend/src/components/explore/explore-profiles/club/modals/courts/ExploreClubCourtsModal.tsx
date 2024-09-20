@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
 import { useTranslation } from "react-i18next";
@@ -73,7 +73,7 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                           <img
                             src={
                               court.courtImage
-                                ? `${localUrl}/${court.courtImage}`
+                                ? `${imageUrl}/${court.courtImage}`
                                 : "/images/icons/avatar.jpg"
                             }
                             alt="court picture"

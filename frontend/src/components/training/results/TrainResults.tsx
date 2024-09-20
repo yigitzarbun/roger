@@ -17,6 +17,7 @@ import TrainingInviteFormModal from "../../../components/invite/training/form/Tr
 import TrainSort from "../sort/TrainSort";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "@/common/constants/apiConstants";
 
 interface TrainResultsProps {
   playerLevelId: number;
@@ -301,7 +302,9 @@ const TrainResults = (props: TrainResultsProps) => {
                   <Link to={`${paths.EXPLORE_PROFILE}1/${player.user_id}`}>
                     <img
                       src={
-                        player.image ? player.image : "/images/icons/avatar.jpg"
+                        player.image
+                          ? `${imageUrl}/${player?.image}`
+                          : "/images/icons/avatar.jpg"
                       }
                       alt={player.name}
                       className={styles["player-image"]}

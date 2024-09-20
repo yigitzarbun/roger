@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import { TournamentMatchRounds } from "../../../../api/endpoints/TournamentMatchRoundsApi";
 import AddTournamentMatchModal from "../modals/add-match-booking/AddTournamentMatchModal";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import AddTournamentMatchScoreModal from "../modals/add-match-score/AddTournamentMatchScoreModal";
 
 interface ClubTournamentFixtureResultsProps {
@@ -122,7 +122,7 @@ const ClubTournamentFixtureResults = (
                     <img
                       src={
                         match.inviterimage
-                          ? `${localUrl}/${match.inviterimage}`
+                          ? `${imageUrl}/${match.inviterimage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
@@ -133,7 +133,7 @@ const ClubTournamentFixtureResults = (
                     <img
                       src={
                         match.inviteeimage
-                          ? `${localUrl}/${match.inviteeimage}`
+                          ? `${imageUrl}/${match.inviteeimage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}

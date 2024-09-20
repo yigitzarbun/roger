@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import NewMessageModal from "../modals/new-message-modal/NewMessageModal";
 import { FaPlus } from "react-icons/fa6";
@@ -82,11 +82,11 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
             <img
               src={
                 chat?.player_image
-                  ? `${localUrl}/${chat?.player_image}`
+                  ? `${imageUrl}/${chat?.player_image}`
                   : chat?.trainer_image
-                  ? `${localUrl}/${chat?.trainr_image}`
+                  ? `${imageUrl}/${chat?.trainr_image}`
                   : chat?.club_imae
-                  ? `${localUrl}/${chat?.club_image}`
+                  ? `${imageUrl}/${chat?.club_image}`
                   : "/images/icons/avatar.jpg"
               }
             />

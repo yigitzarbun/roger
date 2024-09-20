@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import knex from "knex";
 import cron from "node-cron";
+import path from "path";
 
 import knexConfig from "./knexfile";
 
@@ -47,7 +48,7 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "Uploads");
+    cb(null, "Uploads"); // Just "uploads" if it's in the same directory as your server file
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -61,6 +62,8 @@ const server = express();
 
 server.use(express.json());
 server.use(cors({ origin: "https://frontend-wispy-log-4260.fly.dev" }));
+// Serve static files from the Uploads directory
+server.use("/Uploads", express.static(path.join(__dirname, "../Uploads")));
 
 process.env.TZ = "UTC";
 

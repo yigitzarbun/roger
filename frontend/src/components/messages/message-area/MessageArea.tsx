@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import { useAddMessageMutation } from "../../../../api/endpoints/MessagesApi";
 import { toast } from "react-toastify";
@@ -156,11 +156,11 @@ const MessageArea = (props: MessageAreaProps) => {
                     <img
                       src={
                         message?.player_image
-                          ? `${localUrl}/${message?.player_image}`
+                          ? `${imageUrl}/${message?.player_image}`
                           : message?.trainer_image
-                          ? `${localUrl}/${message?.trainer_image}`
+                          ? `${imageUrl}/${message?.trainer_image}`
                           : message?.club_image
-                          ? `${localUrl}/${message?.club_image}`
+                          ? `${imageUrl}/${message?.club_image}`
                           : "/images/icons/avatar.jpg"
                       }
                     />

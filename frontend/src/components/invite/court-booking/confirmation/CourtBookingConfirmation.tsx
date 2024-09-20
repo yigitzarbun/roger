@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 import { useTranslation } from "react-i18next";
 
 interface CourtBookingConfirmationProps {
@@ -51,7 +51,7 @@ const CourtBookingConfirmation = (props: CourtBookingConfirmationProps) => {
                 <img
                   src={
                     invitee?.[0]?.image
-                      ? `${localUrl}/${invitee?.[0]?.image}`
+                      ? `${imageUrl}/${invitee?.[0]?.image}`
                       : "/images/icons/avatar.jpg"
                   }
                   className={styles.image}

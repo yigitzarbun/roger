@@ -6,7 +6,7 @@ import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
-import { localUrl } from "../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 import {
   useGetClubByClubIdQuery,
   useGetClubsQuery,
@@ -394,9 +394,9 @@ const LessonInviteFormModal = (props: LessonInviteModalProps) => {
           <img
             src={
               isUserPlayer && selectedTrainer?.[0]?.image
-                ? `${localUrl}/${selectedTrainer?.[0]?.image}`
+                ? `${imageUrl}/${selectedTrainer?.[0]?.image}`
                 : isUserTrainer && selectedPlayer?.[0]?.image
-                ? `${localUrl}/${selectedPlayer?.[0]?.image}`
+                ? `${imageUrl}/${selectedPlayer?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

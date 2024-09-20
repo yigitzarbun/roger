@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import ReactModal from "react-modal";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
@@ -164,7 +164,7 @@ const SubscribeToClubModal = (props: SubscribeToClubModalProps) => {
           <img
             src={
               selectedClubPackageDetails?.[0]?.image
-                ? `${localUrl}/${selectedClubPackageDetails?.[0]?.image}`
+                ? `${imageUrl}/${selectedClubPackageDetails?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["club-image"]}

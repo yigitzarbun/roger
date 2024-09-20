@@ -10,7 +10,7 @@ import { MdOutlineNotifications } from "react-icons/md";
 import { useGetPlayerProfileDetailsQuery } from "../../../api/endpoints/PlayersApi";
 import { IoLanguageSharp } from "react-icons/io5";
 import { FiMoon } from "react-icons/fi";
-import { localUrl } from "../../common/constants/apiConstants";
+import { imageUrl } from "../../common/constants/apiConstants";
 import {
   useGetPlayerIncomingRequestsQuery,
   useGetTrainerIncomingRequestsQuery,
@@ -245,11 +245,11 @@ const Header = () => {
               <img
                 src={
                   isUserPlayer && playerDetails?.image
-                    ? `${localUrl}/${playerDetails?.image}`
+                    ? `${imageUrl}/${playerDetails?.image}`
                     : isUserTrainer && trainerDetails?.[0]?.image
-                    ? `${localUrl}/${trainerDetails?.[0]?.image}`
+                    ? `${imageUrl}/${trainerDetails?.[0]?.image}`
                     : isUserClub && clubDetails?.[0]?.image
-                    ? `${localUrl}/${clubDetails?.[0]?.image}`
+                    ? `${imageUrl}/${clubDetails?.[0]?.image}`
                     : "/images/icons/avatar.jpg"
                 }
                 alt="avatar"

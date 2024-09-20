@@ -40,7 +40,7 @@ const TrainerImage = (props) => {
       image: trainerDetails?.trainerImage,
     },
   });
-  const onSubmit: SubmitHandler<Trainer> = () => {
+  const onSubmit: SubmitHandler<any> = () => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
       fname: trainerDetails?.fname,

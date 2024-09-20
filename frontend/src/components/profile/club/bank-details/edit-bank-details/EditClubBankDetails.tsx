@@ -49,7 +49,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Club> = (formData) => {
+  const onSubmit: SubmitHandler<any> = (formData) => {
     const clubBankDetails = {
       club_id: clubDetails?.[0]?.club_id,
       club_address: clubDetails?.[0]?.club_address,

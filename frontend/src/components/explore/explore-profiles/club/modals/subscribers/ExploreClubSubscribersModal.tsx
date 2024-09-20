@@ -6,7 +6,7 @@ import { ImBlocked } from "react-icons/im";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import {
   useAddFavouriteMutation,
@@ -147,7 +147,7 @@ const ExploreClubSubscribersModal = (
                         <img
                           src={
                             player.playerImage
-                              ? `${localUrl}/${player.playerImage}`
+                              ? `${imageUrl}/${player.playerImage}`
                               : "/images/icons/avatar.jpg"
                           }
                           className={styles["subscriber-image"]}

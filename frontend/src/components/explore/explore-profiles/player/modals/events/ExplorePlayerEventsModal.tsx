@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { Player } from "../../../../../../../api/endpoints/PlayersApi";
 import { useTranslation } from "react-i18next";
 
@@ -82,10 +82,10 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             (booking.event_type_id === 1 ||
                               booking.event_type_id === 2) &&
                             booking.playerImage
-                              ? `${localUrl}/${booking.playerImage}`
+                              ? `${imageUrl}/${booking.playerImage}`
                               : booking.event_type_id === 3 &&
                                 booking.trainerImage
-                              ? `${localUrl}/${booking.trainerImage}`
+                              ? `${imageUrl}/${booking.trainerImage}`
                               : "/images/icons/avatar.jpg"
                           }
                           className={styles["opponent-image"]}

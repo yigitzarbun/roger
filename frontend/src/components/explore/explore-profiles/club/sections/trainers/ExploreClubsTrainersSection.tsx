@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import paths from "../../../../../../routing/Paths";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import styles from "./styles.module.scss";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import { useGetClubTrainersQuery } from "../../../../../../../api/endpoints/ClubStaffApi";
@@ -85,7 +85,7 @@ const ExploreClubsTrainersSection = (
                       <img
                         src={
                           trainer.trainerImage
-                            ? `${localUrl}/${trainer.trainerImage}`
+                            ? `${imageUrl}/${trainer.trainerImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         alt="trainer_image"

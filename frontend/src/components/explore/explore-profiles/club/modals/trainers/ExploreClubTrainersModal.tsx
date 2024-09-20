@@ -3,7 +3,7 @@ import ReactModal from "react-modal";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { useAppSelector } from "../../../../../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
@@ -80,7 +80,7 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
                         <img
                           src={
                             trainer.trainerImage
-                              ? `${localUrl}/${trainer.trainerImage}`
+                              ? `${imageUrl}/${trainer.trainerImage}`
                               : "/images/icons/avatar.jpg"
                           }
                           alt="trainer picture"

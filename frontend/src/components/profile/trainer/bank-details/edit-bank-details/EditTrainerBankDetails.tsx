@@ -47,7 +47,7 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
     },
   });
 
-  const onSubmit: SubmitHandler<Trainer> = (formData) => {
+  const onSubmit: SubmitHandler<any> = (formData) => {
     const trainerBankDetails = {
       trainer_id: trainerDetails?.trainer_id,
       fname: trainerDetails?.fname,

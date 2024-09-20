@@ -4,7 +4,7 @@ import { FiMessageSquare } from "react-icons/fi";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
@@ -209,7 +209,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
         <img
           src={
             profileImage
-              ? `${localUrl}/${profileImage}`
+              ? `${imageUrl}/${profileImage}`
               : "/images/icons/avatar.jpg"
           }
           alt="player picture"

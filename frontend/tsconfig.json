@@ -5,7 +5,11 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "jsx": "react",
-    "rootDir": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@api/*": ["../backend/src/api/*"]
+    },
+    "rootDir": "./src",
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"]
   },

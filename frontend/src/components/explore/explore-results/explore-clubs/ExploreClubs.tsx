@@ -35,6 +35,7 @@ import AddPlayerCardDetails from "../../../../components/profile/player/card-pay
 import ExploreClubsSortModal from "./explore-clubs-sort/ExploreClubsSortModal";
 import { BsClockHistory } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "@/common/constants/apiConstants";
 
 interface ExploreClubsProps {
   user: User;
@@ -417,7 +418,7 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     <img
                       src={
                         club.clubImage
-                          ? club.clubImage
+                          ? `${imageUrl}/${club?.clubImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt={"club-image"}

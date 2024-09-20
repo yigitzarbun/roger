@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { localUrl } from "../../../common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 
@@ -43,9 +43,9 @@ const ReviewCard = ({ review }) => {
             <img
               src={
                 review?.user_type_id === 1 && review?.image
-                  ? `${localUrl}/${review?.image}`
+                  ? `${imageUrl}/${review?.image}`
                   : review?.user_type_id === 2 && review?.image
-                  ? `${localUrl}/${review?.image}`
+                  ? `${imageUrl}/${review?.image}`
                   : "/images/icons/avatar.jpg"
               }
               className={styles["reviewer-image"]}

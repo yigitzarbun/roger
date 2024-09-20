@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import ExploreTrainerEventsModal from "../../modals/events/ExploreTrainerEventsModal";
 import { useGetUserProfileEventsQuery } from "../../../../../../../api/endpoints/BookingsApi";
@@ -88,7 +88,7 @@ const ExploreTrainersEventsSection = (
                       <img
                         src={
                           booking.event_type_id === 3 && booking.playerImage
-                            ? `${localUrl}/${booking.playerImage}`
+                            ? `${imageUrl}/${booking.playerImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         className={styles["opponent-image"]}

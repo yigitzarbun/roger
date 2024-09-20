@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { IoStar } from "react-icons/io5";
 import styles from "./styles.module.scss";
 import PageLoading from "../../../../../../components/loading/PageLoading";
@@ -163,7 +163,7 @@ const ExplorePlayersInteractionsSections = (
         <img
           src={
             profileImage
-              ? `${localUrl}/${profileImage}`
+              ? `${imageUrl}/${profileImage}`
               : "/images/icons/avatar.jpg"
           }
           alt="player picture"

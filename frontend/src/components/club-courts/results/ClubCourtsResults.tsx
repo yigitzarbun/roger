@@ -12,6 +12,7 @@ import { CourtStructureType } from "../../../../api/endpoints/CourtStructureType
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
+import { imageUrl } from "@/common/constants/apiConstants";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
@@ -154,7 +155,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                     <img
                       src={
                         court?.courtImage
-                          ? court?.courtImage
+                          ? `${imageUrl}/${court?.courtImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt="kort"

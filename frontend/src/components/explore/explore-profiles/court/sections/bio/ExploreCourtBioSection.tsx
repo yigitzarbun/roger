@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import { localUrl } from "../../../../../../common/constants/apiConstants";
+import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { useTranslation } from "react-i18next";
 
 interface ExploreCourtBioSectionProps {
@@ -19,7 +19,7 @@ const ExploreCourtBioSection = (props: ExploreCourtBioSectionProps) => {
         <img
           src={
             profileImage
-              ? `${localUrl}/${profileImage}`
+              ? `${imageUrl}/${profileImage}`
               : "/images/icons/avatar.jpg"
           }
           alt="player picture"
