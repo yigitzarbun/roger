@@ -22,7 +22,7 @@ import MatchInviteFormModal from "../../../components/invite/match/form/MatchInv
 import MatchSort from "../sort/MatchSortModal";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
-import { imageUrl } from "@/common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 
 interface MatchResultsProps {
   playerLevelId: number;
@@ -148,7 +148,7 @@ const MatchResults = (props: MatchResultsProps) => {
   } = useGetPaginatedPlayersQuery({
     currentPage: currentPage,
     playerLevelId: levelId,
-    selectedGender: currentPlayer?.[0].gender,
+    selectedGender: currentPlayer?.[0]?.gender,
     locationId: locationIdValue,
     currentUserId: user?.user?.user_id,
     textSearch: textSearch,
@@ -326,7 +326,7 @@ const MatchResults = (props: MatchResultsProps) => {
                   </Link>
                 </td>
                 <td>
-                  {player.player_level_id === 1
+                  {player?.player_level_id === 1
                     ? t("playerLevelBeginner")
                     : player?.player_level_id === 2
                     ? t("playerLevelIntermediate")
@@ -334,7 +334,7 @@ const MatchResults = (props: MatchResultsProps) => {
                     ? t("playerLevelAdvanced")
                     : t("playerLevelProfessinal")}
                 </td>
-                <td>{player.gender === "male" ? t("male") : t("female")}</td>
+                <td>{player?.gender === "male" ? t("male") : t("female")}</td>
                 <td>{getAge(Number(player.birth_year))}</td>
                 <td>
                   {

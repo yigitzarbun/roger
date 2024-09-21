@@ -31,7 +31,7 @@ import ExploreTrainersFilterModal from "./explore-trainers-filter/ExploreTrainer
 import ExploreTrainersSortModal from "./explore-trainers-sort/ExploreTrainersSortModal";
 import StudentApplicationModal from "../../../../components/lesson/studentship-modal/StudentApplicationModal";
 import { useTranslation } from "react-i18next";
-import { imageUrl } from "@/common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface ExploreTrainersProps {
   user: User;

@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
 import styles from "./styles.module.scss";
 import paths from "../../../routing/Paths";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
-
 import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
-import { imageUrl } from "@/common/constants/apiConstants";
+import { imageUrl } from "../../../common/constants/apiConstants";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;

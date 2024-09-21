@@ -12,7 +12,7 @@ import { useUpdateBookingMutation } from "../../../../../api/endpoints/BookingsA
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
-import { imageUrl } from "@/common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface PlayerCalendarResultsProps {
   date: string;

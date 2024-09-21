@@ -28,7 +28,7 @@ import ExplorePlayersFilterModal from "./explore-players-filter/ExplorePlayersFi
 import LessonInviteFormModal from "../../../../components/invite/lesson/form/LessonInviteFormModal";
 import ExplorePlayersSortModal from "./explore-players-sort/ExplorePlayersSortModal";
 import { useTranslation } from "react-i18next";
-import { imageUrl } from "@/common/constants/apiConstants";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface ExplorePlayersProps {
   user: User;
