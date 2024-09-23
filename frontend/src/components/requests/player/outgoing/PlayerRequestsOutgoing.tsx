@@ -12,6 +12,7 @@ import { useUpdateBookingMutation } from "../../../../../api/endpoints/BookingsA
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { BsClockHistory } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 const PlayerRequestsOutgoing = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -65,6 +66,10 @@ const PlayerRequestsOutgoing = () => {
       handleCloseModal();
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (isBookingsLoading) {
     return <PageLoading />;
@@ -124,9 +129,9 @@ const PlayerRequestsOutgoing = () => {
                       <img
                         src={
                           booking?.trainerImage
-                            ? booking?.trainerImage
+                            ? `${imageUrl}/${booking?.trainerImage}`
                             : booking?.playerImage
-                            ? booking?.playerImage
+                            ? `${imageUrl}/${booking?.playerImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         className={styles["player-image"]}
@@ -140,8 +145,8 @@ const PlayerRequestsOutgoing = () => {
                         to={`${Paths.EXPLORE_PROFILE}1/${booking.invitee_id}`}
                         className={styles["player-name"]}
                       >
-                        {`${booking?.fname}
-                        ${booking?.lname}
+                        {`${booking?.playerFname}
+                        ${booking?.playerLname}
                         `}
                       </Link>
                     ) : booking.event_type_id === 3 ? (

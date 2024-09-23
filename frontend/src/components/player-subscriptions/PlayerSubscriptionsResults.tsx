@@ -92,7 +92,7 @@ const PlayerSubscriptionResults = () => {
           </tbody>
         </table>
       ) : (
-        <p>Kulüp üyeliği bulunmamaktadır</p>
+        <p>{t("playerNoSubscriptionsText")}</p>
       )}
     </div>
   );

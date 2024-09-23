@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
-
 import Modal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../../store/hooks";
-
 import { useUpdateMatchScoreMutation } from "../../../../../../api/endpoints/MatchScoresApi";
-
 import { useGetPlayersByFilterQuery } from "../../../../../../api/endpoints/PlayersApi";
-
 import PageLoading from "../../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 type FormValues = {
   inviter_first_set_games_won: number;
@@ -29,6 +22,8 @@ type FormValues = {
 const EditMatchScoreModal = (props) => {
   const { isEditScoreModalOpen, closeEditScoreModal, selectedMatchScore } =
     props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -195,16 +190,18 @@ const EditMatchScoreModal = (props) => {
       <div className={styles["modal-content"]}>
         {scoreConfirmDecision === "" && (
           <div className={styles["decision-container"]}>
-            <h2>Maç Skoru Doğru Mu?</h2>
-            <p>{`${reporter?.[0]?.fname} ${reporter?.[0]?.lname} maç skorunu şu şekilde kayıt etti:`}</p>
+            <h2>{t("matchScoreCorrectTitle")}</h2>
+            <p>{`${reporter?.[0]?.fname} ${reporter?.[0]?.lname} ${t(
+              "matchScoreCorrectText"
+            )}`}</p>
             <table>
               <thead>
                 <tr>
-                  <th>Davet Eden</th>
-                  <th>Davet Edilen</th>
-                  <th>1. Set</th>
-                  <th>2. Set</th>
-                  <th>3. Set</th>
+                  <th>{t("inviter")}</th>
+                  <th>{t("invitee")}</th>
+                  <th>{t("set1")}</th>
+                  <th>{t("set2")}</th>
+                  <th>{t("set3")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -227,13 +224,13 @@ const EditMatchScoreModal = (props) => {
                 onClick={() => setScoreConfirmDecision("edit")}
                 className={styles["discard-button"]}
               >
-                Değişiklik Talep Et
+                {t("askRevisionButtonText")}
               </button>
               <button
                 onClick={handleConfirmScore}
                 className={styles["submit-button"]}
               >
-                Skoru Onayla
+                {t("confirmScoreButtonText")}
               </button>
             </div>
           </div>
@@ -241,7 +238,7 @@ const EditMatchScoreModal = (props) => {
         {scoreConfirmDecision === "edit" && (
           <div className={styles["edit-container"]}>
             <div className={styles["top-container"]}>
-              <h1 className={styles.title}>Maç Skoru Değiştir</h1>
+              <h1 className={styles.title}>{t("updateMatchScoreTitle")}</h1>
             </div>
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -249,11 +246,13 @@ const EditMatchScoreModal = (props) => {
             >
               <div className={styles["top-row"]}>
                 <div className={styles["set-container"]}>
-                  <h4>1. Set</h4>
+                  <h4>{t("set1")}</h4>
                   <div className={styles["input-outer-container"]}>
                     <div className={styles["input-container"]}>
                       <label>
-                        {`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 1. Set`}
+                        {`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} ${t(
+                          "set1"
+                        )}`}
                       </label>
                       <input
                         {...register("inviter_first_set_games_won", {
@@ -270,13 +269,15 @@ const EditMatchScoreModal = (props) => {
                       />
                       {errors.inviter_first_set_games_won && (
                         <span className={styles["error-field"]}>
-                          Bu alan zorunludur.
+                          {t("mandatoryField")}
                         </span>
                       )}
                     </div>
                     <div className={styles["input-container"]}>
                       <label>
-                        {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 1. Set`}
+                        {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} ${t(
+                          "set1"
+                        )}`}
                       </label>
                       <input
                         {...register("invitee_first_set_games_won", {
@@ -290,17 +291,19 @@ const EditMatchScoreModal = (props) => {
                       />
                       {errors.invitee_first_set_games_won && (
                         <span className={styles["error-field"]}>
-                          Bu alan zorunludur.
+                          {t("mandatoryField")}
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
                 <div className={styles["set-container"]}>
-                  <h4>2. Set</h4>
+                  <h4>{t("set2")}</h4>
                   <div className={styles["input-outer-container"]}>
                     <div className={styles["input-container"]}>
-                      <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 2. Set`}</label>
+                      <label>{`${inviter?.[0]?.fname} ${
+                        inviter?.[0]?.lname
+                      } ${t("set2")}`}</label>
                       <input
                         {...register("inviter_second_set_games_won")}
                         type="number"
@@ -311,13 +314,15 @@ const EditMatchScoreModal = (props) => {
                       />
                       {errors.inviter_second_set_games_won && (
                         <span className={styles["error-field"]}>
-                          Bu alan zorunludur.
+                          {t("mandatoryField")}
                         </span>
                       )}
                     </div>
                     <div className={styles["input-container"]}>
                       <label>
-                        {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 2. Set`}
+                        {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} ${t(
+                          "set2"
+                        )}`}
                       </label>
                       <input
                         {...register("invitee_second_set_games_won")}
@@ -329,7 +334,7 @@ const EditMatchScoreModal = (props) => {
                       />
                       {errors.invitee_second_set_games_won && (
                         <span className={styles["error-field"]}>
-                          Bu alan zorunludur.
+                          {t("mandatoryField")}
                         </span>
                       )}
                     </div>
@@ -340,10 +345,12 @@ const EditMatchScoreModal = (props) => {
               {thirdSetVisible && (
                 <div className={styles["top-row"]}>
                   <div className={styles["set-container"]}>
-                    <h4>3. Set</h4>
+                    <h4>{t("set3")}</h4>
                     <div className={styles["input-outer-container"]}>
                       <div className={styles["input-container"]}>
-                        <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname} 3. Set`}</label>
+                        <label>{`${inviter?.[0]?.fname} ${
+                          inviter?.[0]?.lname
+                        } ${t("set3")}`}</label>
                         <input
                           {...register("inviter_third_set_games_won")}
                           type="number"
@@ -354,13 +361,15 @@ const EditMatchScoreModal = (props) => {
                         />
                         {errors.inviter_third_set_games_won && (
                           <span className={styles["error-field"]}>
-                            Bu alan zorunludur.
+                            {t("mandatoryField")}
                           </span>
                         )}
                       </div>
                       <div className={styles["input-container"]}>
                         <label>
-                          {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} 3. Set`}
+                          {`${invitee?.[0]?.fname} ${invitee?.[0]?.lname} ${t(
+                            "set3"
+                          )}`}
                         </label>
                         <input
                           {...register("invitee_third_set_games_won")}
@@ -372,7 +381,7 @@ const EditMatchScoreModal = (props) => {
                         />
                         {errors.invitee_third_set_games_won && (
                           <span className={styles["error-field"]}>
-                            Bu alan zorunludur.
+                            {t("mandatoryField")}
                           </span>
                         )}
                       </div>
@@ -385,10 +394,10 @@ const EditMatchScoreModal = (props) => {
                   className={styles["discard-button"]}
                   onClick={closeEditScoreModal}
                 >
-                  İptal
+                  {t("discardButtonText")}
                 </button>
                 <button type="submit" className={styles["submit-button"]}>
-                  Onayla
+                  {t("submit")}
                 </button>
               </div>
             </form>

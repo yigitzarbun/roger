@@ -22,7 +22,7 @@ const RegisterPage = () => {
     <div className={styles["register-page-container"]}>
       <div className={styles.hero}>
         <div className={styles["intro-container"]}>
-          <h1>Raket</h1>
+          <h1>RaketGo</h1>
           <h3>
             <span className={styles["blue-span"]}>
               {t("registerPageHeroText1")}

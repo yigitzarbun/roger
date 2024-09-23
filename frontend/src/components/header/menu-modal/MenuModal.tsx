@@ -217,7 +217,7 @@ const MenuModal = (props: MenuModalProps) => {
                 : `${styles["logo-title"]}`
             }
           >
-            Raket
+            RaketGo
           </NavLink>
           <div className={styles["icons-row"]}>
             <FiMessageSquare
@@ -457,7 +457,7 @@ const MenuModal = (props: MenuModalProps) => {
                   : `${styles["logo-title"]}`
               }
             >
-              Raket
+              RaketGo
             </NavLink>
             <div className={styles.icons}>
               {currentTheme === "dark" ? (

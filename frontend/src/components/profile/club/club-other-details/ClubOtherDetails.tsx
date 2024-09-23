@@ -20,7 +20,7 @@ const ClubOtherDetails = (props) => {
       <div className={styles["title-container"]}>
         <h4>Hesabı Sil</h4>
         <p>
-          Hesabını Raket platformu üzerinden kalıcı olarak sil. Hesap
+          Hesabını RaketGo platformu üzerinden kalıcı olarak sil. Hesap
           silindikten sonra tekrar kurtarılamaz.
         </p>
       </div>

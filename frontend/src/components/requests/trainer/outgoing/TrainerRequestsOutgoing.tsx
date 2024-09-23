@@ -13,6 +13,7 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { BsClockHistory } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 const TrainerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
@@ -114,7 +115,7 @@ const TrainerRequestsOutgoing = () => {
                     <img
                       src={
                         booking?.playerImage
-                          ? booking?.playerImage
+                          ? `${imageUrl}/${booking?.playerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}

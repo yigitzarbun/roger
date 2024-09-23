@@ -35,7 +35,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
     refetchPlayerTrainers,
   } = props;
   const { t } = useTranslation();
-  console.log(playerTrainers);
+
   const {
     data: myFavouriteTrainers,
     isLoading: isMyFavouritesLoading,
@@ -47,6 +47,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
       (trainer) => trainer.favouritee_id === user_id
     );
   };
+
   const [updateFavourite, { isSuccess: isUpdateFavouriteSuccess }] =
     useUpdateFavouriteMutation();
 
@@ -99,6 +100,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
       refetchPlayerTrainers();
     }
   }, [isUpdateStudentSuccess]);
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
@@ -120,10 +122,7 @@ const PlayerTrainersResults = (props: PlayerTrainersResultsProps) => {
       </div>
 
       {playerTrainers?.trainers?.length === 0 && (
-        <p>
-          Aradığınız kritere göre eğitmen bulunamadı. Lütfen filtreyi temizleyip
-          tekrar deneyin.
-        </p>
+        <p>{t("playerNoTrainersText")}</p>
       )}
 
       {playerTrainers?.trainers?.length > 0 && (

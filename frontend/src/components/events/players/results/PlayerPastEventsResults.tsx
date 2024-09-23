@@ -17,6 +17,7 @@ import { Club } from "../../../../../api/endpoints/ClubsApi";
 import { CourtStructureType } from "../../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../../api/endpoints/CourtSurfaceTypesApi";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface PlayerPastEventsResultsProps {
   display: string;
@@ -180,10 +181,12 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles.title}>{t("pastEventsTitle")}</h2>
-          <FaFilter
-            onClick={handleOpenPastEventsModal}
-            className={styles.filter}
-          />
+          {myEvents?.pastEvents?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenPastEventsModal}
+              className={styles.filter}
+            />
+          )}
         </div>
         {myEvents?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -255,11 +258,11 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                         (event?.event_type_id === 1 ||
                           event?.event_type_id === 2 ||
                           event.event_type_id === 7)
-                          ? event?.playerImage
+                          ? `${imageUrl}/${event?.playerImage}`
                           : event?.trainerImage && event?.event_type_id === 3
-                          ? event?.trainerImage
+                          ? `${imageUrl}/${event?.trainerImage}`
                           : event?.clubImage && event?.event_type_id === 6
-                          ? event?.clubImage
+                          ? `${imageUrl}/${event?.clubImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}
@@ -300,8 +303,9 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                   >
                     {event.event_type_id === 1 ||
                     event.event_type_id === 2 ||
-                    event.event_type_id === 3 ||
                     event.event_type_id === 7
+                      ? `${event?.playerFname} ${event?.playerLname}`
+                      : event.event_type_id === 3
                       ? `${event?.fname} ${event?.lname}`
                       : event.event_type_id === 6
                       ? event?.student_group_name

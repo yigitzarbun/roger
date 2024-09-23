@@ -132,7 +132,7 @@ const MessageArea = (props: MessageAreaProps) => {
                   <div className={styles["current-user-message-container"]}>
                     <div className={styles["texts-outer-container"]}>
                       <div className={styles["title-container"]}>
-                        <h5>Siz</h5>
+                        <h5>{t("you")}</h5>
                         <p>{convertToMinutesAgo(message?.registered_at)}</p>
                       </div>
                       <div className={styles["texts-container"]}>
@@ -142,11 +142,11 @@ const MessageArea = (props: MessageAreaProps) => {
                     <img
                       src={
                         playerDetails && playerDetails?.[0]?.image
-                          ? playerDetails?.[0]?.image
+                          ? `${imageUrl}/${playerDetails?.[0]?.image}`
                           : trainerDetails && trainerDetails?.[0]?.image
-                          ? trainerDetails?.[0]?.image
+                          ? `${imageUrl}/${trainerDetails?.[0]?.image}`
                           : clubDetails && clubDetails?.[0]?.image
-                          ? clubDetails?.[0]?.image
+                          ? `${imageUrl}/${clubDetails?.[0]?.image}`
                           : "/images/icons/avatar.jpg"
                       }
                     />

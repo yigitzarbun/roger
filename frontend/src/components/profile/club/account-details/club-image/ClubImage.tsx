@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
 import styles from "./styles.module.scss";
-
-import {
-  useUpdateClubMutation,
-  Club,
-} from "../../../../../../api/endpoints/ClubsApi";
+import { useUpdateClubMutation } from "../../../../../../api/endpoints/ClubsApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { updateClubDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
+import { imageUrl } from "../../../../../common/constants/apiConstants";
 
 const ClubImage = (props) => {
   const { clubDetails, refetchClubDetails } = props;
@@ -18,25 +14,22 @@ const ClubImage = (props) => {
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const existingImage = clubDetails?.[0]?.image
-    ? clubDetails?.[0]?.image
-    : null;
-
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const imageFile = e.target.files[0];
-    setValue("image", imageFile);
-    if (imageFile) {
-      setSelectedImage(imageFile);
-    }
-  };
+  const existingImage = clubDetails?.[0]?.image || null;
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const { handleSubmit, reset, setValue } = useForm({
     defaultValues: {
-      image: clubDetails?.[0]?.image,
+      image: existingImage,
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = e.target.files?.[0] || null; // Get the first file or null
+    setValue("image", imageFile);
+    if (imageFile) {
+      setSelectedImage(imageFile); // Update state
+    }
+  };
 
   const onSubmit: SubmitHandler<any> = () => {
     const updatedProfileData = {
@@ -47,7 +40,7 @@ const ClubImage = (props) => {
       club_type_id: clubDetails?.[0]?.club_type_id,
       is_trainer_subscription_required:
         clubDetails?.[0]?.is_trainer_subscription_required,
-      image: selectedImage ? selectedImage : existingImage,
+      image: selectedImage || existingImage,
       is_player_lesson_subscription_required:
         clubDetails?.[0]?.is_player_lesson_subscription_required,
       is_player_subscription_required:
@@ -56,7 +49,7 @@ const ClubImage = (props) => {
       player_rule_id: Number(clubDetails?.[0]?.player_rule_id),
       iban: Number(clubDetails?.[0]?.iban),
       bank_id: Number(clubDetails?.[0]?.bank_id),
-      name_on_bank_account: Number(clubDetails?.[0]?.name_on_bank_account),
+      name_on_bank_account: String(clubDetails?.[0]?.name_on_bank_account), // Changed to String
       higher_price_for_non_subscribers: Number(
         clubDetails?.[0]?.higher_price_for_non_subscribers
       ),
@@ -73,16 +66,28 @@ const ClubImage = (props) => {
       const updatedData = {
         ...updatedProfile,
         image: selectedImage
-          ? URL.createObjectURL(selectedImage)
+          ? `${imageUrl}/Uploads/${selectedImage.name}`
           : existingImage,
       };
       dispatch(updateClubDetails(updatedData));
       toast.success("Profil güncellendi");
       refetchClubDetails();
-      reset(updatedProfile);
-      setSelectedImage(null);
+      reset({ image: null }); // Reset form value
+      setSelectedImage(null); // Clear selected image
     }
-  }, [isSuccess]);
+  }, [
+    isSuccess,
+    updatedProfile,
+    existingImage,
+    dispatch,
+    refetchClubDetails,
+    reset,
+  ]);
+
+  // Prepare the image preview URL
+  const imagePreviewUrl = selectedImage
+    ? URL.createObjectURL(selectedImage)
+    : `${imageUrl}/${existingImage}` || "/images/icons/avatar.jpg";
 
   return (
     <div className={styles["club-image-container"]}>
@@ -97,11 +102,7 @@ const ClubImage = (props) => {
       >
         <label htmlFor="fileInput">
           <img
-            src={
-              selectedImage
-                ? URL.createObjectURL(selectedImage)
-                : clubDetails?.[0]?.image || "/images/icons/avatar.jpg"
-            }
+            src={imagePreviewUrl}
             alt="club-image"
             className={styles["profile-image"]}
             id="preview-image"

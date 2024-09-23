@@ -7,10 +7,10 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Player } from "../../../../../../api/endpoints/PlayersApi";
 import { updatePlayerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
+import { imageUrl } from "../../../../../common/constants/apiConstants";
 
-// Define a new type for the form data
 interface PlayerForm {
-  image: File | null; // Change to File | null
+  image: File | null;
 }
 
 const PlayerImage = (props) => {
@@ -24,25 +24,24 @@ const PlayerImage = (props) => {
 
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const existingImage = playerDetails?.image ? playerDetails.image : null;
+  const existingImage = playerDetails?.image || null;
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const imageFile = e.target.files?.[0] || null; // Get the first file or null
-    setValue("image", imageFile); // Set the value in the form
-    if (imageFile) {
-      setSelectedImage(imageFile); // Update state
-    }
-  };
-
   const { handleSubmit, reset, setValue } = useForm<PlayerForm>({
     defaultValues: {
-      image: null, // Adjust default value to match new type
+      image: null,
     },
   });
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = e.target.files?.[0] || null;
+    setValue("image", imageFile);
+    setSelectedImage(imageFile);
+  };
+
   const onSubmit: SubmitHandler<PlayerForm> = () => {
+    console.log("Submitting player update");
     const updatedProfileData = {
       player_id: playerDetails?.player_id,
       fname: playerDetails?.fname,
@@ -50,12 +49,13 @@ const PlayerImage = (props) => {
       birth_year: playerDetails?.birth_year,
       gender: playerDetails?.gender,
       phone_number: null,
-      image: selectedImage ? selectedImage : existingImage,
+      image: selectedImage || existingImage,
       player_bio_description: null,
       location_id: Number(playerDetails?.location_id),
       player_level_id: Number(playerDetails?.player_level_id),
       user_id: playerDetails?.user_id,
     };
+    console.log("Updated Profile Data: ", updatedProfileData);
     updatePlayer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
   };
@@ -65,16 +65,27 @@ const PlayerImage = (props) => {
       const updatedData = {
         ...updatedProfile,
         image: selectedImage
-          ? URL.createObjectURL(selectedImage)
+          ? `${imageUrl}/Uploads/${selectedImage.name}`
           : existingImage,
       };
       dispatch(updatePlayerDetails(updatedData));
       toast.success("Profil güncellendi");
       refetchPlayerDetails();
-      reset(updatedProfile);
+      reset({ image: null });
       setSelectedImage(null);
     }
-  }, [isSuccess]);
+  }, [
+    isSuccess,
+    updatedProfile,
+    existingImage,
+    dispatch,
+    refetchPlayerDetails,
+    reset,
+  ]);
+
+  const imagePreviewUrl = selectedImage
+    ? URL.createObjectURL(selectedImage)
+    : `${imageUrl}/${existingImage}` || "/images/icons/avatar.jpg";
 
   return (
     <div className={styles["player-account-details-container"]}>
@@ -89,11 +100,7 @@ const PlayerImage = (props) => {
       >
         <label htmlFor="fileInput">
           <img
-            src={
-              selectedImage
-                ? URL.createObjectURL(selectedImage)
-                : playerDetails?.image || "/images/icons/avatar.jpg"
-            }
+            src={imagePreviewUrl}
             alt="player-image"
             className={styles["profile-image"]}
             id="preview-image"

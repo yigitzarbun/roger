@@ -56,7 +56,7 @@ const TrainerStudentRequests = (props: TrainerStudentRequestsProps) => {
 
   return (
     <div className={styles["result-container"]}>
-      <h2 className={styles["result-title"]}>Öğrenciler</h2>
+      <h2 className={styles["result-title"]}>{t("newStudentRequestsTitle")}</h2>
       {newStudentRequestsList?.length > 0 ? (
         <table>
           <thead>

@@ -15,9 +15,13 @@ const DeletePlayerModal = (props) => {
   } = props;
 
   const [deleteUser] = useUpdateUserMutation(playerDetails?.user_id);
+
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
+
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -47,6 +51,7 @@ const DeletePlayerModal = (props) => {
       toast.error("İşlem başarısız");
     }
   };
+
   return (
     <ReactModal
       isOpen={isDeletePlayerModalOpen}

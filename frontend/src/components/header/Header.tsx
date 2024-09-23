@@ -203,13 +203,9 @@ const Header = () => {
         <NavLink
           to={paths.HOME}
           onClick={() => navigateUser("HOME")}
-          className={({ isActive }) =>
-            isActive
-              ? `${styles["active-logo-title"]}`
-              : `${styles["logo-title"]}`
-          }
+          className={styles["logo-title"]}
         >
-          Raket
+          Raket<span className={styles["go-span"]}>Go</span>
         </NavLink>
         {isLoggedIn ? (
           <div className={styles["user-nav"]}>

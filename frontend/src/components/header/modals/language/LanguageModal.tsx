@@ -7,9 +7,13 @@ interface LanguageModalProps {
   isLanguageModalOpen: boolean;
   handleCloseLanguageModal: () => void;
 }
+
 const LanguageModal = (props: LanguageModalProps) => {
   const { isLanguageModalOpen, handleCloseLanguageModal } = props;
+
   const { i18n } = useTranslation();
+
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language || "tr");
 
   const updateLanguage = (language) => {
     const storedData = localStorage.getItem("tennis_app_user");
@@ -17,42 +21,37 @@ const LanguageModal = (props: LanguageModalProps) => {
     if (storedData) {
       try {
         const userData = JSON.parse(storedData);
-
         userData.language = language;
-
-        const updatedUserData = JSON.stringify(userData);
-
-        localStorage.setItem("tennis_app_user", updatedUserData);
-
-        i18n.changeLanguage(language);
-
-        handleCloseLanguageModal();
+        localStorage.setItem("tennis_app_user", JSON.stringify(userData));
       } catch (error) {
         console.error("Error parsing JSON data:", error);
       }
     } else {
-      console.log('No data found in local storage for key "tennis_app_user"');
+      // Handle language change for non-logged-in users
+      console.log(
+        "No user data found. Setting default language in local storage."
+      );
     }
+
+    i18n.changeLanguage(language);
+    setCurrentLanguage(language);
+    handleCloseLanguageModal();
   };
 
-  const [currentLanguage, setCurrentLanguage] = useState("");
-
-  const storedData = localStorage.getItem("tennis_app_user");
-
   useEffect(() => {
+    const storedData = localStorage.getItem("tennis_app_user");
     if (storedData) {
       try {
         const userData = JSON.parse(storedData);
         const lsLanguage = userData.language;
-        const language = lsLanguage ?? "tr";
-        setCurrentLanguage(language);
+        setCurrentLanguage(lsLanguage || "tr");
       } catch (error) {
         console.error("Error parsing JSON data:", error);
       }
     } else {
-      console.log('No data found in local storage for key "tennis_app_user"');
+      setCurrentLanguage(i18n.language || "tr"); // Default to 'tr' if no user data
     }
-  }, []);
+  }, [i18n.language]);
 
   return (
     <ReactModal
@@ -88,4 +87,5 @@ const LanguageModal = (props: LanguageModalProps) => {
     </ReactModal>
   );
 };
+
 export default LanguageModal;

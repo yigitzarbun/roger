@@ -30,22 +30,15 @@
 
     .logo-title {
       font-size: 1.7rem;
-      color: var(--text-color);
+      color: $roger-blue;
       text-decoration: none;
       font-weight: bolder;
       border-bottom: 1px solid inherit;
       padding-bottom: 1vh;
     }
-    .logo-title:hover {
-      color: $roger-blue;
-    }
-    .active-logo-title {
-      font-size: 1.7rem;
-      color: $roger-blue;
-      text-decoration: none;
-      font-weight: bolder;
-      border-bottom: 1px solid $roger-blue;
-      padding-bottom: 1vh;
+
+    .go-span {
+      color: var(--text-color);
     }
     .user-nav {
       display: flex;

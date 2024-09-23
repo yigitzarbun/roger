@@ -24,6 +24,7 @@ import {
 } from "../../../../../api/endpoints/MatchScoresApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 const PlayerRequestsIncoming = () => {
   const { t } = useTranslation();
@@ -222,9 +223,9 @@ const PlayerRequestsIncoming = () => {
                       <img
                         src={
                           booking?.trainerImage
-                            ? booking?.trainerImage
+                            ? `${imageUrl}/${booking?.trainerImage}`
                             : booking?.playerImage
-                            ? booking?.playerImage
+                            ? `${imageUrl}/${booking?.playerImage}`
                             : "/images/icons/avatar.jpg"
                         }
                         className={styles["player-image"]}
@@ -238,8 +239,8 @@ const PlayerRequestsIncoming = () => {
                         to={`${paths.EXPLORE_PROFILE}1/${booking.inviter_id}`}
                         className={styles["player-name"]}
                       >
-                        {`${booking?.fname}
-                        ${booking?.lname}
+                        {`${booking?.playerFname}
+                        ${booking?.playerLname}
                         `}
                       </Link>
                     ) : booking.event_type_id === 3 ? (

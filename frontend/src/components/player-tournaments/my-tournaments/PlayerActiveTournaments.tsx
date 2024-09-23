@@ -79,12 +79,14 @@ const PlayerActiveTournaments = (props: PlayerActiveTournamentsProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles["result-title"]}>{t("myTournamentsTitle")}</h2>
-          <FaFilter
-            onClick={handleOpenMyTournamentsModal}
-            className={
-              textSearch !== "" ? styles["active-filter"] : styles.filter
-            }
-          />
+          {myTournaments?.tournaments?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenMyTournamentsModal}
+              className={
+                textSearch !== "" ? styles["active-filter"] : styles.filter
+              }
+            />
+          )}
         </div>
         {myTournaments?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>

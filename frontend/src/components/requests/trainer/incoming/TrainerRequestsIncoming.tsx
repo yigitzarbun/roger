@@ -26,6 +26,7 @@ import {
 } from "../../../../../api/endpoints/StudentsApi";
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 const TrainerRequestsIncoming = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
@@ -239,7 +240,7 @@ const TrainerRequestsIncoming = () => {
                     <img
                       src={
                         booking?.playerImage
-                          ? booking?.playerImage
+                          ? `${imageUrl}/${booking?.playerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}

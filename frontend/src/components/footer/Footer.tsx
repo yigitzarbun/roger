@@ -13,7 +13,7 @@ const Footer = () => {
     <div className={styles.footer}>
       <div className={styles["top-container"]}>
         <div className={styles["intro-container"]}>
-          <h2>Raket</h2>
+          <h2>RaketGo</h2>
           <p>{t("footerText")}</p>
         </div>
         <div className={styles["navigation-container"]}>
@@ -46,7 +46,7 @@ const Footer = () => {
       <div className={styles["bottom-container"]}>
         <div className={styles["copyright-container"]}>
           <FaCopyright />
-          <p>Copyright 2023 Raket. {t("copyright")}</p>
+          <p>Copyright 2023 RaketGo. {t("copyright")}</p>
         </div>
         <a
           href="https://www.decathlon.com.tr/sport/c0-tum-sporlar/c1-tenis/_/N-1iwpi0u"

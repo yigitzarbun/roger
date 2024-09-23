@@ -76,11 +76,12 @@
         .top-row {
           display: flex;
           justify-content: space-between;
+          align-items: baseline;
           @include small-screen {
             flex-direction: column;
           }
           .set-container {
-            width: 46%;
+            width: 40%;
             display: flex;
             flex-direction: column;
             padding: $roger-box-padding;

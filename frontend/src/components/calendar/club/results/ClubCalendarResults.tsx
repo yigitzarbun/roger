@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from "react";
-
 import { Link } from "react-router-dom";
-
 import { ImBlocked } from "react-icons/im";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import styles from "./styles.module.scss";
 import Paths from "../../../../routing/Paths";
-
 import AddClubCourtBookingModal from "../add-booking-modal/AddClubCourtBookingModal";
 import EditClubCourtBookingModal from "../edit-booking-modal/EditClubCourtBookingModal";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import { useAppSelector } from "../../../../store/hooks";
 import { useGetPaginatedClubCalendarBookingsQuery } from "../../../../../api/endpoints/BookingsApi";
-
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import { useGetStudentGroupsByFilterQuery } from "../../../../../api/endpoints/StudentGroupsApi";
 import AddCourtModal from "../../../../components/club-courts/add-court-modal/AddCourtModal";
@@ -39,6 +32,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
   const user = useAppSelector((store) => store.user.user);
 
   const { data: users, isLoading: isUsersLoading } = useGetUsersQuery({});
+
   const {
     data: currentClub,
     isLoading: isClubDetailsLoading,
@@ -55,7 +49,9 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
 
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
+
   const [currentPage, setCurrentPage] = useState(1);
+
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {

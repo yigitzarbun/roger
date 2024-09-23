@@ -9,6 +9,7 @@ import {
   Trainer,
   useUpdateTrainerMutation,
 } from "../../../../../../api/endpoints/TrainersApi";
+import { imageUrl } from "../../../../../common/constants/apiConstants";
 
 const TrainerImage = (props) => {
   const { trainerDetails, refetchTrainerDetails } = props;
@@ -21,25 +22,24 @@ const TrainerImage = (props) => {
 
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
-  const existingImage = trainerDetails?.trainerImage
-    ? trainerDetails?.trainerImage
-    : null;
+  const existingImage = trainerDetails?.trainerImage || null;
 
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const imageFile = e.target.files[0];
-    setValue("image", imageFile);
-    if (imageFile) {
-      setSelectedImage(imageFile);
-    }
-  };
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const { handleSubmit, reset, setValue } = useForm({
     defaultValues: {
-      image: trainerDetails?.trainerImage,
+      image: existingImage,
     },
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageFile = e.target.files?.[0] || null; // Get the first file or null
+    setValue("image", imageFile);
+    if (imageFile) {
+      setSelectedImage(imageFile); // Update state
+    }
+  };
+
   const onSubmit: SubmitHandler<any> = () => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
@@ -48,7 +48,7 @@ const TrainerImage = (props) => {
       birth_year: trainerDetails?.birth_year,
       gender: trainerDetails?.gender,
       phone_number: null,
-      image: selectedImage ? selectedImage : existingImage,
+      image: selectedImage || existingImage,
       trainer_bio_description: null,
       location_id: Number(trainerDetails?.location_id),
       club_id: Number(trainerDetails?.club_id),
@@ -70,16 +70,28 @@ const TrainerImage = (props) => {
       const updatedData = {
         ...updatedProfile,
         image: selectedImage
-          ? URL.createObjectURL(selectedImage)
+          ? `${imageUrl}/Uploads/${selectedImage.name}`
           : existingImage,
       };
       dispatch(updateTrainerDetails(updatedData));
       toast.success("Profil güncellendi");
       refetchTrainerDetails();
-      reset(updatedProfile);
-      setSelectedImage(null);
+      reset({ image: null }); // Reset the form
+      setSelectedImage(null); // Clear the selected image
     }
-  }, [isSuccess]);
+  }, [
+    isSuccess,
+    updatedProfile,
+    existingImage,
+    dispatch,
+    refetchTrainerDetails,
+    reset,
+  ]);
+
+  // Prepare the image preview URL
+  const imagePreviewUrl = selectedImage
+    ? URL.createObjectURL(selectedImage)
+    : `${imageUrl}/${existingImage}` || "/images/icons/avatar.jpg";
 
   return (
     <div className={styles["trainer-account-details-container"]}>
@@ -94,11 +106,7 @@ const TrainerImage = (props) => {
       >
         <label htmlFor="fileInput">
           <img
-            src={
-              selectedImage
-                ? URL.createObjectURL(selectedImage)
-                : trainerDetails?.trainerImage || "/images/icons/avatar.jpg"
-            }
+            src={imagePreviewUrl}
             alt="trainer-image"
             className={styles["profile-image"]}
             id="preview-image"

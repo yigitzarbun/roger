@@ -20,8 +20,11 @@ const DeleteClubModal = (props) => {
     useDeactivateDeletedClubCourtsMutation(clubDetails?.[0]?.club_id);
 
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
+
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+
   const handleEmail = (e) => {
     setEmail(e.target.value);
   };

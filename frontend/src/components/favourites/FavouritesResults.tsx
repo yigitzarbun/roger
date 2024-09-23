@@ -204,9 +204,7 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
           </tbody>
         </table>
       ) : (
-        myFavourites?.favourites?.length === 0 && (
-          <p>Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır</p>
-        )
+        myFavourites?.favourites?.length === 0 && <p>{t("noFavouritesText")}</p>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

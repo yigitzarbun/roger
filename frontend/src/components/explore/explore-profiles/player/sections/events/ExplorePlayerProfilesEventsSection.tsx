@@ -111,7 +111,11 @@ const ExplorePlayerProfilesEventsSection = (
                       }`}
                       className={styles["opponent-name"]}
                     >
-                      {`${booking?.fname} ${booking?.lname}`}
+                      {booking?.fname
+                        ? `${booking?.fname} ${booking?.lname}`
+                        : booking?.playerFname
+                        ? `${booking?.playerFname} ${booking?.playerLname}`
+                        : "-"}
                     </Link>
                   </td>
                   <td>{booking.club_name}</td>

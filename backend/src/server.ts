@@ -48,22 +48,30 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "Uploads"); // Just "uploads" if it's in the same directory as your server file
+    cb(null, "uploads"); // Store files in the 'uploads' folder
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, Date.now() + "-" + file.originalname); // Unique filenames
   },
 });
 
 const upload = multer({ storage: storage });
+
 const cors = require("cors");
 
 const server = express();
 
 server.use(express.json());
-server.use(cors({ origin: "https://frontend-wispy-log-4260.fly.dev" }));
+
+const corsOptions = {
+  origin: "https://frontend-wispy-log-4260.fly.dev",
+  optionsSuccessStatus: 200,
+};
+
+server.use(cors(corsOptions));
+
 // Serve static files from the Uploads directory
-server.use("/Uploads", express.static(path.join(__dirname, "../Uploads")));
+server.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 process.env.TZ = "UTC";
 

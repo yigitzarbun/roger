@@ -9,6 +9,7 @@ import { useGetPlayerByUserIdQuery } from "../../../../api/endpoints/PlayersApi"
 import { useGetPlayersLeaderboardQuery } from "../../../../api/endpoints/BookingsApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import { getAge } from "../../../common/util/TimeFunctions";
+import { imageUrl } from "../../../common/constants/apiConstants";
 
 interface PlayerLeaderBoardResultsProps {
   playerLevelId: number;
@@ -120,7 +121,7 @@ const PlayersLeaderboardResults = (props: PlayerLeaderBoardResultsProps) => {
                       <img
                         src={
                           player.image
-                            ? player.image
+                            ? `${imageUrl}/${player.image}`
                             : "/images/icons/avatar.jpg"
                         }
                         alt={player.fname}

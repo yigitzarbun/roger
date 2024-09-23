@@ -10,10 +10,15 @@ const PlayerTrainers = () => {
   const user = useAppSelector((store) => store?.user?.user);
 
   const [trainerLevelId, setTrainerLevelId] = useState<number | null>(null);
+
   const [gender, setGender] = useState<string>("");
+
   const [locationId, setLocationId] = useState<number | null>(null);
+
   const [clubId, setClubId] = useState<number | null>(null);
+
   const [textSearch, setTextSearch] = useState<string>("");
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +58,7 @@ const PlayerTrainers = () => {
     clubId: clubId,
     textSearch: textSearch,
   });
+
   const handleClear = () => {
     setTextSearch("");
     setTrainerLevelId(null);
@@ -88,19 +94,22 @@ const PlayerTrainers = () => {
 
   return (
     <div className={styles["player-trainers-container"]}>
-      <PlayerTrainersSearch
-        handleLevel={handleLevel}
-        handleGender={handleGender}
-        handleLocation={handleLocation}
-        handleClub={handleClub}
-        handleTextSearch={handleTextSearch}
-        handleClear={handleClear}
-        trainerLevelId={trainerLevelId}
-        gender={gender}
-        locationId={locationId}
-        clubId={clubId}
-        textSearch={textSearch}
-      />
+      {playerTrainers?.trainers?.length > 0 && (
+        <PlayerTrainersSearch
+          handleLevel={handleLevel}
+          handleGender={handleGender}
+          handleLocation={handleLocation}
+          handleClub={handleClub}
+          handleTextSearch={handleTextSearch}
+          handleClear={handleClear}
+          trainerLevelId={trainerLevelId}
+          gender={gender}
+          locationId={locationId}
+          clubId={clubId}
+          textSearch={textSearch}
+        />
+      )}
+
       <PlayerTrainersResults
         playerTrainers={playerTrainers}
         handleTrainerPage={handleTrainerPage}

@@ -14,7 +14,7 @@ const PlayerGender = (props) => {
         <p>{t("genderText")}</p>
         <p>
           {t("genderText2")}{" "}
-          <span className={styles.email}>merhaba@raket.com</span>
+          <span className={styles.email}>merhaba@raketgo.com</span>
         </p>
       </div>
       <p className={styles.gender}>{playerDetails?.gender}</p>

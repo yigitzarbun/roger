@@ -98,18 +98,20 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
       <div className={styles["title-container"]}>
         <div className={styles["title-left"]}>
           <h2 className={styles.title}>{t("calendarTitle")}</h2>
-          <FaFilter
-            onClick={handleOpenFilter}
-            className={
-              clubId > 0 ||
-              eventTypeId > 0 ||
-              textSearch !== "" ||
-              clubId > 0 ||
-              date !== ""
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {filteredBookings?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenFilter}
+              className={
+                clubId > 0 ||
+                eventTypeId > 0 ||
+                textSearch !== "" ||
+                clubId > 0 ||
+                date !== ""
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
       </div>
       {filteredBookings?.length === 0 ? (
@@ -200,8 +202,9 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                   >
                     {booking.event_type_id === 1 ||
                     booking.event_type_id === 2 ||
-                    booking.event_type_id === 3 ||
                     booking.event_type_id === 7
+                      ? `${booking.playerFname} ${booking.playerLname}`
+                      : booking.event_type_id === 3
                       ? `${booking.fname} ${booking.lname}`
                       : booking.event_type_id === 6
                       ? booking?.student_group_name
@@ -246,23 +249,26 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
                 <td>
                   {(booking.event_type_id === 1 ||
                     booking.event_type_id === 2 ||
-                    booking.event_type_id === 3 ||
                     booking.event_type_id === 7) &&
-                  booking?.gender === "male"
+                  booking?.playerGender === "male"
                     ? t("male")
                     : (booking.event_type_id === 1 ||
                         booking.event_type_id === 2 ||
-                        booking.event_type_id === 3 ||
                         booking.event_type_id === 7) &&
                       booking?.gender === "female"
+                    ? t("female")
+                    : booking.event_type_id === 3 && booking.gender === "male"
+                    ? t("male")
+                    : booking.gender === "female"
                     ? t("female")
                     : "-"}
                 </td>
                 <td>
                   {booking.event_type_id === 1 ||
                   booking.event_type_id === 2 ||
-                  booking.event_type_id === 3 ||
                   booking.event_type_id === 7
+                    ? getAge(booking?.playerBirthYear)
+                    : booking.event_type_id === 3
                     ? getAge(booking?.birth_year)
                     : "-"}
                 </td>

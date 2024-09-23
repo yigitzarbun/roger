@@ -13,6 +13,7 @@ import { useUpdateBookingMutation } from "../../../../../api/endpoints/BookingsA
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface TrainerCalendarResultsProps {
   date: string;
@@ -94,18 +95,20 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
       <div className={styles["title-container"]}>
         <div className={styles["title-left"]}>
           <h2 className={styles.title}>{t("calendarTitle")}</h2>
-          <FaFilter
-            onClick={handleOpenFilter}
-            className={
-              clubId > 0 ||
-              eventTypeId > 0 ||
-              textSearch !== "" ||
-              clubId > 0 ||
-              date !== ""
-                ? styles["active-filter"]
-                : styles.filter
-            }
-          />
+          {trainerBookings?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenFilter}
+              className={
+                clubId > 0 ||
+                eventTypeId > 0 ||
+                textSearch !== "" ||
+                clubId > 0 ||
+                date !== ""
+                  ? styles["active-filter"]
+                  : styles.filter
+              }
+            />
+          )}
         </div>
       </div>
       {trainerBookings?.length === 0 ? (
@@ -156,12 +159,12 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                   >
                     <img
                       src={
-                        booking.event_type_id === 3 && booking.playerImage
-                          ? booking.playerImage
+                        booking.event_type_id === 3 && booking?.playerImage
+                          ? `${imageUrl}/${booking?.playerImage}`
                           : (booking.event_type_id === 5 ||
                               booking.event_type_id === 6) &&
                             booking.clubImage
-                          ? booking.clubImage
+                          ? `${imageUrl}/${booking?.clubImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["trainer-image"]}
@@ -189,6 +192,8 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                   >
                     {booking.student_group_name
                       ? booking.student_group_name
+                      : booking?.externalFname
+                      ? `${booking?.externalFname} ${booking?.externalLname}`
                       : `${booking?.playerFname} ${booking?.playerLname}`}
                   </Link>
                 </td>
@@ -216,6 +221,12 @@ const TrainerCalendarResults = (props: TrainerCalendarResultsProps) => {
                 <td>
                   {booking.student_group_name
                     ? ""
+                    : booking?.externalGender &&
+                      booking?.externalGender === "male"
+                    ? t("male")
+                    : booking?.externalGender &&
+                      booking?.externalGender === "female"
+                    ? t("female")
                     : booking?.playerGender === "female"
                     ? t("female")
                     : booking?.playerGender === "male"

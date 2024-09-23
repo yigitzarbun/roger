@@ -17,6 +17,7 @@ import { CourtSurfaceType } from "../../../../../api/endpoints/CourtSurfaceTypes
 import { useGetTrainerPastEventsQuery } from "../../../../../api/endpoints/BookingsApi";
 import { useGetEventReviewsQuery } from "../../../../../api/endpoints/EventReviewsApi";
 import TrainerPastEventsFilterModal from "./results-filter/TrainerPastEventsFilterModal";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface TrainerEventsResultsProps {
   clubId: number;
@@ -236,9 +237,9 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
                     <img
                       src={
                         event?.playerImage && event?.event_type_id === 3
-                          ? event?.playerImage
+                          ? `${imageUrl}/${event?.playerImage}`
                           : event?.clubImage && event?.event_type_id === 6
-                          ? event?.clubImage
+                          ? `${imageUrl}/${event?.clubImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles["player-image"]}

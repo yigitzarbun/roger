@@ -440,7 +440,7 @@
 
   "noMessageTitle": "Henüz mesajınız yok",
 
-  "footerText": "Raket, tenis oyuncularının birbirleriyle ve eğitmenlerle eşleştirkleri ve doğrudan kort rezervasyonu yaptıkları Türkiye'nin ilk tenis platformudur.",
+  "footerText": "RaketGo, tenis oyuncularının birbirleriyle ve eğitmenlerle eşleştirkleri ve doğrudan kort rezervasyonu yaptıkları Türkiye'nin ilk tenis platformudur.",
 
   "about": "Hakkında",
   "contact": "İletişim",
@@ -563,13 +563,13 @@
   "registerClub": "Kulüp Kayıt",
 
   "registerPlayerTitle": "Benzersiz Tenis Deneyimi",
-  "registerPlayerText2": "Raket ile tenis kariyerinizde yeni bir seviyeye çıkın! Antrenman ve maç davetleri gönderin, özel ders taleplerinde bulunun ve kortları kolayca rezerve edin. Kort ücretini arkadaşlarınızla paylaşma imkanını da unutmayın. Ayrıca, kulüplere abone olarak daha fazla avantaja sahip olabilirsiniz.",
+  "registerPlayerText2": "RaketGo ile tenis kariyerinizde yeni bir seviyeye çıkın! Antrenman ve maç davetleri gönderin, özel ders taleplerinde bulunun ve kortları kolayca rezerve edin. Kort ücretini arkadaşlarınızla paylaşma imkanını da unutmayın. Ayrıca, kulüplere abone olarak daha fazla avantaja sahip olabilirsiniz.",
 
   "registerTrainerTitle": "Eksiksiz Eğitim Yönetimi",
-  "registerTrainerText2": "Raket Platformu, eğitmenlerin kariyerlerini kolayca yönetebilmeleri için tasarlandı. Kulüplere katılabilir ya da bağımsız çalışabilirsiniz. Özel ve grup dersleri verin, ders davetleri gönderin ve kazançlarınızı anında alın. Takvim, ödemeler ve geçmiş etkinliklerinizi takip ederek daha verimli çalışın.",
+  "registerTrainerText2": "RaketGo Platformu, eğitmenlerin kariyerlerini kolayca yönetebilmeleri için tasarlandı. Kulüplere katılabilir ya da bağımsız çalışabilirsiniz. Özel ve grup dersleri verin, ders davetleri gönderin ve kazançlarınızı anında alın. Takvim, ödemeler ve geçmiş etkinliklerinizi takip ederek daha verimli çalışın.",
 
   "registerClubTitle": "Kulüpler için Akıllı Çözümler",
-  "registerClubText2": "Raket Platformu ile kulübünüzü dijitalleştirin ve kolayca yönetin. Kortlarınızı sisteme ekleyin, oyuncular ve eğitmenler tarafından rezerve edilmesini sağlayın. Abonelik paketleri oluşturun ve anında ödeme alın. İsterseniz platformu sadece aboneleriniz için kapalı bir ortam olarak kullanın.",
+  "registerClubText2": "RaketGo Platformu ile kulübünüzü dijitalleştirin ve kolayca yönetin. Kortlarınızı sisteme ekleyin, oyuncular ve eğitmenler tarafından rezerve edilmesini sağlayın. Abonelik paketleri oluşturun ve anında ödeme alın. İsterseniz platformu sadece aboneleriniz için kapalı bir ortam olarak kullanın.",
 
   "proceed": "İleri",
   "return": "Geri",
@@ -579,5 +579,34 @@
   "publicClub": "Devlet / Belediye",
   "independent": "Bağımsız",
 
-  "address": "Adres"
+  "address": "Adres",
+
+  "noActiveStudentGroupsText": "Henüz aktif öğrenci grubu bulunmamaktadır",
+
+  "addMatchScoreTitle": "Maç Skoru Ekle",
+  "set1": "1. Set",
+  "set2": "2. Set",
+  "set3": "3. Set",
+
+  "matchScoreCorrectTitle": "Maç Skoru Doğru Mu?",
+  "matchScoreCorrectText": "maç skorunu şu şekilde kayıt etti:",
+  "inviter": "Davet Eden",
+  "invitee": "Davet Edilen",
+
+  "confirmScoreButtonText": "Skoru Onayla",
+  "askRevisionButtonText": "Değişiklik Talep Et",
+
+  "updateMatchScoreTitle": "Maç Skorunu Değiştir",
+
+  "noPaymentsText": "Henüz ödemeniz bulunmamaktadır",
+
+  "addPaymentDetailsButtonText": "Ödeme Bilgilerini Ekle",
+
+  "playerNoGroupsText": "Kulüp oyuncu grubu üyeliğiniz bulunmamaktadır",
+
+  "playerNoSubscriptionsText": "Kulüp üyeliğiniz bulunmamaktadır",
+
+  "playerNoTrainersText": "Eğitmen bulunamadı",
+
+  "noFavouritesText": "Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır"
 }

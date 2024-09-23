@@ -11,6 +11,7 @@ import {
 } from "../../../../../api/endpoints/EventReviewsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
 import ReactModal from "react-modal";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface AddEventReviewModalProps {
   isAddReviewModalOpen: boolean;
@@ -102,7 +103,9 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
       <div className={styles["modal-content"]}>
         <h3 className={styles.title}>{t("addReviewTitle")}</h3>
         <div className={styles["opponent-container"]}>
-          <img src={image ? image : "/images/icons/avatar.jpg"} />
+          <img
+            src={image ? `${imageUrl}/${image}` : "/images/icons/avatar.jpg"}
+          />
           <p>{`${fname} ${lname}`}</p>
         </div>
         <form
@@ -159,7 +162,7 @@ const AddEventReviewModal = (props: AddEventReviewModalProps) => {
               onClick={closeReviewModal}
               className={styles["discard-button"]}
             >
-              {t("declined")}
+              {t("tableCancelButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
               {t("submit")}

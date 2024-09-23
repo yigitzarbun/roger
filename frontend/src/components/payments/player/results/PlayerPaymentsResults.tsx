@@ -203,7 +203,7 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
           </div>
         </>
       ) : (
-        <p>Henüz ödemeniz bulunmamaktadır.</p>
+        <p>{t("noPaymentsText")}</p>
       )}
 
       {!paymentDetailsExist && (
@@ -211,7 +211,7 @@ const PlayerPaymentsResults = (props: PlayerPaymentsResultsProps) => {
           onClick={navigateToAddPayment}
           className={styles["add-payment-button"]}
         >
-          Ödeme Bilgilerini Ekle
+          {t("addPaymentDetailsButtonText")}
         </button>
       )}
     </div>

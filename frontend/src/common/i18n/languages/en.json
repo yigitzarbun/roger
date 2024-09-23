@@ -32,9 +32,9 @@
   "courtsText": "Manage courts from a single dashboard",
   "courtsButtonText": "View Courts",
 
-  "subscriptionsTitle": "Subscriptions",
-  "subscriptionsText": "Manage subscription packages and subscribers",
-  "subscriptionsButtonText": "View Subscriptions",
+  "subscriptionsTitle": "Memberships",
+  "subscriptionsText": "Manage membership packages and members",
+  "subscriptionsButtonText": "View Memberships",
 
   "leaderboardTitle": "Leaderboard",
   "leaderboardTablePlayerHeader": "Player",
@@ -144,7 +144,7 @@
   "ageGap": "Age Range",
   "participationStatus": "Admission",
   "leaveTournament": "Leave",
-  "subscriptionTypeHeader": "Subscription Type",
+  "subscriptionTypeHeader": "Membership Type",
   "clubNameHeader": "Club Name",
   "groupHeader": "Group",
   "studentCountHeader": "Student Count",
@@ -231,8 +231,8 @@
   "courtNumberAsc": "Court Quantity Ascending",
   "trainerNumberDesc": "Trainer Quantity Descending",
   "trainerNumberAsc": "Trainer Quantity Ascending",
-  "subscriberNumberDesc": "Subscriber Quantity Descending",
-  "subscriberNumberAsc": "Subscriber Quantity Ascending",
+  "subscriberNumberDesc": "Member Quantity Descending",
+  "subscriberNumberAsc": "Member Quantity Ascending",
 
   "sortCourtsTile": "Sort Courts",
   "sortClubNameDesc": "Club Name Z to A",
@@ -250,7 +250,7 @@
   "groupLesson": "Group Lesson",
   "tournamentMatch": "Tournament Match",
   "externalEvent": "External Event",
-  "subscriptionPayment": "Subscription Fee",
+  "subscriptionPayment": "Membership Fee",
   "tournamentAdmissionPayment": "Tournament Admission",
 
   "cancel": "Cancel",
@@ -278,7 +278,7 @@
 
   "settings": "Settings",
   "payments": "Payments",
-  "subscriptions": "Subscriptions",
+  "subscriptions": "Memberships",
   "groups": "Groups",
   "myTrainers": "My Trainers",
   "favourites": "Favourites",
@@ -327,7 +327,7 @@
   "success": "Completed",
   "declined": "Cancelled",
 
-  "clubSubscriptionsTitle": "Club Subscriptions",
+  "clubSubscriptionsTitle": "Club Memberships",
 
   "oneMonthSubscription": "1 Month",
   "threeMonthSubscription": "3 Months",
@@ -375,9 +375,9 @@
 
   "addPaymentDetails": "Add Card",
 
-  "subscribeToClubTitle": "Club Subscription",
+  "subscribeToClubTitle": "Club Membership",
 
-  "subscriptionType": "Subscription Type",
+  "subscriptionType": "Membership Type",
   "subscriptionDuration": "Duration",
 
   "submit": "Submit",
@@ -440,7 +440,7 @@
 
   "noMessageTitle": "No messages yet",
 
-  "footerText": "Raket is Turkey's first tennis-tech platform that brings tennis enthusiasts together and enables them to book courts.",
+  "footerText": "RaketGo is Turkey's first tennis-tech platform that brings tennis enthusiasts together, find partners and trainers, book courts and buy club memberships.",
 
   "about": "About",
   "contact": "Contact",
@@ -451,7 +451,7 @@
 
   "staffApplyButtonText": "Apply",
 
-  "subscriptionPackage": "Subscription Package",
+  "subscriptionPackage": "Membership Package",
 
   "staffEmployedText": "You are a member of staff",
 
@@ -462,10 +462,10 @@
 
   "clubHasNoCourts": "Club has no courts",
   "clubHasNoTrainers": "Club has no trainers",
-  "clubHasNoSubscribers": "Club has no subscribers",
-  "clubHasNoSubscriptions": "Club has no subscription packages",
+  "clubHasNoSubscribers": "Club has no members",
+  "clubHasNoSubscriptions": "Club has no membership packages",
 
-  "subscribersTitle": "Subscribers",
+  "subscribersTitle": "Members",
 
   "price": "Price",
 
@@ -475,7 +475,7 @@
 
   "trainingMatchRuleTitle": "Training / Match",
 
-  "playerSubscriptionNotRequired": "Player subscription is not required for booking courts",
+  "playerSubscriptionNotRequired": "Player membership is not required for booking courts",
 
   "clubStaffPlayerSubscriptionRequired": "Trainer must be club staff and player must be a club member in order to book courts",
   "clubStaffRequiredOnly": "Trainer must be club staff to book courts",
@@ -563,21 +563,50 @@
   "registerClub": "Register as Club",
 
   "registerPlayerTitle": "A unique tennis experience",
-  "registerPlayerText2": "Take your tennis career to the next level with Raket! Send training and match invitations, request private lessons, and easily reserve courts. Don’t forget the option to split court fees with your friends. Plus, by subscribing to clubs, you can enjoy even more benefits.",
+  "registerPlayerText2": "Take your tennis career to the next level with RaketGo! Send training and match invitations, request private lessons, and easily reserve courts. Don’t forget the option to split court fees with your friends. Plus, by subscribing to clubs, you can enjoy even more benefits.",
 
   "registerTrainerTitle": "Comprehensive Training Management",
-  "registerTrainerText2": "The Raket Platform is designed to help trainers easily manage their careers. You can join clubs or work independently. Offer private and group lessons, send lesson invitations, and receive your earnings instantly. Track your schedule, payments, and past events to work more efficiently.",
+  "registerTrainerText2": "The RaketGo Platform is designed to help trainers easily manage their careers. You can join clubs or work independently. Offer private and group lessons, send lesson invitations, and receive your earnings instantly. Track your schedule, payments, and past events to work more efficiently.",
 
   "registerClubTitle": "Smart Solutions for Tennis Clubs",
-  "registerClubText2": "Digitize and manage your club effortlessly with the Raket Platform. Add your courts to the system, allow reservations by players and instructors, create subscription packages, and receive payments instantly. Alternatively, you can use the platform as a closed environment exclusively for your subscribers.",
+  "registerClubText2": "Digitize and manage your club effortlessly with the RaketGo Platform. Add your courts to the system, allow reservations by players and instructors, create subscription packages, and receive payments instantly. Alternatively, you can use the platform as a closed environment exclusively for your subscribers.",
 
   "proceed": "Proceed",
-  "return": "Return",
+  "return": "Back",
 
   "trainerEmploymentType": "Employment Type",
   "privateClub": "Private Club",
   "publicClub": "State / Public",
   "independent": "Independent",
 
-  "address": "Address"
+  "address": "Address",
+
+  "noActiveStudentGroupsText": "No active student groups yet",
+
+  "addMatchScoreTitle": "Add Match Score",
+  "set1": "Set 1",
+  "set2": "Set 2",
+  "set3": "Set 3",
+
+  "matchScoreCorrectTitle": "Is the Match Score Correct?",
+  "matchScoreCorrectText": "claimed that your match has ended with the following result:",
+  "inviter": "Inviter",
+  "invitee": "Invitee",
+
+  "confirmScoreButtonText": "Confirm Score",
+  "askRevisionButtonText": "Update Score",
+
+  "updateMatchScoreTitle": "Update Match Score",
+
+  "noPaymentsText": "No payments yet",
+
+  "addPaymentDetailsButtonText": "Add Payment Details",
+
+  "playerNoGroupsText": "No active club student groups found",
+
+  "playerNoSubscriptionsText": "No active club memberships found",
+
+  "playerNoTrainersText": "No trainers found",
+
+  "noFavouritesText": "No favourites found"
 }

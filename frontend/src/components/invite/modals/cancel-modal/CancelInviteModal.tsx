@@ -2,6 +2,7 @@ import React from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 export type BookingData = {
   booking_id: number;
@@ -72,11 +73,11 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
           <img
             src={
               (isEventTraining || isEventMatch) && bookingData?.playerImage
-                ? bookingData?.playerImage
+                ? `${imageUrl}/${bookingData?.playerImage}`
                 : isEventLesson && isUserPlayer && bookingData?.trainerImage
-                ? bookingData?.trainerImage
+                ? `${imageUrl}/${bookingData?.trainerImage}`
                 : isEventLesson && isUserTrainer && bookingData?.playerImage
-                ? bookingData?.playerImage
+                ? `${imageUrl}/${bookingData?.playerImage}`
                 : "images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}

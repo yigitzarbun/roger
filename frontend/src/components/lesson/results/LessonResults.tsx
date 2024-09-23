@@ -409,7 +409,7 @@ const LessonResults = (props: TrainSearchProps) => {
                   >
                     <img
                       src={
-                        trainer.image
+                        trainer?.trainerImage
                           ? `${imageUrl}/${trainer?.trainerImage}`
                           : "/images/icons/avatar.jpg"
                       }

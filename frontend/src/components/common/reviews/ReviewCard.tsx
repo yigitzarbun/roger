@@ -24,7 +24,23 @@ const ReviewCard = ({ review }) => {
         </p>
         <p>
           <span className={styles.subtitle}>{t("tableClubTypeHeader")}:</span>{" "}
-          {`${review?.event_type_name}`}
+          {`${
+            review?.event_type_id === 1
+              ? t("training")
+              : review?.event_type_id === 2
+              ? t("match")
+              : review?.event_type_id === 3
+              ? t("lesson")
+              : review?.event_type_id === 4
+              ? t("externalTraining")
+              : review?.event_type_id === 5
+              ? t("externalLesson")
+              : review?.event_type_id === 6
+              ? t("groupLesson")
+              : review?.event_type_id === 7
+              ? t("tournamentMatch")
+              : ""
+          }`}
         </p>
       </div>
       {(review.event_type_id === 1 ||

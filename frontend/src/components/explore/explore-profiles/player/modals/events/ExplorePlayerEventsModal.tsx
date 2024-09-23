@@ -112,7 +112,11 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                         className={styles["opponent-name"]}
                         onClick={closeEventsModal}
                       >
-                        {`${booking?.fname} ${booking?.lname}`}
+                        {booking?.fname
+                          ? `${booking?.fname} ${booking?.lname}`
+                          : booking?.playerFname
+                          ? `${booking?.playerFname} ${booking?.playerLname}`
+                          : "-"}
                       </Link>
                     </td>
                     <td>{booking.club_name}</td>

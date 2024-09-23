@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
-
 import { toast } from "react-toastify";
-
 import Modal from "react-modal";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../../store/hooks";
-
 import {
   useUpdateMatchScoreMutation,
   useGetMatchScoresQuery,
 } from "../../../../../../api/endpoints/MatchScoresApi";
-
 import { useGetPlayersByFilterQuery } from "../../../../../../api/endpoints/PlayersApi";
-
 import PageLoading from "../../../../../components/loading/PageLoading";
+import { imageUrl } from "../../../../../common/constants/apiConstants";
+import { useTranslation } from "react-i18next";
 
 type FormValues = {
   inviter_first_set_games_won: number;
@@ -31,6 +25,8 @@ type FormValues = {
 
 const AddMatchScoreModal = (props) => {
   const { isAddScoreModalOpen, closeAddScoreModal, selectedMatchScore } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -58,13 +54,17 @@ const AddMatchScoreModal = (props) => {
     );
 
   const [firstSetInviter, setFirstSetInviter] = useState(null);
+
   const [firstSetInvitee, setFirstSetInvitee] = useState(null);
+
   const [secondSetInviter, setSecondSetInviter] = useState(null);
+
   const [secondSetInvitee, setSecondSetInvitee] = useState(null);
 
   const [thirdSetVisible, setThirdSetVisible] = useState(false);
 
   const [thirdSetInviter, setThirdSetInviter] = useState(null);
+
   const [thirdSetInvitee, setThirdSetInvitee] = useState(null);
 
   const {
@@ -164,17 +164,17 @@ const AddMatchScoreModal = (props) => {
     >
       <div className={styles["overlay"]} onClick={closeAddScoreModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Maç Skoru Ekle</h1>
+        <h1 className={styles.title}>{t("addMatchScoreTitle")}</h1>
         <div className={styles["opponent-container"]}>
           {/* invitee mi inviter mi check? */}
           <img
             src={
               inviter?.[0]?.user_id === user?.user?.user_id &&
               invitee?.[0]?.image
-                ? invitee?.[0]?.image
+                ? `${imageUrl}/${invitee?.[0]?.image}`
                 : invitee?.[0]?.user_id === user?.user?.user_id &&
                   inviter?.[0]?.image
-                ? inviter?.[0]?.image
+                ? `${imageUrl}/${inviter?.[0]?.image}`
                 : "/images/icons/avatar.jpg"
             }
             className={styles["opponent-image"]}
@@ -189,7 +189,7 @@ const AddMatchScoreModal = (props) => {
         >
           <div className={styles["top-row"]}>
             <div className={styles["set-container"]}>
-              <h4>1. Set</h4>
+              <h4>{t("set1")}</h4>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
                   <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</label>
@@ -205,7 +205,7 @@ const AddMatchScoreModal = (props) => {
                   />
                   {errors.inviter_first_set_games_won && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
@@ -221,14 +221,14 @@ const AddMatchScoreModal = (props) => {
                   />
                   {errors.invitee_first_set_games_won && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
               </div>
             </div>
             <div className={styles["set-container"]}>
-              <h4>2. Set</h4>
+              <h4>{t("set2")}</h4>
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
                   <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</label>
@@ -244,7 +244,7 @@ const AddMatchScoreModal = (props) => {
                   />
                   {errors.inviter_second_set_games_won && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
@@ -262,7 +262,7 @@ const AddMatchScoreModal = (props) => {
                   />
                   {errors.invitee_second_set_games_won && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
@@ -272,7 +272,7 @@ const AddMatchScoreModal = (props) => {
           {thirdSetVisible && (
             <div className={styles["top-row"]}>
               <div className={styles["set-container"]}>
-                <h4>3. Set</h4>
+                <h4>{t("set3")}</h4>
                 <div className={styles["input-outer-container"]}>
                   <div className={styles["input-container"]}>
                     <label>{`${inviter?.[0]?.fname} ${inviter?.[0]?.lname}`}</label>
@@ -288,7 +288,7 @@ const AddMatchScoreModal = (props) => {
                     />
                     {errors.inviter_third_set_games_won && (
                       <span className={styles["error-field"]}>
-                        Bu alan zorunludur.
+                        {t("mandatoryField")}
                       </span>
                     )}
                   </div>
@@ -306,7 +306,7 @@ const AddMatchScoreModal = (props) => {
                     />
                     {errors.invitee_third_set_games_won && (
                       <span className={styles["error-field"]}>
-                        Bu alan zorunludur.
+                        {t("mandatoryField")}
                       </span>
                     )}
                   </div>
@@ -319,10 +319,10 @@ const AddMatchScoreModal = (props) => {
               className={styles["discard-button"]}
               onClick={closeAddScoreModal}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

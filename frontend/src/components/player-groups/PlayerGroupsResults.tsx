@@ -120,7 +120,7 @@ const PlayerGroupResults = () => {
           </tbody>
         </table>
       ) : myGroups?.length === 0 ? (
-        <p>Kulüp oyuncu grubu üyeliği bulunmamaktadır</p>
+        <p>{t("playerNoGroupsText")}</p>
       ) : (
         ""
       )}

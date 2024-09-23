@@ -199,7 +199,7 @@ const TrainerStudentGroupsResults = (
           </tbody>
         </table>
       ) : (
-        <p>Henüz aktif öğrenci grubu bulunmamaktadır</p>
+        <p>{t("noActiveStudentGroupsText")}</p>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

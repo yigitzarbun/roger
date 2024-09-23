@@ -16,6 +16,7 @@ import PageLoading from "../../../../components/loading/PageLoading";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 import { BsClockHistory } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface PlayerMatchScoressProps {
   display: string;
@@ -154,10 +155,12 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
           <h2 className={styles.title}>{t("matchScoresTitle")}</h2>
-          <FaFilter
-            onClick={handleOpenMatchScoresFilterModal}
-            className={styles.filter}
-          />
+          {matchScores?.matchScores?.length > 0 && (
+            <FaFilter
+              onClick={handleOpenMatchScoresFilterModal}
+              className={styles.filter}
+            />
+          )}
         </div>
         {matchScores?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>
@@ -206,7 +209,7 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
                     <img
                       src={
                         event.playerImage
-                          ? event.playerImage
+                          ? `${imageUrl}/${event?.playerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt={event.name}

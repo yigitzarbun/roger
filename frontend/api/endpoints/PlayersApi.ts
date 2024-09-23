@@ -112,6 +112,7 @@ export const playersSlice = createApi({
         if (player.card_expiry) {
           formData.append("card_expiry", player.card_expiry);
         }
+
         const requestObject = {
           url: "/players",
           method: "PUT",
