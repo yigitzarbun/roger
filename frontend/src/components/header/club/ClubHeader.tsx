@@ -3,12 +3,15 @@ import { NavLink } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface ClubHeaderProps {
   myStaffRequests: any;
 }
 const ClubHeader = (props: ClubHeaderProps) => {
   const { myStaffRequests } = props;
+
+  const { t } = useTranslation();
 
   return (
     <nav className={styles["header-club-container"]}>
@@ -21,7 +24,7 @@ const ClubHeader = (props: ClubHeaderProps) => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Keşfet
+          {t("headerExploreTitle")}
         </NavLink>
         <NavLink
           to={paths.CLUB_COURTS}
@@ -31,7 +34,7 @@ const ClubHeader = (props: ClubHeaderProps) => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Kortlar
+          {t("courtsTitle")}
         </NavLink>
         <NavLink
           to={paths.CALENDAR}
@@ -41,7 +44,7 @@ const ClubHeader = (props: ClubHeaderProps) => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Takvim
+          {t("headerCalendarTitle")}
         </NavLink>
         <NavLink
           to={paths.CLUB_STAFF}
@@ -51,7 +54,7 @@ const ClubHeader = (props: ClubHeaderProps) => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Personel
+          {t("staff")}
           {myStaffRequests?.length > 0 && (
             <FaCircle className={styles["notification"]} />
           )}
@@ -64,7 +67,7 @@ const ClubHeader = (props: ClubHeaderProps) => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Üyelikler
+          {t("subscriptions")}
         </NavLink>
         <NavLink
           to={paths.CLUB_TOURNAMENTS}
@@ -74,7 +77,7 @@ const ClubHeader = (props: ClubHeaderProps) => {
               : `${styles["nav-link-club"]}`
           }
         >
-          Turnuvalar
+          {t("headerTournamentsTitle")}
         </NavLink>
       </div>
     </nav>

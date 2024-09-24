@@ -608,5 +608,20 @@
 
   "playerNoTrainersText": "No trainers found",
 
-  "noFavouritesText": "No favourites found"
+  "noFavouritesText": "No favourites found",
+
+  "addNewCourtButtonText": "Add New Court",
+
+  "addBankDetailsToAddCourt": "Add bank details before adding new court",
+
+  "clubNoCourts": "You haven't added any courts yet",
+
+  "noCourtsFound": "No courts found according to your search criteria. Please clear filter and try again",
+
+  "addPrice": "Add Price",
+
+  "courtName": "Court Name",
+
+  "activeCourts": "Active Courts",
+  "passiveCourts": "Passive Courts"
 }

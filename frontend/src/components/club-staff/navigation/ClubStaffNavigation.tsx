@@ -33,7 +33,7 @@ const ClubStaffNavigation = (props: ClubStaffNavigationProps) => {
         {myStaffRequests?.length > 0 && (
           <span
             className={styles.notification}
-          >{`(${myStaffRequests?.length})`}</span>
+          >{` (${myStaffRequests?.length})`}</span>
         )}
       </button>
     </div>

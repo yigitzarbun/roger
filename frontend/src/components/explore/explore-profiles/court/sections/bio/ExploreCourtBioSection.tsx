@@ -59,9 +59,9 @@ const ExploreCourtBioSection = (props: ExploreCourtBioSectionProps) => {
                 <tr className={styles["court-row"]}>
                   <td>
                     {selectedCourt?.[0]?.court_structure_type_id === 1
-                      ? t("courtStructureOpen")
-                      : selectedCourt?.[0]?.court_structure_type_id === 2
                       ? t("courtStructureClosed")
+                      : selectedCourt?.[0]?.court_structure_type_id === 2
+                      ? t("courtStructureOpen")
                       : t("courtStructureHybrid")}
                   </td>
                   <td>

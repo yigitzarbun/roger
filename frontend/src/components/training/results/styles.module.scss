@@ -20,20 +20,22 @@
       display: flex;
       align-items: center;
       column-gap: 1.5vw;
+
       @include small-screen {
         column-gap: 3vw;
       }
-      cursor: pointer;
       .title {
         font-size: 2rem;
       }
       .passive-sort {
         color: var(--text-color);
         font-size: 1.5rem;
+        cursor: pointer;
       }
       .active-sort {
         color: $roger-blue;
         font-size: 1.5rem;
+        cursor: pointer;
       }
       .filter {
         cursor: pointer;

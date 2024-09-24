@@ -608,5 +608,20 @@
 
   "playerNoTrainersText": "Eğitmen bulunamadı",
 
-  "noFavouritesText": "Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır"
+  "noFavouritesText": "Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır",
+
+  "addNewCourtButtonText": "Yeni Kort Ekle",
+
+  "addBankDetailsToAddCourt": "Kort eklemek için banka bilgilerinizi ekleyin",
+
+  "clubNoCourts": "Henüz sisteme eklenmiş kortunuz bulunmamaktadır",
+
+  "noCourtsFound": "Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip tekrar deneyin",
+
+  "addPrice": "Fiyat Girin",
+
+  "courtName": "Kort Adı",
+
+  "activeCourts": "Aktif Kortlar",
+  "passiveCourts": "Pasif Kortlar"
 }

@@ -18,8 +18,6 @@ import {
   useGetPlayerProfileDetailsQuery,
 } from "../../../../../../../api/endpoints/PlayersApi";
 import SubscribeToClubModal from "../../../../../../components/explore/subscribe-club-modal/SubscribeToClubModal";
-import { useNavigate } from "react-router-dom";
-import Paths from "../../../../../../routing/Paths";
 import { useGetIsTrainerClubStaffQuery } from "../../../../../../../api/endpoints/ClubStaffApi";
 import ClubEmploymentModal from "../../../../../../components/explore/explore-results/explore-clubs/employment-modal/ClubEmploymentModal";
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
@@ -31,8 +29,6 @@ interface ExploreClubsProfileSectionProps {
 }
 const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   const { selectedClub } = props;
-
-  const navigate = useNavigate();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -198,7 +194,8 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
     isMyFavouriteClubsLoading ||
     isUserSubscribedLoading ||
     isCurrentPlayerLoading ||
-    isTrainerStaffLoading
+    isTrainerStaffLoading ||
+    isPlayerDetailsLoading
   ) {
     return <PageLoading />;
   }
@@ -247,77 +244,79 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                 </tr>
               </tbody>
             </table>
-            <div className={styles["buttons-container"]}>
-              <div className={styles.icons}>
-                {isClublayerInMyFavourites(selectedClub?.[0]?.user_id)
-                  ?.is_active === true ? (
-                  <AiFillStar
-                    className={styles["remove-fav-icon"]}
-                    onClick={() =>
-                      handleToggleFavourite(selectedClub?.[0]?.user_id)
-                    }
+            {user?.user?.user_id !== selectedClub?.[0]?.user_id && (
+              <div className={styles["buttons-container"]}>
+                <div className={styles.icons}>
+                  {isClublayerInMyFavourites(selectedClub?.[0]?.user_id)
+                    ?.is_active === true ? (
+                    <AiFillStar
+                      className={styles["remove-fav-icon"]}
+                      onClick={() =>
+                        handleToggleFavourite(selectedClub?.[0]?.user_id)
+                      }
+                    />
+                  ) : (
+                    <AiOutlineStar
+                      className={styles["add-fav-icon"]}
+                      onClick={() =>
+                        handleToggleFavourite(selectedClub?.[0]?.user_id)
+                      }
+                    />
+                  )}
+                  <FiMessageSquare
+                    className={styles.message}
+                    onClick={handleOpenMessageModal}
                   />
-                ) : (
-                  <AiOutlineStar
-                    className={styles["add-fav-icon"]}
-                    onClick={() =>
-                      handleToggleFavourite(selectedClub?.[0]?.user_id)
-                    }
-                  />
-                )}
-                <FiMessageSquare
-                  className={styles.message}
-                  onClick={handleOpenMessageModal}
-                />
-              </div>
-              <div className={styles["interaction-buttons"]}>
-                {isUserPlayer &&
-                  selectedClub?.[0]?.subscriptionpackagecount > 0 &&
-                  isUserSubscribedToClub?.length === 0 &&
-                  playerPaymentDetailsExist && (
+                </div>
+                <div className={styles["interaction-buttons"]}>
+                  {isUserPlayer &&
+                    selectedClub?.[0]?.subscriptionpackagecount > 0 &&
+                    isUserSubscribedToClub?.length === 0 &&
+                    playerPaymentDetailsExist && (
+                      <button
+                        onClick={handleOpenSubscribeModal}
+                        className={styles["interaction-button"]}
+                      >
+                        {t("subscribe")}
+                      </button>
+                    )}
+                  {isUserPlayer &&
+                    selectedClub?.[0]?.subscriptionpackagecount > 0 &&
+                    isUserSubscribedToClub?.length === 0 &&
+                    !playerPaymentDetailsExist && (
+                      <button
+                        onClick={handleOpenPaymentModal}
+                        className={styles["interaction-button"]}
+                      >
+                        {t("subscribeCardDetails")}
+                      </button>
+                    )}
+                  {(isUserTrainer &&
+                    (!isTrainerStaff ||
+                      isTrainerStaff?.length === 0 ||
+                      isTrainerStaff?.[0]?.employment_status === "declined")) ||
+                  isTrainerStaff?.[0]?.employment_status ===
+                    "terminated_by_club" ? (
                     <button
-                      onClick={handleOpenSubscribeModal}
+                      onClick={openEmploymentModal}
                       className={styles["interaction-button"]}
                     >
-                      {t("subscribe")}
+                      {t("staffEmploymentApplication")}
                     </button>
+                  ) : isUserTrainer &&
+                    isTrainerStaff?.[0]?.employment_status === "accepted" ? (
+                    <p className={styles.accepted}>{t("staffEmployedText")}</p>
+                  ) : isUserTrainer &&
+                    isTrainerStaff?.[0]?.employment_status === "pending" ? (
+                    <p className={styles.pending}>
+                      {t("staffEmploymentAwaiting")}
+                    </p>
+                  ) : (
+                    ""
                   )}
-                {isUserPlayer &&
-                  selectedClub?.[0]?.subscriptionpackagecount > 0 &&
-                  isUserSubscribedToClub?.length === 0 &&
-                  !playerPaymentDetailsExist && (
-                    <button
-                      onClick={handleOpenPaymentModal}
-                      className={styles["interaction-button"]}
-                    >
-                      {t("subscribeCardDetails")}
-                    </button>
-                  )}
-                {(isUserTrainer &&
-                  (!isTrainerStaff ||
-                    isTrainerStaff?.length === 0 ||
-                    isTrainerStaff?.[0]?.employment_status === "declined")) ||
-                isTrainerStaff?.[0]?.employment_status ===
-                  "terminated_by_club" ? (
-                  <button
-                    onClick={openEmploymentModal}
-                    className={styles["interaction-button"]}
-                  >
-                    {t("staffEmploymentApplication")}
-                  </button>
-                ) : isUserTrainer &&
-                  isTrainerStaff?.[0]?.employment_status === "accepted" ? (
-                  <p className={styles.accepted}>{t("staffEmployedText")}</p>
-                ) : isUserTrainer &&
-                  isTrainerStaff?.[0]?.employment_status === "pending" ? (
-                  <p className={styles.pending}>
-                    {t("staffEmploymentAwaiting")}
-                  </p>
-                ) : (
-                  ""
-                )}
+                </div>
               </div>
-            </div>
+            )}
             {isUserPlayer && isUserSubscribedToClub?.length > 0 && (
               <div className={styles["subscribed-container"]}>
                 <IoIosCheckmarkCircle className={styles.done} />

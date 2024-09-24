@@ -98,9 +98,9 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
                 </td>
                 <td>
                   {court?.court_structure_type_id === 1
-                    ? t("courtStructureOpen")
-                    : court?.court_structure_type_id === 2
                     ? t("courtStructureClosed")
+                    : court?.court_structure_type_id === 2
+                    ? t("courtStructureOpen")
                     : t("courtStructureHybrid")}
                 </td>
                 <td>{court?.location_name}</td>

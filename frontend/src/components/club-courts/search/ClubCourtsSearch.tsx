@@ -1,16 +1,8 @@
 import React, { ChangeEvent } from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
-import {
-  CourtStructureType,
-  useGetCourtStructureTypesQuery,
-} from "../../../../api/endpoints/CourtStructureTypesApi";
-import {
-  CourtSurfaceType,
-  useGetCourtSurfaceTypesQuery,
-} from "../../../../api/endpoints/CourtSurfaceTypesApi";
-import PageLoading from "../../../components/loading/PageLoading";
+import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
+import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 
 interface ClubCourtSearchProps {
   handleSurface: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -41,6 +33,8 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
     courtStatus,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <div className={styles["courts-page-container"]}>
       <div className={styles["search-container"]}>
@@ -48,31 +42,41 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Kort adı"
+          placeholder={t("courtName")}
         />
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleSurface} value={surfaceTypeId ?? ""}>
-          <option value="">-- Yüzey --</option>
+          <option value="">-- {t("tableSurfaceHeader")} --</option>
           {courtSurfaceTypes?.map((court_surface_type) => (
             <option
               key={court_surface_type.court_surface_type_id}
               value={court_surface_type.court_surface_type_id}
             >
-              {court_surface_type.court_surface_type_name}
+              {court_surface_type?.court_surface_type_id === 1
+                ? t("courtSurfaceHard")
+                : court_surface_type?.court_surface_type_id === 2
+                ? t("courtSurfaceClay")
+                : court_surface_type?.court_surface_type_id === 3
+                ? t("courtSurfaceGrass")
+                : t("courtSurfaceCarpet")}
             </option>
           ))}
         </select>
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleStructure} value={structureTypeId ?? ""}>
-          <option value="">-- Mekan --</option>
+          <option value="">-- {t("tableStructureHeader")} --</option>
           {courtStructureTypes?.map((court_structure_type) => (
             <option
               key={court_structure_type.court_structure_type_id}
               value={court_structure_type.court_structure_type_id}
             >
-              {court_structure_type.court_structure_type_name}
+              {court_structure_type?.court_structure_type_id === 1
+                ? t("courtStructureClosed")
+                : court_structure_type?.court_structure_type_id === 2
+                ? t("courtStructureOpen")
+                : t("courtStructureHybrid")}
             </option>
           ))}
         </select>
@@ -88,9 +92,9 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
               : "null"
           }
         >
-          <option value={"null"}>-- Tüm kortlar --</option>
-          <option value={"true"}>Aktif kortlar</option>
-          <option value={"false"}>Bloke kortlar</option>
+          <option value={"null"}>-- {t("tableStatusHeader")} --</option>
+          <option value={"true"}>{t("activeCourts")}</option>
+          <option value={"false"}>{t("passiveCourts")}</option>
         </select>
       </div>
       <button
@@ -104,7 +108,7 @@ const ClubCourtsSearch = (props: ClubCourtSearchProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

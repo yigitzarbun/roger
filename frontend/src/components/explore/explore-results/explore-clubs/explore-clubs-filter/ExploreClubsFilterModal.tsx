@@ -100,9 +100,9 @@ const ExploreClubsFilterModal = (props) => {
                     value={type.court_structure_type_id}
                   >
                     {type?.court_structure_type_id === 1
-                      ? t("courtStructureOpen")
-                      : type?.court_structure_type_id === 2
                       ? t("courtStructureClosed")
+                      : type?.court_structure_type_id === 2
+                      ? t("courtStructureOpen")
                       : t("courtStructureHybrid")}
                   </option>
                 ))}
