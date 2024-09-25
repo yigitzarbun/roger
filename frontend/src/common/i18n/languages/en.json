@@ -623,5 +623,42 @@
   "courtName": "Court Name",
 
   "activeCourts": "Active Courts",
-  "passiveCourts": "Passive Courts"
+  "passiveCourts": "Passive Courts",
+
+  "hourUnit": "Hour",
+
+  "courtClosingHourError": "Closing hour must be at least an hour after opening hour",
+
+  "courtImage": "Court Image",
+
+  "addCourtGuestPriceWarningText": "If you add a membership requirement for court rentals, non-member users will be charged at this price. To add a membership requirement, please visit the rules section in your profile.",
+
+  "updateCourtTitle": "Update Court",
+
+  "active": "Active",
+  "passive": "Passive",
+
+  "addBooking": "New Booking",
+
+  "addCourtText": "Add courts to your account in order to sell court bookings",
+
+  "player1": "Player 1",
+  "side1": "Side A",
+
+  "player2": "Player 2",
+  "side2": "Side  B",
+
+  "chooseOption": "Choose an Option",
+
+  "updateBookingTitle": "Update Booking",
+
+  "deleteBooking": "Delete Booking",
+
+  "applicationsTitle": "Applications",
+
+  "role": "Role",
+
+  "deleteStaff": "Remove Staff",
+
+  "noClubStaff": "No club staff found"
 }

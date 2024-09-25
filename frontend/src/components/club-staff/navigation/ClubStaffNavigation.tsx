@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface ClubStaffNavigationProps {
   display: string;
@@ -9,6 +10,9 @@ interface ClubStaffNavigationProps {
 
 const ClubStaffNavigation = (props: ClubStaffNavigationProps) => {
   const { display, handleDisplay, myStaffRequests } = props;
+
+  const { t } = useTranslation();
+
   return (
     <div className={styles["nav-container"]}>
       <button
@@ -19,7 +23,7 @@ const ClubStaffNavigation = (props: ClubStaffNavigationProps) => {
             : styles["inactive-button"]
         }
       >
-        Personel
+        {t("staff")}
       </button>
       <button
         onClick={() => handleDisplay("requests")}
@@ -29,7 +33,7 @@ const ClubStaffNavigation = (props: ClubStaffNavigationProps) => {
             : styles["inactive-button"]
         }
       >
-        Başvurular
+        {t("applicationsTitle")}
         {myStaffRequests?.length > 0 && (
           <span
             className={styles.notification}

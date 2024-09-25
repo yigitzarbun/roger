@@ -623,5 +623,42 @@
   "courtName": "Kort Adı",
 
   "activeCourts": "Aktif Kortlar",
-  "passiveCourts": "Pasif Kortlar"
+  "passiveCourts": "Pasif Kortlar",
+
+  "hourUnit": "Saat",
+
+  "courtClosingHourError": "Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.",
+
+  "courtImage": "Kort Resmi",
+
+  "addCourtGuestPriceWarningText": "Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı eklemek için profilinizdeki kurallar bölümünü ziyaret edin.",
+
+  "updateCourtTitle": "Kort Düzenle",
+
+  "active": "Aktif",
+  "passive": "Pasif",
+
+  "addBooking": "Rezervasyon Ekle",
+
+  "addCourtText": "Kendi üyeleriniz ve diğer oyuncu / eğitmenlerin rezervasyon yapabilmesi için kort ekleyin.",
+
+  "player1": "1. Oyuncu",
+  "side1": "Taraf 1",
+
+  "player2": "2. Oyuncu",
+  "side2": "Taraf 2",
+
+  "chooseOption": "Seçim Yapın",
+
+  "updateBookingTitle": "Rezervasyon Düzenle",
+
+  "deleteBooking": "Rezervasyonu Sil",
+
+  "applicationsTitle": "Başvurular",
+
+  "role": "Rol",
+
+  "deleteStaff": "Personeli Çıkar",
+
+  "noClubStaff": "Kayıtlı personel bulunmamaktadır"
 }

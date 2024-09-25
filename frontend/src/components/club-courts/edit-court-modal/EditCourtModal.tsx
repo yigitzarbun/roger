@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import { generateTimesArray } from "../../../common/util/TimeFunctions";
-
 import styles from "./styles.module.scss";
-
 import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
 import {
@@ -53,6 +47,8 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     currentClub,
   } = props;
 
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const [updateCourt, { isSuccess }] = useUpdateCourtMutation({});
@@ -69,6 +65,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     : null;
 
   const [selectedImage, setSelectedImage] = useState(null);
+
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
     setSelectedImage(imageFile);
@@ -76,6 +73,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
   };
 
   const [openingTime, setOpeningTime] = useState<string>("00:00");
+
   const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setOpeningTime(event.target.value);
   };
@@ -155,7 +153,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeEditCourtModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Kort Düzenle</h1>
+        <h1 className={styles.title}>{t("updateCourtTitle")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -163,19 +161,21 @@ const EditCourtModal = (props: EditCourtModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Kort Adı</label>
+              <label>{t("courtName")}</label>
               <input
                 {...register("court_name", { required: true })}
                 type="text"
               />
               {errors.court_name && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Fiyat (TL / saat)</label>
+              <label>
+                {t("tableCourtPriceHeader")} {`TL/ ${t("hourUnit")}`}
+              </label>
               <input
                 {...register("price_hour", { required: true })}
                 type="number"
@@ -183,61 +183,71 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               />
               {errors.price_hour && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Kort Yüzeyi</label>
+              <label>{t("tableSurfaceHeader")}</label>
               <select
                 {...register("court_surface_type_id", { required: true })}
               >
-                <option value="">-- Kort Yüzeyi --</option>
+                <option value="">-- {t("tableSurfaceHeader")} --</option>
                 {courtSurfaceTypes?.map((surface) => (
                   <option
                     key={surface.court_surface_type_id}
                     value={surface.court_surface_type_id}
                   >
-                    {surface.court_surface_type_name}
+                    {surface?.court_surface_type_id === 1
+                      ? t("courtSurfaceHard")
+                      : surface?.court_surface_type_id === 2
+                      ? t("courtSurfaceClay")
+                      : surface?.court_surface_type_id === 3
+                      ? t("courtSurfaceGrass")
+                      : t("courtSurfaceCarpet")}
                   </option>
                 ))}
               </select>
               {errors.court_surface_type_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Mekan Tipi</label>
+              <label>{t("tableStructureHeader")}</label>
               <select
                 {...register("court_structure_type_id", { required: true })}
               >
-                <option value="">-- Mekan Tipi --</option>
+                <option value="">-- {t("tableStructureHeader")} --</option>
                 {courtStructureTypes?.map((structure) => (
                   <option
                     key={structure.court_structure_type_id}
                     value={structure.court_structure_type_id}
                   >
-                    {structure.court_structure_type_name}
+                    {structure?.court_structure_type_id === 1
+                      ? t("courtStructureClosed")
+                      : structure?.court_structure_type_id === 2
+                      ? t("courtStructureOpen")
+                      : t("courtStructureHybrid")}
                   </option>
                 ))}
               </select>
               {errors.court_structure_type_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Açılış Saati</label>
+              <label>{t("tableOpeningTimeHeader")}</label>
               <select
                 {...register("opening_time", { required: true })}
                 onChange={handleOpeningTime}
               >
-                <option value="">-- Açılış Saati --</option>
+                <option value="">-- {t("tableOpeningTimeHeader")} --</option>
                 {generateTimesArray(24).map((time) => (
                   <option key={time} value={time}>
                     {time}
@@ -246,12 +256,12 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               </select>
               {errors.opening_time && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Kapanış Saati</label>
+              <label>{t("tableClosingTimeHeader")}</label>
               <select
                 {...register("closing_time", {
                   required: true,
@@ -262,7 +272,7 @@ const EditCourtModal = (props: EditCourtModalProps) => {
                   },
                 })}
               >
-                <option value="">-- Kapanış Saati --</option>
+                <option value="">-- {t("tableClosingTimeHeader")} --</option>
                 {generateTimesArray(24).map((time) => (
                   <option key={time} value={time}>
                     {time}
@@ -271,12 +281,12 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               </select>
               {errors.closing_time?.type === "required" && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
               {errors.closing_time?.type === "validate" && (
                 <span className={styles["error-field"]}>
-                  Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
+                  {t("courtClosingHourError")}
                 </span>
               )}
             </div>
@@ -284,24 +294,26 @@ const EditCourtModal = (props: EditCourtModalProps) => {
           <div className={styles["input-outer-container"]}></div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Kort Statüsü</label>
+              <label>{t("tableStatusHeader")}</label>
               <select
                 {...register("is_active", {
-                  required: "Bu alan zorunludur.",
+                  required: t("mandatoryField"),
                 })}
               >
-                <option value="true">Aktif</option>
-                <option value="false">Bloke</option>
+                <option value="true">{t("active")}</option>
+                <option value="false">{t("passive")}</option>
               </select>
               {errors.is_active?.type === "required" && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             {currentClub?.[0]["higher_price_for_non_subscribers"] && (
               <div className={styles["input-container"]}>
-                <label>Fiyat - Üye Olmayanlar (TL / saat)</label>
+                <label>
+                  {t("tablePriceGuestHeader")} {`TL/ ${t("hourUnit")}`}
+                </label>
                 <input
                   {...register("price_hour_non_subscriber", { required: true })}
                   type="number"
@@ -309,13 +321,13 @@ const EditCourtModal = (props: EditCourtModalProps) => {
                 />
                 {errors.price_hour_non_subscriber && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
             )}
             <div className={styles["input-container"]}>
-              <label>Kort Resmi</label>
+              <label>{t("courtImage")}</label>
               <div className={styles["court-picture-container"]}>
                 <img
                   src={
@@ -337,10 +349,10 @@ const EditCourtModal = (props: EditCourtModalProps) => {
               onClick={closeEditCourtModal}
               className={styles["discard-button"]}
             >
-              İptal Et
+              {t("tableCancelButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>
