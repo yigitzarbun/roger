@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 
 interface ClubSubscriptionsNavigationProps {
@@ -11,6 +11,8 @@ const ClubSubscriptionsNavigation = ({
   display,
   handleDisplay,
 }: ClubSubscriptionsNavigationProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className={styles["nav-container"]}>
       <button
@@ -21,7 +23,7 @@ const ClubSubscriptionsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Üyelik Paketleri
+        {t("subscriptionPackages")}
       </button>
       <button
         onClick={() => handleDisplay("subscribers")}
@@ -31,7 +33,7 @@ const ClubSubscriptionsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Üyeler
+        {t("subscribersTitle")}
       </button>
       <button
         onClick={() => handleDisplay("groups")}
@@ -41,7 +43,7 @@ const ClubSubscriptionsNavigation = ({
             : styles["inactive-button"]
         }
       >
-        Gruplar
+        {t("groups")}
       </button>
     </div>
   );

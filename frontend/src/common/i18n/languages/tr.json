@@ -539,7 +539,7 @@
 
   "noBankAccount": "Kayıtlı banka hesabınız bulunmamaktadır",
 
-  "addBankAccount": "Hesap Bilgileri Ekle",
+  "addBankAccount": "Banka Bilgileri Ekle",
 
   "editBankAccountDetails": "Banka Bilgilerini Düzenle",
 
@@ -660,5 +660,40 @@
 
   "deleteStaff": "Personeli Çıkar",
 
-  "noClubStaff": "Kayıtlı personel bulunmamaktadır"
+  "noClubStaff": "Kayıtlı personel bulunmamaktadır",
+
+  "clubStaffFilterTitle": "Personeli Filtrele",
+
+  "clubStaffNamePlaceholder": "Personel adı",
+
+  "managerial": "İdari & Yönetim",
+
+  "removeStaffText": "kulübünüzde çalışıyor. Bu personeli silmek istediğinize emin misiniz?",
+
+  "clubStaffApplicationTitle": "Personel Başvurusu",
+
+  "clubStaffApplicationText": "Bu kulübe başvurunuzu göndermeyi onaylıyor musunuz?",
+
+  "noClubStaffApplications": "Yeni personel başvurusu bulunmamaktadır",
+
+  "declineClubStaffApplicationTitle": "Başvuruyu Reddet",
+  "declineClubStaffApplicationText": "kulübünüzde çalıştığını belirtti. Başvuruyu reddetmek istediğinize emin misiniz?",
+
+  "acceptClubStaffApplicationTitle": "Başvuruyu Onayla",
+  "acceptClubStaffApplicationText": "kulübünüzde çalıştığını belirtti. Başvuruyu onaylamak istediğinize emin misiniz?",
+
+  "subscriptionPackages": "Üyelik Paketleri",
+
+  "addSubscriptionPackageTitle": "Üyelik Paketi Ekle",
+
+  "subscriptionPackageName": "Paket Adı",
+  "subscriptionPackageDurationTitle": "Üyelik Süresi (Ay)",
+
+  "addBankDetailsSubscriptionPackage": "Üyelik satışı yapmak için banka bilgilerinizi ekleyin",
+
+  "noSubscriptionPackages": "Henüz sisteme eklenmiş üyelik paketiniz bulunmamaktadır",
+
+  "editSubscriptionPackageTitle": "Üyelik Paketini Düzenle",
+
+  "clubExternalMember": "Çevrimdışı Üye"
 }

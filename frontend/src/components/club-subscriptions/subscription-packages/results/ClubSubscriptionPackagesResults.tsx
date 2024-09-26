@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import AddSubscriptionPackageModal from "../add-subscription-package-modal/AddSubscriptionPackageModal";
-
-import { ClubSubscription } from "../../../../../api/endpoints/ClubSubscriptionsApi";
 import { ClubSubscriptionTypes } from "../../../../../api/endpoints/ClubSubscriptionTypesApi";
 import EditClubBankDetailsModal from "../../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
+import PageLoading from "../../../../components/loading/PageLoading";
 
 interface ClubSubscriptionPackagesResultsProps {
   openEditClubSubscriptionPackageModal: (subscriptionPackage: any) => void;
@@ -35,6 +33,8 @@ const ClubSubscriptionPackagesResults = (
     refetchClubDetails,
   } = props;
 
+  const { t } = useTranslation();
+
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const bankDetailsExist =
@@ -52,18 +52,25 @@ const ClubSubscriptionPackagesResults = (
     setIsEditBankModalOpen(false);
   };
 
+  if (isBanksLoading) {
+    return <PageLoading />;
+  }
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Üyelikler</h2>
+          <h2 className={styles["result-title"]}>
+            {t("subscriptionPackages")}
+          </h2>
           {bankDetailsExist && (
             <button
               onClick={openAddClubSubscriptionPackageModal}
               className={styles["add-subscription-package-button"]}
               disabled={!bankDetailsExist}
             >
-              <p className={styles["add-title"]}>Üyelik Paketi Ekle</p>
+              <p className={styles["add-title"]}>
+                {t("addSubscriptionPackageTitle")}
+              </p>
             </button>
           )}
         </div>
@@ -71,25 +78,23 @@ const ClubSubscriptionPackagesResults = (
 
       {!bankDetailsExist ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>Üyelik satışı yapmak için banka bilgilerinizi ekleyin.</p>
+          <p>{t("addBankDetailsSubscriptionPackage")}</p>
           <button className={styles.button} onClick={handleOpenEditBankModal}>
-            Banka Bilgilerini Ekle
+            {t("addBankAccount")}
           </button>
         </div>
       ) : (
         bankDetailsExist &&
-        myPackages?.length === 0 && (
-          <p>Henüz sisteme eklenmiş üyelik paketiniz bulunmamaktadır.</p>
-        )
+        myPackages?.length === 0 && <p>{t("noSubscriptionPackages")}</p>
       )}
       {subscriptionTypes && myPackages?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Paket Adı</th>
-              <th>Üyelik Süresi (Ay)</th>
-              <th>Fiyat (TL)</th>
-              <th>Üye Sayısı</th>
+              <th>{t("subscriptionPackageName")}</th>
+              <th>{t("subscriptionPackageDurationTitle")}</th>
+              <th>{t("price")} (TL)</th>
+              <th>{t("tableSubscribersHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -98,7 +103,15 @@ const ClubSubscriptionPackagesResults = (
                 key={subscriptionPackage.club_subscription_package_id}
                 className={styles.row}
               >
-                <td>{subscriptionPackage?.club_subscription_type_name}</td>
+                <td>
+                  {subscriptionPackage?.club_subscription_type_id === 1
+                    ? t("oneMonthSubscription")
+                    : subscriptionPackage?.club_subscription_type_id === 2
+                    ? t("threeMonthSubscription")
+                    : subscriptionPackage?.club_subscription_type_id === 3
+                    ? t("sixMonthSubscription")
+                    : t("twelveMonthSubscription")}
+                </td>
                 <td>
                   {subscriptionPackage?.club_subscription_duration_months}
                 </td>
@@ -111,7 +124,7 @@ const ClubSubscriptionPackagesResults = (
                     }
                     className={styles["edit-package-button"]}
                   >
-                    Düzenle
+                    {t("edit")}
                   </button>
                 </td>
               </tr>

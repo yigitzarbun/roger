@@ -5,6 +5,7 @@ import styles from "./styles.module.scss";
 import AcceptClubStaffModal from "./accept-staff-modal/AcceptClubStaffModal";
 import DeclineClubStaffModal from "./decline-staff-moda/DeclineClubStaffModal";
 import { currentYear } from "../../../common/util/TimeFunctions";
+import { useTranslation } from "react-i18next";
 
 interface ClubStaffRequestsProps {
   myStaffRequests: any;
@@ -13,6 +14,8 @@ interface ClubStaffRequestsProps {
 
 const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
   const { myStaffRequests, refetchMyStaffRequests } = props;
+
+  const { t } = useTranslation();
 
   const [selectedClubStaffUser, setSelectedClubStaffUser] = useState(null);
 
@@ -45,27 +48,26 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
   useEffect(() => {
     refetchMyStaffRequests();
   }, [isAcceptClubStaffModalOpen, isDeclineClubStaffModalOpen]);
-  console.log(myStaffRequests);
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
-        <h2 className={styles["result-title"]}>Başvurular</h2>
+        <h2 className={styles["result-title"]}>{t("applicationsTitle")}</h2>
       </div>
 
-      {myStaffRequests?.length === 0 && (
-        <p>Yeni personel başvurusu bulunmamaktadır.</p>
-      )}
+      {myStaffRequests?.length === 0 && <p>{t("noClubStaffApplications")}</p>}
       {myStaffRequests?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Personel</th>
-              <th>İsim</th>
-              <th>Yaş</th>
-              <th>Cinsiyet</th>
-              <th>Tecrübe</th>
-              <th>Konum</th>
-              <th>Rol</th>
+              <th>{t("staff")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("role")}</th>
+              <th>{t("reject")}</th>
+              <th>{t("approve")}</th>
             </tr>
           </thead>
           <tbody>
@@ -94,16 +96,21 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                   </Link>
                 </td>
                 <td>{currentYear - Number(request?.birth_year)}</td>
-                <td>{request?.gender}</td>
-                <td>{request?.trainer_experience_type_name}</td>
+                <td>{request?.gender === "male" ? t("male") : t("female")}</td>
                 <td>{request?.location_name}</td>
-                <td>{request?.club_staff_role_type_name}</td>
+                <td>
+                  {request?.club_staff_role_type_id === 1
+                    ? t("managerial")
+                    : request?.club_staff_role_type_id === 2
+                    ? t("userTypeTrainer")
+                    : t("other")}
+                </td>
                 <td>
                   <button
                     onClick={() => openDeclineClubStaffModal(request)}
                     className={styles["decline-button"]}
                   >
-                    Reddet
+                    {t("reject")}
                   </button>
                 </td>
                 <td>
@@ -111,7 +118,7 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                     onClick={() => openAcceptClubStaffModal(request)}
                     className={styles["accept-button"]}
                   >
-                    Onay Ver
+                    {t("approve")}
                   </button>
                 </td>
               </tr>

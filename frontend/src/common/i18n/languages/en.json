@@ -660,5 +660,40 @@
 
   "deleteStaff": "Remove Staff",
 
-  "noClubStaff": "No club staff found"
+  "noClubStaff": "No club staff found",
+
+  "clubStaffFilterTitle": "Filter Club Staff",
+
+  "clubStaffNamePlaceholder": "Club staff name",
+
+  "managerial": "Managerial",
+
+  "removeStaffText": "currently works at your club. Are you sure you want remove him / her?",
+
+  "clubStaffApplicationTitle": "Club Staff Application",
+
+  "clubStaffApplicationText": "Do you confirm submitting your application to this club?",
+
+  "noClubStaffApplications": "No new club staff applications",
+
+  "declineClubStaffApplicationTitle": "Decline Application",
+  "declineClubStaffApplicationText": "claimed that he / she works at your club. Are you sure you want to decline this application?",
+
+  "acceptClubStaffApplicationTitle": "Approve Application",
+  "acceptClubStaffApplicationText": "claimed that he / she works at your club. Are you sure you want to approve this application?",
+
+  "subscriptionPackages": "Packages",
+
+  "addSubscriptionPackageTitle": "New Package",
+
+  "subscriptionPackageName": "Membership Name",
+  "subscriptionPackageDurationTitle": "Duration (Month)",
+
+  "addBankDetailsSubscriptionPackage": "Add bank details to create a new membership package",
+
+  "noSubscriptionPackages": "No membership packages found",
+
+  "editSubscriptionPackageTitle": "Edit Package",
+
+  "clubExternalMember": "Offline Member"
 }

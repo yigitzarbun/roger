@@ -20,6 +20,7 @@ import EditClubBankDetailsModal from "../../../components/profile/club/bank-deta
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 import AddSubscriptionPackageModal from "../subscription-packages/add-subscription-package-modal/AddSubscriptionPackageModal";
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useTranslation } from "react-i18next";
 
 interface ClubSubscribersResultsProps {
   textSearch: any;
@@ -53,6 +54,8 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     refetchClubDetails,
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
@@ -215,7 +218,9 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     isPlayerLevelsLoading ||
     isSubscriptionTypesLoading ||
     isMySubscriptionPackagesLoading ||
-    isUserTypesLoading
+    isUserTypesLoading ||
+    isBanksLoading ||
+    isMyPackagesLoading
   ) {
     return <PageLoading />;
   }
@@ -334,9 +339,11 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                       to={`${paths.EXPLORE_PROFILE}1/${subscription.playerUserId}`}
                       className={styles["subscription-name"]}
                     >
-                      {`${subscription?.fname}
-                        ${subscription?.lname}
-                        `}
+                      {subscription?.fname
+                        ? `${subscription?.fname}
+                        ${subscription?.lname}`
+                        : `${subscription?.playerFname}
+                        ${subscription?.playerLname}`}
                     </Link>
                   ) : subscription?.user_type_id === 5 ? (
                     `${subscription?.fname} ${subscription?.lname}`
@@ -344,15 +351,50 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                     ""
                   )}
                 </td>
-                <td>{subscription?.user_type_name}</td>
                 <td>
-                  {subscription?.playerLevelName
-                    ? subscription?.playerLevelName
-                    : subscription?.externalLevelName
-                    ? subscription?.externalLevelName
-                    : ""}
+                  {subscription?.user_type_id === 1
+                    ? t("userTypePlayer")
+                    : subscription?.user_type_id === 5
+                    ? t("clubExternalMember")
+                    : "-"}
                 </td>
-                <td>{subscription?.gender}</td>
+                <td>
+                  {subscription?.playerLevelId === 1 &&
+                  subscription?.playerLevelId
+                    ? t("playerLevelBeginner")
+                    : subscription?.playerLevelId === 2 &&
+                      subscription?.playerLevelId
+                    ? t("playerLevelIntermediate")
+                    : subscription?.playerLevelId === 3 &&
+                      subscription?.playerLevelId
+                    ? t("playerLevelAdvanced")
+                    : subscription?.playerLevelId === 4 &&
+                      subscription?.playerLevelId
+                    ? t("playerLevelProfessinal")
+                    : subscription?.externalLevelId === 1 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelBeginner")
+                    : subscription?.externalLevelId === 2 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelIntermediate")
+                    : subscription?.externalLevelId === 3 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelAdvanced")
+                    : subscription?.externalLevelId === 4 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelProfessinal")
+                    : "-"}
+                </td>
+                <td>
+                  {subscription?.gender && subscription?.gender === "male"
+                    ? t("male")
+                    : subscription?.gender && subscription?.gender === "female"
+                    ? t("female")
+                    : subscription?.playerGender &&
+                      subscription?.playerGender === "male"
+                    ? t("male")
+                    : t("female")}
+                </td>
                 <td>{getAge(Number(subscription.birth_year))}</td>
                 <td>
                   {subscription?.playerLocationName

@@ -1,15 +1,12 @@
 import React, { useEffect } from "react";
-
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import styles from "./styles.module.scss";
-
 import {
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../../api/endpoints/ClubStaffApi";
+import { useTranslation } from "react-i18next";
 
 interface DeclineClubStaffModalProps {
   isDeclineClubStaffModalOpen: boolean;
@@ -24,9 +21,12 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
     selectedClubStaff,
   } = props;
 
+  const { t } = useTranslation();
+
   const selectedTrainerImage = selectedClubStaff?.trainerImage;
 
   const [updateClubStaff, { isSuccess }] = useUpdateClubStaffMutation({});
+
   const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
   const handleDeclineClubStaff = () => {
@@ -62,7 +62,9 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeDeclineClubStaffModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Başvuruyu Reddet</h1>
+        <h1 className={styles.title}>
+          {t("declineClubStaffApplicationTitle")}
+        </h1>
 
         <div className={styles["trainer-container"]}>
           <img
@@ -73,20 +75,22 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
             }
             className={styles["trainer-image"]}
           />
-          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</p>
+          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} ${t(
+            "declineClubStaffApplicationText"
+          )}`}</p>
         </div>
         <div className={styles["buttons-container"]}>
           <button
             onClick={closeDeclineClubStaffModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("cancel")}
           </button>
           <button
             onClick={handleDeclineClubStaff}
             className={styles["submit-button"]}
           >
-            Reddet
+            {t("confirm")}
           </button>
         </div>
       </div>

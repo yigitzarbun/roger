@@ -205,7 +205,11 @@ const ClubStaffResults = () => {
                 <td>{currentYear - Number(staff?.birth_year)}</td>
                 <td>{staff?.gender === "male" ? t("male") : t("female")}</td>
                 <td>{staff?.location_name}</td>
-                <td>{staff?.club_staff_role_type_name}</td>
+                <td>
+                  {staff?.club_staff_role_type_id == 2
+                    ? t("userTypeTrainer")
+                    : "-"}
+                </td>
                 <td>
                   {staff.employment_status === "pending" ? (
                     "Onay Bekliyor"

@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import styles from "./styles.module.scss";
-
 import {
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
@@ -23,6 +20,8 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
     closeAcceptClubStaffModal,
     selectedClubStaff,
   } = props;
+
+  const { t } = useTranslation();
 
   const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
@@ -63,7 +62,7 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeAcceptClubStaffModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Personeli Onayla</h1>
+        <h1 className={styles.title}>{t("acceptClubStaffApplicationTitle")}</h1>
         <div className={styles["trainer-container"]}>
           <img
             src={
@@ -73,20 +72,22 @@ const AcceptClubStaffModal = (props: AcceptClubStaffModalProps) => {
             }
             className={styles["trainer-image"]}
           />
-          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalıştığını belirtti. Başvuruyu onaylıyor musunuz?`}</p>
+          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} ${t(
+            "acceptClubStaffApplicationText"
+          )}`}</p>
         </div>
         <div className={styles["buttons-container"]}>
           <button
             onClick={closeAcceptClubStaffModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("cancel")}
           </button>
           <button
             onClick={handleAcceptClubStaff}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("confirm")}
           </button>
         </div>
       </div>

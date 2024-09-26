@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import styles from "./styles.module.scss";
-
 import {
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
@@ -20,6 +17,8 @@ interface DeleteClubStaffModalProps {
 const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
   const { isDeleteStaffModalOpen, closeDeleteStaffModal, selectedClubStaff } =
     props;
+
+  const { t } = useTranslation();
 
   const { refetch: refetchAllClubStaff } = useGetClubStaffQuery({});
 
@@ -60,7 +59,7 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeDeleteStaffModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Personeli Sil</h1>
+        <h1 className={styles.title}>{t("deleteStaff")}</h1>
         <div className={styles["trainer-container"]}>
           <img
             src={
@@ -70,20 +69,22 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
             }
             className={styles["trainer-image"]}
           />
-          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} kulübünüzde çalışıyor. Bu personeli silmek istediğinize emin misiniz?`}</p>
+          <p>{`${selectedClubStaff?.fname} ${selectedClubStaff?.lname} ${t(
+            "removeStaffText"
+          )}`}</p>
         </div>
         <div className={styles["buttons-container"]}>
           <button
             onClick={closeDeleteStaffModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleDeleteStaff}
             className={styles["submit-button"]}
           >
-            Personel Sil
+            {t("deleteStaff")}
           </button>
         </div>
       </div>

@@ -13,6 +13,7 @@ import {
   useGetClubStaffByFilterQuery,
 } from "../../../../../../api/endpoints/ClubStaffApi";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 interface ClubEmploymentModalProps {
   employmentModalOpen: boolean;
@@ -21,6 +22,8 @@ interface ClubEmploymentModalProps {
 }
 const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const { employmentModalOpen, closeEmploymentModal, selectedClub } = props;
 
@@ -130,7 +133,7 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeEmploymentModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Çalışan Başvurusu</h1>
+        <h1 className={styles.title}>{t("clubStaffApplicationTitle")}</h1>
         <div className={styles["opponent-container"]}>
           <img
             src={
@@ -140,20 +143,21 @@ const ClubEmploymentModal = (props: ClubEmploymentModalProps) => {
             }
             className={styles["opponent-image"]}
           />
-          <p>{`${selectedClub?.club_name} kulubüne başvurunuzu göndermeyi onaylıyor musunuz?`}</p>
+          <p>{selectedClub?.club_name}</p>
         </div>
+        <p>{t("clubStaffApplicationText")}</p>
         <div className={styles["buttons-container"]}>
           <button
             onClick={closeEmploymentModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleAddClubStaff}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("submit")}
           </button>
         </div>
       </div>
