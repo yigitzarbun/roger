@@ -2,6 +2,7 @@ import React, { ChangeEvent } from "react";
 import styles from "./styles.module.scss";
 import { useGetPaymentTypesQuery } from "../../../../../api/endpoints/PaymentTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface ClubPaymentsFilterProps {
   textSearch: string;
@@ -23,6 +24,8 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
     handleClear,
   } = props;
 
+  const { t } = useTranslation();
+
   const { data: paymentTypes, isLoading: isPaymentTypesLoading } =
     useGetPaymentTypesQuery({});
 
@@ -36,7 +39,7 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu / üye adı"
+          placeholder={t("explorePlayersFilterSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
@@ -45,10 +48,22 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
           value={paymentTypeId ?? ""}
           className="input-element"
         >
-          <option value="">-- Tür --</option>
+          <option value="">-- {t("paymentType")} --</option>
           {paymentTypes?.map((type) => (
             <option key={type.payment_type_id} value={type.payment_type_id}>
-              {type.payment_type_name}
+              {type?.payment_type_id === 1
+                ? t("training")
+                : type?.payment_type_id === 2
+                ? t("match")
+                : type?.payment_type_id === 3
+                ? t("lesson")
+                : type?.payment_type_id === 4
+                ? t("externalEvent")
+                : type?.payment_type_id === 5
+                ? t("subscriptionPayment")
+                : type?.payment_type_id === 6
+                ? t("tournamentAdmissionPayment")
+                : ""}
             </option>
           ))}
         </select>
@@ -59,9 +74,9 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
           value={status ?? ""}
           className="input-element"
         >
-          <option value="">-- Durum --</option>
-          <option value="success">Başarılı</option>
-          <option value="declined">Başarısız</option>
+          <option value="">-- {t("paymentStatus")} --</option>
+          <option value="success">{t("success")}</option>
+          <option value="declined">{t("declined")}</option>
         </select>
       </div>
       <button
@@ -72,7 +87,7 @@ const ClubPaymentsFilter = (props: ClubPaymentsFilterProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

@@ -152,18 +152,22 @@ const studentGroupsModel = {
           "trainers.fname as trainer_fname",
           "trainers.lname as trainer_lname",
           "users.user_status_type_id as trainerUserStatusTypeId",
-          db.raw(
-            "json_agg(json_build_object('user_id', students.user_id, 'name', students.fname || ' ' || students.lname, 'playerUserStatusTypeId', u.user_status_type_id)) as students_info"
+          db.raw(`
+      json_agg(
+        CASE 
+          WHEN cs.is_active = true THEN json_build_object(
+            'user_id', students.user_id, 
+            'name', students.fname || ' ' || students.lname, 
+            'subscriptionStatus', cs.is_active, 
+            'playerUserStatusTypeId', u.user_status_type_id, 
+            'subId', cs.club_subscription_id
           )
+        END
+      ) as students_info
+    `)
         )
         .from({ sg: "student_groups" })
         .leftJoin("trainers", "trainers.user_id", "sg.trainer_id")
-        .leftJoin(
-          "users as trainers_users",
-          "trainers_users.user_id",
-          "=",
-          "trainers.user_id"
-        )
         .leftJoin("users", "users.user_id", "=", "trainers.user_id")
         .leftJoin(studentsSubquery, function () {
           this.on("students.user_id", "=", "sg.first_student_id")
@@ -172,6 +176,13 @@ const studentGroupsModel = {
             .orOn("students.user_id", "=", "sg.fourth_student_id");
         })
         .leftJoin("users as u", "u.user_id", "=", "students.user_id")
+        .leftJoin("club_subscriptions as cs", function () {
+          this.on("cs.player_id", "=", "students.user_id").andOn(
+            "cs.club_id",
+            "=",
+            "sg.club_id"
+          );
+        })
         .where("sg.is_active", true)
         .andWhere("sg.club_id", filter.clubUserId)
         .groupBy(

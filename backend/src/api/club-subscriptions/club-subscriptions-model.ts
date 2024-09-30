@@ -248,7 +248,7 @@ const clubSubscriptionsModel = {
           "external_player_levels.player_level_id as externalLevelId",
           "players.gender as playerGender",
           "club_external_members.gender",
-          "players.birth_year",
+          "players.birth_year as playerBirthYear",
           "club_external_members.birth_year",
           "club_subscriptions.start_date",
           "club_subscriptions.end_date",

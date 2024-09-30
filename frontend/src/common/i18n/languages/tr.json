@@ -143,7 +143,7 @@
   "membershipRule": "Üyelik Şartı",
   "ageGap": "Yaş Aralığı",
   "participationStatus": "Katılım Durumu",
-  "leaveTournament": "Ayrıl",
+  "Title": "Ayrılvadan Ayrıl",
   "subscriptionTypeHeader": "Üyelik Türü",
   "clubNameHeader": "Kulüp Adı",
   "groupHeader": "Grup",
@@ -345,6 +345,7 @@
   "userTypePlayer": "Oyuncu",
   "userTypeTrainer": "Eğitmen",
   "userTypeClub": "Kulüp",
+  "userTypeExternalMember": "Çevrimdışı Üye",
 
   "leaderboardTableEmptyText": "Liderlik tablosunda puanı bulunan oyuncu henüz bulunmamaktadır",
   "playersEmptyText": "Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip tekrar deneyin.",
@@ -695,5 +696,76 @@
 
   "editSubscriptionPackageTitle": "Üyelik Paketini Düzenle",
 
-  "clubExternalMember": "Çevrimdışı Üye"
+  "clubExternalMember": "Çevrimdışı Üye",
+
+  "addNewSubscriber": "Yeni Üye",
+
+  "offlineSubscriberNo": "Üye No.",
+
+  "filterSubcribers": "Üyeleri Filtrele",
+
+  "subscriberType": "Üye Türü",
+
+  "deleteSubscriber": "Üye Sil",
+
+  "editMemberTitle": "Üye Düzenle",
+
+  "addSubscriptionPackageToSellSubscription": "Üyelik satışı yapmak için üyelik paketi ekleyin.",
+
+  "addNewGroup": "Yeni Grup",
+
+  "noStudentGroups": "Kayıtlı grup bulunmamaktadır",
+
+  "filterGroups": "Grupları Filtrele",
+
+  "groupTrainerPlayerName": "Grup, eğitmen veya oyuncu adı",
+
+  "editGroup": "Grubu Düzenle",
+
+  "deleteGroup": "Grubu sil",
+
+  "newTournament": "Yeni Turnuva",
+
+  "newTournamentRequirement": "Yeni turnuva eklemek için gerekenler:",
+
+  "noTournaments": "Güncel turnuva bulunmamaktadır",
+
+  "fillAllFields": "Tüm alanları doldurduğunuzdan emin olun",
+
+  "minAge": "Min. Yaş",
+  "maxAge": "Max. Yaş",
+
+  "maxParticipantQty": "Max. Katılımcı Sayısı",
+
+  "tournamentNamePlaceholder": "örn. 40 Yaş+ Erkekler",
+
+  "fixture": "Fikstür",
+
+  "editTournament": "Turnuva Düzenle",
+
+  "tournamentActive": "Turnuva Aktif",
+  "deleteTournament": "Turnuva Sil",
+
+  "tournamentParticipants": "Katılımcılar",
+
+  "noParticipants": "Henüz turnuva katılımcısı yok",
+
+  "joinTournamentTitle": "Turnuvaya Katıl",
+  "joingTournamentText": "Bu turnuvaya katılmayı onaylıyor musunuz?",
+
+  "leaveTournamentTitle": "Turnuvadan Ayrıl",
+  "leaveTournamentText": "Bu turnuvadan ayrılmayı onaylıyor musunuz?",
+
+  "tournamentPlayer1": "Oyuncu 1",
+  "tournamentPlayer2": "Oyuncu 2",
+
+  "addMatch": "Maç Ekle",
+
+  "addScore": "Skor Ekle",
+
+  "totalMatches": "Toplam Maç",
+  "wonMatches": "Kazandığı",
+  "lostMatches": "Kaybettiği",
+
+  "filterParticipants": "Katılımcıları Filtrele"
 }

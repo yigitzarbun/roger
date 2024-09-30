@@ -345,6 +345,7 @@
   "userTypePlayer": "Player",
   "userTypeTrainer": "Trainer",
   "userTypeClub": "Club",
+  "userTypeExternalMember": "Offline Member",
 
   "leaderboardTableEmptyText": "Leaderboard is currently empty",
   "playersEmptyText": "No players found. Remove filters and try again.",
@@ -695,5 +696,76 @@
 
   "editSubscriptionPackageTitle": "Edit Package",
 
-  "clubExternalMember": "Offline Member"
+  "clubExternalMember": "Offline Member",
+
+  "addNewSubscriber": "New Member",
+
+  "offlineSubscriberNo": "Member No.",
+
+  "filterSubcribers": "Filter Members",
+
+  "subscriberType": "Member Type",
+
+  "deleteSubscriber": "Delete Member",
+
+  "editMemberTitle": "Edit Member",
+
+  "addSubscriptionPackageToSellSubscription": "Add new package to sell club membership",
+
+  "addNewGroup": "New Group",
+
+  "noStudentGroups": "No groups found",
+
+  "filterGroups": "Filter Groups",
+
+  "groupTrainerPlayerName": "Group, trainer or player name",
+
+  "editGroup": "Edit Group",
+
+  "deleteGroup": "Delete Group",
+
+  "newTournament": "New Tournament",
+
+  "newTournamentRequirement": "Requirements for creating new tournament:",
+
+  "noTournaments": "No tournaments found",
+
+  "fillAllFields": "All fields must be filled",
+
+  "minAge": "Min. Age",
+  "maxAge": "Max. Age",
+
+  "maxParticipantQty": "Max. Pariticipant Qty.",
+
+  "tournamentNamePlaceholder": "eg. 40+ Men's",
+
+  "fixture": "Fixture",
+
+  "editTournament": "Update Tournament",
+
+  "tournamentActive": "Tournament active",
+  "deleteTournament": "Delete tournament",
+
+  "tournamentParticipants": "Participants",
+
+  "noParticipants": "No participants yet",
+
+  "joinTournamentTitle": "Join Tournament",
+  "joingTournamentText": "Do you confirm participating to this torunament?",
+
+  "leaveTournamentTitle": "Leave Tournament",
+  "leaveTournamentText": "Are you sure you want to leave this tournament?",
+
+  "tournamentPlayer1": "Player 1",
+  "tournamentPlayer2": "Player 2",
+
+  "addMatch": "Add Match",
+
+  "addScore": "Add Score",
+
+  "totalMatches": "Total Matches",
+  "wonMatches": "Won",
+  "lostMatches": "Lost",
+
+  "filterParticipants": "Filter Participants"
 }

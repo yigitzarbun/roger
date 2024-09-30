@@ -1,20 +1,15 @@
 import React, { useEffect } from "react";
-
 import Modal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import PageLoading from "../../../../components/loading/PageLoading";
-
 import {
   useGetStudentGroupsQuery,
   useUpdateStudentGroupMutation,
 } from "../../../../../api/endpoints/StudentGroupsApi";
 import { useGetClubSubscribersByIdQuery } from "../../../../../api/endpoints/ClubSubscriptionsApi";
+import { useTranslation } from "react-i18next";
 
 interface EditGroupModalProps {
   isEditGroupModalOpen: boolean;
@@ -42,6 +37,8 @@ const EditGroupModal = (props: EditGroupModalProps) => {
     user,
   } = props;
 
+  const { t } = useTranslation();
+
   const { data: mySubscribers, isLoading: isMySubscribersLoading } =
     useGetClubSubscribersByIdQuery(user?.user?.user_id);
 
@@ -50,7 +47,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
 
   const [updateGroup, { isSuccess: isUpdateGroupSuccess }] =
     useUpdateStudentGroupMutation({});
-  console.log(selectedGroup);
+
   const {
     register,
     handleSubmit,
@@ -74,6 +71,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
         : null,
     },
   });
+
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
     try {
       const groupData = {
@@ -175,12 +173,12 @@ const EditGroupModal = (props: EditGroupModalProps) => {
       <div className={styles["overlay"]} onClick={closeEditGroupModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1 className={styles.title}>Grup Düzenle</h1>
+          <h1 className={styles.title}>{t("editGroup")}</h1>
           <button
             onClick={handleDeleteGroup}
             className={styles["delete-button"]}
           >
-            Grubu sil
+            {t("deleteGroup")}
           </button>
         </div>
         <form
@@ -189,25 +187,25 @@ const EditGroupModal = (props: EditGroupModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Grup Adı</label>
+              <label>{t("groupName")}</label>
               <input
                 {...register("student_group_name", { required: true })}
                 type="text"
               />
               {errors.student_group_name && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Eğitmen</label>
+              <label>{t("userTypeTrainer")}</label>
               <select
                 {...register("trainer_id", {
                   required: true,
                 })}
               >
-                <option value="">-- Eğitmen --</option>
+                <option value="">-- {t("userTypeTrainer")} --</option>
                 {myTrainers?.map((staff) => (
                   <option key={staff.user_id} value={staff.user_id}>{`${
                     myTrainers?.find(
@@ -222,20 +220,20 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               </select>
               {errors.trainer_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>1. Oyuncu</label>
+              <label>{t("student1")}</label>
               <select
                 {...register("first_student_id", {
                   required: true,
                 })}
               >
-                <option value="">-- 1. Oyuncu --</option>
+                <option value="">-- {t("student1")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -263,18 +261,18 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               </select>
               {errors.first_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>2. Oyuncu</label>
+              <label>{t("student2")}</label>
               <select
                 {...register("second_student_id", {
                   required: true,
                 })}
               >
-                <option value="">-- 2. Oyuncu --</option>
+                <option value="">-- {t("student2")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -302,16 +300,16 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               </select>
               {errors.second_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>3. Oyuncu</label>
+              <label>{t("student3")}</label>
               <select {...register("third_student_id")}>
-                <option value="">-- 3. Oyuncu --</option>
+                <option value="">-- {t("student3")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -339,14 +337,14 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               </select>
               {errors.third_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>4. Oyuncu</label>
+              <label>{t("student4")}</label>
               <select {...register("fourth_student_id")}>
-                <option value="">-- 4. Oyuncu --</option>
+                <option value="">-- {t("student4")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -374,7 +372,7 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               </select>
               {errors.fourth_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -384,10 +382,10 @@ const EditGroupModal = (props: EditGroupModalProps) => {
               onClick={closeEditGroupModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("cancel")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>

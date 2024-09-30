@@ -16,6 +16,7 @@ import {
   useGetPlayerPaymentDetailsExistQuery,
 } from "../../../../../api/endpoints/PlayersApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface AddTournamentParticipantModalProps {
   participateModal: boolean;
@@ -36,9 +37,13 @@ export const AddTournamentParticipantModal = (
     refetchMyTournaments,
     refetchPaginatedTournaments,
   } = props;
+
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const date = new Date();
+
   const currentYear = date.getFullYear();
 
   const applicationDeadline = new Date(
@@ -187,7 +192,7 @@ export const AddTournamentParticipantModal = (
         onClick={closeAddTournamentParticipantModal}
       />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Turnuvaya Katıl</h1>
+        <h1 className={styles.title}>{t("joinTournamentTitle")}</h1>
         <div className={styles["opponent-container"]}>
           <img
             src={
@@ -197,18 +202,20 @@ export const AddTournamentParticipantModal = (
             }
             className={styles["opponent-image"]}
           />
-          <p>{`${selectedTournament?.tournament_name} turnuvasına katılmayı onaylıyor musunuz?`}</p>
+          <p>{`${t("joingTournamentText")} ${
+            selectedTournament?.tournament_name
+          }`}</p>
         </div>
         <table>
           <thead>
             <tr>
-              <th>Kulüp</th>
-              <th>Konum</th>
-              <th>Başlangıç</th>
-              <th>Bitiş</th>
-              <th>Katılım Ücreti</th>
-              <th>Cinsiyet</th>
-              <th>Yaş Aralığı</th>
+              <th>{t("userTypeClub")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("start")}</th>
+              <th>{t("end")}</th>
+              <th>{t("admissionFee")}</th>
+              <th>{t("gender")}</th>
+              <th>{t("ageGap")}</th>
             </tr>
           </thead>
           <tbody>
@@ -218,7 +225,11 @@ export const AddTournamentParticipantModal = (
               <td>{selectedTournament?.start_date?.slice(0, 10)}</td>
               <td>{selectedTournament?.end_date?.slice(0, 10)}</td>
               <td>{`${selectedTournament?.application_fee} TL`}</td>
-              <td>{selectedTournament?.tournament_gender}</td>
+              <td>
+                {selectedTournament?.tournament_gender === "female"
+                  ? t("female")
+                  : t("male")}
+              </td>
               <td>{`${currentYear - selectedTournament?.min_birth_year} - ${
                 currentYear - selectedTournament?.max_birth_year
               }`}</td>
@@ -230,13 +241,13 @@ export const AddTournamentParticipantModal = (
             onClick={closeAddTournamentParticipantModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleAddParticipant}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("submit")}
           </button>
         </div>
       </div>

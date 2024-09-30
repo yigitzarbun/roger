@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
 import { useAddTournamentMutation } from "../../../../api/endpoints/TournamentsApi";
+import { useTranslation } from "react-i18next";
 
 interface AddTournamentModalProps {
   addTournamentModal: boolean;
@@ -52,7 +51,10 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  const { t } = useTranslation();
+
   const date = new Date();
+
   const currentYear = date.getFullYear();
 
   const onSubmit: SubmitHandler<FormValues> = async (formData: FormValues) => {
@@ -94,6 +96,7 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
       closeAddTournamentModal();
     }
   }, [isAddTournamentSuccess]);
+
   return (
     <ReactModal
       isOpen={addTournamentModal}
@@ -105,7 +108,7 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
       <div className={styles["overlay"]} onClick={closeAddTournamentModal} />
       <div className={styles["top-container"]}>
         <div className={styles["modal-content"]}>
-          <h1 className={styles.title}>Turnuva Ekle</h1>
+          <h1 className={styles.title}>{t("newTournament")}</h1>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className={styles["form-container"]}
@@ -120,27 +123,27 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
               errors.club_subscription_required ||
               errors.max_players) && (
               <span className={styles["error-field"]}>
-                Tüm alanları doldurduğunuzdan emin olun
+                {t("fillAllFields")}
               </span>
             )}
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Turnuva Adı</label>
+                <label>{t("tableTournamentName")}</label>
                 <input
                   {...register("tournament_name", { required: true })}
                   type="text"
-                  placeholder="örn. 40 Yaş+ Erkekler"
+                  placeholder={t("tournamentNamePlaceholder")}
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Başlangıç</label>
+                <label>{t("start")}</label>
                 <input
                   {...register("start_date", { required: true })}
                   type="date"
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Bitiş</label>
+                <label>{t("end")}</label>
                 <input
                   {...register("end_date", { required: true })}
                   type="date"
@@ -149,14 +152,14 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Son Başvuru Tarihi</label>
+                <label>{t("deadline")}</label>
                 <input
                   {...register("application_deadline", { required: true })}
                   type="date"
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Katılımcı Min. Yaş</label>
+                <label>{t("minAge")}</label>
                 <input
                   {...register("min_birth_year", {
                     required: true,
@@ -167,7 +170,7 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Katılımcı Max. Yaş</label>
+                <label>{t("maxAge")}</label>
                 <input
                   {...register("max_birth_year", {
                     required: true,
@@ -180,15 +183,15 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Katılımcı Cinsiyet</label>
+                <label>{t("gender")}</label>
                 <select {...register("tournament_gender", { required: true })}>
-                  <option value="">-- Cinsiyet --</option>
-                  <option value="male">Erkek</option>
-                  <option value="female">Kadın</option>
+                  <option value="">-- {t("gender")} --</option>
+                  <option value="male">{t("male")}</option>
+                  <option value="female">{t("female")}</option>
                 </select>
               </div>
               <div className={styles["input-container"]}>
-                <label>Katılım Ücret (TL)</label>
+                <label>{t("admissionFee")} (TL)</label>
                 <input
                   {...register("application_fee", { required: true, min: 1 })}
                   type="number"
@@ -196,7 +199,7 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
               </div>
 
               <div className={styles["input-container"]}>
-                <label>Max. Katılımcı Sayısı</label>
+                <label>{t("maxParticipantQty")}</label>
                 <input
                   {...register("max_players", { required: true, min: 2 })}
                   type="number"
@@ -206,18 +209,18 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
             {clubSubscriptionPackages?.length > 0 && (
               <div className={styles["input-outer-container"]}>
                 <div className={styles["input-container"]}>
-                  <label>Katılımcı Üyelik Şartı</label>
+                  <label>{t("membershipRule")}</label>
                   <select
                     {...register("club_subscription_required", {
                       required: true,
                     })}
                   >
-                    <option value="">-- Üyelik Şartı --</option>
+                    <option value="">-- {t("membershipRule")} --</option>
                     <option value="true">
-                      Katılımcıların kulübe üye olmasına gerek var
+                      {t("clubSubscriptionRequiredYes")}
                     </option>
                     <option value="false">
-                      Katılımcıların kulübe üye olmasına gerek yok
+                      {t("clubSubscriptionRequiredNo")}
                     </option>
                   </select>
                 </div>
@@ -229,10 +232,10 @@ const AddTournamentModal = (props: AddTournamentModalProps) => {
                 onClick={closeAddTournamentModal}
                 className={styles["discard-button"]}
               >
-                İptal Et
+                {t("discardButtonText")}
               </button>
               <button type="submit" className={styles["submit-button"]}>
-                Kaydet
+                {t("submit")}
               </button>
             </div>
           </form>

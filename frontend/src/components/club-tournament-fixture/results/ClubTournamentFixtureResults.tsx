@@ -4,6 +4,7 @@ import { TournamentMatchRounds } from "../../../../api/endpoints/TournamentMatch
 import AddTournamentMatchModal from "../modals/add-match-booking/AddTournamentMatchModal";
 import { imageUrl } from "../../../common/constants/apiConstants";
 import AddTournamentMatchScoreModal from "../modals/add-match-score/AddTournamentMatchScoreModal";
+import { useTranslation } from "react-i18next";
 
 interface ClubTournamentFixtureResultsProps {
   initialRoundId: number;
@@ -36,11 +37,14 @@ const ClubTournamentFixtureResults = (
     refetchTournamentMatches,
     refetchTournamentMatchRounds,
   } = props;
-  console.log(tournamentMatches);
+
+  const { t } = useTranslation();
+
   const [
     addTournamentMatchScoreModalOpen,
     setAddTournamentMatchScoreModalOpen,
   ] = useState(false);
+
   const [selectedMatchScore, setSelectedMatchScore] = useState(null);
 
   const handleOpenAddTournamentMatchScoreModal = (matchScore: any) => {
@@ -76,6 +80,7 @@ const ClubTournamentFixtureResults = (
     }[matchRound] || 0;
 
   let totalMatches = tournamentMatches?.length;
+
   let emptyMatches = requiredMatches - totalMatches;
 
   return (
@@ -101,15 +106,15 @@ const ClubTournamentFixtureResults = (
           <table>
             <thead>
               <tr>
-                <th>Oyuncu 1</th>
-                <th>İsim</th>
-                <th>Oyuncu 2</th>
-                <th>İsim</th>
-                <th>Tarih</th>
-                <th>Saat</th>
-                <th>Kort</th>
-                <th>Skor</th>
-                <th>Kazanan</th>
+                <th>{t("tournamentPlayer1")}</th>
+                <th>{t("tableNameHeader")}</th>
+                <th>{t("tournamentPlayer2")}</th>
+                <th>{t("tableNameHeader")}</th>
+                <th>{t("tableDateHeader")}</th>
+                <th>{t("tableTimeHeader")}</th>
+                <th>{t("tableCourtHeader")}</th>
+                <th>{t("tableScoreHeader")}</th>
+                <th>{t("tableWinnerHeader")}</th>
               </tr>
             </thead>
             <tbody>
@@ -151,7 +156,7 @@ const ClubTournamentFixtureResults = (
                         }
                         className={styles["add-score-button"]}
                       >
-                        Skor Ekle
+                        {t("addScore")}
                       </button>
                     ) : match.match_score_status_type_id === 3 &&
                       match?.inviter_third_set_games_won ? (
@@ -186,7 +191,7 @@ const ClubTournamentFixtureResults = (
                       onClick={handleOpenAddTournamentMatchModal}
                       className={styles["add-match-button"]}
                     >
-                      Maç Ekle
+                      {t("addMatch")}
                     </button>
                   </td>
                 </tr>
@@ -194,7 +199,7 @@ const ClubTournamentFixtureResults = (
             </tbody>
           </table>
         ) : (
-          "Henüz turnuva katılımcısı yok"
+          <> {t("noParticipants")}</>
         )}
       </div>
       {addTournamentMatchModalOpen && (

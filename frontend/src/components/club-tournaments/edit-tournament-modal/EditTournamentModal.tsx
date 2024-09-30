@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
 import { useUpdateTournamentMutation } from "../../../../api/endpoints/TournamentsApi";
+import { useTranslation } from "react-i18next";
 
 interface EditTournamentModalProps {
   updateTournamentModal: boolean;
@@ -34,6 +35,8 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
     refetchClubTournaments,
     selectedTournament,
   } = props;
+
+  const { t } = useTranslation();
 
   const [
     updateTournament,
@@ -161,12 +164,12 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
               errors.is_active ||
               errors.max_players) && (
               <span className={styles["error-field"]}>
-                Tüm alanları doldurduğunuzdan emin olun
+                {t("fillAllFields")}
               </span>
             )}
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Turnuva Adı</label>
+                <label>{t("tableTournamentName")}</label>
                 <input
                   {...register("tournament_name", { required: true })}
                   type="text"
@@ -174,7 +177,7 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Başlangıç</label>
+                <label>{t("start")}</label>
                 <input
                   {...register("start_date", { required: true })}
                   type="date"
@@ -188,7 +191,7 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Bitiş</label>
+                <label>{t("end")}</label>
                 <input
                   {...register("end_date", { required: true })}
                   type="date"
@@ -204,7 +207,7 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Son Başvuru Tarihi</label>
+                <label>{t("deadline")}</label>
                 <input
                   {...register("application_deadline", { required: true })}
                   type="date"
@@ -218,14 +221,14 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
                 />
               </div>
               <div className={styles["input-container"]}>
-                <label>Turnuva Aktiflik</label>
+                <label>{t("tableStatusHeader")}</label>
                 <select {...register("is_active", { required: true })}>
-                  <option value="true">Turnuva Aktif</option>
-                  <option value="false">Turnuvayı Sil</option>
+                  <option value="true">{t("tournamentActive")}</option>
+                  <option value="false">{t("deleteTournament")}</option>
                 </select>
               </div>
               <div className={styles["input-container"]}>
-                <label>Max. Katılımcı Sayısı</label>
+                <label>{t("maxParticipantQty")}</label>
                 <input
                   {...register("max_players", { required: true, min: 2 })}
                   type="number"
@@ -237,10 +240,10 @@ const EditTournamentModal = (props: EditTournamentModalProps) => {
                 onClick={closeUpdateTournamentModal}
                 className={styles["discard-button"]}
               >
-                İptal Et
+                {t("discardButtonText")}
               </button>
               <button type="submit" className={styles["submit-button"]}>
-                Kaydet
+                {t("submit")}
               </button>
             </div>
           </form>

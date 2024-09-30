@@ -6,7 +6,7 @@ import { imageUrl } from "../../../../common/constants/apiConstants";
 import { useUpdateTournamentParticipantMutation } from "../../../../../api/endpoints/TournamentParticipantsApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import PageLoading from "../../../../components/loading/PageLoading";
 
 interface LeaveTournamentModalModalProps {
@@ -23,9 +23,12 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
     refetchMyTournaments,
   } = props;
 
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const date = new Date();
+
   const currentYear = date.getFullYear();
 
   const [
@@ -68,7 +71,7 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeLeaveTournamentModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Turnuvadan Ayrıl</h1>
+        <h1 className={styles.title}>{t("leaveTournamentTitle")}</h1>
         <div className={styles["opponent-container"]}>
           <img
             src={
@@ -78,18 +81,20 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
             }
             className={styles["opponent-image"]}
           />
-          <p>{`${selectedTournament?.tournament_name} turnuvasından ayrılmayı onaylıyor musunuz?`}</p>
+          <p>{`${t("leaveTournamentText")} ${
+            selectedTournament?.tournament_name
+          }`}</p>
         </div>
         <table>
           <thead>
             <tr>
-              <th>Kulüp</th>
-              <th>Konum</th>
-              <th>Başlangıç</th>
-              <th>Bitiş</th>
-              <th>Katılım Ücreti</th>
-              <th>Cinsiyet</th>
-              <th>Yaş Aralığı</th>
+              <th>{t("userTypeClub")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("start")}</th>
+              <th>{t("end")}</th>
+              <th>{t("admissionFee")}</th>
+              <th>{t("gender")}</th>
+              <th>{t("ageGap")}</th>
             </tr>
           </thead>
           <tbody>
@@ -99,7 +104,11 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
               <td>{selectedTournament?.start_date?.slice(0, 10)}</td>
               <td>{selectedTournament?.end_date?.slice(0, 10)}</td>
               <td>{`${selectedTournament?.application_fee} TL`}</td>
-              <td>{selectedTournament?.tournament_gender}</td>
+              <td>
+                {selectedTournament?.tournament_gender === "female"
+                  ? t("female")
+                  : t("male")}
+              </td>
               <td>{`${currentYear - selectedTournament?.min_birth_year} - ${
                 currentYear - selectedTournament?.max_birth_year
               }`}</td>

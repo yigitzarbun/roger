@@ -229,14 +229,14 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Üyeler</h2>
+          <h2 className={styles["result-title"]}>{t("subscribersTitle")}</h2>
           {bankDetailsExist && mySubscriptionPackages?.length > 0 && (
             <button
               onClick={openAddClubSubscriberModal}
               className={styles["add-subscription-package-button"]}
               disabled={mySubscriptionPackages?.length === 0}
             >
-              <p className={styles["add-title"]}>Yeni Üye Ekle</p>
+              <p className={styles["add-title"]}>{t("addNewSubscriber")}</p>
             </button>
           )}
           {mySubscriptions?.subscribers?.length > 0 && (
@@ -269,40 +269,40 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
       </div>
       {!bankDetailsExist ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>Üyelik satışı yapmak için banka bilgilerinizi ekleyin.</p>
+          <p>{t("addBankDetailsSubscriptionPackage")}</p>
           <button className={styles.button} onClick={handleOpenEditBankModal}>
-            Banka Bilgilerini Ekle
+            {t("addBankAccount")}
           </button>
         </div>
       ) : bankDetailsExist && mySubscriptionPackages?.length === 0 ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>Üyelik satışı yapmak için üyelik paketi ekleyin.</p>
+          <p>{t("addSubscriptionPackageToSellSubscription")}</p>
           <button
             className={styles.button}
             onClick={openAddClubSubscriptionPackageModal}
           >
-            Üyelik Paketi Ekle
+            {t("addSubscriptionPackageTitle")}
           </button>
         </div>
       ) : (
         mySubscriptions?.subscribers?.length === 0 && (
-          <p>Kayıtlı aktif üye bulunmamaktadır.</p>
+          <p>{t("clubHasNoSubscribers")}</p>
         )
       )}
       {mySubscriptions?.subscribers?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Üye</th>
-              <th>İsim</th>
-              <th>Üye Tipi</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Üyelik Tipi</th>
-              <th>Üyelik Başlangıç</th>
-              <th>Üyelik Bitiş</th>
+              <th>{t("user")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("subscriptionTypeHeader")}</th>
+              <th>{t("start")}</th>
+              <th>{t("end")}</th>
             </tr>
           </thead>
           <tbody>
@@ -395,7 +395,11 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                     ? t("male")
                     : t("female")}
                 </td>
-                <td>{getAge(Number(subscription.birth_year))}</td>
+                <td>
+                  {subscription?.birth_year
+                    ? getAge(Number(subscription.birth_year))
+                    : getAge(Number(subscription?.playerBirthYear))}
+                </td>
                 <td>
                   {subscription?.playerLocationName
                     ? subscription?.playerLocationName
@@ -403,7 +407,15 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                     ? subscription?.externalLocationName
                     : ""}
                 </td>
-                <td>{subscription?.club_subscription_type_name}</td>
+                <td>
+                  {subscription?.club_subscription_type_id === 1
+                    ? t("oneMonthSubscription")
+                    : subscription?.club_subscription_type_id === 2
+                    ? t("threeMonthSubscription")
+                    : subscription?.club_subscription_type_id === 3
+                    ? t("sixMonthSubscription")
+                    : t("twelveMonthSubscription")}
+                </td>
                 <td>{subscription.start_date.slice(0, 10)}</td>
                 <td>{subscription.end_date.slice(0, 10)}</td>
                 <td>
@@ -412,7 +424,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                       to={`${paths.EXPLORE_PROFILE}1/${subscription.playerUserId} `}
                     >
                       <button className={styles["view-button"]}>
-                        Görüntüle
+                        {t("tableViewHeader")}
                       </button>
                     </Link>
                   ) : subscription?.user_type_id === 5 ? (
@@ -420,7 +432,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                       onClick={() => openEditClubSubscriberModal(subscription)}
                       className={styles["edit-button"]}
                     >
-                      Güncelle
+                      {t("edit")}
                     </button>
                   ) : (
                     ""

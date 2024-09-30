@@ -1,22 +1,17 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-
 import { Link } from "react-router-dom";
-
 import paths from "../../../routing/Paths";
-
 import { useAppSelector } from "../../../store/hooks";
-
 import styles from "./styles.module.scss";
 import { FaFilter } from "react-icons/fa6";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-
 import AddGroupModal from "./add-group-modal/AddGroupModal";
 import EditGroupModal from "./edit-group-modal/EditGroupModal";
 import PageLoading from "../../../components/loading/PageLoading";
-
 import { useGetPaginatedStudentGroupsQuery } from "../../../../api/endpoints/StudentGroupsApi";
 import { useGetTrainersByFilterQuery } from "../../../../api/endpoints/TrainersApi";
 import ClubStudentGroupsFilterModal from "./filter/ClubStudentGroupsFilterModal";
+import { useTranslation } from "react-i18next";
 
 interface ClubGroupsResultsProps {
   textSearch: string;
@@ -25,6 +20,8 @@ interface ClubGroupsResultsProps {
 }
 const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
   const { textSearch, handleTextSearch, handleClear } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -42,7 +39,7 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
       page: currentPage,
       textSearch: textSearch,
     });
-
+  console.log(groups);
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
 
   const openAddGroupModal = () => {
@@ -68,12 +65,15 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
 
   const [isClubStudentGroupsFilterOpen, setIsClubStudentGroupsFilterOpen] =
     useState(false);
+
   const handleOpenClubStudentGroupsFilter = () => {
     setIsClubStudentGroupsFilterOpen(true);
   };
+
   const handleCloseClubStudentGroupsFilter = () => {
     setIsClubStudentGroupsFilterOpen(false);
   };
+
   const handleGroupsPage = (e) => {
     setCurrentPage(e.target.value);
   };
@@ -90,9 +90,11 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
   };
 
   const pageNumbers = [];
+
   for (let i = 1; i <= groups?.totalPages; i++) {
     pageNumbers.push(i);
   }
+
   useEffect(() => {
     refetchGroups();
   }, [currentPage, textSearch, isEditGroupModalOpen, isAddGroupModalOpen]);
@@ -100,16 +102,17 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
   if (isMyTrainersLoading) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Gruplar</h2>
+          <h2 className={styles["result-title"]}>{t("groups")}</h2>
           <button
             onClick={openAddGroupModal}
             className={styles["add-group-button"]}
           >
-            <p className={styles["add-title"]}>Yeni Grup Ekle</p>
+            <p className={styles["add-title"]}>{t("addNewGroup")}</p>
           </button>
           {groups?.studentGroups?.length > 0 && (
             <FaFilter
@@ -137,12 +140,12 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Grup Adı</th>
-              <th>Eğitmen</th>
-              <th>Oyuncu 1</th>
-              <th>Oyuncu 2</th>
-              <th>Oyuncu 3</th>
-              <th>Oyuncu 4</th>
+              <th>{t("groupName")}</th>
+              <th>{t("userTypeTrainer")}</th>
+              <th>{t("student1")}</th>
+              <th>{t("student2")}</th>
+              <th>{t("student3")}</th>
+              <th>{t("student4")}</th>
             </tr>
           </thead>
           <tbody>
@@ -163,10 +166,12 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                   </Link>
                 </td>
                 <td>
-                  {group?.students_info?.[0]?.user_id && (
+                  {group?.students_info?.[0]?.user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[0]?.user_id}`}
                       className={
+                        group?.students_info?.[0]?.subscriptionStatus ===
+                          true &&
                         group?.students_info?.[0]?.playerUserStatusTypeId === 1
                           ? styles.name
                           : styles["inactive-name"]
@@ -174,13 +179,17 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                     >
                       {`${group.students_info?.[0]?.name}`}
                     </Link>
+                  ) : (
+                    "-"
                   )}
                 </td>
                 <td>
-                  {group?.students_info?.[1]?.user_id && (
+                  {group?.students_info?.[1]?.user_id ? (
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[1]?.user_id}`}
                       className={
+                        group?.students_info?.[1]?.subscriptionStatus ===
+                          true &&
                         group?.students_info?.[1]?.playerUserStatusTypeId === 1
                           ? styles.name
                           : styles["inactive-name"]
@@ -188,6 +197,8 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                     >
                       {`${group.students_info?.[1]?.name}`}
                     </Link>
+                  ) : (
+                    "-"
                   )}
                 </td>
                 <td>
@@ -195,6 +206,8 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[2]?.user_id}`}
                       className={
+                        group?.students_info?.[2]?.subscriptionStatus ===
+                          true &&
                         group?.students_info?.[2]?.playerUserStatusTypeId === 1
                           ? styles.name
                           : styles["inactive-name"]
@@ -211,6 +224,8 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                     <Link
                       to={`${paths.EXPLORE_PROFILE}1/${group.students_info?.[3]?.user_id}`}
                       className={
+                        group?.students_info?.[3]?.subscriptionStatus ===
+                          true &&
                         group?.students_info?.[3]?.playerUserStatusTypeId === 1
                           ? styles.name
                           : styles["inactive-name"]
@@ -227,7 +242,7 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
                     onClick={() => openEditGroupModal(group)}
                     className={styles["edit-button"]}
                   >
-                    Düzenle
+                    {t("edit")}
                   </button>
                 </td>
               </tr>
@@ -235,7 +250,7 @@ const ClubGroupsResults = (props: ClubGroupsResultsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Kayıtlı grubunuz bulunmamaktadır.</p>
+        <p>{t("noStudentGroups")}</p>
       )}
       {isAddGroupModalOpen && (
         <AddGroupModal

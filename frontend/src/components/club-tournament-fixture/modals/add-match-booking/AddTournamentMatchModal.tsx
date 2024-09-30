@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
@@ -15,6 +13,7 @@ import {
 } from "../../../../common/util/TimeFunctions";
 import { useAddTournamentMatchMutation } from "../../../../../api/endpoints/TournamentMatchesApi";
 import { useAddMatchScoreMutation } from "../../../../../api/endpoints/MatchScoresApi";
+import { useTranslation } from "react-i18next";
 
 interface AddTournamentMatchModalProps {
   addTournamentMatchModalOpen: boolean;
@@ -56,6 +55,8 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
     refetchTournamentMatches,
   } = props;
 
+  const { t } = useTranslation();
+
   const [addBooking, { data: bookingData, isSuccess: isBookingSuccess }] =
     useAddBookingMutation({});
 
@@ -64,6 +65,7 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
 
   const [addMatchScore, { isSuccess: isAddMatchScoreSuccess }] =
     useAddMatchScoreMutation({});
+
   const {
     register,
     handleSubmit,
@@ -73,24 +75,33 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
   } = useForm<FormValues>();
 
   const today = new Date();
+
   let day = String(today.getDate());
+
   let month = String(today.getMonth() + 1);
+
   const year = today.getFullYear();
 
   day = String(day).length === 1 ? String(day).padStart(2, "0") : day;
+
   month = String(month).length === 1 ? String(month).padStart(2, "0") : month;
+
   const currentDay = `${year}-${month}-${day}`;
 
   const [selectedDate, setSelectedDate] = useState("");
+
   const handleSelectedDate = (event) => {
     setSelectedDate(event.target.value);
   };
 
   const [selectedTime, setSelectedTime] = useState("");
+
   const handleSelectedTime = (event) => {
     setSelectedTime(event.target.value);
   };
+
   const [selectedCourt, setSelectedCourt] = useState(null);
+
   const handleSelectedCourt = (event) => {
     setSelectedCourt(Number(event.target.value));
   };
@@ -114,6 +125,7 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
   const [bookedHoursForSelectedCourtOnSelectedDate, setBookedHours] = useState(
     []
   );
+
   const [skipBookedHours, setSkipBookedHours] = useState(true);
 
   const {
@@ -203,16 +215,16 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
       />
       <div className={styles["top-container"]}>
         <div className={styles["modal-content"]}>
-          <h1 className={styles.title}>Maç Ekle</h1>
+          <h1 className={styles.title}>{t("addMatch")}</h1>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className={styles["form-container"]}
           >
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Oyuncu 1</label>
+                <label>{t("tournamentPlayer1")}</label>
                 <select {...register("inviter_id", { required: true })}>
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">-- {t("chooseOption")} --</option>
                   {tournamentParticipants.map((player) => (
                     <option key={player.user_id} value={player.user_id}>
                       {`${player.fname} ${player.lname}`}
@@ -221,14 +233,14 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
                 </select>
                 {errors.inviter_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Oyuncu 2</label>
+                <label>{t("tournamentPlayer2")}</label>
                 <select {...register("invitee_id", { required: true })}>
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">-- {t("chooseOption")} --</option>
                   {tournamentParticipants.map((player) => (
                     <option key={player.user_id} value={player.user_id}>
                       {`${player.fname} ${player.lname}`}
@@ -237,17 +249,17 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
                 </select>
                 {errors.invitee_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Tarih</label>
+                <label>{t("tableDateHeader")}</label>
                 <input
                   {...register("event_date", {
-                    required: "Bu alan zorunludur",
+                    required: t("mandatoryField"),
                   })}
                   type="date"
                   onChange={handleSelectedDate}
@@ -255,18 +267,18 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
                 />
                 {errors.event_date && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Kort</label>
+                <label>{t("tableCourtHeader")}</label>
                 <select
                   {...register("court_id", { required: true })}
                   onChange={handleSelectedCourt}
                   disabled={!selectedDate}
                 >
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">-- {t("chooseOption")} --</option>
                   {courts.map((court) => (
                     <option key={court.court_id} value={court.court_id}>
                       {court.court_name}
@@ -275,23 +287,23 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
                 </select>
                 {errors.court_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Saat</label>
+                <label>{t("tableTimeHeader")}</label>
                 <select
                   {...register("event_time", {
-                    required: "Bu alan zorunludur",
+                    required: t("mandatoryField"),
                   })}
                   onChange={handleSelectedTime}
                   value={selectedTime}
                   disabled={!selectedDate}
                 >
-                  <option value="">-- Seçim yapın --</option>
+                  <option value="">-- {t("chooseOption")} --</option>
                   {availableTimeSlots.map((timeSlot) => (
                     <option key={timeSlot.start} value={timeSlot.start}>
                       {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
@@ -310,10 +322,10 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
                 onClick={closeAddTournamentMatchModal}
                 className={styles["discard-button"]}
               >
-                İptal
+                {t("discardButtonText")}
               </button>
               <button type="submit" className={styles["submit-button"]}>
-                Onayla
+                {t("submit")}
               </button>
             </div>
           </form>

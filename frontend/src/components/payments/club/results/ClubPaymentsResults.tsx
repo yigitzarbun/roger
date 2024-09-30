@@ -1,14 +1,13 @@
 import React, { useEffect } from "react";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import styles from "./styles.module.scss";
 import Paths from "../../../../routing/Paths";
-
 import { useGetClubPaymentssByUserIdQuery } from "../../../../../api/endpoints/PaymentsApi";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { useGetClubByUserIdQuery } from "../../../../../api/endpoints/ClubsApi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import PageLoading from "../../../loading/PageLoading";
 
 interface ClubPaymentsResultsProps {
   textSearch: string;
@@ -21,7 +20,10 @@ interface ClubPaymentsResultsProps {
 const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
   const { textSearch, status, paymentTypeId, currentPage, setCurrentPage } =
     props;
+
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: clubPayments,
@@ -80,10 +82,14 @@ const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
     refetchClubPayments();
   }, [textSearch, paymentTypeId, status, currentPage]);
 
+  if (isClubDetailsLoading || isClubPaymentsLoading) {
+    return <PageLoading />;
+  }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["title-container"]}>
-        <h2 className={styles.title}>Ödemeler</h2>
+        <h2 className={styles.title}>{t("paymentsTitle")}</h2>
         {clubPayments?.payments?.length > 0 && (
           <div className={styles["nav-container"]}>
             <FaAngleLeft
@@ -101,21 +107,25 @@ const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Durum</th>
-              <th>Ödeme Tarih</th>
-              <th>Etkinlik Tarih</th>
-              <th>Etkinlik Saat</th>
-              <th>Tür</th>
-              <th>Kort</th>
-              <th>Tutar</th>
-              <th>Taraf 1</th>
-              <th>Taraf 2</th>
+              <th>{t("paymentStatus")}</th>
+              <th>{t("paymentDateTitle")}</th>
+              <th>{t("eventDate")}</th>
+              <th>{t("eventTime")}</th>
+              <th>{t("paymentType")}</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("paymentAmount")}</th>
+              <th>{t("side1")}</th>
+              <th>{t("side2")}</th>
             </tr>
           </thead>
           <tbody>
             {clubPayments?.payments?.map((payment) => (
               <tr key={payment.payment_id} className={styles["payment-row"]}>
-                <td>{payment.payment_status}</td>
+                <td>
+                  {payment.payment_status === "success"
+                    ? t("success")
+                    : t("declined")}
+                </td>
                 <td>{payment.registered_at.slice(0, 10)}</td>
                 <td>
                   {payment.eventDate ? payment.eventDate.slice(0, 10) : "-"}
@@ -123,7 +133,21 @@ const ClubPaymentsResults = (props: ClubPaymentsResultsProps) => {
                 <td>
                   {payment.eventTime ? payment.eventTime.slice(0, 5) : "-"}
                 </td>
-                <td>{payment?.payment_type_name}</td>
+                <td>
+                  {payment?.payment_type_id === 1
+                    ? t("training")
+                    : payment?.payment_type_id === 2
+                    ? t("match")
+                    : payment?.payment_type_id === 3
+                    ? t("lesson")
+                    : payment?.payment_type_id === 4
+                    ? t("externalEvent")
+                    : payment?.payment_type_id === 5
+                    ? t("subscriptionPayment")
+                    : payment?.payment_type_id === 6
+                    ? t("tournamentAdmissionPayment")
+                    : ""}
+                </td>
                 <td>{payment.court_name ? payment.court_name : "-"}</td>
                 <td>
                   {payment.payment_type_id === 5

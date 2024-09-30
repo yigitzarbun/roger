@@ -104,6 +104,7 @@ const tournamentsModel = {
           "players.birth_year",
           "players.gender",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "players.image",
           db.raw(
             "COUNT(CASE WHEN (bookings.event_type_id = 2 OR bookings.event_type_id = 7) AND bookings.booking_status_type_id = 5 AND match_scores.match_score_status_type_id = 3 THEN match_scores.match_score_id ELSE NULL END) as totalMatches"
@@ -164,6 +165,7 @@ const tournamentsModel = {
           "players.birth_year",
           "players.gender",
           "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "players.image"
         )
         .as("player_data")

@@ -12,6 +12,7 @@ import EditClubBankDetailsModal from "../../../components/profile/club/bank-deta
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import EditTournamentModal from "../edit-tournament-modal/EditTournamentModal";
+import { useTranslation } from "react-i18next";
 
 interface ClubTournamentsResultsProps {
   clubTournaments: any[];
@@ -28,15 +29,23 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
     refetchClubDetails,
     refetchClubTournaments,
   } = props;
+
+  const { t } = useTranslation();
+
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
+
   const navigate = useNavigate();
+
   const handleNavigate = (path: string) => {
     navigate(Paths[path]);
   };
+
   const [addTournamentModal, setAddTournamentModal] = useState(false);
+
   const handleAddTournamentModal = () => {
     setAddTournamentModal(true);
   };
+
   const closeAddTournamentModal = () => {
     setAddTournamentModal(false);
   };
@@ -59,9 +68,11 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
   });
 
   const [addBankDetailsModal, setAddBankDetailsModal] = useState(false);
+
   const handleOpenBankDetailsModal = () => {
     setAddBankDetailsModal(true);
   };
+
   const closeAddBankDetailsModal = () => {
     setAddBankDetailsModal(false);
     refetchClubBankDetails();
@@ -72,6 +83,7 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
   };
 
   const [updateTournamentModal, setUpdateTournamentModal] = useState(false);
+
   const [selectedTournament, setSelectedTournament] = useState(null);
 
   const handleOpenUpdateTournamentModal = (tournament: any) => {
@@ -83,7 +95,6 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
     setUpdateTournamentModal(false);
   };
 
-  console.log(updateTournamentModal);
   if (
     isBanksLoading ||
     isClubBankDetailsExistLoading ||
@@ -92,32 +103,35 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
   ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Turnuvalar</h2>
+          <h2 className={styles["result-title"]}>
+            {t("headerTournamentsTitle")}
+          </h2>
           <button
             onClick={handleAddTournamentModal}
             className={styles["add-tournament-button"]}
             disabled={!clubBankDetailsExist || clubCourts?.length === 0}
           >
-            Yeni Turnuva
+            {t("newTournament")}
           </button>
         </div>
       </div>
       {(!clubBankDetailsExist || clubCourts?.length === 0) && (
         <div className={styles["validation-container"]}>
-          <p>Yeni turnuva ekleyebilmek için gerekenler:</p>{" "}
+          <p>{t("newTournamentRequirement")}</p>{" "}
           <div className={styles["buttons-container"]}>
             {!clubBankDetailsExist && (
               <button onClick={handleOpenBankDetailsModal}>
-                Banka Bilgilerini Ekle
+                {t("addBankAccount")}
               </button>
             )}
             {clubCourts?.length === 0 && (
               <button onClick={() => handleNavigate("CLUB_COURTS")}>
-                Kort Ekle
+                {t("addNewCourtButtonText")}
               </button>
             )}
           </div>
@@ -127,17 +141,17 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
         <table>
           <thead>
             <tr>
-              <th>Turnuva Adı</th>
-              <th>Başlangıç</th>
-              <th>Bitiş</th>
-              <th>Min. Yaş</th>
-              <th>Max. Yaş</th>
-              <th>Cinsiyet</th>
-              <th>Katılım Ücreti</th>
-              <th>Katılımcı</th>
-              <th>Max. Katılımcı</th>
-              <th>Son Başvuru</th>
-              <th>Üyelik Şartı</th>
+              <th>{t("tableTournamentName")}</th>
+              <th>{t("start")}</th>
+              <th>{t("end")}</th>
+              <th>{t("minAge")}</th>
+              <th>{t("maxAge")}</th>
+              <th>{t("gender")}</th>
+              <th>{t("admissionFee")}</th>
+              <th>{t("participants")}</th>
+              <th>{t("maxParticipantQty")}</th>
+              <th>{t("deadline")}</th>
+              <th>{t("membershipRule")}</th>
             </tr>
           </thead>
           <tbody>
@@ -158,7 +172,11 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 <td>{tournament.end_date.slice(0, 10)}</td>
                 <td>{getAge(Number(tournament.min_birth_year))}</td>
                 <td>{getAge(Number(tournament.max_birth_year))}</td>
-                <td>{tournament.tournament_gender}</td>
+                <td>
+                  {tournament.tournament_gender === "female"
+                    ? t("female")
+                    : t("male")}
+                </td>
                 <td>{`${tournament.application_fee} TL`}</td>
                 <td>{tournament.participant_count}</td>
                 <td>{tournament.max_players}</td>
@@ -169,7 +187,7 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                     onClick={() => handleOpenUpdateTournamentModal(tournament)}
                     className={styles["submit-button"]}
                   >
-                    Düzenle
+                    {t("edit")}
                   </button>
                 </td>
                 <td>
@@ -179,7 +197,7 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                     }
                     className={styles["submit-button"]}
                   >
-                    Fikstür
+                    {t("fixture")}
                   </button>
                 </td>
               </tr>
@@ -187,7 +205,7 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
           </tbody>
         </table>
       ) : clubBankDetailsExist && clubCourts?.length > 0 ? (
-        <p>Güncel turnuva bulunmamaktadır</p>
+        <p>{t("noTournaments")}</p>
       ) : (
         ""
       )}
