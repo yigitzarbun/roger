@@ -7,10 +7,13 @@ import { useUpdateUserMutation } from "../../../../../store/auth/apiSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDeactivateDeletedClubCourtsMutation } from "../../../../../../api/endpoints/CourtsApi";
+import { useTranslation } from "react-i18next";
 
 const DeleteClubModal = (props) => {
   const { clubDetails, isDeleteClubModalOpen, handleCloseDeleteClubModal } =
     props;
+
+  const { t } = useTranslation();
 
   const [deleteUser, { isSuccess: deleteClubSuccess }] = useUpdateUserMutation(
     clubDetails?.[0]?.user_id
@@ -75,17 +78,13 @@ const DeleteClubModal = (props) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseDeleteClubModal} />
       <div className={styles["modal-content"]}>
-        <h3>Hesabı Sil</h3>
-        <p>
-          Hesabınıza ait tüm bilgiler silinecektir ve bu işlemin geri dönüşü
-          olmayacaktır.
-        </p>
+        <h3>{t("deleteAccountTitle")}</h3>
         <div className={styles["input-container"]}>
-          <label>Devam etmek için kayıtlı e-posta adresinizi yazın</label>
+          <label>{t("writeEmailToContinue")}</label>
           <input type="text" onChange={handleEmail} />
         </div>
         <div className={styles["input-container"]}>
-          <label>Aşağıdaki alana hesabımı silmek istiyorum yazın</label>
+          <label>{t("writeDeleteAccount")}</label>
           <input type="text" onChange={handleDeleteConfirmation} />
         </div>
         <div className={styles["buttons-container"]}>
@@ -93,10 +92,10 @@ const DeleteClubModal = (props) => {
             className={styles["discard-button"]}
             onClick={handleCloseDeleteClubModal}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button className={styles["submit-button"]} onClick={handleDelete}>
-            Hesabı Sil
+            {t("deleteAccountTitle")}
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@ import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
 import { useGetLocationsQuery } from "../../../../../api/endpoints/LocationsApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../../../api/endpoints/ClubStaffRoleTypesApi";
+import { useTranslation } from "react-i18next";
 
 const ClubStaffFilterModal = (props) => {
   const {
@@ -21,6 +22,9 @@ const ClubStaffFilterModal = (props) => {
 
   const { data: locations, isLoading: isLocationsLoading } =
     useGetLocationsQuery({});
+
+  const { t } = useTranslation();
+
   const { data: clubStaffRoleTypes, isLoading: isClubStaffRoleTypesLoading } =
     useGetClubStaffRoleTypesQuery({});
 
@@ -34,14 +38,14 @@ const ClubStaffFilterModal = (props) => {
     >
       <div className={styles["overlay"]} onClick={closeStaffFilterModal} />
       <div className={styles["modal-content"]}>
-        <h3>Eğitmenleri Filtrele</h3>
+        <h3>{t("clubStaffFilterTitle")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["search-container"]}>
             <input
               type="text"
               onChange={handleTextSearch}
               value={textSearch}
-              placeholder="Personel adı"
+              placeholder={t("clubStaffNamePlaceholder")}
             />
           </div>
           <div className={styles["input-outer-container"]}>
@@ -51,13 +55,17 @@ const ClubStaffFilterModal = (props) => {
                 value={roleId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Tüm Roller --</option>
+                <option value="">-- {t("role")} --</option>
                 {clubStaffRoleTypes?.map((role) => (
                   <option
                     key={role.club_staff_role_type_id}
                     value={role.club_staff_role_type_id}
                   >
-                    {role.club_staff_role_type_name}
+                    {role.club_staff_role_type_id === 1
+                      ? t("managerial")
+                      : role.club_staff_role_type_id === 2
+                      ? t("userTypeTrainer")
+                      : t("other")}
                   </option>
                 ))}
               </select>
@@ -68,9 +76,11 @@ const ClubStaffFilterModal = (props) => {
                 value={gender}
                 className="input-element"
               >
-                <option value="">-- Cinsiyet --</option>
-                <option value="female">Kadın</option>
-                <option value="male">Erkek</option>
+                <option value="">
+                  -- {t("leaderboardTableGenderHeader")} --
+                </option>
+                <option value="female">{t("female")}</option>
+                <option value="male">{t("male")}</option>
               </select>
             </div>
           </div>
@@ -81,7 +91,7 @@ const ClubStaffFilterModal = (props) => {
                 value={locationId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Tüm Konumlar --</option>
+                <option value="">-- {t("allLocations")} --</option>
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -95,13 +105,13 @@ const ClubStaffFilterModal = (props) => {
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={closeStaffFilterModal}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

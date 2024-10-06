@@ -143,7 +143,7 @@
   "membershipRule": "Üyelik Şartı",
   "ageGap": "Yaş Aralığı",
   "participationStatus": "Katılım Durumu",
-  "leaveTournament": "Ayrıl",
+  "Title": "Ayrılvadan Ayrıl",
   "subscriptionTypeHeader": "Üyelik Türü",
   "clubNameHeader": "Kulüp Adı",
   "groupHeader": "Grup",
@@ -345,6 +345,7 @@
   "userTypePlayer": "Oyuncu",
   "userTypeTrainer": "Eğitmen",
   "userTypeClub": "Kulüp",
+  "userTypeExternalMember": "Çevrimdışı Üye",
 
   "leaderboardTableEmptyText": "Liderlik tablosunda puanı bulunan oyuncu henüz bulunmamaktadır",
   "playersEmptyText": "Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip tekrar deneyin.",
@@ -406,7 +407,7 @@
 
   "playerSubscriptionTrainerStaffRequired": "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir",
   "clubStaffRequired": "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir",
-  "Not": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
+  "playerLessonSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
 
   "cancelLessonTitle": "Ders İptal",
   "cancelMatchTitle": "Maç İptal",
@@ -482,6 +483,8 @@
   "playerSubscriptionRequiredOnly": "Oyuncunun kulüp üyesi olması yeterlidir",
   "clubStaffPlayerSubscriptionNotRequired": "Oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur",
 
+  "playerOrTrainerSubscriptionNotRequired": "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok",
+
   "differentPriceForMembers": "Üyelere farklı fiyat uygulanır",
   "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz",
 
@@ -539,7 +542,7 @@
 
   "noBankAccount": "Kayıtlı banka hesabınız bulunmamaktadır",
 
-  "addBankAccount": "Hesap Bilgileri Ekle",
+  "addBankAccount": "Banka Bilgileri Ekle",
 
   "editBankAccountDetails": "Banka Bilgilerini Düzenle",
 
@@ -608,5 +611,187 @@
 
   "playerNoTrainersText": "Eğitmen bulunamadı",
 
-  "noFavouritesText": "Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır"
+  "noFavouritesText": "Favorilere eklenen oyuncu, eğitmen veya kulüp bulunmamaktadır",
+
+  "addNewCourtButtonText": "Yeni Kort Ekle",
+
+  "addBankDetailsToAddCourt": "Kort eklemek için banka bilgilerinizi ekleyin",
+
+  "clubNoCourts": "Henüz sisteme eklenmiş kortunuz bulunmamaktadır",
+
+  "noCourtsFound": "Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip tekrar deneyin",
+
+  "addPrice": "Fiyat Girin",
+
+  "courtName": "Kort Adı",
+
+  "activeCourts": "Aktif Kortlar",
+  "passiveCourts": "Pasif Kortlar",
+
+  "hourUnit": "Saat",
+
+  "courtClosingHourError": "Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.",
+
+  "courtImage": "Kort Resmi",
+
+  "addCourtGuestPriceWarningText": "Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı eklemek için profilinizdeki kurallar bölümünü ziyaret edin.",
+
+  "updateCourtTitle": "Kort Düzenle",
+
+  "active": "Aktif",
+  "passive": "Pasif",
+
+  "addBooking": "Rezervasyon Ekle",
+
+  "addCourtText": "Kendi üyeleriniz ve diğer oyuncu / eğitmenlerin rezervasyon yapabilmesi için kort ekleyin.",
+
+  "player1": "1. Oyuncu",
+  "side1": "Taraf 1",
+
+  "player2": "2. Oyuncu",
+  "side2": "Taraf 2",
+
+  "chooseOption": "Seçim Yapın",
+
+  "updateBookingTitle": "Rezervasyon Düzenle",
+
+  "deleteBooking": "Rezervasyonu Sil",
+
+  "applicationsTitle": "Başvurular",
+
+  "role": "Rol",
+
+  "deleteStaff": "Personeli Çıkar",
+
+  "noClubStaff": "Kayıtlı personel bulunmamaktadır",
+
+  "clubStaffFilterTitle": "Personeli Filtrele",
+
+  "clubStaffNamePlaceholder": "Personel adı",
+
+  "managerial": "İdari & Yönetim",
+
+  "removeStaffText": "kulübünüzde çalışıyor. Bu personeli silmek istediğinize emin misiniz?",
+
+  "clubStaffApplicationTitle": "Personel Başvurusu",
+
+  "clubStaffApplicationText": "Bu kulübe başvurunuzu göndermeyi onaylıyor musunuz?",
+
+  "noClubStaffApplications": "Yeni personel başvurusu bulunmamaktadır",
+
+  "declineClubStaffApplicationTitle": "Başvuruyu Reddet",
+  "declineClubStaffApplicationText": "kulübünüzde çalıştığını belirtti. Başvuruyu reddetmek istediğinize emin misiniz?",
+
+  "acceptClubStaffApplicationTitle": "Başvuruyu Onayla",
+  "acceptClubStaffApplicationText": "kulübünüzde çalıştığını belirtti. Başvuruyu onaylamak istediğinize emin misiniz?",
+
+  "subscriptionPackages": "Üyelik Paketleri",
+
+  "addSubscriptionPackageTitle": "Üyelik Paketi Ekle",
+
+  "subscriptionPackageName": "Paket Adı",
+  "subscriptionPackageDurationTitle": "Üyelik Süresi (Ay)",
+
+  "addBankDetailsSubscriptionPackage": "Üyelik satışı yapmak için banka bilgilerinizi ekleyin",
+
+  "noSubscriptionPackages": "Henüz sisteme eklenmiş üyelik paketiniz bulunmamaktadır",
+
+  "editSubscriptionPackageTitle": "Üyelik Paketini Düzenle",
+
+  "clubExternalMember": "Çevrimdışı Üye",
+
+  "addNewSubscriber": "Yeni Üye",
+
+  "offlineSubscriberNo": "Üye No.",
+
+  "filterSubcribers": "Üyeleri Filtrele",
+
+  "subscriberType": "Üye Türü",
+
+  "deleteSubscriber": "Üye Sil",
+
+  "editMemberTitle": "Üye Düzenle",
+
+  "addSubscriptionPackageToSellSubscription": "Üyelik satışı yapmak için üyelik paketi ekleyin.",
+
+  "addNewGroup": "Yeni Grup",
+
+  "noStudentGroups": "Kayıtlı grup bulunmamaktadır",
+
+  "filterGroups": "Grupları Filtrele",
+
+  "groupTrainerPlayerName": "Grup, eğitmen veya oyuncu adı",
+
+  "editGroup": "Grubu Düzenle",
+
+  "deleteGroup": "Grubu sil",
+
+  "newTournament": "Yeni Turnuva",
+
+  "newTournamentRequirement": "Yeni turnuva eklemek için gerekenler:",
+
+  "noTournaments": "Güncel turnuva bulunmamaktadır",
+
+  "fillAllFields": "Tüm alanları doldurduğunuzdan emin olun",
+
+  "minAge": "Min. Yaş",
+  "maxAge": "Max. Yaş",
+
+  "maxParticipantQty": "Max. Katılımcı Sayısı",
+
+  "tournamentNamePlaceholder": "örn. 40 Yaş+ Erkekler",
+
+  "fixture": "Fikstür",
+
+  "editTournament": "Turnuva Düzenle",
+
+  "tournamentActive": "Turnuva Aktif",
+  "deleteTournament": "Turnuva Sil",
+
+  "tournamentParticipants": "Katılımcılar",
+
+  "noParticipants": "Henüz turnuva katılımcısı yok",
+
+  "joinTournamentTitle": "Turnuvaya Katıl",
+  "joingTournamentText": "Bu turnuvaya katılmayı onaylıyor musunuz?",
+
+  "leaveTournamentTitle": "Turnuvadan Ayrıl",
+  "leaveTournamentText": "Bu turnuvadan ayrılmayı onaylıyor musunuz?",
+
+  "tournamentPlayer1": "Oyuncu 1",
+  "tournamentPlayer2": "Oyuncu 2",
+
+  "addMatch": "Maç Ekle",
+
+  "addScore": "Skor Ekle",
+
+  "totalMatches": "Toplam Maç",
+  "wonMatches": "Kazandığı",
+  "lostMatches": "Kaybettiği",
+
+  "filterParticipants": "Katılımcıları Filtrele",
+
+  "clubType": "Kulüp Türü",
+
+  "bankDetails": "Banka Bilgileri",
+
+  "clubBankDetailText": "Kort kiralama, üyelik satışı vb. işlemler için banka bilgileriniz eklemeniz gerekmektedir",
+
+  "nameOnCard": "Kart Üzerindeki İsim Soyisim",
+
+  "cardNumber": "Kart Numarası",
+  "expiryDate": "Geçerlilik Tarihi",
+
+  "bankAccountName": "Banka Hesap Adı",
+
+  "courtPrice": "Kort Fiyatı",
+
+  "differentCourtPricingToExternalApplies": "Üye olmayanlara farklı fiyat uygulanır",
+  "differentCourtPricingToExternalNotApplies": "Üye olmayanlara farklı fiyat uygulanmaz",
+
+  "playerSubscriptionRule": "Oyuncu Üyelik Şartı",
+  "trainerStaffRule": "Eğitmen Personel Şartı",
+
+  "trainerStaffRequired": "Eğtimenin personel olması gereklidir",
+  "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok"
 }

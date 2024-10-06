@@ -3,6 +3,8 @@ import styles from "./styles.module.scss";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
 import EditClubBankDetailsModal from "./edit-bank-details/EditClubBankDetails";
+import PageLoading from "../../../loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface ClubBankAccountDetailsProps {
   clubDetails: any;
@@ -10,6 +12,9 @@ interface ClubBankAccountDetailsProps {
 }
 const ClubBankAccountDetails = (props: ClubBankAccountDetailsProps) => {
   const { clubDetails, refetchClubDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const bankDetails = {
@@ -33,14 +38,15 @@ const ClubBankAccountDetails = (props: ClubBankAccountDetailsProps) => {
     setIsEditBankModalOpen(false);
   };
 
+  if (isBanksLoading) {
+    return <PageLoading />;
+  }
+
   return (
     <div className={styles["club-bank-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Kart Bilgileri</h4>
-        <p>
-          Kort kiralama ve kulüp üyeliği satışı işlemleri için banka bilgisi
-          eklemek zorunludur.
-        </p>
+        <h4>{t("bankDetails")}</h4>
+        <p>{t("clubBankDetailText")}</p>
       </div>
       <div className={styles.section}>
         {bankDetailsExist ? (
@@ -54,18 +60,20 @@ const ClubBankAccountDetails = (props: ClubBankAccountDetailsProps) => {
                 }
               </p>
               <p>
-                {bankDetails?.name_on_bank_account} isimli hesabınız aktiftir
+                {`${bankDetails?.name_on_bank_account} ${t(
+                  "bankAccountActiveText"
+                )}`}
               </p>
             </div>
             <button className={styles.button} onClick={handleOpenEditBankModal}>
-              Düzenle
+              {t("edit")}
             </button>
           </>
         ) : (
           <div className={styles.section}>
-            <h4>Kayıtlı banka hesabınız bulunmamaktadır</h4>
+            <h4>{t("noBankAccount")}</h4>
             <button className={styles.button} onClick={handleOpenEditBankModal}>
-              Hesap Bilgileri Ekle
+              {t("addBankAccount")}
             </button>
           </div>
         )}

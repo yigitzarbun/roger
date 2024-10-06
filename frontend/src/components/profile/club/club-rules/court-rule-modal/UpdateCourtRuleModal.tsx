@@ -7,6 +7,7 @@ import {
   Club,
   useUpdateClubMutation,
 } from "../../../../../../api/endpoints/ClubsApi";
+import { useTranslation } from "react-i18next";
 
 interface UpdateCourtRuleModallProps {
   isCourtRuleModalOpen: boolean;
@@ -25,9 +26,12 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
     clubHasSubscriptionPackages,
   } = props;
 
+  const { t } = useTranslation();
+
   const [selectedCourtPriceRule, setSelectedCourtPriceRule] = useState(
     selectedClub?.[0]?.higher_price_for_non_subscribers
   );
+
   let isButtonDisabled = false;
 
   if (
@@ -100,7 +104,7 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseModal} />
       <div className={styles["modal-content"]}>
-        <h1>Kort Fiyatlandırma Kuralı</h1>
+        <h1>{t("tableCourtHeader")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -113,15 +117,15 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
                 onChange={handleSelectedCourtPriceRule}
               >
                 <option value="true">
-                  Üye olmayanlara farklı fiyat uygulanır
+                  {t("differentCourtPricingToExternalApplies")}
                 </option>
                 <option value="false">
-                  Üye olmayanlara farklı fiyat uygulanmaz
+                  {t("differentCourtPricingToExternalNotApplies")}
                 </option>
               </select>
               {errors.higher_price_for_non_subscribers && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -131,10 +135,10 @@ const UpdateCourtRuleModal = (props: UpdateCourtRuleModallProps) => {
               onClick={handleCloseModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

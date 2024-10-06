@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import {
   useUpdateClubMutation,
   Club,
@@ -14,11 +13,19 @@ import { useGetLocationsQuery } from "../../../../../../api/endpoints/LocationsA
 
 const ClubLocation = (props) => {
   const { clubDetails, refetchClubDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: locations } = useGetLocationsQuery({});
+
   const dispatch = useAppDispatch();
+
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newLocation, setNewLocation] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleLocationChange = (e) => {
@@ -46,6 +53,7 @@ const ClubLocation = (props) => {
       location_id: Number(clubDetails?.[0]?.location_id),
     },
   });
+
   const onSubmit: SubmitHandler<Club> = (formData) => {
     const updatedProfileData = {
       club_id: clubDetails?.[0]?.club_id,
@@ -95,10 +103,12 @@ const ClubLocation = (props) => {
       setValue("location_id", Number(clubDetails?.[0]?.location_id));
     }
   }, [locations, setValue, clubDetails]);
+
   return (
     <div className={styles["club-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Konum</h4>
+        <h4>{t("tableLocationHeader")}</h4>
+        <p>{t("locationText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -106,7 +116,7 @@ const ClubLocation = (props) => {
         encType="multipart/form-data"
       >
         <div className={styles["input-container"]}>
-          <label>Konum</label>
+          <label>{t("tableLocationHeader")}</label>
           <select
             {...register("location_id", { required: true })}
             onChange={handleLocationChange}
@@ -128,7 +138,7 @@ const ClubLocation = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

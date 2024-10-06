@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useGetCourtsByFilterQuery } from "../../../../../api/endpoints/CourtsApi";
 import { useGetEventTypesQuery } from "../../../../../api/endpoints/EventTypesApi";
 import PageLoading from "../../../../components/loading/PageLoading";
@@ -33,8 +32,11 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
     handleTextSearch,
   } = props;
 
+  const { t } = useTranslation();
+
   // date filter
   const tomorrow = new Date(currentDayObject);
+
   tomorrow.setDate(currentDayObject.getDate() + 1);
 
   const { data: eventTypes, isLoading: isEventTypesLoading } =
@@ -51,12 +53,12 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
           type="text"
           onChange={handleTextSearch}
           value={textSearch}
-          placeholder="Oyuncu / Eğitmen / Grup adı"
+          placeholder={t("explorePlayerCalendarSearchPlaceholder")}
         />
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleCourt} value={courtId ?? ""}>
-          <option value="">-- Kort --</option>
+          <option value="">-- {t("tableCourtHeader")} --</option>
           {myCourts?.map((court) => (
             <option key={court.court_id} value={court.court_id}>
               {court.court_name}
@@ -66,10 +68,24 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
       </div>
       <div className={styles["input-container"]}>
         <select onChange={handleEventType} value={eventTypeId ?? ""}>
-          <option value="">-- Tür --</option>
+          <option value="">-- {t("tableClubTypeHeader")} --</option>
           {eventTypes?.map((type) => (
             <option key={type.event_type_id} value={type.event_type_id}>
-              {type.event_type_name}
+              {type?.event_type_id === 1
+                ? t("training")
+                : type?.event_type_id === 2
+                ? t("match")
+                : type?.event_type_id === 3
+                ? t("lesson")
+                : type?.event_type_id === 4
+                ? t("externalTraining")
+                : type?.event_type_id === 5
+                ? t("externalLesson")
+                : type?.event_type_id === 6
+                ? t("groupLesson")
+                : type?.event_type_id === 7
+                ? t("tournamentMatch")
+                : ""}
             </option>
           ))}
         </select>
@@ -82,7 +98,7 @@ const ClubCalendarSearch = (props: ClubCalendarSearchProps) => {
             : styles["passive-clear-button"]
         }
       >
-        Temizle
+        {t("clearButtonText")}
       </button>
     </div>
   );

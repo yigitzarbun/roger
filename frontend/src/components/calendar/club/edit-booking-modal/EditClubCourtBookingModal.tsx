@@ -18,6 +18,7 @@ import {
 import { useGetEventTypesQuery } from "../../../../../api/endpoints/EventTypesApi";
 import { useGetClubTrainersQuery } from "../../../../../api/endpoints/ClubStaffApi";
 import { useGetStudentGroupsByFilterQuery } from "../../../../../api/endpoints/StudentGroupsApi";
+import { useTranslation } from "react-i18next";
 
 interface EditClubCourtBookingModalProps {
   editBookingModalOpen: boolean;
@@ -35,6 +36,9 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     myCourts,
     user,
   } = props;
+
+  const { t } = useTranslation();
+
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 
@@ -57,6 +61,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
     useUpdateBookingMutation({});
 
   const [selectedDate, setSelectedDate] = useState("");
+
   const handleSelectedDate = (event) => {
     setSelectedDate(event.target.value);
   };
@@ -68,16 +73,19 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   };
 
   const [selectedCourt, setSelectedCourt] = useState(null);
+
   const handleSelectedCourt = (event) => {
     setSelectedCourt(Number(event.target.value));
   };
 
   const [selectedEventType, setSelectedEventType] = useState(null);
+
   const handleSelectedEventType = (event) => {
     setSelectedEventType(Number(event.target.value));
   };
 
   const [selectedGroup, setSelectedGroup] = useState(null);
+
   const handleSelectedGroup = (event) => {
     setSelectedGroup(Number(event.target.value));
   };
@@ -212,6 +220,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
   ) {
     return <PageLoading />;
   }
+
   return (
     <ReactModal
       isOpen={editBookingModalOpen}
@@ -223,12 +232,12 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
       <div className={styles["overlay"]} onClick={closeEditBookingModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1 className={styles.title}>Rezervasyon Düzenle</h1>
+          <h1 className={styles.title}>{t("updateBookingTitle")}</h1>
           <button
             onClick={handleDeleteBooking}
             className={styles["delete-button"]}
           >
-            Rezervasyonu sil
+            {t("deleteBooking")}
           </button>
         </div>
         <form
@@ -237,10 +246,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Tarih</label>
+              <label>{t("tableDateHeader")}</label>
               <input
                 {...register("event_date", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                 })}
                 type="date"
                 onChange={handleSelectedDate}
@@ -248,12 +257,12 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               />
               {errors.event_date && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Kort</label>
+              <label>{t("tableCourtHeader")}</label>
               <select
                 {...register("court_id", { required: true })}
                 onChange={handleSelectedCourt}
@@ -268,17 +277,17 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               </select>
               {errors.court_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Saat</label>
+              <label>{t("tableTimeHeader")}</label>
               <select
                 {...register("event_time", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                 })}
                 onChange={handleSelectedTime}
                 value={selectedTime}
@@ -314,10 +323,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Etkinlik Türü</label>
+              <label>{t("tableClubTypeHeader")}</label>
               <select
                 {...register("event_type_id", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                 })}
                 onChange={handleSelectedEventType}
               >
@@ -330,7 +339,21 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
                   )
                   .map((type) => (
                     <option key={type.event_type_id} value={type.event_type_id}>
-                      {type.event_type_name}
+                      {type?.event_type_id === 1
+                        ? t("training")
+                        : type?.event_type_id === 2
+                        ? t("match")
+                        : type?.event_type_id === 3
+                        ? t("lesson")
+                        : type?.event_type_id === 4
+                        ? t("externalTraining")
+                        : type?.event_type_id === 5
+                        ? t("externalLesson")
+                        : type?.event_type_id === 6
+                        ? t("groupLesson")
+                        : type?.event_type_id === 7
+                        ? t("tournamentMatch")
+                        : ""}
                     </option>
                   ))}
               </select>
@@ -345,10 +368,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
             <div className={styles["input-container"]}>
               <label>
                 {selectedEventType === 4
-                  ? "1. Oyuncu"
+                  ? t("player1")
                   : selectedEventType === 5 || selectedEventType === 6
-                  ? "Eğitmen"
-                  : "Taraf 1"}
+                  ? t("tableTrainerHeader")
+                  : t("side1")}
               </label>
               <select
                 {...register("inviter_id", { required: true })}
@@ -390,19 +413,19 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               </select>
               {errors.inviter_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
               <label>
                 {selectedEventType === 4
-                  ? "2. Oyuncu"
+                  ? t("player2")
                   : selectedEventType === 5
-                  ? "Öğrenci"
+                  ? t("student")
                   : selectedEventType === 6
-                  ? "Grup"
-                  : "Taraf 1"}
+                  ? t("groupHeader")
+                  : t("side2")}
               </label>
               <select
                 {...register("invitee_id", {
@@ -424,7 +447,7 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               </select>
               {errors.invitee_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -434,10 +457,10 @@ const EditClubCourtBookingModal = (props: EditClubCourtBookingModalProps) => {
               onClick={closeEditBookingModal}
               className={styles["discard-button"]}
             >
-              Vazgeç
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>

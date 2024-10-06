@@ -17,6 +17,7 @@ import { useGetCourtStructureTypesQuery } from "../../../../../api/endpoints/Cou
 import { useGetCourtSurfaceTypesQuery } from "../../../../../api/endpoints/CourtSurfaceTypesApi";
 import EditClubBankDetailsModal from "../../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
+import { useTranslation } from "react-i18next";
 
 interface ClubCalendarResultsProps {
   courtId: number;
@@ -27,6 +28,8 @@ interface ClubCalendarResultsProps {
 }
 const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
   const { courtId, eventTypeId, myCourts, textSearch, refecthMyCourts } = props;
+
+  const { t } = useTranslation();
 
   // fetch data
   const user = useAppSelector((store) => store.user.user);
@@ -166,14 +169,14 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Takvim</h2>
+          <h2 className={styles["result-title"]}>{t("calendarTitle")}</h2>
           {myCourts?.length > 0 && (
             <button
               className={styles["add-booking-button"]}
               onClick={openAddBookingModal}
               disabled={myCourts?.length === 0}
             >
-              Rezervasyon Ekle
+              {t("addBooking")}
             </button>
           )}
         </div>
@@ -194,42 +197,35 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
       </div>
       {!clubBankDetailsExist ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>
-            Kort satışı gerçekleştirmek için öncelikle banka bilgilerinizi
-            eklemeniz gerekmektedir.
-          </p>
+          <p>{t("addBankDetailsToAddCourt")}</p>
           <button className={styles.button} onClick={handleOpenEditBankModal}>
-            Banka Bilgilerini Ekle
+            {t("addPaymentDetailsButtonText")}
           </button>
         </div>
       ) : clubBankDetailsExist &&
         clubCalendarBookings?.bookings?.length === 0 &&
         myCourts?.length === 0 ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>
-            Kendi üyeleriniz ve diğer oyuncu / eğitmenlerin rezervasyon
-            yapabilmesi için kort ekleyin.
-          </p>
+          <p>{t("addCourtText")}</p>
           <button onClick={openAddCourtModal} className={styles.button}>
             Kort Ekle
           </button>
         </div>
       ) : clubBankDetailsExist &&
         clubCalendarBookings?.bookings?.length === 0 ? (
-        <div>Onaylanmış gelecek etkinlik bulunmamaktadır.</div>
+        <div>{t("calendarEmptyText")}</div>
       ) : (
         <table>
           <thead>
             <tr>
-              <th>Davet Eden</th>
-              <th>Davet Edilen</th>
-              <th>Tür </th>
-              <th>Tarih</th>
-              <th>Saat </th>
-              <th>Kort</th>
-              <th>Konum</th>
-              <th>Ücret</th>
-              <th>Düzenle</th>
+              <th>{t("inviter")}</th>
+              <th>{t("invitee")}</th>
+              <th>{t("tableClubTypeHeader")} </th>
+              <th>{t("tableDateHeader")}</th>
+              <th>{t("tableTimeHeader")} </th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tablePriceHeader")}</th>
+              <th>{t("edit")}</th>
             </tr>
           </thead>
           <tbody>
@@ -294,11 +290,26 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                     booking.inviteename
                   )}
                 </td>
-                <td>{booking?.event_type_name}</td>
+                <td>
+                  {booking?.event_type_id === 1
+                    ? t("training")
+                    : booking?.event_type_id === 2
+                    ? t("match")
+                    : booking?.event_type_id === 3
+                    ? t("lesson")
+                    : booking?.event_type_id === 4
+                    ? t("externalTraining")
+                    : booking?.event_type_id === 5
+                    ? t("externalLesson")
+                    : booking?.event_type_id === 6
+                    ? t("groupLesson")
+                    : booking?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""}
+                </td>
                 <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                 <td>{booking.event_time.slice(0, 5)}</td>
                 <td>{booking?.court_name}</td>
-                <td>{booking?.club_name}</td>
                 <td>
                   {booking?.event_type_id !== 6
                     ? `${booking?.price_hour} TL`
@@ -312,7 +323,7 @@ const ClubCalendarResults = (props: ClubCalendarResultsProps) => {
                       onClick={() => openEditBookingModal(booking)}
                       className={styles["edit-button"]}
                     >
-                      Düzenle
+                      {t("edit")}
                     </button>
                   ) : (
                     <ImBlocked className={styles.blocked} />

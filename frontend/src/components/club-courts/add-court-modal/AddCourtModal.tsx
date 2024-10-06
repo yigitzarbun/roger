@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
 import { useForm, SubmitHandler } from "react-hook-form";
 import styles from "./styles.module.scss";
-import PageLoading from "../../../components/loading/PageLoading";
 import {
   useAddCourtMutation,
   useGetCourtsByFilterQuery,
-  useGetCourtsQuery,
 } from "../../../../api/endpoints/CourtsApi";
 import { CourtStructureType } from "../../../../api/endpoints/CourtStructureTypesApi";
 import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi";
@@ -49,7 +46,10 @@ const AddCourtModal = (props: AddCourtModalProps) => {
     refetchMyCourts,
   } = props;
 
+  const { t } = useTranslation();
+
   const [selectedImage, setSelectedImage] = useState(null);
+
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
     setSelectedImage(imageFile);
@@ -66,6 +66,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
   const { refetch: refetchClubCourts } = useGetCourtsByFilterQuery({
     club_id: user?.clubDetails?.club_id,
   });
+
   const [openingTime, setOpeningTime] = useState<string>("00:00");
 
   const handleOpeningTime = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -125,14 +126,14 @@ const AddCourtModal = (props: AddCourtModalProps) => {
       <div className={styles["overlay"]} onClick={closeAddCourtModal} />
       <div className={styles["top-container"]}>
         <div className={styles["modal-content"]}>
-          <h1 className={styles.title}>Kort Ekle</h1>
+          <h1 className={styles.title}>{t("addNewCourtButtonText")}</h1>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className={styles["form-container"]}
           >
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Kort Adı</label>
+                <label>{t("courtName")}</label>
                 <input
                   {...register("court_name", { required: true })}
                   type="text"
@@ -140,12 +141,14 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                 />
                 {errors.court_name && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Fiyat (TL / saat)</label>
+                <label>
+                  {t("tableCourtPriceHeader")} {`TL/ ${t("hourUnit")}`}
+                </label>
                 <input
                   {...register("price_hour", { required: true })}
                   type="number"
@@ -153,61 +156,71 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                 />
                 {errors.price_hour && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Kort Yüzeyi</label>
+                <label>{t("tableSurfaceHeader")}</label>
                 <select
                   {...register("court_surface_type_id", { required: true })}
                 >
-                  <option value="">-- Kort Yüzeyi --</option>
+                  <option value="">-- {t("tableSurfaceHeader")} --</option>
                   {courtSurfaceTypes?.map((surface) => (
                     <option
                       key={surface.court_surface_type_id}
                       value={surface.court_surface_type_id}
                     >
-                      {surface.court_surface_type_name}
+                      {surface?.court_surface_type_id === 1
+                        ? t("courtSurfaceHard")
+                        : surface?.court_surface_type_id === 2
+                        ? t("courtSurfaceClay")
+                        : surface?.court_surface_type_id === 3
+                        ? t("courtSurfaceGrass")
+                        : t("courtSurfaceCarpet")}
                     </option>
                   ))}
                 </select>
                 {errors.court_surface_type_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
             </div>
             <div className={styles["input-outer-container"]}>
               <div className={styles["input-container"]}>
-                <label>Mekan Tipi</label>
+                <label>{t("tableStructureHeader")}</label>
                 <select
                   {...register("court_structure_type_id", { required: true })}
                 >
-                  <option value="">-- Mekan Tipi --</option>
+                  <option value="">-- {t("tableStructureHeader")} --</option>
                   {courtStructureTypes?.map((structure) => (
                     <option
                       key={structure.court_structure_type_id}
                       value={structure.court_structure_type_id}
                     >
-                      {structure.court_structure_type_name}
+                      {structure?.court_structure_type_id === 1
+                        ? t("courtStructureClosed")
+                        : structure?.court_structure_type_id === 2
+                        ? t("courtStructureOpen")
+                        : t("courtStructureHybrid")}
                     </option>
                   ))}
                 </select>
                 {errors.court_structure_type_id && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Açılış Saati</label>
+                <label>{t("tableOpeningTimeHeader")}</label>
                 <select
                   {...register("opening_time", { required: true })}
                   onChange={handleOpeningTime}
                 >
-                  <option value="">-- Açılış Saati --</option>
+                  <option value="">-- {t("tableOpeningTimeHeader")} --</option>
                   {generateTimesArray(24).map((time) => (
                     <option key={time} value={time}>
                       {time}
@@ -216,12 +229,12 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                 </select>
                 {errors.opening_time && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
               </div>
               <div className={styles["input-container"]}>
-                <label>Kapanış Saati</label>
+                <label>{t("tableClosingTimeHeader")}</label>
                 <select
                   {...register("closing_time", {
                     required: true,
@@ -233,7 +246,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                     },
                   })}
                 >
-                  <option value="">-- Kapanış Saati --</option>
+                  <option value="">-- {t("tableClosingTimeHeader")} --</option>
                   {generateTimesArray(24).map((time) => (
                     <option key={time} value={time}>
                       {time}
@@ -242,12 +255,12 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                 </select>
                 {errors.closing_time?.type === "required" && (
                   <span className={styles["error-field"]}>
-                    Bu alan zorunludur.
+                    {t("mandatoryField")}
                   </span>
                 )}
                 {errors.closing_time?.type === "validate" && (
                   <span className={styles["error-field"]}>
-                    Kapanış saati açılış saatinden en az 1 saat sonra olmalıdır.
+                    {t("courtClosingHourError")}
                   </span>
                 )}
               </div>
@@ -255,8 +268,9 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             <div className={styles["input-outer-container"]}>
               {currentClub?.[0]["higher_price_for_non_subscribers"] && (
                 <div className={styles["input-container"]}>
-                  <label>Üye Olmayanlar İçin Fiyat (TL / saat)</label>
-
+                  <label>
+                    {t("tablePriceGuestHeader")} {`TL/ ${t("hourUnit")}`}
+                  </label>
                   <input
                     {...register("price_hour_non_subscriber", {
                       required: true,
@@ -266,13 +280,13 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                   />
                   {errors.price_hour_non_subscriber && (
                     <span className={styles["error-field"]}>
-                      Bu alan zorunludur.
+                      {t("mandatoryField")}
                     </span>
                   )}
                 </div>
               )}
               <div className={styles["input-container"]}>
-                <label>Kort Resmi</label>
+                <label>{t("courtImage")}</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -283,9 +297,7 @@ const AddCourtModal = (props: AddCourtModalProps) => {
             </div>
             {currentClub?.[0]["higher_price_for_non_subscribers"] && (
               <p className={styles["description-text"]}>
-                Eğer kort kiralamak için üyelik şartı eklerseniz, üye olmayan
-                kullanıcılar bu fiyat üzerinden ücretlendirilir. Üyelik şartı
-                eklemek için profilinizdeki kurallar bölümünü ziyaret edin.
+                {t("addCourtGuestPriceWarningText")}
               </p>
             )}
             <div className={styles["buttons-container"]}>
@@ -293,16 +305,14 @@ const AddCourtModal = (props: AddCourtModalProps) => {
                 onClick={closeAddCourtModal}
                 className={styles["discard-button"]}
               >
-                İptal Et
+                {t("tableCancelButtonText")}
               </button>
               <button
                 type="submit"
                 className={styles["submit-button"]}
                 disabled={!clubBankDetailsExist}
               >
-                {clubBankDetailsExist
-                  ? "Tamamla"
-                  : "Banka Hesap Bilgilerinizi Ekleyin"}
+                {clubBankDetailsExist ? t("submit") : t("addBankAccount")}
               </button>
             </div>
           </form>

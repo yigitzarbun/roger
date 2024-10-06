@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import { Trainer } from "../../../../../api/endpoints/TrainersApi";
 import { useGetUsersQuery } from "../../../../store/auth/apiSlice";
 import {
@@ -17,6 +12,7 @@ import {
 import { useGetClubSubscribersByIdQuery } from "../../../../../api/endpoints/ClubSubscriptionsApi";
 import { useAddUserMutation } from "../../../../store/auth/apiSlice";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface AddGroupModalProps {
   isAddGroupModalOpen: boolean;
@@ -36,6 +32,8 @@ type FormValues = {
 
 const AddGroupModal = (props: AddGroupModalProps) => {
   const { isAddGroupModalOpen, closeAddGroupModal, myTrainers, user } = props;
+
+  const { t } = useTranslation();
 
   const { data: mySubscribers, isLoading: isMySubscribersLoading } =
     useGetClubSubscribersByIdQuery(user?.user?.user_id);
@@ -120,7 +118,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
     >
       <div className={styles["overlay"]} onClick={closeAddGroupModal} />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Yeni Grup Ekle</h1>
+        <h1 className={styles.title}>{t("addNewGroup")}</h1>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -128,26 +126,25 @@ const AddGroupModal = (props: AddGroupModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Grup Adı</label>
+              <label>{t("groupName")}</label>
               <input
                 {...register("student_group_name", { required: true })}
                 type="text"
-                placeholder="örn. Yıldızlar Grubu"
               />
               {errors.student_group_name && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Eğitmen</label>
+              <label>{t("userTypeTrainer")}</label>
               <select
                 {...register("trainer_id", {
                   required: true,
                 })}
               >
-                <option value="">-- Eğitmen --</option>
+                <option value="">-- {t("userTypeTrainer")} --</option>
                 {myTrainers?.map((staff) => (
                   <option
                     key={staff.user_id}
@@ -157,20 +154,20 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               </select>
               {errors.trainer_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>1. Oyuncu</label>
+              <label>{t("student1")}</label>
               <select
                 {...register("first_student_id", {
                   required: true,
                 })}
               >
-                <option value="">-- 1. Oyuncu --</option>
+                <option value="">-- {t("student1")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -198,18 +195,18 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               </select>
               {errors.first_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>2. Oyuncu</label>
+              <label>{t("student2")}</label>
               <select
                 {...register("second_student_id", {
                   required: true,
                 })}
               >
-                <option value="">-- 2. Oyuncu --</option>
+                <option value="">-- {t("student2")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -237,16 +234,16 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               </select>
               {errors.second_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>3. Oyuncu</label>
+              <label>{t("student3")}</label>
               <select {...register("third_student_id")}>
-                <option value="">-- 3. Oyuncu --</option>
+                <option value="">-- {t("student3")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -274,14 +271,14 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               </select>
               {errors.third_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>4. Oyuncu</label>
+              <label>{t("student4")}</label>
               <select {...register("fourth_student_id")}>
-                <option value="">-- 4. Oyuncu --</option>
+                <option value="">-- {t("student4")} --</option>
                 {mySubscribers?.map((subscriber) => (
                   <option
                     key={
@@ -309,7 +306,7 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               </select>
               {errors.fourth_student_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -320,10 +317,10 @@ const AddGroupModal = (props: AddGroupModalProps) => {
               className={styles["discard-button"]}
               onClick={closeAddGroupModal}
             >
-              İptal
+              {t("cancel")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>

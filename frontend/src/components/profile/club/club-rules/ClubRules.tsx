@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { AiOutlineEdit } from "react-icons/ai";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../../store/hooks";
-
 import { useGetClubByUserIdQuery } from "../../../../../api/endpoints/ClubsApi";
-
 import UpdateCourtRuleModal from "./court-rule-modal/UpdateCourtRuleModal";
 import UpdateLessonRuleModal from "./lesson-rule-modal/UpdateLessonRuleModal";
 import UpdatePlayerRuleModal from "./player-rule-modal/UpdatePlayerRuleModal";
-
 import PageLoading from "../../../../components/loading/PageLoading";
 import { useGetClubSubscriptionPackagesByFilterQuery } from "../../../../../api/endpoints/ClubSubscriptionPackagesApi";
 
 const ClubRules = () => {
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const {
     data: selectedClub,
@@ -32,16 +29,19 @@ const ClubRules = () => {
   });
 
   const [isCourtRuleModalOpen, setIsCourtRuleModalOpen] = useState(false);
+
   const openCourtRuleModal = () => {
     setIsCourtRuleModalOpen(true);
   };
 
   const [isLessonRuleModalOpen, setIsLessonRuleModalOpen] = useState(false);
+
   const openLessonRuleModal = () => {
     setIsLessonRuleModalOpen(true);
   };
 
   const [isPlayerRuleModalOpen, setIsPlayerModalOpen] = useState(false);
+
   const handlePlayerRuleModal = () => {
     setIsPlayerModalOpen(true);
   };
@@ -55,13 +55,14 @@ const ClubRules = () => {
   useEffect(() => {
     refetchClubDetails();
   }, [isCourtRuleModalOpen, isLessonRuleModalOpen, isPlayerRuleModalOpen]);
-  if (isClubDetailsLoading) {
+
+  if (isClubDetailsLoading || isClubSubscriptionPackagesLoading) {
     return <PageLoading />;
   }
 
   return (
     <div className={styles["club-rules-container"]}>
-      <h4>Kulüp Kuralları</h4>
+      <h4>{t("clubRulesTitle")}</h4>
       <div className={styles["tables-container"]}>
         <table
           className={styles["player-rules-table"]}
@@ -69,7 +70,7 @@ const ClubRules = () => {
         >
           <thead>
             <tr>
-              <th>Antreman ve Maç Kuralları</th>
+              <th>{t("trainingMatchRuleTitle")}</th>
               <th>
                 <AiOutlineEdit className={styles.edit} />
               </th>
@@ -77,10 +78,10 @@ const ClubRules = () => {
           </thead>
           <tbody>
             <tr className={styles["rule-row"]}>
-              <td>{`Oyuncuların kort kiralamak için üye olmasına gerek ${
+              <td>{`${
                 selectedClub?.[0]?.is_player_subscription_required === true
-                  ? "var"
-                  : "yok"
+                  ? t("playerSubscriptionRequired")
+                  : t("playerSubscriptionNotRequired")
               }`}</td>
             </tr>
           </tbody>
@@ -91,7 +92,7 @@ const ClubRules = () => {
         >
           <thead>
             <tr>
-              <th>Ders Kuralları</th>
+              <th>{t("lessonTitle")}</th>
               <th>
                 <AiOutlineEdit className={styles.edit} />
               </th>
@@ -104,22 +105,22 @@ const ClubRules = () => {
                   false &&
                 selectedClub?.[0]?.is_player_lesson_subscription_required ===
                   false
-                  ? "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok"
+                  ? t("playerOrTrainerSubscriptionNotRequired")
                   : selectedClub?.[0]?.is_trainer_subscription_required ===
                       false &&
                     selectedClub?.[0]
                       ?.is_player_lesson_subscription_required === true
-                  ? "Eğitmen kulüp çalışanı değil ama oyuncu üye ise kort kiralanabilir"
+                  ? t("playerSubscriptionRequiredOnly")
                   : selectedClub?.[0]?.is_trainer_subscription_required ===
                       true &&
                     selectedClub?.[0]
                       ?.is_player_lesson_subscription_required === false
-                  ? "Eğitmen kulüp çalışanı ise ama oyuncu üye değil ise kort kiralanabilir"
+                  ? t("clubStaffRequiredOnly")
                   : selectedClub?.[0]?.is_trainer_subscription_required ===
                       true &&
                     selectedClub?.[0]
                       ?.is_player_lesson_subscription_required === true
-                  ? "Eğitmenin kulüp çalışanı olması, oyuncunun üye olması zorunludur"
+                  ? t("clubStaffPlayerSubscriptionRequired")
                   : ""}
               </td>
             </tr>
@@ -131,7 +132,7 @@ const ClubRules = () => {
         >
           <thead>
             <tr>
-              <th>Kort Fiyat Kuralları</th>
+              <th>{t("courtPrice")}</th>
               <th>
                 <AiOutlineEdit className={styles.edit} />
               </th>
@@ -139,10 +140,10 @@ const ClubRules = () => {
           </thead>
           <tbody>
             <tr className={styles["rule-row"]}>
-              <td>{`Üye olmayanlara farklı fiyat politikası ${
+              <td>{` ${
                 selectedClub?.[0]?.higher_price_for_non_subscribers === true
-                  ? "uygulanır"
-                  : "uygulanmaz"
+                  ? t("differentCourtPricingToExternalApplies")
+                  : t("differentCourtPricingToExternalNotApplies")
               }`}</td>
             </tr>
           </tbody>

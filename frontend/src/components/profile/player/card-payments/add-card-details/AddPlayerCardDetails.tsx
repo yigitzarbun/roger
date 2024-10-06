@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
-import {
-  Player,
-  useUpdatePlayerMutation,
-} from "../../../../../../api/endpoints/PlayersApi";
+import { useUpdatePlayerMutation } from "../../../../../../api/endpoints/PlayersApi";
 
 const AddPlayerCardDetails = (props) => {
   const {
@@ -22,8 +15,12 @@ const AddPlayerCardDetails = (props) => {
     cardDetailsExist,
   } = props;
 
+  const { t } = useTranslation();
+
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
+
   const [expiryValue, setExpiryValue] = useState("");
+
   const handleExpiryChange = (event) => {
     const input = event.target;
     let value = input.value.replace(/\D/g, "");
@@ -85,28 +82,26 @@ const AddPlayerCardDetails = (props) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseModal} />
       <div className={styles["modal-content"]}>
-        <h3>
-          {cardDetailsExist ? "Kart Bilgilerini Düzenle" : "Yeni Kart Ekle"}
-        </h3>
+        <h3>{cardDetailsExist ? t("updateCardInformation") : t("addCard")}</h3>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
         >
           <div className={styles["outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Kart Üzerindeki İsim Soyisim</label>
+              <label>{t("nameOnCard")}</label>
               <input
                 {...register("name_on_card", { required: true })}
                 type="text"
               />
               {errors.name_on_card && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Kart Numarası</label>
+              <label>{t("cardNumber")}</label>
               <input
                 {...register("card_number", {
                   required: "Bu alan zorunludur",
@@ -116,7 +111,7 @@ const AddPlayerCardDetails = (props) => {
               />
               {errors.card_number && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -134,12 +129,12 @@ const AddPlayerCardDetails = (props) => {
               />
               {errors.cvc && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Son Kullanma Tarihi</label>
+              <label>{t("expiryDate")}</label>
               <input
                 {...register("card_expiry", {
                   required: true,
@@ -153,7 +148,7 @@ const AddPlayerCardDetails = (props) => {
               />
               {errors.card_expiry && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -163,10 +158,10 @@ const AddPlayerCardDetails = (props) => {
               onClick={handleCloseModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

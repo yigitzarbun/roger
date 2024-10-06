@@ -10,6 +10,7 @@ import { CourtSurfaceType } from "../../../../api/endpoints/CourtSurfaceTypesApi
 import EditClubBankDetailsModal from "../../../components/profile/club/bank-details/edit-bank-details/EditClubBankDetails";
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 import { imageUrl } from "../../../common/constants/apiConstants";
+import { useTranslation } from "react-i18next";
 
 interface ClubCourtResultsProps {
   surfaceTypeId: number;
@@ -47,6 +48,8 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     refetchClubDetails,
   } = props;
 
+  const { t } = useTranslation();
+
   const clubBankDetailsExist =
     currentClub?.[0]["iban"] &&
     currentClub?.[0]["bank_id"] &&
@@ -56,6 +59,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     currentClub?.[0]["higher_price_for_non_subscribers"];
 
   const pageNumbers = [];
+
   for (let i = 1; i <= currentClubCourts?.totalPages; i++) {
     pageNumbers.push(i);
   }
@@ -68,7 +72,9 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
   const handleCloseEditBankModal = () => {
     setIsEditBankModalOpen(false);
   };
+
   const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
+
   const bankDetails = {
     bank_id: currentClub?.[0]?.bank_id,
     iban: currentClub?.[0]?.iban,
@@ -84,7 +90,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Kortlar</h2>
+          <h2 className={styles["result-title"]}>{t("courts")}</h2>
           {clubBankDetailsExist && (
             <button
               onClick={openAddCourtModal}
@@ -92,8 +98,8 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
               disabled={!clubBankDetailsExist}
             >
               {clubBankDetailsExist
-                ? "Yeni Kort Ekle"
-                : "Banka Bilgilerini Ekle"}
+                ? t("addNewCourtButtonText")
+                : t("addBankAccount")}
             </button>
           )}
         </div>
@@ -112,36 +118,33 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
       </div>
       {currentClubCourts?.courts?.length === 0 && !clubBankDetailsExist ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>Kort eklemek için banka bilgilerinizi ekleyin.</p>
+          <p>{t("addBankDetailsToAddCourt")}</p>
           <button className={styles.button} onClick={handleOpenEditBankModal}>
-            Banka Bilgilerini Ekle
+            {t("addBankAccount")}
           </button>
         </div>
       ) : currentClubCourts?.courts?.length === 0 && clubBankDetailsExist ? (
-        <p>Henüz sisteme eklenmiş kortunuz bulunmamaktadır.</p>
+        <p>{t("clubNoCourts")}</p>
       ) : (
         currentClubCourts?.courts?.length === 0 &&
         (surfaceTypeId > 0 || structureTypeId > 0 || textSearch !== "") && (
-          <p>
-            Aradığınız kritere göre kort bulunamadı. Lütfen filtreyi temizleyip
-            tekrar deneyin.
-          </p>
+          <p>{t("noCourtsFound")}</p>
         )
       )}
       {currentClubCourts?.courts?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Kort</th>
-              <th>Kort Adı</th>
-              <th>Yüzey</th>
-              <th>Mekan</th>
-              <th>Açılış</th>
-              <th>Kapanış</th>
-              <th>Fiyat </th>
-              <th>Fiyat - (misafir)</th>
-              <th>Aktif</th>
-              <th>Kortu Düzenle</th>
+              <th>{t("tableCourtHeader")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableSurfaceHeader")}</th>
+              <th>{t("tableStructureHeader")}</th>
+              <th>{t("tableOpeningTimeHeader")}</th>
+              <th>{t("tableClosingTimeHeader")}</th>
+              <th>{t("tableCourtPriceHeader")} </th>
+              <th>{t("tablePriceGuestHeader")}</th>
+              <th>{t("tableStatusHeader")}</th>
+              <th>{t("edit")}</th>
             </tr>
           </thead>
           <tbody>
@@ -168,8 +171,22 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                     {court.court_name}
                   </Link>
                 </td>
-                <td>{court.court_surface_type_name}</td>
-                <td>{court.court_structure_type_name}</td>
+                <td>
+                  {court?.court_surface_type_id === 1
+                    ? t("courtSurfaceHard")
+                    : court?.court_surface_type_id === 2
+                    ? t("courtSurfaceClay")
+                    : court?.court_surface_type_id === 3
+                    ? t("courtSurfaceGrass")
+                    : t("courtSurfaceCarpet")}
+                </td>
+                <td>
+                  {court?.court_structure_type_id === 1
+                    ? t("courtStructureClosed")
+                    : court?.court_structure_type_id === 2
+                    ? t("courtStructureOpen")
+                    : t("courtStructureHybrid")}
+                </td>
                 <td>{court.opening_time.slice(0, 5)}</td>
                 <td>{court.closing_time.slice(0, 5)}</td>
                 <td>{court.price_hour}</td>
@@ -179,7 +196,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                     ? court.price_hour_non_subscriber
                     : higher_price_for_non_subscribers &&
                       !court.price_hour_non_subscriber
-                    ? "Fiyat Girin"
+                    ? t("addPrice")
                     : higher_price_for_non_subscribers === false && "-"}
                 </td>
                 <td>
@@ -190,7 +207,7 @@ const ClubCourtsResults = (props: ClubCourtResultsProps) => {
                   )}
                 </td>
                 <td onClick={() => openEditCourtModal(court.court_id)}>
-                  <button className={styles["edit-button"]}>Düzenle</button>
+                  <button className={styles["edit-button"]}>{t("edit")}</button>
                 </td>
               </tr>
             ))}

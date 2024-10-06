@@ -345,6 +345,7 @@
   "userTypePlayer": "Player",
   "userTypeTrainer": "Trainer",
   "userTypeClub": "Club",
+  "userTypeExternalMember": "Offline Member",
 
   "leaderboardTableEmptyText": "Leaderboard is currently empty",
   "playersEmptyText": "No players found. Remove filters and try again.",
@@ -406,7 +407,10 @@
 
   "playerSubscriptionTrainerStaffRequired": "Player needs to be a member and the trainer needs to be a staff of this club, in order to book this court",
   "clubStaffRequired": "Trainer needs to be a staff at this club in order to book this court",
+  "playerLessonSubscriptionRequired": "This club requires player membership to book this court",
+
   "playerSubscriptionRequired": "This club requires player membership to book this court",
+  "playerOrTrainerSubscriptionNotRequired": "Trainers don't need to be staff or players don't need to be club members in order to book courts",
 
   "cancelLessonTitle": "Cancel Lesson",
   "cancelMatchTitle": "Cancel Match",
@@ -608,5 +612,187 @@
 
   "playerNoTrainersText": "No trainers found",
 
-  "noFavouritesText": "No favourites found"
+  "noFavouritesText": "No favourites found",
+
+  "addNewCourtButtonText": "Add New Court",
+
+  "addBankDetailsToAddCourt": "Add bank details before adding new court",
+
+  "clubNoCourts": "You haven't added any courts yet",
+
+  "noCourtsFound": "No courts found according to your search criteria. Please clear filter and try again",
+
+  "addPrice": "Add Price",
+
+  "courtName": "Court Name",
+
+  "activeCourts": "Active Courts",
+  "passiveCourts": "Passive Courts",
+
+  "hourUnit": "Hour",
+
+  "courtClosingHourError": "Closing hour must be at least an hour after opening hour",
+
+  "courtImage": "Court Image",
+
+  "addCourtGuestPriceWarningText": "If you add a membership requirement for court rentals, non-member users will be charged at this price. To add a membership requirement, please visit the rules section in your profile.",
+
+  "updateCourtTitle": "Update Court",
+
+  "active": "Active",
+  "passive": "Passive",
+
+  "addBooking": "New Booking",
+
+  "addCourtText": "Add courts to your account in order to sell court bookings",
+
+  "player1": "Player 1",
+  "side1": "Side A",
+
+  "player2": "Player 2",
+  "side2": "Side  B",
+
+  "chooseOption": "Choose an Option",
+
+  "updateBookingTitle": "Update Booking",
+
+  "deleteBooking": "Delete Booking",
+
+  "applicationsTitle": "Applications",
+
+  "role": "Role",
+
+  "deleteStaff": "Remove Staff",
+
+  "noClubStaff": "No club staff found",
+
+  "clubStaffFilterTitle": "Filter Club Staff",
+
+  "clubStaffNamePlaceholder": "Club staff name",
+
+  "managerial": "Managerial",
+
+  "removeStaffText": "currently works at your club. Are you sure you want remove him / her?",
+
+  "clubStaffApplicationTitle": "Club Staff Application",
+
+  "clubStaffApplicationText": "Do you confirm submitting your application to this club?",
+
+  "noClubStaffApplications": "No new club staff applications",
+
+  "declineClubStaffApplicationTitle": "Decline Application",
+  "declineClubStaffApplicationText": "claimed that he / she works at your club. Are you sure you want to decline this application?",
+
+  "acceptClubStaffApplicationTitle": "Approve Application",
+  "acceptClubStaffApplicationText": "claimed that he / she works at your club. Are you sure you want to approve this application?",
+
+  "subscriptionPackages": "Packages",
+
+  "addSubscriptionPackageTitle": "New Package",
+
+  "subscriptionPackageName": "Membership Name",
+  "subscriptionPackageDurationTitle": "Duration (Month)",
+
+  "addBankDetailsSubscriptionPackage": "Add bank details to create a new membership package",
+
+  "noSubscriptionPackages": "No membership packages found",
+
+  "editSubscriptionPackageTitle": "Edit Package",
+
+  "clubExternalMember": "Offline Member",
+
+  "addNewSubscriber": "New Member",
+
+  "offlineSubscriberNo": "Member No.",
+
+  "filterSubcribers": "Filter Members",
+
+  "subscriberType": "Member Type",
+
+  "deleteSubscriber": "Delete Member",
+
+  "editMemberTitle": "Edit Member",
+
+  "addSubscriptionPackageToSellSubscription": "Add new package to sell club membership",
+
+  "addNewGroup": "New Group",
+
+  "noStudentGroups": "No groups found",
+
+  "filterGroups": "Filter Groups",
+
+  "groupTrainerPlayerName": "Group, trainer or player name",
+
+  "editGroup": "Edit Group",
+
+  "deleteGroup": "Delete Group",
+
+  "newTournament": "New Tournament",
+
+  "newTournamentRequirement": "Requirements for creating new tournament:",
+
+  "noTournaments": "No tournaments found",
+
+  "fillAllFields": "All fields must be filled",
+
+  "minAge": "Min. Age",
+  "maxAge": "Max. Age",
+
+  "maxParticipantQty": "Max. Pariticipant Qty.",
+
+  "tournamentNamePlaceholder": "eg. 40+ Men's",
+
+  "fixture": "Fixture",
+
+  "editTournament": "Update Tournament",
+
+  "tournamentActive": "Tournament active",
+  "deleteTournament": "Delete tournament",
+
+  "tournamentParticipants": "Participants",
+
+  "noParticipants": "No participants yet",
+
+  "joinTournamentTitle": "Join Tournament",
+  "joingTournamentText": "Do you confirm participating to this torunament?",
+
+  "leaveTournamentTitle": "Leave Tournament",
+  "leaveTournamentText": "Are you sure you want to leave this tournament?",
+
+  "tournamentPlayer1": "Player 1",
+  "tournamentPlayer2": "Player 2",
+
+  "addMatch": "Add Match",
+
+  "addScore": "Add Score",
+
+  "totalMatches": "Total Matches",
+  "wonMatches": "Won",
+  "lostMatches": "Lost",
+
+  "filterParticipants": "Filter Participants",
+
+  "clubType": "Club Type",
+
+  "bankDetails": "Bank Details",
+
+  "clubBankDetailText": "Please add your bank details in order to rent your courts and sell club memberships",
+
+  "nameOnCard": "Full Name on Card",
+
+  "cardNumber": "Card Number",
+  "expiryDate": "Expiry Date",
+
+  "bankAccountName": "Bank Account Name",
+
+  "courtPrice": "Court Price",
+
+  "differentCourtPricingToExternalApplies": "Different pricing for non-members",
+  "differentCourtPricingToExternalNotApplies": "Same pricing for non-members",
+
+  "playerSubscriptionRule": "Player Membership Rule",
+  "trainerStaffRule": "Club Staff Rule",
+
+  "trainerStaffRequired": "Trainer must be club staff",
+  "trainerStaffNotRequired": "Trainer don't need to be club staff"
 }

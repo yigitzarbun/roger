@@ -20,6 +20,7 @@ import {
 import { useGetEventTypesQuery } from "../../../../../api/endpoints/EventTypesApi";
 import { useGetClubStaffByFilterQuery } from "../../../../../api/endpoints/ClubStaffApi";
 import { useGetStudentGroupsByFilterQuery } from "../../../../../api/endpoints/StudentGroupsApi";
+import { useTranslation } from "react-i18next";
 
 interface AddClubCourtBookingModalProps {
   addBookingModalOpen: boolean;
@@ -29,6 +30,8 @@ interface AddClubCourtBookingModalProps {
 
 const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
   const { addBookingModalOpen, closeAddBookingModal, myCourts } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user);
 
@@ -178,7 +181,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
       <div className={styles["overlay"]} onClick={closeAddBookingModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1 className={styles.title}>Rezervasyon Ekle</h1>
+          <h1 className={styles.title}>{t("addBooking")}</h1>
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -186,10 +189,10 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Tarih</label>
+              <label>{t("tableDateHeader")}</label>
               <input
                 {...register("event_date", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                 })}
                 type="date"
                 onChange={handleSelectedDate}
@@ -197,18 +200,18 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               />
               {errors.event_date && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Kort</label>
+              <label>{t("tableCourtHeader")}</label>
               <select
                 {...register("court_id", { required: true })}
                 onChange={handleSelectedCourt}
                 disabled={!selectedDate}
               >
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("tableCourtHeader")} --</option>
                 {myCourts &&
                   myCourts.map((court) => (
                     <option key={court.court_id} value={court.court_id}>
@@ -218,23 +221,23 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               </select>
               {errors.court_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Saat</label>
+              <label>{t("tableTimeHeader")}</label>
               <select
                 {...register("event_time", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                 })}
                 onChange={handleSelectedTime}
                 value={selectedTime}
                 disabled={!selectedDate || !selectedCourt}
               >
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("tableTimeHeader")} --</option>
                 {availableTimeSlots.map((timeSlot) => (
                   <option key={timeSlot.start} value={timeSlot.start}>
                     {formatTime(timeSlot.start)} - {formatTime(timeSlot.end)}
@@ -248,14 +251,14 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Etkinlik Türü</label>
+              <label>{t("tableClubTypeHeader")}</label>
               <select
                 {...register("event_type_id", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                 })}
                 onChange={handleSelectedEventType}
               >
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("tableClubTypeHeader")} --</option>
                 {eventTypes
                   .filter(
                     (type) =>
@@ -265,7 +268,21 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
                   )
                   .map((type) => (
                     <option key={type.event_type_id} value={type.event_type_id}>
-                      {type.event_type_name}
+                      {type?.event_type_id === 1
+                        ? t("training")
+                        : type?.event_type_id === 2
+                        ? t("match")
+                        : type?.event_type_id === 3
+                        ? t("lesson")
+                        : type?.event_type_id === 4
+                        ? t("externalTraining")
+                        : type?.event_type_id === 5
+                        ? t("externalLesson")
+                        : type?.event_type_id === 6
+                        ? t("groupLesson")
+                        : type?.event_type_id === 7
+                        ? t("tournamentMatch")
+                        : ""}
                     </option>
                   ))}
               </select>
@@ -280,16 +297,16 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
             <div className={styles["input-container"]}>
               <label>
                 {selectedEventType === 4
-                  ? "1. Oyuncu"
+                  ? t("player1")
                   : selectedEventType === 5 || selectedEventType === 6
-                  ? "Eğitmen"
-                  : "Taraf 1"}
+                  ? t("tableTrainerHeader")
+                  : t("side1")}
               </label>
               <select
                 {...register("inviter_id", { required: true })}
                 disabled={selectedEventType === 6 && !selectedGroup}
               >
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("chooseOption")} --</option>
                 {selectedEventType === 4 && myExternalMembers
                   ? myExternalMembers.map((member) => (
                       <option key={member.user_id} value={member.user_id}>
@@ -319,19 +336,19 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               </select>
               {errors.inviter_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
               <label>
                 {selectedEventType === 4
-                  ? "2. Oyuncu"
+                  ? t("player2")
                   : selectedEventType === 5
-                  ? "Öğrenci"
+                  ? t("student")
                   : selectedEventType === 6
-                  ? "Grup"
-                  : "Taraf 2"}
+                  ? t("groupHeader")
+                  : t("side2")}
               </label>
               <select
                 {...register("invitee_id", {
@@ -339,7 +356,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
                 })}
                 onChange={handleSelectedGroup}
               >
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("chooseOption")} --</option>
                 {myExternalMembers && selectedEventType === 6
                   ? myGroups.map((group) => (
                       <option key={group.user_id} value={group.user_id}>
@@ -354,7 +371,7 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               </select>
               {errors.invitee_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -364,10 +381,10 @@ const AddClubCourtBookingModal = (props: AddClubCourtBookingModalProps) => {
               onClick={closeAddBookingModal}
               className={styles["discard-button"]}
             >
-              Vazgeç
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>

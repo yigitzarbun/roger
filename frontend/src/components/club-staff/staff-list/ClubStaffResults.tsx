@@ -11,17 +11,24 @@ import { currentYear } from "../../../common/util/TimeFunctions";
 import { useGetPaginatedClubStaffQuery } from "../../../../api/endpoints/ClubStaffApi";
 import { useGetClubStaffRoleTypesQuery } from "../../../../api/endpoints/ClubStaffRoleTypesApi";
 import ClubStaffFilterModal from "./filter/ClubStaffFilterModal";
+import { useTranslation } from "react-i18next";
 
 const ClubStaffResults = () => {
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const { data: clubStaffRoleTypes, isLoading: isClubStaffRoleTypesLoading } =
     useGetClubStaffRoleTypesQuery({});
 
   const [currentPage, setCurrentPage] = useState(1);
+
   const [locationId, setLocationId] = useState<number | null>(null);
+
   const [gender, setGender] = useState<string>("");
+
   const [roleId, setRoleId] = useState<number | null>(null);
+
   const [textSearch, setTextSearch] = useState<string>("");
 
   const handleClear = () => {
@@ -30,9 +37,11 @@ const ClubStaffResults = () => {
     setRoleId(null);
     setTextSearch("");
   };
+
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+
   const handleLocation = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setLocationId(isNaN(value) ? null : value);
@@ -123,7 +132,7 @@ const ClubStaffResults = () => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Eğitmenleri Keşfet</h2>
+          <h2 className={styles["result-title"]}>{t("staff")}</h2>
           {myStaff?.staff?.length > 0 && (
             <FaFilter
               onClick={handleOpenStaffFilterModal}
@@ -151,18 +160,18 @@ const ClubStaffResults = () => {
           </div>
         )}
       </div>
-      {myStaff?.staff?.length === 0 && <p>Kayıtlı personel bulunmamaktadır.</p>}
+      {myStaff?.staff?.length === 0 && <p>{t("noClubStaff")}</p>}
       {clubStaffRoleTypes && myStaff?.staff?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Personel</th>
-              <th>İsim</th>
-              <th>Yaş</th>
-              <th>Cinsiyet</th>
-              <th>Konum</th>
-              <th>Rol</th>
-              <th></th>
+              <th>{t("staff")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("role")}</th>
+              <th>{t("deleteStaff")}</th>
             </tr>
           </thead>
           <tbody>
@@ -194,9 +203,13 @@ const ClubStaffResults = () => {
                   </Link>
                 </td>
                 <td>{currentYear - Number(staff?.birth_year)}</td>
-                <td>{staff?.gender}</td>
+                <td>{staff?.gender === "male" ? t("male") : t("female")}</td>
                 <td>{staff?.location_name}</td>
-                <td>{staff?.club_staff_role_type_name}</td>
+                <td>
+                  {staff?.club_staff_role_type_id == 2
+                    ? t("userTypeTrainer")
+                    : "-"}
+                </td>
                 <td>
                   {staff.employment_status === "pending" ? (
                     "Onay Bekliyor"
@@ -205,7 +218,7 @@ const ClubStaffResults = () => {
                       onClick={() => openDeleteStaffModal(staff)}
                       className={styles["delete-button"]}
                     >
-                      Sil
+                      {t("remove")}
                     </button>
                   )}
                 </td>
