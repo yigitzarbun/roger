@@ -7,6 +7,7 @@ import {
   Club,
   useUpdateClubMutation,
 } from "../../../../../../api/endpoints/ClubsApi";
+import { useTranslation } from "react-i18next";
 
 interface UpdatePlayerRuleModallProps {
   isPlayerRuleModalOpen: boolean;
@@ -25,6 +26,8 @@ const UpdatePlayerRuleModal = (props: UpdatePlayerRuleModallProps) => {
     clubHasSubscriptionPackages,
   } = props;
 
+  const { t } = useTranslation();
+
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
 
   const {
@@ -38,12 +41,15 @@ const UpdatePlayerRuleModal = (props: UpdatePlayerRuleModallProps) => {
         selectedClub?.[0]?.is_player_subscription_required,
     },
   });
+
   const [selectedRule, setSelectedRule] = useState(
     selectedClub?.[0]?.is_player_subscription_required
   );
+
   const handleSelectedRule = (event) => {
     setSelectedRule(event.target.value);
   };
+
   let isButtonDisabled = false;
 
   if (selectedRule === "true" && clubHasSubscriptionPackages?.length === 0) {
@@ -93,7 +99,7 @@ const UpdatePlayerRuleModal = (props: UpdatePlayerRuleModallProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseModal} />
       <div className={styles["modal-content"]}>
-        <h1>Antreman ve Maç Kuralları</h1>
+        <h1>{t("trainingMatchRuleTitle")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -105,16 +111,14 @@ const UpdatePlayerRuleModal = (props: UpdatePlayerRuleModallProps) => {
                 {...register("is_player_subscription_required")}
                 onChange={handleSelectedRule}
               >
-                <option value="true">
-                  Oyuncuların kort kiralamak için üye olmalarına gerek var
-                </option>
+                <option value="true">{t("playerSubscriptionRequired")}</option>
                 <option value="false">
-                  Oyuncuların kort kiralamak için üye olmaları gerekmiyor
+                  {t("playerSubscriptionNotRequired")}
                 </option>
               </select>
               {errors.is_player_subscription_required && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -124,10 +128,10 @@ const UpdatePlayerRuleModal = (props: UpdatePlayerRuleModallProps) => {
               onClick={handleCloseModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

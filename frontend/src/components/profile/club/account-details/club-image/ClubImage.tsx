@@ -6,15 +6,21 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { updateClubDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { imageUrl } from "../../../../../common/constants/apiConstants";
+import { useTranslation } from "react-i18next";
 
 const ClubImage = (props) => {
   const { clubDetails, refetchClubDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
 
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
 
   const existingImage = clubDetails?.[0]?.image || null;
+
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const { handleSubmit, reset, setValue } = useForm({
@@ -92,8 +98,8 @@ const ClubImage = (props) => {
   return (
     <div className={styles["club-image-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Profil Resmi</h4>
-        <p>Diğer kullanıcıların gördüğü profil resmidir.</p>
+        <h4>{t("profilePicture")}</h4>
+        <p>{t("profilePictureText")}</p>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -108,7 +114,6 @@ const ClubImage = (props) => {
             id="preview-image"
           />
         </label>
-
         <input
           type="file"
           id="fileInput"
@@ -126,7 +131,7 @@ const ClubImage = (props) => {
           }
           disabled={selectedImage === null}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

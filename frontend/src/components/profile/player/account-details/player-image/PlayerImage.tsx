@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
 import { useUpdatePlayerMutation } from "../../../../../../api/endpoints/PlayersApi";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Player } from "../../../../../../api/endpoints/PlayersApi";
 import { updatePlayerDetails } from "../../../../../store/slices/authSlice";
 import { useAppDispatch } from "../../../../../store/hooks";
 import { imageUrl } from "../../../../../common/constants/apiConstants";

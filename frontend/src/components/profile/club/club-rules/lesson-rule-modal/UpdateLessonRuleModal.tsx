@@ -8,6 +8,7 @@ import {
   useUpdateClubMutation,
 } from "../../../../../../api/endpoints/ClubsApi";
 import { useAppSelector } from "../../../../../store/hooks";
+import { useTranslation } from "react-i18next";
 
 interface UpdateLessonRuleModallProps {
   isLessonRuleModalOpen: boolean;
@@ -24,6 +25,9 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
     refetchClubDetails,
     clubHasSubscriptionPackages,
   } = props;
+
+  const { t } = useTranslation();
+
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const [updateClub, { data, isSuccess }] = useUpdateClubMutation({});
@@ -121,8 +125,7 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
     >
       <div className={styles["overlay"]} onClick={handleCloseModal} />
       <div className={styles["modal-content"]}>
-        <h1>Ders Kuralları</h1>
-
+        <h1>{t("lessonTitle")}</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
@@ -130,38 +133,36 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Oyuncu Üyelik Şartı</label>
+              <label>{t("playerSubscriptionRule")}</label>
               <select
                 {...register("is_player_lesson_subscription_required")}
                 onChange={handleSelectedPlayerRule}
               >
-                <option value={"true"}>Oyuncunun üye olması zorunlu</option>
+                <option value={"true"}>
+                  {t("playerLessonSubscriptionRequired")}
+                </option>
                 <option value={"false"}>
-                  Oyuncunun üye olmasına gerek yok
+                  {t("playerSubscriptionNotRequired")}
                 </option>
               </select>
               {errors.is_player_lesson_subscription_required && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Eğitmen Personel Şartı</label>
+              <label>{t("trainerStaffRule")}</label>
               <select
                 {...register("is_trainer_subscription_required")}
                 onChange={handleSelectedTrainerRule}
               >
-                <option value={"true"}>
-                  Eğitmenin personel olması zorunlu
-                </option>
-                <option value={"false"}>
-                  Eğitmenin personel olmasına gerek yok
-                </option>
+                <option value={"true"}>{t("trainerStaffRequired")}</option>
+                <option value={"false"}>{t("trainerStaffNotRequired")}</option>
               </select>
               {errors.is_trainer_subscription_required && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -171,10 +172,10 @@ const UpdateLessonRuleModal = (props: UpdateLessonRuleModallProps) => {
               onClick={handleCloseModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>

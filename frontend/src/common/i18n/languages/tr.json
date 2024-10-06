@@ -407,7 +407,7 @@
 
   "playerSubscriptionTrainerStaffRequired": "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir",
   "clubStaffRequired": "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir",
-  "Not": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
+  "playerLessonSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
 
   "cancelLessonTitle": "Ders İptal",
   "cancelMatchTitle": "Maç İptal",
@@ -482,6 +482,8 @@
   "clubStaffRequiredOnly": "Eğitmenin kulüp çalışanı olması yeterlidir",
   "playerSubscriptionRequiredOnly": "Oyuncunun kulüp üyesi olması yeterlidir",
   "clubStaffPlayerSubscriptionNotRequired": "Oyuncunun üye olmasına veya eğitmenin kulüp çalışanı olmasına gerek yoktur",
+
+  "playerOrTrainerSubscriptionNotRequired": "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok",
 
   "differentPriceForMembers": "Üyelere farklı fiyat uygulanır",
   "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz",
@@ -767,5 +769,29 @@
   "wonMatches": "Kazandığı",
   "lostMatches": "Kaybettiği",
 
-  "filterParticipants": "Katılımcıları Filtrele"
+  "filterParticipants": "Katılımcıları Filtrele",
+
+  "clubType": "Kulüp Türü",
+
+  "bankDetails": "Banka Bilgileri",
+
+  "clubBankDetailText": "Kort kiralama, üyelik satışı vb. işlemler için banka bilgileriniz eklemeniz gerekmektedir",
+
+  "nameOnCard": "Kart Üzerindeki İsim Soyisim",
+
+  "cardNumber": "Kart Numarası",
+  "expiryDate": "Geçerlilik Tarihi",
+
+  "bankAccountName": "Banka Hesap Adı",
+
+  "courtPrice": "Kort Fiyatı",
+
+  "differentCourtPricingToExternalApplies": "Üye olmayanlara farklı fiyat uygulanır",
+  "differentCourtPricingToExternalNotApplies": "Üye olmayanlara farklı fiyat uygulanmaz",
+
+  "playerSubscriptionRule": "Oyuncu Üyelik Şartı",
+  "trainerStaffRule": "Eğitmen Personel Şartı",
+
+  "trainerStaffRequired": "Eğtimenin personel olması gereklidir",
+  "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok"
 }

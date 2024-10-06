@@ -407,7 +407,10 @@
 
   "playerSubscriptionTrainerStaffRequired": "Player needs to be a member and the trainer needs to be a staff of this club, in order to book this court",
   "clubStaffRequired": "Trainer needs to be a staff at this club in order to book this court",
+  "playerLessonSubscriptionRequired": "This club requires player membership to book this court",
+
   "playerSubscriptionRequired": "This club requires player membership to book this court",
+  "playerOrTrainerSubscriptionNotRequired": "Trainers don't need to be staff or players don't need to be club members in order to book courts",
 
   "cancelLessonTitle": "Cancel Lesson",
   "cancelMatchTitle": "Cancel Match",
@@ -767,5 +770,29 @@
   "wonMatches": "Won",
   "lostMatches": "Lost",
 
-  "filterParticipants": "Filter Participants"
+  "filterParticipants": "Filter Participants",
+
+  "clubType": "Club Type",
+
+  "bankDetails": "Bank Details",
+
+  "clubBankDetailText": "Please add your bank details in order to rent your courts and sell club memberships",
+
+  "nameOnCard": "Full Name on Card",
+
+  "cardNumber": "Card Number",
+  "expiryDate": "Expiry Date",
+
+  "bankAccountName": "Bank Account Name",
+
+  "courtPrice": "Court Price",
+
+  "differentCourtPricingToExternalApplies": "Different pricing for non-members",
+  "differentCourtPricingToExternalNotApplies": "Same pricing for non-members",
+
+  "playerSubscriptionRule": "Player Membership Rule",
+  "trainerStaffRule": "Club Staff Rule",
+
+  "trainerStaffRequired": "Trainer must be club staff",
+  "trainerStaffNotRequired": "Trainer don't need to be club staff"
 }

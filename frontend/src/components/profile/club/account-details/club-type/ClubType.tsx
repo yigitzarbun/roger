@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import {
   useUpdateClubMutation,
   Club,
@@ -14,11 +13,19 @@ import { useGetClubTypesQuery } from "../../../../../../api/endpoints/ClubTypesA
 
 const ClubType = (props) => {
   const { clubDetails, refetchClubDetails } = props;
+
+  const { t } = useTranslation();
+
   const { data: clubTypes } = useGetClubTypesQuery({});
+
   const dispatch = useAppDispatch();
+
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newType, setNewType] = useState(null);
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleTypeChange = (e) => {
@@ -99,7 +106,7 @@ const ClubType = (props) => {
   return (
     <div className={styles["club-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Kulüp Türü</h4>
+        <h4>{t("clubType")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -113,12 +120,16 @@ const ClubType = (props) => {
           >
             {clubTypes?.map((type) => (
               <option key={type.club_type_id} value={type.club_type_id}>
-                {type.club_type_name}
+                {type.club_type_id === 1
+                  ? t("clubTypePrivate")
+                  : type.club_type_id === 2
+                  ? t("clubTypePublic")
+                  : t("clubTypeResidential")}
               </option>
             ))}
           </select>
           {errors.club_type_id && (
-            <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+            <span className={styles["error-field"]}>{t("mandatoryField")}</span>
           )}
         </div>
         <button
@@ -128,7 +139,7 @@ const ClubType = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

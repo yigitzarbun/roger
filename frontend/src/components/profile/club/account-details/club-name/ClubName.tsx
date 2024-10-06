@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useUpdateClubMutation } from "../../../../../../api/endpoints/ClubsApi";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Club } from "../../../../../../api/endpoints/ClubsApi";
@@ -11,11 +10,17 @@ import { useAppDispatch } from "../../../../../store/hooks";
 
 const ClubName = (props) => {
   const { clubDetails, refetchClubDetails } = props;
+
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
 
   const [updateClub, { isSuccess }] = useUpdateClubMutation({});
+
   const [updatedProfile, setUpdatedProfile] = useState(null);
+
   const [newName, setNewName] = useState("");
+
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const handleNameChange = (e) => {
@@ -88,7 +93,7 @@ const ClubName = (props) => {
   return (
     <div className={styles["club-account-details-container"]}>
       <div className={styles["title-container"]}>
-        <h4>Kulüp Adı</h4>
+        <h4>{t("clubNameHeader")}</h4>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -103,7 +108,9 @@ const ClubName = (props) => {
               onChange={handleNameChange}
             />
             {errors.club_name && (
-              <span className={styles["error-field"]}>Bu alan zorunludur.</span>
+              <span className={styles["error-field"]}>
+                {t("mandatoryField")}
+              </span>
             )}
           </div>
         </div>
@@ -114,7 +121,7 @@ const ClubName = (props) => {
           }
           disabled={buttonDisabled}
         >
-          Kaydet
+          {t("save")}
         </button>
       </form>
     </div>

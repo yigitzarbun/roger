@@ -1,18 +1,10 @@
 import React, { useEffect } from "react";
-
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
-import {
-  Club,
-  useUpdateClubMutation,
-} from "../../../../../../api/endpoints/ClubsApi";
-
+import { useUpdateClubMutation } from "../../../../../../api/endpoints/ClubsApi";
+import { useTranslation } from "react-i18next";
 import { Bank } from "../../../../../../api/endpoints/BanksApi";
 
 interface EditClubBankDetailsModallProps {
@@ -34,6 +26,8 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
     refetchClubDetails,
   } = props;
 
+  const { t } = useTranslation();
+
   const [updateClub, { data, isSuccess }] = useUpdateClubMutation({});
 
   const {
@@ -43,7 +37,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      iban: clubDetails?.[0]?.iban,
+      iban: String(clubDetails?.[0]?.iban || ""),
       name_on_bank_account: clubDetails?.[0]?.name_on_bank_account,
       bank_id: clubDetails?.[0]?.bank_id,
     },
@@ -102,9 +96,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
       <div className={styles["overlay"]} onClick={handleCloseModal} />
       <div className={styles["modal-content"]}>
         <h1>
-          {bankDetailsExist
-            ? "Banla Bilgilerini Düzenle"
-            : "Banka Bilgilerini Ekle"}
+          {bankDetailsExist ? t("editBankAccountDetails") : t("addBankAccount")}
         </h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -112,43 +104,43 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>IBAN no</label>
+              <label>IBAN</label>
               <input
                 {...register("iban", {
-                  required: "Bu alan zorunludur",
+                  required: t("mandatoryField"),
                   minLength: {
                     value: 26,
-                    message: "Bilgileri doğru girdiğinizden emin olun",
+                    message: t("mandatoryField"),
                   },
                   maxLength: {
                     value: 26,
-                    message: "Bilgileri doğru girdiğinizden emin olun",
+                    message: t("mandatoryField"),
                   },
                 })}
-                type="number"
+                type="text"
               />
               {errors.iban && (
                 <span className={styles["error-field"]}>
-                  Bilgileri eksiksiz ve doğru girdiğinizden emin olun
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Banka Hesap Adı</label>
+              <label>{t("bankAccountName")}</label>
               <input
                 {...register("name_on_bank_account", { required: true })}
                 type="text"
               />
               {errors.name_on_bank_account && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Banka</label>
+              <label>{t("bankName")}</label>
               <select {...register("bank_id")}>
-                <option value="">-- Seçim yapın --</option>
+                <option value="">-- {t("chooseOption")} --</option>
                 {banks?.map((bank) => (
                   <option key={bank.bank_id} value={bank.bank_id}>
                     {bank.bank_name}
@@ -157,7 +149,7 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
               </select>
               {errors.bank_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -167,10 +159,10 @@ const EditClubBankDetailsModal = (props: EditClubBankDetailsModallProps) => {
               onClick={handleCloseModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Onayla
+              {t("submit")}
             </button>
           </div>
         </form>
