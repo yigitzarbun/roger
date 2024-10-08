@@ -309,9 +309,9 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
                 </td>
                 <td>
                   {event?.court_structure_type_id === 1
-                    ? t("courtStructureOpen")
-                    : event?.court_structure_type_id === 2
                     ? t("courtStructureClosed")
+                    : event?.court_structure_type_id === 2
+                    ? t("courtStructureOpen")
                     : t("courtStructureHybrid")}
                 </td>
                 <td>

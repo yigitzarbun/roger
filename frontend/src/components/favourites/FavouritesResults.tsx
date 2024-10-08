@@ -12,6 +12,7 @@ import {
   useUpdateFavouriteMutation,
 } from "../../../api/endpoints/FavouritesApi";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../common/constants/apiConstants";
 
 interface FavouritesSearchProps {
   locationId: number;
@@ -135,7 +136,9 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
                     <img
                       src={
                         favourite?.image
-                          ? favourite?.image
+                          ? `${imageUrl}/${favourite?.image}`
+                          : favourite?.playerImage
+                          ? `${imageUrl}/${favourite?.playerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       className={styles.image}
@@ -147,9 +150,13 @@ const FavouritesResults = (props: FavouritesSearchProps) => {
                     to={`${paths.EXPLORE_PROFILE}${favourite?.user_type_id}/${favourite.favouritee_id}`}
                     className={styles.name}
                   >
-                    {favourite?.fname || favourite?.lname
+                    {favourite?.fname
                       ? `${favourite?.fname} ${favourite?.lname}`
-                      : favourite.club_name}
+                      : favourite?.playerFname
+                      ? `${favourite?.playerFname} ${favourite?.playerLname}`
+                      : favourite.club_name
+                      ? favourite.club_name
+                      : "-"}
                   </Link>
                 </td>
                 <td>

@@ -1,13 +1,9 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import {
   useGetClubSubscriptionPackagesByFilterQuery,
   useUpdateClubSubscriptionPackageMutation,
@@ -27,6 +23,8 @@ type FormValues = {
 const EditSubscriptionPackageModal = (
   props: EditSubscriptionPackageModalProps
 ) => {
+  const { t } = useTranslation();
+
   const {
     openEditPackageModal,
     closeEditClubSubscriptionPackageModal,
@@ -100,19 +98,27 @@ const EditSubscriptionPackageModal = (
         onClick={closeEditClubSubscriptionPackageModal}
       />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Üyelik Paketi Düzenle</h1>
-        <h4>{selectedSubscriptionPackage?.club_subscription_type_name}</h4>
+        <h1 className={styles.title}>{t("editSubscriptionPackageTitle")}</h1>
+        <h4>
+          {selectedSubscriptionPackage?.club_subscription_type_id === 1
+            ? t("oneMonthSubscription")
+            : selectedSubscriptionPackage?.club_subscription_type_id === 2
+            ? t("threeMonthSubscription")
+            : selectedSubscriptionPackage?.club_subscription_type_id === 3
+            ? t("sixMonthSubscription")
+            : t("twelveMonthSubscription")}
+        </h4>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className={styles["form-container"]}
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Fiyat (TL)</label>
+              <label>{t("price")} (TL)</label>
               <input {...register("price", { required: true })} type="number" />
               {errors.price && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -122,10 +128,10 @@ const EditSubscriptionPackageModal = (
               onClick={closeEditClubSubscriptionPackageModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>

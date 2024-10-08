@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-
 import ClubSubscriptionPackagesResults from "./results/ClubSubscriptionPackagesResults";
 import EditSubscriptionPackageModal from "./edit-subscription-package-modal/EditSubscriptionPackageModal";
 import PageLoading from "../../../components/loading/PageLoading";
-
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
 import { useGetClubSubscriptionTypesQuery } from "../../../../api/endpoints/ClubSubscriptionTypesApi";
 import { useAppSelector } from "../../../store/hooks";
@@ -14,6 +12,7 @@ interface ClubSubscriptionPackagesProps {
 }
 const ClubSubscriptionPackages = (props: ClubSubscriptionPackagesProps) => {
   const { currentClub, refetchClubDetails } = props;
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const [selectedSubscriptionPackage, setSelectedSubscriptionPackage] =

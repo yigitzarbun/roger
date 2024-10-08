@@ -4,12 +4,12 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { FaFilter } from "react-icons/fa6";
 import { imageUrl } from "../../../common/constants/apiConstants";
 import { BsInfoCircleFill } from "react-icons/bs";
-
 import styles from "./styles.module.scss";
 import { getAge } from "../../../common/util/TimeFunctions";
 import Paths from "../../../routing/Paths";
 import { Link } from "react-router-dom";
 import TournamentPlayersFilterModal from "./filter/TournamentPlayersFilterModal";
+import { useTranslation } from "react-i18next";
 
 interface TournamentDetailProps {
   tournamentDetails: any;
@@ -39,6 +39,8 @@ const TournamentDetail = (props: TournamentDetailProps) => {
     handleClear,
   } = props;
 
+  const { t } = useTranslation();
+
   const [openTournamentPlayersFilter, setOpenTournamentPlayersFilter] =
     useState(false);
 
@@ -61,7 +63,9 @@ const TournamentDetail = (props: TournamentDetailProps) => {
         <div className={styles["title-container"]}>
           {tournamentDetails?.players?.length > 0 && (
             <h2 className={styles["result-title"]}>
-              {`${tournamentDetails?.tournament?.tournament_name} Katılımcıları`}
+              {`${tournamentDetails?.tournament?.tournament_name} ${t(
+                "tournamentParticipants"
+              )}`}
             </h2>
           )}
 
@@ -92,15 +96,15 @@ const TournamentDetail = (props: TournamentDetailProps) => {
         <table>
           <thead>
             <tr>
-              <th>Sıralama</th>
-              <th>Oyuncu</th>
-              <th>İsim</th>
-              <th>Toplam Maç</th>
-              <th>Kazandığı</th>
-              <th>Kaybettiği</th>
-              <th>Puan</th>
-              <th>Seviye</th>
-              <th>Yaş</th>
+              <th>{t("leaderboardTableRankingHeader")}</th>
+              <th>{t("leaderboardTablePlayerHeader")}</th>
+              <th>{t("leaderboardTablePlayerNameHeader")}</th>
+              <th>{t("totalMatches")}</th>
+              <th>{t("wonMatches")}</th>
+              <th>{t("lostMatches")}</th>
+              <th>{t("leaderboardTablePointsHeader")}</th>
+              <th>{t("leaderboardTableLevelHeader")}</th>
+              <th>{t("leaderboardTableAgeHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -133,14 +137,22 @@ const TournamentDetail = (props: TournamentDetailProps) => {
                 <td>{player.wonmatches}</td>
                 <td>{player.lostmatches}</td>
                 <td>{player.playerpoints}</td>
-                <td>{player.player_level_name}</td>
+                <td>
+                  {player?.player_level_id === 1
+                    ? t("playerLevelBeginner")
+                    : player?.player_level_id === 2
+                    ? t("playerLevelIntermediate")
+                    : player?.player_level_id === 3
+                    ? t("playerLevelAdvanced")
+                    : t("playerLevelProfessinal")}
+                </td>
                 <td>{getAge(player.birth_year)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>Henüz turnuva katılımcısı bulunmamaktadır</p>
+        <p>{t("noParticipants")}</p>
       )}
 
       {openTournamentPlayersFilter && (
@@ -155,22 +167,25 @@ const TournamentDetail = (props: TournamentDetailProps) => {
           closeTournamentPlayersFilter={closeTournamentPlayersFilter}
         />
       )}
-      <div className={styles["pages-container"]}>
-        {pageNumbers?.map((pageNumber) => (
-          <button
-            key={pageNumber}
-            value={pageNumber}
-            onClick={handleTournamentPage}
-            className={
-              pageNumber === Number(currentPage)
-                ? styles["active-page"]
-                : styles["passive-page"]
-            }
-          >
-            {pageNumber}
-          </button>
-        ))}
-      </div>
+      {pageNumbers?.length > 0 && (
+        <div className={styles["pages-container"]}>
+          {pageNumbers?.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              value={pageNumber}
+              onClick={handleTournamentPage}
+              className={
+                pageNumber === Number(currentPage)
+                  ? styles["active-page"]
+                  : styles["passive-page"]
+              }
+            >
+              {pageNumber}
+            </button>
+          ))}
+        </div>
+      )}
+
       {tournamentDetails?.players?.length > 0 && (
         <div className={styles["info-container"]}>
           <BsInfoCircleFill className={styles.icon} />

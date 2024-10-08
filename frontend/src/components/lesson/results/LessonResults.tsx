@@ -369,7 +369,6 @@ const LessonResults = (props: TrainSearchProps) => {
               <th>{t("tableLocationHeader")}</th>
               <th>{t("tablePriceHeader")}</th>
               <th>{t("tableLessonHeader")}</th>
-              <th>{t("tableStudentshipHeader")}</th>
             </tr>
           </thead>
           <tbody>
@@ -451,44 +450,6 @@ const LessonResults = (props: TrainSearchProps) => {
                   >
                     {t("tableLessonInviteButtonText")}
                   </button>
-                </td>
-                <td>
-                  {playerStudentships?.find(
-                    (student) =>
-                      student.trainer_id === trainer.trainerUserId &&
-                      student.student_status === "pending"
-                  ) ? (
-                    <BsClockHistory
-                      className={styles["pending-confirmation-text"]}
-                    />
-                  ) : playerStudentships?.find(
-                      (student) =>
-                        student.trainer_id === trainer.trainerUserId &&
-                        student.student_status === "accepted"
-                    ) ? (
-                    <button
-                      onClick={() =>
-                        handleDeclineStudent(trainer.trainerUserId)
-                      }
-                      className={styles["cancel-student-button"]}
-                    >
-                      {t("tableDeleteStudentshipButtonText")}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() =>
-                        handleOpenStudentApplicationModal(
-                          trainer.trainerUserId,
-                          trainer.fname,
-                          trainer.lname,
-                          trainer.image
-                        )
-                      }
-                      className={styles["add-student-button"]}
-                    >
-                      {t("tableStudentshipButtonText")}
-                    </button>
-                  )}
                 </td>
               </tr>
             ))}

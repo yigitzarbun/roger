@@ -1,7 +1,6 @@
 import React from "react";
-
+import { useTranslation } from "react-i18next";
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../../store/hooks";
 
 interface ClubTournamentFixtureNavigationProps {
@@ -15,6 +14,8 @@ const ClubTournamentFixtureNavigation = ({
 }: ClubTournamentFixtureNavigationProps) => {
   const user = useAppSelector((store) => store?.user?.user);
 
+  const { t } = useTranslation();
+
   return (
     <div className={styles["nav-container"]}>
       <button
@@ -25,7 +26,7 @@ const ClubTournamentFixtureNavigation = ({
             : styles["inactive-button"]
         }
       >
-        <span>Fikstür</span>
+        <span>{t("fixture")}</span>
       </button>
       <button
         onClick={() => handleDisplay("participants")}
@@ -35,7 +36,7 @@ const ClubTournamentFixtureNavigation = ({
             : styles["inactive-button"]
         }
       >
-        <span>Katılımcılar</span>
+        <span>{t("tournamentParticipants")}</span>
       </button>
     </div>
   );

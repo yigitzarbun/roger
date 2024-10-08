@@ -1,19 +1,14 @@
 import React, { useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-
 import { toast } from "react-toastify";
-
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import styles from "./styles.module.scss";
-
 import {
   ClubSubscriptionPackage,
   useAddClubSubscriptionPackageMutation,
   useGetClubSubscriptionPackagesByFilterQuery,
 } from "../../../../../api/endpoints/ClubSubscriptionPackagesApi";
-
 import { ClubSubscriptionTypes } from "../../../../../api/endpoints/ClubSubscriptionTypesApi";
 
 interface AddSubscriptionPackageModalProps {
@@ -42,6 +37,8 @@ const AddSubscriptionPackageModal = (
     currentClub,
   } = props;
 
+  const { t } = useTranslation();
+
   const { refetch: refetchMyPackages } =
     useGetClubSubscriptionPackagesByFilterQuery({
       is_active: true,
@@ -57,6 +54,7 @@ const AddSubscriptionPackageModal = (
     useAddClubSubscriptionPackageMutation({});
 
   const myPackageTypes = [];
+
   myPackages?.forEach((myPackage) =>
     myPackageTypes.push(myPackage.club_subscription_type_id)
   );
@@ -105,7 +103,7 @@ const AddSubscriptionPackageModal = (
         onClick={closeAddClubSubscriptionPackageModal}
       />
       <div className={styles["modal-content"]}>
-        <h1 className={styles.title}>Üyelik Paketi Ekle</h1>
+        <h1 className={styles.title}>{t("addSubscriptionPackageTitle")}</h1>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -113,11 +111,11 @@ const AddSubscriptionPackageModal = (
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Üyelik Türü</label>
+              <label>{t("subscriptionTypeHeader")}</label>
               <select
                 {...register("club_subscription_type_id", { required: true })}
               >
-                <option value="">-- Üyelik Türü --</option>
+                <option value="">-- {t("subscriptionTypeHeader")} --</option>
                 {clubSubscriptionTypes
                   ?.filter(
                     (type) =>
@@ -128,18 +126,24 @@ const AddSubscriptionPackageModal = (
                       key={type.club_subscription_type_id}
                       value={type.club_subscription_type_id}
                     >
-                      {type.club_subscription_type_name}
+                      {type?.club_subscription_type_id === 1
+                        ? t("oneMonthSubscription")
+                        : type?.club_subscription_type_id === 2
+                        ? t("threeMonthSubscription")
+                        : type?.club_subscription_type_id === 3
+                        ? t("sixMonthSubscription")
+                        : t("twelveMonthSubscription")}
                     </option>
                   ))}
               </select>
               {errors.club_subscription_type_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Fiyat (TL)</label>
+              <label>{t("price")} (TL)</label>
               <input
                 {...register("price", { required: true })}
                 type="number"
@@ -147,7 +151,7 @@ const AddSubscriptionPackageModal = (
               />
               {errors.price && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -157,16 +161,14 @@ const AddSubscriptionPackageModal = (
               onClick={closeAddClubSubscriptionPackageModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button
               type="submit"
               className={styles["submit-button"]}
               disabled={!clubBankDetailsExist}
             >
-              {clubBankDetailsExist
-                ? "Tamamla"
-                : "Banka Hesap Bilgilerinizi Ekleyin"}
+              {clubBankDetailsExist ? t("submit") : t("addBankAccount")}
             </button>
           </div>
         </form>

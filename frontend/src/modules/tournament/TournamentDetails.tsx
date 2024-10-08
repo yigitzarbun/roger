@@ -14,18 +14,24 @@ import { useGetTournamentMatchRoundsQuery } from "../../../api/endpoints/Tournam
 
 const TournamentDetails = () => {
   const params = useParams();
+
   const tournamentId = Number(params?.tournament_id);
+
   const [currentPage, setCurrentPage] = useState(1);
+
   const [textSearch, setTextSearch] = useState("");
+
   const [playerLevelId, setPlayerLevelId] = useState(null);
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+
   const handlePlayerLevel = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setPlayerLevelId(isNaN(value) ? null : value);
   };
+
   const handleClear = () => {
     setTextSearch("");
     setPlayerLevelId(null);
@@ -132,9 +138,15 @@ const TournamentDetails = () => {
     refetchTournamentDetails();
   }, [currentPage, textSearch, playerLevelId, tournamentId]);
 
-  if (isTournamentDetailsLoading) {
+  if (
+    isTournamentDetailsLoading ||
+    isTournamentMatchRoundsLoading ||
+    isTournamentParticipantsCountLoading ||
+    isTournamentMatchesLoading
+  ) {
     return <PageLoading />;
   }
+
   return (
     <div className={styles["tournament-container"]}>
       <TournamentDetailsNavigation

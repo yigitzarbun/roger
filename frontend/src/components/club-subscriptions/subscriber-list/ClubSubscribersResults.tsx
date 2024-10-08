@@ -20,6 +20,7 @@ import EditClubBankDetailsModal from "../../../components/profile/club/bank-deta
 import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 import AddSubscriptionPackageModal from "../subscription-packages/add-subscription-package-modal/AddSubscriptionPackageModal";
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../../api/endpoints/ClubSubscriptionPackagesApi";
+import { useTranslation } from "react-i18next";
 
 interface ClubSubscribersResultsProps {
   textSearch: any;
@@ -53,6 +54,8 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     refetchClubDetails,
   } = props;
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const { data: userTypes, isLoading: isUserTypesLoading } =
     useGetUserTypesQuery({});
@@ -215,7 +218,9 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     isPlayerLevelsLoading ||
     isSubscriptionTypesLoading ||
     isMySubscriptionPackagesLoading ||
-    isUserTypesLoading
+    isUserTypesLoading ||
+    isBanksLoading ||
+    isMyPackagesLoading
   ) {
     return <PageLoading />;
   }
@@ -224,14 +229,14 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <div className={styles["title-container"]}>
-          <h2 className={styles["result-title"]}>Üyeler</h2>
+          <h2 className={styles["result-title"]}>{t("subscribersTitle")}</h2>
           {bankDetailsExist && mySubscriptionPackages?.length > 0 && (
             <button
               onClick={openAddClubSubscriberModal}
               className={styles["add-subscription-package-button"]}
               disabled={mySubscriptionPackages?.length === 0}
             >
-              <p className={styles["add-title"]}>Yeni Üye Ekle</p>
+              <p className={styles["add-title"]}>{t("addNewSubscriber")}</p>
             </button>
           )}
           {mySubscriptions?.subscribers?.length > 0 && (
@@ -264,40 +269,40 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
       </div>
       {!bankDetailsExist ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>Üyelik satışı yapmak için banka bilgilerinizi ekleyin.</p>
+          <p>{t("addBankDetailsSubscriptionPackage")}</p>
           <button className={styles.button} onClick={handleOpenEditBankModal}>
-            Banka Bilgilerini Ekle
+            {t("addBankAccount")}
           </button>
         </div>
       ) : bankDetailsExist && mySubscriptionPackages?.length === 0 ? (
         <div className={styles["add-bank-details-container"]}>
-          <p>Üyelik satışı yapmak için üyelik paketi ekleyin.</p>
+          <p>{t("addSubscriptionPackageToSellSubscription")}</p>
           <button
             className={styles.button}
             onClick={openAddClubSubscriptionPackageModal}
           >
-            Üyelik Paketi Ekle
+            {t("addSubscriptionPackageTitle")}
           </button>
         </div>
       ) : (
         mySubscriptions?.subscribers?.length === 0 && (
-          <p>Kayıtlı aktif üye bulunmamaktadır.</p>
+          <p>{t("clubHasNoSubscribers")}</p>
         )
       )}
       {mySubscriptions?.subscribers?.length > 0 && (
         <table>
           <thead>
             <tr>
-              <th>Üye</th>
-              <th>İsim</th>
-              <th>Üye Tipi</th>
-              <th>Seviye</th>
-              <th>Cinsiyet</th>
-              <th>Yaş</th>
-              <th>Konum</th>
-              <th>Üyelik Tipi</th>
-              <th>Üyelik Başlangıç</th>
-              <th>Üyelik Bitiş</th>
+              <th>{t("user")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableClubTypeHeader")}</th>
+              <th>{t("tableLevelHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("subscriptionTypeHeader")}</th>
+              <th>{t("start")}</th>
+              <th>{t("end")}</th>
             </tr>
           </thead>
           <tbody>
@@ -334,9 +339,11 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                       to={`${paths.EXPLORE_PROFILE}1/${subscription.playerUserId}`}
                       className={styles["subscription-name"]}
                     >
-                      {`${subscription?.fname}
-                        ${subscription?.lname}
-                        `}
+                      {subscription?.fname
+                        ? `${subscription?.fname}
+                        ${subscription?.lname}`
+                        : `${subscription?.playerFname}
+                        ${subscription?.playerLname}`}
                     </Link>
                   ) : subscription?.user_type_id === 5 ? (
                     `${subscription?.fname} ${subscription?.lname}`
@@ -344,16 +351,55 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                     ""
                   )}
                 </td>
-                <td>{subscription?.user_type_name}</td>
                 <td>
-                  {subscription?.playerLevelName
-                    ? subscription?.playerLevelName
-                    : subscription?.externalLevelName
-                    ? subscription?.externalLevelName
-                    : ""}
+                  {subscription?.user_type_id === 1
+                    ? t("userTypePlayer")
+                    : subscription?.user_type_id === 5
+                    ? t("clubExternalMember")
+                    : "-"}
                 </td>
-                <td>{subscription?.gender}</td>
-                <td>{getAge(Number(subscription.birth_year))}</td>
+                <td>
+                  {subscription?.playerLevelId === 1 &&
+                  subscription?.playerLevelId
+                    ? t("playerLevelBeginner")
+                    : subscription?.playerLevelId === 2 &&
+                      subscription?.playerLevelId
+                    ? t("playerLevelIntermediate")
+                    : subscription?.playerLevelId === 3 &&
+                      subscription?.playerLevelId
+                    ? t("playerLevelAdvanced")
+                    : subscription?.playerLevelId === 4 &&
+                      subscription?.playerLevelId
+                    ? t("playerLevelProfessinal")
+                    : subscription?.externalLevelId === 1 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelBeginner")
+                    : subscription?.externalLevelId === 2 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelIntermediate")
+                    : subscription?.externalLevelId === 3 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelAdvanced")
+                    : subscription?.externalLevelId === 4 &&
+                      subscription?.externalLevelId
+                    ? t("playerLevelProfessinal")
+                    : "-"}
+                </td>
+                <td>
+                  {subscription?.gender && subscription?.gender === "male"
+                    ? t("male")
+                    : subscription?.gender && subscription?.gender === "female"
+                    ? t("female")
+                    : subscription?.playerGender &&
+                      subscription?.playerGender === "male"
+                    ? t("male")
+                    : t("female")}
+                </td>
+                <td>
+                  {subscription?.birth_year
+                    ? getAge(Number(subscription.birth_year))
+                    : getAge(Number(subscription?.playerBirthYear))}
+                </td>
                 <td>
                   {subscription?.playerLocationName
                     ? subscription?.playerLocationName
@@ -361,7 +407,15 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                     ? subscription?.externalLocationName
                     : ""}
                 </td>
-                <td>{subscription?.club_subscription_type_name}</td>
+                <td>
+                  {subscription?.club_subscription_type_id === 1
+                    ? t("oneMonthSubscription")
+                    : subscription?.club_subscription_type_id === 2
+                    ? t("threeMonthSubscription")
+                    : subscription?.club_subscription_type_id === 3
+                    ? t("sixMonthSubscription")
+                    : t("twelveMonthSubscription")}
+                </td>
                 <td>{subscription.start_date.slice(0, 10)}</td>
                 <td>{subscription.end_date.slice(0, 10)}</td>
                 <td>
@@ -370,7 +424,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                       to={`${paths.EXPLORE_PROFILE}1/${subscription.playerUserId} `}
                     >
                       <button className={styles["view-button"]}>
-                        Görüntüle
+                        {t("tableViewHeader")}
                       </button>
                     </Link>
                   ) : subscription?.user_type_id === 5 ? (
@@ -378,7 +432,7 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
                       onClick={() => openEditClubSubscriberModal(subscription)}
                       className={styles["edit-button"]}
                     >
-                      Güncelle
+                      {t("edit")}
                     </button>
                   ) : (
                     ""

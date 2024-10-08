@@ -166,7 +166,7 @@
     .view-button {
       background-color: $roger-black-dark;
       border: none;
-      width: 150px;
+      width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
@@ -188,7 +188,7 @@
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
       cursor: pointer;
-      width: 150px;
+      width: 100px;
     }
     .edit-button:hover {
       background-color: var(--primary-button-background-color);

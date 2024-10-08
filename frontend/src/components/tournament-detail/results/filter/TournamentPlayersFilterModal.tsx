@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import ReactModal from "react-modal";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface TournamentPlayersFilterModalProps {
   textSearch: string;
@@ -26,6 +27,8 @@ const TournamentPlayersFilterModal = (
     closeTournamentPlayersFilter,
   } = props;
 
+  const { t } = useTranslation();
+
   return (
     <ReactModal
       isOpen={openTournamentPlayersFilter}
@@ -39,7 +42,7 @@ const TournamentPlayersFilterModal = (
         onClick={closeTournamentPlayersFilter}
       />
       <div className={styles["modal-content"]}>
-        <h3>Katılımcıları Filtrele</h3>
+        <h3>{t("filterParticipants")}</h3>
         <div className={styles["form-container"]}>
           <div className={styles["input-outer-container"]}>
             <div className={styles["search-container"]}>
@@ -47,7 +50,7 @@ const TournamentPlayersFilterModal = (
                 onChange={handleTextSearch}
                 value={textSearch}
                 type="text"
-                placeholder="Oyuncularda ara"
+                placeholder={t("explorePlayersFilterSearchPlaceholder")}
               />
             </div>
           </div>
@@ -58,13 +61,19 @@ const TournamentPlayersFilterModal = (
                 value={playerLevelId ?? ""}
                 className="input-element"
               >
-                <option value="">-- Seviye --</option>
+                <option value="">-- {t("playerLevel")} --</option>
                 {playerLevels?.map((player_level) => (
                   <option
                     key={player_level.player_level_id}
                     value={player_level.player_level_id}
                   >
-                    {player_level.player_level_name}
+                    {player_level?.player_level_id === 1
+                      ? t("playerLevelBeginner")
+                      : player_level?.player_level_id === 2
+                      ? t("playerLevelIntermediate")
+                      : player_level?.player_level_id === 3
+                      ? t("playerLevelAdvanced")
+                      : t("playerLevelProfessinal")}
                   </option>
                 ))}
               </select>
@@ -72,13 +81,13 @@ const TournamentPlayersFilterModal = (
           </div>
           <div className={styles["buttons-container"]}>
             <button onClick={handleClear} className={styles["discard-button"]}>
-              Temizle
+              {t("clearButtonText")}
             </button>
             <button
               onClick={closeTournamentPlayersFilter}
               className={styles["submit-button"]}
             >
-              Uygula
+              {t("applyButtonText")}
             </button>
           </div>
         </div>

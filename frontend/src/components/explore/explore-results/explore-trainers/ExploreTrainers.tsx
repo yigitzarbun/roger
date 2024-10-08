@@ -3,7 +3,6 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { FaFilter } from "react-icons/fa6";
 import { BsSortDown } from "react-icons/bs";
-import { BsClockHistory } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../routing/Paths";
@@ -262,21 +261,7 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
       updateStudent(updatedStudentData);
     }
   };
-  const handleDeclineStudent = (selectedTrainerId: number) => {
-    const selectedStudent = playerStudentships?.find(
-      (student) =>
-        student.trainer_id === selectedTrainerId &&
-        student.player_id === user?.user?.user_id &&
-        student.student_status === "accepted"
-    );
-    if (selectedStudent) {
-      const updatedStudentData = {
-        ...selectedStudent,
-        student_status: "declined",
-      };
-      updateStudent(updatedStudentData);
-    }
-  };
+
   useEffect(() => {
     if (isAddStudentSuccess || isUpdateStudentSuccess) {
       handleCloseStudentApplicationModal();
@@ -381,7 +366,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
               <th>{t("tableAgeHeader")}</th>
               <th>{t("tableLocationHeader")}</th>
               <th>{isUserPlayer ? t("tableLessonHeader") : ""}</th>
-              <th>{isUserPlayer ? t("tableStudentshipHeader") : ""}</th>
             </tr>
           </thead>
           <tbody>
@@ -460,46 +444,6 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
                     </button>
                   )}
                 </td>
-                {isUserPlayer && (
-                  <td>
-                    {playerStudentships?.find(
-                      (student) =>
-                        student.trainer_id === trainer.trainerUserId &&
-                        student.student_status === "pending"
-                    ) ? (
-                      <BsClockHistory
-                        className={styles["pending-confirmation-text"]}
-                      />
-                    ) : playerStudentships?.find(
-                        (student) =>
-                          student.trainer_id === trainer.trainerUserId &&
-                          student.student_status === "accepted"
-                      ) ? (
-                      <button
-                        onClick={() =>
-                          handleDeclineStudent(trainer.trainerUserId)
-                        }
-                        className={styles["cancel-student-button"]}
-                      >
-                        {t("tableDeleteStudentshipButtonText")}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          handleOpenStudentApplicationModal(
-                            trainer.trainerUserId,
-                            trainer.fname,
-                            trainer.lname,
-                            trainer.image
-                          )
-                        }
-                        className={styles["add-student-button"]}
-                      >
-                        {t("tableStudentshipButtonText")}
-                      </button>
-                    )}
-                  </td>
-                )}
               </tr>
             ))}
           </tbody>

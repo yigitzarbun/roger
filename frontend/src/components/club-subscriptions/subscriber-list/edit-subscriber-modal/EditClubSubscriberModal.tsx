@@ -18,6 +18,7 @@ import {
 } from "../../../../../api/endpoints/ClubSubscriptionsApi";
 import { PlayerLevel } from "../../../../../api/endpoints/PlayerLevelsApi";
 import PageLoading from "../../../../components/loading/PageLoading";
+import { useTranslation } from "react-i18next";
 
 interface EditClubSubscriberModalProps {
   isEditSubscriberModalOpen: boolean;
@@ -49,6 +50,8 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
     playerLevels,
     mySubscriptionPackages,
   } = props;
+
+  const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
 
@@ -252,12 +255,12 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
       />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1 className={styles.title}>Üye Düzenle</h1>
+          <h1 className={styles.title}>{t("editMemberTitle")}</h1>
           <button
             onClick={handleDeleteExternalMember}
             className={styles["delete-button"]}
           >
-            Üyeyi sil
+            {t("deleteSubscriber")}
           </button>
         </div>
         <form
@@ -266,62 +269,62 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
         >
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>İsim</label>
+              <label>{t("firstName")}</label>
               <input {...register("fname", { required: true })} type="text" />
               {errors.fname && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Soyisim</label>
+              <label>{t("lastName")}</label>
               <input {...register("lname", { required: true })} type="text" />
               {errors.lname && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Üye No.</label>
+              <label>{t("offlineSubscriberNo")}</label>
               <input {...register("member_id")} type="text" />
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>E-posta</label>
+              <label>{t("loginEmailLabel")}</label>
               <input {...register("email")} type="email" />
             </div>
             <div className={styles["input-container"]}>
-              <label>Doğum Yılı</label>
+              <label>{t("birthYear")}</label>
               <input
                 {...register("birth_year", { required: true })}
                 type="number"
               />
               {errors.birth_year && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Cinsiyet</label>
+              <label>{t("gender")}</label>
               <select {...register("gender", { required: true })}>
-                <option value="">-- Cinsiyet --</option>
-                <option value="female">Kadın</option>
-                <option value="male">Erkek</option>
+                <option value="">-- {t("gender")} --</option>
+                <option value="female">{t("female")}</option>
+                <option value="male">{t("male")}</option>
               </select>
               {errors.gender && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
           </div>
           <div className={styles["input-outer-container"]}>
             <div className={styles["input-container"]}>
-              <label>Üyelik Türü</label>
+              <label>{t("subscriptionType")}</label>
               <select
                 {...register("club_subscription_package_id", {
                   required: true,
@@ -340,45 +343,55 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
                           clubPackage.club_subscription_type_id
                       )?.club_subscription_type_name
                     } - ${
-                      clubSubscriptionTypes?.find(
-                        (type) =>
-                          type.club_subscription_type_id ===
-                          clubPackage.club_subscription_type_id
-                      )?.club_subscription_duration_months
-                    } ay - ${clubPackage.price} TL
+                      clubPackage?.club_subscription_type_id === 1
+                        ? t("oneMonthSubscription")
+                        : clubPackage?.club_subscription_type_id === 2
+                        ? t("threeMonthSubscription")
+                        : clubPackage?.club_subscription_type_id === 3
+                        ? t("sixMonthSubscription")
+                        : t("twelveMonthSubscription")
+                    } - ${clubPackage.price} TL
                  `}
                   </option>
                 ))}
               </select>
               {errors.club_subscription_package_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Seviye</label>
+              <label>{t("tableLevelHeader")}</label>
               <select {...register("player_level_id", { required: true })}>
-                <option value="">-- Seviye --</option>
+                <option value="">-- {t("tableLevelHeader")} --</option>
                 {playerLevels?.map((level) => (
                   <option
                     key={level.player_level_id}
                     value={level.player_level_id}
                   >
-                    {level.player_level_name}
+                    {level?.player_level_id === 1 && level?.player_level_id
+                      ? t("playerLevelBeginner")
+                      : level?.player_level_id === 2
+                      ? t("playerLevelIntermediate")
+                      : level?.player_level_id === 3
+                      ? t("playerLevelAdvanced")
+                      : level?.player_level_id === 4
+                      ? t("playerLevelProfessinal")
+                      : ""}
                   </option>
                 ))}
               </select>
               {errors.player_level_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
             <div className={styles["input-container"]}>
-              <label>Konum</label>
+              <label>{t("tableLocationHeader")}</label>
               <select {...register("location_id", { required: true })}>
-                <option value="">-- Konum --</option>
+                <option value="">-- {t("tableLocationHeader")} --</option>{" "}
                 {locations?.map((location) => (
                   <option
                     key={location.location_id}
@@ -390,7 +403,7 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
               </select>
               {errors.location_id && (
                 <span className={styles["error-field"]}>
-                  Bu alan zorunludur.
+                  {t("mandatoryField")}
                 </span>
               )}
             </div>
@@ -400,10 +413,10 @@ const EditClubSubscriberModal = (props: EditClubSubscriberModalProps) => {
               onClick={closeEditClubSubscriberModal}
               className={styles["discard-button"]}
             >
-              İptal
+              {t("discardButtonText")}
             </button>
             <button type="submit" className={styles["submit-button"]}>
-              Tamamla
+              {t("submit")}
             </button>
           </div>
         </form>
