@@ -6,6 +6,7 @@ import AcceptClubStaffModal from "./accept-staff-modal/AcceptClubStaffModal";
 import DeclineClubStaffModal from "./decline-staff-moda/DeclineClubStaffModal";
 import { currentYear } from "../../../common/util/TimeFunctions";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../common/constants/apiConstants";
 
 interface ClubStaffRequestsProps {
   myStaffRequests: any;
@@ -80,7 +81,7 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                     <img
                       src={
                         request?.trainerImage
-                          ? request?.trainerImage
+                          ? `${imageUrl}/${request?.trainerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt="request"

@@ -12,6 +12,7 @@ import { useGetPaginatedClubStaffQuery } from "../../../../api/endpoints/ClubSta
 import { useGetClubStaffRoleTypesQuery } from "../../../../api/endpoints/ClubStaffRoleTypesApi";
 import ClubStaffFilterModal from "./filter/ClubStaffFilterModal";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../common/constants/apiConstants";
 
 const ClubStaffResults = () => {
   const { t } = useTranslation();
@@ -182,7 +183,7 @@ const ClubStaffResults = () => {
                     <img
                       src={
                         staff.trainerImage
-                          ? staff.trainerImage
+                          ? `${imageUrl}/${staff?.trainerImage}`
                           : "/images/icons/avatar.jpg"
                       }
                       alt="staff_image"

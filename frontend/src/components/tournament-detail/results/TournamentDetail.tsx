@@ -68,15 +68,14 @@ const TournamentDetail = (props: TournamentDetailProps) => {
               )}`}
             </h2>
           )}
-
-          {tournamentDetails?.players?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenTournamentFilter}
-              className={
-                textSearch !== "" ? styles["active-filter"] : styles.filter
-              }
-            />
-          )}
+          <FaFilter
+            onClick={handleOpenTournamentFilter}
+            className={
+              textSearch !== "" || playerLevelId > 0
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
         </div>
         {tournamentDetails?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>

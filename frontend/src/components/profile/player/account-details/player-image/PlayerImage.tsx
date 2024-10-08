@@ -40,7 +40,6 @@ const PlayerImage = (props) => {
   };
 
   const onSubmit: SubmitHandler<PlayerForm> = () => {
-    console.log("Submitting player update");
     const updatedProfileData = {
       player_id: playerDetails?.player_id,
       fname: playerDetails?.fname,
@@ -54,7 +53,6 @@ const PlayerImage = (props) => {
       player_level_id: Number(playerDetails?.player_level_id),
       user_id: playerDetails?.user_id,
     };
-    console.log("Updated Profile Data: ", updatedProfileData);
     updatePlayer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);
   };
@@ -84,7 +82,9 @@ const PlayerImage = (props) => {
 
   const imagePreviewUrl = selectedImage
     ? URL.createObjectURL(selectedImage)
-    : `${imageUrl}/${existingImage}` || "/images/icons/avatar.jpg";
+    : existingImage
+    ? `${imageUrl}/${existingImage}`
+    : "/images/icons/avatar.jpg";
 
   return (
     <div className={styles["player-account-details-container"]}>

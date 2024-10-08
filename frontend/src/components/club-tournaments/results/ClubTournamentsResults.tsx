@@ -181,7 +181,9 @@ const ClubTournamentsResults = (props: ClubTournamentsResultsProps) => {
                 <td>{tournament.participant_count}</td>
                 <td>{tournament.max_players}</td>
                 <td>{tournament.application_deadline.slice(0, 10)}</td>
-                <td>{tournament.club_subscription_required ? "Var" : "Yok"}</td>
+                <td>
+                  {tournament.club_subscription_required ? t("yes") : t("no")}
+                </td>
                 <td>
                   <button
                     onClick={() => handleOpenUpdateTournamentModal(tournament)}

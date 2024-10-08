@@ -154,8 +154,8 @@
   "today": "Bugün",
   "tomorrow": "Yarın",
 
-  "yes": "Yes",
-  "no": "No",
+  "yes": "Evet",
+  "no": "Hayır",
 
   "clubTypePrivate": "Özel",
   "clubTypePublic": "Devlet / Belediye / Okul",
@@ -793,5 +793,7 @@
   "trainerStaffRule": "Eğitmen Personel Şartı",
 
   "trainerStaffRequired": "Eğtimenin personel olması gereklidir",
-  "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok"
+  "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok",
+
+  "tournamentInfo": "Turnuva Bilgileri"
 }
