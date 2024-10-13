@@ -65,6 +65,8 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                             ? 1
                             : booking.event_type_id === 2
                             ? 1
+                            : booking.event_type_id === 7
+                            ? 1
                             : booking.event_type_id === 3
                             ? 2
                             : ""
@@ -80,7 +82,8 @@ const ExplorePlayerEventsModal = (props: ExplorePlayerEventsModalProps) => {
                         <img
                           src={
                             (booking.event_type_id === 1 ||
-                              booking.event_type_id === 2) &&
+                              booking.event_type_id === 2 ||
+                              booking.event_type_id === 7) &&
                             booking.playerImage
                               ? `${imageUrl}/${booking.playerImage}`
                               : booking.event_type_id === 3 &&

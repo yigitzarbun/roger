@@ -1,15 +1,11 @@
 import React, { useState, ChangeEvent } from "react";
-
 import styles from "./styles.module.scss";
-
 import { useAppSelector } from "../../store/hooks";
-
 import ExploreNavigation from "../../components/explore/navigation/ExploreNavigation";
 import ExplorePlayers from "../../components/explore/explore-results/explore-players/ExplorePlayers";
 import ExploreTrainers from "../../components/explore/explore-results/explore-trainers/ExploreTrainers";
 import ExploreClubs from "../../components/explore/explore-results/explore-clubs/ExploreClubs";
 import ExploreCourts from "../../components/explore/explore-results/explore-courts/ExploreCourts";
-
 import { useGetLocationsQuery } from "../../../api/endpoints/LocationsApi";
 import { useGetPlayerLevelsQuery } from "../../../api/endpoints/PlayerLevelsApi";
 import { useGetTrainerExperienceTypesQuery } from "../../../api/endpoints/TrainerExperienceTypesApi";
@@ -24,6 +20,7 @@ const Explore = () => {
   const user = useAppSelector((store) => store.user.user);
 
   const [display, setDisplay] = useState("players");
+
   const handleDisplay = (value: string) => {
     setDisplay(value);
   };
@@ -55,21 +52,28 @@ const Explore = () => {
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
 
-  // TO DO: isUserPlayer burdan gönder
   const [textSearch, setTextSearch] = useState<string>("");
+
   const [playerLevelId, setPlayerLevelId] = useState<number | null>(null);
+
   const [clubId, setClubId] = useState<number | null>(null);
 
   const [trainerExperienceTypeId, setTrainerExperienceTypeId] = useState<
     number | null
   >(null);
+
   const [gender, setGender] = useState<string>("");
+
   const [locationId, setLocationId] = useState<number | null>(null);
+
   const [clubType, setClubType] = useState<number | null>(null);
+
   const [courtSurfaceType, setCourtSurfaceType] = useState<number | null>(null);
+
   const [courtStructureType, setCourtStructureType] = useState<number | null>(
     null
   );
+
   const [favourite, setFavourite] = useState<boolean | null>(false);
 
   const [clubTrainers, setClubTrainers] = useState<boolean | null>(false);
@@ -91,6 +95,7 @@ const Explore = () => {
 
     setSubscribedClubs(false);
   };
+
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
@@ -108,6 +113,7 @@ const Explore = () => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
+
   const handleTrainerExperience = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setTrainerExperienceTypeId(isNaN(value) ? null : value);

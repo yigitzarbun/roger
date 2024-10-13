@@ -118,7 +118,6 @@ const AddTournamentMatchModal = (props: AddTournamentMatchModalProps) => {
       inviter_id: Number(formData.inviter_id),
       invitee_id: Number(formData.invitee_id),
     };
-
     addBooking(bookingData);
   };
 
