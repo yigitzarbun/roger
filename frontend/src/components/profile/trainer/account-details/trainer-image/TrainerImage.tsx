@@ -88,10 +88,11 @@ const TrainerImage = (props) => {
     reset,
   ]);
 
-  // Prepare the image preview URL
   const imagePreviewUrl = selectedImage
     ? URL.createObjectURL(selectedImage)
-    : `${imageUrl}/${existingImage}` || "/images/icons/avatar.jpg";
+    : existingImage
+    ? `${imageUrl}/${existingImage}`
+    : "/images/icons/avatar.jpg";
 
   return (
     <div className={styles["trainer-account-details-container"]}>

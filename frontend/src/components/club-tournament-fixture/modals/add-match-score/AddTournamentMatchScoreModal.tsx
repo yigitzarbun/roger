@@ -6,6 +6,10 @@ import styles from "./styles.module.scss";
 import { useUpdateMatchScoreMutation } from "../../../../../api/endpoints/MatchScoresApi";
 import { useAppSelector } from "../../../../store/hooks";
 import { useTranslation } from "react-i18next";
+import {
+  useGetBookingByIdQuery,
+  useUpdateBookingMutation,
+} from "../../../../../api/endpoints/BookingsApi";
 
 type FormValues = {
   inviter_first_set_games_won: number;
@@ -36,10 +40,16 @@ const AddTournamentMatchScoreModal = (
 
   const { t } = useTranslation();
 
+  const { data: bookingDetails, isLoading: isBookingDetailsLoading } =
+    useGetBookingByIdQuery(selectedMatchScore?.booking_id);
+
   const user = useAppSelector((store) => store?.user?.user);
 
   const [updateMatchScore, { isSuccess: isUpdateMatchScoreSuccess }] =
     useUpdateMatchScoreMutation({});
+
+  const [updateBooking, { isSuccess: isUpdateBookingSuccess }] =
+    useUpdateBookingMutation({});
 
   const [firstSetInviter, setFirstSetInviter] = useState(null);
 
@@ -121,6 +131,23 @@ const AddTournamentMatchScoreModal = (
 
   useEffect(() => {
     if (isUpdateMatchScoreSuccess) {
+      const bookingData = {
+        booking_id: bookingDetails?.[0]?.booking_id,
+        registered_at: bookingDetails?.[0]?.registered_at,
+        event_date: bookingDetails?.[0]?.event_date,
+        event_time: bookingDetails?.[0]?.event_time,
+        court_price: bookingDetails?.[0]?.court_price,
+        lesson_price: bookingDetails?.[0]?.lesson_price,
+        invitation_note: bookingDetails?.[0]?.invitation_note,
+        payment_id: bookingDetails?.[0]?.payment_id,
+        booking_status_type_id: 5,
+        event_type_id: bookingDetails?.[0]?.event_type_id,
+        club_id: bookingDetails?.[0]?.club_id,
+        court_id: bookingDetails?.[0]?.court_id,
+        inviter_id: bookingDetails?.[0]?.inviter_id,
+        invitee_id: bookingDetails?.[0]?.invitee_id,
+      };
+      updateBooking(bookingData);
       toast.success("Başarıyla gönderildi");
       refetchTournamentMatches();
       reset({

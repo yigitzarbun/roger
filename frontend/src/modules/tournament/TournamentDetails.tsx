@@ -142,7 +142,8 @@ const TournamentDetails = () => {
     isTournamentDetailsLoading ||
     isTournamentMatchRoundsLoading ||
     isTournamentParticipantsCountLoading ||
-    isTournamentMatchesLoading
+    isTournamentMatchesLoading ||
+    isPlayerLevelsLoading
   ) {
     return <PageLoading />;
   }

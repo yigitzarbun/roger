@@ -18,15 +18,21 @@ const PlayerEvents = () => {
   };
 
   const [textSearch, setTextSearch] = useState<string>("");
+
   const [clubId, setClubId] = useState<number | null>(null);
+
   const [courtSurfaceTypeId, setcourtSurfaceTypeId] = useState<number | null>(
     null
   );
+
   const [courtStructureTypeId, setcourtStructureTypeId] = useState<
     number | null
   >(null);
+
   const [eventTypeId, setEventTypeId] = useState<number | null>(null);
+
   const [missingReviews, setMissingReviews] = useState<number | null>(null);
+
   const [missingScores, setMissingScores] = useState<number | null>(null);
 
   const [selectedMatchScore, setSelectedMatchScore] = useState(null);
@@ -38,6 +44,7 @@ const PlayerEvents = () => {
   const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [isViewReviewModalOpen, setIsViewReviewModalOpen] = useState(false);
+
   const openViewReviewModal = (booking_id: number) => {
     setSelectedBookingId(booking_id);
     setIsViewReviewModalOpen(true);
@@ -47,9 +54,13 @@ const PlayerEvents = () => {
   };
 
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+
   const [fname, setFname] = useState("");
+
   const [lname, setLname] = useState("");
+
   const [image, setImage] = useState(null);
+
   const openReviewModal = (
     booking_id: number,
     fname: string,
@@ -62,6 +73,7 @@ const PlayerEvents = () => {
     setImage(image);
     setIsAddReviewModalOpen(true);
   };
+
   const closeReviewModal = () => {
     setIsAddReviewModalOpen(false);
   };
@@ -69,33 +81,43 @@ const PlayerEvents = () => {
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
   };
+
   const handleClub = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setClubId(isNaN(value) ? null : value);
   };
+
   const handleCourtStructure = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setcourtStructureTypeId(isNaN(value) ? null : value);
   };
+
   const handleCourtSurface = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setcourtSurfaceTypeId(isNaN(value) ? null : value);
   };
+
   const handleEventType = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(event.target.value, 10);
     setEventTypeId(isNaN(value) ? null : value);
   };
+
   const handleMissingReviews = () => {
     missingReviews === null ? setMissingReviews(1) : setMissingReviews(null);
   };
+
   const handleMissingScores = () => {
     missingScores === null ? setMissingScores(1) : setMissingScores(null);
   };
+
   const { data: clubs, isLoading: isClubsLoading } = useGetClubsQuery({});
+
   const { data: courtStructureTypes, isLoading: isCourtStructureTypesLoading } =
     useGetCourtStructureTypesQuery({});
+
   const { data: courtSurfaceTypes, isLoading: isCourtSurfaceTypesLoading } =
     useGetCourtSurfaceTypesQuery({});
+
   const { data: eventTypes, isLoading: isEventTypesLoading } =
     useGetEventTypesQuery({});
 

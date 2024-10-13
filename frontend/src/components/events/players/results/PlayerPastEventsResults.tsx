@@ -134,6 +134,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
   };
 
   const pageNumbers = [];
+
   for (let i = 1; i <= myEvents?.totalPages; i++) {
     pageNumbers.push(i);
   }

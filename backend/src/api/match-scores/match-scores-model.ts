@@ -144,15 +144,23 @@ const matchScoresModel = {
       const count = await db
         .select(
           "match_scores.*",
-          "bookings.*",
-          "players.*",
+          "bookings.booking_id",
+          "bookings.inviter_id",
+          "bookings.invitee_id",
+          "bookings.event_date",
+          "bookings.event_time",
           "players.image as playerImage",
-          "clubs.*",
-          "courts.*",
+          "players.fname",
+          "players.lname",
+          "player_levels.player_level_name",
+          "player_levels.player_level_id",
           "event_types.*",
-          "court_surface_types.*",
-          "court_structure_types.*",
-          "player_levels.*"
+          "clubs.club_name",
+          "courts.court_name",
+          "court_surface_types.court_surface_type_name",
+          "court_surface_types.court_surface_type_id",
+          "court_structure_types.court_structure_type_name",
+          "court_structure_types.court_structure_type_id"
         )
         .from("bookings")
         .leftJoin("players", function () {
@@ -243,7 +251,9 @@ const matchScoresModel = {
             .orWhere("bookings.inviter_id", filter.userId);
         })
         .andWhere((builder) => {
-          builder.where("bookings.event_type_id", 2);
+          builder
+            .where("bookings.event_type_id", 2)
+            .orWhere("bookings.event_type_id", 7);
         })
         .andWhere(function () {
           this.whereNot("players.user_id", filter.userId);
@@ -253,6 +263,7 @@ const matchScoresModel = {
         matchScores: bookings,
         totalPages: Math.ceil(count.length / scoresPerPage),
       };
+      console.log("bookings: ", bookings);
       return data;
     } catch (error) {
       console.error(error);

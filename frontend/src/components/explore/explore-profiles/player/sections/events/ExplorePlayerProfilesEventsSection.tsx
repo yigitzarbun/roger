@@ -22,7 +22,7 @@ const ExplorePlayerProfilesEventsSection = (
 
   const { data: playerBookings, isLoading: isPlayerBookingsLoading } =
     useGetUserProfileEventsQuery(selectedPlayer?.user_id);
-
+  console.log(playerBookings);
   const [isEventsModalOpen, setIsEventModalOpen] = useState(false);
 
   const openEventsModal = () => {
@@ -66,6 +66,8 @@ const ExplorePlayerProfilesEventsSection = (
                           ? 1
                           : booking.event_type_id === 2
                           ? 1
+                          : booking.event_type_id === 7
+                          ? 1
                           : booking.event_type_id === 3
                           ? 2
                           : ""
@@ -80,7 +82,8 @@ const ExplorePlayerProfilesEventsSection = (
                       <img
                         src={
                           (booking.event_type_id === 1 ||
-                            booking.event_type_id === 2) &&
+                            booking.event_type_id === 2 ||
+                            booking.event_type_id === 7) &&
                           booking.playerImage
                             ? `${imageUrl}/${booking.playerImage}`
                             : booking.event_type_id === 3 &&
