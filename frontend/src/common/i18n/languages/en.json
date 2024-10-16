@@ -796,5 +796,7 @@
   "trainerStaffRequired": "Trainer must be club staff",
   "trainerStaffNotRequired": "Trainer don't need to be club staff",
 
-  "tournamentInfo": "Tournament Details"
+  "tournamentInfo": "Tournament Details",
+
+  "noFixture": "Fixture is not created yet"
 }

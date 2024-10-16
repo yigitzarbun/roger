@@ -795,5 +795,7 @@
   "trainerStaffRequired": "Eğtimenin personel olması gereklidir",
   "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok",
 
-  "tournamentInfo": "Turnuva Bilgileri"
+  "tournamentInfo": "Turnuva Bilgileri",
+
+  "noFixture": "Henüz fikstür eklenmedi"
 }

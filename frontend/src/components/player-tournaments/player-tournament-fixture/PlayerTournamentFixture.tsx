@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./styles.module.scss";
 import { imageUrl } from "../../../common/constants/apiConstants";
 import { TournamentMatchRounds } from "../../../../api/endpoints/TournamentMatchRoundsApi";
+import { useTranslation } from "react-i18next";
 
 interface PlayerTournamentFixtureProps {
   numberOfParticipants: number;
@@ -19,6 +20,8 @@ const PlayerTournamentFixture = (props: PlayerTournamentFixtureProps) => {
     matchRound,
     handleMatchRound,
   } = props;
+
+  const { t } = useTranslation();
 
   // Determine the number of matches required for the current match round
   const requiredMatches =
@@ -62,15 +65,15 @@ const PlayerTournamentFixture = (props: PlayerTournamentFixtureProps) => {
           <table>
             <thead>
               <tr>
-                <th>Oyuncu 1</th>
-                <th>İsim</th>
-                <th>Oyuncu 2</th>
-                <th>İsim</th>
-                <th>Tarih</th>
-                <th>Saat</th>
-                <th>Kort</th>
-                <th>Skor</th>
-                <th>Kazanan</th>
+                <th>{t("tournamentPlayer1")}</th>
+                <th>{t("tableNameHeader")}</th>
+                <th>{t("tournamentPlayer2")}</th>
+                <th>{t("tableNameHeader")}</th>
+                <th>{t("tableDateHeader")}</th>
+                <th>{t("tableTimeHeader")}</th>
+                <th>{t("tableCourtHeader")}</th>
+                <th>{t("tableScoreHeader")}</th>
+                <th>{t("tableWinnerHeader")}</th>
               </tr>
             </thead>
             <tbody>
@@ -136,9 +139,9 @@ const PlayerTournamentFixture = (props: PlayerTournamentFixtureProps) => {
             </tbody>
           </table>
         ) : numberOfParticipants === 0 ? (
-          "Henüz turnuva katılımcısı yok"
+          t("noParticipants")
         ) : totalMatches === 0 || !totalMatches ? (
-          "Henüz fikstür eklenmedi"
+          t("noFixture")
         ) : (
           "-"
         )}
