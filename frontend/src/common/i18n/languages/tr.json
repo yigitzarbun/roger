@@ -793,5 +793,9 @@
   "trainerStaffRule": "Eğitmen Personel Şartı",
 
   "trainerStaffRequired": "Eğtimenin personel olması gereklidir",
-  "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok"
+  "trainerStaffNotRequired": "Eğitmenin personel olmasına gerek yok",
+
+  "tournamentInfo": "Turnuva Bilgileri",
+
+  "noFixture": "Henüz fikstür eklenmedi"
 }
