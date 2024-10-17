@@ -93,7 +93,23 @@ const NotificationsModal = (props: NotificationsModalProps) => {
                   : request?.user_type_id === 1
                   ? `${request?.playerFname} ${request?.playerLname}`
                   : "-"}
-                {` ${request.event_type_name} ${t("sentRequest")}`}
+                {` ${
+                  request?.event_type_id === 1
+                    ? t("training")
+                    : request?.event_type_id === 2
+                    ? t("match")
+                    : request?.event_type_id === 3
+                    ? t("lesson")
+                    : request?.event_type_id === 4
+                    ? t("externalTraining")
+                    : request?.event_type_id === 5
+                    ? t("externalLesson")
+                    : request?.event_type_id === 6
+                    ? t("groupLesson")
+                    : request?.event_type_id === 7
+                    ? t("tournamentMatch")
+                    : ""
+                } ${t("sentRequest")}`}
               </p>
             </div>
           ))}
@@ -136,9 +152,23 @@ const NotificationsModal = (props: NotificationsModalProps) => {
               <BiTennisBall className={styles.icon} />
               <p onClick={() => handleNavigate("REQUESTS")}>{`${
                 request.fname
-              } ${request.lname} ${request.event_type_name} ${t(
-                "sentRequest"
-              )}`}</p>
+              } ${request.lname} ${
+                request?.event_type_id === 1
+                  ? t("training")
+                  : request?.event_type_id === 2
+                  ? t("match")
+                  : request?.event_type_id === 3
+                  ? t("lesson")
+                  : request?.event_type_id === 4
+                  ? t("externalTraining")
+                  : request?.event_type_id === 5
+                  ? t("externalLesson")
+                  : request?.event_type_id === 6
+                  ? t("groupLesson")
+                  : request?.event_type_id === 7
+                  ? t("tournamentMatch")
+                  : ""
+              } ${t("sentRequest")}`}</p>
             </div>
           ))}
       </div>
