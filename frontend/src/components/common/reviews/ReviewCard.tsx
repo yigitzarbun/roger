@@ -58,8 +58,8 @@ const ReviewCard = ({ review }) => {
           >
             <img
               src={
-                review?.user_type_id === 1 && review?.image
-                  ? `${imageUrl}/${review?.image}`
+                review?.user_type_id === 1 && review?.playerImage
+                  ? `${imageUrl}/${review?.playerImage}`
                   : review?.user_type_id === 2 && review?.image
                   ? `${imageUrl}/${review?.image}`
                   : "/images/icons/avatar.jpg"
@@ -78,7 +78,7 @@ const ReviewCard = ({ review }) => {
             className={styles["reviewer-name"]}
           >
             {review?.user_type_id === 1
-              ? `${review?.fname} ${review?.lname}`
+              ? `${review?.playerFname} ${review?.playerLname}`
               : review?.user_type_id === 2
               ? `${review?.fname} ${review?.lname}`
               : ""}
