@@ -80,7 +80,11 @@ const DeclineInviteModal = (props: DeclineInviteModalProps) => {
           <p className={styles["player-name"]}>
             {declineBookingData?.user_type_id === 6
               ? declineBookingData?.student_group_name
-              : `${declineBookingData?.fname} ${declineBookingData?.lname}`}
+              : declineBookingData?.user_type_id === 2
+              ? `${declineBookingData?.fname} ${declineBookingData?.lname}`
+              : declineBookingData?.user_type_id === 1
+              ? `${declineBookingData?.playerFname} ${declineBookingData?.playerLname}`
+              : "-"}
           </p>
         </div>
         <table>

@@ -48,7 +48,7 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
   const isEventLesson = acceptBookingData?.event_type_id === 3;
 
   const { t } = useTranslation();
-
+  console.log(acceptBookingData);
   return (
     <ReactModal
       isOpen={isAcceptModalOpen}
@@ -81,7 +81,11 @@ const AcceptInviteModal = (props: AcceptInviteModalProps) => {
           <p className={styles["player-name"]}>
             {acceptBookingData?.user_type_id === 6
               ? acceptBookingData?.student_group_name
-              : `${acceptBookingData?.fname} ${acceptBookingData?.lname}`}
+              : acceptBookingData?.user_type_id === 2
+              ? `${acceptBookingData?.fname} ${acceptBookingData?.lname}`
+              : acceptBookingData?.user_type_id === 1
+              ? `${acceptBookingData?.playerFname} ${acceptBookingData?.playerLname}`
+              : "-"}
           </p>
         </div>
         <table>
