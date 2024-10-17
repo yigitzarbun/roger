@@ -1,14 +1,20 @@
 import React from "react";
 import styles from "./styles.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface TournamentDetailsInfo {
   tournamentDetails: any;
 }
 const TournamentDetailsInfo = (props: TournamentDetailsInfo) => {
   const { tournamentDetails } = props;
+
   const tournamentInfo = tournamentDetails.tournament;
+
   const date = new Date();
+
   const currentYear = date.getFullYear();
+
+  const { t } = useTranslation();
 
   return (
     <div className={styles["result-container"]}>
@@ -22,17 +28,17 @@ const TournamentDetailsInfo = (props: TournamentDetailsInfo) => {
       <table>
         <thead>
           <tr>
-            <th>Turnuva Adı</th>
-            <th>Kulüp</th>
-            <th>Konum</th>
-            <th>Başlangıç</th>
-            <th>Bitiş</th>
-            <th>Son Başvuru</th>
-            <th>Katılım Ücreti</th>
-            <th>Cinsiyet</th>
-            <th>Katılımcı</th>
-            <th>Üyelik Şartı</th>
-            <th>Yaş Aralığı</th>
+            <th>{t("tableTournamentName")}</th>
+            <th>{t("userTypeClub")}</th>
+            <th>{t("tableLocationHeader")}</th>
+            <th>{t("start")}</th>
+            <th>{t("end")}</th>
+            <th>{t("deadline")}</th>
+            <th>{t("admissionFee")}</th>
+            <th>{t("gender")}</th>
+            <th>{t("participants")}</th>
+            <th>{t("membershipRule")}</th>
+            <th>{t("ageGap")}</th>
           </tr>
         </thead>
         <tbody>
