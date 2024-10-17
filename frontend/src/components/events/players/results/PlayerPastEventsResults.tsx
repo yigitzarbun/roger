@@ -359,10 +359,19 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                       onClick={() =>
                         openReviewModal(
                           event.booking_id,
-                          event.fname,
-                          event.lname,
+                          event.event_type_id === 1 ||
+                            event.event_type_id === 2 ||
+                            event.event_type_id === 7
+                            ? event.playerFname
+                            : event.fname,
+                          event.event_type_id === 1 ||
+                            event.event_type_id === 2 ||
+                            event.event_type_id === 7
+                            ? event.playerLname
+                            : event.lname,
                           (event.event_type_id === 1 ||
-                            event.event_type_id === 2) &&
+                            event.event_type_id === 2 ||
+                            event.event_type_id === 7) &&
                             event.playerImage
                             ? event.playerImage
                             : event.event_type_id === 3 &&

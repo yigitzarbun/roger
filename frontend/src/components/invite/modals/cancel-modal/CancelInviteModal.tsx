@@ -51,7 +51,7 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
     bookingData?.event_type_id === 6;
 
   const { t } = useTranslation();
-
+  console.log(bookingData);
   return (
     <ReactModal
       isOpen={isModalOpen}
@@ -83,13 +83,13 @@ const CancelInviteModal = (props: CancelInviteModalProps) => {
             className={styles["opponent-image"]}
           />
           <p className={styles["player-name"]}>
-            {bookingData?.event_type_id === 6
+            {bookingData?.user_type_id === 6
               ? bookingData?.student_group_name
-              : (bookingData?.event_type_id === 3 ||
-                  bookingData?.event_type_id === 5) &&
-                isUserTrainer
+              : bookingData?.user_type_id === 2
+              ? `${bookingData?.fname} ${bookingData?.lname}`
+              : bookingData?.user_type_id === 1
               ? `${bookingData?.playerFname} ${bookingData?.playerLname}`
-              : `${bookingData?.fname} ${bookingData?.lname}`}
+              : "-"}
           </p>
         </div>
         <table>
