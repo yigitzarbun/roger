@@ -55,7 +55,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
   //accepted invitations
   //decline invitations
   //cancelled invitations
-
+  console.log(playerIncomingRequests);
   return (
     <ReactModal
       isOpen={isNotificationsModalOpen}
@@ -82,9 +82,16 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           playerIncomingRequests?.map((request) => (
             <div className={styles["menu-item"]} key={request.booking_id}>
               <BiTennisBall className={styles.icon} />
-              <p
-                onClick={() => handleNavigate("REQUESTS")}
-              >{`${request.fname} ${request.lname} ${request.event_type_name} daveti gönderdi`}</p>
+              <p onClick={() => handleNavigate("REQUESTS")}>
+                {request?.user_type_id === 6
+                  ? request?.student_group_name
+                  : request?.user_type_id === 2
+                  ? `${request?.fname} ${request?.lname}`
+                  : request?.user_type_id === 1
+                  ? `${request?.playerFname} ${request?.playerLname}`
+                  : "-"}
+                {` ${request.event_type_name} daveti gönderdi`}
+              </p>
             </div>
           ))}
         {isUserPlayer && (missingScoresLength > 0 || missingReviews > 0) && (
