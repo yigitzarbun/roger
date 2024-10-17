@@ -29,6 +29,7 @@ const ProfileModal = (props: ProfileModalProps) => {
     email,
     handleCloseMenuModal,
   } = props;
+
   const { t } = useTranslation();
 
   const user = useAppSelector((store) => store.user?.user?.user);

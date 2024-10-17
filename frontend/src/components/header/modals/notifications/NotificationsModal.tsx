@@ -6,7 +6,7 @@ import { FaRegCreditCard } from "react-icons/fa";
 import { BiTennisBall } from "react-icons/bi";
 import { MdOutlineComment } from "react-icons/md";
 import { IoPeople } from "react-icons/io5";
-
+import { useTranslation } from "react-i18next";
 import Paths from "../../../../routing/Paths";
 
 interface NotificationsModalProps {
@@ -43,6 +43,8 @@ const NotificationsModal = (props: NotificationsModalProps) => {
     newStudentRequests,
   } = props;
 
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const handleNavigate = (path: string) => {
@@ -50,12 +52,13 @@ const NotificationsModal = (props: NotificationsModalProps) => {
     handleCloseMenuModal();
     handleCloseNotificationsModal();
   };
+
   // TO do
   // add:
   //accepted invitations
   //decline invitations
   //cancelled invitations
-  console.log(playerIncomingRequests);
+
   return (
     <ReactModal
       isOpen={isNotificationsModalOpen}
@@ -73,7 +76,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           <div className={styles["menu-item"]}>
             <FaRegCreditCard className={styles.icon} />
             <p onClick={() => handleNavigate("PROFILE")}>
-              Ödeme bilgilerinizi ekleyin
+              {t("addPaymentDetailsButtonText")}
             </p>
           </div>
         )}
@@ -90,7 +93,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
                   : request?.user_type_id === 1
                   ? `${request?.playerFname} ${request?.playerLname}`
                   : "-"}
-                {` ${request.event_type_name} daveti gönderdi`}
+                {` ${request.event_type_name} ${t("sentRequest")}`}
               </p>
             </div>
           ))}
@@ -98,7 +101,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           <div className={styles["menu-item"]}>
             <MdOutlineComment className={styles.icon} />
             <p onClick={() => handleNavigate("PERFORMANCE")}>
-              Yorumunuzu bekleyen etkinlikler var
+              {t("missingReviewsExisting")}
             </p>
           </div>
         )}
@@ -106,7 +109,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           <div className={styles["menu-item"]}>
             <MdOutlineComment className={styles.icon} />
             <p onClick={() => handleNavigate("PERFORMANCE")}>
-              Yorumunuzu bekleyen etkinlikler var
+              {t("missingReviewsExisting")}
             </p>
           </div>
         )}
@@ -114,7 +117,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           <div className={styles["menu-item"]}>
             <IoPeople className={styles.icon} />
             <p onClick={() => handleNavigate("STUDENTS")}>
-              Yeni öğrenci talebiniz var
+              {t("newStudentRequest")}
             </p>
           </div>
         )}
@@ -122,7 +125,7 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           <div className={styles["menu-item"]}>
             <IoPeople className={styles.icon} />
             <p onClick={() => handleNavigate("CLUB_STAFF")}>
-              Çalışan başvurunuz var
+              {t("newStaffRequest")}{" "}
             </p>
           </div>
         )}
@@ -131,9 +134,11 @@ const NotificationsModal = (props: NotificationsModalProps) => {
           trainerIncomingRequests?.map((request) => (
             <div className={styles["menu-item"]} key={request.booking_id}>
               <BiTennisBall className={styles.icon} />
-              <p
-                onClick={() => handleNavigate("REQUESTS")}
-              >{`${request.fname} ${request.lname} ${request.event_type_name} daveti gönderdi`}</p>
+              <p onClick={() => handleNavigate("REQUESTS")}>{`${
+                request.fname
+              } ${request.lname} ${request.event_type_name} ${t(
+                "sentRequest"
+              )}`}</p>
             </div>
           ))}
       </div>
