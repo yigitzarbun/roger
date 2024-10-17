@@ -798,5 +798,10 @@
 
   "tournamentInfo": "Tournament Details",
 
-  "noFixture": "Fixture is not created yet"
+  "noFixture": "Fixture is not created yet",
+
+  "missingReviewsExisting": "Events awaiting for your review",
+  "newStudentRequest": "New student request",
+  "newStaffRequest": "New staff request",
+  "sentRequest": "request"
 }

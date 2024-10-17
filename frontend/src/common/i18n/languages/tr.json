@@ -797,5 +797,10 @@
 
   "tournamentInfo": "Turnuva Bilgileri",
 
-  "noFixture": "Henüz fikstür eklenmedi"
+  "noFixture": "Henüz fikstür eklenmedi",
+
+  "missingReviewsExisting": "Yorumunuzu bekleyen etkinlikler var",
+  "newStudentRequest": "Yeni öğrenci talebiniz var",
+  "newStaffRequest": "Yeni çalışan başvurunu var",
+  "sentRequest": "daveti gönderdi"
 }
