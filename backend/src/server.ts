@@ -2,10 +2,8 @@ import express, { Request, Response } from "express";
 import knex from "knex";
 import cron from "node-cron";
 import path from "path";
-import http from "http";
 
 import knexConfig from "./knexfile";
-import { Server } from "socket.io";
 
 import usersAuthRouter from "./api/users-auth/auth-router";
 import usersRouter from "./api/users/users-router";
@@ -63,42 +61,21 @@ const cors = require("cors");
 
 const server = express();
 
+server.use(express.json());
+
 const corsOptions = {
-  origin: "http://localhost:5173", // Use a single origin or an array
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // Allow cookies to be sent
-  optionsSuccessStatus: 204, // For legacy browser support
+  origin: "https://frontend-wispy-log-4260.fly.dev",
+  optionsSuccessStatus: 200,
 };
 
 server.use(cors(corsOptions));
-server.use(express.json());
 
 // Serve static files from the Uploads directory
 server.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-const httpServer = http.createServer(server);
-
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:5173", // Adjust according to your frontend URL
-    methods: ["GET", "POST"],
-    credentials: true, // Allow credentials (cookies, etc.)
-  },
-});
-
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
-
-  // Handle socket events here
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-
 process.env.TZ = "UTC";
 
-const db = knex(knexConfig.development);
+const db = knex(knexConfig.production);
 
 cron.schedule("* * * * *", async () => {
   await updatePendingBookings();
@@ -257,8 +234,4 @@ server.get("/", (_req: Request, res: Response) => {
   res.send("TypeScript With Express");
 });
 
-const port = 5000;
-server.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
 export default server;

@@ -182,7 +182,7 @@ const Header = () => {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", currentTheme);
   }, [currentTheme]);
-  console.log(`${imageUrl}/${playerDetails?.image}`);
+
   if (
     isPlayerDetailsLoading ||
     isIncomingRequestsLoading ||

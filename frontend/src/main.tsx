@@ -51,13 +51,10 @@ i18n.init({
   fallbackLng: defaultLanguage,
 });
 
-/*
 const SocketIOComponent: React.FC = () => {
   useEffect(() => {
     // Connect to the Socket.io server
-    const socket = io("http://localhost:5000", {
-      withCredentials: true,
-    });
+    const socket = io("https://backend-divine-darkness-6265.fly.dev"); // Replace with your server URL
 
     // Listen for Socket.io events
     socket.on("bookingUpdated", (data) => {
@@ -72,7 +69,6 @@ const SocketIOComponent: React.FC = () => {
   }, []);
   return null; // No need to render anything for this component
 };
-*/
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -80,7 +76,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <I18nextProvider i18n={i18n}>
         <ToastContainer className="toast.container" autoClose={1000} />
         <RouterProvider router={Router} />
-        {/*  <SocketIOComponent /> */}
+        <SocketIOComponent />
       </I18nextProvider>
     </Provider>
   </React.StrictMode>
