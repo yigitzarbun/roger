@@ -239,20 +239,18 @@ const ClubSubscribersResults = (props: ClubSubscribersResultsProps) => {
               <p className={styles["add-title"]}>{t("addNewSubscriber")}</p>
             </button>
           )}
-          {mySubscriptions?.subscribers?.length > 0 && (
-            <FaFilter
-              onClick={handleOpenSubscribersFilterModal}
-              className={
-                clubSubscriptionTypeId > 0 ||
-                textSearch !== "" ||
-                locationId > 0 ||
-                playerLevelId > 0 ||
-                userTypeId > 0
-                  ? styles["active-filter"]
-                  : styles.filter
-              }
-            />
-          )}
+          <FaFilter
+            onClick={handleOpenSubscribersFilterModal}
+            className={
+              clubSubscriptionTypeId > 0 ||
+              textSearch !== "" ||
+              locationId > 0 ||
+              playerLevelId > 0 ||
+              userTypeId > 0
+                ? styles["active-filter"]
+                : styles.filter
+            }
+          />
         </div>
         {mySubscriptions?.totalPages > 1 && (
           <div className={styles["navigation-container"]}>

@@ -194,6 +194,7 @@ const ClubTournamentFixtureResults = (
                       {t("addMatch")}
                     </button>
                   </td>
+                  <td>-</td>
                 </tr>
               ))}
             </tbody>

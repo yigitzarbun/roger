@@ -7,6 +7,7 @@ import {
   useUpdateClubStaffMutation,
 } from "../../../../../api/endpoints/ClubStaffApi";
 import { useTranslation } from "react-i18next";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface DeclineClubStaffModalProps {
   isDeclineClubStaffModalOpen: boolean;
@@ -70,7 +71,7 @@ const DeclineClubStaffModal = (props: DeclineClubStaffModalProps) => {
           <img
             src={
               selectedTrainerImage
-                ? selectedTrainerImage
+                ? `${imageUrl}/${selectedTrainerImage}`
                 : "images/icons/avatar.jpg"
             }
             className={styles["trainer-image"]}

@@ -7,6 +7,7 @@ import {
   useGetClubStaffQuery,
   useUpdateClubStaffMutation,
 } from "../../../../../api/endpoints/ClubStaffApi";
+import { imageUrl } from "../../../../common/constants/apiConstants";
 
 interface DeleteClubStaffModalProps {
   isDeleteStaffModalOpen: boolean;
@@ -64,7 +65,7 @@ const DeleteClubStaffModal = (props: DeleteClubStaffModalProps) => {
           <img
             src={
               selectedTrainerImage
-                ? selectedTrainerImage
+                ? `${imageUrl}/${selectedTrainerImage}`
                 : "images/icons/avatar.jpg"
             }
             className={styles["trainer-image"]}
