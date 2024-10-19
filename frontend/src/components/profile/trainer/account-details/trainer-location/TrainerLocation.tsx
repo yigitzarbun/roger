@@ -56,12 +56,12 @@ const TrainerLocation = (props) => {
   const onSubmit: SubmitHandler<Trainer> = (formData) => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
-      fname: trainerDetails?.fname,
-      lname: trainerDetails?.lname,
-      birth_year: trainerDetails?.birth_year,
+      fname: trainerDetails?.trainerFname,
+      lname: trainerDetails?.trainerLname,
+      birth_year: trainerDetails?.trainerBirthYear,
       gender: trainerDetails?.gender,
       phone_number: null,
-      image: trainerDetails?.image,
+      image: trainerDetails?.trainerImage,
       trainer_bio_description: null,
       location_id: Number(formData?.location_id),
       club_id: Number(trainerDetails?.club_id),
@@ -72,7 +72,7 @@ const TrainerLocation = (props) => {
       trainer_experience_type_id: Number(
         trainerDetails?.trainer_experience_type_id
       ),
-      user_id: trainerDetails?.user_id,
+      user_id: trainerDetails?.trainerUserId,
     };
     updateTrainer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);

@@ -56,8 +56,8 @@ const TrainerName = (props) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      fname: trainerDetails?.fname,
-      lname: trainerDetails?.lname,
+      fname: trainerDetails?.trainerFname,
+      lname: trainerDetails?.trainerLname,
     },
   });
 
@@ -80,7 +80,7 @@ const TrainerName = (props) => {
       trainer_experience_type_id: Number(
         trainerDetails?.trainer_experience_type_id
       ),
-      user_id: trainerDetails?.user_id,
+      user_id: trainerDetails?.trainerUserId,
     };
     updateTrainer(updatedProfileData);
     setUpdatedProfile(updatedProfileData);

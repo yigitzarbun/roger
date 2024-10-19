@@ -50,12 +50,12 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
   const onSubmit: SubmitHandler<any> = (formData) => {
     const trainerBankDetails = {
       trainer_id: trainerDetails?.trainer_id,
-      fname: trainerDetails?.fname,
-      lname: trainerDetails?.lname,
-      birth_year: trainerDetails?.birth_year,
-      gender: trainerDetails?.gender,
+      fname: trainerDetails?.trainerFname,
+      lname: trainerDetails?.trainerLname,
+      birth_year: trainerDetails?.trainerBirthYear,
+      gender: trainerDetails?.trainerGender,
       phone_number: null,
-      image: trainerDetails?.image,
+      image: trainerDetails?.trainerImage,
       trainer_bio_description: null,
       location_id: Number(trainerDetails?.location_id),
       club_id: Number(trainerDetails?.club_id),
@@ -66,7 +66,7 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
       trainer_experience_type_id: Number(
         trainerDetails?.trainer_experience_type_id
       ),
-      user_id: trainerDetails?.user_id,
+      user_id: trainerDetails?.trainerUserId,
       iban: formData?.iban,
       name_on_bank_account: formData?.name_on_bank_account,
       bank_id: Number(formData?.bank_id),

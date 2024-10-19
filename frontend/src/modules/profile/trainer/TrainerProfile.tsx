@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import styles from "./styles.module.scss";
 import TrainerAccountDetails from "../../../components/profile/trainer/account-details/TrainerAccountDetails";
 import TrainerBankAccountDetails from "../../../components/profile/trainer/bank-details/TrainerBankAccountDetails";
@@ -8,9 +7,12 @@ import TrainerProfileNavigation from "../../../components/profile/trainer/traine
 import { useGetTrainerProfileDetailsQuery } from "../../../../api/endpoints/TrainersApi";
 import PageLoading from "../../../components/loading/PageLoading";
 import TrainerOtherDetails from "../../../components/profile/trainer/other-details/TrainerOtherDetails";
+import { useTranslation } from "react-i18next";
 
 const TrainerProfile = () => {
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { t } = useTranslation();
 
   const [page, setPage] = useState("account");
 
@@ -30,7 +32,7 @@ const TrainerProfile = () => {
   return (
     <div className={styles["trainer-profile-container"]}>
       <div className={styles["title-container"]}>
-        <h2>Hesap Ayarları</h2>
+        <h2>{t("settingsTitle")}</h2>
       </div>
       <div className={styles.main}>
         <TrainerProfileNavigation page={page} handlePage={handlePage} />
