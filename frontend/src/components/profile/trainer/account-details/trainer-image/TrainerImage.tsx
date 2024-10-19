@@ -43,9 +43,9 @@ const TrainerImage = (props) => {
   const onSubmit: SubmitHandler<any> = () => {
     const updatedProfileData = {
       trainer_id: trainerDetails?.trainer_id,
-      fname: trainerDetails?.fname,
-      lname: trainerDetails?.lname,
-      birth_year: trainerDetails?.birth_year,
+      fname: trainerDetails?.trainerFname,
+      lname: trainerDetails?.trainerLname,
+      birth_year: trainerDetails?.trainerBirthYear,
       gender: trainerDetails?.gender,
       phone_number: null,
       image: selectedImage || existingImage,
