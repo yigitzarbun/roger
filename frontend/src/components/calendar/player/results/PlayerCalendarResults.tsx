@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
@@ -13,6 +13,7 @@ import { getAge } from "../../../../common/util/TimeFunctions";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import Paths from "../../../../routing/Paths";
 
 interface PlayerCalendarResultsProps {
   date: string;
@@ -30,6 +31,12 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
   const user = useAppSelector((store) => store?.user?.user?.user);
 
   const formattedDate = date ? date.split("/").reverse().join("-") : "";
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.EXPLORE);
+  };
 
   const {
     data: filteredBookings,
@@ -115,7 +122,11 @@ const PlayerCalendarResults = (props: PlayerCalendarResultsProps) => {
         </div>
       </div>
       {filteredBookings?.length === 0 ? (
-        <div>{t("calendarEmptyText")}</div>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("calendarEmptyText")}</h4>
+          <p>{t("explorePlayersTrainersClubs")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       ) : (
         <table>
           <thead>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
@@ -16,6 +16,12 @@ import { imageUrl } from "../../../../common/constants/apiConstants";
 
 const PlayerRequestsOutgoing = () => {
   const user = useAppSelector((store) => store?.user?.user?.user);
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.EXPLORE);
+  };
 
   const { t } = useTranslation();
 
@@ -81,7 +87,11 @@ const PlayerRequestsOutgoing = () => {
         <h2 className={styles.title}>{t("outgoingRequestsTitle")}</h2>
       </div>
       {outgoingBookings?.length === 0 ? (
-        <div>{t("playerOutgoingRequestsEmptyText")}</div>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("playerOutgoingRequestsEmptyText")}</h4>
+          <p>{t("explorePlayersTrainersClubs")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       ) : (
         <>
           <table>

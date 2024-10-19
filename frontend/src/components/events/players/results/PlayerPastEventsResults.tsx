@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
@@ -18,6 +18,7 @@ import { CourtStructureType } from "../../../../../api/endpoints/CourtStructureT
 import { CourtSurfaceType } from "../../../../../api/endpoints/CourtSurfaceTypesApi";
 import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilterModal";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import Paths from "../../../../routing/Paths";
 
 interface PlayerPastEventsResultsProps {
   display: string;
@@ -95,6 +96,12 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
     handleMissingScores,
     handleClear,
   } = props;
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.EXPLORE);
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -418,7 +425,11 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>{t("playerPastEventsEmptyText")}</p>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("playerPastEventsEmptyText")}</h4>
+          <p>{t("explorePlayersTrainersClubs")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (
