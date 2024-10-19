@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
@@ -25,6 +25,7 @@ import {
 import { getAge } from "../../../../common/util/TimeFunctions";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import Paths from "../../../../routing/Paths";
 
 const PlayerRequestsIncoming = () => {
   const { t } = useTranslation();
@@ -44,6 +45,12 @@ const PlayerRequestsIncoming = () => {
 
   const [acceptBookingData, setAcceptBookingData] =
     useState<AcceptBookingData | null>(null);
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.EXPLORE);
+  };
 
   const {
     data: incomingBookings,
@@ -185,7 +192,11 @@ const PlayerRequestsIncoming = () => {
         <h2 className={styles.title}>{t("incomingRequestsTitle")}</h2>
       </div>
       {incomingBookings?.length === 0 ? (
-        <div>{t("playerIncomingRequestsEmptyText")}</div>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("playerIncomingRequestsEmptyText")}</h4>
+          <p>{t("explorePlayersTrainersClubs")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       ) : (
         <>
           <table>

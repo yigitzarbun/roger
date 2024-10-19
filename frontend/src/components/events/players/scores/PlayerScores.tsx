@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import { useAppSelector } from "../../../../store/hooks";
 import { FaFilter } from "react-icons/fa6";
@@ -17,6 +17,7 @@ import PlayerPastEventsFilterModal from "../results-filter/PlayerPastEventsFilte
 import { BsClockHistory } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import Paths from "../../../../routing/Paths";
 
 interface PlayerMatchScoressProps {
   display: string;
@@ -80,6 +81,12 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
     handleClear,
   } = props;
   const [currentPage, setCurrentPage] = useState(1);
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.MATCH);
+  };
 
   const { t } = useTranslation();
 
@@ -168,7 +175,6 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
               onClick={handlePrevPage}
               className={styles["nav-arrow"]}
             />
-
             <FaAngleRight
               onClick={handleNextPage}
               className={styles["nav-arrow"]}
@@ -326,7 +332,11 @@ const PlayerScores = (props: PlayerMatchScoressProps) => {
           </tbody>
         </table>
       ) : (
-        <p>{t("playerPastEventsEmptyText")}</p>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("playerPastMatchesEmptyText")}</h4>
+          <p>{t("explorePlayerForMatch")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

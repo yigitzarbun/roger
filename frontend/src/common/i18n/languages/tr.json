@@ -347,7 +347,6 @@
   "userTypeTrainer": "Eğitmen",
   "userTypeClub": "Kulüp",
   "userTypeExternalMember": "Çevrimdışı Üye",
-  "userTypeExternalMember": "Çevrimdışı Üye",
 
   "leaderboardTableEmptyText": "Liderlik tablosunda puanı bulunan oyuncu henüz bulunmamaktadır",
   "playersEmptyText": "Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip tekrar deneyin.",
@@ -409,7 +408,6 @@
 
   "playerSubscriptionTrainerStaffRequired": "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir",
   "clubStaffRequired": "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir",
-  "playerLessonSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
   "playerLessonSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
 
   "cancelLessonTitle": "Ders İptal",
@@ -488,8 +486,6 @@
 
   "playerOrTrainerSubscriptionNotRequired": "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok",
 
-  "playerOrTrainerSubscriptionNotRequired": "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok",
-
   "differentPriceForMembers": "Üyelere farklı fiyat uygulanır",
   "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz",
 
@@ -547,7 +543,6 @@
 
   "noBankAccount": "Kayıtlı banka hesabınız bulunmamaktadır",
 
-  "addBankAccount": "Banka Bilgileri Ekle",
   "addBankAccount": "Banka Bilgileri Ekle",
 
   "editBankAccountDetails": "Banka Bilgilerini Düzenle",
@@ -808,5 +803,10 @@
   "missingReviewsExisting": "Yorumunuzu bekleyen etkinlikler var",
   "newStudentRequest": "Yeni öğrenci talebiniz var",
   "newStaffRequest": "Yeni çalışan başvurunu var",
-  "sentRequest": "daveti gönderdi"
+  "sentRequest": "daveti gönderdi",
+
+  "explorePlayersTrainersClubs": "Oyuncuları, eğitmenleri, kulüpleri, kortları ve turnuvaları keşfet",
+  "explore": "Keşfet",
+  "explorePlayerForMatch": "Yeni maç daveti göndermek için oyuncuları keşfet",
+  "playerPastMatchesEmptyText": "Tamamlanmış maç bulunamadı"
 }
