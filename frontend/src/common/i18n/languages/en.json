@@ -346,6 +346,7 @@
   "userTypeTrainer": "Trainer",
   "userTypeClub": "Club",
   "userTypeExternalMember": "Offline Member",
+  "userTypeExternalMember": "Offline Member",
 
   "leaderboardTableEmptyText": "Leaderboard is currently empty",
   "playersEmptyText": "No players found. Remove filters and try again.",
@@ -409,7 +410,10 @@
   "clubStaffRequired": "Trainer needs to be a staff at this club in order to book this court",
   "playerLessonSubscriptionRequired": "This club requires player membership to book this court",
 
+  "playerLessonSubscriptionRequired": "This club requires player membership to book this court",
+
   "playerSubscriptionRequired": "This club requires player membership to book this court",
+  "playerOrTrainerSubscriptionNotRequired": "Trainers don't need to be staff or players don't need to be club members in order to book courts",
   "playerOrTrainerSubscriptionNotRequired": "Trainers don't need to be staff or players don't need to be club members in order to book courts",
 
   "cancelLessonTitle": "Cancel Lesson",
@@ -527,6 +531,7 @@
   "studentApplicationText": "Do you want to proceed with your studenship application to this trainer?",
 
   "addReviewTitle": "Add Review",
+  "title": "Title",
   "title": "Title",
   "score": "Score",
   "reviewText": "Review",

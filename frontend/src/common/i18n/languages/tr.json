@@ -144,6 +144,7 @@
   "ageGap": "Yaş Aralığı",
   "participationStatus": "Katılım Durumu",
   "Title": "Ayrılvadan Ayrıl",
+  "Title": "Ayrılvadan Ayrıl",
   "subscriptionTypeHeader": "Üyelik Türü",
   "clubNameHeader": "Kulüp Adı",
   "groupHeader": "Grup",
@@ -346,6 +347,7 @@
   "userTypeTrainer": "Eğitmen",
   "userTypeClub": "Kulüp",
   "userTypeExternalMember": "Çevrimdışı Üye",
+  "userTypeExternalMember": "Çevrimdışı Üye",
 
   "leaderboardTableEmptyText": "Liderlik tablosunda puanı bulunan oyuncu henüz bulunmamaktadır",
   "playersEmptyText": "Aradığınız kritere göre oyuncu bulunamadı. Lütfen filtreyi temizleyip tekrar deneyin.",
@@ -407,6 +409,7 @@
 
   "playerSubscriptionTrainerStaffRequired": "Kort kiralamak için oyuncunun kulübe üye olması, eğitmenin kulüp çalışanı olması gerekmektedir",
   "clubStaffRequired": "Kort kiralamak için eğitmenin kulüp çalışanı olması gerekmektedir",
+  "playerLessonSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
   "playerLessonSubscriptionRequired": "Kort kiralamak için oyuncunun kulübe üye olması gerekmektedir",
 
   "cancelLessonTitle": "Ders İptal",
@@ -485,6 +488,8 @@
 
   "playerOrTrainerSubscriptionNotRequired": "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok",
 
+  "playerOrTrainerSubscriptionNotRequired": "Eğtimenin kulüp çalışanı olmasına veya oyuncunun üye olmasına gerek yok",
+
   "differentPriceForMembers": "Üyelere farklı fiyat uygulanır",
   "samePriceForMembers": "Üyelere farklı fiyat uygulanmaz",
 
@@ -542,6 +547,7 @@
 
   "noBankAccount": "Kayıtlı banka hesabınız bulunmamaktadır",
 
+  "addBankAccount": "Banka Bilgileri Ekle",
   "addBankAccount": "Banka Bilgileri Ekle",
 
   "editBankAccountDetails": "Banka Bilgilerini Düzenle",

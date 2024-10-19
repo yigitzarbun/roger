@@ -54,13 +54,23 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
     <div className={styles["result-container"]}>
       <div className={styles["top-container"]}>
         <h2 className={styles["result-title"]}>{t("applicationsTitle")}</h2>
+        <h2 className={styles["result-title"]}>{t("applicationsTitle")}</h2>
       </div>
 
+      {myStaffRequests?.length === 0 && <p>{t("noClubStaffApplications")}</p>}
       {myStaffRequests?.length === 0 && <p>{t("noClubStaffApplications")}</p>}
       {myStaffRequests?.length > 0 && (
         <table>
           <thead>
             <tr>
+              <th>{t("staff")}</th>
+              <th>{t("tableNameHeader")}</th>
+              <th>{t("tableAgeHeader")}</th>
+              <th>{t("tableGenderHeader")}</th>
+              <th>{t("tableLocationHeader")}</th>
+              <th>{t("role")}</th>
+              <th>{t("reject")}</th>
+              <th>{t("approve")}</th>
               <th>{t("staff")}</th>
               <th>{t("tableNameHeader")}</th>
               <th>{t("tableAgeHeader")}</th>
@@ -98,7 +108,15 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                 </td>
                 <td>{currentYear - Number(request?.birth_year)}</td>
                 <td>{request?.gender === "male" ? t("male") : t("female")}</td>
+                <td>{request?.gender === "male" ? t("male") : t("female")}</td>
                 <td>{request?.location_name}</td>
+                <td>
+                  {request?.club_staff_role_type_id === 1
+                    ? t("managerial")
+                    : request?.club_staff_role_type_id === 2
+                    ? t("userTypeTrainer")
+                    : t("other")}
+                </td>
                 <td>
                   {request?.club_staff_role_type_id === 1
                     ? t("managerial")
@@ -112,6 +130,7 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                     className={styles["decline-button"]}
                   >
                     {t("reject")}
+                    {t("reject")}
                   </button>
                 </td>
                 <td>
@@ -119,6 +138,7 @@ const ClubStaffRequests = (props: ClubStaffRequestsProps) => {
                     onClick={() => openAcceptClubStaffModal(request)}
                     className={styles["accept-button"]}
                   >
+                    {t("approve")}
                     {t("approve")}
                   </button>
                 </td>
