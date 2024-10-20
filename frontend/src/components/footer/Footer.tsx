@@ -16,22 +16,6 @@ const Footer = () => {
           <h2>RaketGo</h2>
           <p>{t("footerText")}</p>
         </div>
-        <div className={styles["navigation-container"]}>
-          <nav>
-            <div className={styles["left-nav"]}>
-              <Link to={paths.EXPLORE}>{t("headerExploreTitle")}</Link>
-              <Link to={paths.TRAIN}>{t("headerTrainingTitle")}</Link>
-              <Link to={paths.MATCH}>{t("headerMatchTitle")}</Link>
-              <Link to={paths.LESSON}>{t("headerLessonTitle")}</Link>
-            </div>
-            <div className={styles["left-nav"]}>
-              <Link to={paths.CALENDAR}>{t("headerCalendarTitle")}</Link>
-              <Link to={paths.REQUESTS}>{t("headerInvitesTitle")}</Link>
-              <Link to={paths.PERFORMANCE}>{t("headerPerformanceTitle")}</Link>
-              <Link to={paths.PROFILE}>{t("account")}</Link>
-            </div>
-          </nav>
-        </div>
         <div className={styles["social-container"]}>
           <GrInstagram />
           <GrLinkedin />

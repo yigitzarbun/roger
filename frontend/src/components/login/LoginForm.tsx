@@ -91,7 +91,6 @@ const LoginForm = () => {
             <input
               {...register("email", { required: true })}
               type="email"
-              placeholder={t("loginEmailInputPlaceholder")}
               onChange={handleEmail}
             />
             {errors.email && (

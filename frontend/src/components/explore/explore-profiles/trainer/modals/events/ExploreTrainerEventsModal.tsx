@@ -75,11 +75,11 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
                             : ""
                         }/${
                           booking.inviter_id ===
-                            selectedTrainer?.[0]?.user_id &&
+                            selectedTrainer?.[0]?.trainerUserId &&
                           booking.event_type_id === 3
                             ? booking.invitee_id
                             : booking.invitee_id ===
-                                selectedTrainer?.[0]?.user_id &&
+                                selectedTrainer?.[0]?.trainerUserId &&
                               booking.event_type_id === 3
                             ? booking.inviter_id
                             : booking.event_type_id === 6
@@ -108,11 +108,11 @@ const ExploreTrainerEventsModal = (props: ExploreTrainerEventsModalProps) => {
                             : ""
                         }/${
                           booking.inviter_id ===
-                            selectedTrainer?.[0]?.user_id &&
+                            selectedTrainer?.[0]?.trainerUserId &&
                           booking.event_type_id === 3
                             ? booking.invitee_id
                             : booking.invitee_id ===
-                                selectedTrainer?.[0]?.user_id &&
+                                selectedTrainer?.[0]?.trainerUserId &&
                               booking.event_type_id === 3
                             ? booking.inviter_id
                             : booking.event_type_id === 6

@@ -103,7 +103,7 @@
     .lesson-button {
       background-color: var(--primary-button-background-color);
       border: none;
-      width: 110px;
+      min-width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
@@ -120,7 +120,7 @@
     .add-student-button {
       background-color: var(--secondary-button-background-color);
       border: none;
-      width: 110px;
+      min-width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
@@ -137,7 +137,7 @@
     .cancel-student-button {
       background-color: $roger-red;
       border: none;
-      width: 110px;
+      min-width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;

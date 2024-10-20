@@ -190,16 +190,16 @@ const playersModel = {
             "COALESCE(COUNT(DISTINCT CASE WHEN event_reviews.is_active = true THEN event_reviews.event_review_id ELSE NULL END), 0) as reviewScoreCount"
           ),
           db.raw(
-            "COALESCE(COUNT(DISTINCT match_scores.match_score_id), 0) as totalMatches"
+            "COALESCE(COUNT(DISTINCT CASE WHEN match_scores.match_score_status_type_id = 3 THEN match_scores.match_score_id ELSE NULL END), 0) as totalMatches"
           ),
           db.raw(
-            "COALESCE(SUM(CASE WHEN match_scores.winner_id = players.user_id AND (match_scores.match_score_status_type_id = 3 OR match_scores.match_score_status_type_id = 7) THEN 1 ELSE 0 END), 0) as wonMatches"
+            "COALESCE(SUM(CASE WHEN match_scores.winner_id = players.user_id AND match_scores.match_score_status_type_id = 3 THEN 1 ELSE 0 END), 0) as wonMatches"
           ),
           db.raw(
-            "COALESCE(SUM(CASE WHEN match_scores.winner_id != players.user_id AND (match_scores.match_score_status_type_id = 3 OR match_scores.match_score_status_type_id = 7) THEN 1 ELSE 0 END), 0) as lostMatches"
+            "COALESCE(SUM(CASE WHEN match_scores.winner_id IS NOT NULL AND match_scores.winner_id != players.user_id AND match_scores.match_score_status_type_id = 3 THEN 1 ELSE 0 END), 0) as lostMatches"
           ),
           db.raw(
-            "COALESCE(SUM(CASE WHEN match_scores.winner_id = players.user_id AND (match_scores.match_score_status_type_id = 3 OR match_scores.match_score_status_type_id = 7) THEN 3 ELSE 0 END), 0) as playerPoints"
+            "COALESCE(SUM(CASE WHEN match_scores.winner_id = players.user_id AND match_scores.match_score_status_type_id = 3 THEN 3 ELSE 0 END), 0) as playerPoints"
           )
         )
         .from("players")
@@ -230,13 +230,15 @@ const playersModel = {
               "=",
               "players.user_id"
             );
-          }).andOn(function () {
-            this.on("bookings.event_type_id", "=", 2).orOn(
-              "bookings.event_type_id",
-              "=",
-              7
-            );
-          });
+          })
+            .andOn(function () {
+              this.on("bookings.event_type_id", "=", 2).orOn(
+                "bookings.event_type_id",
+                "=",
+                7
+              );
+            })
+            .andOn("bookings.booking_status_type_id", 5);
         })
         .leftJoin(
           "match_scores",
@@ -245,6 +247,9 @@ const playersModel = {
           "bookings.booking_id"
         )
         .where("players.user_id", userId)
+        .andWhere("match_scores.match_score_status_type_id", 3)
+        .whereNotNull("match_scores.winner_id")
+        .andWhere("bookings.booking_status_type_id", "=", 5)
         .groupBy(
           "players.player_id",
           "users.user_id",

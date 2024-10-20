@@ -361,7 +361,7 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>Tamamlanmış etkinlik bulunmamaktadır</p>
+        <p>{t("noCompletedEvents")}</p>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

@@ -97,9 +97,9 @@
   "tableTrainHeader": "Antreman",
   "tableMatchHeader": "Maç",
   "tableLessonHeader": "Ders",
-  "tableTrainButtonText": "Antreman Yap",
-  "tableMatchButtonText": "Maç Yap",
-  "tableLessonButtonText": "Ders Daveti",
+  "tableTrainButtonText": "Antreman",
+  "tableMatchButtonText": "Maç",
+  "tableLessonButtonText": "Ders Al",
   "tableClubHeader": "Kulüp",
   "tablePriceHeader": "Ücret",
   "tableMemberPrice": "Üye Ücret",
@@ -808,5 +808,9 @@
   "explorePlayersTrainersClubs": "Oyuncuları, eğitmenleri, kulüpleri, kortları ve turnuvaları keşfet",
   "explore": "Keşfet",
   "explorePlayerForMatch": "Yeni maç daveti göndermek için oyuncuları keşfet",
-  "playerPastMatchesEmptyText": "Tamamlanmış maç bulunamadı"
+  "playerPastMatchesEmptyText": "Tamamlanmış maç bulunamadı",
+
+  "chatWith": "",
+
+  "noCompletedEvents": "Henüz tamamlanmış etkinlik bulunmamaktadır"
 }

@@ -11,13 +11,15 @@
   column-gap: 5vw;
   border: 1px solid $roger-border-color;
   overflow-x: auto;
-
+  justify-content: space-between;
   @include small-screen {
     flex-direction: column;
   }
   .image-container {
     display: flex;
     column-gap: 1vw;
+    width: 55%;
+    justify-content: space-between;
     .profile-image {
       width: 200px;
       height: 200px;
@@ -26,73 +28,20 @@
       object-position: center;
     }
     .name-container {
-      width: 50%;
-      h4 {
-        font-weight: lighter;
-      }
-      .reviews {
-        margin-top: 2vh;
-        .active-star {
-          color: $roger-green;
-          font-size: 0.9rem;
-          margin-top: 1vh;
-        }
-        .empty-star {
-          color: grey;
-          font-size: 0.9rem;
-          margin-top: 1vh;
-        }
-        .reviews-text {
-          font-size: 0.9rem;
-        }
-      }
-    }
-  }
-  .bio-container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 4.5vh;
-    .top-container {
+      width: 60%;
       display: flex;
-      column-gap: 5vw;
-      align-items: start;
-      width: 100%;
-      .table-container {
+      flex-direction: column;
+      justify-content: space-between;
+      .name {
         display: flex;
         flex-direction: column;
-        row-gap: 4vh;
-        overflow-x: auto;
-
-        table {
-          width: 100%;
-          text-align: left;
-          border-collapse: collapse;
-
-          th {
-            padding-top: 0;
-            padding-bottom: 0;
-          }
-          .player-row {
-            border-bottom: 1px solid $roger-border-color;
-            td {
-              border-top: 1px solid $roger-border-color;
-              vertical-align: middle;
-              padding: 10px;
-              height: 12vh;
-            }
-          }
-        }
-        .buttons-container {
+        .name-top {
           display: flex;
-          align-items: center;
-          column-gap: 3vw;
-          @include small-screen {
-            margin-bottom: 4vh;
-          }
+          column-gap: 2vw;
           .icons {
             display: flex;
             align-items: center;
-            column-gap: 3vw;
+            column-gap: 1vw;
 
             .remove-fav-icon {
               color: $roger-blue;
@@ -116,33 +65,106 @@
               color: $roger-blue;
             }
           }
-          .interaction-buttons {
-            display: flex;
-            column-gap: 3vw;
+        }
+        h4 {
+          font-style: italic;
+        }
+        .reviews {
+          margin-top: 2vh;
+          .active-star {
+            color: $roger-green;
+            font-size: 0.9rem;
+            margin-top: 1vh;
+          }
+          .empty-star {
+            color: grey;
+            font-size: 0.9rem;
+            margin-top: 1vh;
+          }
+          .reviews-text {
+            font-size: 0.9rem;
+          }
+        }
+      }
 
-            .interaction-button {
+      .interaction-buttons {
+        display: flex;
+        column-gap: 3vw;
+
+        .interaction-button {
+          padding: $roger-button-padding;
+          border-radius: $roger-border-radius;
+          border: none;
+          background-color: $roger-black-dark;
+          font-size: 0.9rem;
+          cursor: pointer;
+          text-decoration: none;
+          color: white;
+          text-align: center;
+          min-width: 100px;
+        }
+
+        .interaction-button:hover {
+          background-color: $roger-black-light;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .bio-container {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    .top-container {
+      display: flex;
+      column-gap: 5vw;
+      align-items: start;
+      width: 100%;
+      .table-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 8vh;
+        overflow-x: auto;
+        width: 100%;
+        table {
+          //width: 100%;
+          text-align: left;
+          border-collapse: collapse;
+          th {
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+          .player-row {
+            border-bottom: 1px solid $roger-border-color;
+            td {
+              border-top: 1px solid $roger-border-color;
+              vertical-align: middle;
               padding: 10px;
-              border-radius: $roger-border-radius;
-              border: none;
-              background-color: $roger-black-dark;
-              font-size: 0.8rem;
-              cursor: pointer;
-              text-decoration: none;
-              color: white;
-              text-align: center;
+              height: 12vh;
             }
-
-            .interaction-button:hover {
-              background-color: $roger-black-light;
-              cursor: pointer;
+          }
+        }
+        .stats-container {
+          display: flex;
+          column-gap: 2vw;
+          .stat {
+            display: flex;
+            flex-direction: column;
+            padding: $roger-box-padding;
+            border-radius: $roger-border-radius;
+            border: 1px solid $roger-border-color;
+            width: 25%;
+            text-align: center;
+            h4 {
+              font-size: 0.9rem;
+            }
+            p {
+              font-size: 1.2rem;
             }
           }
         }
       }
-    }
-    .pending-confirmation-text {
-      color: var(--yellow-text);
-      font-size: 0.9rem;
     }
   }
   .icon {

@@ -33,9 +33,16 @@ const MessagesComponent = () => {
 
   const [otherUserId, setOtherUserId] = useState(null);
 
-  const handleOtherUserId = (id: number) => {
+  const [otherName, setOtherName] = useState(null);
+
+  const [messageId, setMessageId] = useState(null);
+
+  const handleOtherUserId = (id: number, name: string, messageId: number) => {
     setOtherUserId(id);
+    setOtherName(name);
+    setMessageId(messageId);
   };
+
   const [skipChatMessages, setSkipChatMessages] = useState(true);
 
   const { data: chatMessages, refetch: refetchChatMessages } =
@@ -85,6 +92,7 @@ const MessagesComponent = () => {
           otherUserId={otherUserId}
           handleOtherUserId={handleOtherUserId}
           user={user}
+          messageId={messageId}
         />
       </div>
       <div className={styles["message-area"]}>
@@ -95,6 +103,7 @@ const MessagesComponent = () => {
             refetchChatMessages={refetchChatMessages}
             setOtherUserId={setOtherUserId}
             shouldShowChatAreaCloseIcon={shouldShowChatAreaCloseIcon}
+            otherName={otherName}
           />
         )}
       </div>

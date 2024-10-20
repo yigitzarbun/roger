@@ -22,7 +22,7 @@ const ExplorePlayerProfilesEventsSection = (
 
   const { data: playerBookings, isLoading: isPlayerBookingsLoading } =
     useGetUserProfileEventsQuery(selectedPlayer?.user_id);
-  console.log(playerBookings);
+
   const [isEventsModalOpen, setIsEventModalOpen] = useState(false);
 
   const openEventsModal = () => {
@@ -56,7 +56,7 @@ const ExplorePlayerProfilesEventsSection = (
           </thead>
           <tbody>
             {playerBookings
-              ?.slice(playerBookings.length - 4)
+              ?.slice(playerBookings.length > 4 ? playerBookings.length - 4 : 0)
               ?.map((booking) => (
                 <tr key={booking.booking_id} className={styles["opponent-row"]}>
                   <td>
@@ -102,6 +102,8 @@ const ExplorePlayerProfilesEventsSection = (
                           ? 1
                           : booking.event_type_id === 2
                           ? 1
+                          : booking.event_type_id === 7
+                          ? 1
                           : booking.event_type_id === 3
                           ? 2
                           : ""
@@ -114,10 +116,18 @@ const ExplorePlayerProfilesEventsSection = (
                       }`}
                       className={styles["opponent-name"]}
                     >
-                      {booking?.fname
+                      {(booking?.event_type_id === 1 ||
+                        booking?.event_type_id === 2 ||
+                        booking?.event_type_id === 7) &&
+                      booking.fname
                         ? `${booking?.fname} ${booking?.lname}`
-                        : booking?.playerFname
+                        : (booking?.event_type_id === 1 ||
+                            booking?.event_type_id === 2 ||
+                            booking?.event_type_id === 7) &&
+                          booking?.playerFname
                         ? `${booking?.playerFname} ${booking?.playerLname}`
+                        : booking?.event_type_id === 3
+                        ? `${booking?.trainerFname} ${booking?.trainerLname}`
                         : "-"}
                     </Link>
                   </td>
@@ -142,7 +152,8 @@ const ExplorePlayerProfilesEventsSection = (
                   <td>{new Date(booking.event_date).toLocaleDateString()}</td>
                   <td>{booking.event_time.slice(0, 5)}</td>
                   <td>
-                    {booking.event_type_id === 2 &&
+                    {(booking.event_type_id === 2 ||
+                      booking.event_type_id === 7) &&
                     booking.match_score_status_type_id === 3
                       ? `${booking?.inviter_first_set_games_won}/${
                           booking?.invitee_first_set_games_won
@@ -160,7 +171,8 @@ const ExplorePlayerProfilesEventsSection = (
                       : "-"}
                   </td>
                   <td>
-                    {booking.event_type_id === 2 &&
+                    {(booking.event_type_id === 2 ||
+                      booking.event_type_id === 7) &&
                     booking.winner_id &&
                     booking.match_score_status_type_id === 3 &&
                     booking?.winner_id === selectedPlayer?.user_id ? (
@@ -170,7 +182,8 @@ const ExplorePlayerProfilesEventsSection = (
                       >
                         {`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}
                       </Link>
-                    ) : booking.event_type_id === 2 &&
+                    ) : (booking.event_type_id === 2 ||
+                        booking.event_type_id === 7) &&
                       booking.winner_id &&
                       booking.match_score_status_type_id === 3 &&
                       booking?.winner_id !== selectedPlayer?.user_id ? (

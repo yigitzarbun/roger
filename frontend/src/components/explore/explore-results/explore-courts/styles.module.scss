@@ -166,7 +166,7 @@
     .book-button {
       background-color: var(--primary-button-background-color);
       border: none;
-      width: 110px;
+      min-width: 100px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;

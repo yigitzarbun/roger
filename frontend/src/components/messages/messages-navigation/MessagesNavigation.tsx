@@ -11,8 +11,9 @@ interface MessagesNavigationProps {
   handleTextSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   textSearch: string;
   otherUserId: number;
-  handleOtherUserId: (id: number) => void;
+  handleOtherUserId: (id: number, name: string, messageId: number) => void;
   user: any;
+  messageId: number;
 }
 const MessagesNavigation = (props: MessagesNavigationProps) => {
   const {
@@ -22,6 +23,7 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
     otherUserId,
     handleOtherUserId,
     user,
+    messageId,
   } = props;
 
   const convertToMinutesAgo = (dateString: string) => {
@@ -70,12 +72,24 @@ const MessagesNavigation = (props: MessagesNavigationProps) => {
         userChats.map((chat) => (
           <div
             key={chat?.message_id}
-            className={styles["chat-container"]}
+            className={
+              messageId === chat?.message_id
+                ? styles["active-chat-container"]
+                : styles["chat-container"]
+            }
             onClick={() =>
               handleOtherUserId(
                 chat?.sender_id === user?.user_id
                   ? chat?.recipient_id
-                  : chat?.sender_id
+                  : chat?.sender_id,
+                chat?.player_fname
+                  ? `${chat?.player_fname} ${chat?.player_lname}`
+                  : chat?.trainer_fname
+                  ? `${chat?.trainer_fname} ${chat?.trainer_lname}`
+                  : chat?.club_name
+                  ? chat?.club_name
+                  : "-",
+                chat?.message_id
               )
             }
           >

@@ -21,7 +21,7 @@ const ExploreTrainersEventsSection = (
   const { selectedTrainer, trainerGroups } = props;
 
   const { data: trainerBookings, isLoading: isTrainerBookingLoading } =
-    useGetUserProfileEventsQuery(selectedTrainer?.[0]?.user_id);
+    useGetUserProfileEventsQuery(selectedTrainer?.[0]?.trainerUserId);
 
   const [isEventsModalOpen, setIsEventsModalOpen] = useState(false);
 
@@ -73,11 +73,12 @@ const ExploreTrainersEventsSection = (
                           ? 3
                           : ""
                       }/${
-                        booking.inviter_id === selectedTrainer?.[0]?.user_id &&
+                        booking.inviter_id ===
+                          selectedTrainer?.[0]?.trainerUserId &&
                         booking.event_type_id === 3
                           ? booking.invitee_id
                           : booking.invitee_id ===
-                              selectedTrainer?.[0]?.user_id &&
+                              selectedTrainer?.[0]?.trainerUserId &&
                             booking.event_type_id === 3
                           ? booking.inviter_id
                           : booking.event_type_id === 6
@@ -104,11 +105,12 @@ const ExploreTrainersEventsSection = (
                           ? 3
                           : ""
                       }/${
-                        booking.inviter_id === selectedTrainer?.[0]?.user_id &&
+                        booking.inviter_id ===
+                          selectedTrainer?.[0]?.trainerUserId &&
                         booking.event_type_id === 3
                           ? booking.invitee_id
                           : booking.invitee_id ===
-                              selectedTrainer?.[0]?.user_id &&
+                              selectedTrainer?.[0]?.trainerUserId &&
                             booking.event_type_id === 3
                           ? booking.inviter_id
                           : booking.event_type_id === 6

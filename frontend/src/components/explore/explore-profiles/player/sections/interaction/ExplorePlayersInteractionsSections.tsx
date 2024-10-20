@@ -169,61 +169,11 @@ const ExplorePlayersInteractionsSections = (
           alt="player picture"
           className={styles["profile-image"]}
         />
-
         <div className={styles["name-container"]}>
-          <h2>{`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}</h2>
-          <h4>{t("userTypePlayer")}</h4>
-          <div className={styles.reviews}>
-            {selectedPlayer?.averagereviewscore?.length > 0 &&
-              generateStars(selectedPlayer?.averagereviewscore).map(
-                (star, index) => <span key={index}>{star}</span>
-              )}
-            {selectedPlayer?.averagereviewscore?.length > 0 && (
-              <p className={styles["reviews-text"]}>
-                {selectedPlayer?.reviewscorecount} {t("reviews")}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className={styles["bio-container"]}>
-        <div className={styles["top-container"]}>
-          <div className={styles["table-container"]}>
-            <table>
-              <thead>
-                <tr>
-                  <th>{t("tableAgeHeader")}</th>
-                  <th>{t("tableGenderHeader")}</th>
-                  <th>{t("tableLocationHeader")}</th>
-                  <th>{t("tableLevelHeader")}</th>
-                  <th>{t("tableMatchHeader")}</th>
-                  <th>W</th>
-                  <th>L</th>
-                  <th>{t("leaderboardTablePointsHeader")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className={styles["player-row"]}>
-                  <td>{getAge(Number(selectedPlayer?.birth_year))}</td>
-                  <td>{selectedPlayer?.gender}</td>
-                  <td>{selectedPlayer?.location_name}</td>
-                  <td>{selectedPlayer?.player_level_name}</td>
-                  <td>{selectedPlayer?.totalmatches}</td>
-                  <td className={styles["win-count"]}>
-                    {selectedPlayer?.wonmatches}
-                  </td>
-                  <td className={styles["lost-count"]}>
-                    {selectedPlayer?.lostmatches}
-                  </td>
-                  <td className={styles["points-count"]}>
-                    {selectedPlayer?.playerpoints}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            {user_id !== user?.user?.user_id && (
-              <div className={styles["buttons-container"]}>
+          <div className={styles.name}>
+            <div className={styles["name-top"]}>
+              <h2>{`${selectedPlayer?.fname} ${selectedPlayer?.lname}`}</h2>
+              {user_id !== user?.user?.user_id && (
                 <div className={styles.icons}>
                   {isPlayerInMyFavourites(selectedPlayer?.user_id)
                     ?.is_active === true ? (
@@ -246,34 +196,103 @@ const ExplorePlayersInteractionsSections = (
                     onClick={handleOpenMessageModal}
                   />
                 </div>
-                <div className={styles["interaction-buttons"]}>
-                  {isUserPlayer && (
-                    <button
-                      onClick={handleOpenTrainingModal}
-                      className={styles["interaction-button"]}
-                    >
-                      {t("tableTrainButtonText")}
-                    </button>
-                  )}
-                  {isUserPlayer && selectedPlayer?.gender === userGender && (
-                    <button
-                      onClick={handleOpenMatchModal}
-                      className={styles["interaction-button"]}
-                    >
-                      {t("tableMatchButtonText")}
-                    </button>
-                  )}
-                  {isUserTrainer && (
-                    <button
-                      onClick={handleOpenLessonModal}
-                      className={styles["interaction-button"]}
-                    >
-                      {t("tableLessonButtonText")}
-                    </button>
-                  )}
-                </div>
+              )}
+            </div>
+            <h4>{t("userTypePlayer")}</h4>
+            <div className={styles.reviews}>
+              {selectedPlayer?.averagereviewscore?.length > 0 &&
+                generateStars(selectedPlayer?.averagereviewscore).map(
+                  (star, index) => <span key={index}>{star}</span>
+                )}
+              {selectedPlayer?.averagereviewscore?.length > 0 && (
+                <p className={styles["reviews-text"]}>
+                  {selectedPlayer?.reviewscorecount} {t("reviews")}
+                </p>
+              )}
+            </div>
+          </div>
+          {user_id !== user?.user?.user_id && (
+            <div className={styles["interaction-buttons"]}>
+              {isUserPlayer && (
+                <button
+                  onClick={handleOpenTrainingModal}
+                  className={styles["interaction-button"]}
+                >
+                  {t("tableTrainButtonText")}
+                </button>
+              )}
+              {isUserPlayer && selectedPlayer?.gender === userGender && (
+                <button
+                  onClick={handleOpenMatchModal}
+                  className={styles["interaction-button"]}
+                >
+                  {t("tableMatchButtonText")}
+                </button>
+              )}
+              {isUserTrainer && (
+                <button
+                  onClick={handleOpenLessonModal}
+                  className={styles["interaction-button"]}
+                >
+                  {t("tableLessonButtonText")}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={styles["bio-container"]}>
+        <div className={styles["top-container"]}>
+          <div className={styles["table-container"]}>
+            <table>
+              <thead>
+                <tr>
+                  <th>{t("tableAgeHeader")}</th>
+                  <th>{t("tableGenderHeader")}</th>
+                  <th>{t("tableLocationHeader")}</th>
+                  <th>{t("tableLevelHeader")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className={styles["player-row"]}>
+                  <td>{getAge(Number(selectedPlayer?.birth_year))}</td>
+                  <td>
+                    {selectedPlayer?.gender === "male"
+                      ? t("male")
+                      : t("female")}
+                  </td>
+                  <td>{selectedPlayer?.location_name}</td>
+                  <td>
+                    {selectedPlayer?.player_level_id === 1
+                      ? t("playerLevelBeginner")
+                      : selectedPlayer?.player_level_id === 2
+                      ? t("playerLevelIntermediate")
+                      : selectedPlayer?.player_level_id === 3
+                      ? t("playerLevelAdvanced")
+                      : t("playerLevelProfessinal")}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className={styles["stats-container"]}>
+              <div className={styles.stat}>
+                <h4>Match</h4>
+                <p>{selectedPlayer?.totalmatches}</p>
               </div>
-            )}
+              <div className={styles.stat}>
+                <h4>Win</h4>
+                <p>{selectedPlayer?.wonmatches}</p>
+              </div>
+              <div className={styles.stat}>
+                <h4>Lose</h4>
+                <p>{selectedPlayer?.lostmatches}</p>
+              </div>
+              <div className={styles.stat}>
+                <h4>{t("leaderboardTablePointsHeader")}</h4>
+                <p>{selectedPlayer?.playerpoints}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

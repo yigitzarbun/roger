@@ -16,6 +16,7 @@ interface MessageAreaProps {
   refetchChatMessages: () => void;
   setOtherUserId: (e: any) => void;
   shouldShowChatAreaCloseIcon: boolean;
+  otherName: string;
 }
 
 const MessageArea = (props: MessageAreaProps) => {
@@ -25,6 +26,7 @@ const MessageArea = (props: MessageAreaProps) => {
     refetchChatMessages,
     setOtherUserId,
     shouldShowChatAreaCloseIcon,
+    otherName,
   } = props;
 
   const { t } = useTranslation();
@@ -123,7 +125,9 @@ const MessageArea = (props: MessageAreaProps) => {
           <p>{t("messagesTitle")}</p>
         </div>
       )}
-
+      <h3>
+        {t("chatWith")} {otherName}
+      </h3>
       <div className={styles["messages-container"]} ref={messagesContainerRef}>
         {chatMessages?.length > 0
           ? chatMessages?.map((message) => (

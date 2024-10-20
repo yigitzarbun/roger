@@ -153,27 +153,23 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
 
   const [page, setPage] = useState(1);
 
-  const firstPageFields = ["fname", "lname", "gender", "birth_year"];
-
-  const secondPageFields = [
-    "player_level_id",
-    "location_id",
-    "email",
-    "password",
-  ];
-
   const handlePage = async (direction: string) => {
-    if (direction === "next" && page === 1) {
-      const result = await trigger();
+    let result;
+    if (direction === "next") {
+      if (page === 1) {
+        result = await trigger(["fname", "lname", "gender", "birth_year"]);
+      } else if (page === 2) {
+        result = await trigger([
+          "player_level_id",
+          "location_id",
+          "email",
+          "password",
+        ]);
+      }
       if (result) {
         setPage(page + 1);
       }
-    } else if (direction === "next" && page === 2) {
-      const result = await trigger();
-      if (result) {
-        setPage(page + 1);
-      }
-    } else if (direction === "prev" && page !== 1) {
+    } else if (direction === "prev") {
       setPage(page - 1);
     }
   };
@@ -205,15 +201,27 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
           className={styles["form-container"]}
           encType="multipart/form-data"
         >
-          {(errors.fname ||
-            errors.lname ||
-            errors.gender ||
-            errors.birth_year ||
-            errors.player_level_id ||
-            errors.location_id ||
-            errors.email ||
-            errors.password ||
-            errors.repeat_password) && (
+          {page === 1 &&
+            (errors.fname ||
+              errors.lname ||
+              errors.gender ||
+              errors.birth_year) && (
+              <span className={styles["error-field"]}>
+                Tüm alanları doldurduğunuzdan emin olun
+              </span>
+            )}
+
+          {page === 2 &&
+            (errors.player_level_id ||
+              errors.location_id ||
+              errors.email ||
+              errors.password) && (
+              <span className={styles["error-field"]}>
+                Tüm alanları doldurduğunuzdan emin olun
+              </span>
+            )}
+
+          {page === 3 && errors.repeat_password && (
             <span className={styles["error-field"]}>
               Tüm alanları doldurduğunuzdan emin olun
             </span>
@@ -229,6 +237,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                     type="text"
                     placeholder={t("registerFNamelInputPlaceholder")}
                   />
+                  {errors.fname && <span>{errors.fname.message}</span>}
                 </div>
                 <div className={styles["input-container"]}>
                   <label>{t("lastName")}</label>
@@ -314,7 +323,6 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                   <input
                     {...register("email", { required: true })}
                     type="email"
-                    placeholder={t("registerEmailInputPlaceholder")}
                   />
                 </div>
                 <div className={styles["input-container"]}>
@@ -375,7 +383,7 @@ const PlayerRegisterForm = (props: PlayerRegisterProps) => {
                 {t("return")}
               </button>
             )}
-            {page === 3 && Object.keys(errors)?.length === 0 ? (
+            {page === 3 ? (
               <button type="submit" className={styles["submit-button"]}>
                 {t("registerButtonText")}
               </button>

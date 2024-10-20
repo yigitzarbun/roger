@@ -32,6 +32,14 @@ const AddPlayerCardDetails = (props) => {
     setExpiryValue(value);
   };
 
+  const [cardNumber, setCardNumber] = useState("");
+
+  const handleCardNumberChange = (event) => {
+    const input = event.target.value.replace(/\D/g, ""); // Remove non-digit characters
+    const formatted = input.replace(/(.{4})/g, "$1 ").trim(); // Add space after every 4 digits
+    setCardNumber(formatted); // Set the formatted card number
+  };
+
   const {
     register,
     handleSubmit,
@@ -108,6 +116,8 @@ const AddPlayerCardDetails = (props) => {
                   minLength: 16,
                   maxLength: 16,
                 })}
+                value={cardNumber}
+                onChange={handleCardNumberChange}
               />
               {errors.card_number && (
                 <span className={styles["error-field"]}>

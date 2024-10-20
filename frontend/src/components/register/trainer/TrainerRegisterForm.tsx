@@ -423,7 +423,6 @@ const TrainerRegisterForm = (props: TrainerRegisterProps) => {
                   <input
                     {...register("email", { required: true })}
                     type="email"
-                    placeholder={t("registerEmailInputPlaceholder")}
                   />
                 </div>
                 <div className={styles["input-container"]}>

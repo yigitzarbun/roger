@@ -1098,10 +1098,6 @@ const bookingsModel = {
           "trainers.lname as trainerLname",
           "trainers.user_id as trainerUserId",
           "trainers.image as trainerImage",
-          "players.fname",
-          "players.lname",
-          "trainers.fname",
-          "trainers.lname",
           "clubs.club_name",
           "clubs.user_id as clubUserId",
           "event_types.event_type_name",
@@ -1113,17 +1109,15 @@ const bookingsModel = {
           "match_scores.inviter_second_set_games_won",
           "match_scores.invitee_second_set_games_won",
           "match_scores.inviter_third_set_games_won",
-          "match_scores.inviter_third_set_games_won",
-          "match_scores.invitee_third_set_games_won",
           "match_scores.invitee_third_set_games_won",
           "match_scores.winner_id",
           "courts.court_name",
           "student_groups.student_group_name",
           db.raw(
-            "CASE WHEN event_types.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.fname END as winner_fname"
+            "CASE WHEN event_types.event_type_id IN (2, 7) AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.fname END as winner_fname"
           ),
           db.raw(
-            "CASE WHEN event_types.event_type_id = 2 AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.lname END as winner_lname"
+            "CASE WHEN event_types.event_type_id IN (2, 7) AND match_scores.match_score_status_type_id = 3 AND match_scores.winner_id = players.user_id THEN players.lname END as winner_lname"
           )
         )
         .from("bookings")
@@ -1178,6 +1172,26 @@ const bookingsModel = {
           builder
             .whereNot("players.user_id", userId)
             .orWhereNot("trainers.user_id", userId);
+        })
+        .andWhere((builder) => {
+          builder
+            .where(function () {
+              this.whereNotNull("match_scores.winner_id")
+                .where("match_scores.match_score_status_type_id", 3)
+                .andWhere(function () {
+                  this.where("event_types.event_type_id", 2).orWhere(
+                    "event_types.event_type_id",
+                    7
+                  );
+                });
+            })
+            .orWhere(function () {
+              this.where("event_types.event_type_id", "<>", 2).andWhere(
+                "event_types.event_type_id",
+                "<>",
+                7
+              );
+            });
         });
 
       return userPastEvents;
