@@ -11,14 +11,20 @@
   column-gap: 5vw;
   border: 1px solid $roger-border-color;
   overflow-x: auto;
+  justify-content: space-between;
   @include small-screen {
     flex-direction: column;
   }
   .image-container {
     display: flex;
     column-gap: 1vw;
+    width: 55%;
+    justify-content: space-between;
     @include small-screen {
-      column-gap: 2vw;
+      flex-direction: column;
+      width: 100%;
+      row-gap: 2vh;
+      text-align: center;
     }
     .profile-image {
       width: 200px;
@@ -26,9 +32,18 @@
       border-radius: 50%;
       object-fit: cover;
       object-position: center;
+      @include small-screen {
+        margin: 0 auto;
+      }
     }
     .name-container {
-      width: 50%;
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      @include small-screen {
+        width: 100%;
+      }
       h4 {
         font-weight: lighter;
       }
@@ -36,64 +51,22 @@
         margin-top: 1vh;
         font-size: 0.9rem;
       }
-    }
-  }
-  .bio-container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 4.5vh;
-
-    .top-container {
-      display: flex;
-      column-gap: 5vw;
-      align-items: start;
-      width: 100%;
-
-      .table-container {
+      .name {
         display: flex;
         flex-direction: column;
-        row-gap: 4vh;
-        width: 100%;
-        overflow-x: auto;
-
-        table {
-          width: 100%;
-          text-align: left;
-          border-collapse: collapse;
-          th {
-            padding-top: 0;
-            padding-bottom: 0;
-          }
-          .player-row {
-            border-bottom: 1px solid $roger-border-color;
-            td {
-              border-top: 1px solid $roger-border-color;
-              vertical-align: middle;
-              padding: 10px;
-              height: 12vh;
-            }
-            .win-count {
-              color: $roger-green;
-            }
-            .lost-count {
-              color: $roger-red;
-            }
-            .points-count {
-              color: $roger-blue;
-            }
-          }
+        @include small-screen {
+          row-gap: 1vh;
         }
-        .buttons-container {
+        .name-top {
           display: flex;
-          align-items: center;
-          column-gap: 3vw;
+          column-gap: 2vw;
           @include small-screen {
-            margin-bottom: 4vh;
+            margin: 0 auto;
           }
           .icons {
             display: flex;
             align-items: center;
-            column-gap: 3vw;
+            column-gap: 1vw;
 
             .remove-fav-icon {
               color: $roger-blue;
@@ -117,36 +90,79 @@
               color: $roger-blue;
             }
           }
-          .interaction-buttons {
-            display: flex;
-            column-gap: 2vw;
-
-            .interaction-button {
-              padding: 10px;
-              border-radius: $roger-border-radius;
-              border: none;
-              background-color: $roger-black-dark;
-              font-size: 0.8rem;
-              cursor: pointer;
-              text-decoration: none;
-              color: white;
-              text-align: center;
-            }
-
-            .interaction-button:hover {
-              background-color: $roger-black-light;
-              cursor: pointer;
-            }
-            .pending {
-              color: var(--yellow-text);
-              font-size: 0.9rem;
-            }
-            .accepted {
-              color: var(--green-text);
-              font-size: 0.9rem;
-            }
+        }
+        h4 {
+          font-style: italic;
+        }
+        .reviews {
+          margin-top: 2vh;
+          .active-star {
+            color: $roger-green;
+            font-size: 0.9rem;
+            margin-top: 1vh;
+          }
+          .empty-star {
+            color: grey;
+            font-size: 0.9rem;
+            margin-top: 1vh;
+          }
+          .reviews-text {
+            font-size: 0.9rem;
           }
         }
+      }
+      .interaction-buttons {
+        display: flex;
+        column-gap: 2vw;
+        @include small-screen {
+          margin: 4vh auto 0 auto;
+        }
+        .interaction-button {
+          padding: 10px;
+          border-radius: $roger-border-radius;
+          border: none;
+          background-color: $roger-black-dark;
+          font-size: 0.8rem;
+          cursor: pointer;
+          text-decoration: none;
+          color: white;
+          text-align: center;
+        }
+
+        .interaction-button:hover {
+          background-color: $roger-black-light;
+          cursor: pointer;
+        }
+        .pending {
+          color: var(--yellow-text);
+          font-size: 0.9rem;
+        }
+        .accepted {
+          color: var(--green-text);
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+  .bio-container {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    @include small-screen {
+      width: 100%;
+    }
+    .top-container {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      row-gap: 4vh;
+
+      .table-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 4vh;
+        overflow-x: auto;
+
         .subscribed-container {
           display: flex;
           column-gap: 1vw;
@@ -158,6 +174,38 @@
             color: $roger-green;
             font-size: 1.2rem;
           }
+        }
+      }
+    }
+    .stats-container {
+      display: flex;
+      column-gap: 2vw;
+      @include small-screen {
+        justify-content: space-between;
+        column-gap: auto;
+      }
+      .stat {
+        display: flex;
+        flex-direction: column;
+        padding: $roger-box-padding;
+        border-radius: $roger-border-radius;
+        border: 1px solid $roger-border-color;
+        width: 22%;
+        text-align: center;
+        overflow: hidden; // Prevent overflow
+        text-overflow: ellipsis; // Add ellipsis for overflowing text
+        white-space: nowrap; // Prevent text wrapping
+        @include small-screen {
+          width: 24%;
+        }
+        h4 {
+          font-size: 0.9rem;
+          @include small-screen {
+            font-size: 0.8rem;
+          }
+        }
+        p {
+          font-size: 1.2rem;
         }
       }
     }

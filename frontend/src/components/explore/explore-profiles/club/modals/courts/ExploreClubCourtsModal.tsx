@@ -40,7 +40,7 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
       <div className={styles["overlay"]} onClick={closeCourtsModal} />
       <div className={styles["modal-content"]}>
         <div className={styles["top-container"]}>
-          <h1>Kortlar</h1>
+          <h1>{t("courtsTitle")}</h1>
         </div>
         <div className={styles["table-container"]}>
           {courts?.length > 0 ? (

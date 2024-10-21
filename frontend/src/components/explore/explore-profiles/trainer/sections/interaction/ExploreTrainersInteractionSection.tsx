@@ -303,8 +303,14 @@ export const ExploreTrainersInteractionSection = (
               </thead>
               <tbody>
                 <tr className={styles["player-row"]}>
-                  <td>{getAge(Number(selectedTrainer?.[0]?.birth_year))}</td>
-                  <td>{selectedTrainer?.[0]?.gender}</td>
+                  <td>
+                    {getAge(Number(selectedTrainer?.[0]?.trainerBirthYear))}
+                  </td>
+                  <td>
+                    {selectedTrainer?.[0]?.trainerGender === "male"
+                      ? t("male")
+                      : t("female")}
+                  </td>
                   <td>{selectedTrainer?.[0]?.location_name}</td>
                   <td>
                     {selectedTrainer?.[0]?.employment_status === "accepted"
@@ -330,72 +336,15 @@ export const ExploreTrainersInteractionSection = (
                 </tr>
               </tbody>
             </table>
-            <div className={styles["buttons-container"]}>
-              <div className={styles.icons}>
-                {isTrainerInMyFavourites(selectedTrainer?.[0]?.user_id)
-                  ?.is_active === true ? (
-                  <AiFillStar
-                    className={styles["remove-fav-icon"]}
-                    onClick={() =>
-                      handleToggleFavourite(selectedTrainer?.[0]?.user_id)
-                    }
-                  />
-                ) : (
-                  <AiOutlineStar
-                    className={styles["add-fav-icon"]}
-                    onClick={() =>
-                      handleToggleFavourite(selectedTrainer?.[0]?.user_id)
-                    }
-                  />
-                )}
-                <FiMessageSquare
-                  className={styles.message}
-                  onClick={handleOpenMessageModal}
-                />
-              </div>
-              <div className={styles["interaction-buttons"]}>
-                {isUserPlayer && (
-                  <button
-                    onClick={() =>
-                      handleOpenLessonModal(selectedTrainer?.[0]?.user_id)
-                    }
-                    className={styles["interaction-button"]}
-                  >
-                    {t("tableLessonInviteButtonText")}
-                  </button>
-                )}
-
-                {isUserPlayer && (
-                  <p>
-                    {isStudentPending() ? (
-                      ""
-                    ) : isStudentAccepted() ? (
-                      <button
-                        onClick={() =>
-                          handleDeclineStudent(selectedTrainer?.[0]?.user_id)
-                        }
-                        className={styles["interaction-button"]}
-                      >
-                        {t("tableDeleteStudentshipButtonText")}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          handleOpenStudentApplicationModal(
-                            selectedTrainer?.[0]?.user_id,
-                            selectedTrainer?.[0]?.fname,
-                            selectedTrainer?.[0]?.lname,
-                            selectedTrainer?.[0]?.image
-                          )
-                        }
-                        className={styles["interaction-button"]}
-                      >
-                        {t("studentshipApply")}
-                      </button>
-                    )}
-                  </p>
-                )}
-              </div>
+          </div>
+          <div className={styles["stats-container"]}>
+            <div className={styles.stat}>
+              <h4>Lessons</h4>
+              <p>{selectedTrainer?.[0]?.lessoncount}</p>
+            </div>
+            <div className={styles.stat}>
+              <h4>Students</h4>
+              <p>{selectedTrainer?.[0]?.studentcount}</p>
             </div>
           </div>
         </div>

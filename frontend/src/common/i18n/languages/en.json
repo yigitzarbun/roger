@@ -806,8 +806,15 @@
   "sentRequest": "request",
 
   "explorePlayersTrainersClubs": "Explore players, trainers, clubs, courts and tournaments",
+  "explorePlayers": "Explore players",
+
   "explore": "Explore",
 
   "explorePlayerForMatch": "Explore players suitable for challenging to a match",
-  "playerPastMatchesEmptyText": "No past matches found"
+  "playerPastMatchesEmptyText": "No past matches found",
+
+  "chatWith": "Chat with",
+
+  "noCompletedEvents": "No completed events yet",
+  "packages": "Packages"
 }
