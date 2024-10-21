@@ -11,7 +11,7 @@
   column-gap: 5vw;
   border: 1px solid $roger-border-color;
   overflow-x: auto;
-
+  justify-content: space-between;
   @include small-screen {
     flex-direction: column;
     row-gap: 6vh;
@@ -38,33 +38,7 @@
       }
     }
     .name-container {
-      width: 50%;
-      h4 {
-        font-weight: lighter;
-      }
-      .reviews {
-        margin-top: 2vh;
-        .active-star {
-          color: $roger-green;
-          font-size: 0.9rem;
-          margin-top: 1vh;
-        }
-        .empty-star {
-          color: grey;
-          font-size: 0.9rem;
-          margin-top: 1vh;
-        }
-        .reviews-text {
-          font-size: 0.9rem;
-        }
-      }
-    }
-  }
-  .bio-container {
-    display: flex;
-    flex-direction: column;
-    row-gap: 4.5vh;
-    .top-container {
+      width: 60%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -86,7 +60,7 @@
           .icons {
             display: flex;
             align-items: center;
-            column-gap: 3vw;
+            column-gap: 1vw;
 
             .remove-fav-icon {
               color: $roger-blue;

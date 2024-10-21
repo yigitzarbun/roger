@@ -270,19 +270,100 @@ export const ExploreTrainersInteractionSection = (
           className={styles["profile-image"]}
         />
         <div className={styles["name-container"]}>
-          <h2>{`${selectedTrainer?.[0]?.fname} ${selectedTrainer?.[0]?.lname}`}</h2>
-          <h4>{t("userTypeTrainer")}</h4>
-          <div className={styles.reviews}>
-            {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 &&
-              generateStars(selectedTrainer?.[0]?.averagereviewscore).map(
-                (star, index) => <span key={index}>{star}</span>
+          <div className={styles.name}>
+            <div className={styles["name-top"]}>
+              <h2>{`${selectedTrainer?.[0]?.trainerFname} ${selectedTrainer?.[0]?.trainerLname}`}</h2>
+              {user_id !== user?.user?.user_id && (
+                <div className={styles.icons}>
+                  {isTrainerInMyFavourites(selectedTrainer?.[0]?.trainerUserId)
+                    ?.is_active === true ? (
+                    <AiFillStar
+                      className={styles["remove-fav-icon"]}
+                      onClick={() =>
+                        handleToggleFavourite(
+                          selectedTrainer?.[0]?.trainerUserId
+                        )
+                      }
+                    />
+                  ) : (
+                    <AiOutlineStar
+                      className={styles["add-fav-icon"]}
+                      onClick={() =>
+                        handleToggleFavourite(
+                          selectedTrainer?.[0]?.trainerUserId
+                        )
+                      }
+                    />
+                  )}
+                  <FiMessageSquare
+                    className={styles.message}
+                    onClick={handleOpenMessageModal}
+                  />
+                </div>
               )}
-            {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 && (
-              <p className={styles["reviews-text"]}>
-                {selectedTrainer?.[0]?.reviewscorecount} {t("reviews")}
-              </p>
-            )}
+            </div>
+
+            <h4>{t("userTypeTrainer")}</h4>
+            <div className={styles.reviews}>
+              {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 &&
+                generateStars(selectedTrainer?.[0]?.averagereviewscore).map(
+                  (star, index) => <span key={index}>{star}</span>
+                )}
+              {Number(selectedTrainer?.[0]?.averagereviewscore) > 0 && (
+                <p className={styles["reviews-text"]}>
+                  {selectedTrainer?.[0]?.reviewscorecount} {t("reviews")}
+                </p>
+              )}
+            </div>
           </div>
+
+          {user_id !== user?.user?.user_id && (
+            <div className={styles["interaction-buttons"]}>
+              {isUserPlayer && (
+                <button
+                  onClick={() =>
+                    handleOpenLessonModal(selectedTrainer?.[0]?.trainerUserId)
+                  }
+                  className={styles["interaction-button"]}
+                >
+                  {t("tableLessonInviteButtonText")}
+                </button>
+              )}
+
+              {isUserPlayer && (
+                <p>
+                  {isStudentPending() ? (
+                    ""
+                  ) : isStudentAccepted() ? (
+                    <button
+                      onClick={() =>
+                        handleDeclineStudent(
+                          selectedTrainer?.[0]?.trainerUserId
+                        )
+                      }
+                      className={styles["interaction-button"]}
+                    >
+                      {t("tableDeleteStudentshipButtonText")}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        handleOpenStudentApplicationModal(
+                          selectedTrainer?.[0]?.trainerUserId,
+                          selectedTrainer?.[0]?.trainerFname,
+                          selectedTrainer?.[0]?.trainerLname,
+                          selectedTrainer?.[0]?.trainerImage
+                        )
+                      }
+                      className={styles["interaction-button"]}
+                    >
+                      {t("studentshipApply")}
+                    </button>
+                  )}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
       <div className={styles["bio-container"]}>
@@ -296,8 +377,6 @@ export const ExploreTrainersInteractionSection = (
                   <th>{t("tableLocationHeader")}</th>
                   <th>{t("tableClubHeader")}</th>
                   <th>{t("tableLevelHeader")}</th>
-                  <th>{t("tableLessonHeader")}</th>
-                  <th>{t("students")}</th>
                   <th>{t("tablePriceHeader")}</th>
                 </tr>
               </thead>
@@ -326,8 +405,6 @@ export const ExploreTrainersInteractionSection = (
                       ? t("trainerLevelAdvanced")
                       : t("trainerLevelProfessional")}
                   </td>
-                  <td>{selectedTrainer?.[0]?.lessoncount}</td>
-                  <td>{selectedTrainer?.[0]?.studentcount}</td>
                   <td>
                     {selectedTrainer?.[0]?.price_hour
                       ? `${selectedTrainer?.[0]?.price_hour} TL`
@@ -367,7 +444,7 @@ export const ExploreTrainersInteractionSection = (
         <MessageModal
           messageModal={messageModal}
           closeMessageModal={closeMessageModal}
-          recipient_id={selectedTrainer?.[0]?.user_id}
+          recipient_id={selectedTrainer?.[0]?.trainerUserId}
         />
       )}
       {studentApplicationModalOpen && (

@@ -169,7 +169,6 @@ const ExplorePlayersInteractionsSections = (
           alt="player picture"
           className={styles["profile-image"]}
         />
-
         <div className={styles["name-container"]}>
           <div className={styles.name}>
             <div className={styles["name-top"]}>
