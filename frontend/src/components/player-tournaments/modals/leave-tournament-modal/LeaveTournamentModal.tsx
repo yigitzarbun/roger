@@ -120,13 +120,13 @@ const LeaveTournamentModal = (props: LeaveTournamentModalModalProps) => {
             onClick={closeLeaveTournamentModal}
             className={styles["discard-button"]}
           >
-            İptal
+            {t("discardButtonText")}
           </button>
           <button
             onClick={handleWithdrawParticipant}
             className={styles["submit-button"]}
           >
-            Onayla
+            {t("submit")}
           </button>
         </div>
       </div>

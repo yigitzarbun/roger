@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import { useAppSelector } from "../../../../store/hooks";
 import { ImBlocked } from "react-icons/im";
@@ -18,6 +18,7 @@ import { useGetTrainerPastEventsQuery } from "../../../../../api/endpoints/Booki
 import { useGetEventReviewsQuery } from "../../../../../api/endpoints/EventReviewsApi";
 import TrainerPastEventsFilterModal from "./results-filter/TrainerPastEventsFilterModal";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import Paths from "../../../../routing/Paths";
 
 interface TrainerEventsResultsProps {
   clubId: number;
@@ -61,6 +62,12 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
   } = props;
 
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.EXPLORE);
+  };
 
   const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
 
@@ -361,7 +368,11 @@ const TrainerEventsResults = (props: TrainerEventsResultsProps) => {
           </tbody>
         </table>
       ) : (
-        <p>{t("noCompletedEvents")}</p>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("noCompletedEvents")}</h4>
+          <p>{t("explorePlayers")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       )}
       <div className={styles["pages-container"]}>
         {pageNumbers?.map((pageNumber) => (

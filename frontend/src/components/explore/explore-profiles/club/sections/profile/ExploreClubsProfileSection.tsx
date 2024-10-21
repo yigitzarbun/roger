@@ -214,38 +214,10 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
         />
 
         <div className={styles["name-container"]}>
-          <h2>{selectedClub?.[0]?.club_name} </h2>
-          <h4>{t("userTypeClub")}</h4>
-          <address>{selectedClub?.[0]?.club_address}</address>
-        </div>
-      </div>
-      <div className={styles["bio-container"]}>
-        <div className={styles["top-container"]}>
-          <div className={styles["table-container"]}>
-            <table>
-              <thead>
-                <tr>
-                  <th>{t("tableLocationHeader")}</th>
-                  <th>{t("tableClubTypeHeader")}</th>
-                  <th>{t("tableCourtHeader")}</th>
-                  <th>{t("tableTrainerHeader")}</th>
-                  <th>{t("tableSubscribersHeader")}</th>
-                  <th>{t("subscriptionPackage")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className={styles["player-row"]}>
-                  <td>{selectedClub?.[0]?.location_name}</td>
-                  <td>{selectedClub?.[0]?.club_type_name}</td>
-                  <td>{selectedClub?.[0]?.courtcount}</td>
-                  <td>{selectedClub?.[0]?.staffcount}</td>
-                  <td>{selectedClub?.[0]?.subscriberscount}</td>
-                  <td>{selectedClub?.[0]?.subscriptionpackagecount}</td>
-                </tr>
-              </tbody>
-            </table>
-            {user?.user?.user_id !== selectedClub?.[0]?.user_id && (
-              <div className={styles["buttons-container"]}>
+          <div className={styles.name}>
+            <div className={styles["name-top"]}>
+              <h2>{selectedClub?.[0]?.club_name}</h2>
+              {user?.user?.user_id !== selectedClub?.[0]?.user_id && (
                 <div className={styles.icons}>
                   {isClublayerInMyFavourites(selectedClub?.[0]?.user_id)
                     ?.is_active === true ? (
@@ -268,61 +240,97 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                     onClick={handleOpenMessageModal}
                   />
                 </div>
-                <div className={styles["interaction-buttons"]}>
-                  {isUserPlayer &&
-                    selectedClub?.[0]?.subscriptionpackagecount > 0 &&
-                    isUserSubscribedToClub?.length === 0 &&
-                    playerPaymentDetailsExist && (
-                      <button
-                        onClick={handleOpenSubscribeModal}
-                        className={styles["interaction-button"]}
-                      >
-                        {t("subscribe")}
-                      </button>
-                    )}
-                  {isUserPlayer &&
-                    selectedClub?.[0]?.subscriptionpackagecount > 0 &&
-                    isUserSubscribedToClub?.length === 0 &&
-                    !playerPaymentDetailsExist && (
-                      <button
-                        onClick={handleOpenPaymentModal}
-                        className={styles["interaction-button"]}
-                      >
-                        {t("subscribeCardDetails")}
-                      </button>
-                    )}
-                  {(isUserTrainer &&
-                    (!isTrainerStaff ||
-                      isTrainerStaff?.length === 0 ||
-                      isTrainerStaff?.[0]?.employment_status === "declined")) ||
-                  isTrainerStaff?.[0]?.employment_status ===
-                    "terminated_by_club" ? (
-                    <button
-                      onClick={openEmploymentModal}
-                      className={styles["interaction-button"]}
-                    >
-                      {t("staffEmploymentApplication")}
-                    </button>
-                  ) : isUserTrainer &&
-                    isTrainerStaff?.[0]?.employment_status === "accepted" ? (
-                    <p className={styles.accepted}>{t("staffEmployedText")}</p>
-                  ) : isUserTrainer &&
-                    isTrainerStaff?.[0]?.employment_status === "pending" ? (
-                    <p className={styles.pending}>
-                      {t("staffEmploymentAwaiting")}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+            <h4>
+              {`${
+                selectedClub?.[0]?.club_type_id === 1
+                  ? t("clubTypePrivate")
+                  : selectedClub?.[0]?.club_type_id === 2
+                  ? t("clubTypePublic")
+                  : t("clubTypeResidential")
+              }
+               ${t("userTypeClub")}`}
+            </h4>
+            <address>{selectedClub?.[0]?.club_address}</address>
+            <p>{selectedClub?.[0]?.location_name}</p>
+          </div>
+          {user?.user?.user_id !== selectedClub?.[0]?.user_id && (
+            <div className={styles["interaction-buttons"]}>
+              {isUserPlayer &&
+                selectedClub?.[0]?.subscriptionpackagecount > 0 &&
+                isUserSubscribedToClub?.length === 0 &&
+                playerPaymentDetailsExist && (
+                  <button
+                    onClick={handleOpenSubscribeModal}
+                    className={styles["interaction-button"]}
+                  >
+                    {t("subscribe")}
+                  </button>
+                )}
+              {isUserPlayer &&
+                selectedClub?.[0]?.subscriptionpackagecount > 0 &&
+                isUserSubscribedToClub?.length === 0 &&
+                !playerPaymentDetailsExist && (
+                  <button
+                    onClick={handleOpenPaymentModal}
+                    className={styles["interaction-button"]}
+                  >
+                    {t("subscribeCardDetails")}
+                  </button>
+                )}
+              {(isUserTrainer &&
+                (!isTrainerStaff ||
+                  isTrainerStaff?.length === 0 ||
+                  isTrainerStaff?.[0]?.employment_status === "declined")) ||
+              isTrainerStaff?.[0]?.employment_status ===
+                "terminated_by_club" ? (
+                <button
+                  onClick={openEmploymentModal}
+                  className={styles["interaction-button"]}
+                >
+                  {t("staffEmploymentApplication")}
+                </button>
+              ) : isUserTrainer &&
+                isTrainerStaff?.[0]?.employment_status === "accepted" ? (
+                <p className={styles.accepted}>{t("staffEmployedText")}</p>
+              ) : isUserTrainer &&
+                isTrainerStaff?.[0]?.employment_status === "pending" ? (
+                <p className={styles.pending}>{t("staffEmploymentAwaiting")}</p>
+              ) : (
+                ""
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className={styles["bio-container"]}>
+        <div className={styles["top-container"]}>
+          <div className={styles["table-container"]}>
             {isUserPlayer && isUserSubscribedToClub?.length > 0 && (
               <div className={styles["subscribed-container"]}>
                 <IoIosCheckmarkCircle className={styles.done} />
                 <p className={styles["subscribed-text"]}>{t("subscribed")}</p>
               </div>
             )}
+          </div>
+          <div className={styles["stats-container"]}>
+            <div className={styles.stat}>
+              <h4>{t("courtsTitle")}</h4>
+              <p>{selectedClub?.[0]?.courtcount}</p>
+            </div>
+            <div className={styles.stat}>
+              <h4>{t("exploreTrainersTabTitle")}</h4>
+              <p>{selectedClub?.[0]?.staffcount}</p>
+            </div>
+            <div className={styles.stat}>
+              <h4>{t("subscribersTitle")}</h4>
+              <p>{selectedClub?.[0]?.subscriberscount}</p>
+            </div>
+            <div className={styles.stat}>
+              <h4>{t("packages")}</h4>
+              <p>{selectedClub?.[0]?.subscriptionpackagecount}</p>
+            </div>
           </div>
         </div>
       </div>

@@ -556,8 +556,11 @@ const bookingsModel = {
           "clubs.club_name",
           "courts.court_name",
           "court_structure_types.court_structure_type_name",
+          "court_structure_types.court_structure_type_id",
           "court_surface_types.court_surface_type_name",
+          "court_surface_types.court_surface_type_id",
           "event_types.event_type_name",
+          "event_types.event_type_id",
           db.raw(
             "COALESCE(event_reviews.is_active, false) AS isEventReviewActive"
           ) // Return whether the event review is active or not

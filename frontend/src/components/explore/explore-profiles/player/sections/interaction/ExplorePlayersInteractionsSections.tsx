@@ -277,7 +277,7 @@ const ExplorePlayersInteractionsSections = (
             </table>
             <div className={styles["stats-container"]}>
               <div className={styles.stat}>
-                <h4>Match</h4>
+                <h4>{t("matchTitle")}</h4>
                 <p>{selectedPlayer?.totalmatches}</p>
               </div>
               <div className={styles.stat}>

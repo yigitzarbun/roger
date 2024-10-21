@@ -385,7 +385,11 @@ export const ExploreTrainersInteractionSection = (
                   <td>
                     {getAge(Number(selectedTrainer?.[0]?.trainerBirthYear))}
                   </td>
-                  <td>{selectedTrainer?.[0]?.trainerGender}</td>
+                  <td>
+                    {selectedTrainer?.[0]?.trainerGender === "male"
+                      ? t("male")
+                      : t("female")}
+                  </td>
                   <td>{selectedTrainer?.[0]?.location_name}</td>
                   <td>
                     {selectedTrainer?.[0]?.employment_status === "accepted"
@@ -409,15 +413,15 @@ export const ExploreTrainersInteractionSection = (
                 </tr>
               </tbody>
             </table>
-            <div className={styles["stats-container"]}>
-              <div className={styles.stat}>
-                <h4>Lessons</h4>
-                <p>{selectedTrainer?.[0]?.lessoncount}</p>
-              </div>
-              <div className={styles.stat}>
-                <h4>Students</h4>
-                <p>{selectedTrainer?.[0]?.studentcount}</p>
-              </div>
+          </div>
+          <div className={styles["stats-container"]}>
+            <div className={styles.stat}>
+              <h4>Lessons</h4>
+              <p>{selectedTrainer?.[0]?.lessoncount}</p>
+            </div>
+            <div className={styles.stat}>
+              <h4>Students</h4>
+              <p>{selectedTrainer?.[0]?.studentcount}</p>
             </div>
           </div>
         </div>

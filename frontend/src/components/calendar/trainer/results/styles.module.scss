@@ -42,7 +42,31 @@
       }
     }
   }
+  .no-requests-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2vh;
+    h4 {
+      font-size: 1.1rem;
+    }
+    button {
+      background-color: $roger-black-dark;
+      border: none;
+      width: 110px;
+      padding: $roger-button-padding;
+      border-radius: $roger-border-radius;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 2vh;
+    }
 
+    button:hover {
+      background-color: $roger-black-light;
+    }
+  }
   table {
     width: 100%;
     text-align: left;

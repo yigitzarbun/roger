@@ -144,7 +144,6 @@
   "ageGap": "Yaş Aralığı",
   "participationStatus": "Katılım Durumu",
   "Title": "Ayrılvadan Ayrıl",
-  "Title": "Ayrılvadan Ayrıl",
   "subscriptionTypeHeader": "Üyelik Türü",
   "clubNameHeader": "Kulüp Adı",
   "groupHeader": "Grup",
@@ -809,8 +808,10 @@
   "explore": "Keşfet",
   "explorePlayerForMatch": "Yeni maç daveti göndermek için oyuncuları keşfet",
   "playerPastMatchesEmptyText": "Tamamlanmış maç bulunamadı",
+  "explorePlayers": "Oyuncuları keşfet",
 
   "chatWith": "",
 
-  "noCompletedEvents": "Henüz tamamlanmış etkinlik bulunmamaktadır"
+  "noCompletedEvents": "Henüz tamamlanmış etkinlik bulunmamaktadır",
+  "packages": "Paketler"
 }

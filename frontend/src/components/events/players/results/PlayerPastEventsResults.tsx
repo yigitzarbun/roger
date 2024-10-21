@@ -358,7 +358,7 @@ const PlayerPastEventsResults = (props: PlayerPastEventsResultsProps) => {
                     : t("courtStructureHybrid")}
                 </td>
                 <td>
-                  {event?.isEventReviewActive ? (
+                  {event?.iseventreviewactive ? (
                     <IoIosCheckmarkCircle className={styles.done} />
                   ) : (
                     <button

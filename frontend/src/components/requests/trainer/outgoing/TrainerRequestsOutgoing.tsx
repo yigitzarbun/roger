@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import paths from "../../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../../store/hooks";
@@ -14,11 +14,18 @@ import { getAge } from "../../../../common/util/TimeFunctions";
 import { BsClockHistory } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import Paths from "../../../../routing/Paths";
 
 const TrainerRequestsOutgoing = () => {
   const { user } = useAppSelector((store) => store.user?.user);
 
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(Paths.EXPLORE);
+  };
 
   const {
     data: outgoingBookings,
@@ -79,7 +86,11 @@ const TrainerRequestsOutgoing = () => {
         <h2 className={styles["result-title"]}>{t("outgoingRequestsTitle")}</h2>
       </div>
       {outgoingBookings?.length === 0 ? (
-        <div>{t("noLessonInvitationText")}</div>
+        <div className={styles["no-requests-container"]}>
+          <h4>{t("noLessonInvitationText")}</h4>
+          <p>{t("explorePlayersTrainersClubs")}</p>
+          <button onClick={handleNavigate}>{t("explore")}</button>
+        </div>
       ) : (
         <table>
           <thead>
