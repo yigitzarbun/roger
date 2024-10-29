@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
 import { toast } from "react-toastify";
@@ -19,32 +19,12 @@ const AddPlayerCardDetails = (props) => {
 
   const [updatePlayer, { isSuccess }] = useUpdatePlayerMutation({});
 
-  const [expiryValue, setExpiryValue] = useState("");
-
-  const handleExpiryChange = (event) => {
-    const input = event.target;
-    let value = input.value.replace(/\D/g, "");
-    if (value.length > 2) {
-      value = `${value.slice(0, 2)}/${value.slice(2)}`;
-    } else if (value.length === 2) {
-      value = `${value}/`;
-    }
-    setExpiryValue(value);
-  };
-
-  const [cardNumber, setCardNumber] = useState("");
-
-  const handleCardNumberChange = (event) => {
-    const input = event.target.value.replace(/\D/g, ""); // Remove non-digit characters
-    const formatted = input.replace(/(.{4})/g, "$1 ").trim(); // Add space after every 4 digits
-    setCardNumber(formatted); // Set the formatted card number
-  };
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({
     defaultValues: {
       name_on_card: playerDetails?.name_on_card,
@@ -53,6 +33,47 @@ const AddPlayerCardDetails = (props) => {
       card_expiry: playerDetails?.card_expiry,
     },
   });
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetchPlayerDetails();
+      toast.success("Başarıyla güncellendi");
+      handleCloseModal();
+      reset();
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      // Set formatted default values when the modal opens
+      if (playerDetails?.card_number) {
+        setValue(
+          "card_number",
+          playerDetails.card_number.replace(/(.{4})/g, "$1 ").trim()
+        );
+      }
+      if (playerDetails?.card_expiry) {
+        setValue("card_expiry", playerDetails.card_expiry);
+      }
+    }
+  }, [isModalOpen, playerDetails, setValue]);
+
+  const formatCardNumber = (value) => {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(.{4})/g, "$1 ")
+      .trim(); // Format card number
+  };
+
+  const formatExpiryDate = (value) => {
+    const cleanedValue = value.replace(/\D/g, "");
+    if (cleanedValue.length > 4) {
+      return `${cleanedValue.slice(0, 2)}/${cleanedValue.slice(2, 6)}`;
+    } else if (cleanedValue.length > 2) {
+      return `${cleanedValue.slice(0, 2)}/${cleanedValue.slice(2)}`;
+    }
+    return cleanedValue;
+  };
 
   const onSubmit: SubmitHandler<any> = (formData) => {
     const playerCardDetails = {
@@ -65,20 +86,12 @@ const AddPlayerCardDetails = (props) => {
       player_level_id: playerDetails?.player_level_id,
       user_id: playerDetails?.user_id,
       name_on_card: formData?.name_on_card,
-      card_number: formData?.card_number,
+      card_number: formData?.card_number.replace(/\s/g, ""), // Remove spaces for the backend
       cvc: Number(formData?.cvc),
       card_expiry: formData?.card_expiry,
     };
     updatePlayer(playerCardDetails);
   };
-  useEffect(() => {
-    if (isSuccess) {
-      refetchPlayerDetails();
-      toast.success("Başarıyla güncellendi");
-      handleCloseModal();
-      reset();
-    }
-  }, [isSuccess]);
 
   return (
     <ReactModal
@@ -114,10 +127,12 @@ const AddPlayerCardDetails = (props) => {
                 {...register("card_number", {
                   required: "Bu alan zorunludur",
                   minLength: 16,
-                  maxLength: 16,
+                  maxLength: 19, // accounting for spaces
                 })}
-                value={cardNumber}
-                onChange={handleCardNumberChange}
+                type="text"
+                onChange={(e) =>
+                  setValue("card_number", formatCardNumber(e.target.value))
+                }
               />
               {errors.card_number && (
                 <span className={styles["error-field"]}>
@@ -152,9 +167,10 @@ const AddPlayerCardDetails = (props) => {
                   maxLength: 5,
                 })}
                 type="text"
-                placeholder="AA/YY"
-                value={expiryValue}
-                onChange={handleExpiryChange}
+                placeholder="MM/YY"
+                onChange={(e) =>
+                  setValue("card_expiry", formatExpiryDate(e.target.value))
+                }
               />
               {errors.card_expiry && (
                 <span className={styles["error-field"]}>

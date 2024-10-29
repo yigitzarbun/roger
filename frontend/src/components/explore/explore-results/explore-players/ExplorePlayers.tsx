@@ -29,6 +29,9 @@ import LessonInviteFormModal from "../../../../components/invite/lesson/form/Les
 import ExplorePlayersSortModal from "./explore-players-sort/ExplorePlayersSortModal";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import EditTrainerBankDetails from "../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetTrainerProfileDetailsQuery } from "../../../../../api/endpoints/TrainersApi";
+import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
 
 interface ExplorePlayersProps {
   user: User;
@@ -77,6 +80,27 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     isUserTrainer = user?.user?.user_type_id === 2;
     isUserClub = user?.user?.user_type_id === 3;
   }
+
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.[0]?.trainerIban &&
+    trainerDetails?.[0]?.trainerBankId &&
+    trainerDetails?.[0]?.trainerBankAccountName;
 
   const [isPlayerFilterModalOpen, setIsPlayerFilterModalOpen] = useState(false);
 
@@ -190,8 +214,12 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const handleOpenLessonModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsLessonModalOpen(true);
+    if (isUserTrainer && bankDetailsExist) {
+      setOpponentUserId(userId);
+      setIsLessonModalOpen(true);
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
+    }
   };
 
   const handleCloseLessonModal = () => {
@@ -220,6 +248,8 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     useGetPlayerByUserIdQuery(user?.user?.user_id);
 
   const userGender = currentPlayer?.[0]?.gender;
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   useEffect(() => {
     if (isAddFavouriteSuccess || isUpdateFavouriteSuccess) {
@@ -487,6 +517,17 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           handleClearOrderBy={handleClearOrderBy}
           orderByDirection={orderByDirection}
           orderByColumn={orderByColumn}
+        />
+      )}
+
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails?.[0]}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>

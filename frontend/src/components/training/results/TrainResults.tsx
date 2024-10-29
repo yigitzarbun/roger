@@ -6,7 +6,11 @@ import { BsSortDown } from "react-icons/bs";
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../store/hooks";
-import { useGetPaginatedPlayersQuery } from "../../../../api/endpoints/PlayersApi";
+import {
+  useGetPaginatedPlayersQuery,
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../api/endpoints/PlayersApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
@@ -18,6 +22,7 @@ import TrainSort from "../sort/TrainSort";
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../common/constants/apiConstants";
+import AddPlayerCardDetails from "../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface TrainResultsProps {
   playerLevelId: number;
@@ -41,13 +46,39 @@ const TrainResults = (props: TrainResultsProps) => {
 
   const { user } = useAppSelector((store) => store.user);
 
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const handleOpenInviteModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsInviteModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setOpponentUserId(userId);
+      setIsInviteModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseInviteModal = () => {
@@ -208,7 +239,12 @@ const TrainResults = (props: TrainResultsProps) => {
     }
   }, [isAddFavouriteSuccess, isUpdateFavouriteSuccess]);
 
-  if (isPlayersLoading || isMyFavouritesLoading) {
+  if (
+    isPlayersLoading ||
+    isMyFavouritesLoading ||
+    isPlayerPaymentDetailsExistLoading ||
+    isPlayerDetailsLoading
+  ) {
     return <div>Loading...</div>;
   }
 
@@ -373,6 +409,16 @@ const TrainResults = (props: TrainResultsProps) => {
           handleClearOrderBy={handleClearOrderBy}
           orderByDirection={orderByDirection}
           orderByColumn={orderByColumn}
+        />
+      )}
+
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

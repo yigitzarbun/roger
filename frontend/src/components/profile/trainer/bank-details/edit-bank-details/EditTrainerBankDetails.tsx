@@ -72,6 +72,7 @@ const EditTrainerBankDetails = (props: EditTrainerBankDetailsProps) => {
       bank_id: Number(formData?.bank_id),
     };
     updateTrainer(trainerBankDetails);
+    console.log(trainerBankDetails);
   };
 
   useEffect(() => {

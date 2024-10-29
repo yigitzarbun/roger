@@ -7,7 +7,10 @@ import { BsClockHistory } from "react-icons/bs";
 import paths from "../../../routing/Paths";
 import styles from "./styles.module.scss";
 import { useAppSelector } from "../../../store/hooks";
-import { useGetPaginatedTrainersQuery } from "../../../../api/endpoints/TrainersApi";
+import {
+  useGetPaginatedTrainersQuery,
+  useGetTrainerProfileDetailsQuery,
+} from "../../../../api/endpoints/TrainersApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
@@ -26,8 +29,15 @@ import StudentApplicationModal from "../studentship-modal/StudentApplicationModa
 import { FaFilter } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../common/constants/apiConstants";
+import AddPlayerCardDetails from "../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import {
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../api/endpoints/PlayersApi";
+import EditTrainerBankDetails from "../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 
-interface TrainSearchProps {
+interface LessonSearchProps {
   trainerLevelId: number;
   gender: string;
   locationId: number;
@@ -37,7 +47,7 @@ interface TrainSearchProps {
   handleOpenFilter: () => void;
 }
 
-const LessonResults = (props: TrainSearchProps) => {
+const LessonResults = (props: LessonSearchProps) => {
   const {
     trainerLevelId,
     gender,
@@ -54,6 +64,49 @@ const LessonResults = (props: TrainSearchProps) => {
   const isUserPlayer = user?.user?.user_type_id === 1;
 
   const isUserTrainer = user?.user?.user_type_id === 2;
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.trainerIban &&
+    trainerDetails?.trainerBankId &&
+    trainerDetails?.trainerBankAccountName;
 
   const {
     data: playerStudentships,
@@ -237,9 +290,19 @@ const LessonResults = (props: TrainSearchProps) => {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const handleOpenInviteModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsInviteModalOpen(true);
+    if (isUserPlayer && playerPaymentDetailsExist) {
+      setOpponentUserId(userId);
+      setIsInviteModalOpen(true);
+    } else if (isUserPlayer && !playerPaymentDetailsExist) {
+      handleOpenCardDetailsModal();
+    } else if (isUserTrainer && bankDetailsExist) {
+      setOpponentUserId(userId);
+      setIsInviteModalOpen(true);
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
+    }
   };
+
   const handleCloseInviteModal = () => {
     setIsInviteModalOpen(false);
   };
@@ -281,6 +344,8 @@ const LessonResults = (props: TrainSearchProps) => {
         return trainer;
       }
     });
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   useEffect(() => {
     if (isAddStudentSuccess || isUpdateStudentSuccess) {
@@ -500,6 +565,27 @@ const LessonResults = (props: TrainSearchProps) => {
           trainerName={trainerName}
           handleAddStudent={handleAddStudent}
           trainerImage={selectedTrainerImage}
+        />
+      )}
+
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>
