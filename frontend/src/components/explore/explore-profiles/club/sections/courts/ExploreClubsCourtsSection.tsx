@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import paths from "../../../../../../routing/Paths";
 import styles from "./styles.module.scss";
@@ -9,6 +9,12 @@ import PageLoading from "../../../../../../components/loading/PageLoading";
 import ExploreClubCourtsModal from "../../modals/courts/ExploreClubCourtsModal";
 import { useGetClubCourtsQuery } from "../../../../../../../api/endpoints/CourtsApi";
 import { useTranslation } from "react-i18next";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import { useAppSelector } from "../../../../../../store/hooks";
+import {
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../../../../api/endpoints/PlayersApi";
 
 interface ExploreClubsCourtsSectionProps {
   selectedClub: any;
@@ -19,7 +25,41 @@ interface ExploreClubsCourtsSectionProps {
 const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
   const { selectedClub, isUserPlayer, isUserTrainer } = props;
 
+  const navigate = useNavigate();
+
   const { t } = useTranslation();
+
+  const { user } = useAppSelector((store) => store.user);
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
+  const handleNavigate = (courtId: number) => {
+    if (playerPaymentDetailsExist) {
+      navigate(`${paths.EXPLORE_PROFILE}kort/${courtId}`);
+    } else {
+      handleOpenCardDetailsModal();
+    }
+  };
 
   const { data: courts, isLoading: isCourtsLoading } = useGetClubCourtsQuery(
     selectedClub?.[0]?.club_id
@@ -65,28 +105,18 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
             {courts?.slice(courts?.length - 2).map((court) => (
               <tr key={court.court_id} className={styles["court-row"]}>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
-                    {
-                      <img
-                        src={
-                          court.courtImage
-                            ? `${imageUrl}/${court.courtImage}`
-                            : "/images/icons/avatar.jpg"
-                        }
-                        alt="court picture"
-                        className={styles["court-image"]}
-                      />
+                  <img
+                    src={
+                      court.courtImage
+                        ? `${imageUrl}/${court.courtImage}`
+                        : "/images/icons/avatar.jpg"
                     }
-                  </Link>
+                    alt="court picture"
+                    className={styles["court-image"]}
+                    onClick={() => handleNavigate(court.court_id)}
+                  />
                 </td>
-                <td>
-                  <Link
-                    to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                    className={styles["court-name"]}
-                  >
-                    {court.court_name}
-                  </Link>
-                </td>
+                <td>{court.court_name}</td>
                 <td>
                   {court?.court_surface_type_id === 1
                     ? t("courtSurfaceHard")
@@ -118,13 +148,11 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
                   )}
                 </td>
                 <td>
-                  <Link to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}>
-                    <button>
-                      {isUserPlayer || isUserTrainer
-                        ? t("tableBookCourtButton")
-                        : t("tableViewHeader")}
-                    </button>
-                  </Link>
+                  <button onClick={() => handleNavigate(court.court_id)}>
+                    {isUserPlayer || isUserTrainer
+                      ? t("tableBookCourtButton")
+                      : t("tableViewHeader")}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -147,6 +175,19 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
           courts={courts}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

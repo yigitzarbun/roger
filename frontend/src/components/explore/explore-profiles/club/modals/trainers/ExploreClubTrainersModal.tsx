@@ -8,16 +8,26 @@ import { useAppSelector } from "../../../../../../store/hooks";
 import { useTranslation } from "react-i18next";
 import { getAge } from "../../../../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExploreClubTrainersModalProps {
   isTrainersModalOpen: boolean;
   closeTrainersModal: () => void;
   confirmedClubTrainers: any[];
+  playerDetails: any;
+  refetchPlayerDetails: () => void;
+  cardDetailsExist: boolean;
 }
 
 const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
-  const { isTrainersModalOpen, closeTrainersModal, confirmedClubTrainers } =
-    props;
+  const {
+    isTrainersModalOpen,
+    closeTrainersModal,
+    confirmedClubTrainers,
+    playerDetails,
+    refetchPlayerDetails,
+    cardDetailsExist,
+  } = props;
 
   const { t } = useTranslation();
 
@@ -31,9 +41,24 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
   const handleOpenLessonModal = (trainerLessonUserId: number) => {
-    setTrainerLessonUserId(trainerLessonUserId);
-    setIsInviteModalOpen(true);
+    if (cardDetailsExist) {
+      setTrainerLessonUserId(trainerLessonUserId);
+      setIsInviteModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseInviteModal = () => {
@@ -130,7 +155,7 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
               </tbody>
             </table>
           ) : (
-            <p>Henüz kulübe bağlı çalışan eğitmen bulunmamaktadır</p>
+            <p>{t("clubHasNoTrainers")}</p>
           )}
         </div>
       </div>
@@ -141,6 +166,15 @@ const ExploreClubTrainerModal = (props: ExploreClubTrainersModalProps) => {
           handleCloseInviteModal={handleCloseInviteModal}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
+        />
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={cardDetailsExist}
         />
       )}
     </ReactModal>

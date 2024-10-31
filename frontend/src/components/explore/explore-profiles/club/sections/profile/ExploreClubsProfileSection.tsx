@@ -90,7 +90,11 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
 
   const handleOpenSubscribeModal = () => {
-    setOpenSubscribeModal(true);
+    if (playerPaymentDetailsExist) {
+      setOpenSubscribeModal(true);
+    } else {
+      handleOpenPaymentModal();
+    }
   };
   const handleCloseSubscribeModal = () => {
     setOpenSubscribeModal(false);
@@ -259,8 +263,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
             <div className={styles["interaction-buttons"]}>
               {isUserPlayer &&
                 selectedClub?.[0]?.subscriptionpackagecount > 0 &&
-                isUserSubscribedToClub?.length === 0 &&
-                playerPaymentDetailsExist && (
+                isUserSubscribedToClub?.length === 0 && (
                   <button
                     onClick={handleOpenSubscribeModal}
                     className={styles["interaction-button"]}
@@ -268,17 +271,7 @@ const ExploreClubsProfileSection = (props: ExploreClubsProfileSectionProps) => {
                     {t("subscribe")}
                   </button>
                 )}
-              {isUserPlayer &&
-                selectedClub?.[0]?.subscriptionpackagecount > 0 &&
-                isUserSubscribedToClub?.length === 0 &&
-                !playerPaymentDetailsExist && (
-                  <button
-                    onClick={handleOpenPaymentModal}
-                    className={styles["interaction-button"]}
-                  >
-                    {t("subscribeCardDetails")}
-                  </button>
-                )}
+
               {(isUserTrainer &&
                 (!isTrainerStaff ||
                   isTrainerStaff?.length === 0 ||

@@ -31,6 +31,11 @@ import ExploreTrainersSortModal from "./explore-trainers-sort/ExploreTrainersSor
 import StudentApplicationModal from "../../../../components/lesson/studentship-modal/StudentApplicationModal";
 import { useTranslation } from "react-i18next";
 import { imageUrl } from "../../../../common/constants/apiConstants";
+import AddPlayerCardDetails from "../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import {
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../../api/endpoints/PlayersApi";
 
 interface ExploreTrainersProps {
   user: User;
@@ -88,9 +93,35 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
 
   const isUserClub = user?.user?.user_type_id === 3;
 
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
   const handleOpenLessonModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsLessonModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setOpponentUserId(userId);
+      setIsLessonModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseLessonModal = () => {
@@ -513,6 +544,15 @@ const ExploreTrainers = (props: ExploreTrainersProps) => {
           trainerName={trainerName}
           handleAddStudent={handleAddStudent}
           trainerImage={selectedTrainerImage}
+        />
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

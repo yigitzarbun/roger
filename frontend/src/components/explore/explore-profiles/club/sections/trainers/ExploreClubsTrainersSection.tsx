@@ -8,6 +8,12 @@ import { useGetClubTrainersQuery } from "../../../../../../../api/endpoints/Club
 import ExploreClubTrainerModal from "../../modals/trainers/ExploreClubTrainersModal";
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 import { useTranslation } from "react-i18next";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import { useAppSelector } from "../../../../../../store/hooks";
+import {
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../../../../api/endpoints/PlayersApi";
 
 interface ExploreClubsTrainersSectionProps {
   isUserTrainer: boolean;
@@ -20,6 +26,30 @@ const ExploreClubsTrainersSection = (
   const { isUserTrainer, isUserPlayer, selectedClub } = props;
 
   const { t } = useTranslation();
+
+  const { user } = useAppSelector((store) => store.user);
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
 
   const { data: clubStaffTrainers, isLoading: isClubStaffLoading } =
     useGetClubTrainersQuery(selectedClub?.[0]?.user_id);
@@ -39,8 +69,12 @@ const ExploreClubsTrainersSection = (
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   const handleOpenLessonModal = (trainerLessonUserId: number) => {
-    setTrainerLessonUserId(trainerLessonUserId);
-    setIsInviteModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setTrainerLessonUserId(trainerLessonUserId);
+      setIsInviteModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseInviteModal = () => {
@@ -146,6 +180,9 @@ const ExploreClubsTrainersSection = (
           isTrainersModalOpen={isTrainersModalOpen}
           closeTrainersModal={closeTrainersModal}
           confirmedClubTrainers={clubStaffTrainers}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
       {isInviteModalOpen && (
@@ -155,6 +192,16 @@ const ExploreClubsTrainersSection = (
           handleCloseInviteModal={handleCloseInviteModal}
           isUserPlayer={isUserPlayer}
           isUserTrainer={isUserTrainer}
+        />
+      )}
+
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

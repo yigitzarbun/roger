@@ -266,8 +266,12 @@ const ExploreClubs = (props: ExploreClubsProps) => {
   const [selectedClubId, setSelectedClubId] = useState(null);
 
   const handleOpenSubscribeModal = (value: number) => {
-    setOpenSubscribeModal(true);
-    setSelectedClubId(value);
+    if (playerPaymentDetailsExist) {
+      setOpenSubscribeModal(true);
+      setSelectedClubId(value);
+    } else {
+      handleOpenPaymentModal();
+    }
   };
 
   const handleCloseSubscribeModal = () => {
@@ -451,21 +455,12 @@ const ExploreClubs = (props: ExploreClubsProps) => {
                     club?.isPlayerSubscribed ? (
                       <IoIosCheckmarkCircle className={styles.done} />
                     ) : club?.clubHasSubscriptionPackages &&
-                      playerPaymentDetailsExist ? (
+                      !club?.isPlayerSubscribed ? (
                       <button
                         onClick={() => handleOpenSubscribeModal(club.user_id)}
-                        disabled={!playerPaymentDetailsExist}
                         className={styles["subscribe-button"]}
                       >
                         {t("subscribe")}
-                      </button>
-                    ) : club?.clubHasSubscriptionPackages &&
-                      !playerPaymentDetailsExist ? (
-                      <button
-                        onClick={handleOpenPaymentModal}
-                        className={styles["payment-button"]}
-                      >
-                        {t("addPaymentDetails")}
                       </button>
                     ) : (
                       <ImBlocked className={styles.blocked} />

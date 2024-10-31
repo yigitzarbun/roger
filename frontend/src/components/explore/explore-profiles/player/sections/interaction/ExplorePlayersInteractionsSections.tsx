@@ -5,7 +5,11 @@ import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { IoStar } from "react-icons/io5";
 import styles from "./styles.module.scss";
 import PageLoading from "../../../../../../components/loading/PageLoading";
-import { useGetPlayerByUserIdQuery } from "../../../../../../../api/endpoints/PlayersApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../../../../api/endpoints/PlayersApi";
 import {
   useAddFavouriteMutation,
   useGetFavouritesByFilterQuery,
@@ -18,6 +22,7 @@ import MatchInviteFormModal from "../../../../../../components/invite/match/form
 import LessonInviteFormModal from "../../../../../../components/invite/lesson/form/LessonInviteFormModal";
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
 import { useTranslation } from "react-i18next";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: any;
@@ -32,6 +37,28 @@ const ExplorePlayersInteractionsSections = (
   const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
 
   const generateStars = (count) => {
     const stars = [];
@@ -59,7 +86,11 @@ const ExplorePlayersInteractionsSections = (
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
 
   const handleOpenTrainingModal = () => {
-    setIsTrainingModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setIsTrainingModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseTrainingModal = () => {
@@ -69,7 +100,11 @@ const ExplorePlayersInteractionsSections = (
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
 
   const handleOpenMatchModal = () => {
-    setIsMatchModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setIsMatchModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseMatchModal = () => {
@@ -324,6 +359,15 @@ const ExplorePlayersInteractionsSections = (
           messageModal={messageModal}
           closeMessageModal={closeMessageModal}
           recipient_id={selectedPlayer?.user_id}
+        />
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

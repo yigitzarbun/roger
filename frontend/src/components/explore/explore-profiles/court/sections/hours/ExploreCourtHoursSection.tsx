@@ -8,6 +8,11 @@ import {
 import { useAppSelector } from "../../../../../../store/hooks";
 import CourtBookingFormModal from "../../../../../../components/invite/court-booking/form/CourtBookingFormModal";
 import { useTranslation } from "react-i18next";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import {
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../../../../api/endpoints/PlayersApi";
 
 interface ExploreCourtHoursSectionProps {
   bookings: any[];
@@ -28,10 +33,36 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
 
   const [eventTime, setEventTime] = useState("");
 
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
   const openCourtBookingInviteModal = (date: string, time: string) => {
-    setEventDate(date);
-    setEventTime(time);
-    setIsCourtBookingModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setEventDate(date);
+      setEventTime(time);
+      setIsCourtBookingModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const closeCourtBookingInviteModal = () => {
@@ -81,13 +112,24 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
           ))}
         </tbody>
       </table>
-      <CourtBookingFormModal
-        isCourtBookingModalOpen={isCourtBookingModalOpen}
-        closeCourtBookingInviteModal={closeCourtBookingInviteModal}
-        event_date={eventDate}
-        event_time={eventTime}
-        selectedCourt={selectedCourt}
-      />
+      {isCourtBookingModalOpen && (
+        <CourtBookingFormModal
+          isCourtBookingModalOpen={isCourtBookingModalOpen}
+          closeCourtBookingInviteModal={closeCourtBookingInviteModal}
+          event_date={eventDate}
+          event_time={eventTime}
+          selectedCourt={selectedCourt}
+        />
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
     </div>
   );
 };

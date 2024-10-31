@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
 import Paths from "../../../../../../routing/Paths";
@@ -13,6 +13,7 @@ import {
   useGetFavouritesByFilterQuery,
   useUpdateFavouriteMutation,
 } from "../../../../../../../api/endpoints/FavouritesApi";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExploreClubSubscribersModalProps {
   isSubscribersModalOpen: boolean;
@@ -22,6 +23,9 @@ interface ExploreClubSubscribersModalProps {
   handleOpenTrainInviteModal: (userId: number) => void;
   handleOpenMatchInviteModal: (userId: number) => void;
   handleOpenLessonModal: (userId: number) => void;
+  playerDetails: any;
+  refetchPlayerDetails: () => void;
+  cardDetailsExist: boolean;
 }
 
 const ExploreClubSubscribersModal = (
@@ -35,7 +39,21 @@ const ExploreClubSubscribersModal = (
     handleOpenTrainInviteModal,
     handleOpenMatchInviteModal,
     handleOpenLessonModal,
+    playerDetails,
+    refetchPlayerDetails,
+    cardDetailsExist,
   } = props;
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
 
   const {
     data: myFavourites,
@@ -242,17 +260,21 @@ const ExploreClubSubscribersModal = (
                             handleOpenTrainInviteModal(player.playerUserId)
                           }
                         >
-                          {t("trainInviteTitle")}
+                          {t("tableTrainButtonText")}
                         </button>
                       ) : isUserPlayer &&
                         (player.playerUserId === user?.user?.user_id ||
                           player.user_type_id !== 1) ? (
                         <ImBlocked className={styles.blocked} />
-                      ) : isUserPlayer &&
-                        user?.playerDetails?.gender ===
-                          player.playerGenderName &&
-                        player.playerUserId !== user?.user?.user_id &&
-                        player.user_type_id === 1 ? (
+                      ) : (
+                        ""
+                      )}
+                    </td>
+                    <td>
+                      {isUserPlayer &&
+                      user?.playerDetails?.gender === player.playerGenderName &&
+                      player.playerUserId !== user?.user?.user_id &&
+                      player.user_type_id === 1 ? (
                         <button
                           onClick={() =>
                             handleOpenMatchInviteModal(player.playerUserId)
@@ -262,7 +284,7 @@ const ExploreClubSubscribersModal = (
                             player.playerGenderName
                           }
                         >
-                          {t("matchInviteTitle")}
+                          {t("tableMatchButtonText")}
                         </button>
                       ) : isUserPlayer &&
                         (user?.playerDetails?.gender !==
@@ -270,7 +292,12 @@ const ExploreClubSubscribersModal = (
                           player.playerUserId === user?.user?.user_id ||
                           player.user_type_id !== 1) ? (
                         <ImBlocked className={styles.blocked} />
-                      ) : isUserTrainer && player.user_type_id === 1 ? (
+                      ) : (
+                        ""
+                      )}
+                    </td>
+                    <td>
+                      {isUserTrainer && player.user_type_id === 1 && (
                         <button
                           onClick={() =>
                             handleOpenLessonModal(player.playerUserId)
@@ -278,8 +305,6 @@ const ExploreClubSubscribersModal = (
                         >
                           {t("lessonInviteTitle")}
                         </button>
-                      ) : (
-                        ""
                       )}
                     </td>
                   </tr>
@@ -287,10 +312,19 @@ const ExploreClubSubscribersModal = (
               </tbody>
             </table>
           ) : (
-            <p>Kulübe üye bulunmamaktadır.</p>
+            <p>{t("clubHasNoSubscribers")}</p>
           )}
         </div>
       </div>
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={cardDetailsExist}
+        />
+      )}
     </ReactModal>
   );
 };

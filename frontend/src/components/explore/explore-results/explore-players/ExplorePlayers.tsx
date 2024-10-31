@@ -20,6 +20,8 @@ import {
 import {
   useGetPaginatedPlayersQuery,
   useGetPlayerByUserIdQuery,
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
 } from "../../../../../api/endpoints/PlayersApi";
 import { handleToggleFavourite } from "../../../../common/util/UserDataFunctions";
 import TrainingInviteFormModal from "../../../../components/invite/training/form/TrainingInviteFormModal";
@@ -32,6 +34,7 @@ import { imageUrl } from "../../../../common/constants/apiConstants";
 import EditTrainerBankDetails from "../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
 import { useGetTrainerProfileDetailsQuery } from "../../../../../api/endpoints/TrainersApi";
 import { useGetBanksQuery } from "../../../../../api/endpoints/BanksApi";
+import AddPlayerCardDetails from "../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExplorePlayersProps {
   user: User;
@@ -80,6 +83,28 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
     isUserTrainer = user?.user?.user_type_id === 2;
     isUserClub = user?.user?.user_type_id === 3;
   }
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
 
   const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
 
@@ -193,8 +218,12 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const [isTrainingModalOpen, setIsTrainingModalOpen] = useState(false);
 
   const handleOpenTrainingModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsTrainingModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setOpponentUserId(userId);
+      setIsTrainingModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const handleCloseTrainingModal = () => {
@@ -204,8 +233,12 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
   const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
 
   const handleOpenMatchModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsMatchModalOpen(true);
+    if (playerPaymentDetailsExist) {
+      setOpponentUserId(userId);
+      setIsMatchModalOpen(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
   const handleCloseMatchModal = () => {
     setIsMatchModalOpen(false);
@@ -528,6 +561,15 @@ const ExplorePlayers = (props: ExplorePlayersProps) => {
           trainerDetails={trainerDetails?.[0]}
           bankDetailsExist={bankDetailsExist}
           refetchTrainerDetails={refetchTrainerDetails}
+        />
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

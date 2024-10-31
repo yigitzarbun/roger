@@ -11,6 +11,11 @@ import { Link } from "react-router-dom";
 import Paths from "../../../routing/Paths";
 import { useAppSelector } from "../../../store/hooks";
 import { useTranslation } from "react-i18next";
+import AddPlayerCardDetails from "../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import {
+  useGetPlayerPaymentDetailsExistQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../api/endpoints/PlayersApi";
 
 interface AllTournamentsProps {
   refetchMyTournaments: () => void;
@@ -36,6 +41,28 @@ const AllTournaments = (props: AllTournamentsProps) => {
   const [subscriptionRequired, setSubscriptionRequired] = useState(null);
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const {
+    data: playerPaymentDetailsExist,
+    isLoading: isPlayerPaymentDetailsExistLoading,
+  } = useGetPlayerPaymentDetailsExistQuery(user?.user?.user_id);
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
 
   const handleTextSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setTextSearch(event.target.value);
@@ -129,9 +156,13 @@ const AllTournaments = (props: AllTournamentsProps) => {
     tournament: any,
     clubUserId: number
   ) => {
-    setSelectedTournament(tournament);
-    setSelectedClubUserId(clubUserId);
-    setParticipateModal(true);
+    if (playerPaymentDetailsExist) {
+      setSelectedTournament(tournament);
+      setSelectedClubUserId(clubUserId);
+      setParticipateModal(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
 
   const closeAddTournamentParticipantModal = () => {
@@ -304,6 +335,15 @@ const AllTournaments = (props: AllTournamentsProps) => {
             </button>
           ))}
         </div>
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
+        />
       )}
     </div>
   );

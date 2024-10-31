@@ -7,11 +7,15 @@ import ExploreClubSubscriptionsModal from "../../modals/subscriptions/ExploreClu
 import SubscribeToClubModal from "../../../../subscribe-club-modal/SubscribeToClubModal";
 import PageLoading from "../../../../../../components/loading/PageLoading";
 import { useGetClubSubscriptionPackageDetailsQuery } from "../../../../../../../api/endpoints/ClubSubscriptionPackagesApi";
-import { useGetPlayerByUserIdQuery } from "../../../../../../../api/endpoints/PlayersApi";
+import {
+  useGetPlayerByUserIdQuery,
+  useGetPlayerProfileDetailsQuery,
+} from "../../../../../../../api/endpoints/PlayersApi";
 import {
   useGetClubSubscribersByIdQuery,
   useGetClubSubscriptionsByFilterQuery,
 } from "../../../../../../../api/endpoints/ClubSubscriptionsApi";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExploreClubsSubscriptionsSectionProps {
   selectedClub: any;
@@ -24,6 +28,12 @@ const ExploreClubsSubscriptionsSection = (
   const { selectedClub, isUserPlayer, user } = props;
 
   const { t } = useTranslation();
+
+  const {
+    data: playerDetails,
+    isLoading: isPlayerDetailsLoading,
+    refetch: refetchPlayerDetails,
+  } = useGetPlayerProfileDetailsQuery(user?.user?.user_id);
 
   const {
     data: selectedClubSubscriptionPackages,
@@ -88,12 +98,29 @@ const ExploreClubsSubscriptionsSection = (
     setIsSubscriptionsModalOpen(false);
   };
 
+  // player card details
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
   // subscribe to club package
   const [openSubscribeModal, setOpenSubscribeModal] = useState(false);
 
   const handleOpenSubscribeModal = () => {
-    setOpenSubscribeModal(true);
+    if (playerPaymentDetailsExist) {
+      setOpenSubscribeModal(true);
+    } else {
+      handleOpenCardDetailsModal();
+    }
   };
+
   const handleCloseSubscribeModal = () => {
     setOpenSubscribeModal(false);
   };
@@ -161,9 +188,7 @@ const ExploreClubsSubscriptionsSection = (
                       <ImBlocked className={styles.blocked} />
                     ) : (
                       <button onClick={handleOpenSubscribeModal}>
-                        {playerPaymentDetailsExist
-                          ? t("subscribe")
-                          : t("subscribeCardDetails")}
+                        {t("subscribe")}
                       </button>
                     )}
                   </td>
@@ -189,6 +214,8 @@ const ExploreClubsSubscriptionsSection = (
           selectedClubSubscriptionPackages={selectedClubSubscriptionPackages}
           playerPaymentDetailsExist={playerPaymentDetailsExist}
           handleOpenSubscribeModal={handleOpenSubscribeModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
         />
       )}
       {openSubscribeModal && (
@@ -196,6 +223,15 @@ const ExploreClubsSubscriptionsSection = (
           openSubscribeModal={openSubscribeModal}
           handleCloseSubscribeModal={handleCloseSubscribeModal}
           selectedClubId={selectedClub?.[0]?.user_id}
+        />
+      )}
+      {addPlayerCardDetailsModelOpen && (
+        <AddPlayerCardDetails
+          isModalOpen={addPlayerCardDetailsModelOpen}
+          handleCloseModal={handleCloseCardDetailsModal}
+          playerDetails={playerDetails}
+          refetchPlayerDetails={refetchPlayerDetails}
+          cardDetailsExist={playerPaymentDetailsExist}
         />
       )}
     </div>

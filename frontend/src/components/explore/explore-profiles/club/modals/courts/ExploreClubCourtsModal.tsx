@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactModal from "react-modal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.scss";
 import paths from "../../../../../../routing/Paths";
 import { imageUrl } from "../../../../../../common/constants/apiConstants";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
 import { useTranslation } from "react-i18next";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExploreClubCourtsModalProps {
   isCourtsModalOpen: boolean;
@@ -15,6 +16,9 @@ interface ExploreClubCourtsModalProps {
   courts: any;
   isUserPlayer: boolean;
   isUserTrainer: boolean;
+  playerDetails: any;
+  refetchPlayerDetails: () => void;
+  cardDetailsExist: boolean;
 }
 
 const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
@@ -25,10 +29,33 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
     courts,
     isUserPlayer,
     isUserTrainer,
+    playerDetails,
+    refetchPlayerDetails,
+    cardDetailsExist,
   } = props;
 
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
+
+  const handleNavigate = (courtId: number) => {
+    if (cardDetailsExist) {
+      navigate(`${paths.EXPLORE_PROFILE}kort/${courtId}`);
+    } else {
+      handleOpenCardDetailsModal();
+    }
+  };
   return (
     <ReactModal
       isOpen={isCourtsModalOpen}
@@ -66,30 +93,20 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                 {courts?.map((court) => (
                   <tr key={court.court_id} className={styles["court-row"]}>
                     <td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                      >
-                        {
-                          <img
-                            src={
-                              court.courtImage
-                                ? `${imageUrl}/${court.courtImage}`
-                                : "/images/icons/avatar.jpg"
-                            }
-                            alt="court picture"
-                            className={styles["court-image"]}
-                          />
-                        }
-                      </Link>
+                      {
+                        <img
+                          src={
+                            court.courtImage
+                              ? `${imageUrl}/${court.courtImage}`
+                              : "/images/icons/avatar.jpg"
+                          }
+                          alt="court picture"
+                          className={styles["court-image"]}
+                          onClick={() => handleNavigate(court.court_id)}
+                        />
+                      }
                     </td>
-                    <td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                        className={styles["court-name"]}
-                      >
-                        {court.court_name}
-                      </Link>
-                    </td>
+                    <td>{court.court_name}</td>
                     <td>
                       {court?.court_surface_type_id === 1
                         ? t("courtSurfaceHard")
@@ -121,24 +138,29 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
                       )}
                     </td>
                     <td>
-                      <Link
-                        to={`${paths.EXPLORE_PROFILE}kort/${court.court_id} `}
-                      >
-                        <button>
-                          {isUserPlayer || isUserTrainer
-                            ? t("tableBookCourtButton")
-                            : t("tableViewHeader")}
-                        </button>
-                      </Link>
+                      <button onClick={() => handleNavigate(court.court_id)}>
+                        {isUserPlayer || isUserTrainer
+                          ? t("tableBookCourtButton")
+                          : t("tableViewHeader")}
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <p>Henüz kulübe ait kort bulunmamaktadır</p>
+            <p>{t("clubHasNoCourts")}</p>
           )}
         </div>
+        {addPlayerCardDetailsModelOpen && (
+          <AddPlayerCardDetails
+            isModalOpen={addPlayerCardDetailsModelOpen}
+            handleCloseModal={handleCloseCardDetailsModal}
+            playerDetails={playerDetails}
+            refetchPlayerDetails={refetchPlayerDetails}
+            cardDetailsExist={cardDetailsExist}
+          />
+        )}
       </div>
     </ReactModal>
   );

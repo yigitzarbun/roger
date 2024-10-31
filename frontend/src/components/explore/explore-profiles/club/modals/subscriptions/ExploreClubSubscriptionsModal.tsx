@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
 import { ImBlocked } from "react-icons/im";
@@ -8,6 +8,7 @@ import PageLoading from "../../../../../../components/loading/PageLoading";
 import { useAppSelector } from "../../../../../../store/hooks";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useGetClubSubscriptionsByFilterQuery } from "../../../../../../../api/endpoints/ClubSubscriptionsApi";
+import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
 
 interface ExploreClubSubscriptionsModalProps {
   isSubscriptionsModalOpen: boolean;
@@ -15,7 +16,9 @@ interface ExploreClubSubscriptionsModalProps {
   selectedClub: Club;
   selectedClubSubscriptionPackages: any[];
   playerPaymentDetailsExist: boolean;
-  handleOpenSubscribeModal: (value: number) => void;
+  handleOpenSubscribeModal: () => void;
+  playerDetails: any;
+  refetchPlayerDetails: () => void;
 }
 
 const ExploreClubSubscriptionsModal = (
@@ -28,6 +31,8 @@ const ExploreClubSubscriptionsModal = (
     selectedClubSubscriptionPackages,
     playerPaymentDetailsExist,
     handleOpenSubscribeModal,
+    refetchPlayerDetails,
+    playerDetails,
   } = props;
 
   const user = useAppSelector((store) => store?.user?.user);
@@ -35,6 +40,18 @@ const ExploreClubSubscriptionsModal = (
   const { t } = useTranslation();
 
   const isUserPlayer = user?.user?.user_type_id === 1;
+
+  // player card details
+  const [addPlayerCardDetailsModelOpen, setAddPlayerCardDetailsModelOpen] =
+    useState(false);
+
+  const handleOpenCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(true);
+  };
+
+  const handleCloseCardDetailsModal = () => {
+    setAddPlayerCardDetailsModelOpen(false);
+  };
 
   const { data: clubSubscriptions, isLoading: isClubSubscriptionsLoading } =
     useGetClubSubscriptionsByFilterQuery({
@@ -131,13 +148,8 @@ const ExploreClubSubscriptionsModal = (
                         ) === false ? (
                         <ImBlocked className={styles.blocked} />
                       ) : (
-                        <button
-                          onClick={() => handleOpenSubscribeModal}
-                          disabled={!playerPaymentDetailsExist}
-                        >
-                          {playerPaymentDetailsExist
-                            ? t("subscribe")
-                            : t("subscribeCardDetails")}
+                        <button onClick={handleOpenSubscribeModal}>
+                          {t("subscribe")}
                         </button>
                       )}
                     </td>
@@ -147,6 +159,15 @@ const ExploreClubSubscriptionsModal = (
             </tbody>
           </table>
         </div>
+        {addPlayerCardDetailsModelOpen && (
+          <AddPlayerCardDetails
+            isModalOpen={addPlayerCardDetailsModelOpen}
+            handleCloseModal={handleCloseCardDetailsModal}
+            playerDetails={playerDetails}
+            refetchPlayerDetails={refetchPlayerDetails}
+            cardDetailsExist={playerPaymentDetailsExist}
+          />
+        )}
       </div>
     </ReactModal>
   );
