@@ -15,6 +15,9 @@ import {
   useGetPlayerPaymentDetailsExistQuery,
   useGetPlayerProfileDetailsQuery,
 } from "../../../../../../../api/endpoints/PlayersApi";
+import EditTrainerBankDetails from "../../../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetBanksQuery } from "../../../../../../../api/endpoints/BanksApi";
+import { useGetTrainerProfileDetailsQuery } from "../../../../../../../api/endpoints/TrainersApi";
 
 interface ExploreClubsCourtsSectionProps {
   selectedClub: any;
@@ -30,6 +33,8 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
   const { t } = useTranslation();
 
   const { user } = useAppSelector((store) => store.user);
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {
     data: playerPaymentDetailsExist,
@@ -53,11 +58,37 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
     setAddPlayerCardDetailsModelOpen(false);
   };
 
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.[0]?.trainerIban &&
+    trainerDetails?.[0]?.trainerBankId &&
+    trainerDetails?.[0]?.trainerBankAccountName;
+
   const handleNavigate = (courtId: number) => {
-    if (playerPaymentDetailsExist) {
+    if (
+      (isUserPlayer && playerPaymentDetailsExist) ||
+      (isUserTrainer && bankDetailsExist)
+    ) {
       navigate(`${paths.EXPLORE_PROFILE}kort/${courtId}`);
-    } else {
+    } else if (isUserPlayer && !playerPaymentDetailsExist) {
       handleOpenCardDetailsModal();
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
     }
   };
 
@@ -78,7 +109,6 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
   if (isCourtsLoading) {
     return <PageLoading />;
   }
-
   return (
     <div className={styles["courts-section"]}>
       <h2>{t("courtsTitle")}</h2>
@@ -135,8 +165,11 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
                 </td>
                 <td>{court?.location_name}</td>
                 <td>{court?.price_hour} TL</td>
-                {selectedClub?.[0]?.higher_price_for_non_subscribers && (
-                  <td>{court.price_hour_non_subscriber} TL</td>
+                {selectedClub?.[0]?.higher_price_for_non_subscribers &&
+                court.price_hour_non_subscriber ? (
+                  <td>{`${court.price_hour_non_subscriber} TL`}</td>
+                ) : (
+                  <td>-</td>
                 )}
                 <td>{court?.opening_time.slice(0, 5)}</td>
                 <td>{court?.closing_time.slice(0, 5)}</td>
@@ -178,6 +211,10 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
           playerDetails={playerDetails}
           refetchPlayerDetails={refetchPlayerDetails}
           cardDetailsExist={playerPaymentDetailsExist}
+          trainerDetails={trainerDetails}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
+          banks={banks}
         />
       )}
 
@@ -188,6 +225,16 @@ const ExploreClubsCourtsSection = (props: ExploreClubsCourtsSectionProps) => {
           playerDetails={playerDetails}
           refetchPlayerDetails={refetchPlayerDetails}
           cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails?.[0]}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>

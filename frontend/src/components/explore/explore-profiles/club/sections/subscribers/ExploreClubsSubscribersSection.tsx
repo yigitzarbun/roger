@@ -16,6 +16,9 @@ import {
   useGetPlayerPaymentDetailsExistQuery,
   useGetPlayerProfileDetailsQuery,
 } from "../../../../../../../api/endpoints/PlayersApi";
+import { useGetTrainerProfileDetailsQuery } from "../../../../../../../api/endpoints/TrainersApi";
+import EditTrainerBankDetails from "../../../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetBanksQuery } from "../../../../../../../api/endpoints/BanksApi";
 
 interface ExploreClubsSubscribersSectionProps {
   selectedClub: any;
@@ -29,6 +32,8 @@ const ExploreClubsSubscribersSection = (
   const { selectedClub, isUserPlayer, isUserTrainer, user } = props;
 
   const { t } = useTranslation();
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {
     data: playerPaymentDetailsExist,
@@ -51,6 +56,27 @@ const ExploreClubsSubscribersSection = (
   const handleCloseCardDetailsModal = () => {
     setAddPlayerCardDetailsModelOpen(false);
   };
+
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.[0]?.trainerIban &&
+    trainerDetails?.[0]?.trainerBankId &&
+    trainerDetails?.[0]?.trainerBankAccountName;
 
   const { data: clubSubscribers, isLoading: isClubsubscribersLoading } =
     useGetClubSubscribersByIdQuery(selectedClub?.[0]?.user_id);
@@ -100,8 +126,12 @@ const ExploreClubsSubscribersSection = (
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const handleOpenLessonModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsLessonModalOpen(true);
+    if (isUserTrainer && bankDetailsExist) {
+      setOpponentUserId(userId);
+      setIsLessonModalOpen(true);
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
+    }
   };
 
   const handleCloseLessonModal = () => {
@@ -247,7 +277,16 @@ const ExploreClubsSubscribersSection = (
                         player.user_type_id !== 1) ? (
                       <ImBlocked className={styles.blocked} />
                     ) : (
-                      ""
+                      isUserTrainer &&
+                      player.user_type_id === 1 && (
+                        <button
+                          onClick={() =>
+                            handleOpenLessonModal(player.playerUserId)
+                          }
+                        >
+                          {t("tableLessonButtonText")}
+                        </button>
+                      )
                     )}
                   </td>
                   <td>
@@ -274,17 +313,6 @@ const ExploreClubsSubscribersSection = (
                       <ImBlocked className={styles.blocked} />
                     ) : (
                       ""
-                    )}
-                  </td>
-                  <td>
-                    {isUserTrainer && player.user_type_id === 1 && (
-                      <button
-                        onClick={() =>
-                          handleOpenLessonModal(player.playerUserId)
-                        }
-                      >
-                        {t("lessonInviteTitle")}
-                      </button>
                     )}
                   </td>
                 </tr>
@@ -344,6 +372,16 @@ const ExploreClubsSubscribersSection = (
           playerDetails={playerDetails}
           refetchPlayerDetails={refetchPlayerDetails}
           cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails?.[0]}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>

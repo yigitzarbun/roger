@@ -13,6 +13,9 @@ import {
   useGetPlayerPaymentDetailsExistQuery,
   useGetPlayerProfileDetailsQuery,
 } from "../../../../../../../api/endpoints/PlayersApi";
+import EditTrainerBankDetails from "../../../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetTrainerProfileDetailsQuery } from "../../../../../../../api/endpoints/TrainersApi";
+import { useGetBanksQuery } from "../../../../../../../api/endpoints/BanksApi";
 
 interface ExploreCourtHoursSectionProps {
   bookings: any[];
@@ -25,6 +28,10 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
 
   const user = useAppSelector((store) => store?.user?.user);
 
+  const isUserPlayer = user?.user?.user_type_id === 1;
+
+  const isUserTrainer = user?.user?.user_type_id === 2;
+
   const isUserClub = user?.user?.user_type_id === 3;
 
   const [isCourtBookingModalOpen, setIsCourtBookingModalOpen] = useState(false);
@@ -32,6 +39,8 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
   const [eventDate, setEventDate] = useState("");
 
   const [eventTime, setEventTime] = useState("");
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {
     data: playerPaymentDetailsExist,
@@ -55,13 +64,39 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
     setAddPlayerCardDetailsModelOpen(false);
   };
 
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.[0]?.trainerIban &&
+    trainerDetails?.[0]?.trainerBankId &&
+    trainerDetails?.[0]?.trainerBankAccountName;
+
   const openCourtBookingInviteModal = (date: string, time: string) => {
-    if (playerPaymentDetailsExist) {
+    if (
+      (isUserPlayer && playerPaymentDetailsExist) ||
+      (isUserTrainer && bankDetailsExist)
+    ) {
       setEventDate(date);
       setEventTime(time);
       setIsCourtBookingModalOpen(true);
-    } else {
+    } else if (isUserPlayer && !playerPaymentDetailsExist) {
       handleOpenCardDetailsModal();
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
     }
   };
 
@@ -128,6 +163,16 @@ const ExploreCourtHoursSection = (props: ExploreCourtHoursSectionProps) => {
           playerDetails={playerDetails}
           refetchPlayerDetails={refetchPlayerDetails}
           cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails?.[0]}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>

@@ -201,22 +201,25 @@ const TrainerStudentGroupsResults = (
       ) : (
         <p>{t("noActiveStudentGroupsText")}</p>
       )}
-      <div className={styles["pages-container"]}>
-        {pageNumbers?.map((pageNumber) => (
-          <button
-            key={pageNumber}
-            value={pageNumber}
-            onClick={handleTrainersPage}
-            className={
-              pageNumber === Number(currentPage)
-                ? styles["active-page"]
-                : styles["passive-page"]
-            }
-          >
-            {pageNumber}
-          </button>
-        ))}
-      </div>
+      {pageNumbers.length > 0 && (
+        <div className={styles["pages-container"]}>
+          {pageNumbers?.map((pageNumber) => (
+            <button
+              key={pageNumber}
+              value={pageNumber}
+              onClick={handleTrainersPage}
+              className={
+                pageNumber === Number(currentPage)
+                  ? styles["active-page"]
+                  : styles["passive-page"]
+              }
+            >
+              {pageNumber}
+            </button>
+          ))}
+        </div>
+      )}
+
       {isTrainerStudentGroupsFilterOpen && (
         <TrainerStudentGroupsFilterModal
           textSearch={textSearch}

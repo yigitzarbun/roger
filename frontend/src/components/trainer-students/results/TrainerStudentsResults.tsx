@@ -12,6 +12,9 @@ import DeleteTrainerStudentModal from "./delete-student-modal/DeleteTrainerStude
 import { getAge } from "../../../common/util/TimeFunctions";
 import LessonInviteFormModal from "../../../components/invite/lesson/form/LessonInviteFormModal";
 import TrainerStudentsFilterModal from "./trainer-students-filter-modal/TrainerStudentsFilterModal";
+import EditTrainerBankDetails from "../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetTrainerProfileDetailsQuery } from "../../../../api/endpoints/TrainersApi";
+import { useGetBanksQuery } from "../../../../api/endpoints/BanksApi";
 
 interface TrainerStudentsProps {
   playerLevelId: number;
@@ -55,6 +58,29 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
 
   const isUserTrainer = user?.user?.user_type_id === 2;
 
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.[0]?.trainerIban &&
+    trainerDetails?.[0]?.trainerBankId &&
+    trainerDetails?.[0]?.trainerBankAccountName;
+
   const pageNumbers = [];
 
   for (let i = 1; i <= paginatedTrainerStudents?.totalPages; i++) {
@@ -66,8 +92,12 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
   const [opponentUserId, setOpponentUserId] = useState(null);
 
   const handleOpenLessonModal = (userId: number) => {
-    setOpponentUserId(userId);
-    setIsLessonModalOpen(true);
+    if (bankDetailsExist) {
+      setOpponentUserId(userId);
+      setIsLessonModalOpen(true);
+    } else {
+      handleOpenBankDetailsModal();
+    }
   };
 
   const handleCloseLessonModal = () => {
@@ -250,6 +280,16 @@ const TrainerStudentsResults = (props: TrainerStudentsProps) => {
           playerLevelId={playerLevelId}
           playerLevels={playerLevels}
           handleGender={handleGender}
+        />
+      )}
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails?.[0]}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>

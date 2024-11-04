@@ -8,6 +8,9 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import { ImBlocked } from "react-icons/im";
 import { useTranslation } from "react-i18next";
 import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import { useGetTrainerProfileDetailsQuery } from "../../../../../../../api/endpoints/TrainersApi";
+import EditTrainerBankDetails from "../../../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { Bank } from "../../../../../../../api/endpoints/BanksApi";
 
 interface ExploreClubCourtsModalProps {
   isCourtsModalOpen: boolean;
@@ -19,6 +22,10 @@ interface ExploreClubCourtsModalProps {
   playerDetails: any;
   refetchPlayerDetails: () => void;
   cardDetailsExist: boolean;
+  trainerDetails: any;
+  bankDetailsExist: boolean;
+  refetchTrainerDetails: () => void;
+  banks: Bank[];
 }
 
 const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
@@ -32,6 +39,10 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
     playerDetails,
     refetchPlayerDetails,
     cardDetailsExist,
+    trainerDetails,
+    bankDetailsExist,
+    refetchTrainerDetails,
+    banks,
   } = props;
 
   const { t } = useTranslation();
@@ -49,11 +60,26 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
     setAddPlayerCardDetailsModelOpen(false);
   };
 
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
   const handleNavigate = (courtId: number) => {
-    if (cardDetailsExist) {
+    if (
+      (isUserPlayer && cardDetailsExist) ||
+      (isUserTrainer && bankDetailsExist)
+    ) {
       navigate(`${paths.EXPLORE_PROFILE}kort/${courtId}`);
-    } else {
+    } else if (isUserPlayer && !cardDetailsExist) {
       handleOpenCardDetailsModal();
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
     }
   };
   return (
@@ -159,6 +185,16 @@ const ExploreClubCourtsModal = (props: ExploreClubCourtsModalProps) => {
             playerDetails={playerDetails}
             refetchPlayerDetails={refetchPlayerDetails}
             cardDetailsExist={cardDetailsExist}
+          />
+        )}
+        {trainerBankDetailsModal && (
+          <EditTrainerBankDetails
+            isModalOpen={trainerBankDetailsModal}
+            handleCloseModal={handleCloseBankDetailsModal}
+            banks={banks}
+            trainerDetails={trainerDetails?.[0]}
+            bankDetailsExist={bankDetailsExist}
+            refetchTrainerDetails={refetchTrainerDetails}
           />
         )}
       </div>

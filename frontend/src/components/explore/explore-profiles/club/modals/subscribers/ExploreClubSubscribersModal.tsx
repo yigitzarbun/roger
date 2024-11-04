@@ -267,7 +267,16 @@ const ExploreClubSubscribersModal = (
                           player.user_type_id !== 1) ? (
                         <ImBlocked className={styles.blocked} />
                       ) : (
-                        ""
+                        isUserTrainer &&
+                        player.user_type_id === 1 && (
+                          <button
+                            onClick={() =>
+                              handleOpenLessonModal(player.playerUserId)
+                            }
+                          >
+                            {t("tableLessonButtonText")}
+                          </button>
+                        )
                       )}
                     </td>
                     <td>
@@ -294,17 +303,6 @@ const ExploreClubSubscribersModal = (
                         <ImBlocked className={styles.blocked} />
                       ) : (
                         ""
-                      )}
-                    </td>
-                    <td>
-                      {isUserTrainer && player.user_type_id === 1 && (
-                        <button
-                          onClick={() =>
-                            handleOpenLessonModal(player.playerUserId)
-                          }
-                        >
-                          {t("lessonInviteTitle")}
-                        </button>
                       )}
                     </td>
                   </tr>

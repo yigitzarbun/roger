@@ -174,14 +174,14 @@ const TrainerPaymentsResults = (props: TrainerPaymentsResultsProps) => {
           </div>
         </>
       ) : (
-        <p>Henüz ödemeniz bulunmamaktadır.</p>
+        <p>{t("noBankAccount")}</p>
       )}
       {!bankDetailsExist && (
         <button
           onClick={navigateToAddPayment}
           className={styles["add-payment-button"]}
         >
-          Ödeme Bilgilerini Ekle
+          {t("addBankAccount")}
         </button>
       )}
     </div>

@@ -23,6 +23,9 @@ import LessonInviteFormModal from "../../../../../../components/invite/lesson/fo
 import MessageModal from "../../../../../messages/modals/message-modal/MessageModal";
 import { useTranslation } from "react-i18next";
 import AddPlayerCardDetails from "../../../../../../components/profile/player/card-payments/add-card-details/AddPlayerCardDetails";
+import EditTrainerBankDetails from "../../../../../../components/profile/trainer/bank-details/edit-bank-details/EditTrainerBankDetails";
+import { useGetTrainerProfileDetailsQuery } from "../../../../../../../api/endpoints/TrainersApi";
+import { useGetBanksQuery } from "../../../../../../../api/endpoints/BanksApi";
 
 interface ExplorePlayersInteractionsSectionsProps {
   selectedPlayer: any;
@@ -37,6 +40,8 @@ const ExplorePlayersInteractionsSections = (
   const { t } = useTranslation();
 
   const user = useAppSelector((store) => store?.user?.user);
+
+  const { data: banks, isLoading: isBanksLoading } = useGetBanksQuery({});
 
   const {
     data: playerPaymentDetailsExist,
@@ -59,6 +64,27 @@ const ExplorePlayersInteractionsSections = (
   const handleCloseCardDetailsModal = () => {
     setAddPlayerCardDetailsModelOpen(false);
   };
+
+  const [trainerBankDetailsModal, setTrainerBankDetailsModal] = useState(false);
+
+  const handleOpenBankDetailsModal = () => {
+    setTrainerBankDetailsModal(true);
+  };
+
+  const handleCloseBankDetailsModal = () => {
+    setTrainerBankDetailsModal(false);
+  };
+
+  const {
+    data: trainerDetails,
+    isLoading: isTrainerDetailsLoading,
+    refetch: refetchTrainerDetails,
+  } = useGetTrainerProfileDetailsQuery(user?.user?.user_id);
+
+  const bankDetailsExist =
+    trainerDetails?.[0]?.trainerIban &&
+    trainerDetails?.[0]?.trainerBankId &&
+    trainerDetails?.[0]?.trainerBankAccountName;
 
   const generateStars = (count) => {
     const stars = [];
@@ -114,7 +140,11 @@ const ExplorePlayersInteractionsSections = (
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
 
   const handleOpenLessonModal = () => {
-    setIsLessonModalOpen(true);
+    if (isUserTrainer && bankDetailsExist) {
+      setIsLessonModalOpen(true);
+    } else if (isUserTrainer && !bankDetailsExist) {
+      handleOpenBankDetailsModal();
+    }
   };
 
   const handleCloseLessonModal = () => {
@@ -368,6 +398,16 @@ const ExplorePlayersInteractionsSections = (
           playerDetails={playerDetails}
           refetchPlayerDetails={refetchPlayerDetails}
           cardDetailsExist={playerPaymentDetailsExist}
+        />
+      )}
+      {trainerBankDetailsModal && (
+        <EditTrainerBankDetails
+          isModalOpen={trainerBankDetailsModal}
+          handleCloseModal={handleCloseBankDetailsModal}
+          banks={banks}
+          trainerDetails={trainerDetails?.[0]}
+          bankDetailsExist={bankDetailsExist}
+          refetchTrainerDetails={refetchTrainerDetails}
         />
       )}
     </div>

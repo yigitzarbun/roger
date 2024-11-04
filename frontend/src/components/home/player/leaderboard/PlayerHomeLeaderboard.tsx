@@ -26,7 +26,7 @@ const PlayerHomeLeaderboard = () => {
     isLoading: isLeaderboardLoading,
     refetch: refetchLeaderBoard,
   } = useGetPlayersLeaderboardQuery({
-    perPage: 5,
+    perPage: 4,
     currentPageNumber: currentPage,
     gender: playerDetails?.[0]?.gender,
   });

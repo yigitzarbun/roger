@@ -10,85 +10,8 @@
   row-gap: 20px;
   border: 1px $roger-border-color solid;
   overflow-x: auto;
-  .top-container {
-    display: flex;
-    justify-content: space-between;
-    .title-container {
-      display: flex;
-      align-items: center;
-      column-gap: 2vw;
-      .result-title {
-        font-size: 2rem;
-      }
-      .filter {
-        cursor: pointer;
-      }
-      .active-filter {
-        color: $roger-blue;
-        cursor: pointer;
-      }
-    }
-    .navigation-container {
-      display: flex;
-      column-gap: 10px;
-
-      .nav-arrow {
-        font-size: 1.5rem;
-        cursor: pointer;
-      }
-      .nav-arrow:hover {
-        color: $roger-blue;
-      }
-    }
-  }
-  .nav-filter-container {
-    display: flex;
-    column-gap: 2vw;
-
-    .input-container {
-      display: flex;
-      width: 15%;
-      align-items: center;
-      background-color: $roger-black-dark;
-      padding: 2px;
-      border-radius: $roger-border-radius;
-      justify-content: center;
-      column-gap: 14px;
-
-      select,
-      input {
-        padding: $roger-button-padding;
-        border-radius: $roger-border-radius;
-        border: 1px solid $roger-border-color;
-        width: 100%;
-        background-color: $roger-box-bg-color;
-        cursor: pointer;
-      }
-    }
-
-    .search-container {
-      display: flex;
-      width: 30%;
-      align-items: center;
-      background-color: $roger-black-dark;
-      padding: 2px;
-      border-radius: $roger-border-radius;
-      justify-content: center;
-      column-gap: 14px;
-
-      label {
-        font-weight: bold;
-      }
-
-      select,
-      input {
-        padding: $roger-button-padding;
-        border-radius: $roger-border-radius;
-        border: 1px solid $roger-border-color;
-        width: 100%;
-        background-color: $roger-box-bg-color;
-      }
-    }
+  .result-title {
+    font-size: 2rem;
   }
   table {
     width: 100%;

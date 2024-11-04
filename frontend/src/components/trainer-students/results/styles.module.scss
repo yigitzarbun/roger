@@ -141,7 +141,7 @@
     .invite-button {
       background-color: $roger-black-dark;
       border: none;
-      width: 150px;
+      min-width: 110px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
@@ -158,7 +158,7 @@
     .delete-button {
       background-color: $roger-red;
       border: none;
-      width: 150px;
+      min-width: 110px;
       padding: $roger-button-padding;
       border-radius: $roger-border-radius;
       font-size: 0.9rem;
